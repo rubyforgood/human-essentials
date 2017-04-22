@@ -7,11 +7,23 @@
 # Ignore bundler config.
 /.bundle
 
-# Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+# Ignore system files that we don't want (these are linked in cap)
+/public/system
+/public/.htaccess
 
-# Ignore Byebug command history file.
+# Ignore the default SQLite database.
+/db/*.sqlite3
+/db/*.sqlite3-journal
+pdx_db_test
+
+# Ignore all logfiles and tempfiles.
+/log/*.log
+/tmp
+.env
 .byebug_history
+
+# Ignore locally installed bundled gems
+/vendor/bundle
+
+# Ignore compiled assets
+/public/assets
