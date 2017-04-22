@@ -70,6 +70,7 @@ class Inventory < ApplicationRecord
     update_inventory_holdings(updated_quantities)
   end
 
+  # TODO - this action is happening in the Transfer model/controller - does this method belong here?
   def move_inventory!(transfer)
     updated_quantities = {}
     insufficient_items = []
@@ -101,7 +102,7 @@ class Inventory < ApplicationRecord
   end
 
 
-
+  # TODO - this action is happening in the TicketsController. Is this model the correct place for this method?
   def reclaim!(ticket)
     ActiveRecord::Base.transaction do
       ticket.containers.each do |container|

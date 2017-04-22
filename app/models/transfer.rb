@@ -23,20 +23,24 @@ class Transfer < ApplicationRecord
   validates_associated :containers
   validate :container_items_exist_in_inventory
 
+  # TODO - this could probably be made an association method for the `containers` association
   def quantities_by_category
     containers.includes(:item).group("items.category").sum(:quantity)
   end
 
+  # TODO - this could probably be made an association method for the `containers` association
   def sorted_containers
     containers.includes(:item).order("items.name")
   end
 
+  # TODO - this could probably be made an association method for the `containers` association
   def total_quantity
     containers.sum(:quantity)
   end
 
   private
 
+  # TODO - this could probably be made an association method for the `containers` association
   def container_items_exist_in_inventory
     self.containers.each do |container|
       next unless container.item

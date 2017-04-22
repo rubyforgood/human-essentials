@@ -1,0 +1,2 @@
+module BarcodeItemsHelper
+end

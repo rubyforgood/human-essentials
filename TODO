@@ -1,0 +1,35 @@
+app/controllers/donations_controller.rb:
+  * [  2] - needs to be able to handle barcodes too
+
+app/controllers/inventories_controller.rb:
+  * [ 22] - the intake! method needs to be worked into this controller somehow.
+  * [ 23] - the distribute! method needs to be worked into this controller somehow
+
+app/models/admin_user.rb:
+  * [  2] AdminUser should be rebuilt from scratch! 
+
+app/models/barcode_item.rb:
+  * [ 21] - this should be renamed to something more specific -- it produces a hash, not a container object
+
+app/models/donation.rb:
+  * [ 26] - change this to "by_source()" with an argument that accepts a source name
+  * [ 33] - Can this be simplified so that we can just pass it the donation_item_params hash?
+  * [ 42] - Test coverage for this method
+  * [ 50] - Could this be made a member method "count" of the `items` association?
+  * [ 55] - This should check for existence of the item first. Also, I think there's a to_container method in Barcode, isn't there?
+  * [ 60] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
+  * [ 69] - Is this necessary? If so, it should be renamed to "add_quantity"
+
+app/models/holding.rb:
+  * [ 24] - is there a reason for doing this instead of setting a DB default?
+
+app/models/inventory.rb:
+  * [ 73] - this action is happening in the Transfer model/controller - does this method belong here?
+  * [105] - this action is happening in the TicketsController. Is this model the correct place for this method?
+
+app/models/transfer.rb:
+  * [ 26] - this could probably be made an association method for the `containers` association
+  * [ 31] - this could probably be made an association method for the `containers` association
+  * [ 36] - this could probably be made an association method for the `containers` association
+  * [ 43] - this could probably be made an association method for the `containers` association
+
