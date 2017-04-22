@@ -10,7 +10,7 @@
 #  quantity   :integer
 #
 
-class BarcodeItem < ActiveRecord::Base
+class BarcodeItem < ApplicationRecord
   belongs_to :item, dependent: :destroy, counter_cache: :barcode_count
 
   validates :value, presence: true, uniqueness: true

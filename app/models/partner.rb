@@ -9,6 +9,6 @@
 #  updated_at :datetime
 #
 
-class Partner < ActiveRecord::Base
+class Partner < ApplicationRecord
   has_many :tickets
 end

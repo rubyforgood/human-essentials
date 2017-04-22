@@ -11,7 +11,7 @@
 #  itemizable_type :string
 #
 
-class Container < ActiveRecord::Base
+class Container < ApplicationRecord
   belongs_to :itemizable, polymorphic: true, inverse_of: :containers, required: true
   belongs_to :item
 

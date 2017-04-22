@@ -4,13 +4,14 @@
 #
 #  id                  :integer          not null, primary key
 #  source              :string
-#  completed           :boolean          default(FALSE)
+#  completed           :boolean          default("f")
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
+#  inventory_id        :integer
 #
 
-class Donation < ActiveRecord::Base
+class Donation < ApplicationRecord
   belongs_to :dropoff_location
   has_many :containers, as: :itemizable, inverse_of: :itemizable
   belongs_to :inventory

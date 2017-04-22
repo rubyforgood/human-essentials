@@ -3,10 +3,11 @@
 # Table name: tickets
 #
 #  id           :integer          not null, primary key
+#  comment      :text
 #  created_at   :datetime
 #  updated_at   :datetime
-#  partner_id   :integer
 #  inventory_id :integer
+#  partner_id   :integer
 #
 
 FactoryGirl.define do

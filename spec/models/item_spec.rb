@@ -2,11 +2,12 @@
 #
 # Table name: items
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  category   :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id            :integer          not null, primary key
+#  name          :string
+#  category      :string
+#  created_at    :datetime
+#  updated_at    :datetime
+#  barcode_count :integer
 #
 
 require "rails_helper"

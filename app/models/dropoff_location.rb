@@ -9,7 +9,7 @@
 #  updated_at :datetime
 #
 
-class DropoffLocation < ActiveRecord::Base
+class DropoffLocation < ApplicationRecord
 
 	has_many :donations
 

@@ -3,13 +3,14 @@
 # Table name: tickets
 #
 #  id           :integer          not null, primary key
+#  comment      :text
 #  created_at   :datetime
 #  updated_at   :datetime
-#  partner_id   :integer
 #  inventory_id :integer
+#  partner_id   :integer
 #
 
-class Ticket < ActiveRecord::Base
+class Ticket < ApplicationRecord
 
   # Tickets are issued from a single inventory, so we associate them so that
   # on-hand amounts can be verified

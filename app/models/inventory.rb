@@ -9,7 +9,7 @@
 #  updated_at :datetime
 #
 
-class Inventory < ActiveRecord::Base
+class Inventory < ApplicationRecord
   has_many :holdings
   has_many :donations
   has_many :tickets

@@ -4,10 +4,11 @@
 #
 #  id                  :integer          not null, primary key
 #  source              :string
-#  completed           :boolean          default(FALSE)
+#  completed           :boolean          default("f")
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
+#  inventory_id        :integer
 #
 
 require "rails_helper"

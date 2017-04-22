@@ -10,7 +10,7 @@
 #  item_id      :integer
 #
 
-class Holding < ActiveRecord::Base
+class Holding < ApplicationRecord
   after_initialize :set_quantity
 
   belongs_to :inventory

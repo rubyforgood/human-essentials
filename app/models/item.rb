@@ -2,14 +2,15 @@
 #
 # Table name: items
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  category   :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id            :integer          not null, primary key
+#  name          :string
+#  category      :string
+#  created_at    :datetime
+#  updated_at    :datetime
+#  barcode_count :integer
 #
 
-class Item < ActiveRecord::Base
+class Item < ApplicationRecord
   has_many :containers
   has_many :holdings
   has_many :barcode_items

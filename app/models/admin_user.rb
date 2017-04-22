@@ -1,3 +1,8 @@
+### !!!!!!!!!!!!!!!!!!!!!!!!! ###
+### TODO: AdminUser should be rebuilt from scratch! 
+### It's preserved here only for the devise configurations. 
+### !!!!!!!!!!!!!!!!!!!!!!!!! ###
+
 # == Schema Information
 #
 # Table name: admin_users
@@ -17,9 +22,9 @@
 #  updated_at             :datetime         not null
 #
 
-class AdminUser < ActiveRecord::Base
+#class AdminUser < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, 
-         :recoverable, :rememberable, :trackable, :validatable
-end
+#  devise :database_authenticatable, 
+#         :recoverable, :rememberable, :trackable, :validatable
+#end
