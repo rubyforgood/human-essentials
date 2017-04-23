@@ -11,6 +11,8 @@
 #
 
 class Item < ApplicationRecord
+  validates_presence_of :name
+  
   has_many :containers
   has_many :holdings
   has_many :barcode_items

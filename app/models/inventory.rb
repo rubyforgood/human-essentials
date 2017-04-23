@@ -23,7 +23,7 @@ class Inventory < ApplicationRecord
   end
 
   def item_total(item_id)
-    holdings.select(item_id: item_id).first.quantity
+    holdings.select(:quantity).find_by_item_id(item_id).try(:quantity)
   end
 
   def size

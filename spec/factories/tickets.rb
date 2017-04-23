@@ -16,7 +16,7 @@ FactoryGirl.define do
     partner
 
     trait :with_items do
-      association :inventory, factory: :inventory_with_items
+      inventory { create :inventory, :with_items }
 
       transient do
         item_quantity 100

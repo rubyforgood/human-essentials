@@ -13,18 +13,28 @@
 require "rails_helper"
 
 RSpec.describe Holding, type: :model do
-	describe "quantity" do
-		it "is required" do
-			holding = build(:holding, quantity: nil)
-			expect(holding).not_to be_valid
-		end
-		it "is an integer" do
-			holding = build(:holding, quantity: 'aaa')
-			expect(holding).not_to be_valid
-		end
-		it "is not a negative number" do
-			holding = build(:holding, quantity: -1)
-			expect(holding).not_to be_valid
-		end
+	context "Validations >" do
+	  describe "quantity >" do
+	  	it "is required" do
+	  	  expect(build(:holding, quantity: nil)).not_to be_valid
+	  	end
+	  	it "is numerical" do
+	  	  expect(build(:holding, quantity: 'a')).not_to be_valid
+	  	end
+	  	it "is gte 0" do
+	  		expect(build(:holding, quantity: -1)).not_to be_valid
+	  		expect(build(:holding, quantity: 0)).to be_valid
+	  	end
+	  end
+      it "requires an inventory association" do
+      	expect(build(:holding, inventory_id: nil)).not_to be_valid
+      end
+      it "requires an item" do
+      	expect(build(:holding, item_id: nil)).not_to be_valid
+      end
+	end
+
+	it "initializes the quantity to 0 if it was not specified" do
+		expect(Holding.new.quantity).to eq(0)
 	end
 end

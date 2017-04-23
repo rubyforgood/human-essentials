@@ -12,21 +12,15 @@
 require "rails_helper"
 
 RSpec.describe DropoffLocation, type: :model do
-	let(:dropoff_location) { FactoryGirl.create :dropoff_location }
-	it "has a name" do
-		expect(dropoff_location.name).to_not be nil
-	end
+	
+	context "Validations >" do
+		it "is invalid without a name" do
+		  expect(build(:dropoff_location, name: nil)).not_to be_valid
+		end
 
-	it "has an address" do
-		expect(dropoff_location.address).to_not be nil
+		it "is invalid without an address" do
+		  expect(build(:dropoff_location, address: nil)).not_to be_valid
+		end
 	end
-	it "has an array of Donation" do
-		expect(dropoff_location.donations).to eq([])
-
-	end
-	it "has many donations" do
-    assc = described_class.reflect_on_association(:donations)
-    expect(assc.macro).to eq :has_many
-  end
 end
 

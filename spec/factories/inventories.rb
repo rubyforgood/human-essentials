@@ -11,15 +11,15 @@
 
 FactoryGirl.define do
   factory :inventory do
+    transient do
+      item_quantity 100
+      item nil
+    end
+
     name "Smithsonian Institute"
     address "1500 Remount Road, Front Royal, VA"
 
-    factory :inventory_with_items do
-      transient do
-        item_quantity 100
-        item nil
-      end
-
+    trait :with_items do
       after(:create) do |inventory, evaluator|
         item = (evaluator.item.nil?) ? create(:item) : evaluator.item
         item.save if item.new_record?
