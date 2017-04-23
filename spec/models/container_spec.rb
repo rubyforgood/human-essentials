@@ -14,12 +14,13 @@
 require "rails_helper"
 
 RSpec.describe Container, type: :model do
-	let(:container) { FactoryGirl.create :container }
-	it "has a quantity" do
-		expect(container.quantity).to_not be nil
-	end
-	it "does not allow a quantity to not be present" do
-		container = Container.new(quantity: nil)
-		expect(container.valid?).to be false
+	context "Validations >" do
+		it "requires an item" do
+			expect(build(:container, item: nil)).not_to be_valid
+		end
+
+		it "requires a quantity" do
+			expect(build(:container, quantity: nil)).not_to be_valid
+		end
 	end
 end

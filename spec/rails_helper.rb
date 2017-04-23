@@ -45,7 +45,11 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean
+
+    # FG.lint leaves straggler data behind if we don't clean afterwards
+    DatabaseCleaner.start
     FactoryGirl.lint
+    DatabaseCleaner.clean
   end
   
   config.before(:each) do

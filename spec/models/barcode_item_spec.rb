@@ -13,36 +13,48 @@
 require 'rails_helper'
 
 RSpec.describe BarcodeItem, type: :model do
-  describe "value" do
-    it "is not nil" do
-      barcode_item = build(:barcode_item, value: nil)
-      expect(barcode_item).not_to be_valid
+  it "updates a counter in Item whenever it tracks a new barcode" do
+    item = create(:item)
+    expect { 
+      create(:barcode_item, item: item)
+      item.reload
+    }.to change{item.barcode_items.size}.by(1)
+  end
+
+  context "validations >" do
+    describe "value >" do
+      it "requires a value" do
+        expect(build(:barcode_item, value: nil)).not_to be_valid
+      end
+      it "enforces uniqueness in barcode value" do
+        barcode_item = create(:barcode_item)
+        expect(build(:barcode_item, value: barcode_item.value)).not_to be_valid
+      end
     end
-    it "has a unique barcode string value" do
+
+    describe "item >" do
+      it "is invalid without an item associated with it" do
+        expect(build(:barcode_item, item: nil)).not_to be_valid
+      end
+    end
+
+    describe "quantity >" do
+      it "is not nil" do
+        expect(build(:barcode_item, quantity: nil)).not_to be_valid
+      end
+      it "is an integer" do
+        expect(build(:barcode_item, quantity: 'aaa')).not_to be_valid
+      end
+      it "is not a negative number" do
+        expect(build(:barcode_item, quantity: -1)).not_to be_valid
+      end  
+    end
+  end
+
+  describe "to_container >" do
+    it "emits a hash for a container" do
       barcode_item = create :barcode_item
-      bad_barcode = build(:barcode_item, value: barcode_item.value)
-      expect(bad_barcode).not_to be_valid
+      expect(barcode_item.to_container).to eq({item_id: barcode_item.item_id, quantity: barcode_item.quantity})
     end
-  end
-  it "is invalid without an item associated with it" do
-    expect(build(:barcode_item, item: nil)).not_to be_valid
-  end
-  describe "quantity" do
-    it "is not nil" do
-      barcode_item = build(:barcode_item, quantity: nil)
-      expect(barcode_item).not_to be_valid
-    end
-    it "is an integer" do
-      barcode_item = build(:barcode_item, quantity: 'aaa')
-      expect(barcode_item).not_to be_valid
-    end
-    it "is not a negative number" do
-      barcode_item = build(:barcode_item, quantity: -1)
-      expect(barcode_item).not_to be_valid
-    end
-  end
-  it "emits a hash for a container" do
-    barcode_item = create :barcode_item
-    expect(barcode_item.to_container).to eq({item_id: barcode_item.item_id, quantity: barcode_item.quantity})
   end
 end

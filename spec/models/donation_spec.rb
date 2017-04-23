@@ -14,100 +14,136 @@
 require "rails_helper"
 
 RSpec.describe Donation, type: :model do
-	let(:d) { FactoryGirl.create :donation }
-	it "has a dropoff location" do
-		expect(d.dropoff_location).to_not be nil
-	end
-	it "has a source" do
-		expect(d.source).to_not be nil
-	end
-	pending "has a receipt number" do
-		expect(d.receipt_number).to_not be nil
-	end
-	it "has a completed flag by default" do
-		expect(d.completed).to be false
-	end
-
-  describe "validations >" do
-	  it "doesn't allow location to blank" do
-		  expect(build(:donation, dropoff_location: nil)).not_to be_valid
-	  end
-	  it "doesn't allow source to be nil" do
-		  expect(build(:donation, source: nil)).not_to be_valid
-	  end
-  end
-  it "has many items" do
-  	item = create :item
-  	d.track(item, 3)
-  	expect(d.items.count).to eq(1)
-  end
-  it "has an item total" do
-  	item1 = create :item
-  	item2 = create :item
-  	d.track(item1, 4)
-  	d.track(item2, 5)
-  	expect(d.total_items).to eq(9)
-  end
-
-  it "belongs to dropoff location" do
-    assc = described_class.reflect_on_association(:dropoff_location)
-    expect(assc.macro).to eq :belongs_to
-  end
-
-	it "tracks from a barcode" do
-		donation = create :donation
-		barcode_item = create :barcode_item
-		expect{donation.track_from_barcode(barcode_item.to_container); donation.reload}.to change{donation.containers.count}.by(1)
-	end
-	describe "Tracking" do
-		it "does not add new container" do
-			item = FactoryGirl.create :item
-			d.containers.create(quantity: 5, item_id: item.id)
-			count = d.containers.count
-			d.track(item, 10)
-			expect(d.containers.count).to eq(count)
-		end
-		it "updates donation container's quantity" do
-			item = FactoryGirl.create :item
-			d.containers.create(quantity: 5, item_id: item.id)
-			d.track(item, 10)
-			expect(d.containers.find_by(item_id: item.id).quantity).to eq(15)
-		end
-	end
-  it "changes donations to be completed" do
-    d.complete
-    expect(d.completed).to be true
-  end
-
-  describe "scope `#between`" do
-    before(:each) { Donation.delete_all }
-
-    it "returns all donations created between two dates" do
-      donations = create_list :donation, 5
-      start_date = donations.first.created_at - 1.day
-      end_date = donations.last.created_at + 1.day
-      results = Donation.between(start_date, end_date).to_a
-      expect(results).to match donations
+  context "Validations >" do
+    it "requires a dropoff_location" do
+      expect(build(:donation, dropoff_location: nil)).not_to be_valid
     end
-
-    it "does not return donations created outside of two dates" do
-      donations = create_list :donation, 5
-      results = Donation.between(1.year.ago, 5.months.ago).to_a
-      expect(results).to be_empty
+    it "requires a source" do
+      expect(build(:donation, source: nil)).not_to be_valid
     end
   end
 
-  describe "scope `#diaper_drive`" do
-    it "returns all donations from a diaper drive" do
-      donations = create_list :donation, 3, source: "Diaper Drive"
-      results = Donation.diaper_drive
-      expect(results.to_a).to match donations
+  it "defaults to incomplete" do
+    expect(build(:donation).completed).to be_falsey
+  end
+
+  context "Scopes >" do
+    describe "completed >" do
+      it "shows donations that are flagged complete" do
+        create(:donation, completed: false)
+        create(:donation, completed: true)
+        expect(Donation.completed.count).to eq(1)
+      end
     end
 
-    it "does not return non-diaper drive donations" do
-      donations = create_list :donation, 2, source: "Donation"
-      results = Donation.diaper_drive
-      expect(results.to_a).not_to match donations
+    describe "incomplete >" do
+      it "shows donations that are flagged incomplete" do
+        create(:donation, completed: false)
+        create(:donation, completed: true)
+        expect(Donation.incomplete.count).to eq(1)
+      end
+    end
+    describe "between >" do
+      it "returns all donations created between two dates" do
+        create(:donation, created_at: 1.year.ago)
+        create(:donation, created_at: Date.yesterday)
+        create(:donation, created_at: Date.today)
+        expect(Donation.between(1.month.ago, Date.tomorrow).size).to eq(2)
+      end
+    end
+
+    describe "diaper_drive >" do
+      it "returns all donations with the source `Diaper Drive`" do
+        create(:donation, source: "Somewhere else")
+        create(:donation, source: "Diaper Drive")
+        expect(Donation.diaper_drive.count).to eq(1)
+      end
+    end
+  end
+
+  context "Associations >" do
+    describe "items >" do
+      it "has_many" do
+        donation = create(:donation)
+        item = create(:item)
+        # Using donation.track because it marshalls the HMT 
+        donation.track(item, 1)
+        expect(donation.items.count).to eq(1)
+      end
+    end
+
+  end
+
+  context "Methods >" do
+    describe "total_items" do
+      it "has an item total" do
+        donation = create(:donation)
+        item1 = create :item
+        item2 = create :item
+        donation.track(item1, 1)
+        donation.track(item2, 2)
+        expect(donation.total_items).to eq(3)
+      end
+    end
+
+    describe "track" do
+      it "does not add a new container unnecessarily, updating existing container instead" do
+        donation = create(:donation)
+        item = create :item
+        donation.track(item, 5)
+        expect {
+          donation.track(item, 10)
+        }.not_to change{donation.containers.count}
+
+        expect(donation.containers.first.quantity).to eq(15)
+      end
+    end
+
+    describe "track_from_barcode" do
+      it "tracks from a barcode" do
+        donation = create :donation
+        barcode_item = create :barcode_item
+        expect{
+          donation.track_from_barcode(barcode_item.to_container); 
+          donation.reload
+        }.to change{donation.items.count}.by(1)
+      end
+    end
+
+    describe "complete" do
+      it "sets the `completed` field to true" do
+        donation = create(:donation)
+        expect {
+          donation.complete
+        }.to change{donation.completed}.from(false).to(true)
+      end
+    end
+
+    describe "check_existence" do
+      it "returns true if the item_id already exists" do
+        donation = create(:donation, :with_item)
+        expect(donation.check_existence(donation.items.first.id)).to be_truthy
+      end
+    end
+
+    describe "update_quantity" do
+      it "adds an additional quantity to the existing container" do
+        donation = create(:donation, :with_item)
+        expect { 
+          donation.update_quantity(1, donation.items.first)
+          donation.reload
+        }.to change{donation.containers.first.quantity}.by(1)
+      end
+
+      it "works whether you give it an item or an id" do
+        pending "TODO: refactor & fix"
+        donation = create(:donation, :with_item)
+        expect { 
+          donation.update_quantity(1, donation.items.first.id)
+          donation.reload
+        }.to change{donation.containers.first.quantity}.by(1)
+      end
+      # TODO - make this test pass
     end
   end
 end

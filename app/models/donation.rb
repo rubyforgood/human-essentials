@@ -66,7 +66,7 @@ class Donation < ApplicationRecord
     end
   end
 
-  ## TODO - Is this necessary? If so, it should be renamed to "add_quantity"
+  ## TODO - Refactor this. "update" doesn't reflect that this "adds only"
   def update_quantity(q, i)
     container = self.containers.find_by(item_id: i.id)
     container.quantity += q
