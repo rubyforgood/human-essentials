@@ -9,14 +9,6 @@ RSpec.describe BarcodeItemsController, type: :controller do
     end
   end
 
-  describe "POST #create" do
-    subject { post :create, { barcode_item: attributes_for(:barcode_item) } }
-    it "redirects to #show" do
-      pending("This should be moved to a feature spec")
-      raise 
-    end
-  end
-
   describe "GET #new" do
     subject { get :new }
     it "returns http success" do

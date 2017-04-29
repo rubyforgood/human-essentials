@@ -15,7 +15,7 @@ class BarcodeItem < ApplicationRecord
 
   validates :value, presence: true, uniqueness: true
   validates :quantity, presence: true
-  validates :item_id, presence: true
+  validates :item, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   # TODO - this should be renamed to something more specific -- it produces a hash, not a container object

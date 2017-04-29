@@ -1,0 +1,9 @@
+<%= simple_form_for form do |f| %>
+
+<%= f.input :quantity, label: "Quantity", error: "Please enter a quantity for this package" %>
+<%= f.association :item, collection: @items, label: "Item", error: "Choose an item from the list" %>
+<%= f.input :value, label: "Barcode", error: "You must scan a barcode for this" %>
+
+<%= f.button :submit %>
+
+<% end %>

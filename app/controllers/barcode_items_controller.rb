@@ -4,12 +4,14 @@ class BarcodeItemsController < ApplicationController
   end
 
   def create
+    Rails.logger.info barcode_item_params.inspect
     @barcode_item = BarcodeItem.create(barcode_item_params)
-    redirect_to(barcode_item_path(@barcode_item))
+    redirect_to(barcode_item_path(@barcode_item), notice: "New barcode added!")
   end
 
   def new
     @barcode_item = BarcodeItem.new
+    @items = Item.all
   end
 
   def edit

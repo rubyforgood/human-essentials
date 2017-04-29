@@ -13,7 +13,7 @@
 FactoryGirl.define do
 
   factory :barcode_item do
-    sequence(:value) { |n| "#{n * 5}"}
+    sequence(:value) { |n| "#{n}" * 12 } # 037000863427
     item
     quantity 50
   end
