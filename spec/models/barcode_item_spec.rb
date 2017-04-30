@@ -21,6 +21,10 @@ RSpec.describe BarcodeItem, type: :model do
     }.to change{item.barcode_items.size}.by(1)
   end
 
+  it "can filter" do
+    expect(subject.class).to respond_to :filter
+  end
+
   context "validations >" do
     describe "value >" do
       it "requires a value" do
@@ -48,6 +52,15 @@ RSpec.describe BarcodeItem, type: :model do
       it "is not a negative number" do
         expect(build(:barcode_item, quantity: -1)).not_to be_valid
       end  
+    end
+  end
+
+  describe "barcoded_items >" do
+    it "returns a collection of items that have barcodes associated with them" do
+      create_list(:item, 3)
+      create(:barcode_item, item: Item.first)
+      create(:barcode_item, item: Item.last)
+      expect(BarcodeItem.barcoded_items.length).to eq(2)
     end
   end
 

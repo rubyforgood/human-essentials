@@ -1,5 +1,39 @@
 require 'rails_helper'
 
 RSpec.describe "barcode_items/index.html.erb", type: :view do
-  pending "add some examples to (or delete) #{__FILE__}"
+  before(:each) do
+  	@item1 = create(:item)
+  	@item2 = create(:item)
+    assign(:barcode_items, [
+    	create(:barcode_item, item: @item1, quantity: 10),
+    	create(:barcode_item, item: @item1, quantity: 100),
+    	create(:barcode_item, item: @item2, quantity: 10)
+    	])
+    assign(:items, [@item1, @item2])
+    render
+  end
+
+  it "Shows all barcodes in a table" do
+  	expect(rendered).to have_css("table#barcode_items tbody tr", count: 3)
+  end
+
+  it "Has CRUD links in each row" do
+  	within "table#barcode_items tbody tr:first-child td:nth-child(4)" do
+  		expect(rendered).to have_content "View"
+  		expect(rendered).to have_content "Edit"
+  		expect(rendered).to have_content "Delete"
+  	end
+  end
+
+  context "With filters" do
+  	it "Has filters" do
+  		expect(rendered).to have_css("#filters")
+  	end
+
+    it "Has a filter option to constrain Barcodes by Item type" do
+      expect(rendered).to have_css("select#filters_item_id")
+      expect(rendered).to have_css("select#filters_item_id option", count: 2)
+    end
+  
+  end
 end

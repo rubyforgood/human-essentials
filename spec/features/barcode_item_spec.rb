@@ -22,4 +22,16 @@ RSpec.feature "Barcode management", type: :feature do
   	expect(page.find('.flash.success')).to have_content "updated"
   end
 
+  scenario "User can filter the #index by item type" do
+    item = create(:item, name: "1T Diapers")
+    item2 = create(:item, name: "2T Diapers")
+    create(:barcode_item, item: Item.first)
+    create(:barcode_item, item: Item.last)
+    visit "/barcode_items"
+    select Item.first.name, from: "filters_item_id"
+    click_button "Filter"
+
+    expect(page).to have_css("table tbody tr", count: 1)
+  end
+
 end

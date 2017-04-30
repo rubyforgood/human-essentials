@@ -1,10 +1,10 @@
 class BarcodeItemsController < ApplicationController
   def index
-    @barcode_items = BarcodeItem.all
+    @barcode_items = BarcodeItem.includes(:item).filter(filter_params)
+    @items = BarcodeItem.barcoded_items
   end
 
   def create
-    Rails.logger.info barcode_item_params.inspect
     @barcode_item = BarcodeItem.create(barcode_item_params)
     redirect_to barcode_item_path(@barcode_item), notice: "New barcode added!"
   end
@@ -37,5 +37,10 @@ class BarcodeItemsController < ApplicationController
 private
   def barcode_item_params
     params.require(:barcode_item).permit(:value, :item_id, :quantity)
+  end
+
+  def filter_params
+    return {} unless params.has_key?(:filters)
+    params.require(:filters).slice(:item_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity)
   end
 end

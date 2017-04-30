@@ -18,6 +18,13 @@ class BarcodeItem < ApplicationRecord
   validates :item, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
+  include Filterable
+  scope :item_id, ->(item_id) { where(item_id: item_id) }
+
+  def self.barcoded_items
+    Item.joins(:barcode_items).group(:id)
+  end
+
   # TODO - this should be renamed to something more specific -- it produces a hash, not a container object
   def to_container
     {
