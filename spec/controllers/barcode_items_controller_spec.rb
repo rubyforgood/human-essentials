@@ -30,14 +30,6 @@ RSpec.describe BarcodeItemsController, type: :controller do
     end
   end
 
-  describe "PUT #update" do
-    subject { put :update, params: { id: create(:barcode_item) } }
-    it "redirects to #show" do
-      pending("This should be moved to a feature spec")
-      raise
-    end
-  end
-
   describe "DELETE #destroy" do
     subject { delete :destroy, params: { id: create(:barcode_item) } }
     it "redirecst to the index" do

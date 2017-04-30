@@ -12,4 +12,14 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.find('.flash.success')).to have_content "added"
   end
 
+  scenario "User updates an existing barcode" do
+  	item = create(:item)
+  	barcode = create(:barcode_item, item: item)
+  	visit "/barcode_items/#{barcode.id}/edit"
+  	fill_in "Quantity", id: "barcode_item_quantity", with: (barcode.quantity.to_i + 10).to_s
+  	click_button "Update Barcode item"
+
+  	expect(page.find('.flash.success')).to have_content "updated"
+  end
+
 end

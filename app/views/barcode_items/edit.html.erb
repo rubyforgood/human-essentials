@@ -1,2 +1,3 @@
-<h1>BarcodeItems#edit</h1>
-<p>Find me in app/views/barcode_items/edit.html.erb</p>
+<h1>Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %></h1>
+
+<%= render partial: "form", object: @barcode_item %>

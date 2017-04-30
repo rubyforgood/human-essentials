@@ -6,7 +6,7 @@ class BarcodeItemsController < ApplicationController
   def create
     Rails.logger.info barcode_item_params.inspect
     @barcode_item = BarcodeItem.create(barcode_item_params)
-    redirect_to(barcode_item_path(@barcode_item), notice: "New barcode added!")
+    redirect_to barcode_item_path(@barcode_item), notice: "New barcode added!"
   end
 
   def new
@@ -16,6 +16,7 @@ class BarcodeItemsController < ApplicationController
 
   def edit
     @barcode_item = BarcodeItem.find(params[:id])
+    @items = Item.all
   end
 
   def show
@@ -24,8 +25,8 @@ class BarcodeItemsController < ApplicationController
 
   def update
     @barcode_item = BarcodeItem.find(params[:id])
-    BarcodeItem.update_attributes(barcode_item_params)
-    redirect_to barcode_item_path(@barcode_item)
+    @barcode_item.update_attributes(barcode_item_params)
+    redirect_to barcode_item_path(@barcode_item), notice: "Barcode updated!"
   end
 
   def destroy
