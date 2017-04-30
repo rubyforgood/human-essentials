@@ -18,11 +18,9 @@ RSpec.describe "barcode_items/index.html.erb", type: :view do
   end
 
   it "Has CRUD links in each row" do
-  	within "table#barcode_items tbody tr:first-child td:nth-child(4)" do
-  		expect(rendered).to have_content "View"
-  		expect(rendered).to have_content "Edit"
-  		expect(rendered).to have_content "Delete"
-  	end
+		expect(rendered).to have_css("table#barcode_items tbody tr td a", text: "View")
+		expect(rendered).to have_css("table#barcode_items tbody tr td a", text: "Edit")
+		expect(rendered).to have_css("table#barcode_items tbody tr td a", text: "Delete")
   end
 
   context "With filters" do

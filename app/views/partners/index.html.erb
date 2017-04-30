@@ -1,2 +1,14 @@
-<h1>Partners#index</h1>
-<p>Find me in app/views/partners/index.html.erb</p>
+<h1>Community Partners</h1>
+
+<table id="partners">
+  <thead>
+    <tr>
+      <th>Partner</th>
+      <th>E-mail</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "partner_row", collection: @partners %>
+  </tbody>
+</table>

@@ -1,0 +1,7 @@
+<tr>
+  <td><%= partner_row.name %></td>
+  <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
+  <td><%= link_to "View", partner_path(partner_row) %>    
+      <%= link_to "Edit", edit_partner_path(partner_row) %> 
+      <%= link_to "Delete", partner_path(partner_row), method: :delete %></td>
+</tr>

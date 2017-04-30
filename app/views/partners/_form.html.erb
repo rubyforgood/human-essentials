@@ -1,0 +1,8 @@
+<%= simple_form_for form do |f| %>
+
+<%= f.input :name, label: "Name", error: "You must enter a name" %>
+<%= f.input :email, label: "E-mail", error: "You must enter a valid e-mail", as: :email %>
+
+<%= f.button :submit %>
+
+<% end %>

@@ -11,7 +11,7 @@
 
 FactoryGirl.define do
   factory :partner do
-    name "Leslie Sue"
-    email "leslie@gmail.com"
+    sequence(:name) { |n| "Leslie Sue, the #{n}" }
+    sequence(:email) { |n| "leslie#{n}@gmail.com" }
   end
 end

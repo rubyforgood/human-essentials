@@ -5,6 +5,7 @@ class PartnersController < ApplicationController
 
   def create
     @partner = Partner.create(partner_params)
+    redirect_to(partner_path(@partner), notice: "Partner added!")
   end
 
   def show
@@ -22,6 +23,7 @@ class PartnersController < ApplicationController
   def update
     @partner = Partner.find(params[:id])
     @partner.update_attributes(partner_params)
+    redirect_to(partner_path(@partner), notice: "#{@partner.name} updated!")
   end
 
   def destroy
