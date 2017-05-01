@@ -22,13 +22,17 @@ RSpec.feature "Barcode management", type: :feature do
   scenario "User can filter the #index by those that contain certain items" do
     item = create(:item, name: "1T Diapers")
     item2 = create(:item, name: "2T Diapers")
-    create(:inventory, :with_items, item: item, item_quantity: 10)
-    create(:inventory)
+    inventory1 = create(:inventory, :with_items, item: item, item_quantity: 10, name: "Foo")
+    inventory2 = create(:inventory, name: "Bar")
     visit "/inventories"
+
     select item.name, from: "filters_containing"
     click_button "Filter"
 
     expect(page).to have_css("table#inventories tbody tr", count: 1)
+    expect(page).to have_xpath("//table[@id='inventories']/tbody/tr/td", text: inventory1.name)
+    expect(page).not_to have_xpath("//table[@id='inventories']/tbody/tr/td", text: inventory2.name)
   end
 
 end
+

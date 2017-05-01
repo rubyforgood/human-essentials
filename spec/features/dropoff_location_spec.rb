@@ -12,7 +12,7 @@ RSpec.feature "Dropoff location", type: :feature do
 
   scenario "User updates an existing dropoff location" do
     dropoff_location = create(:dropoff_location)
-    visit "/dropoff_location/#{dropoff_location.id}/edit"
+    visit "/dropoff_locations/#{dropoff_location.id}/edit"
     fill_in "Address", with: dropoff_location.name + " new"
     click_button "Update Dropoff location"
 

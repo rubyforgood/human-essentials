@@ -5,6 +5,7 @@ class DropoffLocationsController < ApplicationController
 
   def create
     @dropoff_location = DropoffLocation.create(dropoff_location_params)
+    redirect_to @dropoff_location, notice: "New dropoff location added!"
   end
 
   def new
@@ -22,7 +23,7 @@ class DropoffLocationsController < ApplicationController
   def update
     @dropoff_location = DropoffLocation.find(params[:id])
     @dropoff_location.update_attributes(dropoff_location_params)
-    redirect_to @dropoff_location
+    redirect_to @dropoff_location, notice: "#{@dropoff_location.name} updated!"
   end
 
   def destroy
