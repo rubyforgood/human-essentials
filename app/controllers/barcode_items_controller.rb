@@ -15,12 +15,12 @@ class BarcodeItemsController < ApplicationController
   end
 
   def edit
-    @barcode_item = BarcodeItem.find(params[:id])
+    @barcode_item = BarcodeItem.includes(:item).find(params[:id])
     @items = Item.all
   end
 
   def show
-    @barcode_item = BarcodeItem.find(params[:id])
+    @barcode_item = BarcodeItem.includes(:item).find(params[:id])
   end
 
   def update

@@ -19,4 +19,20 @@ class Item < ApplicationRecord
   has_many :inventories, through: :holdings
   has_many :donations, through: :containers, source: :itemizable, source_type: Donation
   has_many :tickets, through: :containers, source: :itemizable, source_type: Ticket
+
+  include Filterable
+  scope :in_category, ->(category) { where(category: category) }
+  scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
+
+  def self.categories
+    self.select(:category).group(:category)
+  end
+
+  def self.inventories_containing(item)
+    Inventory.joins(:holdings).where('holdings.item_id = ?', item.id)
+  end
+
+  def self.barcodes_for(item)
+    BarcodeItem.where('item_id = ?', item.id)
+  end
 end

@@ -9,14 +9,6 @@ RSpec.describe ItemsController, type: :controller do
     end
   end
 
-  describe "POST #create" do
-    subject { post :create, params: { item: attributes_for(:item) } }
-    it "redirects to #show" do
-      pending("This should be moved to a feature spec")
-      expect(subject).to redirect_to(:show_path)
-    end
-  end
-
   describe "GET #new" do
     subject { get :new }
     it "returns http success" do
@@ -35,14 +27,6 @@ RSpec.describe ItemsController, type: :controller do
     subject { get :show, params: { id: create(:item) } }
     it "returns http success" do
       expect(subject).to be_successful
-    end
-  end
-
-  describe "PUT #update" do
-    subject { put :update, params: { id: create(:item), item: attributes_for(:item) } }
-    it "redirects to #show" do
-      pending "This should be moved to a feature spec"
-      expect(subject).to redirect_to(:show_path)
     end
   end
 

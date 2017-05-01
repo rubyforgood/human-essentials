@@ -1,2 +1,24 @@
-<h1>Items#index</h1>
-<p>Find me in app/views/items/index.html.erb</p>
+<h1>Items</h1>
+
+<table id="items">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Barcodes</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "item_row", collection: @items %>
+  </tbody>
+</table>
+
+<section id="filters">
+  <%= form_tag(items_path, method: :get) do |f| %>
+    <%= label_tag "Filter by Item" %>
+    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category) %>
+    <%= submit_tag "Filter" %>
+  <% end %>
+  <%= link_to "Clear Filters", items_path %>
+</section>

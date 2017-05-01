@@ -1,2 +1,9 @@
-<h1>BarcodeItems#show</h1>
-<p>Find me in app/views/barcode_items/show.html.erb</p>
+<h1><%= @barcode_item.item.name %></h1>
+
+<dl>
+    <dt>Quantity</dt>
+	<dd><%= @barcode_item.quantity %></dd>
+
+	<dt>Barcode</dt>
+	<dd><%= @barcode_item.value %></dd>
+</dl>
