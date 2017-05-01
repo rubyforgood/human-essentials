@@ -27,7 +27,7 @@ class Inventory < ApplicationRecord
   end
 
   def size
-    holdings.collect { |h| h.quantity }.reduce(:+)
+    holdings.sum(:quantity)
   end
 
   def intake!(donation)
@@ -111,10 +111,6 @@ class Inventory < ApplicationRecord
       end
     end
     ticket.destroy
-  end
-
-  def total_inventory
-    holdings.sum(:quantity)
   end
 
   private

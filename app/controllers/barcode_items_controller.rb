@@ -6,7 +6,7 @@ class BarcodeItemsController < ApplicationController
 
   def create
     @barcode_item = BarcodeItem.create(barcode_item_params)
-    redirect_to barcode_item_path(@barcode_item), notice: "New barcode added!"
+    redirect_to @barcode_item, notice: "New barcode added!"
   end
 
   def new
@@ -26,7 +26,7 @@ class BarcodeItemsController < ApplicationController
   def update
     @barcode_item = BarcodeItem.find(params[:id])
     @barcode_item.update_attributes(barcode_item_params)
-    redirect_to barcode_item_path(@barcode_item), notice: "Barcode updated!"
+    redirect_to @barcode_item, notice: "Barcode updated!"
   end
 
   def destroy

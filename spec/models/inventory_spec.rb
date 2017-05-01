@@ -112,13 +112,5 @@ RSpec.describe Inventory, type: :model do
         expect(inventory.holdings.first.quantity).to eq 350
       end
     end
-
-    describe "total_inventory" do
-      it "totals up the sum of all units held in the inventory, agnostic of item type" do
-        inventory = create(:inventory, :with_items, item_quantity: 10)
-        expect(inventory.total_inventory).to eq(10)
-      end
-    end
-
   end
 end

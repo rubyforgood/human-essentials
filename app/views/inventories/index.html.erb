@@ -1,2 +1,15 @@
-<h1>Inventories#index</h1>
-<p>Find me in app/views/inventories/index.html.erb</p>
+<h1>Inventories</h1>
+
+<table id="inventories">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Address</th>
+      <th>Total Inventory</th>
+      <th>&nbsp;</th>
+  </thead>
+
+  <tbody>
+    <%= render partial: "inventory_row", collection: @inventories %>
+  </tbody>
+</table>

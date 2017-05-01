@@ -1,10 +1,11 @@
 class InventoriesController < ApplicationController
   def index
-    @inventories = Inventory.all
+    @inventories = Inventory.includes(:holdings).all
   end
 
   def create
     @inventory = Inventory.create(inventory_params)
+    redirect_to @inventory, notice: "New inventory added!"
   end
 
   def new
@@ -24,7 +25,7 @@ class InventoriesController < ApplicationController
   def update
     @inventory = Inventory.find(params[:id])
     @inventory.update_attributes(inventory_params)
-    redirect_to @inventory
+    redirect_to @inventory, notice: "#{@inventory.name} updated!"
   end
 
   def destroy
