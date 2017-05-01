@@ -10,7 +10,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.find('.flash.success')).to have_content "added"
   end
 
-  scenario "User updates an existing barcode" do
+  scenario "User updates an existing inventory" do
   	inventory = create(:inventory)
   	visit "/inventories/#{inventory.id}/edit"
   	fill_in "Address", with: inventory.name + " new"

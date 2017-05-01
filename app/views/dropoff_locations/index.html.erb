@@ -1,2 +1,14 @@
-<h1>DropoffLocations#index</h1>
-<p>Find me in app/views/dropoff_locations/index.html.erb</p>
+<h1>Dropoff Locations</h1>
+
+<table id="dropoff_locations">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Address</th>
+      <th>&nbsp;</th>
+  </thead>
+
+  <tbody>
+    <%= render partial: "dropoff_location_row", collection: @dropoff_locations %>
+  </tbody>
+</table>

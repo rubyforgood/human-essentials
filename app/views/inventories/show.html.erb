@@ -1,2 +1,20 @@
-<h1>Inventories#show</h1>
-<p>Find me in app/views/inventories/show.html.erb</p>
+<h1><%= @inventory.name %></h1>
+<address><%= @inventory.address %></address>
+
+<table id="inventory">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "inventory_item_row", collection: @inventory.holdings %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>Total</td>
+      <td><%= @inventory.size %></td>
+    </tr>
+  </tfoot>
+</table>
