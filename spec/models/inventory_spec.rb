@@ -21,6 +21,22 @@ RSpec.describe Inventory, type: :model do
     end
   end
 
+  context "Filtering >" do
+    it "can filter" do
+      expect(subject.class).to respond_to :filter
+    end
+
+    it "->containing yields only inventories that have that item" do
+      item = create(:item)
+      item2 = create(:item)
+      inventory = create(:inventory, :with_items, item: item, item_quantity: 5)
+      create(:inventory, :with_items, item: item2, item_quantity: 5)
+      results = Inventory.containing(item.id)
+      expect(results.length).to eq(1)
+      expect(results.first).to eq(inventory)
+    end
+  end
+
   context "Methods >" do
     describe "Inventory.item_total" do
       it "gathers the final total of a single item across all inventories" do
@@ -31,6 +47,15 @@ RSpec.describe Inventory, type: :model do
         create(:holding, inventory_id: inv.id, quantity: 10)
     
         expect(Inventory.item_total(item.id)).to eq(20)
+      end
+    end
+
+    describe "Inventory.items_inventoried" do
+      it "returns a collection of items that are stored within inventories" do
+        create_list(:item, 3)
+        create(:inventory, :with_items, item: Item.first, item_quantity: 5)
+        create(:inventory, :with_items, item: Item.last, item_quantity: 5)
+        expect(Inventory.items_inventoried.length).to eq(2)
       end
     end
 

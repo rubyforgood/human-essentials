@@ -12,7 +12,7 @@
 
 FactoryGirl.define do
 	factory :item do
-		name "3T Diapers"
+		sequence(:name) { |n| "#{n}T Diapers" }
 		category "disposable"
 	end
 end

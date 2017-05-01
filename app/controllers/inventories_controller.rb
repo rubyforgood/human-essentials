@@ -1,6 +1,7 @@
 class InventoriesController < ApplicationController
   def index
-    @inventories = Inventory.includes(:holdings).all
+    @items = Inventory.items_inventoried
+    @inventories = Inventory.includes(:holdings).filter(filter_params)
   end
 
   def create
@@ -36,5 +37,10 @@ class InventoriesController < ApplicationController
 private
   def inventory_params
     params.require(:inventory).permit(:name, :address)
+  end
+
+  def filter_params
+    return {} unless params.has_key?(:filters)
+    params.require(:filters).slice(:containing)
   end
 end

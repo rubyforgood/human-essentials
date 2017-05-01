@@ -14,8 +14,10 @@ require "rails_helper"
 
 RSpec.describe Item, type: :model do
   context "Validations >" do
-    it "requires a name" do
+    it "requires a unique name" do
+      item = create(:item)
       expect(build(:item, name: nil)).not_to be_valid
+      expect(build(:item, name: item.name)).not_to be_valid
     end
   end
 end

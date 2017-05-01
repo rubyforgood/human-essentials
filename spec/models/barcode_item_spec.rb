@@ -21,8 +21,19 @@ RSpec.describe BarcodeItem, type: :model do
     }.to change{item.barcode_items.size}.by(1)
   end
 
-  it "can filter" do
-    expect(subject.class).to respond_to :filter
+  context "Filters >" do
+    it "can filter" do
+      expect(subject.class).to respond_to :filter
+    end
+
+    it "->item_id shows only barcodes for a specific item_id" do
+      item = create(:item)
+      barcode_item = create(:barcode_item, item: item)
+      create(:barcode_item)
+      results = BarcodeItem.item_id(item.id)
+      expect(results.length).to eq(1)
+      expect(results.first).to eq(barcode_item)
+    end
   end
 
   context "validations >" do

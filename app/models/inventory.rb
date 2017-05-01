@@ -18,8 +18,15 @@ class Inventory < ApplicationRecord
   validates :name, presence: true
   validates :address, presence: true
 
+  include Filterable
+  scope :containing, ->(item_id) { joins(:holdings).where('holdings.item_id = ?', item_id) }
+
   def self.item_total(item_id)
     Inventory.select('quantity').joins(:holdings).where('holdings.item_id = ?', item_id).collect { |h| h.quantity }.reduce(:+)
+  end
+
+  def self.items_inventoried
+    Item.joins(:inventories).group(:name)
   end
 
   def item_total(item_id)
