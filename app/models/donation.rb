@@ -18,6 +18,7 @@ class Donation < ApplicationRecord
   has_many :items, through: :containers
 
   validates :dropoff_location, presence: true
+  validates :inventory, presence: true
   validates :source, presence: true
 
   scope :completed, -> { where(completed: true) }

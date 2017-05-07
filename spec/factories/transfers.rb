@@ -13,8 +13,8 @@
 FactoryGirl.define do
 
   factory :transfer do
-  	from { create(:inventory) }
-  	to { create(:inventory) }
+  	from_id { create(:inventory).id }
+  	to_id { create(:inventory).id }
   	comment "A comment"
   end
 end

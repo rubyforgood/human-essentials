@@ -13,8 +13,13 @@ class TicketsController < ApplicationController
   end
 
   def create
-    @ticket = Ticket.create(ticket_params)
-    redirect_to ticket_path(@ticket)
+    @ticket = Ticket.new(ticket_params)
+    if (@ticket.save)
+      redirect_to ticket_path(@ticket)
+    else
+      flash[:notice] = "An error occurred, try again?"
+      render :new
+    end
   end
 
   def new

@@ -1,32 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe DonationsController, type: :controller do
-
-  describe "PATCH #add_item" do
-    subject { patch :add_item, params: { id: create(:donation) } }
-    it "returns http success" do
-      pending "This should be moved to a feature spec"
-      expect(subject).to have_http_status(:success)
-    end
-  end
-
-  describe "PATCH #remove_item" do
-    subject { patch :remove_item, params: { id: create(:donation) } }
-    it "returns http success" do
-      pending "This should be moved to a feature spec"
-      expect(subject).to have_http_status(:success)
-    end
-  end
-
-  describe "PATCH #complete" do
-    subject { patch :complete, params: { id: create(:donation) } }
-    it "returns http success" do
-      pending "This should be moved to a feature spec"
-      request.env["HTTP_REFERER"]
-      expect(subject).to have_http_status(:success)
-    end
-  end
-
   describe "GET #index" do
     subject { get :index }
     it "returns http success" do
@@ -34,18 +8,35 @@ RSpec.describe DonationsController, type: :controller do
     end
   end
 
-  describe "POST #create" do
-    subject { post :create, { donation: attributes_for(:donation) } }
-    it "redirects to #show" do
-      pending("This should be moved to a feature spec")
-      raise 
-    end
-  end
-
   describe "GET #new" do
     subject { get :new }
     it "returns http success" do
       expect(subject).to be_successful
+    end
+  end
+
+  describe "POST#create" do
+    let!(:inventory){ create(:inventory) }
+    let!(:dropoff_location) { create(:dropoff_location) }
+
+    it "redirects to GET#edit on success" do
+      post :create, params: { donation: { inventory_id: inventory.id, dropoff_location_id: dropoff_location.id, source: "foo" } }
+      d = Donation.last
+      expect(response).to redirect_to(edit_donation_path(d))
+    end
+
+    it "renders GET#new with notice on failure" do
+      post :create, params: { donation: { inventory_id: nil, dropoff_location_id: nil, source: nil } }
+      expect(response).to be_successful # Will render :new
+      expect(flash[:notice]).to match(/error/i)
+    end
+  end
+
+  describe "PUT#update" do
+    it "redirects to #show" do
+      donation = create(:donation, source: "bar")
+      put :update, params: { id: donation.id, donation: { source: "foo"} }
+      expect(response).to redirect_to(donation_path(donation))
     end
   end
 
@@ -60,14 +51,6 @@ RSpec.describe DonationsController, type: :controller do
     subject { get :show, params: { id: create(:donation) } }
     it "returns http success" do
       expect(subject).to be_successful
-    end
-  end
-
-  describe "PUT #update" do
-    subject { put :update, params: { id: create(:donation) } }
-    it "redirects to #show" do
-      pending("This should be moved to a feature spec")
-      raise
     end
   end
 

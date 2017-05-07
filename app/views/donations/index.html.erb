@@ -1,2 +1,39 @@
-<h1>Donations#index</h1>
-<p>Find me in app/views/donations/index.html.erb</p>
+<h1>All Donations</h1>
+
+<h2>Incomplete Donations</h2>
+<p>These donations are not yet completed. Any items in these have not yet been officially added to the records yet.</p>
+<table id="incomplete">
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Dropoff Location</th>
+      <th>Storage Location</th>
+      <th>Quantity of Items</th>
+      <th>Variety of Items</th>
+      <th>Status</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "donation_row", collection: @incomplete %>
+  </tbody>
+</table>
+
+<h2>Completed Donations</h2>
+<p>These donations have been completed and are displayed here for historical record purposes only.</p>
+<table id="completed">
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Dropoff Location</th>
+      <th>Storage Location</th>
+      <th>Quantity of Items</th>
+      <th>Variety of Items</th>
+      <th>Status</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "donation_row", collection: @completed %>
+  </tbody>
+</table>

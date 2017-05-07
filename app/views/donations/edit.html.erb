@@ -1,2 +1,3 @@
-<h1>Donations#edit</h1>
-<p>Find me in app/views/donations/edit.html.erb</p>
+<h1>Editing donation from <%= @donation.source %></h1>
+
+<%= render partial: "donation_form", object: @donation %>

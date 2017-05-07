@@ -44,20 +44,19 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean
-
-    # FG.lint leaves straggler data behind if we don't clean afterwards
-    DatabaseCleaner.start
-    FactoryGirl.lint
-    DatabaseCleaner.clean
+    #__start_db_cleaning_with_log
+    #__sweep_up_db_with_log
+    __start_db_cleaning_with_log
+    __lint_with_log
+    __sweep_up_db_with_log
   end
   
   config.before(:each) do
-    DatabaseCleaner.start
+    __start_db_cleaning_with_log
   end
 
   config.after(:each) do
-    DatabaseCleaner.clean
+    __sweep_up_db_with_log
   end
 
  
@@ -80,4 +79,20 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+end
+
+def __start_db_cleaning_with_log
+  Rails.logger.info "======> SISYPHUS, PUSH THAT BOULDER BACK UP THE HILL <========"
+  DatabaseCleaner.start
+end
+
+def __sweep_up_db_with_log
+  DatabaseCleaner.clean
+  Rails.logger.info "========= ONE MUST IMAGINE SISYPHUS HAPPY ===================="
+end
+
+def __lint_with_log
+  Rails.logger.info "////////////////// LINTING ////////////////////"
+  FactoryGirl.lint
+  Rails.logger.info "////////////////// END LINT ///////////////////"
 end

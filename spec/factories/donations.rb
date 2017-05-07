@@ -15,6 +15,7 @@ FactoryGirl.define do
 	factory :donation do
 		dropoff_location
 		source "Donation"
+		inventory
 		# completed false
 
 		transient do

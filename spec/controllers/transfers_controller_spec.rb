@@ -10,10 +10,16 @@ RSpec.describe TransfersController, type: :controller do
   end
 
   describe "POST #create" do
-    subject { post :create, params: { transfer: attributes_for(:transfer) } }
-    it "redirects to #show" do
-      pending("This should be moved to a feature spec")
-      expect(subject).to redirect_to(:show_path)
+    it "redirects to #show when successful" do
+      post :create, params: { transfer: attributes_for(:transfer) }
+      t = Transfer.last
+      expect(response).to redirect_to(transfer_path(t))
+    end
+
+    it "redirects to #new when failing" do
+      post :create, params: { transfer: { from_id: nil, to_id: nil } }
+      expect(response).to be_successful # Will render :new
+      expect(flash[:notice]).to match(/error/i)
     end
   end
 

@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   resources :partners
 
   resources :donations do 
-    patch :track, on: :member
+    patch :add_item, on: :member
     patch :remove_item, on: :member
     patch :complete, on: :member
   end

@@ -21,6 +21,9 @@ RSpec.describe Donation, type: :model do
     it "requires a source" do
       expect(build(:donation, source: nil)).not_to be_valid
     end
+    it "requires an inventory (storage location)" do
+      expect(build(:donation, inventory_id: nil)).not_to be_valid
+    end
   end
 
   it "defaults to incomplete" do
@@ -143,7 +146,6 @@ RSpec.describe Donation, type: :model do
           donation.reload
         }.to change{donation.containers.first.quantity}.by(1)
       end
-      # TODO - make this test pass
     end
   end
 end
