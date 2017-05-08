@@ -1,6 +1,6 @@
 class TransfersController < ApplicationController
   def index
-  	@transfers = Transfer.all
+  	@transfers = Transfer.includes(:containers).includes(:from).includes(:to).all
   end
 
   def create
@@ -15,10 +15,14 @@ class TransfersController < ApplicationController
 
   def new
   	@transfer = Transfer.new
+    @inventories = Inventory.all
+    @items = Item.all
   end
 
   def show
-  	@transfer = Transfer.new
+  	@transfer = Transfer.includes(:containers).includes(:from).includes(:to).includes(:items).find(params[:id])
+    @total = @transfer.total_quantity
+    @containers = @transfer.sorted_containers
   end
 
 private

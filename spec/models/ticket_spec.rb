@@ -28,14 +28,29 @@ RSpec.describe Ticket, type: :model do
   end
 
   context "Methods >" do
-  	describe "quantities_by_category" do
-  	  pending "responds with breakdown of different categories and how much is in each one"
+    before(:each) do
+      @ticket = create(:ticket)
+      @first = create(:item, name: "AAA", category: "Foo")
+      @last = create(:item, name: "ZZZ", category: "Bar")
+    end
+
+  	it "quantities_by_category" do
+      @ticket.containers << create(:container, item: @first, quantity: 5)
+      @ticket.containers << create(:container, item: @last, quantity: 10)
+      @ticket.containers << create(:container, item: create(:item, category: "Foo"), quantity: 10)
+      expect(@ticket.quantities_by_category).to eq({"Bar" => 10, "Foo" => 15})
   	end
-  	describe "sorted_containers" do
-  		pending "lists all containers, sorted by item name"
+  	it "sorted_containers" do
+      c1 = create(:container, item: @first)
+      c2 = create(:container, item: @last)
+      @ticket.containers << c1
+      @ticket.containers << c2
+      expect(@ticket.sorted_containers.to_a).to match_array [c1,c2]
   	end
-  	describe "total_quantity" do
-  		pending "shows the total of all items found in all containers"
+  	it "total_quantity" do
+  		@ticket.containers << create(:container, item: @first, quantity: 5)
+      @ticket.containers << create(:container, item: @last, quantity: 10)
+      expect(@ticket.total_quantity).to eq(15)
   	end
   end
 end

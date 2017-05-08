@@ -12,6 +12,17 @@
 
 
 <section id="containers">
+  <table>
+    <thead>
+      <th>Item</th>
+      <th>Quantity</th>
+    </thead>
+
+    <tbody>
+      <%= render partial: "donation_item_row", collection: @containers %>
+    </tbody>
+  </table>
+
 <!-- 
 TODO: What's the best way to do this? Should we use a new workflow?
 -->

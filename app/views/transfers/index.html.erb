@@ -1,2 +1,15 @@
-<h1>Transfers#index</h1>
-<p>Find me in app/views/transfers/index.html.erb</p>
+<h1>Transfers</h1>
+
+<table id="transfers">
+  <thead>
+    <tr>
+      <th>From</th>
+      <th>To</th>
+      <th>Comment</th>
+      <th>Total Moved</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "transfer_row", collection: @transfers %>
+  </tbody>
+</table>

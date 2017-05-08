@@ -13,14 +13,14 @@ RSpec.describe "donations/index.html.erb", type: :view do
       render
     end
 
-    scenario "a user sees the incomplete donations displayed separately from completed donations" do
+    it "shows the incomplete donations displayed separately from completed donations" do
       # The incomplete table
       expect(rendered).to have_xpath("//table[@id='incomplete']/tbody/tr", count: 1)
       # The completed table
       expect(rendered).to have_xpath("//table[@id='completed']/tbody/tr", count: 1)
     end
 
-    scenario "a user sees summary information about the donations, including CRUD controls" do
+    it "shows summary information about the donations, including CRUD controls" do
       # The Dropoff Name
       expect(rendered).to have_xpath("//table[@id='incomplete']/tbody/tr/td", text: @incomplete.dropoff_location.name)
       # The donation source

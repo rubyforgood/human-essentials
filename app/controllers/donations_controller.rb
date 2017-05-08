@@ -50,7 +50,8 @@ class DonationsController < ApplicationController
   end
 
   def show
-    @donation = Donation.find(params[:id])
+    @donation = Donation.includes(:containers).find(params[:id])
+    @containers = @donation.containers
   end
 
   def update

@@ -1,2 +1,30 @@
-<h1>Transfers#show</h1>
-<p>Find me in app/views/transfers/show.html.erb</p>
+<h1>Transfer from <%= @transfer.from.name %> to <%= @transfer.to.name %></h1>
+
+<% if @transfer.comment.present? %>
+  <p><%= @transfer.comment %></p>
+<% end %>
+
+<table id="manifest">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @containers.each do |container| %>
+      <tr>
+        <td><%= container.item.name %></td>
+        <td><%= container.quantity %></td>
+      </tr>
+    <% end %>
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <td>Total:</td>
+      <td><%= @total %></td>
+    </tr>
+  </tfoot>
+</table>

@@ -1,2 +1,10 @@
-<h1>Transfers#new</h1>
-<p>Find me in app/views/transfers/new.html.erb</p>
+<h1>Transfer across inventories</h1>
+
+<%= simple_form_for @transfer do |f| %>
+
+<%= f.association :from, label: "From inventory", collection: @inventories, error: "Which inventory is the source?" %>
+<%= f.association :to, collection: @inventories, label: "To inventory", error: "Which inventory is receiving this?" %>
+
+<%= f.button :submit %>
+
+<% end %>
