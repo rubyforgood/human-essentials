@@ -1,2 +1,23 @@
-<h1>Tickets#show</h1>
-<p>Find me in app/views/tickets/show.html.erb</p>
+<h1>Ticket Manifest for <%= @ticket.updated_at.strftime('%B %-d %Y') %> Distribution to <%= @ticket.partner.name %></h1>
+
+<fieldset>
+<ul>
+  <li>Source inventory: <%= @ticket.inventory.name %></li>
+</ul>
+</fieldset>
+
+
+<section id="containers">
+  <table>
+    <thead>
+      <th>Quantity</th>
+      <th>Item</th>
+    </thead>
+
+    <tbody>
+      <%= render partial: "ticket_item_row", collection: @containers %>
+    </tbody>
+  </table>
+
+
+</section>

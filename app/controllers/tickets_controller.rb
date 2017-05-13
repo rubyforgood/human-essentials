@@ -9,7 +9,7 @@ class TicketsController < ApplicationController
   end
 
   def index
-    @tickets = Ticket.all
+    @tickets = Ticket.includes(:containers).includes(:inventory).includes(:items).all
   end
 
   def create
@@ -27,7 +27,7 @@ class TicketsController < ApplicationController
   end
 
   def show
-    @ticket = Ticket.find(params[:id])
+    @ticket = Ticket.includes(:containers).includes(:inventory).find(params[:id])
   end
 private
   def ticket_params

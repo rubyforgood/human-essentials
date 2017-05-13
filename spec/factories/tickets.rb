@@ -31,15 +31,6 @@ FactoryGirl.define do
                end
         ticket.containers << build(:container, quantity: evaluator.item_quantity, item: item)
       end
-
-      after(:create) do |ticket, evaluator|
-        item = if evaluator.item.nil?
-                 ticket.inventory.holdings.first.item
-               else
-                 evaluator.item
-               end
-        create_list(:container, 1, itemizable: ticket, quantity: evaluator.item_quantity, item: item)
-      end
     end
   end
 end

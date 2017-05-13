@@ -43,6 +43,8 @@ class Ticket < ApplicationRecord
 
   private
 
+  
+
   def container_items_exist_in_inventory
     self.containers.each do |container|
       next unless container.item
