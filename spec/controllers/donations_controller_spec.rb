@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe DonationsController, type: :controller do
   describe "GET #index" do

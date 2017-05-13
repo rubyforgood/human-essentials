@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe "barcode_items/edit.html.erb", type: :view do
   it "shows a form that asks for an item, quantity, and barcode" do

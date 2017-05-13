@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe "donations/show.html.erb", type: :view do
   context "when viewing an incomplete donation" do

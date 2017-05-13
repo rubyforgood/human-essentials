@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe "partners/show.html.erb", type: :view do
   before(:each) do

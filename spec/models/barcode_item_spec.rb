@@ -10,7 +10,7 @@
 #  quantity   :integer
 #
 
-require 'rails_helper'
+
 
 RSpec.describe BarcodeItem, type: :model do
   it "updates a counter in Item whenever it tracks a new barcode" do

@@ -11,7 +11,7 @@
 #  itemizable_type :string
 #
 
-require "rails_helper"
+
 
 RSpec.describe Container, type: :model do
 	context "Validations >" do

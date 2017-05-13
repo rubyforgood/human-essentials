@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe "dropoff_locations/edit.html.erb", type: :view do
   it "shows a form that asks for a name and address" do

@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe BarcodeItemsController, type: :controller do
 

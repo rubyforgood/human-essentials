@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe "transfers/index.html.erb", type: :view do
   before(:each) do

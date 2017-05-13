@@ -10,7 +10,7 @@
 #  item_id      :integer
 #
 
-require "rails_helper"
+
 
 RSpec.describe Holding, type: :model do
 	context "Validations >" do

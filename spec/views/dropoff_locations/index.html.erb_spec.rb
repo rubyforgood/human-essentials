@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe "dropoff_locations/index.html.erb", type: :view do
   before(:each) do

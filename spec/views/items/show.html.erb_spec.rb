@@ -1,4 +1,4 @@
-require 'rails_helper'
+
 
 RSpec.describe "items/show.html.erb", type: :view do
   context "With an item among others in a category" do

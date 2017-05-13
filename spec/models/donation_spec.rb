@@ -11,7 +11,7 @@
 #  inventory_id        :integer
 #
 
-require "rails_helper"
+
 
 RSpec.describe Donation, type: :model do
   context "Validations >" do
