@@ -1,7 +1,7 @@
 class InventoriesController < ApplicationController
   def index
     @items = Inventory.items_inventoried
-    @inventories = Inventory.includes(:holdings).filter(filter_params)
+    @inventories = Inventory.includes(:inventory_items).filter(filter_params)
   end
 
   def create

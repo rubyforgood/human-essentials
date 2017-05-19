@@ -25,7 +25,7 @@ FactoryGirl.define do
 
       after(:build) do |distribution, evaluator|
         item = if evaluator.item.nil?
-                 distribution.inventory.holdings.first.item
+                 distribution.inventory.inventory_items.first.item
                else
                  evaluator.item
                end

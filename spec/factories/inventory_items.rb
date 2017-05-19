@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: holdings
+# Table name: inventory_items
 #
 #  id           :integer          not null, primary key
 #  quantity     :integer
@@ -11,7 +11,7 @@
 #
 
 FactoryGirl.define do
-  factory :holding do
+  factory :inventory_item do
     quantity 300
     item
     inventory

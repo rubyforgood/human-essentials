@@ -58,17 +58,17 @@ ActiveRecord::Schema.define(version: 20170519134505) do
     t.datetime "updated_at"
   end
 
-  create_table "holdings", force: :cascade do |t|
-    t.integer  "inventory_id"
-    t.integer  "item_id"
-    t.integer  "quantity"
+  create_table "inventories", force: :cascade do |t|
+    t.string   "name"
+    t.string   "address"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "inventories", force: :cascade do |t|
-    t.string   "name"
-    t.string   "address"
+  create_table "inventory_items", force: :cascade do |t|
+    t.integer  "inventory_id"
+    t.integer  "item_id"
+    t.integer  "quantity"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

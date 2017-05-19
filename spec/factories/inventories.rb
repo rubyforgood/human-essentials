@@ -23,7 +23,7 @@ FactoryGirl.define do
       after(:create) do |inventory, evaluator|
         item = (evaluator.item.nil?) ? create(:item) : evaluator.item
         item.save if item.new_record?
-        create_list(:holding, 1, inventory: inventory, quantity: evaluator.item_quantity, item: item)
+        create_list(:inventory_item, 1, inventory: inventory, quantity: evaluator.item_quantity, item: item)
       end
     end
   end
