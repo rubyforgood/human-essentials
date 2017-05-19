@@ -14,9 +14,12 @@
 //= require jquery_ujs
 //= require foundation
 //= require turbolinks
+//
+//= require Chart.bundle
+//= require chartkick
+//
 //= require_tree .
 
-$(function(){ $(document).foundation(); });
 $(document).on('turbolinks:load', function() {
   $(document).foundation();
 });
