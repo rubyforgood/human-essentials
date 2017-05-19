@@ -5,12 +5,12 @@ RSpec.describe "distributions/show.html.erb", type: :view do
       inventory = create(:inventory, :with_items, item_quantity: 5, item: item)
       @distribution = create(:distribution, :with_items, inventory: inventory, item_quantity: 5, item: item)
       assign(:distribution, @distribution)
-      assign(:containers, @distribution.containers)
+      assign(:line_items, @distribution.line_items)
       render
     end
 
     it "DOES list the items found in the distribution, along with quantities" do
-    	expect(rendered).to have_xpath("//section[@id='containers']/table/tbody/tr", count: 1)
+    	expect(rendered).to have_xpath("//section[@id='line_items']/table/tbody/tr", count: 1)
     end
   end
 end

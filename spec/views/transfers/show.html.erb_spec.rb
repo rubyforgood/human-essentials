@@ -8,11 +8,11 @@ RSpec.describe "transfers/show.html.erb", type: :view do
   	@from = create(:inventory, name: "Bar")
 
   	@transfer = create(:transfer, from: @from, to: @to)
-  	@transfer.containers << create(:container, item: @item, quantity: 10)
+  	@transfer.line_items << create(:line_item, item: @item, quantity: 10)
 
     assign(:transfer, @transfer)
     assign(:total, @transfer.total_quantity)
-    assign(:containers, @transfer.sorted_containers)
+    assign(:line_items, @transfer.sorted_line_items)
 
   	render
   end

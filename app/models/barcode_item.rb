@@ -25,8 +25,8 @@ class BarcodeItem < ApplicationRecord
     Item.joins(:barcode_items).group(:id)
   end
 
-  # TODO - this should be renamed to something more specific -- it produces a hash, not a container object
-  def to_container
+  # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
+  def to_line_item
     {
       item_id: item.id,
       quantity: quantity

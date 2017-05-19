@@ -93,7 +93,7 @@ RSpec.describe Inventory, type: :model do
         inventory.intake!(donation)
 
         expect(inventory.inventory_items.count).to eq(1)
-        expect(inventory.inventory_items.where(item_id: donation.containers.first.item.id).first.quantity).to eq(20)
+        expect(inventory.inventory_items.where(item_id: donation.line_items.first.item.id).first.quantity).to eq(20)
       end
     end
 
@@ -108,7 +108,7 @@ RSpec.describe Inventory, type: :model do
       it "raises error when distribution exceeds inventory" do
         inventory = create :inventory, :with_items, item_quantity: 300
         distribution = build :distribution, :with_items, inventory: inventory, item_quantity: 350
-        item = distribution.containers.first.item
+        item = distribution.line_items.first.item
         expect {
           inventory.distribute!(distribution)
         }.to raise_error do |error|
