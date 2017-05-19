@@ -38,7 +38,7 @@ RSpec.describe "items/show.html.erb", type: :view do
       location1 = create(:storage_location, :with_items, item: @item, item_quantity: 10)
       location2 = create(:storage_location, :with_items, item: @item, item_quantity: 30)
       assign(:item, @item)
-      assign(:in_inventories, Item.storage_locations_containing(@item))
+      assign(:storage_locations_containing, Item.storage_locations_containing(@item))
 
       render
 
