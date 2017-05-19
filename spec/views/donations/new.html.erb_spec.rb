@@ -2,12 +2,13 @@
 
 RSpec.describe "donations/new.html.erb", type: :view do
   before(:each) do
+    @donation = Donation.new
   	@dropoff_location = create(:dropoff_location)
   	@inventory = create(:inventory)
 
     assign(:dropoff_locations, [@dropoff_location])
     assign(:inventories, [@inventory])
-  	assign(:donation, Donation.new)
+  	assign(:donation, @donation)
 
   	render
   end

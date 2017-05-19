@@ -2,7 +2,7 @@ RSpec.feature "Donations", type: :feature do
   before :each do
     # create an item
   end
-  
+
   context "When starting a new donation" do
     before(:each) do
       create(:dropoff_location)
@@ -13,15 +13,15 @@ RSpec.feature "Donations", type: :feature do
     scenario "User can fill out the form to create an in-flight donation" do
       select DropoffLocation.first.name, from: "donation_dropoff_location_id"
       select Inventory.first.name, from: "donation_inventory_id"
-      fill_in "Source", with: "Something"
-  
+      select Donation.new.sources.first, from: "donation_source"
+
       expect {
         click_button "Create Donation"
       }.to change{Donation.incomplete.count}.by(1)
     end
 
   end
-  
+
 
   context "When working with an in-flight donation" do
     before :each do
@@ -40,8 +40,8 @@ RSpec.feature "Donations", type: :feature do
       # the form should update
       pending("TODO: adding items manually to a donation")
       raise
-    end  
- 
+    end
+
     scenario "a user wants to remove items from the donation" do
       # click that delete button
       # the form should update
@@ -77,7 +77,7 @@ RSpec.feature "Donations", type: :feature do
         # the form should update
         pending("TODO: adding items via an existing barcode")
         raise
-      end  
+      end
 
       scenario "a user can add items that do not yet have a barcode" do
         # enter a new barcode
