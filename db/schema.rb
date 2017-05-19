@@ -12,9 +12,6 @@
 
 ActiveRecord::Schema.define(version: 20170519161045) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "barcode_items", force: :cascade do |t|
     t.string   "value"
     t.integer  "item_id"
@@ -147,4 +144,5 @@ ActiveRecord::Schema.define(version: 20170519161045) do
   add_foreign_key "distributions", "inventories"
   add_foreign_key "distributions", "partners"
   add_foreign_key "donations", "inventories"
+
 end
