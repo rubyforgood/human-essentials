@@ -17,16 +17,16 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  host: localhost
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
   <<: *default
-  development:
-  adapter: sqlite3
-  database: db/development.sqlite3
-  pool: 5
+  database: diaper_dev
+  username: postgres
+  password: io
   timeout: 5000
 
   # The specified database role being used to connect to postgres.
@@ -61,10 +61,9 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  development:
-  adapter: sqlite3
-  database: db/test.sqlite3
-  pool: 5
+  database: diaper_test
+  username: postgres
+  password: io
   timeout: 5000
 
 # As with config/secrets.yml, you never want to store sensitive information,
@@ -91,3 +90,4 @@ production:
   database: diaper_production
   username: diaper
   password: <%= ENV['DIAPER_DATABASE_PASSWORD'] %>
+
