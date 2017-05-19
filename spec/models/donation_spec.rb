@@ -4,17 +4,20 @@
 #
 #  id                  :integer          not null, primary key
 #  source              :string
-#  completed           :boolean          default("f")
+#  completed           :boolean          default("false")
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
+#  comment             :text
+#  organization_id     :integer
 #  storage_location_id :integer
 #
 
-
-
 RSpec.describe Donation, type: :model do
   context "Validations >" do
+    it "must belong to an organization" do
+      expect(build(:donation, organization_id: nil)).not_to be_valid
+    end
     it "requires a dropoff_location" do
       expect(build(:donation, dropoff_location: nil)).not_to be_valid
     end

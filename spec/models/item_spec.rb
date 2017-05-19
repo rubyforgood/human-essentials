@@ -2,16 +2,20 @@
 #
 # Table name: items
 #
-#  id            :integer          not null, primary key
-#  name          :string
-#  category      :string
-#  created_at    :datetime
-#  updated_at    :datetime
-#  barcode_count :integer
+#  id              :integer          not null, primary key
+#  name            :string
+#  category        :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  barcode_count   :integer
+#  organization_id :integer
 #
 
 RSpec.describe Item, type: :model do
   context "Validations >" do
+    it "must belong to an organization" do
+      expect(build(:item, organization_id: nil)).not_to be_valid
+    end
     it "requires a unique name" do
       item = create(:item)
       expect(build(:item, name: nil)).not_to be_valid
