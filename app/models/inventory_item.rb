@@ -1,13 +1,13 @@
 # == Schema Information
 #
-# Table name: inventory_item
+# Table name: inventory_items
 #
-#  id                  :integer          not null, primary key
-#  quantity            :integer
-#  created_at          :datetime
-#  updated_at          :datetime
+#  id           :integer          not null, primary key
 #  storage_location_id :integer
-#  item_id             :integer
+#  item_id      :integer
+#  quantity     :integer
+#  created_at   :datetime
+#  updated_at   :datetime
 #
 
 class InventoryItem < ApplicationRecord

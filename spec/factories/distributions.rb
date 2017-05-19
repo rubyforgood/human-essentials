@@ -2,18 +2,20 @@
 #
 # Table name: distributions
 #
-#  id                  :integer          not null, primary key
-#  comment             :text
-#  created_at          :datetime
-#  updated_at          :datetime
+#  id              :integer          not null, primary key
+#  comment         :text
+#  created_at      :datetime
+#  updated_at      :datetime
 #  storage_location_id :integer
-#  partner_id          :integer
+#  partner_id      :integer
+#  organization_id :integer
 #
 
 FactoryGirl.define do
   factory :distribution do
     storage_location
     partner
+    organization { Organization.try(:first) || create(:organization) }
 
     trait :with_items do
       storage_location { create :storage_location, :with_items }

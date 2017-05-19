@@ -2,15 +2,17 @@
 #
 # Table name: transfers
 #
-#  id         :integer          not null, primary key
-#  from_id    :integer
-#  to_id      :integer
-#  comment    :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id              :integer          not null, primary key
+#  from_id         :integer
+#  to_id           :integer
+#  comment         :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  organization_id :integer
 #
 
 class Transfer < ApplicationRecord
+  belongs_to :organization
   belongs_to :from, :class_name => 'StorageLocation', :foreign_key => :from_id
   belongs_to :to, :class_name => 'StorageLocation', :foreign_key => :to_id
 
@@ -19,7 +21,7 @@ class Transfer < ApplicationRecord
   accepts_nested_attributes_for :line_items,
     allow_destroy: true
 
-  validates :from, :to, presence: true
+  validates :from, :to, :organization, presence: true
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
 

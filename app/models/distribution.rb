@@ -2,12 +2,13 @@
 #
 # Table name: distributions
 #
-#  id                  :integer          not null, primary key
-#  comment             :text
-#  created_at          :datetime
-#  updated_at          :datetime
+#  id              :integer          not null, primary key
+#  comment         :text
+#  created_at      :datetime
+#  updated_at      :datetime
 #  storage_location_id :integer
-#  partner_id          :integer
+#  partner_id      :integer
+#  organization_id :integer
 #
 
 class Distribution < ApplicationRecord
@@ -18,6 +19,7 @@ class Distribution < ApplicationRecord
 
   # Distributions are issued to a single partner
   belongs_to :partner
+  belongs_to :organization
 
   # Distributions contain many different items
   has_many :line_items, as: :itemizable, inverse_of: :itemizable
@@ -25,7 +27,7 @@ class Distribution < ApplicationRecord
   accepts_nested_attributes_for :line_items,
     allow_destroy: true
 
-  validates :storage_location, :partner, presence: true
+  validates :storage_location, :partner, :organization, presence: true
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
 

@@ -2,16 +2,20 @@
 #
 # Table name: distributions
 #
-#  id                  :integer          not null, primary key
-#  comment             :text
-#  created_at          :datetime
-#  updated_at          :datetime
+#  id              :integer          not null, primary key
+#  comment         :text
+#  created_at      :datetime
+#  updated_at      :datetime
 #  storage_location_id :integer
-#  partner_id          :integer
+#  partner_id      :integer
+#  organization_id :integer
 #
 
 RSpec.describe Distribution, type: :model do
   context "Validations >" do
+    it "must belong to an organization" do
+      expect(build(:distribution, organization: nil)).not_to be_valid
+    end
     it "requires a storage location" do
       expect(build(:distribution, storage_location: nil)).not_to be_valid
     end
@@ -21,8 +25,7 @@ RSpec.describe Distribution, type: :model do
     end
 
     xit "ensures the associated line_items are valid" do
-
-    end
+  	end
 
     xit "ensures that any included items are found in the associated storage location" do
     end
@@ -48,7 +51,7 @@ RSpec.describe Distribution, type: :model do
       @distribution.line_items << c1
       @distribution.line_items << c2
       expect(@distribution.sorted_line_items.to_a).to match_array [c1,c2]
-    end
+  	end
 
     it "total_quantity" do
       @distribution.line_items << create(:line_item, item: @first, quantity: 5)
