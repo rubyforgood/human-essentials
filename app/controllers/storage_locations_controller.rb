@@ -34,6 +34,11 @@ class StorageLocationsController < ApplicationController
     redirect_to storage_locations_path
   end
 
+  def inventory
+    @storage_location = StorageLocation.includes(inventory_items: :item).find(params[:id])
+    respond_to :json
+  end
+
 private
   def storage_location_params
     params.require(:storage_location).permit(:name, :address)

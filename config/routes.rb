@@ -5,7 +5,12 @@ Rails.application.routes.draw do
   scope path: ':organization_id' do
 
     resources :transfers, only: [:index, :create, :new, :show]
-    resources :storage_locations
+    resources :storage_locations do
+      member do
+        get :inventory
+      end
+    end
+
     resources :distributions, only: [:index, :create, :new, :show] do
       get :print, on: :member
       post :reclaim, on: :member

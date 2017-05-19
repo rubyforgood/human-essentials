@@ -4,8 +4,8 @@ class TransfersController < ApplicationController
   end
 
   def create
-    @transfer = Transfer.new(transfer_params.merge({ organization_id: current_organization.id }) )
-    if (@transfer.save)
+    @transfer = Transfer.new(transfer_params.merge(organization_id: current_organization.id))
+    if @transfer.save
       redirect_to transfer_path(organization_id: current_organization.short_name, id: @transfer)
     else
       flash[:notice] = "There was an error, try again?"
@@ -15,8 +15,9 @@ class TransfersController < ApplicationController
 
   def new
     @transfer = Transfer.new
+    @transfer.line_items.build
     @storage_locations = StorageLocation.all
-    @items = Item.all
+    @items = Item.alphabetized
   end
 
   def show
@@ -28,6 +29,6 @@ class TransfersController < ApplicationController
   private
 
   def transfer_params
-    params.require(:transfer).permit(:from_id, :to_id, :comment)
+    params.require(:transfer).permit(:from_id, :to_id, :comment, line_items_attributes: [:item_id, :quantity, :_destroy])
   end
 end
