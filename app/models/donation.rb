@@ -43,7 +43,7 @@ class Donation < ApplicationRecord
   ## TODO - Test coverage for this method
   def remove(item_id)
     line_item = self.line_items.find_by(item_id: item_id)
-    if (line_item) 
+    if (line_item)
       line_item.destroy
     end
   end
@@ -79,4 +79,7 @@ class Donation < ApplicationRecord
     self.save
   end
 
+  def sources
+    ['here', 'there', 'everywhere']
+  end
 end
