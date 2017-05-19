@@ -12,6 +12,8 @@
 #
 
 class Donation < ApplicationRecord
+  belongs_to :organization
+
   belongs_to :dropoff_location
   has_many :containers, as: :itemizable, inverse_of: :itemizable
   belongs_to :inventory

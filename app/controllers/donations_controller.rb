@@ -1,7 +1,7 @@
 class DonationsController < ApplicationController
   # TODO - needs to be able to handle barcodes too
   def track
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     if (donation_item_params.has_key?(:barcode_id))
       @donation.track_from_barcode(Barcode.find(donation_item_params[:barcode_id]).to_container)
     else
@@ -10,12 +10,12 @@ class DonationsController < ApplicationController
   end
 
   def remove_item
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     @donation.remove(donation_item_params[:item_id])
   end
 
   def complete
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     @donation.complete
     redirect_to donations_path, notice: "Completed!"
   end

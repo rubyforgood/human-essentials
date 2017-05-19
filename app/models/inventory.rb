@@ -10,6 +10,8 @@
 #
 
 class Inventory < ApplicationRecord
+  belongs_to :organization
+  
   has_many :holdings
   has_many :donations
   has_many :tickets

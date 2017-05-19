@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe Organization, type: :model do
   describe "#short_name" do
     it "can only contain valid characters" do

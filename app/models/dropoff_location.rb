@@ -10,6 +10,8 @@
 #
 
 class DropoffLocation < ApplicationRecord
+	belongs_to :organization
+	
     validates_presence_of :name
     validates_presence_of :address
 

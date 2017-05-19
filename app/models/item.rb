@@ -11,6 +11,7 @@
 #
 
 class Item < ApplicationRecord
+  belongs_to :organization # If these are universal this isn't necessary
   validates :name, presence: true, uniqueness: true
   
   has_many :containers
