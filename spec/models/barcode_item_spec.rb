@@ -75,10 +75,10 @@ RSpec.describe BarcodeItem, type: :model do
     end
   end
 
-  describe "to_container >" do
-    it "emits a hash for a container" do
+  describe "to_line_item >" do
+    it "emits a hash for a line_item" do
       barcode_item = create :barcode_item
-      expect(barcode_item.to_container).to eq({item_id: barcode_item.item_id, quantity: barcode_item.quantity})
+      expect(barcode_item.to_line_item).to eq({item_id: barcode_item.item_id, quantity: barcode_item.quantity})
     end
   end
 end

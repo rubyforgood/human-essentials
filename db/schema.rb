@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519134505) do
+ActiveRecord::Schema.define(version: 20170519144942) do
 
   create_table "barcode_items", force: :cascade do |t|
     t.string   "value"
@@ -18,16 +18,6 @@ ActiveRecord::Schema.define(version: 20170519134505) do
     t.integer  "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "containers", force: :cascade do |t|
-    t.integer  "quantity"
-    t.integer  "item_id"
-    t.integer  "itemizable_id"
-    t.string   "itemizable_type"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-    t.index ["itemizable_id", "itemizable_type"], name: "index_containers_on_itemizable_id_and_itemizable_type"
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -79,6 +69,16 @@ ActiveRecord::Schema.define(version: 20170519134505) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "barcode_count"
+  end
+
+  create_table "line_items", force: :cascade do |t|
+    t.integer  "quantity"
+    t.integer  "item_id"
+    t.integer  "itemizable_id"
+    t.string   "itemizable_type"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
   end
 
   create_table "partners", force: :cascade do |t|

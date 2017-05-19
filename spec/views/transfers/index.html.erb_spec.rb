@@ -3,11 +3,11 @@
 RSpec.describe "transfers/index.html.erb", type: :view do
   before(:each) do
   	t1 = create(:transfer, comment: "MOVES STUFF", from: create(:inventory, name: "From1"), to: create(:inventory, name: "To1"))
-  	t1.containers << create(:container, quantity: 10)
-  	t1.containers << create(:container, quantity: 20)
+  	t1.line_items << create(:line_item, quantity: 10)
+  	t1.line_items << create(:line_item, quantity: 20)
 
   	t2 = create(:transfer)
-  	t2.containers << create(:container)
+  	t2.line_items << create(:line_item)
 
     assign(:transfers, Transfer.all)
 

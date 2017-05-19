@@ -39,13 +39,13 @@ class Inventory < ApplicationRecord
 
   def intake!(donation)
     log = {}
-    donation.containers.each do |container|
-      inventory_item = InventoryItem.find_or_create_by(inventory_id: self.id, item_id: container.item_id) do |inventory_item|
+    donation.line_items.each do |line_item|
+      inventory_item = InventoryItem.find_or_create_by(inventory_id: self.id, item_id: line_item.item_id) do |inventory_item|
         inventory_item.quantity = 0
       end
-      inventory_item.quantity += container.quantity rescue 0
+      inventory_item.quantity += line_item.quantity rescue 0
       inventory_item.save
-      log[container.item_id] = "+#{container.quantity}"
+      log[line_item.item_id] = "+#{line_item.quantity}"
     end
     log
   end
@@ -53,24 +53,24 @@ class Inventory < ApplicationRecord
   def distribute!(distribution)
     updated_quantities = {}
     insufficient_items = []
-    distribution.containers.each do |container|
-      inventory_item = self.inventory_items.find_by(item: container.item)
+    distribution.line_items.each do |line_item|
+      inventory_item = self.inventory_items.find_by(item: line_item.item)
       next if inventory_item.nil? || inventory_item.quantity == 0
-      if inventory_item.quantity >= container.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - container.quantity
+      if inventory_item.quantity >= line_item.quantity
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
       else
         insufficient_items << {
-          item_id: container.item.id,
-          item_name: container.item.name,
+          item_id: line_item.item.id,
+          item_name: line_item.item.name,
           quantity_on_hand: inventory_item.quantity,
-          quantity_requested: container.quantity
+          quantity_requested: line_item.quantity
         }
       end
     end
 
     unless insufficient_items.empty?
       raise Errors::InsufficientAllotment.new(
-        "Distribution containers exceed the available inventory",
+        "Distribution line_items exceed the available inventory",
         insufficient_items)
     end
 
@@ -81,27 +81,27 @@ class Inventory < ApplicationRecord
   def move_inventory!(transfer)
     updated_quantities = {}
     insufficient_items = []
-    transfer.containers.each do |container|
-      inventory_item = self.inventory_items.find_by(item: container.item)
-      new_inventory_item = transfer.to.inventory_items.find_or_create_by(item: container.item)
+    transfer.line_items.each do |line_item|
+      inventory_item = self.inventory_items.find_by(item: line_item.item)
+      new_inventory_item = transfer.to.inventory_items.find_or_create_by(item: line_item.item)
       next if inventory_item.nil? || inventory_item.quantity == 0
-      if inventory_item.quantity >= container.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - container.quantity
+      if inventory_item.quantity >= line_item.quantity
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
         updated_quantities[new_inventory_item.id] = (updated_quantities[new_inventory_item.id] ||
-          new_inventory_item.quantity) + container.quantity
+          new_inventory_item.quantity) + line_item.quantity
       else
         insufficient_items << {
-          item_id: container.item.id,
-          item_name: container.item.name,
+          item_id: line_item.item.id,
+          item_name: line_item.item.name,
           quantity_on_hand: inventory_item.quantity,
-          quantity_requested: container.quantity
+          quantity_requested: line_item.quantity
         }
       end
     end
 
     unless insufficient_items.empty?
       raise Errors::InsufficientAllotment.new(
-        "Transfer containers exceed the available inventory",
+        "Transfer line_items exceed the available inventory",
         insufficient_items)
     end
 
@@ -112,9 +112,9 @@ class Inventory < ApplicationRecord
   # TODO - this action is happening in the DistributionsController. Is this model the correct place for this method?
   def reclaim!(distribution)
     ActiveRecord::Base.transaction do
-      distribution.containers.each do |container|
-        inventory_item = self.inventory_items.find_by(item: container.item)
-        inventory_item.update_attribute(:quantity, inventory_item.quantity + container.quantity)
+      distribution.line_items.each do |line_item|
+        inventory_item = self.inventory_items.find_by(item: line_item.item)
+        inventory_item.update_attribute(:quantity, inventory_item.quantity + line_item.quantity)
       end
     end
     distribution.destroy

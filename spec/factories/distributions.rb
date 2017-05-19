@@ -29,7 +29,7 @@ FactoryGirl.define do
                else
                  evaluator.item
                end
-        distribution.containers << build(:container, quantity: evaluator.item_quantity, item: item)
+        distribution.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
   end
