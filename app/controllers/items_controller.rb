@@ -20,7 +20,7 @@ class ItemsController < ApplicationController
   def show
     @item = Item.find(params[:id])
     @items_in_category = Item.in_same_category_as(@item)
-    @inventories_containing = Item.inventories_containing(@item)
+    @storage_locations_containing = Item.storage_locations_containing(@item)
     @barcodes_for = Item.barcodes_for(@item)
   end
 
