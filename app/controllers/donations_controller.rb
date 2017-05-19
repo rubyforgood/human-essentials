@@ -1,7 +1,7 @@
 class DonationsController < ApplicationController
   # TODO - needs to be able to handle barcodes too
   def track
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     if (donation_item_params.has_key?(:barcode_id))
       @donation.track_from_barcode(Barcode.find(donation_item_params[:barcode_id]).to_line_item)
     else
@@ -10,27 +10,27 @@ class DonationsController < ApplicationController
   end
 
   def remove_item
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     @donation.remove(donation_item_params[:item_id])
   end
 
   def complete
-    @donation = Donation.find(params[:id])
+    @donation = current_organization.donations.find(params[:id])
     @donation.complete
     redirect_to donations_path, notice: "Completed!"
   end
 
   def index
-    @completed = Donation.includes(:line_items).includes(:inventory).includes(:dropoff_location).completed
-    @incomplete = Donation.includes(:line_items).includes(:inventory).includes(:dropoff_location).incomplete
+    @completed = Donation.includes(:line_items).includes(:storage_location).includes(:dropoff_location).completed
+    @incomplete = Donation.includes(:line_items).includes(:storage_location).includes(:dropoff_location).incomplete
   end
 
   def create
     @donation = Donation.new(donation_params)
     if (@donation.save)
       redirect_to(edit_donation_path(@donation))
-    else 
-      @inventories = Inventory.all
+    else
+      @storage_locations = StorageLocation.all
       @dropoff_locations = DropoffLocation.all
       flash[:notice] = "There was an error starting this donation, try again?"
       render action: :new
@@ -38,13 +38,13 @@ class DonationsController < ApplicationController
   end
 
   def new
-    @inventories = Inventory.all
+    @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
     @donation = Donation.new
   end
 
   def edit
-    @inventories = Inventory.all
+    @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
     @donation = Donation.find(params[:id])
   end
@@ -67,7 +67,7 @@ class DonationsController < ApplicationController
 
 private
   def donation_params
-    params.require(:donation).permit(:source, :inventory_id, :dropoff_location_id)
+    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id)
   end
 
   def donation_item_params

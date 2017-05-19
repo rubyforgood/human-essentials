@@ -1,0 +1,9 @@
+<tr>
+  <td><%= storage_location.name %></td>
+  <td><%= storage_location.address %></td>
+  <td><%= storage_location.size %></td>
+  <td><%= link_to "View", storage_location %>
+  <%= link_to "Edit", edit_storage_location_path(storage_location) %>
+  <%= link_to "Delete", storage_location, method: :delete, confirm: "Are you sure?" %>
+  </td>
+</tr>

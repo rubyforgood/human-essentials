@@ -2,19 +2,20 @@
 #
 # Table name: transfers
 #
-#  id         :integer          not null, primary key
-#  from_id    :integer
-#  to_id      :integer
-#  comment    :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id              :integer          not null, primary key
+#  from_id         :integer
+#  to_id           :integer
+#  comment         :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  organization_id :integer
 #
 
 FactoryGirl.define do
-
   factory :transfer do
-  	from_id { create(:inventory).id }
-  	to_id { create(:inventory).id }
+  	organization { Organization.try(:first) || create(:organization) }
+    from_id { create(:storage_location).id }
+    to_id { create(:storage_location).id }
   	comment "A comment"
   end
 end

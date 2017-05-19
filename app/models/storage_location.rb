@@ -1,32 +1,33 @@
 # == Schema Information
 #
-# Table name: inventories
+# Table name: storage_locations
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  address    :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id              :integer          not null, primary key
+#  name            :string
+#  address         :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  organization_id :integer
 #
 
-class Inventory < ApplicationRecord
+class StorageLocation < ApplicationRecord
+  belongs_to :organization
   has_many :inventory_items
   has_many :donations
   has_many :distributions
   has_many :items, through: :inventory_items
 
-  validates :name, presence: true
-  validates :address, presence: true
+  validates :name, :address, :organization, presence: true
 
   include Filterable
   scope :containing, ->(item_id) { joins(:inventory_items).where('inventory_items.item_id = ?', item_id) }
 
   def self.item_total(item_id)
-    Inventory.select('quantity').joins(:inventory_items).where('inventory_items.item_id = ?', item_id).collect { |h| h.quantity }.reduce(:+)
+    StorageLocation.select('quantity').joins(:inventory_items).where('inventory_items.item_id = ?', item_id).collect { |h| h.quantity }.reduce(:+)
   end
 
   def self.items_inventoried
-    Item.joins(:inventories).group(:name)
+    Item.joins(:storage_locations).select(:id, :name).group(:id, :name)
   end
 
   def item_total(item_id)
@@ -40,7 +41,7 @@ class Inventory < ApplicationRecord
   def intake!(donation)
     log = {}
     donation.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(inventory_id: self.id, item_id: line_item.item_id) do |inventory_item|
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: line_item.item_id) do |inventory_item|
         inventory_item.quantity = 0
       end
       inventory_item.quantity += line_item.quantity rescue 0

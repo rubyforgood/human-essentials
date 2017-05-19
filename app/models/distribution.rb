@@ -2,22 +2,24 @@
 #
 # Table name: distributions
 #
-#  id           :integer          not null, primary key
-#  comment      :text
-#  created_at   :datetime
-#  updated_at   :datetime
-#  inventory_id :integer
-#  partner_id   :integer
+#  id              :integer          not null, primary key
+#  comment         :text
+#  created_at      :datetime
+#  updated_at      :datetime
+#  storage_location_id :integer
+#  partner_id      :integer
+#  organization_id :integer
 #
 
 class Distribution < ApplicationRecord
 
-  # Distributions are issued from a single inventory, so we associate them so that
-  # on-hand amounts can be verified
-  belongs_to :inventory
+  # Distributions are issued from a single storage location, so we associate
+  # them so that on-hand amounts can be verified
+  belongs_to :storage_location
 
   # Distributions are issued to a single partner
   belongs_to :partner
+  belongs_to :organization
 
   # Distributions contain many different items
   has_many :line_items, as: :itemizable, inverse_of: :itemizable
@@ -25,7 +27,7 @@ class Distribution < ApplicationRecord
   accepts_nested_attributes_for :line_items,
     allow_destroy: true
 
-  validates :inventory, :partner, presence: true
+  validates :storage_location, :partner, :organization, presence: true
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
 
@@ -48,9 +50,9 @@ class Distribution < ApplicationRecord
   def line_item_items_exist_in_inventory
     self.line_items.each do |line_item|
       next unless line_item.item
-      inventory_item = self.inventory.inventory_items.find_by(item: line_item.item)
+      inventory_item = self.storage_location.inventory_items.find_by(item: line_item.item)
       if inventory_item.nil?
-        errors.add(:inventory,
+        errors.add(:storage_location,
                    "#{line_item.item.name} is not available " \
                    "at this storage location")
       end

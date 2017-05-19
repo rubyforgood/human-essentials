@@ -12,18 +12,18 @@
 #
 
 FactoryGirl.define do
-	factory :line_item do
-		quantity 0
-		item
-        itemizable_type "Donation"
-        itemizable_id { create(:donation).id }
+  factory :line_item do
+    quantity 0
+    item
+    itemizable_type "Donation"
+    itemizable_id { create(:donation).id }
 
-		trait :donation do
-		end
+    trait :donation do
+    end
 
-		trait :distribution do
-			itemizable_type "Distribution"
-			itemizable_id { create(:distribution).id }
-		end
-	end
+    trait :distribution do
+      itemizable_type "Distribution"
+      itemizable_id { create(:distribution).id }
+    end
+  end
 end
