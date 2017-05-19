@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
 
     <%= stylesheet_link_tag    "application" %>
     <%= javascript_include_tag "application", 'data-turbolinks-track' => true %>
@@ -25,17 +25,15 @@
             <li class="has-submenu">
               <a href="javascript:void(0)">Inventory</a>
               <ul class="submenu menu vertical" data-submenu>
-                <li><a href="#0">One</a></li>
-                <li><a href="#0">Two</a></li>
-                <li><a href="#0">Three</a></li>
+                <li><%= link_to_unless_current('Barcode Items', barcode_items_path) %></li>
               </ul>
             </li>
             <li class="has-submenu">
               <a href="javascript:void(0)">Address List</a>
               <ul class="submenu menu vertical" data-submenu>
-                <li><a href="#0">One</a></li>
-                <li><a href="#0">Two</a></li>
-                <li><a href="#0">Three</a></li>
+                <li><%= link_to_unless_current('Dropoff Locations', dropoff_locations_path) %></li>
+                <li><%= link_to_unless_current('Partners', partners_path) %></li>
+                <li><%= link_to_unless_current('Storage Locations', storage_locations_path) %></li>
               </ul>
             </li>
           </ul>
