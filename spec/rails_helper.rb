@@ -53,6 +53,7 @@ RSpec.configure do |config|
   
   config.before(:each) do
     __start_db_cleaning_with_log
+    @organization = create(:organization)
   end
 
   config.after(:each) do

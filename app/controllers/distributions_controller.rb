@@ -13,9 +13,9 @@ class DistributionsController < ApplicationController
   end
 
   def create
-    @distribution = Distribution.new(distribution_params)
-    if (@distribution.save)
-      redirect_to distribution_path(@distribution)
+    @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
+    if @distribution.save
+      redirect_to distribution_path(@distribution, organization_id: current_organization.short_name)
     else
       flash[:notice] = "An error occurred, try again?"
       render :new
