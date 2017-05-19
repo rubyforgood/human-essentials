@@ -6,6 +6,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'spec_helper'
 require 'rspec/rails'
 require 'capybara/rails'
+require 'pry'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -39,7 +40,7 @@ RSpec.configure do |config|
 
   # Make FactoryGirl easier.
   config.include FactoryGirl::Syntax::Methods
-  
+
   # Preparatifyication
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
@@ -50,7 +51,7 @@ RSpec.configure do |config|
     __lint_with_log
     __sweep_up_db_with_log
   end
-  
+
   config.before(:each) do
     __start_db_cleaning_with_log
     @organization = create(:organization)
@@ -60,7 +61,7 @@ RSpec.configure do |config|
     __sweep_up_db_with_log
   end
 
- 
+
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.

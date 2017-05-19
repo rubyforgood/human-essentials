@@ -24,11 +24,12 @@ class Item < ApplicationRecord
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
   include Filterable
+  scope :alphabetized, -> { order(:name) }
   scope :in_category, ->(category) { where(category: category) }
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
 
   def self.categories
-    self.select(:category).group(:category)
+    select(:category).group(:category).order(:category)
   end
 
   def self.storage_locations_containing(item)
