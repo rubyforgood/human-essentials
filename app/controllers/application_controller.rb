@@ -11,4 +11,12 @@ class ApplicationController < ActionController::Base
     options.merge(organization_id: current_organization.to_param)
   end
   helper_method :organization_url_options
+
+  # override Rails' default_url_options
+  def default_url_options(options = {})
+    if current_organization.present? && options[:organization_id].nil?
+      options[:organization_id] = current_organization.to_param
+    end
+    options
+  end
 end
