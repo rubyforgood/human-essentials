@@ -43,9 +43,9 @@ RSpec.describe Inventory, type: :model do
         item = create(:item)
         inv = create(:inventory, :with_items, item_quantity: 10, item: item)
         create(:inventory, :with_items, item_quantity: 10, item: item)
-        # This holding will not be included, because it will be for a different item
-        create(:holding, inventory_id: inv.id, quantity: 10)
-    
+        # This inventory_item will not be included, because it will be for a different item
+        create(:inventory_item, inventory_id: inv.id, quantity: 10)
+
         expect(Inventory.item_total(item.id)).to eq(20)
       end
     end
@@ -70,8 +70,8 @@ RSpec.describe Inventory, type: :model do
     describe "size" do
       it "returns total quantity of all items in this inventory" do
         inventory = create(:inventory)
-        create(:holding, inventory_id: inventory.id, quantity: 10)
-        create(:holding, inventory_id: inventory.id, quantity: 10)
+        create(:inventory_item, inventory_id: inventory.id, quantity: 10)
+        create(:inventory_item, inventory_id: inventory.id, quantity: 10)
         expect(inventory.size).to eq(20)
       end
     end
@@ -89,11 +89,11 @@ RSpec.describe Inventory, type: :model do
 
       it "adds items to the inventory total if that item already exists in inventory" do
         inventory = create(:inventory, :with_items, item_quantity: 10)
-        donation = create(:donation, :with_item, item_quantity: 10, item_id: inventory.holdings.first.item.id)
+        donation = create(:donation, :with_item, item_quantity: 10, item_id: inventory.inventory_items.first.item.id)
         inventory.intake!(donation)
 
-        expect(inventory.holdings.count).to eq(1)
-        expect(inventory.holdings.where(item_id: donation.containers.first.item.id).first.quantity).to eq(20)
+        expect(inventory.inventory_items.count).to eq(1)
+        expect(inventory.inventory_items.where(item_id: donation.containers.first.item.id).first.quantity).to eq(20)
       end
     end
 
@@ -102,7 +102,7 @@ RSpec.describe Inventory, type: :model do
         inventory = create :inventory, :with_items, item_quantity: 300
         distribution = build :distribution, :with_items, inventory: inventory, item_quantity: 50
         inventory.distribute!(distribution)
-        expect(inventory.holdings.first.quantity).to eq 250
+        expect(inventory.inventory_items.first.quantity).to eq 250
       end
 
       it "raises error when distribution exceeds inventory" do
@@ -134,7 +134,7 @@ RSpec.describe Inventory, type: :model do
         inventory = create :inventory, :with_items, item_quantity: 300
         distribution = create :distribution, :with_items, inventory: inventory, item_quantity: 50
         inventory.reclaim!(distribution)
-        expect(inventory.holdings.first.quantity).to eq 350
+        expect(inventory.inventory_items.first.quantity).to eq 350
       end
     end
   end

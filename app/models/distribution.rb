@@ -43,13 +43,13 @@ class Distribution < ApplicationRecord
 
   private
 
-  
+
 
   def container_items_exist_in_inventory
     self.containers.each do |container|
       next unless container.item
-      holding = self.inventory.holdings.find_by(item: container.item)
-      if holding.nil?
+      inventory_item = self.inventory.inventory_items.find_by(item: container.item)
+      if inventory_item.nil?
         errors.add(:inventory,
                    "#{container.item.name} is not available " \
                    "at this storage location")

@@ -2,11 +2,11 @@
 
 RSpec.describe "inventories/show.html.erb", type: :view do
   before(:each) do
-  	inventory = create(:inventory)
-  	item1 = create(:item)
-  	item2 = create(:item)
-  	create(:holding, inventory: inventory, item: item1, quantity: 100)
-    create(:holding, inventory: inventory, item: item2, quantity: 50)
+    inventory = create(:inventory)
+    item1 = create(:item)
+    item2 = create(:item)
+    create(:inventory_item, inventory: inventory, item: item1, quantity: 100)
+    create(:inventory_item, inventory: inventory, item: item2, quantity: 50)
 
     assign(:inventory, inventory)
     render
@@ -18,7 +18,7 @@ RSpec.describe "inventories/show.html.erb", type: :view do
   end
 
   it "has links for the items in the item column" do
-  	item = Item.first
-  	expect(rendered).to have_xpath("//table[@id='inventory']/tbody/tr/td/a[@href='#{item_path(item)}']", text: item.name)
+    item = Item.first
+    expect(rendered).to have_xpath("//table[@id='inventory']/tbody/tr/td/a[@href='#{item_path(item)}']", text: item.name)
   end
 end
