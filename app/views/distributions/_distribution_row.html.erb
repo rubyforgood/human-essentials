@@ -1,0 +1,10 @@
+<tr>
+  <td><%= distribution_row.partner.name %></td>
+  <td><%= distribution_row.inventory.name %></td>
+  <td><%= distribution_row.total_quantity %></td>
+  <td>
+    <%= link_to "View", distribution_path(distribution_row) %>
+    <%= link_to "Print", print_distribution_path(distribution_row) %>
+    <%= link_to "Reclaim", reclaim_distribution_path(distribution_row), method: :post, data: { confirm: "Are you sure?" } %>
+  </td>
+</tr>

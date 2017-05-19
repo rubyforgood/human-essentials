@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: tickets
+# Table name: distributions
 #
 #  id           :integer          not null, primary key
 #  comment      :text
@@ -11,7 +11,7 @@
 #
 
 FactoryGirl.define do
-  factory :ticket do
+  factory :distribution do
     inventory
     partner
 
@@ -23,13 +23,13 @@ FactoryGirl.define do
         item nil
       end
 
-      after(:build) do |ticket, evaluator|
+      after(:build) do |distribution, evaluator|
         item = if evaluator.item.nil?
-                 ticket.inventory.holdings.first.item
+                 distribution.inventory.inventory_items.first.item
                else
                  evaluator.item
                end
-        ticket.containers << build(:container, quantity: evaluator.item_quantity, item: item)
+        distribution.containers << build(:container, quantity: evaluator.item_quantity, item: item)
       end
     end
   end

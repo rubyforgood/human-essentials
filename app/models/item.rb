@@ -13,13 +13,13 @@
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
   validates :name, presence: true, uniqueness: true
-  
+
   has_many :containers
-  has_many :holdings
+  has_many :inventory_items
   has_many :barcode_items
-  has_many :inventories, through: :holdings
+  has_many :inventories, through: :inventory_items
   has_many :donations, through: :containers, source: :itemizable, source_type: Donation
-  has_many :tickets, through: :containers, source: :itemizable, source_type: Ticket
+  has_many :distributions, through: :containers, source: :itemizable, source_type: Distribution
 
   include Filterable
   scope :in_category, ->(category) { where(category: category) }
@@ -30,7 +30,7 @@ class Item < ApplicationRecord
   end
 
   def self.inventories_containing(item)
-    Inventory.joins(:holdings).where('holdings.item_id = ?', item.id)
+    Inventory.joins(:inventory_items).where('inventory_items.item_id = ?', item.id)
   end
 
   def self.barcodes_for(item)

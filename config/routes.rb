@@ -2,17 +2,14 @@ Rails.application.routes.draw do
   scope path: ':organization_id' do
     resources :transfers, only: [:index, :create, :new, :show]
 
-    resources :tickets, only: [:index, :create, :new, :show] do
+    resources :distributions, only: [:index, :create, :new, :show] do
       get :print, on: :member
       post :reclaim, on: :member
     end
 
     resources :barcode_items
-
     resources :dropoff_locations
-
     resources :items
-
     resources :partners
 
     resources :donations do

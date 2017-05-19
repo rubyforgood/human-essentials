@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: holdings
+# Table name: inventory_item
 #
 #  id           :integer          not null, primary key
 #  quantity     :integer
@@ -10,7 +10,7 @@
 #  item_id      :integer
 #
 
-class Holding < ApplicationRecord
+class InventoryItem < ApplicationRecord
   after_initialize :set_quantity
 
   belongs_to :inventory
