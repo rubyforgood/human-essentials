@@ -8,41 +8,66 @@
 
     <%= stylesheet_link_tag    "application" %>
     <%= javascript_include_tag "application", 'data-turbolinks-track' => true %>
-    <%= javascript_include_tag "vendor/modernizr" %>
 
     <%= csrf_meta_tags %>
   </head>
 
   <body>
-
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <ul class="dropdown menu" data-dropdown-menu>
-        <li class="menu-text">PDX Diaper Bank</li>
-        <li><a href="#0">Dashboard</a></li>
-        <li class="has-submenu">
-          <a href="#0">Address List</a>
-          <ul class="submenu menu vertical" data-submenu>
-            <li><a href="#0">One</a></li>
-            <li><a href="#0">Two</a></li>
-            <li><a href="#0">Three</a></li>
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <% if user_signed_in? %>
+          <ul class="dropdown menu" data-dropdown-menu>
+            <li class="menu-text organization-name">PDX Diaper Bank</li>
+            <li><%= link_to_unless_current('Dashboard', dashboard_path) %></li>
+            <li><%= link_to_unless_current('Donations', donations_path) %></li>
+            <li><%= link_to_unless_current('Distributions', distributions_path) %></li>
+            <li><%= link_to_unless_current('Transfers', transfers_path) %></li>
+            <li class="has-submenu">
+              <a href="javascript:void(0)">Inventory</a>
+              <ul class="submenu menu vertical" data-submenu>
+                <li><a href="#0">One</a></li>
+                <li><a href="#0">Two</a></li>
+                <li><a href="#0">Three</a></li>
+              </ul>
+            </li>
+            <li class="has-submenu">
+              <a href="javascript:void(0)">Address List</a>
+              <ul class="submenu menu vertical" data-submenu>
+                <li><a href="#0">One</a></li>
+                <li><a href="#0">Two</a></li>
+                <li><a href="#0">Three</a></li>
+              </ul>
+            </li>
           </ul>
-        </li>
-        <li><a href="#0">Two</a></li>
-        <li><a href="#0">Three</a></li>
-      </ul>
+        <% else %>
+          <ul>
+            <li class="menu-text">DiaperBase™</li>
+          </ul>
+        <% end %>
+      </div>
+      <div class="top-bar-right">
+        <ul class="menu">
+          <% if user_signed_in? %>
+            <li><%= current_user.email %></li>
+            <li><a href='#'>Settings</a></li>
+            <li><%= link_to('Log out', destroy_user_session_path, method: 'delete') %></li>
+          <% else %>
+            <li><%= link_to 'Sign In', new_user_session_path %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
-    <div class="top-bar-right">
-      <ul class="menu">
-        <li><input type="search" placeholder="Search"></li>
-        <li><button type="button" class="button">Search</button></li>
-      </ul>
-    </div>
-  </div>
 
     <%= display_flash_messages %>
 
-    <%= yield %>
+    <div class="row">
+      <% if content_for?(:sidebar) %>
+        <div class="medium-6 large-4 columns"><%= yield :sidebar %></div>
+        <div class="medium-6 large-8 columns"><%= yield %></div>
+      <% else %>
+        <div class="medium-12 large-12 columns"><%= yield %></div>
+      <% end %>
+    </div>
 
   </body>
 </html>

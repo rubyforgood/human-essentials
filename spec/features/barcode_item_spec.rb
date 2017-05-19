@@ -42,10 +42,11 @@ RSpec.feature "Barcode management", type: :feature do
     item2 = create(:item, name: "Wonder Diapers")
     item3 = create(:item, name: "ABC Diapers")
     expected_order = [item1.name, item3.name, item2.name]
+
     create(:barcode_item, item: item3)
     create(:barcode_item, item: item2)
     create(:barcode_item, item: item1)
-    visit "/barcode_items"
+    visit "/#{@organization.short_name}/barcode_items"
 
     expect(page.all('select#filters_item_id option').map(&:text)).to eq(expected_order)
     expect(page.all('select#filters_item_id option').map(&:text)).not_to eq(expected_order.reverse)
