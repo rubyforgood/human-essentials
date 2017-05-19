@@ -6,4 +6,9 @@ class ApplicationController < ActionController::Base
     # FIXME: should be short_name so that we get "/pdx/blah" rather than "/123/blah"
   	@organization ||= Organization.find_by(short_name: params[:organization_id])
   end
+
+  def organization_url_options(options={})
+    options.merge(organization_id: current_organization.to_param)
+  end
+  helper_method :organization_url_options
 end

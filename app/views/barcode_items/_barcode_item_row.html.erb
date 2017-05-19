@@ -2,7 +2,7 @@
   <td><%= barcode_item_row.item.name %></td>
   <td><%= barcode_item_row.quantity %></td>
   <td><%= barcode_item_row.value %></td>
-  <td><%= link_to "View", barcode_item_path(barcode_item_row) %> 
-      <%= link_to "Edit", edit_barcode_item_path(barcode_item_row) %> 
-      <%= link_to "Delete", barcode_item_path(barcode_item_row), method: :delete, confirm: "Are you sure?" %>
+  <td><%= link_to "View", barcode_item_path(barcode_item_row, organization_url_options) %>
+      <%= link_to "Edit", edit_barcode_item_path(barcode_item_row, organization_url_options) %>
+      <%= link_to "Delete", barcode_item_path(barcode_item_row, organization_url_options), method: :delete, confirm: "Are you sure?" %>
 </tr>
