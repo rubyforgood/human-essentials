@@ -29,8 +29,10 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Devise::Test::ControllerHelpers, type: :view
+  config.include Devise::Test::IntegrationHelpers, type: :feature
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -39,7 +41,7 @@ RSpec.configure do |config|
 
   # Make FactoryGirl easier.
   config.include FactoryGirl::Syntax::Methods
-  
+
   # Preparatifyication
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
@@ -50,17 +52,19 @@ RSpec.configure do |config|
     __lint_with_log
     __sweep_up_db_with_log
   end
-  
+
   config.before(:each) do
     __start_db_cleaning_with_log
+
+    # prepare a default @organization and @user to always be available for testing
     @organization = create(:organization)
+    @user = create(:user)
   end
 
   config.after(:each) do
     __sweep_up_db_with_log
   end
 
- 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.
