@@ -15,6 +15,7 @@ class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
   validates :name, presence: true, uniqueness: true
   validates :organization, presence: true
+
   has_many :line_items
   has_many :inventory_items
   has_many :barcode_items

@@ -19,7 +19,7 @@ FactoryGirl.define do
     source "Donation"
     comment "It's a fine day for diapers."
     inventory
-    organization { Organization.try(:first) rescue create(:organization) }
+    organization
     # completed false
 
     transient do

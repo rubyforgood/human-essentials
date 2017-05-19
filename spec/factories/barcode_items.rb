@@ -14,7 +14,7 @@
 FactoryGirl.define do
 
   factory :barcode_item do
-  	organization { Organization.try(:first) rescue create(:organization) }
+    organization
     sequence(:value) { |n| "#{n}" * 12 } # 037000863427
     item
     quantity 50

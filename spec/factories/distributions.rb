@@ -15,7 +15,7 @@ FactoryGirl.define do
   factory :distribution do
     inventory
     partner
-    organization { create(:organization) } #Organization.try(:first) rescue create(:organization) }
+    organization
 
     trait :with_items do
       inventory { create :inventory, :with_items }

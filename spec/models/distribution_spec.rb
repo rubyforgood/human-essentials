@@ -14,7 +14,7 @@
 RSpec.describe Distribution, type: :model do
   context "Validations >" do
     it "must belong to an organization" do
-      expect(build(:distribution, organization_id: nil)).not_to be_valid
+      expect(build(:distribution, organization: nil)).not_to be_valid
     end
   	it "requires an inventory" do
       expect(build(:distribution, inventory: nil)).not_to be_valid
@@ -25,7 +25,6 @@ RSpec.describe Distribution, type: :model do
   	end
 
     xit "ensures the associated line_items are valid" do
-
   	end
 
     xit "ensures that any included items are found in the associated inventory" do
@@ -53,7 +52,7 @@ RSpec.describe Distribution, type: :model do
       @distribution.line_items << c2
       expect(@distribution.sorted_line_items.to_a).to match_array [c1,c2]
   	end
-    
+
   	it "total_quantity" do
   		@distribution.line_items << create(:line_item, item: @first, quantity: 5)
       @distribution.line_items << create(:line_item, item: @last, quantity: 10)

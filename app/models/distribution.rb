@@ -19,6 +19,7 @@ class Distribution < ApplicationRecord
 
   # Distributions are issued to a single partner
   belongs_to :partner
+  belongs_to :organization
 
   # Distributions contain many different items
   has_many :line_items, as: :itemizable, inverse_of: :itemizable
