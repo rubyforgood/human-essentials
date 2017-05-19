@@ -1,0 +1,20 @@
+<h1><%= @storage_location.name %></h1>
+<address><%= @storage_location.address %></address>
+
+<table id="storage_location">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>Total</td>
+      <td><%= @storage_location.size %></td>
+    </tr>
+  </tfoot>
+</table>

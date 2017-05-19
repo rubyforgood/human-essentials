@@ -23,15 +23,15 @@ RSpec.describe DistributionsController, type: :controller do
 
   describe "POST #create" do
     it "redirects to #show on success" do
-      i = create(:inventory)
+      i = create(:storage_location)
       p = create(:partner)
-      post :create, params: { distribution: { inventory_id: i.id, partner_id: p.id } }
+      post :create, params: { distribution: { storage_location_id: i.id, partner_id: p.id } }
       d = Distribution.last
       expect(response).to redirect_to(distribution_path(d.id))
     end
 
     it "renders #new again on failure, with notice" do
-      post :create, params: { distribution: { comment: nil, partner_id: nil, inventory_id: nil } }
+      post :create, params: { distribution: { comment: nil, partner_id: nil, storage_location_id: nil } }
       expect(response).to be_successful
       expect(flash[:notice]).to match(/error/i)
     end

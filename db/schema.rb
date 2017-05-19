@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519144942) do
+ActiveRecord::Schema.define(version: 20170519160110) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "barcode_items", force: :cascade do |t|
     t.string   "value"
@@ -24,10 +27,10 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.text     "comment"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "inventory_id"
+    t.integer  "storage_location_id"
     t.integer  "partner_id"
-    t.index ["inventory_id"], name: "index_distributions_on_inventory_id"
-    t.index ["partner_id"], name: "index_distributions_on_partner_id"
+    t.index ["partner_id"], name: "index_distributions_on_partner_id", using: :btree
+    t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id", using: :btree
   end
 
   create_table "donations", force: :cascade do |t|
@@ -36,10 +39,10 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.integer  "dropoff_location_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "inventory_id"
+    t.integer  "storage_location_id"
     t.text     "comment"
-    t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id"
-    t.index ["inventory_id"], name: "index_donations_on_inventory_id"
+    t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id", using: :btree
+    t.index ["storage_location_id"], name: "index_donations_on_storage_location_id", using: :btree
   end
 
   create_table "dropoff_locations", force: :cascade do |t|
@@ -49,15 +52,8 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.datetime "updated_at"
   end
 
-  create_table "inventories", force: :cascade do |t|
-    t.string   "name"
-    t.string   "address"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "inventory_items", force: :cascade do |t|
-    t.integer  "inventory_id"
+    t.integer  "storage_location_id"
     t.integer  "item_id"
     t.integer  "quantity"
     t.datetime "created_at"
@@ -79,12 +75,19 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.string   "itemizable_type"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
-    t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
+    t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type", using: :btree
   end
 
   create_table "partners", force: :cascade do |t|
     t.string   "name"
     t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "storage_locations", force: :cascade do |t|
+    t.string   "name"
+    t.string   "address"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -97,4 +100,24 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.inet     "current_sign_in_ip"
+    t.inet     "last_sign_in_ip"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  end
+
+  add_foreign_key "distributions", "partners"
+  add_foreign_key "distributions", "storage_locations"
+  add_foreign_key "donations", "storage_locations"
 end

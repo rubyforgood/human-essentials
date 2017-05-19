@@ -1,9 +1,9 @@
 <%= simple_form_for donation_form do |f| %>
 
-<%= f.input :source, collection: @donation.sources, label: "Dropoff Source", error: "What was the source for this donation?" %>
-<%= f.association :dropoff_location, collection: @dropoff_locations, label: "Dropoff Location", error: "Where was this donation dropped off?" %>
-<%= f.association :inventory, collection: @inventories, label: "Storage Location", error: "Where is it being stored?" %>
+  <%= f.input :source, collection: @donation.sources, label: "Dropoff Source", error: "What was the source for this donation?" %>
+  <%= f.association :dropoff_location, collection: @dropoff_locations, label: "Dropoff Location", error: "Where was this donation dropped off?" %>
+  <%= f.association :storage_location, collection: @storage_locations, label: "Storage Location", error: "Where is it being stored?" %>
 
-<%= f.button :submit %>
+  <%= f.button :submit %>
 
 <% end %>

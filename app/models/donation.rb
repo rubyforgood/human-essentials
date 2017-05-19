@@ -8,17 +8,17 @@
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
-#  inventory_id        :integer
+#  storage_location_id :integer
 #
 
 class Donation < ApplicationRecord
   belongs_to :dropoff_location
   has_many :line_items, as: :itemizable, inverse_of: :itemizable
-  belongs_to :inventory
+  belongs_to :storage_location
   has_many :items, through: :line_items
 
   validates :dropoff_location, presence: true
-  validates :inventory, presence: true
+  validates :storage_location, presence: true
   validates :source, presence: true
 
   scope :completed, -> { where(completed: true) }

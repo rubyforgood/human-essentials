@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :users
+
   resources :transfers, only: [:index, :create, :new, :show]
 
   resources :distributions, only: [:index, :create, :new, :show] do
@@ -20,7 +22,7 @@ Rails.application.routes.draw do
     patch :complete, on: :member
   end
 
-  resources :inventories
+  resources :storage_locations
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

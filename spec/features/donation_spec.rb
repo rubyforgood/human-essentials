@@ -6,13 +6,13 @@ RSpec.feature "Donations", type: :feature do
   context "When starting a new donation" do
     before(:each) do
       create(:dropoff_location)
-      create(:inventory)
+      create(:storage_location)
       visit "/donations/new"
     end
 
     scenario "User can fill out the form to create an in-flight donation" do
       select DropoffLocation.first.name, from: "donation_dropoff_location_id"
-      select Inventory.first.name, from: "donation_inventory_id"
+      select StorageLocation.first.name, from: "donation_storage_location_id"
       select Donation.new.sources.first, from: "donation_source"
 
       expect {

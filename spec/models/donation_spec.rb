@@ -8,7 +8,7 @@
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
-#  inventory_id        :integer
+#  storage_location_id :integer
 #
 
 
@@ -22,7 +22,7 @@ RSpec.describe Donation, type: :model do
       expect(build(:donation, source: nil)).not_to be_valid
     end
     it "requires an inventory (storage location)" do
-      expect(build(:donation, inventory_id: nil)).not_to be_valid
+      expect(build(:donation, storage_location_id: nil)).not_to be_valid
     end
   end
 
@@ -107,7 +107,7 @@ RSpec.describe Donation, type: :model do
         donation = create :donation
         barcode_item = create :barcode_item
         expect{
-          donation.track_from_barcode(barcode_item.to_line_item);
+          donation.track_from_barcode(barcode_item.to_line_item)
           donation.reload
         }.to change{donation.items.count}.by(1)
       end

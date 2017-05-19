@@ -8,7 +8,7 @@
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
-#  inventory_id        :integer
+#  storage_location_id :integer
 #
 
 FactoryGirl.define do
@@ -16,7 +16,7 @@ FactoryGirl.define do
     dropoff_location
     source "Donation"
     comment "It's a fine day for diapers."
-    inventory
+    storage_location
     # completed false
 
     transient do
