@@ -10,14 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519144942) do
+ActiveRecord::Schema.define(version: 20170519161045) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "barcode_items", force: :cascade do |t|
     t.string   "value"
     t.integer  "item_id"
     t.integer  "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.integer  "organization_id"
+    t.index ["organization_id"], name: "index_barcode_items_on_organization_id", using: :btree
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -26,8 +31,10 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.datetime "updated_at"
     t.integer  "inventory_id"
     t.integer  "partner_id"
-    t.index ["inventory_id"], name: "index_distributions_on_inventory_id"
-    t.index ["partner_id"], name: "index_distributions_on_partner_id"
+    t.integer  "organization_id"
+    t.index ["inventory_id"], name: "index_distributions_on_inventory_id", using: :btree
+    t.index ["organization_id"], name: "index_distributions_on_organization_id", using: :btree
+    t.index ["partner_id"], name: "index_distributions_on_partner_id", using: :btree
   end
 
   create_table "donations", force: :cascade do |t|
@@ -38,8 +45,10 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.datetime "updated_at"
     t.integer  "inventory_id"
     t.text     "comment"
+    t.integer  "organization_id"
     t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id", using: :btree
     t.index ["inventory_id"], name: "index_donations_on_inventory_id", using: :btree
+    t.index ["organization_id"], name: "index_donations_on_organization_id", using: :btree
   end
 
   create_table "dropoff_locations", force: :cascade do |t|
@@ -47,6 +56,8 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.string   "address"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "organization_id"
+    t.index ["organization_id"], name: "index_dropoff_locations_on_organization_id", using: :btree
   end
 
   create_table "inventories", force: :cascade do |t|
@@ -54,6 +65,8 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.string   "address"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "organization_id"
+    t.index ["organization_id"], name: "index_inventories_on_organization_id", using: :btree
   end
 
   create_table "inventory_items", force: :cascade do |t|
@@ -70,6 +83,18 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "barcode_count"
+    t.integer  "organization_id"
+    t.index ["organization_id"], name: "index_items_on_organization_id", using: :btree
+  end
+
+  create_table "line_items", force: :cascade do |t|
+    t.integer  "quantity"
+    t.integer  "item_id"
+    t.integer  "itemizable_id"
+    t.string   "itemizable_type"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type", using: :btree
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -80,16 +105,7 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.string   "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["short_name"], name: "index_organizations_on_short_name"
-
-  create_table "line_items", force: :cascade do |t|
-    t.integer  "quantity"
-    t.integer  "item_id"
-    t.integer  "itemizable_id"
-    t.string   "itemizable_type"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-    t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
+    t.index ["short_name"], name: "index_organizations_on_short_name", using: :btree
   end
 
   create_table "partners", force: :cascade do |t|
@@ -97,14 +113,21 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.string   "email"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "organization_id"
+    t.index ["organization_id"], name: "index_partners_on_organization_id", using: :btree
   end
 
   create_table "transfers", force: :cascade do |t|
     t.integer  "from_id"
     t.integer  "to_id"
     t.string   "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.integer  "organization_id"
+    t.index ["organization_id"], name: "index_transfers_on_organization_id", using: :btree
   end
 
+  add_foreign_key "distributions", "inventories"
+  add_foreign_key "distributions", "partners"
+  add_foreign_key "donations", "inventories"
 end

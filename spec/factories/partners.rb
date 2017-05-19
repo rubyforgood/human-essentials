@@ -2,11 +2,12 @@
 #
 # Table name: partners
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  email      :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id              :integer          not null, primary key
+#  name            :string
+#  email           :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  organization_id :integer
 #
 
 FactoryGirl.define do

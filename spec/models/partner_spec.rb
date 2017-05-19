@@ -2,17 +2,19 @@
 #
 # Table name: partners
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  email      :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id              :integer          not null, primary key
+#  name            :string
+#  email           :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  organization_id :integer
 #
-
-
 
 RSpec.describe Partner, type: :model do
   context "Validations >" do
+    it "must belong to an organization" do
+      expect(build(:partner, organization_id: nil)).not_to be_valid
+    end
     it "requires a unique name" do
       expect(build(:partner, name: nil)).not_to be_valid
       create(:partner, name: "Foo")

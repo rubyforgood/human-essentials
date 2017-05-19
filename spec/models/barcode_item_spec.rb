@@ -2,15 +2,14 @@
 #
 # Table name: barcode_items
 #
-#  id         :integer          not null, primary key
-#  value      :string
-#  item_id    :integer
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  quantity   :integer
+#  id              :integer          not null, primary key
+#  value           :string
+#  item_id         :integer
+#  quantity        :integer
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  organization_id :integer
 #
-
-
 
 RSpec.describe BarcodeItem, type: :model do
   it "updates a counter in Item whenever it tracks a new barcode" do
@@ -37,6 +36,9 @@ RSpec.describe BarcodeItem, type: :model do
   end
 
   context "validations >" do
+    it "is invalid without an organization" do
+      expect(build(:barcode_item, organization: nil)).not_to be_valid
+    end
     describe "value >" do
       it "requires a value" do
         expect(build(:barcode_item, value: nil)).not_to be_valid

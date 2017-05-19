@@ -2,11 +2,12 @@
 #
 # Table name: inventories
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  address    :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id              :integer          not null, primary key
+#  name            :string
+#  address         :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  organization_id :integer
 #
 
 FactoryGirl.define do

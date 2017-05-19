@@ -2,17 +2,19 @@
 #
 # Table name: items
 #
-#  id            :integer          not null, primary key
-#  name          :string
-#  category      :string
-#  created_at    :datetime
-#  updated_at    :datetime
-#  barcode_count :integer
+#  id              :integer          not null, primary key
+#  name            :string
+#  category        :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  barcode_count   :integer
+#  organization_id :integer
 #
 
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
   validates :name, presence: true, uniqueness: true
+  validates :organization, presence: true
   has_many :line_items
   has_many :inventory_items
   has_many :barcode_items

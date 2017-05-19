@@ -2,20 +2,21 @@
 #
 # Table name: barcode_items
 #
-#  id         :integer          not null, primary key
-#  value      :string
-#  item_id    :integer
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  quantity   :integer
+#  id              :integer          not null, primary key
+#  value           :string
+#  item_id         :integer
+#  quantity        :integer
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  organization_id :integer
 #
 
 class BarcodeItem < ApplicationRecord
+  belongs_to :organization
   belongs_to :item, dependent: :destroy, counter_cache: :barcode_count
 
   validates :value, presence: true, uniqueness: true
-  validates :quantity, presence: true
-  validates :item, presence: true
+  validates :quantity, :item, :organization, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   include Filterable

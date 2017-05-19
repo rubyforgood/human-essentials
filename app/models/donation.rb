@@ -4,11 +4,13 @@
 #
 #  id                  :integer          not null, primary key
 #  source              :string
-#  completed           :boolean          default("f")
+#  completed           :boolean          default("false")
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
 #  inventory_id        :integer
+#  comment             :text
+#  organization_id     :integer
 #
 
 class Donation < ApplicationRecord
@@ -19,9 +21,7 @@ class Donation < ApplicationRecord
   belongs_to :inventory
   has_many :items, through: :line_items
 
-  validates :dropoff_location, presence: true
-  validates :inventory, presence: true
-  validates :source, presence: true
+  validates :dropoff_location, :inventory, :source, :organization, presence: true
 
   scope :completed, -> { where(completed: true) }
   scope :incomplete, -> { where(completed: false) }

@@ -2,12 +2,13 @@
 #
 # Table name: distributions
 #
-#  id           :integer          not null, primary key
-#  comment      :text
-#  created_at   :datetime
-#  updated_at   :datetime
-#  inventory_id :integer
-#  partner_id   :integer
+#  id              :integer          not null, primary key
+#  comment         :text
+#  created_at      :datetime
+#  updated_at      :datetime
+#  inventory_id    :integer
+#  partner_id      :integer
+#  organization_id :integer
 #
 
 class Distribution < ApplicationRecord
@@ -25,7 +26,7 @@ class Distribution < ApplicationRecord
   accepts_nested_attributes_for :line_items,
     allow_destroy: true
 
-  validates :inventory, :partner, presence: true
+  validates :inventory, :partner, :organization, presence: true
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
 

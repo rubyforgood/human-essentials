@@ -2,17 +2,19 @@
 #
 # Table name: inventories
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  address    :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id              :integer          not null, primary key
+#  name            :string
+#  address         :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  organization_id :integer
 #
-
-
 
 RSpec.describe Inventory, type: :model do
   context "Validations >" do
+    it "must belong to an organization" do
+      expect(build(:inventory, organization_id: nil)).not_to be_valid
+    end
     it "requires a name" do
       expect(build(:inventory, name: nil)).not_to be_valid
     end

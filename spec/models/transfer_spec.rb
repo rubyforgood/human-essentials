@@ -11,11 +11,10 @@
 #  organization_id :integer
 #
 
-FactoryGirl.define do
-
-  factory :transfer do
-  	from_id { create(:inventory).id }
-  	to_id { create(:inventory).id }
-  	comment "A comment"
+RSpec.describe Transfer, type: :model do
+  context "Validations >" do
+    it "must belong to an organization" do
+      expect(build(:transfer, organization_id: nil)).not_to be_valid
+    end
   end
 end

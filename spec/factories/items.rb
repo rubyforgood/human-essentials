@@ -2,12 +2,13 @@
 #
 # Table name: items
 #
-#  id            :integer          not null, primary key
-#  name          :string
-#  category      :string
-#  created_at    :datetime
-#  updated_at    :datetime
-#  barcode_count :integer
+#  id              :integer          not null, primary key
+#  name            :string
+#  category        :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  barcode_count   :integer
+#  organization_id :integer
 #
 
 FactoryGirl.define do

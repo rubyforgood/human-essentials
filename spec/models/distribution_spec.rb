@@ -2,18 +2,20 @@
 #
 # Table name: distributions
 #
-#  id           :integer          not null, primary key
-#  comment      :text
-#  created_at   :datetime
-#  updated_at   :datetime
-#  inventory_id :integer
-#  partner_id   :integer
+#  id              :integer          not null, primary key
+#  comment         :text
+#  created_at      :datetime
+#  updated_at      :datetime
+#  inventory_id    :integer
+#  partner_id      :integer
+#  organization_id :integer
 #
-
-
 
 RSpec.describe Distribution, type: :model do
   context "Validations >" do
+    it "must belong to an organization" do
+      expect(build(:distribution, organization_id: nil)).not_to be_valid
+    end
   	it "requires an inventory" do
       expect(build(:distribution, inventory: nil)).not_to be_valid
   	end

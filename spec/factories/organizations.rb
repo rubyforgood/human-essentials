@@ -6,6 +6,8 @@
 #  name       :string
 #  short_name :string
 #  address    :text
+#  email      :string
+#  url        :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

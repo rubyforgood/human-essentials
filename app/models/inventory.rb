@@ -2,11 +2,12 @@
 #
 # Table name: inventories
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  address    :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id              :integer          not null, primary key
+#  name            :string
+#  address         :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  organization_id :integer
 #
 
 class Inventory < ApplicationRecord
@@ -17,8 +18,7 @@ class Inventory < ApplicationRecord
   has_many :distributions
   has_many :items, through: :inventory_items
 
-  validates :name, presence: true
-  validates :address, presence: true
+  validates :name, :address, :organization, presence: true
 
   include Filterable
   scope :containing, ->(item_id) { joins(:inventory_items).where('inventory_items.item_id = ?', item_id) }
