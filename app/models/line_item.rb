@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: containers
+# Table name: line_items
 #
 #  id              :integer          not null, primary key
 #  quantity        :integer
@@ -11,16 +11,10 @@
 #  itemizable_type :string
 #
 
+class LineItem < ApplicationRecord
+  belongs_to :itemizable, polymorphic: true, inverse_of: :line_items, required: true
+  belongs_to :item
 
-
-RSpec.describe Container, type: :model do
-	context "Validations >" do
-		it "requires an item" do
-			expect(build(:container, item: nil)).not_to be_valid
-		end
-
-		it "requires a quantity" do
-			expect(build(:container, quantity: nil)).not_to be_valid
-		end
-	end
+  validates :item_id, presence: true
+  validates :quantity, presence: true
 end

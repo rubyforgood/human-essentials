@@ -13,13 +13,12 @@
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
   validates :name, presence: true, uniqueness: true
-
-  has_many :containers
+  has_many :line_items
   has_many :inventory_items
   has_many :barcode_items
   has_many :inventories, through: :inventory_items
-  has_many :donations, through: :containers, source: :itemizable, source_type: Donation
-  has_many :distributions, through: :containers, source: :itemizable, source_type: Distribution
+  has_many :donations, through: :line_items, source: :itemizable, source_type: Donation
+  has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
   include Filterable
   scope :in_category, ->(category) { where(category: category) }

@@ -26,7 +26,7 @@ FactoryGirl.define do
 		trait :with_item do
 			after(:create) do |instance, evaluator|
 				item_id = (evaluator.item_id.nil?) ? create(:item).id : evaluator.item_id
-				instance.containers << create(:container, :donation, quantity: evaluator.item_quantity, item_id: item_id)
+				instance.line_items << create(:line_item, :donation, quantity: evaluator.item_quantity, item_id: item_id)
 			end
 		end
 	end

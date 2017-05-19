@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: containers
+# Table name: line_items
 #
 #  id              :integer          not null, primary key
 #  quantity        :integer
@@ -12,7 +12,7 @@
 #
 
 FactoryGirl.define do
-	factory :container do
+	factory :line_item do
 		quantity 0
 		item
         itemizable_type "Donation"

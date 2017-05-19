@@ -3,7 +3,7 @@ class DonationsController < ApplicationController
   def track
     @donation = current_organization.donations.find(params[:id])
     if (donation_item_params.has_key?(:barcode_id))
-      @donation.track_from_barcode(Barcode.find(donation_item_params[:barcode_id]).to_container)
+      @donation.track_from_barcode(Barcode.find(donation_item_params[:barcode_id]).to_line_item)
     else
       @donation.track(donation_item_params[:item_id], donation_item_params[:quantity])
     end
@@ -21,8 +21,8 @@ class DonationsController < ApplicationController
   end
 
   def index
-    @completed = Donation.includes(:containers).includes(:inventory).includes(:dropoff_location).completed
-    @incomplete = Donation.includes(:containers).includes(:inventory).includes(:dropoff_location).incomplete
+    @completed = Donation.includes(:line_items).includes(:inventory).includes(:dropoff_location).completed
+    @incomplete = Donation.includes(:line_items).includes(:inventory).includes(:dropoff_location).incomplete
   end
 
   def create
@@ -50,8 +50,8 @@ class DonationsController < ApplicationController
   end
 
   def show
-    @donation = Donation.includes(:containers).find(params[:id])
-    @containers = @donation.containers
+    @donation = Donation.includes(:line_items).find(params[:id])
+    @line_items = @donation.line_items
   end
 
   def update

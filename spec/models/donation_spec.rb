@@ -90,15 +90,15 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "track" do
-      it "does not add a new container unnecessarily, updating existing container instead" do
+      it "does not add a new line_item unnecessarily, updating existing line_item instead" do
         donation = create(:donation)
         item = create :item
         donation.track(item, 5)
         expect {
           donation.track(item, 10)
-        }.not_to change{donation.containers.count}
+        }.not_to change{donation.line_items.count}
 
-        expect(donation.containers.first.quantity).to eq(15)
+        expect(donation.line_items.first.quantity).to eq(15)
       end
     end
 
@@ -107,7 +107,7 @@ RSpec.describe Donation, type: :model do
         donation = create :donation
         barcode_item = create :barcode_item
         expect{
-          donation.track_from_barcode(barcode_item.to_container); 
+          donation.track_from_barcode(barcode_item.to_line_item); 
           donation.reload
         }.to change{donation.items.count}.by(1)
       end
@@ -130,12 +130,12 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "update_quantity" do
-      it "adds an additional quantity to the existing container" do
+      it "adds an additional quantity to the existing line_item" do
         donation = create(:donation, :with_item)
         expect { 
           donation.update_quantity(1, donation.items.first)
           donation.reload
-        }.to change{donation.containers.first.quantity}.by(1)
+        }.to change{donation.line_items.first.quantity}.by(1)
       end
 
       it "works whether you give it an item or an id" do
@@ -144,7 +144,7 @@ RSpec.describe Donation, type: :model do
         expect { 
           donation.update_quantity(1, donation.items.first.id)
           donation.reload
-        }.to change{donation.containers.first.quantity}.by(1)
+        }.to change{donation.line_items.first.quantity}.by(1)
       end
     end
   end

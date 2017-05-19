@@ -29,17 +29,17 @@ RSpec.describe "donations/show.html.erb", type: :view do
     before :each do
       @complete = create(:donation, :with_item, item_quantity: 5, item_id: create(:item).id, completed: true)
       assign(:donation, @complete)
-      assign(:containers, @complete.containers)
+      assign(:line_items, @complete.line_items)
       render
     end
 
     it "DOES list the items found in the donation, along with quantities" do
-    	expect(rendered).to have_xpath("//section[@id='containers']/table/tbody/tr", count: 1)
+    	expect(rendered).to have_xpath("//section[@id='line_items']/table/tbody/tr", count: 1)
     end
 
     it "does NOT show any forms for doing anything" do
-    	expect(rendered).not_to have_xpath("//section[@id='containers']/select")
-    	expect(rendered).not_to have_xpath("//section[@id='containers']/input")
+    	expect(rendered).not_to have_xpath("//section[@id='line_items']/select")
+    	expect(rendered).not_to have_xpath("//section[@id='line_items']/input")
     end
 
     it "does NOT show a 'Complete' link" do

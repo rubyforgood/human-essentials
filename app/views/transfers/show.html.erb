@@ -13,10 +13,10 @@
   </thead>
 
   <tbody>
-    <% @containers.each do |container| %>
+    <% @line_items.each do |line_item| %>
       <tr>
-        <td><%= container.item.name %></td>
-        <td><%= container.quantity %></td>
+        <td><%= line_item.item.name %></td>
+        <td><%= line_item.quantity %></td>
       </tr>
     <% end %>
   </tbody>
