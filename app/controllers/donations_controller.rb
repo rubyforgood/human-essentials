@@ -21,16 +21,16 @@ class DonationsController < ApplicationController
   end
 
   def index
-    @completed = Donation.includes(:line_items).includes(:inventory).includes(:dropoff_location).completed
-    @incomplete = Donation.includes(:line_items).includes(:inventory).includes(:dropoff_location).incomplete
+    @completed = Donation.includes(:line_items).includes(:storage_location).includes(:dropoff_location).completed
+    @incomplete = Donation.includes(:line_items).includes(:storage_location).includes(:dropoff_location).incomplete
   end
 
   def create
     @donation = Donation.new(donation_params)
     if (@donation.save)
       redirect_to(edit_donation_path(@donation))
-    else 
-      @inventories = Inventory.all
+    else
+      @storage_locations = StorageLocation.all
       @dropoff_locations = DropoffLocation.all
       flash[:notice] = "There was an error starting this donation, try again?"
       render action: :new
@@ -38,13 +38,13 @@ class DonationsController < ApplicationController
   end
 
   def new
-    @inventories = Inventory.all
+    @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
     @donation = Donation.new
   end
 
   def edit
-    @inventories = Inventory.all
+    @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
     @donation = Donation.find(params[:id])
   end
@@ -67,7 +67,7 @@ class DonationsController < ApplicationController
 
 private
   def donation_params
-    params.require(:donation).permit(:source, :inventory_id, :dropoff_location_id)
+    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id)
   end
 
   def donation_item_params

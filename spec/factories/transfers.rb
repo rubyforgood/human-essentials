@@ -12,11 +12,10 @@
 #
 
 FactoryGirl.define do
-
   factory :transfer do
   	organization { Organization.try(:first) || create(:organization) }
-  	from_id { create(:inventory).id }
-  	to_id { create(:inventory).id }
+    from_id { create(:storage_location).id }
+    to_id { create(:storage_location).id }
   	comment "A comment"
   end
 end

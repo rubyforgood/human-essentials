@@ -13,9 +13,8 @@
 
 class Transfer < ApplicationRecord
   belongs_to :organization
-  
-  belongs_to :from, :class_name => 'Inventory', :foreign_key => :from_id
-  belongs_to :to, :class_name => 'Inventory', :foreign_key => :to_id
+  belongs_to :from, :class_name => 'StorageLocation', :foreign_key => :from_id
+  belongs_to :to, :class_name => 'StorageLocation', :foreign_key => :to_id
 
   has_many :line_items, as: :itemizable, inverse_of: :itemizable
   has_many :items, through: :line_items

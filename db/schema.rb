@@ -29,12 +29,12 @@ ActiveRecord::Schema.define(version: 20170519161045) do
     t.text     "comment"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "inventory_id"
+    t.integer  "storage_location_id"
     t.integer  "partner_id"
     t.integer  "organization_id"
-    t.index ["inventory_id"], name: "index_distributions_on_inventory_id", using: :btree
     t.index ["organization_id"], name: "index_distributions_on_organization_id", using: :btree
     t.index ["partner_id"], name: "index_distributions_on_partner_id", using: :btree
+    t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id", using: :btree
   end
 
   create_table "donations", force: :cascade do |t|
@@ -43,12 +43,12 @@ ActiveRecord::Schema.define(version: 20170519161045) do
     t.integer  "dropoff_location_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "inventory_id"
+    t.integer  "storage_location_id"
     t.text     "comment"
     t.integer  "organization_id"
     t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id", using: :btree
-    t.index ["inventory_id"], name: "index_donations_on_inventory_id", using: :btree
     t.index ["organization_id"], name: "index_donations_on_organization_id", using: :btree
+    t.index ["storage_location_id"], name: "index_donations_on_storage_location_id", using: :btree
   end
 
   create_table "dropoff_locations", force: :cascade do |t|
@@ -60,17 +60,8 @@ ActiveRecord::Schema.define(version: 20170519161045) do
     t.index ["organization_id"], name: "index_dropoff_locations_on_organization_id", using: :btree
   end
 
-  create_table "inventories", force: :cascade do |t|
-    t.string   "name"
-    t.string   "address"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "organization_id"
-    t.index ["organization_id"], name: "index_inventories_on_organization_id", using: :btree
-  end
-
   create_table "inventory_items", force: :cascade do |t|
-    t.integer  "inventory_id"
+    t.integer  "storage_location_id"
     t.integer  "item_id"
     t.integer  "quantity"
     t.datetime "created_at"
@@ -117,6 +108,15 @@ ActiveRecord::Schema.define(version: 20170519161045) do
     t.index ["organization_id"], name: "index_partners_on_organization_id", using: :btree
   end
 
+  create_table "storage_locations", force: :cascade do |t|
+    t.string   "name"
+    t.string   "address"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "organization_id"
+    t.index ["organization_id"], name: "index_storage_locations_on_organization_id", using: :btree
+  end
+
   create_table "transfers", force: :cascade do |t|
     t.integer  "from_id"
     t.integer  "to_id"
@@ -144,7 +144,7 @@ ActiveRecord::Schema.define(version: 20170519161045) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
-  add_foreign_key "distributions", "inventories"
   add_foreign_key "distributions", "partners"
-  add_foreign_key "donations", "inventories"
+  add_foreign_key "distributions", "storage_locations"
+  add_foreign_key "donations", "storage_locations"
 end

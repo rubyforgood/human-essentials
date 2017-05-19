@@ -8,9 +8,9 @@
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
-#  inventory_id        :integer
 #  comment             :text
 #  organization_id     :integer
+#  storage_location_id :integer
 #
 
 class Donation < ApplicationRecord
@@ -18,10 +18,10 @@ class Donation < ApplicationRecord
 
   belongs_to :dropoff_location
   has_many :line_items, as: :itemizable, inverse_of: :itemizable
-  belongs_to :inventory
+  belongs_to :storage_location
   has_many :items, through: :line_items
 
-  validates :dropoff_location, :inventory, :source, :organization, presence: true
+  validates :dropoff_location, :storage_location, :source, :organization, presence: true
 
   scope :completed, -> { where(completed: true) }
   scope :incomplete, -> { where(completed: false) }
@@ -45,7 +45,7 @@ class Donation < ApplicationRecord
   ## TODO - Test coverage for this method
   def remove(item_id)
     line_item = self.line_items.find_by(item_id: item_id)
-    if (line_item) 
+    if (line_item)
       line_item.destroy
     end
   end

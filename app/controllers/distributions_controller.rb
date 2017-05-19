@@ -9,7 +9,7 @@ class DistributionsController < ApplicationController
   end
 
   def index
-    @distributions = Distribution.includes(:line_items).includes(:inventory).includes(:items).all
+    @distributions = Distribution.includes(:line_items).includes(:storage_location).includes(:items).all
   end
 
   def create
@@ -27,12 +27,12 @@ class DistributionsController < ApplicationController
   end
 
   def show
-    @distribution = Distribution.includes(:line_items).includes(:inventory).find(params[:id])
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
   end
 
   private
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :partner_id, :inventory_id)
+    params.require(:distribution).permit(:comment, :partner_id, :storage_location_id)
   end
 end

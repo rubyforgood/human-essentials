@@ -1,6 +1,6 @@
 class TransfersController < ApplicationController
   def index
-  	@transfers = Transfer.includes(:line_items).includes(:from).includes(:to).all
+    @transfers = Transfer.includes(:line_items).includes(:from).includes(:to).all
   end
 
   def create
@@ -14,19 +14,20 @@ class TransfersController < ApplicationController
   end
 
   def new
-  	@transfer = Transfer.new
-    @inventories = Inventory.all
+    @transfer = Transfer.new
+    @storage_locations = StorageLocation.all
     @items = Item.all
   end
 
   def show
-  	@transfer = Transfer.includes(:line_items).includes(:from).includes(:to).includes(:items).find(params[:id])
+    @transfer = Transfer.includes(:line_items).includes(:from).includes(:to).includes(:items).find(params[:id])
     @total = @transfer.total_quantity
     @line_items = @transfer.sorted_line_items
   end
 
-private
+  private
+
   def transfer_params
-  	params.require(:transfer).permit(:from_id, :to_id, :comment)
+    params.require(:transfer).permit(:from_id, :to_id, :comment)
   end
 end

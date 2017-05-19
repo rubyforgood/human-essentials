@@ -6,7 +6,7 @@
 #  comment         :text
 #  created_at      :datetime
 #  updated_at      :datetime
-#  inventory_id    :integer
+#  storage_location_id :integer
 #  partner_id      :integer
 #  organization_id :integer
 #
@@ -16,19 +16,19 @@ RSpec.describe Distribution, type: :model do
     it "must belong to an organization" do
       expect(build(:distribution, organization: nil)).not_to be_valid
     end
-  	it "requires an inventory" do
-      expect(build(:distribution, inventory: nil)).not_to be_valid
-  	end
+    it "requires a storage location" do
+      expect(build(:distribution, storage_location: nil)).not_to be_valid
+    end
 
     it "requires a partner" do
-  	  expect(build(:distribution, partner: nil)).not_to be_valid
-  	end
+      expect(build(:distribution, partner: nil)).not_to be_valid
+    end
 
     xit "ensures the associated line_items are valid" do
   	end
 
-    xit "ensures that any included items are found in the associated inventory" do
-  	end
+    xit "ensures that any included items are found in the associated storage location" do
+    end
   end
 
   context "Methods >" do
@@ -38,14 +38,14 @@ RSpec.describe Distribution, type: :model do
       @last = create(:item, name: "ZZZ", category: "Bar")
     end
 
-  	it "quantities_by_category" do
+    it "quantities_by_category" do
       @distribution.line_items << create(:line_item, item: @first, quantity: 5)
       @distribution.line_items << create(:line_item, item: @last, quantity: 10)
       @distribution.line_items << create(:line_item, item: create(:item, category: "Foo"), quantity: 10)
       expect(@distribution.quantities_by_category).to eq({"Bar" => 10, "Foo" => 15})
-  	end
+    end
 
-  	it "sorted_line_items" do
+    it "sorted_line_items" do
       c1 = create(:line_item, item: @first)
       c2 = create(:line_item, item: @last)
       @distribution.line_items << c1
@@ -53,10 +53,10 @@ RSpec.describe Distribution, type: :model do
       expect(@distribution.sorted_line_items.to_a).to match_array [c1,c2]
   	end
 
-  	it "total_quantity" do
-  		@distribution.line_items << create(:line_item, item: @first, quantity: 5)
+    it "total_quantity" do
+      @distribution.line_items << create(:line_item, item: @first, quantity: 5)
       @distribution.line_items << create(:line_item, item: @last, quantity: 10)
       expect(@distribution.total_quantity).to eq(15)
-  	end
+    end
   end
 end

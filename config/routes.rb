@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   scope path: ':organization_id' do
     resources :transfers, only: [:index, :create, :new, :show]
-
+    resources :storage_locations
     resources :distributions, only: [:index, :create, :new, :show] do
       get :print, on: :member
       post :reclaim, on: :member
@@ -20,7 +20,6 @@ Rails.application.routes.draw do
       patch :complete, on: :member
     end
 
-    resources :inventories
   end
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

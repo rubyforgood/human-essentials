@@ -8,9 +8,9 @@
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
-#  inventory_id        :integer
 #  comment             :text
 #  organization_id     :integer
+#  storage_location_id :integer
 #
 
 RSpec.describe Donation, type: :model do
@@ -25,7 +25,7 @@ RSpec.describe Donation, type: :model do
       expect(build(:donation, source: nil)).not_to be_valid
     end
     it "requires an inventory (storage location)" do
-      expect(build(:donation, inventory_id: nil)).not_to be_valid
+      expect(build(:donation, storage_location_id: nil)).not_to be_valid
     end
   end
 
@@ -72,7 +72,7 @@ RSpec.describe Donation, type: :model do
       it "has_many" do
         donation = create(:donation)
         item = create(:item)
-        # Using donation.track because it marshalls the HMT 
+        # Using donation.track because it marshalls the HMT
         donation.track(item, 1)
         expect(donation.items.count).to eq(1)
       end
@@ -110,7 +110,7 @@ RSpec.describe Donation, type: :model do
         donation = create :donation
         barcode_item = create :barcode_item
         expect{
-          donation.track_from_barcode(barcode_item.to_line_item); 
+          donation.track_from_barcode(barcode_item.to_line_item)
           donation.reload
         }.to change{donation.items.count}.by(1)
       end
@@ -135,7 +135,7 @@ RSpec.describe Donation, type: :model do
     describe "update_quantity" do
       it "adds an additional quantity to the existing line_item" do
         donation = create(:donation, :with_item)
-        expect { 
+        expect {
           donation.update_quantity(1, donation.items.first)
           donation.reload
         }.to change{donation.line_items.first.quantity}.by(1)
@@ -144,7 +144,7 @@ RSpec.describe Donation, type: :model do
       it "works whether you give it an item or an id" do
         pending "TODO: refactor & fix"
         donation = create(:donation, :with_item)
-        expect { 
+        expect {
           donation.update_quantity(1, donation.items.first.id)
           donation.reload
         }.to change{donation.line_items.first.quantity}.by(1)
