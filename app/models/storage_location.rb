@@ -26,7 +26,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def self.items_inventoried
-    Item.joins(:storage_locations).group(:name)
+    Item.joins(:storage_locations).select(:id, :name).group(:id, :name)
   end
 
   def item_total(item_id)
