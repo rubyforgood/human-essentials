@@ -34,5 +34,18 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page).not_to have_xpath("//table[@id='storage_locations']/tbody/tr/td", text: location2.name)
   end
 
-end
+  scenario "Filter list presented to user is in alphabetical order by item name" do
+    item1 = create(:item, name: "AAA Diapers")
+    item2 = create(:item, name: "ABC Diapers")
+    item3 = create(:item, name: "Wonder Diapers")
+    expected_order = [item1.name, item2.name, item3.name]
+    sotorage_location1 = create(:sotorage_location, :with_items, item: item2, item_quantity: 10, name: "Foo")
+    sotorage_location2 = create(:sotorage_location, :with_items, item: item1, item_quantity: 10, name: "Bar")
+    sotorage_location3 = create(:sotorage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
+    visit "/inventories"
 
+    expect(page.all('select#filters_containing option').map(&:text)).to eq(expected_order)
+    expect(page.all('select#filters_containing option').map(&:text)).not_to eq(expected_order.reverse)
+  end
+
+end
