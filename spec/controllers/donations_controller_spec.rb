@@ -16,17 +16,17 @@ RSpec.describe DonationsController, type: :controller do
   end
 
   describe "POST#create" do
-    let!(:inventory){ create(:inventory) }
+    let!(:storage_location){ create(:storage_location) }
     let!(:dropoff_location) { create(:dropoff_location) }
 
     it "redirects to GET#edit on success" do
-      post :create, params: { donation: { inventory_id: inventory.id, dropoff_location_id: dropoff_location.id, source: "foo" } }
+      post :create, params: { donation: { storage_location_id: storage_location.id, dropoff_location_id: dropoff_location.id, source: "foo" } }
       d = Donation.last
       expect(response).to redirect_to(edit_donation_path(d))
     end
 
     it "renders GET#new with notice on failure" do
-      post :create, params: { donation: { inventory_id: nil, dropoff_location_id: nil, source: nil } }
+      post :create, params: { donation: { storage_location_id: nil, dropoff_location_id: nil, source: nil } }
       expect(response).to be_successful # Will render :new
       expect(flash[:notice]).to match(/error/i)
     end

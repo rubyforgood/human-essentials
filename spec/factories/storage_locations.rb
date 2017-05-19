@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: inventories
+# Table name: storage_locations
 #
 #  id         :integer          not null, primary key
 #  name       :string
@@ -10,7 +10,7 @@
 #
 
 FactoryGirl.define do
-  factory :inventory do
+  factory :storage_location do
     transient do
       item_quantity 100
       item nil
@@ -20,10 +20,10 @@ FactoryGirl.define do
     address "1500 Remount Road, Front Royal, VA"
 
     trait :with_items do
-      after(:create) do |inventory, evaluator|
+      after(:create) do |storage_location, evaluator|
         item = (evaluator.item.nil?) ? create(:item) : evaluator.item
         item.save if item.new_record?
-        create_list(:inventory_item, 1, inventory: inventory, quantity: evaluator.item_quantity, item: item)
+        create_list(:inventory_item, 1, storage_location: storage_location, quantity: evaluator.item_quantity, item: item)
       end
     end
   end

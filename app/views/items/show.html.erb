@@ -7,17 +7,16 @@
 <table id="inventories">
   <thead>
     <tr>
-      <th>Inventory</th>
+      <th>Storage location</th>
       <th>Quantity</th>
     </tr>
   </thead>
   <tbody>
-
-    <% total = 0; @in_inventories.each do |inventory| 
-       total += inventory.item_total(@item) %>
+    <% total = 0; @in_inventories.each do |storage|
+       total += storage.item_total(@item) %>
       <tr>
-        <td><%= link_to inventory.name, inventory_path(inventory) %></td>
-        <td><%= inventory.item_total(@item) %></td>
+        <td><%= link_to storage.name, storage_location_path(storage) %></td>
+        <td><%= storage.item_total(@item) %></td>
       </tr>
     <% end %>
   </tbody>

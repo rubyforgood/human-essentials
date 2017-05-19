@@ -2,9 +2,9 @@
 
 <%= simple_form_for @transfer do |f| %>
 
-<%= f.association :from, label: "From inventory", collection: @inventories, error: "Which inventory is the source?" %>
-<%= f.association :to, collection: @inventories, label: "To inventory", error: "Which inventory is receiving this?" %>
+  <%= f.association :from, label: "From storage location", collection: @storage_locations, error: "Which location are you moving inventory from?" %>
+  <%= f.association :to, collection: @storage_locations, label: "To storage location", error: "Which location is receiving this?" %>
 
-<%= f.button :submit %>
+  <%= f.button :submit %>
 
 <% end %>

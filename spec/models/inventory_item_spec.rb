@@ -2,12 +2,12 @@
 #
 # Table name: inventory_items
 #
-#  id           :integer          not null, primary key
-#  quantity     :integer
-#  created_at   :datetime
-#  updated_at   :datetime
-#  inventory_id :integer
-#  item_id      :integer
+#  id                  :integer          not null, primary key
+#  quantity            :integer
+#  created_at          :datetime
+#  updated_at          :datetime
+#  storage_location_id :integer
+#  item_id             :integer
 #
 
 RSpec.describe InventoryItem, type: :model do
@@ -27,7 +27,7 @@ RSpec.describe InventoryItem, type: :model do
       end
     end
     it "requires an inventory association" do
-      expect(build(:inventory_item, inventory_id: nil)).not_to be_valid
+      expect(build(:inventory_item, storage_location_id: nil)).not_to be_valid
     end
     it "requires an item" do
       expect(build(:inventory_item, item_id: nil)).not_to be_valid

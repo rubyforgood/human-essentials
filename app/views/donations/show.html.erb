@@ -5,7 +5,7 @@
 <ul>
   <li>It was collected through: <%= @donation.source %></li>
   <li>It was dropped off at: <%= @donation.dropoff_location.name %></li>
-  <li>It will be stored at: <%= @donation.inventory.name %></li>
+  <li>It will be stored at: <%= @donation.storage_location.name %></li>
 </ul>
 <%= link_to "Make a correction >", edit_donation_path(@donation) %>
 </fieldset>
@@ -23,7 +23,7 @@
     </tbody>
   </table>
 
-<!-- 
+<!--
 TODO: What's the best way to do this? Should we use a new workflow?
 -->
 </section>
