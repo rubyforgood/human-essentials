@@ -1,21 +1,22 @@
 RSpec.describe DistributionsController, type: :controller do
+  let!(:current_organization) { create(:organization) }
 
   describe "GET #print" do
-    subject { get :print, params: { id: create(:distribution).id } }
+    subject { get :print, params: { organization_id: current_organization, id: create(:distribution).id } }
     it "returns http success" do
       expect(subject).to be_successful
     end
   end
 
   describe "GET #reclaim" do
-    subject { get :reclaim, params: { id: create(:distribution).id } }
+    subject { get :reclaim, params: { organization_id: current_organization, id: create(:distribution).id } }
     it "returns http success" do
       expect(subject).to be_successful
     end
   end
 
   describe "GET #index" do
-    subject { get :index }
+    subject { get :index, params: { organization_id: current_organization } }
     it "returns http success" do
       expect(subject).to be_successful
     end
