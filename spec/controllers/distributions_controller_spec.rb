@@ -1,16 +1,14 @@
-
-
-RSpec.describe TicketsController, type: :controller do
+RSpec.describe DistributionsController, type: :controller do
 
   describe "GET #print" do
-    subject { get :print, params: { id: create(:ticket).id } }
+    subject { get :print, params: { id: create(:distribution).id } }
     it "returns http success" do
       expect(subject).to be_successful
     end
   end
 
   describe "GET #reclaim" do
-    subject { get :reclaim, params: { id: create(:ticket).id } }
+    subject { get :reclaim, params: { id: create(:distribution).id } }
     it "returns http success" do
       expect(subject).to be_successful
     end
@@ -27,14 +25,13 @@ RSpec.describe TicketsController, type: :controller do
     it "redirects to #show on success" do
       i = create(:inventory)
       p = create(:partner)
-      post :create, params: { ticket: { inventory_id: i.id, partner_id: p.id } }
-      t = Ticket.last
-      expect(response).to redirect_to(ticket_path(t.id))
+      post :create, params: { distribution: { inventory_id: i.id, partner_id: p.id } }
+      d = Distribution.last
+      expect(response).to redirect_to(distribution_path(d.id))
     end
 
     it "renders #new again on failure, with notice" do
-      post :create, params: { ticket: { comment: nil, partner_id: nil, inventory_id: nil } }
-      t = Ticket.last
+      post :create, params: { distribution: { comment: nil, partner_id: nil, inventory_id: nil } }
       expect(response).to be_successful
       expect(flash[:notice]).to match(/error/i)
     end
@@ -48,7 +45,7 @@ RSpec.describe TicketsController, type: :controller do
   end
 
   describe "GET #show" do
-    subject { get :show, params: { id: create(:ticket) } }
+    subject { get :show, params: { id: create(:distribution) } }
     it "returns http success" do
       expect(subject).to be_successful
     end

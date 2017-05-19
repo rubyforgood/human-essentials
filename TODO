@@ -25,7 +25,7 @@ app/models/holding.rb:
 
 app/models/inventory.rb:
   * [ 73] - this action is happening in the Transfer model/controller - does this method belong here?
-  * [105] - this action is happening in the TicketsController. Is this model the correct place for this method?
+  * [105] - this action is happening in the DistributionsController. Is this model the correct place for this method?
 
 app/models/transfer.rb:
   * [ 26] - this could probably be made an association method for the `containers` association

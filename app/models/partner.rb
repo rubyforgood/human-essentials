@@ -10,7 +10,7 @@
 #
 
 class Partner < ApplicationRecord
-  has_many :tickets
+  has_many :distributions
 
   validates :name, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160824014043) do
+ActiveRecord::Schema.define(version: 20170519134505) do
 
   create_table "barcode_items", force: :cascade do |t|
     t.string   "value"
@@ -28,6 +28,16 @@ ActiveRecord::Schema.define(version: 20160824014043) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.index ["itemizable_id", "itemizable_type"], name: "index_containers_on_itemizable_id_and_itemizable_type"
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.text     "comment"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "inventory_id"
+    t.integer  "partner_id"
+    t.index ["inventory_id"], name: "index_distributions_on_inventory_id"
+    t.index ["partner_id"], name: "index_distributions_on_partner_id"
   end
 
   create_table "donations", force: :cascade do |t|
@@ -76,16 +86,6 @@ ActiveRecord::Schema.define(version: 20160824014043) do
     t.string   "email"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "tickets", force: :cascade do |t|
-    t.text     "comment"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "inventory_id"
-    t.integer  "partner_id"
-    t.index ["inventory_id"], name: "index_tickets_on_inventory_id"
-    t.index ["partner_id"], name: "index_tickets_on_partner_id"
   end
 
   create_table "transfers", force: :cascade do |t|

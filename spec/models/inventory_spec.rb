@@ -100,17 +100,17 @@ RSpec.describe Inventory, type: :model do
     describe "distribute!" do
       it "distrbutes items from inventory" do
         inventory = create :inventory, :with_items, item_quantity: 300
-        ticket = build :ticket, :with_items, inventory: inventory, item_quantity: 50
-        inventory.distribute!(ticket)
+        distribution = build :distribution, :with_items, inventory: inventory, item_quantity: 50
+        inventory.distribute!(distribution)
         expect(inventory.holdings.first.quantity).to eq 250
       end
 
-      it "raises error when ticket exceeds inventory" do
+      it "raises error when distribution exceeds inventory" do
         inventory = create :inventory, :with_items, item_quantity: 300
-        ticket = build :ticket, :with_items, inventory: inventory, item_quantity: 350
-        item = ticket.containers.first.item
+        distribution = build :distribution, :with_items, inventory: inventory, item_quantity: 350
+        item = distribution.containers.first.item
         expect {
-          inventory.distribute!(ticket)
+          inventory.distribute!(distribution)
         }.to raise_error do |error|
           expect(error).to be_a Errors::InsufficientAllotment
           expect(error.insufficient_items).to include({
@@ -126,14 +126,14 @@ RSpec.describe Inventory, type: :model do
     describe "move_inventory!" do
       pending "removes items from inventory and adds them to another inventory"
 
-      pending "raises error when ticket exceeds inventory"
+      pending "raises error when distribution exceeds inventory"
     end
 
     describe "reclaim!" do
-      it "adds ticket items back to inventory" do
+      it "adds distribution items back to inventory" do
         inventory = create :inventory, :with_items, item_quantity: 300
-        ticket = create :ticket, :with_items, inventory: inventory, item_quantity: 50
-        inventory.reclaim!(ticket)
+        distribution = create :distribution, :with_items, inventory: inventory, item_quantity: 50
+        inventory.reclaim!(distribution)
         expect(inventory.holdings.first.quantity).to eq 350
       end
     end

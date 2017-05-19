@@ -21,9 +21,9 @@ FactoryGirl.define do
 		trait :donation do
 		end
 
-		trait :ticket do
-			itemizable_type "Ticket"
-			itemizable_id { create(:ticket).id }
+		trait :distribution do
+			itemizable_type "Distribution"
+			itemizable_id { create(:distribution).id }
 		end
 	end
 end

@@ -12,7 +12,7 @@
 class Inventory < ApplicationRecord
   has_many :holdings
   has_many :donations
-  has_many :tickets
+  has_many :distributions
   has_many :items, through: :holdings
 
   validates :name, presence: true
@@ -50,10 +50,10 @@ class Inventory < ApplicationRecord
     log
   end
 
-  def distribute!(ticket)
+  def distribute!(distribution)
     updated_quantities = {}
     insufficient_items = []
-    ticket.containers.each do |container|
+    distribution.containers.each do |container|
       holding = self.holdings.find_by(item: container.item)
       next if holding.nil? || holding.quantity == 0
       if holding.quantity >= container.quantity
@@ -70,7 +70,7 @@ class Inventory < ApplicationRecord
 
     unless insufficient_items.empty?
       raise Errors::InsufficientAllotment.new(
-        "Ticket containers exceed the available inventory",
+        "Distribution containers exceed the available inventory",
         insufficient_items)
     end
 
@@ -87,7 +87,7 @@ class Inventory < ApplicationRecord
       next if holding.nil? || holding.quantity == 0
       if holding.quantity >= container.quantity
         updated_quantities[holding.id] = (updated_quantities[holding.id] || holding.quantity) - container.quantity
-        updated_quantities[new_holding.id] = (updated_quantities[new_holding.id] || 
+        updated_quantities[new_holding.id] = (updated_quantities[new_holding.id] ||
           new_holding.quantity) + container.quantity
       else
         insufficient_items << {
@@ -109,15 +109,15 @@ class Inventory < ApplicationRecord
   end
 
 
-  # TODO - this action is happening in the TicketsController. Is this model the correct place for this method?
-  def reclaim!(ticket)
+  # TODO - this action is happening in the DistributionsController. Is this model the correct place for this method?
+  def reclaim!(distribution)
     ActiveRecord::Base.transaction do
-      ticket.containers.each do |container|
+      distribution.containers.each do |container|
         holding = self.holdings.find_by(item: container.item)
         holding.update_attribute(:quantity, holding.quantity + container.quantity)
       end
     end
-    ticket.destroy
+    distribution.destroy
   end
 
   private
