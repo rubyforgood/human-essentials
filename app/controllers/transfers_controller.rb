@@ -4,9 +4,9 @@ class TransfersController < ApplicationController
   end
 
   def create
-    @transfer = Transfer.new(transfer_params)
+    @transfer = Transfer.new(transfer_params.merge({ organization_id: current_organization.id }) )
     if (@transfer.save)
-      redirect_to transfer_path(@transfer)
+      redirect_to transfer_path(organization_id: current_organization.short_name, id: @transfer)
     else
       flash[:notice] = "There was an error, try again?"
       render :new

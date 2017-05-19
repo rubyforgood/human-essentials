@@ -26,7 +26,7 @@ class DonationsController < ApplicationController
   end
 
   def create
-    @donation = Donation.new(donation_params)
+    @donation = Donation.new(donation_params.merge(organization: current_organization))
     if (@donation.save)
       redirect_to(edit_donation_path(@donation))
     else
