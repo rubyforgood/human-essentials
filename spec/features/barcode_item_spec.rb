@@ -1,5 +1,5 @@
 RSpec.feature "Barcode management", type: :feature do
-  
+
   scenario "User adds a new barcode" do
   	item = create(:item)
   	barcode_traits = attributes_for(:barcode_item)
@@ -34,4 +34,17 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page).to have_css("table tbody tr", count: 1)
   end
 
+  scenario "Filter presented to user lists items in alphabetical order" do
+    item1 = create(:item, name: "AAA Diapers")
+    item2 = create(:item, name: "Wonder Diapers")
+    item3 = create(:item, name: "ABC Diapers")
+    expected_order = [item1.name, item3.name, item2.name]
+    create(:barcode_item, item: item3)
+    create(:barcode_item, item: item2)
+    create(:barcode_item, item: item1)
+    visit "/barcode_items"
+
+    expect(page.all('select#filters_item_id option').map(&:text)).to eq(expected_order)
+    expect(page.all('select#filters_item_id option').map(&:text)).not_to eq(expected_order.reverse)
+  end
 end

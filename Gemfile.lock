@@ -340,6 +340,7 @@ DEPENDENCIES
   listen (~> 3.0.5)
   pg (~> 0.18)
   prawn-rails
+  pry
   puma (~> 3.0)
   rails (~> 5.0.2)
   rspec-rails
