@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :users
+
   scope path: ':organization_id' do
     resources :transfers, only: [:index, :create, :new, :show]
 
