@@ -37,8 +37,9 @@ ActiveRecord::Schema.define(version: 20170519144942) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "inventory_id"
-    t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id"
-    t.index ["inventory_id"], name: "index_donations_on_inventory_id"
+    t.text     "comment"
+    t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id", using: :btree
+    t.index ["inventory_id"], name: "index_donations_on_inventory_id", using: :btree
   end
 
   create_table "dropoff_locations", force: :cascade do |t|
