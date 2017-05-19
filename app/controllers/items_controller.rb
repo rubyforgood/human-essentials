@@ -1,6 +1,6 @@
 class ItemsController < ApplicationController
   def index
-    @items = Item.filter(filter_params)
+    @items = Item.alphabetized.filter(filter_params)
     @categories = Item.categories
   end
 

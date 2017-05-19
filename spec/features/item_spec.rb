@@ -1,5 +1,5 @@
 RSpec.feature "Item management", type: :feature do
-    
+
   scenario "User creates a new item" do
     visit '/items/new'
     item_traits = attributes_for(:item)
@@ -19,7 +19,7 @@ RSpec.feature "Item management", type: :feature do
     expect(page.find('.flash.success')).to have_content "updated"
   end
 
-   scenario "User can filter the #index by category type" do
+  scenario "User can filter the #index by category type" do
     item = create(:item, category: "same")
     item2 = create(:item, category: "different")
     visit "/items"
@@ -29,5 +29,14 @@ RSpec.feature "Item management", type: :feature do
     expect(page).to have_css("table tbody tr", count: 1)
   end
 
+  scenario "Filters presented to user are alphabetized by category" do
+    item = create(:item, category: "same")
+    item2 = create(:item, category: "different")
+    expected_order = [item2.category, item.category]
+    visit "/items"
+
+    expect(page.all('select#filters_in_category option').map(&:text)).to eq(expected_order)
+    expect(page.all('select#filters_in_category option').map(&:text)).not_to eq(expected_order.reverse)
+  end
 
 end

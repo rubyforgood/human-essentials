@@ -52,6 +52,15 @@ RSpec.describe Item, type: :model do
         result = Item.categories
         expect(result.length).to eq(2)
       end
+
+      it "returns the list of categories alphabetized" do
+        item1 = create(:item, category: "one")
+        item2 = create(:item, category: "two")
+        item3 = create(:item, category: "three")
+        alphabetized_list = [ item1, item3, item2 ]
+        result = Item.categories
+        expect(result.map(&:category)).to eq(alphabetized_list.map(&:category))
+      end
     end
 
     describe "storage_locations_containing" do
@@ -70,6 +79,17 @@ RSpec.describe Item, type: :model do
         create(:barcode_item)
         expect(Item.barcodes_for(item).first).to eq(barcode_item)
       end
+    end
+  end
+
+  context "Alphabetized Scope >" do
+    it "retrieves items in alphabetical order" do
+      item_c = create(:item, name: "C")
+      item_b = create(:item, name: "B")
+      item_a = create(:item, name: "A")
+      alphabetized_list = [item_a.name, item_b.name, item_c.name]
+      expect(Item.alphabetized.count).to eq(3)
+      expect(Item.alphabetized.map(&:name)).to eq(alphabetized_list)
     end
   end
 end

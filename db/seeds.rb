@@ -6,45 +6,87 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 # Creates Seed Data for the organization
+
+pdx_org = Organization.find_or_create_by!(name: "Portland Diaper Bank", short_name: "pdx_bank") do |organization|
+  organization.address = "P.O. Box 22613, Portland OR 97269"
+  organization.email = "info@pdxdiaperbank.org"
+end
+
 DropoffLocation.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
   location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"
+  location.organization = pdx_org
 end
 DropoffLocation.find_or_create_by!(name: "Tidee Didee Diaper Service") do |location|
   location.address = "6011 SE 92nd Ave., Portland,OR 97266"
+  location.organization = pdx_org
 end
 DropoffLocation.find_or_create_by!(name: "Southside Swap & Play") do |location|
   location.address = "5239 SE Woodstock Ave, Portland, OR 97206"
+  location.organization = pdx_org
 end
 DropoffLocation.find_or_create_by!(name: "Kuts 4 Kids & Adults") do |location|
   location.address = "4423 SE Hawthorne Blvd., Portland, OR 97215"
+  location.organization = pdx_org
 end
 DropoffLocation.find_or_create_by!(name: "JJ Jump") do |location|
   location.address = "9057 SE Jannsen Rd., Clackamas, OR 97015"
+  location.organization = pdx_org
 end
 
-Partner.find_or_create_by!(name: "Teen Parent Services - PPS", email: "someone@teenservices.org")
-Partner.find_or_create_by!(name: "Portland Homeless Family Solutions", email: "anyone@portlandhomeless.com")
-Partner.find_or_create_by!(name: "Pregnancy Resource Center", email: "contactus@pregnancyresources.com")
-Partner.find_or_create_by!(name: "Rose Haven", email: "contact@rosehaven.com")
-Partner.find_or_create_by!(name: "Volunteers of America", email: "info@volunteersofamerica.org")
-Partner.find_or_create_by!(name: "Clackamas Service Center", email: "outreach@clackamas.com")
-Partner.find_or_create_by!(name: "Housing Alternatives", email: "support@housingalternatives.com")
-Partner.find_or_create_by!(name: "JOIN", email: "info@join.org")
-Partner.find_or_create_by!(name: "Emmanuel Housing Center", email: "contact@emmanuelhousingcenter.com")
-Partner.find_or_create_by!(name: "Catholic Charities", email: "contactus@catholiccharities.org")
-Partner.find_or_create_by!(name: "Healthy Families of Oregon", email: "info@oregonfamilies.org")
-Partner.find_or_create_by!(name: "NARA Northwest", email: "contactus@naranorthwest.org")
-Partner.find_or_create_by!(name: "Job Corps", email: "someone@jobcorps.org")
-Partner.find_or_create_by!(name: "Helensview Middle and High School", email: "programs@helensviewschooldistrict.edu")
+Partner.find_or_create_by!(name: "Teen Parent Services - PPS", email: "someone@teenservices.org") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Portland Homeless Family Solutions", email: "anyone@portlandhomeless.com") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Pregnancy Resource Center", email: "contactus@pregnancyresources.com") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Rose Haven", email: "contact@rosehaven.com") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Volunteers of America", email: "info@volunteersofamerica.org") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Clackamas Service Center", email: "outreach@clackamas.com") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Housing Alternatives", email: "support@housingalternatives.com") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "JOIN", email: "info@join.org") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Emmanuel Housing Center", email: "contact@emmanuelhousingcenter.com") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Catholic Charities", email: "contactus@catholiccharities.org") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Healthy Families of Oregon", email: "info@oregonfamilies.org") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "NARA Northwest", email: "contactus@naranorthwest.org") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Job Corps", email: "someone@jobcorps.org") do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Helensview Middle and High School", email: "programs@helensviewschooldistrict.edu") do |partner|
+  partner.organization = pdx_org
+end
 
-inv_arbor = Inventory.find_or_create_by!(name: "Bulk Storage (Arborscape)") do |inventory|
+inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage (Arborscape)") do |inventory|
   inventory.address = "Unknown"
+  inventory.organization = pdx_org
 end
-inv_dsu = Inventory.find_or_create_by!(name: "Diaper Storage Unit") do |inventory|
+inv_dsu = StorageLocation.find_or_create_by!(name: "Diaper Storage Unit") do |inventory|
   inventory.address = "Unknown"
+  inventory.organization = pdx_org
 end
-inv_pdxdb = Inventory.find_or_create_by!(name: "PDX Diaper Bank (Office)") do |inventory|
+inv_pdxdb = StorageLocation.find_or_create_by!(name: "PDX Diaper Bank (Office)") do |inventory|
   inventory.address = "Unknown"
+  inventory.organization = pdx_org
 end
 
 # qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
@@ -102,21 +144,86 @@ items_by_category = {
   ]
 }
 
-def seed_quantity(item_id, inventory_id, quantity)
+def seed_quantity(item_id, storage_location_id, quantity)
   return if (quantity == 0)
-  InventoryItem.find_or_create_by(item_id: item_id, inventory_id: inventory_id) { |h|
+  InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) { |h|
     h.quantity = quantity
   }
 end
 
 items_by_category.each do |category, entries|
   entries.each do |entry|
-    item = Item.find_or_create_by!(name: entry[:name])
+    item = Item.find_or_create_by!(name: entry[:name], organization: pdx_org)
     item.update_attributes(entry.except(:name).except(:qty).merge(category: category))
 
     seed_quantity(item.id, inv_arbor.id, entry[:qty][0])
     seed_quantity(item.id, inv_dsu.id, entry[:qty][1])
     seed_quantity(item.id, inv_pdxdb.id, entry[:qty][2])
-
   end
+end
+
+BarcodeItem.find_or_create_by!(value: "10037867880046") do |barcode|
+  barcode.item =  Item.find_by(name: "Kids (Size 5)")
+  barcode.quantity = 108
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "10037867880053") do |barcode|
+  barcode.item = Item.find_by(name: "Kids (Size 6)")
+  barcode.quantity = 92
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "10037867880039") do |barcode|
+  barcode.item = Item.find_by(name: "Kids (Size 4)")
+  barcode.quantity = 124
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "803516626364") do |barcode|
+  barcode.item = Item.find_by(name: "Kids (Size 1)")
+  barcode.quantity = 40
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "036000406535") do |barcode|
+  barcode.item = Item.find_by(name: "Kids (Size 1)")
+  barcode.quantity = 44
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "037000863427") do |barcode|
+  barcode.item = Item.find_by(name: "Kids (Size 1)")
+  barcode.quantity = 35
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "041260379000") do |barcode|
+  barcode.item = Item.find_by(name: "Kids (Size 3)")
+  barcode.quantity = 160
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "074887711700") do |barcode|
+  barcode.item = Item.find_by(name: "Wipes (Baby)")
+  barcode.quantity = 8
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "036000451306") do |barcode|
+  barcode.item = Item.find_by(name: "Kids Pull-Ups (4T-5T)")
+  barcode.quantity = 56
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "037000862246") do |barcode|
+  barcode.item =  Item.find_by(name: "Kids (Size 4)")
+  barcode.quantity = 92
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "041260370236") do |barcode|
+  barcode.item =  Item.find_by(name: "Kids (Size 4)")
+  barcode.quantity = 68
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "036000407679") do |barcode|
+  barcode.item =  Item.find_by(name: "Kids (Size 4)")
+  barcode.quantity = 24
+  barcode.organization = pdx_org
+end
+BarcodeItem.find_or_create_by!(value: "311917152226") do |barcode|
+  barcode.item =  Item.find_by(name: "Kids (Size 4)")
+  barcode.quantity = 82
+  barcode.organization = pdx_org
 end
