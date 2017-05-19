@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :users
+
   resources :transfers, only: [:index, :create, :new, :show]
 
   resources :distributions, only: [:index, :create, :new, :show] do
