@@ -8,12 +8,38 @@
 
     <%= stylesheet_link_tag    "application" %>
     <%= javascript_include_tag "application", 'data-turbolinks-track' => true %>
-    <% javascript_include_tag "vendor/modernizr" %>
+    <%= javascript_include_tag "vendor/modernizr" %>
 
     <%= csrf_meta_tags %>
   </head>
 
   <body>
+
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <ul class="dropdown menu" data-dropdown-menu>
+        <li class="menu-text">PDX Diaper Bank</li>
+        <li><a href="<%= dashboard_path(organization: @organization) %>">Dashboard</a></li>
+        <li class="has-submenu">
+          <a href="#0">Dashboard</a>
+          <ul class="submenu menu vertical" data-submenu>
+            <li><a href="#0">One</a></li>
+            <li><a href="#0">Two</a></li>
+            <li><a href="#0">Three</a></li>
+          </ul>
+        </li>
+        <li><a href="#0">Two</a></li>
+        <li><a href="#0">Three</a></li>
+      </ul>
+    </div>
+    <div class="top-bar-right">
+      <ul class="menu">
+        <li><input type="search" placeholder="Search"></li>
+        <li><button type="button" class="button">Search</button></li>
+      </ul>
+    </div>
+  </div>
+
     <%= display_flash_messages %>
 
     <%= yield %>
