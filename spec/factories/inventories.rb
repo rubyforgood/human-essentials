@@ -19,7 +19,7 @@ FactoryGirl.define do
 
     name "Smithsonian Institute"
     address "1500 Remount Road, Front Royal, VA"
-    organization
+    organization { Organization.try(:first) || create(:organization) }
 
     trait :with_items do
       after(:create) do |inventory, evaluator|

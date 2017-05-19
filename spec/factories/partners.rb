@@ -14,6 +14,6 @@ FactoryGirl.define do
   factory :partner do
     sequence(:name) { |n| "Leslie Sue, the #{n}" }
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
-    organization
+    organization { Organization.try(:first) || create(:organization) }
   end
 end

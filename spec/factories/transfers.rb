@@ -14,7 +14,7 @@
 FactoryGirl.define do
 
   factory :transfer do
-  	organization
+  	organization { Organization.try(:first) || create(:organization) }
   	from_id { create(:inventory).id }
   	to_id { create(:inventory).id }
   	comment "A comment"
