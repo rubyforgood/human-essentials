@@ -1,0 +1,15 @@
+<% content_for :title, "#{current_organization.name } Dashboard" %>
+
+<div class='row'>
+  <div class='large-12 columns'>
+    <h1>Dashboard</h1>
+  </div>
+
+  <div class='medium-6 large-6 columns'>
+    <a class='button large expanded success' href='<%= new_donation_path %>'>Create Donation</a>
+  </div>
+
+  <div class='medium-6 large-6 columns'>
+    <a class='button large expanded warning' href='<%= new_distribution_path %>'>Create Distribution</a>
+  </div>
+</div>

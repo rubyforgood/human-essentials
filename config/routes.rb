@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   devise_for :users
 
   scope path: ':organization_id' do
@@ -20,6 +21,8 @@ Rails.application.routes.draw do
       patch :remove_item, on: :member
       patch :complete, on: :member
     end
+
+    get 'dashboard', to: 'dashboard#show'
 
   end
 
