@@ -14,10 +14,10 @@
 </table>
 
 <section id="filters">
-  <%= form_tag(barcode_items_path(organization_url_options), method: :get) do |f| %>
+  <%= form_tag(barcode_items_path, method: :get) do |f| %>
     <%= label_tag "Filter by Item" %>
     <%= collection_select(:filters, :item_id, @items, :id, :name) %>
     <%= submit_tag "Filter" %>
   <% end %>
-  <%= link_to "Clear Filters", barcode_items_path(organization_url_options) %>
+  <%= link_to "Clear Filters", barcode_items_path %>
 </section>
