@@ -27,3 +27,5 @@ pdx_db_test
 
 # Ignore compiled assets
 /public/assets
+
+.rails_routes*
