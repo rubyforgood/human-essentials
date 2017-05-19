@@ -30,3 +30,4 @@ pdx_db_test
 /public/assets
 
 .rails_routes*
+.rake_tasks~
