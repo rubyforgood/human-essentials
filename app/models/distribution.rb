@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: tickets
+# Table name: distributions
 #
 #  id           :integer          not null, primary key
 #  comment      :text
@@ -10,16 +10,16 @@
 #  partner_id   :integer
 #
 
-class Ticket < ApplicationRecord
+class Distribution < ApplicationRecord
 
-  # Tickets are issued from a single inventory, so we associate them so that
+  # Distributions are issued from a single inventory, so we associate them so that
   # on-hand amounts can be verified
   belongs_to :inventory
 
-  # Tickets are issued to a single partner
+  # Distributions are issued to a single partner
   belongs_to :partner
 
-  # Tickets contain many different items
+  # Distributions contain many different items
   has_many :containers, as: :itemizable, inverse_of: :itemizable
   has_many :items, through: :containers
   accepts_nested_attributes_for :containers,

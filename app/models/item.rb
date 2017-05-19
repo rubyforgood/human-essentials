@@ -18,7 +18,7 @@ class Item < ApplicationRecord
   has_many :barcode_items
   has_many :inventories, through: :holdings
   has_many :donations, through: :containers, source: :itemizable, source_type: Donation
-  has_many :tickets, through: :containers, source: :itemizable, source_type: Ticket
+  has_many :distributions, through: :containers, source: :itemizable, source_type: Distribution
 
   include Filterable
   scope :in_category, ->(category) { where(category: category) }

@@ -1,0 +1,23 @@
+<h1>Distribution Manifest for <%= @distribution.updated_at.strftime('%B %-d %Y') %> Distribution to <%= @distribution.partner.name %></h1>
+
+<fieldset>
+<ul>
+  <li>Source inventory: <%= @distribution.inventory.name %></li>
+</ul>
+</fieldset>
+
+
+<section id="containers">
+  <table>
+    <thead>
+      <th>Quantity</th>
+      <th>Item</th>
+    </thead>
+
+    <tbody>
+      <%= render partial: "distribution_item_row", collection: @containers %>
+    </tbody>
+  </table>
+
+
+</section>
