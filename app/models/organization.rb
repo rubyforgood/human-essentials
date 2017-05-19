@@ -23,4 +23,9 @@ class Organization < ApplicationRecord
   has_many :items
   has_many :partners
   has_many :transfers
+
+  # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
+  def to_param
+    short_name
+  end
 end
