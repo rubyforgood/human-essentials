@@ -12,6 +12,8 @@ pdx_org = Organization.find_or_create_by!(name: "Portland Diaper Bank", short_na
   organization.email = "info@pdxdiaperbank.org"
 end
 
+user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org
+
 DropoffLocation.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
   location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"
   location.organization = pdx_org
