@@ -31,7 +31,7 @@ RSpec.describe DistributionsController, type: :controller do
       expect(p).to be_valid
 
       post :create, params: { organization_id: current_organization.short_name,
-                              { distribution: { storage_location_id: i.id, partner_id: p.id } }
+                              distribution: { storage_location_id: i.id, partner_id: p.id } }
       expect(response).to have_http_status(:redirect)
 
       d = Distribution.last
