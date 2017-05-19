@@ -1,10 +1,48 @@
-<h1>Transfer across inventories</h1>
+<h1>Transfer inventory</h1>
 
-<%= simple_form_for @transfer do |f| %>
+<%= simple_form_for @transfer, wrapper: :horizontal_form do |f| %>
 
-  <%= f.association :from, label: "From storage location", collection: @storage_locations, error: "Which location are you moving inventory from?" %>
-  <%= f.association :to, collection: @storage_locations, label: "To storage location", error: "Which location is receiving this?" %>
+  <%= f.association :from,
+    collection: @storage_locations,
+    label: "From storage location",
+    error: "Which location are you moving inventory from?",
+    input_html: {
+      data: {
+        storage_location_inventory_path: inventory_storage_location_path(
+          organization_id: current_organization,
+          id: ":id",
+          format: :json
+        )
+      }
+    }
+  %>
 
-  <%= f.button :submit %>
+  <%= f.association :to,
+    collection: @storage_locations,
+    label: "To storage location",
+    error: "Which location is receiving this?" %>
 
+  <%= f.input :comment %>
+
+  <%= f.simple_fields_for :line_items do |item| %>
+    <div id="transfer_line_items">
+      <%= render 'line_item_fields', f: item %>
+    </div>
+    <div class="row links">
+      <div class="small-offset-3 small-9 columns">
+        <%= link_to_add_association "add line item", f, :line_items,
+          data: {
+            association_insertion_node: "#transfer_line_items",
+            association_insertion_method: "append"
+          }
+        %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="small-offset-3 small-9 columns">
+      <%= f.button :submit %>
+    </div>
+  </div>
 <% end %>

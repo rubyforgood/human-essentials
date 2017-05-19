@@ -1,0 +1,12 @@
+<div class="nested-fields">
+  <div class="row">
+    <div class="small-3 small-offset-3 columns">
+      <%= f.input_field :item, collection: @items, prompt: "Choose an item" %>
+    </div>
+    <div class="small-2 columns">
+      <%= f.input_field :quantity, placeholder: "Quantity" %>
+    </div>
+
+      <%= link_to_remove_association "X", f, class: "button tiny alert float-left" %>
+  </div>
+</div>
