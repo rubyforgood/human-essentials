@@ -14,6 +14,8 @@ class Adjustment < ApplicationRecord
   private
 
   def storage_locations_belong_to_organization
+    return if self.organization.nil?
+
     if !self.organization.storage_locations.include?(self.storage_location)
       errors.add :storage_location, 'storage location must belong to organization'
     end

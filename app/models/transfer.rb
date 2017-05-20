@@ -44,6 +44,8 @@ class Transfer < ApplicationRecord
   private
 
   def storage_locations_belong_to_organization
+    return if self.organization.nil?
+
     if !self.organization.storage_locations.include?(self.from)
       errors.add :from, 'from location must belong to organization'
     end
