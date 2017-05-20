@@ -1,27 +1,33 @@
 class TransfersController < ApplicationController
   def index
-    @transfers = Transfer.includes(:line_items).includes(:from).includes(:to).all
+    @transfers = current_organization.transfers.includes(:line_items).includes(:from).includes(:to).all
   end
 
   def create
-    @transfer = Transfer.new(transfer_params.merge(organization_id: current_organization.id))
+    @transfer = current_organization.transfers.new(transfer_params)
+
+    @transfer.from.move_inventory!(@transfer)
+
     if @transfer.save
       redirect_to transfer_path(organization_id: current_organization.short_name, id: @transfer)
     else
       flash[:notice] = "There was an error, try again?"
       render :new
     end
+  rescue Errors::InsufficientAllotment => ex
+    flash[:notice] = ex.message
+    render :new
   end
 
   def new
-    @transfer = Transfer.new
+    @transfer = current_organization.transfers.new
     @transfer.line_items.build
     @storage_locations = StorageLocation.all
     @items = Item.alphabetized
   end
 
   def show
-    @transfer = Transfer.includes(:line_items).includes(:from).includes(:to).includes(:items).find(params[:id])
+    @transfer = current_organization.transfers.includes(:line_items).includes(:from).includes(:to).includes(:items).find(params[:id])
     @total = @transfer.total_quantity
     @line_items = @transfer.sorted_line_items
   end
@@ -29,6 +35,7 @@ class TransfersController < ApplicationController
   private
 
   def transfer_params
-    params.require(:transfer).permit(:from_id, :to_id, :comment, line_items_attributes: [:item_id, :quantity, :_destroy])
+    params.require(:transfer).permit(:from_id, :to_id, :comment,
+                                     line_items_attributes: [:item_id, :quantity, :_destroy])
   end
 end
