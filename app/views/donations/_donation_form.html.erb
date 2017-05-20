@@ -1,9 +1,29 @@
-<%= simple_form_for donation_form do |f| %>
+<%= simple_form_for @donation do |f| %>
 
-  <%= f.input :source, label: "Source", error: "What effort or initiative did this donation come from?" %>
+  <%= f.input :source, collection: Donation::SOURCES, label: "Source", error: "What effort or initiative did this donation come from?" %>
   <%= f.association :dropoff_location, collection: @dropoff_locations, label: "Dropoff Location", error: "Where was this donation dropped off?" %>
   <%= f.association :storage_location, collection: @storage_locations, label: "Storage Location", error: "Where is it being stored?" %>
 
-  <%= f.button :submit %>
+  <%= f.simple_fields_for :line_items do |item| %>
+    <div id="transfer_line_items">
+      <%= render 'line_item_fields', f: item %>
+    </div>
+    <div class="row links">
+      <div class="small-offset-3 small-9 columns">
+        <%= link_to_add_association "add line item", f, :line_items,
+        data: {
+          association_insertion_node: "#transfer_line_items",
+          association_insertion_method: "append"
+        }
+        %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="small-offset-3 small-9 columns">
+      <%= f.button :submit %>
+    </div>
+  </div>
 
 <% end %>

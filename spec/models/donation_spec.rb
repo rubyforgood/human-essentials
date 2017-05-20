@@ -4,7 +4,6 @@
 #
 #  id                  :integer          not null, primary key
 #  source              :string
-#  completed           :boolean          default("false")
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
@@ -29,26 +28,7 @@ RSpec.describe Donation, type: :model do
     end
   end
 
-  it "defaults to incomplete" do
-    expect(build(:donation).completed).to be_falsey
-  end
-
   context "Scopes >" do
-    describe "completed >" do
-      it "shows donations that are flagged complete" do
-        create(:donation, completed: false)
-        create(:donation, completed: true)
-        expect(Donation.completed.count).to eq(1)
-      end
-    end
-
-    describe "incomplete >" do
-      it "shows donations that are flagged incomplete" do
-        create(:donation, completed: false)
-        create(:donation, completed: true)
-        expect(Donation.incomplete.count).to eq(1)
-      end
-    end
     describe "between >" do
       it "returns all donations created between two dates" do
         create(:donation, created_at: 1.year.ago)
@@ -113,15 +93,6 @@ RSpec.describe Donation, type: :model do
           donation.track_from_barcode(barcode_item.to_line_item)
           donation.reload
         }.to change{donation.items.count}.by(1)
-      end
-    end
-
-    describe "complete" do
-      it "sets the `completed` field to true" do
-        donation = create(:donation)
-        expect {
-          donation.complete
-        }.to change{donation.completed}.from(false).to(true)
       end
     end
 

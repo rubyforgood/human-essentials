@@ -1,7 +1,7 @@
 class DonationsController < ApplicationController
   # We load the resources in before_filters so that they are not re-loaded
   # by Cancan, which won't use the correct methods.
-  #before_filter :simple_load, only: [:track, :remove_item, :complete, :edit, :update, :destroy]
+  #before_filter :simple_load, only: [:track, :remove_item, :edit, :update, :destroy]
   #before_filter :eager_load_single, only: [:show]
   #before_filter :load_collection, only: [:index]
   #before_filter :load_new, only: [:new]
@@ -24,22 +24,14 @@ class DonationsController < ApplicationController
     @donation.remove(donation_item_params[:item_id])
   end
 
-  def complete
-    @donation = current_organization.donations.find(params[:id])
-    @donation.complete
-    redirect_to donations_path, notice: "Completed!"
-  end
-
   def index
     @donations = Donation.includes(:line_items, :storage_location, :dropoff_location)
-    @completed = @donations.completed
-    @incomplete = @donations.incomplete
   end
 
   def create
     @donation = Donation.new(donation_params.merge(organization: current_organization))
     if (@donation.save)
-      redirect_to(edit_donation_path(@donation))
+      redirect_to donations_path
     else
       @storage_locations = StorageLocation.all
       @dropoff_locations = DropoffLocation.all
@@ -50,16 +42,17 @@ class DonationsController < ApplicationController
 
   def new
     @donation = Donation.new
+    @donation.line_items.build
     @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
-
+    @items = Item.alphabetized
   end
 
   def edit
-    @donation = current_organization.donations.find(params[:id])    
+    @donation = Donation.find(params[:id])
+    @donation.line_items.build
     @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
-
   end
 
   def show
@@ -81,11 +74,10 @@ class DonationsController < ApplicationController
 
 private
   def donation_params
-    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
   end
 
   def donation_item_params
     params.require(:donation).permit(:barcode_id, :item_id, :quantity)
   end
 end
-

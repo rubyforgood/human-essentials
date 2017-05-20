@@ -24,6 +24,3 @@ $ ->
         $.each data, (index) ->
           options += "<option value=\"" + data[index].item_id + "\">" + data[index].item_name + "</option>\n"
         $("select", insertedItem).find('option').remove().end().append(options)
-
-
-
