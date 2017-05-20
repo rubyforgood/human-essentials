@@ -75,13 +75,77 @@ RSpec.describe DonationsController, type: :controller do
       it "Disallows all access" do
         other_org = create(:organization)
         get :index, params: { organization_id: other_org.to_param }
-        expect(response).to redirect_to(root_path)
+        expect(response).to have_http_status(403)
+
+        d = create(:donation, organization: other_org)
+        single_params = { organization_id: other_org.to_param, id: d.id }
+        
+        get :new, params: { organization_id: other_org.to_param }
+        expect(response).to have_http_status(403)
+        
+        get :show, params: single_params
+        expect(response).to have_http_status(403)
+
+        patch :add_item, params: single_params
+        expect(response).to have_http_status(403)
+
+        patch :remove_item, params: single_params
+        expect(response).to have_http_status(403)
+
+        patch :complete, params: single_params
+        expect(response).to have_http_status(403)
+
+        get :edit, params: single_params
+        expect(response).to have_http_status(403)
+
+        put :update, params: single_params
+        expect(response).to have_http_status(403)
+
+        post :create, params: { organization_id: other_org.to_param }
+        expect(response).to have_http_status(403)
+
+        delete :destroy, params: single_params
+        expect(response).to have_http_status(403)
       end
     end
 
   end
 
   context "While not signed in" do
+    it "redirects the user to the sign-in page" do
+      d = create(:donation)
+      single_params = { organization_id: d.organization.to_param, id: d.id }
+
+      get :index, params: { organization_id: d.organization.to_param }
+      expect(response).to be_redirect
+
+      get :new, params: { organization_id: d.organization.to_param }
+      expect(response).to be_redirect
+
+      post :create, params: { organization_id: d.organization.to_param }
+      expect(response).to be_redirect
+      
+      get :show, params: single_params
+      expect(response).to be_redirect
+
+      patch :add_item, params: single_params
+      expect(response).to be_redirect
+
+      patch :remove_item, params: single_params
+      expect(response).to be_redirect
+
+      patch :complete, params: single_params
+      expect(response).to be_redirect
+
+      get :edit, params: single_params
+      expect(response).to be_redirect
+
+      put :update, params: single_params
+      expect(response).to be_redirect
+
+      delete :destroy, params: single_params
+      expect(response).to be_redirect
+    end
   end
 
 end

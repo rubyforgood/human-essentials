@@ -59,7 +59,6 @@ GEM
     bindex (0.5.0)
     builder (3.2.3)
     byebug (9.0.6)
-    cancancan (1.16.0)
     capistrano (3.8.1)
       airbrussh (>= 1.0.0)
       i18n
@@ -320,7 +319,6 @@ DEPENDENCIES
   awesome_print
   better_errors
   byebug
-  cancancan
   capistrano-rails
   capistrano-rbenv
   capybara
