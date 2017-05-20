@@ -7,6 +7,10 @@ class DistributionsController < ApplicationController
   def reclaim
     @distribution = Distribution.find(params[:id])
     @distribution.storage_location.reclaim!(@distribution)
+
+    flash[:notice] = "Distribution #{@distribution.id} has been reclaimed!"
+    redirect_to distributions_path
+
   end
 
   def index
