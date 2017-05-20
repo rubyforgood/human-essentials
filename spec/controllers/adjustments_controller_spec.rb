@@ -12,7 +12,7 @@ RSpec.describe AdjustmentsController, type: :controller do
   let(:valid_attributes) {
     {
       organization_id: @organization.id,
-      storage_location_id: create(:storage_location).id
+      storage_location_id: create(:storage_location, organization: @organization).id
     }
   }
 
@@ -53,14 +53,6 @@ RSpec.describe AdjustmentsController, type: :controller do
       end
     end
 
-    describe "GET #edit" do
-      it "is successful" do
-        adjustment = create(:adjustment)
-        get :edit, params: default_params.merge(id: adjustment.to_param), session: valid_session
-        expect(response).to be_successful
-      end
-    end
-
     describe "POST #create" do
       context "with valid params" do
         it "creates a new Adjustment" do
@@ -93,61 +85,5 @@ RSpec.describe AdjustmentsController, type: :controller do
         end
       end
     end
-
-    # describe "PUT #update" do
-    #   context "with valid params" do
-    #     let(:new_attributes) {
-    #       skip("Add a hash of attributes valid for your model")
-    #     }
-
-    #     it "updates the requested adjustment" do
-    #       adjustment = create(:adjustment)
-    #       put :update, params: {id: adjustment.to_param, adjustment: new_attributes}, session: valid_session
-    #       adjustment.reload
-    #       skip("Add assertions for updated state")
-    #     end
-
-    #     it "assigns the requested adjustment as @adjustment" do
-    #       adjustment = create(:adjustment)
-    #       put :update, params: {id: adjustment.to_param, adjustment: valid_attributes}, session: valid_session
-    #       expect(assigns(:adjustment)).to eq(adjustment)
-    #     end
-
-    #     it "redirects to the adjustment" do
-    #       adjustment = create(:adjustment)
-    #       put :update, params: {id: adjustment.to_param, adjustment: valid_attributes}, session: valid_session
-    #       expect(response).to redirect_to(adjustment)
-    #     end
-    #   end
-
-    #   context "with invalid params" do
-    #     it "assigns the adjustment as @adjustment" do
-    #       adjustment = create(:adjustment)
-    #       put :update, params: {id: adjustment.to_param, adjustment: invalid_attributes}, session: valid_session
-    #       expect(assigns(:adjustment)).to eq(adjustment)
-    #     end
-
-    #     it "re-renders the 'edit' template" do
-    #       adjustment = create(:adjustment)
-    #       put :update, params: {id: adjustment.to_param, adjustment: invalid_attributes}, session: valid_session
-    #       expect(response).to render_template("edit")
-    #     end
-    #   end
-    # end
-
-    # describe "DELETE #destroy" do
-    #   it "destroys the requested adjustment" do
-    #     adjustment = create(:adjustment)
-    #     expect {
-    #       delete :destroy, params: {id: adjustment.to_param}, session: valid_session
-    #     }.to change(Adjustment, :count).by(-1)
-    #   end
-
-    #   it "redirects to the adjustments list" do
-    #     adjustment = create(:adjustment)
-    #     delete :destroy, params: {id: adjustment.to_param}, session: valid_session
-    #     expect(response).to redirect_to(adjustments_url)
-    #   end
-    # end
   end
 end
