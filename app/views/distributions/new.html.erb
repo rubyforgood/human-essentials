@@ -1,2 +1,5 @@
-<h1>Distributions#new</h1>
-<p>Find me in app/views/distributions/new.html.erb</p>
+<h1>Create a new distribution</h1>
+
+<%= simple_form_for @distribution, url: new_distribution_path(organization_id: @organization.id) do |f| %>
+  <%= render partial: "distribution_form", object: f %>
+<% end %>

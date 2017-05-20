@@ -24,6 +24,7 @@ class DistributionsController < ApplicationController
 
   def new
     @distribution = Distribution.new
+    @organization = current_organization
   end
 
   def show
