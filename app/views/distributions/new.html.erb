@@ -1,2 +1,46 @@
-<h1>Distributions#new</h1>
-<p>Find me in app/views/distributions/new.html.erb</p>
+<h1>Create a new distribution</h1>
+
+<%= simple_form_for @distribution, wrapper: :horizontal_form do |f| %>
+
+<%= f.association :partner,
+  label: "Partner",
+  error: "Which partner is this distribution going to?"
+%>
+
+<%= f.association :storage_location,
+  collection: @storage_locations,
+  label: "From storage location",
+  error: "Which location are you moving inventory from?",
+  input_html: {
+    data: {
+      storage_location_inventory_path: inventory_storage_location_path(
+        organization_id: current_organization,
+        id: ":id",
+        format: :json
+      )
+    }
+  }
+%>
+
+<%= f.input :comment,
+  label: "Comment" %>
+
+<%= f.simple_fields_for :line_items do |item| %>
+  <div id="transfer_line_items">
+    <%= render 'line_item_fields', f: item %>
+  </div>
+  <div class="row links">
+    <div class="small-offset-3 small-9 columns">
+      <%= link_to_add_association "add line item", f, :line_items,
+        data: {
+          association_insertion_node: "#transfer_line_items",
+          association_insertion_method: "append"
+        }
+      %>
+    </div>
+  </div>
+<% end %>
+
+<%= f.button :submit %>
+
+<% end %>

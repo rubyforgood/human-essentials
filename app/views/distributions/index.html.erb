@@ -1,6 +1,10 @@
+<div class="header-action">
+  <%= link_to "New Distribution", new_distribution_path(organization_id: current_organization), class: "button float-right" %>
+</div>
+
 <h1>Distributions</h1>
 
-<table>
+<table id="distributions">
   <thead>
     <tr>
       <th>Partner</th>
