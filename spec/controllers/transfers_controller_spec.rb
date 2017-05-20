@@ -40,12 +40,14 @@ RSpec.describe TransfersController, type: :controller do
     end
     context "Looking at a different organization" do
       let(:object) { create(:transfer, organization: create(:organization) ) }
+      let!(:skip) { [:edit] }
       include_examples "requiring authorization"
     end
   end
 
   context "While not signed in" do
     let(:object) { create(:transfer) }
+    let!(:skip) { [:edit] }
 
     include_examples "requiring authentication"
   end
