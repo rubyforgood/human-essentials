@@ -25,10 +25,8 @@ class Donation < ApplicationRecord
   accepts_nested_attributes_for :line_items,
     allow_destroy: true
 
-  validates :dropoff_location, :storage_location, :source, :line_items, :organization, presence: true
+  validates :dropoff_location, :storage_location, :source, :organization, presence: true
 
-  scope :completed, -> { where(completed: true) }
-  scope :incomplete, -> { where(completed: false) }
   scope :between, ->(start, stop) { where(donations: { created_at: start..stop }) }
   # TODO - change this to "by_source()" with an argument that accepts a source name
   scope :diaper_drive, -> { where(source: "Diaper Drive") }
@@ -78,11 +76,6 @@ class Donation < ApplicationRecord
     line_item = self.line_items.find_by(item_id: i.id)
     line_item.quantity += q
     line_item.save
-  end
-
-  def complete
-    self.completed = true
-    self.save
   end
 
 end

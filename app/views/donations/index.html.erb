@@ -2,11 +2,9 @@
   <%= link_to "New Donation", new_donation_path(organization_id: current_organization), class: "button float-right" %>
 </div>
 
-<h1>All Donations</h1>
+<h1>Donations</h1>
 
-<h2>Incomplete Donations</h2>
-<p>These donations are not yet completed. Any items in these have not yet been officially added to the records yet.</p>
-<table id="incomplete">
+<table id="donations">
   <thead>
     <tr>
       <th>Source</th>
@@ -14,30 +12,9 @@
       <th>Storage Location</th>
       <th>Quantity of Items</th>
       <th>Variety of Items</th>
-      <th>Status</th>
-      <th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
-    <%= render partial: "donation_row", collection: @incomplete %>
-  </tbody>
-</table>
-
-<h2>Completed Donations</h2>
-<p>These donations have been completed and are displayed here for historical record purposes only.</p>
-<table id="completed">
-  <thead>
-    <tr>
-      <th>Source</th>
-      <th>Dropoff Location</th>
-      <th>Storage Location</th>
-      <th>Quantity of Items</th>
-      <th>Variety of Items</th>
-      <th>Status</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render partial: "donation_row", collection: @completed %>
+    <%= render partial: "donation_row", collection: @donations %>
   </tbody>
 </table>

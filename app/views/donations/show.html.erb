@@ -27,7 +27,3 @@
 TODO: What's the best way to do this? Should we use a new workflow?
 -->
 </section>
-
-<% unless @donation.completed? %>
-  <%= link_to "Complete Donation", complete_donation_path(@donation), method: :patch, class: "btn button primary submit" %>
-<% end %>
