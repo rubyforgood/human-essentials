@@ -15,3 +15,9 @@
  *= require foundation_and_overrides
 
  */
+
+.header-action {
+  float: right;
+  padding-top: 15px;
+}
+
