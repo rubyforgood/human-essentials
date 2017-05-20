@@ -1,0 +1,26 @@
+<%= render 'devise/shared/account_management_menu' %>
+
+<h1><%= current_organization.name %> Users</h1>
+
+<table>
+  <thead>
+    <tr>Email</tr>
+    <tr></tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.email %></td>
+        <td>
+          <% if user != current_user %>
+            <%= link_to "Edit", edit_user_path(user) %>
+            <%= link_to "Delete", user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?" %>
+          <% else %>
+            <%= link_to "Edit", edit_user_registration_path(organization_id: nil) %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

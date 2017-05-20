@@ -4,6 +4,9 @@ Rails.application.routes.draw do
 
   scope path: ':organization_id' do
 
+    resources :users
+    resource :organization
+
     resources :transfers, only: [:index, :create, :new, :show]
     resources :storage_locations do
       member do
