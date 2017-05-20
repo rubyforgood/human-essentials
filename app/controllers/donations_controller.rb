@@ -39,7 +39,7 @@ class DonationsController < ApplicationController
   def create
     @donation = Donation.new(donation_params.merge(organization: current_organization))
     if (@donation.save)
-      redirect_to(donations_path)
+      redirect_to donations_path
     else
       @storage_locations = StorageLocation.all
       @dropoff_locations = DropoffLocation.all

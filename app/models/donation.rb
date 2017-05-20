@@ -25,7 +25,7 @@ class Donation < ApplicationRecord
   accepts_nested_attributes_for :line_items,
     allow_destroy: true
 
-  validates :dropoff_location, :storage_location, :source, :organization, presence: true
+  validates :dropoff_location, :storage_location, :source, :line_items, :organization, presence: true
 
   scope :completed, -> { where(completed: true) }
   scope :incomplete, -> { where(completed: false) }
