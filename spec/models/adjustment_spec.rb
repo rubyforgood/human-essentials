@@ -18,9 +18,7 @@ RSpec.describe Adjustment, type: :model do
                                { item_id: storage_location.items.first.id, quantity: 10 }
                              ])
 
-      new_adjustment.save!
-
-      # expect(new_adjustment.save).to be_truthy
+      expect(new_adjustment.save).to be_truthy
     end
 
   end

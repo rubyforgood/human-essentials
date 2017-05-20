@@ -21,6 +21,7 @@ class StorageLocation < ApplicationRecord
 
   include Filterable
   scope :containing, ->(item_id) { joins(:inventory_items).where('inventory_items.item_id = ?', item_id) }
+  scope :alphabetized, -> { order(:name) }
 
   def self.item_total(item_id)
     StorageLocation.select('quantity').joins(:inventory_items).where('inventory_items.item_id = ?', item_id).collect { |h| h.quantity }.reduce(:+)
@@ -102,13 +103,46 @@ class StorageLocation < ApplicationRecord
 
     unless insufficient_items.empty?
       raise Errors::InsufficientAllotment.new(
-        "Transfer line_items exceed the available inventory",
+        "Oh no! Transfer line items exceed the available inventory",
         insufficient_items)
     end
 
     update_inventory_inventory_items(updated_quantities)
   end
 
+
+  # mimcs move_inventory!
+  # TODO - this is called from the AdjustmentsController, should probably be in a service, not this model
+  def adjust!(adjustment)
+    updated_quantities = {}
+    insufficient_items = []
+
+    adjustment.line_items.each do |line_item|
+
+      inventory_item = self.inventory_items.find_by(item: line_item.item)
+      next if inventory_item.nil? || inventory_item.quantity == 0
+
+      if inventory_item.quantity >= line_item.quantity
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
+      else
+        insufficient_items << {
+          item_id: line_item.item.id,
+          item_name: line_item.item.name,
+          quantity_on_hand: inventory_item.quantity,
+          quantity_requested: line_item.quantity
+        }
+      end
+
+    end
+
+    unless insufficient_items.empty?
+      raise Errors::InsufficientAllotment.new(
+        "Transfer line_items exceed the available inventory",
+        insufficient_items)
+    end
+
+    update_inventory_inventory_items(updated_quantities)
+  end
 
   # TODO - this action is happening in the DistributionsController. Is this model the correct place for this method?
   def reclaim!(distribution)
