@@ -5,6 +5,7 @@
 <table>
   <thead>
     <tr>
+      <th>Created</th>
       <th>Organization</th>
       <th>Storage location</th>
       <th>Comment</th>
@@ -15,8 +16,9 @@
   <tbody>
     <% @adjustments.each do |adjustment| %>
       <tr>
-        <td><%= adjustment.organization %></td>
-        <td><%= adjustment.storage_location %></td>
+        <td><%= adjustment.created_at %></td>
+        <td><%= adjustment.organization.name %></td>
+        <td><%= adjustment.storage_location.name %></td>
         <td><%= adjustment.comment %></td>
         <td><%= link_to 'Show', adjustment %></td>
         <td><%= link_to 'Edit', edit_adjustment_path(adjustment) %></td>
