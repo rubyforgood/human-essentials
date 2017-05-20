@@ -22,6 +22,9 @@ RSpec.describe OrganizationsController, type: :controller do
 
     it 'can update name' do
       expect(subject).to have_http_status(:redirect)
+
+      @organization.reload
+      expect(@organization.name).to eq 'Thunder Pants'
     end
   end
 
