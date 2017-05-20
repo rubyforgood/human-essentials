@@ -3,6 +3,9 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :authorize_user
 
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found!
+
+
   def current_organization
     # FIXME: should be short_name so that we get "/pdx/blah" rather than "/123/blah"
     @organization ||= Organization.find_by(short_name: params[:organization_id])
@@ -26,7 +29,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_user
-    verboten! unless current_organization.id == current_user.organization_id
+    verboten! unless (params[:controller] == "devise/sessions" || current_organization.id == current_user.organization_id)
   end
 
   def not_found!
