@@ -1,7 +1,7 @@
 RSpec.feature "Item management", type: :feature do
-
+  let!(:url_prefix) { "/#{@organization.to_param}" }
   scenario "User creates a new item" do
-    visit '/items/new'
+    visit url_prefix + '/items/new'
     item_traits = attributes_for(:item)
     fill_in "Name", with: item_traits[:name]
     fill_in "Category", with: item_traits[:category]
@@ -12,7 +12,7 @@ RSpec.feature "Item management", type: :feature do
 
   scenario "User updates an existing item" do
     item = create(:item)
-    visit "/items/#{item.id}/edit"
+    visit url_prefix + "/items/#{item.id}/edit"
     fill_in "Category", with: item.category + " new"
     click_button "Update Item"
 
@@ -22,7 +22,7 @@ RSpec.feature "Item management", type: :feature do
   scenario "User can filter the #index by category type" do
     item = create(:item, category: "same")
     item2 = create(:item, category: "different")
-    visit "/items"
+    visit url_prefix + "/items"
     select Item.first.category, from: "filters_in_category"
     click_button "Filter"
 
@@ -33,7 +33,7 @@ RSpec.feature "Item management", type: :feature do
     item = create(:item, category: "same")
     item2 = create(:item, category: "different")
     expected_order = [item2.category, item.category]
-    visit "/items"
+    visit url_prefix + "/items"
 
     expect(page.all('select#filters_in_category option').map(&:text)).to eq(expected_order)
     expect(page.all('select#filters_in_category option').map(&:text)).not_to eq(expected_order.reverse)
