@@ -1,0 +1,95 @@
+<% if user_signed_in? %>
+  <div class="top-bar-container" data-sticky-container>
+    <div class="sticky" data-sticky data-options="anchor: page; marginTop: 0; stickyOn: small;">
+      <div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
+        <button class="menu-icon" type="button" data-toggle="example-menu"></button>
+        <div class="title-bar-title">
+          <% if current_organization.present?  %>
+            <%= current_organization.name %>
+          <% elsif current_user.organization.present?  %>
+            <%= current_user.organization.name %>
+          <% else %>
+            <span>DiaperBase</span>
+          <% end %>
+        </div>
+      </div>
+      <div class="top-bar" id="example-menu">
+        <div class="top-bar-left">
+          <ul class="dropdown menu" data-dropdown-menu>
+            <li class="menu-text organization-name">
+              <% if current_organization.present?  %>
+                <%= current_organization.name %>
+              <% elsif current_user.organization.present?  %>
+                <%= current_user.organization.name %>
+              <% else %>
+                <span>DiaperBase</span>
+              <% end %>
+            </li>
+            <li><%= navigation_link_to('Dashboard', dashboard_path) %></li>
+            <li><%= navigation_link_to('Donations', donations_path) %></li>
+            <li><%= navigation_link_to('Distributions', distributions_path) %></li>
+            <li><%= navigation_link_to('Transfers', transfers_path) %></li>
+            <li class="has-submenu">
+              <a href="javascript:void(0)">Inventory</a>
+              <ul class="submenu menu vertical" data-submenu>
+                <li><%= navigation_link_to('Barcode Items', barcode_items_path) %></li>
+              </ul>
+            </li>
+            <li class="has-submenu">
+              <a href="javascript:void(0)">Address List</a>
+              <ul class="submenu menu vertical" data-submenu>
+                <li><%= navigation_link_to('Dropoff Locations', dropoff_locations_path) %></li>
+                <li><%= navigation_link_to('Partners', partners_path) %></li>
+                <li><%= navigation_link_to('Storage Locations', storage_locations_path) %></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="top-bar-right">
+          <ul class="menu dropdown" data-dropdown-menu>
+            <li><%= current_user.email %></li>
+            <li class='has-submenu'>
+              <a href='javascript:void(0)'>Settings</a>
+              <ul class="submenu vertical menu">
+                <li><%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %></li>
+                <% with_options organization_id: current_user.organization.to_param do |with_org| %>
+                  <li><%= navigation_link_to "Manage users", with_org.users_path %></li>
+                  <li><%= navigation_link_to "Modify organization", with_org.edit_organization_path %></li>
+                <% end %>
+              </ul>
+            </li>
+            <li><%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete') %></li>
+          </ul>
+        </div>
+          <ul class="menu">
+            <li><button type="button" class="button">Login</button></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+<div class="top-bar-container" data-sticky-container>
+  <div class="sticky" data-sticky data-options="anchor: page; marginTop: 0; stickyOn: small;">
+    <div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
+      <button class="menu-icon" type="button" data-toggle="example-menu"></button>
+      <div class="title-bar-title">
+        <span>DiaperBase</span>
+      </div>
+    </div>
+    <div class="top-bar" id="example-menu">
+        <div class="top-bar-left">
+          <ul class='menu'>
+            <li class="menu-text organization-name"><span>Diaper Base</span></li>
+          </ul>
+        </div>
+
+        <div class="top-bar-right">
+          <ul class="menu dropdown" data-dropdown-menu>
+            <li><%= link_to 'Sign In', new_user_session_path(organization_id: nil) %></li>
+          </ul>
+        </div>
+      </div>
+  </div>
+</div>
+<% end %>

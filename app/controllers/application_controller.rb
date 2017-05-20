@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_user
-    verboten! unless (params[:controller] == "devise/sessions" || current_organization.id == current_user.organization_id)
+    verboten! unless (params[:controller].include?("devise") || current_organization.id == current_user.organization_id)
   end
 
   def not_found!
