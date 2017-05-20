@@ -14,7 +14,6 @@ class OrganizationsController < ApplicationController
     end
   end
 
-
   # TODO: who should be able to arrive here and how?
   def new
   end

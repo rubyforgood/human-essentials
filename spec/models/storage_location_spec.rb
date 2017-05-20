@@ -2,11 +2,12 @@
 #
 # Table name: storage_locations
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  address    :string
-#  created_at :datetime
-#  updated_at :datetime
+#  id              :integer          not null, primary key
+#  name            :string
+#  address         :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  organization_id :integer
 #
 
 RSpec.describe StorageLocation, type: :model do
