@@ -4,8 +4,4 @@
   <td><%= donation_row.storage_location.name %></td>
   <td><%= donation_row.total_items %></td>
   <td><%= donation_row.line_items.size %></td>
-  <td><%= donation_row.completed ? "Completed" : "In Progress" %></td>
-  <td><%= link_to(donation_row.completed? ? "View" : "Add Items", donation_path(donation_row)) %>
-      <%= link_to("Edit", edit_donation_path(donation_row)) unless donation_row.completed? %>
-      <%= link_to("Cancel", donation_path(donation_row), method: :delete, confirm: "Are you sure?") unless donation_row.completed %></td>
 </tr>

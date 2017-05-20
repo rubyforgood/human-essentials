@@ -4,7 +4,6 @@
 #
 #  id                  :integer          not null, primary key
 #  source              :string
-#  completed           :boolean          default("false")
 #  dropoff_location_id :integer
 #  created_at          :datetime
 #  updated_at          :datetime
@@ -20,7 +19,6 @@ FactoryGirl.define do
     comment "It's a fine day for diapers."
     storage_location
     organization { Organization.try(:first) || create(:organization) }
-    # completed false
 
     transient do
       item_quantity 10

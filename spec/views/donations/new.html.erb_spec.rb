@@ -1,10 +1,12 @@
 RSpec.describe "donations/new.html.erb", type: :view do
   before(:each) do
+    @organization     = create(:organization)
     @dropoff_location = create(:dropoff_location)
     @storage_location = create(:storage_location)
 
     assign(:dropoff_locations, [@dropoff_location])
     assign(:storage_locations, [@storage_location])
+    assign(:organization_id,   @organzation.id)
     assign(:donation, Donation.new)
 
     render
