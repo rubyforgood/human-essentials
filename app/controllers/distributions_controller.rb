@@ -24,7 +24,10 @@ class DistributionsController < ApplicationController
 
   def new
     @distribution = Distribution.new
+    @distribution.line_items.build
     @organization = current_organization
+    @items = Item.alphabetized
+    @storage_locations = StorageLocation.all
   end
 
   def show
