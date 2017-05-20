@@ -6,12 +6,16 @@ class TransfersController < ApplicationController
   def create
     @transfer = current_organization.transfers.new(transfer_params)
 
-    @transfer.from.move_inventory!(@transfer)
+    if @transfer.valid?
+      @transfer.from.move_inventory!(@transfer)
 
-    if @transfer.save
-      redirect_to transfer_path(organization_id: current_organization.short_name, id: @transfer)
+      if @transfer.save
+        redirect_to transfer_path(organization_id: current_organization.short_name, id: @transfer)
+      else
+        flash[:notice] = "There was an error, try again?"
+        render :new
+      end
     else
-      flash[:notice] = "There was an error, try again?"
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
@@ -22,8 +26,8 @@ class TransfersController < ApplicationController
   def new
     @transfer = current_organization.transfers.new
     @transfer.line_items.build
-    @storage_locations = StorageLocation.all
-    @items = Item.alphabetized
+    @storage_locations = current_organization.storage_locations.alphabetized
+    @items = current_organization.items.alphabetized
   end
 
   def show

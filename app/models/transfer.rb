@@ -24,6 +24,7 @@ class Transfer < ApplicationRecord
   validates :from, :to, :organization, presence: true
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
+  validate :storage_locations_belong_to_organization
 
   # TODO - this could probably be made an association method for the `line_items` association
   def quantities_by_category
@@ -41,6 +42,16 @@ class Transfer < ApplicationRecord
   end
 
   private
+
+  def storage_locations_belong_to_organization
+    if !self.organization.storage_locations.include?(self.from)
+      errors.add :from, 'from location must belong to organization'
+    end
+
+    if !self.organization.storage_locations.include?(self.to)
+      errors.add :to, 'to location must belong to organization'
+    end
+  end
 
   # TODO - this could probably be made an association method for the `line_items` association
   def line_item_items_exist_in_inventory
