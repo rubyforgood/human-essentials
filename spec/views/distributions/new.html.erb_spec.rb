@@ -12,7 +12,7 @@ RSpec.describe "distributions/new.html.erb", type: :view do
     render
   end
 
-  it "Asks for storage location and partner", :focus do
+  it "Asks for storage location and partner" do
     expect(rendered).to have_xpath("//form/div/select[@name='distribution[storage_location_id]']")
     expect(rendered).to have_xpath("//form/div/select[@name='distribution[partner_id]']")
   end
