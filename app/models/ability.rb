@@ -6,13 +6,10 @@ class Ability
 
     # This should probably be tamped down a bit once we've
     # got some behaviors established with more detail.
-    [BarcodeItem, Distribution, Donation, DropoffLocation,
-     InventoryItem, Item, LineItem, Organization, Partner,
-     StorageLocation, Transfer].each do |c|
-       can :manage, c, organization_id: { user.organization_id }
-   end
+    
+    can :manage, [BarcodeItem, Distribution, Donation, DropoffLocation, InventoryItem, Item, LineItem, Organization, Partner, StorageLocation, Transfer], organization: { id: user.organization_id }
 
-   can :manage, User, id: { user.id }
+    can :manage, User, id: user.id
 
     # Define abilities for the passed in user here. For example:
     #
