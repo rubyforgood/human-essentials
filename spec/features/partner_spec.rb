@@ -1,7 +1,7 @@
 RSpec.feature "Partner management", type: :feature do
-  
+  let!(:url_prefix) { "/#{@organization.to_param}"}
   scenario "User can add a new partner" do
-  	visit '/partners/new'
+  	visit url_prefix + '/partners/new'
     fill_in "Name", with: "Frank"
     fill_in "E-mail", with: "frank@frank.com"
     click_button "Create Partner"
@@ -11,7 +11,7 @@ RSpec.feature "Partner management", type: :feature do
 
   scenario "User can update a partner" do
     partner = create(:partner, name: "Frank")
-    visit "/partners/#{partner.id}/edit"
+    visit url_prefix + "/partners/#{partner.id}/edit"
     fill_in "Name", with: "Franklin"
     click_button "Update Partner"
 

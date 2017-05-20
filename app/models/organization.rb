@@ -15,8 +15,8 @@
 class Organization < ApplicationRecord
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
-  validates :url, format: /\Ahttps?:\/\//
-  validates :email, format: /[^@]+@[^@]+/
+  validates :url, format: /\Ahttps?:\/\//, allow_blank: true
+  validates :email, format: /[^@]+@[^@]+/, allow_blank: true
 
   has_many :adjustments
   has_many :barcode_items
