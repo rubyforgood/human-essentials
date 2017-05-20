@@ -50,7 +50,7 @@ RSpec.configure do |config|
     #__start_db_cleaning_with_log
     #__sweep_up_db_with_log
     __start_db_cleaning_with_log
-    __lint_with_log
+    # __lint_with_log
     __sweep_up_db_with_log
   end
 

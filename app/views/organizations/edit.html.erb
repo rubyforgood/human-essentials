@@ -1,3 +1,19 @@
 <%= render 'devise/shared/account_management_menu' %>
 
 <h1>Edit <%= current_organization.name %></h1>
+
+<%= simple_form_for current_organization, url: edit_organization_path do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name, required: true, autofocus: true %>
+    <%= f.input :short_name, required: true, autofocus: true %>
+    <%= f.input :url %>
+    <%= f.input :email %>
+    <%= f.input :address %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, "Update" %>
+  </div>
+<% end %>
