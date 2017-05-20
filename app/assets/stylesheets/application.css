@@ -21,3 +21,12 @@
   padding-top: 15px;
 }
 
+/** HAX **/
+.row .primary {
+  margin-top: 16px;
+}
+
+a.active[disabled] {
+  color: #777;
+}
+

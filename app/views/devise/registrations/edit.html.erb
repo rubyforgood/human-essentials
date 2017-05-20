@@ -1,0 +1,35 @@
+<%= render 'devise/shared/account_management_menu' %>
+
+<h2>Update your account information</h2>
+
+<%= simple_form_for(resource, as: resource_name, url: user_registration_path(resource), html: { method: :put }) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :email, required: true, autofocus: true %>
+
+    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
+    <% end %>
+
+    <div class='change-password-link'>
+      <a data-toggle="change-password">Change Password</a>
+    </div>
+
+    <fieldset id='change-password'  class='hide' data-toggler=".hide">
+      <legend>Password Changes</legend>
+      <%= f.input :password, autocomplete: "off", required: false %>
+      <p class="help-text" id="password-help">leave it blank if you don't want to change it</p>
+      <%= f.input :password_confirmation, required: false %>
+      <%= f.input :current_password, hint: "we need your current password to confirm your changes", required: true %>
+      <p class="help-text" id="password-confirmation-help">we need your current password to confirm your changes</p>
+
+    </fieldset>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, "Update" %>
+  </div>
+<% end %>
+
+<%= link_to "Back", :back %>
