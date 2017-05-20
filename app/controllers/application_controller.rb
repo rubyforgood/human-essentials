@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   def current_organization
     # FIXME: should be short_name so that we get "/pdx/blah" rather than "/123/blah"
-  	@organization ||= Organization.find_by(short_name: params[:organization_id])
+    @organization ||= Organization.find_by(short_name: params[:organization_id])
   end
   helper_method :current_organization
 

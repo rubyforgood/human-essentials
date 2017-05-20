@@ -27,6 +27,7 @@ gem 'jquery-rails'
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
+gem 'yajl-ruby'
 
 # Use Foundation for layout
 gem 'foundation-rails', '~> 6.0'
@@ -44,6 +45,7 @@ gem 'simple_form'
 
 # These are inherited from original app.
 gem "chartkick"
+gem 'cocoon'
 gem "groupdate"
 gem 'jquery-ui-rails'
 # gem 'cancancan'  # Disabled because this is probably overkill
@@ -77,6 +79,7 @@ group :development do
 
   # Inherited gems
   gem 'annotate'
+  gem 'binding_of_caller'
   gem 'better_errors'
   gem 'capistrano-rails'
   gem 'capistrano-rbenv'

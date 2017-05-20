@@ -12,7 +12,7 @@
 
 class StorageLocation < ApplicationRecord
   belongs_to :organization
-  has_many :inventory_items
+  has_many :inventory_items, -> { includes(:item).order("items.name") }
   has_many :donations
   has_many :distributions
   has_many :items, through: :inventory_items

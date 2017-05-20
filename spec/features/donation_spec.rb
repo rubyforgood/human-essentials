@@ -1,13 +1,15 @@
 RSpec.feature "Donations", type: :feature do
   before :each do
     # create an item
+    sign_in @user
+    @url_prefix = "/#{@organization.short_name}"
   end
 
   context "When starting a new donation" do
     before(:each) do
       create(:dropoff_location)
       create(:storage_location)
-      visit "/donations/new"
+      visit @url_prefix + "/donations/new"
     end
 
     scenario "User can fill out the form to create an in-flight donation" do
@@ -30,7 +32,7 @@ RSpec.feature "Donations", type: :feature do
       # create the incomplete donation
       # add one item to it
       # visit that donation
-      visit "/donations/#{@incomplete.id}"
+      visit @url_prefix + "/donations/#{@incomplete.id}"
     end
 
     scenario "a user wants to manually add items" do
@@ -59,7 +61,7 @@ RSpec.feature "Donations", type: :feature do
 
     scenario "a user can complete a donation" do
       click_link "Complete Donation"
-      expect(current_path).to eq donations_path
+      expect(current_path).to eq donations_path(organization_id: @organization)
       expect(page.find('.flash')).to have_content('ompleted')
     end
 

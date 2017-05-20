@@ -1,5 +1,4 @@
 
-
 RSpec.describe TransfersController, type: :controller do
   before do
     sign_in(@user)
