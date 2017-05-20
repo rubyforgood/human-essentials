@@ -39,7 +39,7 @@ class DonationsController < ApplicationController
   def create
     @donation = Donation.new(donation_params.merge(organization: current_organization))
     if (@donation.save)
-      redirect_to(edit_donation_path(@donation))
+      redirect_to(donations_path)
     else
       @storage_locations = StorageLocation.all
       @dropoff_locations = DropoffLocation.all
@@ -50,16 +50,17 @@ class DonationsController < ApplicationController
 
   def new
     @donation = Donation.new
+    @donation.line_items.build
     @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
-
+    @items = Item.alphabetized
   end
 
   def edit
-    @donation = current_organization.donations.find(params[:id])    
+    @donation = Donation.find(params[:id])
+    @donation.line_items.build
     @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
-
   end
 
   def show
@@ -81,11 +82,10 @@ class DonationsController < ApplicationController
 
 private
   def donation_params
-    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
   end
 
   def donation_item_params
     params.require(:donation).permit(:barcode_id, :item_id, :quantity)
   end
 end
-

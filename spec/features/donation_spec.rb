@@ -1,38 +1,48 @@
 RSpec.feature "Donations", type: :feature do
   before :each do
-    # create an item
     sign_in @user
     @url_prefix = "/#{@organization.short_name}"
   end
 
-  context "When starting a new donation" do
+  context "When visiting the index page" do
     before(:each) do
+      visit @url_prefix + "/donations"
+    end
+
+    scenario "User can click to the new donation form" do
+      click_link "New Donation"
+
+      expect(current_path).to eq(new_donation_path(@organization))
+      expect(page).to have_content "Start a new donation"
+    end
+  end
+
+  context "When building a new donation" do
+    before(:each) do
+      create(:item)
       create(:dropoff_location)
       create(:storage_location)
       visit @url_prefix + "/donations/new"
     end
 
-    scenario "User can fill out the form to create an in-flight donation" do
+    scenario "User can fill out the form to create a new donation" do
       select DropoffLocation.first.name, from: "donation_dropoff_location_id"
       select StorageLocation.first.name, from: "donation_storage_location_id"
-      fill_in "Source", with: "Something"
+      select Donation::SOURCES.first, from: "donation_source"
+      select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item"
+      fill_in "donation_line_items_attributes_0_quantity", with: "0"
 
       expect {
         click_button "Create Donation"
-      }.to change{Donation.incomplete.count}.by(1)
+      }.to change{Donation.count}.by(1)
     end
-
   end
 
-
-  context "When working with an in-flight donation" do
+  context "When working with a new donation" do
     before :each do
       item = create(:item)
-      @incomplete = create(:donation, :with_item, item_quantity: 10, item_id: item.id, completed: false)
-      # create the incomplete donation
-      # add one item to it
-      # visit that donation
-      visit @url_prefix + "/donations/#{@incomplete.id}"
+      @donation = build(:donation, :with_item, item_quantity: 10, item_id: item.id)
+      visit @url_prefix + "/donations/new"
     end
 
     scenario "a user wants to manually add items" do
@@ -59,8 +69,9 @@ RSpec.feature "Donations", type: :feature do
       raise
     end
 
-    scenario "a user can complete a donation" do
-      click_link "Complete Donation"
+    scenario "a user can create a donation" do
+      skip
+      click_link_or_button "Create Donation"
       expect(current_path).to eq donations_path(organization_id: @organization)
       expect(page.find('.flash')).to have_content('ompleted')
     end

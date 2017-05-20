@@ -14,12 +14,16 @@
 #
 
 class Donation < ApplicationRecord
+  SOURCES = ["Diaper Drive", "Purchased Supplies", "Donation Pickup Location", "Misc. Donation"].freeze
+
   belongs_to :organization
 
   belongs_to :dropoff_location
-  has_many :line_items, as: :itemizable, inverse_of: :itemizable
   belongs_to :storage_location
+  has_many :line_items, as: :itemizable, inverse_of: :itemizable
   has_many :items, through: :line_items
+  accepts_nested_attributes_for :line_items,
+    allow_destroy: true
 
   validates :dropoff_location, :storage_location, :source, :organization, presence: true
 
