@@ -24,6 +24,7 @@ require 'pry'
 # require only the support files necessary.
 #
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].each {|f| require f}
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
@@ -50,7 +51,7 @@ RSpec.configure do |config|
     #__start_db_cleaning_with_log
     #__sweep_up_db_with_log
     __start_db_cleaning_with_log
-    __lint_with_log
+    # __lint_with_log
     __sweep_up_db_with_log
   end
 

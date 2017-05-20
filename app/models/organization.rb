@@ -13,7 +13,10 @@
 #
 
 class Organization < ApplicationRecord
-  validates :short_name, format: /\A[a-z0-9_]+\z/i
+  validates :name, presence: true
+  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
+  validates :url, format: /\Ahttps?:\/\//
+  validates :email, format: /[^@]+@[^@]+/
 
   has_many :barcode_items
   has_many :distributions

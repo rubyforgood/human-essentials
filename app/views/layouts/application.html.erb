@@ -17,29 +17,35 @@
       <div class="top-bar-left">
         <% if user_signed_in? %>
           <ul class="dropdown menu" data-dropdown-menu>
-            <li class="menu-text organization-name"><%= current_organization.name %></li>
-            <li><%= link_to_unless_current('Dashboard', dashboard_path) %></li>
-            <li><%= link_to_unless_current('Donations', donations_path) %></li>
-            <li><%= link_to_unless_current('Distributions', distributions_path) %></li>
-            <li><%= link_to_unless_current('Transfers', transfers_path) %></li>
+            <% if current_organization.present?  %>
+              <li class="menu-text organization-name"><%= current_organization.name %></li>
+            <% elsif current_user.organization.present?  %>
+              <li class="menu-text organization-name"><%= current_user.organization.name %></li>
+            <% else %>
+              <li class="menu-text organization-name"><span>DiaperBase</span></li>
+            <% end %>
+            <li><%= navigation_link_to('Dashboard', dashboard_path) %></li>
+            <li><%= navigation_link_to('Donations', donations_path) %></li>
+            <li><%= navigation_link_to('Distributions', distributions_path) %></li>
+            <li><%= navigation_link_to('Transfers', transfers_path) %></li>
             <li class="has-submenu">
               <a href="javascript:void(0)">Inventory</a>
               <ul class="submenu menu vertical" data-submenu>
-                <li><%= link_to_unless_current('Barcode Items', barcode_items_path) %></li>
+                <li><%= navigation_link_to('Barcode Items', barcode_items_path) %></li>
               </ul>
             </li>
             <li class="has-submenu">
               <a href="javascript:void(0)">Address List</a>
               <ul class="submenu menu vertical" data-submenu>
-                <li><%= link_to_unless_current('Dropoff Locations', dropoff_locations_path) %></li>
-                <li><%= link_to_unless_current('Partners', partners_path) %></li>
-                <li><%= link_to_unless_current('Storage Locations', storage_locations_path) %></li>
+                <li><%= navigation_link_to('Dropoff Locations', dropoff_locations_path) %></li>
+                <li><%= navigation_link_to('Partners', partners_path) %></li>
+                <li><%= navigation_link_to('Storage Locations', storage_locations_path) %></li>
               </ul>
             </li>
           </ul>
         <% else %>
           <ul>
-            <li class="menu-text">DiaperBase™</li>
+            <li class="menu-text organization-name"><span>DiaperBase™</span></li>
           </ul>
         <% end %>
       </div>
@@ -47,10 +53,10 @@
         <ul class="menu">
           <% if user_signed_in? %>
             <li><%= current_user.email %></li>
-            <li><a href='#'>Settings</a></li>
-            <li><%= link_to('Log out', destroy_user_session_path, method: 'delete') %></li>
+            <li><%= link_to('Settings', edit_user_registration_path(organization_id: nil)) %></li>
+            <li><%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete') %></li>
           <% else %>
-            <li><%= link_to 'Sign In', new_user_session_path %></li>
+            <li><%= link_to 'Sign In', new_user_session_path(organization_id: nil) %></li>
           <% end %>
         </ul>
       </div>
@@ -60,10 +66,10 @@
 
     <div class="row">
       <% if content_for?(:sidebar) %>
-        <div class="medium-6 large-4 columns"><%= yield :sidebar %></div>
-        <div class="medium-6 large-8 columns"><%= yield %></div>
+        <div class="primary medium-4 large-3 columns"><%= yield :sidebar %></div>
+        <div class="primary medium-8 large-9 columns"><%= yield %></div>
       <% else %>
-        <div class="medium-12 large-12 columns"><%= yield %></div>
+        <div class="primary medium-12 large-12 columns"><%= yield %></div>
       <% end %>
     </div>
 
