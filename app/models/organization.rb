@@ -18,6 +18,7 @@ class Organization < ApplicationRecord
   validates :url, format: /\Ahttps?:\/\//
   validates :email, format: /[^@]+@[^@]+/
 
+  has_many :adjustments
   has_many :barcode_items
   has_many :distributions
   has_many :donations
