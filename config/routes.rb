@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     resources :users
     resource :organization
 
+    resources :adjustments
     resources :transfers, only: [:index, :create, :new, :show]
     resources :storage_locations do
       member do

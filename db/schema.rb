@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170519192951) do
+ActiveRecord::Schema.define(version: 20170520183653) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "adjustments", force: :cascade do |t|
+    t.integer  "organization_id"
+    t.integer  "storage_location_id"
+    t.text     "comment"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.index ["organization_id"], name: "index_adjustments_on_organization_id", using: :btree
+    t.index ["storage_location_id"], name: "index_adjustments_on_storage_location_id", using: :btree
+  end
 
   create_table "barcode_items", force: :cascade do |t|
     t.string   "value"
@@ -145,6 +155,8 @@ ActiveRecord::Schema.define(version: 20170519192951) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
+  add_foreign_key "adjustments", "organizations"
+  add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "storage_locations"

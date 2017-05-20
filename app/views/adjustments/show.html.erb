@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Organization:</strong>
+  <%= @adjustment.organization %>
+</p>
+
+<p>
+  <strong>Storage location:</strong>
+  <%= @adjustment.storage_location %>
+</p>
+
+<p>
+  <strong>Comment:</strong>
+  <%= @adjustment.comment %>
+</p>
+
+<%= link_to 'Edit', edit_adjustment_path(@adjustment) %> |
+<%= link_to 'Back', adjustments_path %>
