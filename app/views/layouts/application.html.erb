@@ -11,35 +11,41 @@
     <%= javascript_include_tag "vendor/modernizr" %>
 
     <%= csrf_meta_tags %>
+    <link href="https://fonts.googleapis.com/css?family=Heebo:300,400,500" rel="stylesheet">
   </head>
 
   <body>
-
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <ul class="dropdown menu" data-dropdown-menu>
-        <li class="menu-text">PDX Diaper Bank</li>
-        <li><a href="#0">Dashboard</a></li>
-        <li class="has-submenu">
-          <a href="#0">Address List</a>
-          <ul class="submenu menu vertical" data-submenu>
-            <li><a href="#0">One</a></li>
-            <li><a href="#0">Two</a></li>
-            <li><a href="#0">Three</a></li>
-          </ul>
-        </li>
-        <li><a href="#0">Two</a></li>
-        <li><a href="#0">Three</a></li>
-      </ul>
+    <div class="top-bar-container" data-sticky-container>
+      <div class="sticky" data-sticky data-options="anchor: page; marginTop: 0; stickyOn: small;">
+        <div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
+          <button class="menu-icon" type="button" data-toggle="example-menu"></button>
+          <div class="title-bar-title">PDX Diaper Bank</div>
+        </div>
+        <div class="top-bar" id="example-menu">
+          <div class="top-bar-left">
+            <ul class="dropdown menu" data-dropdown-menu>
+              <li class="menu-text">PDX Diaper Bank</li>
+              <li><a href="#0">Dashboard</a></li>
+              <li class="has-submenu">
+                <a href="#0">Address List</a>
+                <ul class="submenu menu vertical" data-submenu>
+                  <li><a href="#0">One</a></li>
+                  <li><a href="#0">Two</a></li>
+                  <li><a href="#0">Three</a></li>
+                </ul>
+              </li>
+              <li><a href="#0">Two</a></li>
+              <li><a href="#0">Three</a></li>
+            </ul>
+          </div>
+          <div class="top-bar-right">
+            <ul class="menu">
+              <li><button type="button" class="button">Login</button></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="top-bar-right">
-      <ul class="menu">
-        <li><input type="search" placeholder="Search"></li>
-        <li><button type="button" class="button">Search</button></li>
-      </ul>
-    </div>
-  </div>
-
     <%= display_flash_messages %>
 
     <%= yield %>

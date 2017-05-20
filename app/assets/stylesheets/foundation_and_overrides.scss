@@ -51,3 +51,212 @@
 //
 // @include motion-ui-transitions;
 // @include motion-ui-animations;
+
+// Website colors
+$dark-grey: #262626;
+$grey: #3D3C3C;
+$light-grey: #EDECEC;
+$white: white;
+$off-white: #F9F9F9;
+$blue: #0BA6CC;
+$light-blue: #CEE8F1;
+$lighter-blue: #EDFAFF;
+$error: #DE5347;
+$sucess: #6EB85B;
+
+h1, h2, h3, h4, p, th {
+  color:$dark-grey;
+  font-family: 'Heebo', sans-serif;
+  font-weight: 300;
+}
+
+h1 {
+  padding-top: 10px;
+  font-size: 34px;
+  padding-bottom: 15px;
+}
+
+h2, h3, h4 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h3 {
+  font-size: 28px;
+}
+
+h3 {
+  font-size: 24px;
+}
+
+p {
+  font-weight: 300;
+  font-size: 16px;
+  padding-bottom: 10px;
+}
+
+// hr border color
+hr {
+  border-color: $light-grey;
+}
+
+.row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+// make the nav sticky
+.sticky {
+  width: 100%;
+}
+
+// nav background color
+.top-bar, .top-bar li, .top-bar ul.menu  {
+  // background: $light-blue;
+  // background: $white;
+  background: $blue;
+}
+
+// nav links
+.top-bar, .top-bar li, .top-bar ul.menu, .top-bar a {
+  // color: $grey;
+  color: $white;
+}
+
+.top-bar li:hover, .top-bar ul.menu:hover, .top-bar a:hover {
+  color: $light-grey;
+}
+
+// dropdown menu arrow color
+.dropdown.menu li.is-dropdown-submenu-parent a::after  {
+  // border-color: $grey transparent transparent;
+  border-color: $white transparent transparent;
+}
+
+// nav dropdown menu
+.top-bar ul.menu {
+  border :none;
+}
+
+// add bottom border to dropdown menu items
+.top-bar li.is-submenu-item {
+  border-bottom: solid;
+  border-bottom-width: 1px;
+  border-color: $light-grey;
+}
+
+// remove border from last item in dropdown menu
+.top-bar li.is-submenu-item:last-child{
+    border-bottom: none;
+}
+
+// top-bar button style
+ul.menu .button {
+  background-color: $blue;
+  color: $white;
+  font-weight: 400;
+  border: solid;
+  border-width: 1px;
+  border-color: $white;
+  margin-top: 3px;
+}
+
+// top-bar button hover
+ul.menu .button:hover, ul.menu .button:focus {
+  color: $blue;
+  background-color: $white;
+}
+
+// table header font
+thead th {
+  font-weight: 400;
+}
+//table header background color
+thead {
+  background-color: $light-blue;
+}
+
+// table even numbered row background color
+tbody tr:nth-child(even){
+  background-color: $off-white;
+}
+
+// add radious and margin bottom to form feilds
+[type='text'], [type='password'], [type='date'], [type='datetime'], [type='datetime-local'], [type='month'], [type='week'], [type='email'], [type='number'], [type='search'], [type='tel'], [type='time'], [type='url'], [type='color'], textarea{
+border-radius: 4px;
+}
+
+// add margin bottom to feildset
+fieldset{
+  margin-bottom: 20px;
+}
+
+// remove border on callout
+.callout {
+  border: none;
+}
+// alert callout style error
+.callout.alert {
+  background-color: $error;
+  color: $white;
+}
+
+// alert callout style sucess
+.callout.success {
+  background-color: $sucess;
+  color: $white;
+}
+
+// X closeout for alert box
+button span {
+color: $white;
+}
+
+// X closeout for alert box hover
+button span:hover {
+color: $light-grey;
+}
+
+// style error alert text
+div.alert-box.alert{
+  font-weight: bold;
+  color: $error;
+  font-size: 18;
+  margin-bottom: 15px;
+}
+
+// style error alert text
+small.error{
+  font-weight: bold;
+  font-style: italic;
+  color: $error;
+  display: block;
+  margin-top: -12px;
+  margin-bottom: 16px;
+}
+
+// add radious and padding to buttons
+div.button, .button, .button:hover, .button:focus, ul.menu .button, ul.menu .button:hover, ul.menu .button:focus, .input-group:last-child .button{
+  border-radius: 4px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+// button style
+div.button, .button {
+  background-color: $white;
+  color: $blue;
+  font-weight: 400;
+  border: solid;
+  border-width: 1px;
+  border-color: $blue;
+}
+
+// button hover style
+.button:hover, .button:focus {
+  color: white;
+  background-color: $blue;
+}

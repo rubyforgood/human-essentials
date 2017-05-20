@@ -1,1 +1,97 @@
-<h1>Landing Page</h1>
+<div class="row">
+  <div class="small-12 columns">
+    <h1>Page Elements</h1>
+    <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="small-12 columns">
+    <h2>Table</h2>
+    <p>These donations are not yet completed. Any items in these have not yet been officially added to the records yet.</p>
+    <table id="incomplete">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Dropoff Location</th>
+          <th>Storage Location</th>
+          <th>Quantity of Items</th>
+          <th>Variety of Items</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Content</td>
+          <td>Content</td>
+          <td>Content</td>
+          <td>Content</td>
+          <td>Content</td>
+          <td>Content</td>
+        </tr>
+        <tr>
+          <td>Content</td>
+          <td>Content</td>
+          <td>Content</td>
+          <td>Content</td>
+          <td>Content</td>
+          <td>Content</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="small-12 columns">
+    <h2>Forms</h2>
+    <form>
+      <label>
+        Source
+        <input type="text" placeholder="Enter Item Source">
+      </label>
+      <label>
+        Item Status
+        <textarea placeholder="Enter Item Status"></textarea>
+      </label>
+      <fieldset >
+        <legend>Variety of Items</legend>
+        <input id="checkbox1" type="checkbox"><label for="checkbox1">Adult Diapers</label>
+        <input id="checkbox2" type="checkbox"><label for="checkbox2">Childrens Diapers</label>
+        <input id="checkbox3" type="checkbox"><label for="checkbox3">Other</label>
+      </fieldset>
+      <div class="input-group">
+        <div class="input-group-button">
+          <input type="submit" class="button" value="Submit">
+        </div>
+      </div>
+    </form>
+
+    <hr>
+
+      <h2>Alerts</h2>
+      <div class="flash callout success" data-closable="">Signed in successfully.<button name="button" type="button" class="close-button" data-close="" aria-label="Dismiss alert"><span aria-hidden="true">×</span></button></div>
+
+      <div class="flash callout alert" data-closable="">Failed to create user<button name="button" type="button" class="close-button" data-close="" aria-label="Dismiss alert"><span aria-hidden="true">×</span></button></div>
+
+      <form novalidate="novalidate" class="simple_form new_user" id="new_user" action="/pdx_bank/users" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="LWMcA4gR33erBE4wA7zztMV3exuO94FqXLG5iMHk1aGotyjYgx7leB5CFnvjS2LNfTYVMlQI2mNAdQR7/tYyVA==">
+
+      <div class="alert-box alert">Please review the problems below:</div>
+
+      <div class="form-inputs">
+        <div class="input email required user_email error"><label class="email required" for="user_email"><abbr title="required">*</abbr> Email</label><input class="string email required" autofocus="autofocus" required="required" aria-required="true" aria-invalid="true" type="email" value="asdf" name="user[email]" id="user_email"><small class="error">is invalid</small></div>
+        <div class="input password required user_password error"><label class="password required" for="user_password"><abbr title="required">*</abbr> Password</label><input class="password required" required="required" aria-required="true" aria-invalid="true" type="password" name="user[password]" id="user_password"><small class="error">can't be blank</small></div>
+        <div class="input password required user_password_confirmation"><label class="password required" for="user_password_confirmation"><abbr title="required">*</abbr> Password confirmation</label><input class="password required" required="required" aria-required="true" type="password" name="user[password_confirmation]" id="user_password_confirmation"></div>
+      </div>
+
+      <div class="form-actions">
+        <input type="submit" name="commit" value="Sign up" class="button" data-disable-with="Sign up">
+      </div>
+    </form>
+
+  </div>
+</div>
