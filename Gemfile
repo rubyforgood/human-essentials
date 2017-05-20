@@ -48,7 +48,7 @@ gem "chartkick"
 gem 'cocoon'
 gem "groupdate"
 gem 'jquery-ui-rails'
-gem 'cancancan'
+# gem 'cancancan'  # Disabled because this is probably overkill
 gem 'devise', '= 4.2.1'
 gem 'dotenv-rails', group: :production
 gem 'unicorn', group: :production

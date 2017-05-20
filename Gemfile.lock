@@ -61,7 +61,6 @@ GEM
       debug_inspector (>= 0.0.1)
     builder (3.2.3)
     byebug (9.0.6)
-    cancancan (1.16.0)
     capistrano (3.8.1)
       airbrussh (>= 1.0.0)
       i18n
@@ -326,7 +325,6 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   byebug
-  cancancan
   capistrano-rails
   capistrano-rbenv
   capybara

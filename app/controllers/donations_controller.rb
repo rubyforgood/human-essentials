@@ -1,6 +1,16 @@
 class DonationsController < ApplicationController
+  # We load the resources in before_filters so that they are not re-loaded
+  # by Cancan, which won't use the correct methods.
+  #before_filter :simple_load, only: [:track, :remove_item, :complete, :edit, :update, :destroy]
+  #before_filter :eager_load_single, only: [:show]
+  #before_filter :load_collection, only: [:index]
+  #before_filter :load_new, only: [:new]
+
+  # Cancan authorization
+  #load_and_authorize_resource
+
   # TODO - needs to be able to handle barcodes too
-  def track
+  def add_item
     @donation = current_organization.donations.find(params[:id])
     if (donation_item_params.has_key?(:barcode_id))
       @donation.track_from_barcode(Barcode.find(donation_item_params[:barcode_id]).to_line_item)
@@ -21,8 +31,9 @@ class DonationsController < ApplicationController
   end
 
   def index
-    @completed = Donation.includes(:line_items).includes(:storage_location).includes(:dropoff_location).completed
-    @incomplete = Donation.includes(:line_items).includes(:storage_location).includes(:dropoff_location).incomplete
+    @donations = Donation.includes(:line_items, :storage_location, :dropoff_location)
+    @completed = @donations.completed
+    @incomplete = @donations.incomplete
   end
 
   def create
@@ -38,15 +49,17 @@ class DonationsController < ApplicationController
   end
 
   def new
+    @donation = Donation.new
     @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
-    @donation = Donation.new
+
   end
 
   def edit
+    @donation = current_organization.donations.find(params[:id])    
     @storage_locations = StorageLocation.all
     @dropoff_locations = DropoffLocation.all
-    @donation = Donation.find(params[:id])
+
   end
 
   def show
@@ -61,13 +74,14 @@ class DonationsController < ApplicationController
   end
 
   def destroy
-    Donation.find(params[:id]).destroy
+    @donation = current_organization.donations.find(params[:id])
+    @donation.destroy
     redirect_to donations_path
   end
 
 private
   def donation_params
-    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id)
+    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id).merge(organization: current_organization)
   end
 
   def donation_item_params
