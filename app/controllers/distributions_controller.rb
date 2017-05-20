@@ -6,6 +6,7 @@ class DistributionsController < ApplicationController
 
   def reclaim
     @distribution = Distribution.find(params[:id])
+    @distribution.storage_location.reclaim!(@distribution)
   end
 
   def index
@@ -15,6 +16,8 @@ class DistributionsController < ApplicationController
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
     if @distribution.save
+
+      @distribution.storage_location.distribute!(@distribution)
       redirect_to distributions_path
     else
       flash[:notice] = "An error occurred, try again?"
