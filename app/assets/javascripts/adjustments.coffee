@@ -2,13 +2,14 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+
 item_option = (item) ->
   "<option value='#{item.item_id}'>
      #{ item.item_name } -- #{ item.quantity }
    </option>"
 
 $(document).on 'turbolinks:load', () ->
-  control_id = "#transfer_from_id"
+  control_id = '#adjustment_storage_location_id'
 
   $(document).on "change", control_id, (evt) ->
     control = $(evt.target)
@@ -17,13 +18,15 @@ $(document).on 'turbolinks:load', () ->
       dataType: "json"
       success: (data) ->
         options = $.map data, item_option
-        $("#transfer_line_items select").html(options)
+        $("#adjustment_storage_location_line_items select").html(options)
 
-  $(document).on "cocoon:after-insert", "form#new_transfer", (e, insertedItem) ->
+  $(document).on "cocoon:after-insert", "form#new_adjustment", (e, insertedItem) ->
     control = $(control_id)
     $.ajax
       url: control.data("storage-location-inventory-path").replace(":id", control.val())
       dataType: "json"
       success: (data) ->
         options = $.map data, item_option
+        console.log("inserted item", insertedItem)
         $("select", insertedItem).html(options)
+

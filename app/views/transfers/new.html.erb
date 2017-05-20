@@ -1,5 +1,10 @@
 <h1>Transfer inventory</h1>
 
+<p>
+  Create a <strong>Transfer</strong> to move quantities of inventory from one
+  storage location to another.
+</p>
+
 <%= simple_form_for @transfer, wrapper: :horizontal_form do |f| %>
 
   <%= f.association :from,

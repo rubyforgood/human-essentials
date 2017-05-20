@@ -2,18 +2,34 @@
 
 <p>
   <strong>Organization:</strong>
-  <%= @adjustment.organization %>
+  <%= @adjustment.organization.name %>
 </p>
 
 <p>
   <strong>Storage location:</strong>
-  <%= @adjustment.storage_location %>
+  <%= @adjustment.storage_location.name %>
 </p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @adjustment.line_items.each do |line_item| %>
+      <tr>
+        <td><%= line_item.item.name %></td>
+        <td><%= line_item.quantity %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
 <p>
   <strong>Comment:</strong>
   <%= @adjustment.comment %>
 </p>
 
-<%= link_to 'Edit', edit_adjustment_path(@adjustment) %> |
 <%= link_to 'Back', adjustments_path %>
