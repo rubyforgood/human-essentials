@@ -1,7 +1,7 @@
 RSpec.feature "Barcode management", type: :feature do
-
+  let!(:url_prefix) { "/#{@organization.to_param}"}
   scenario "User creates a new storage location" do
-    visit '/storage_locations/new'
+    visit url_prefix + "/storage_locations/new"
     storage_location_traits = attributes_for(:storage_location)
     fill_in "Name", with: storage_location_traits[:name]
     fill_in "Address", with: storage_location_traits[:address]
@@ -12,7 +12,7 @@ RSpec.feature "Barcode management", type: :feature do
 
   scenario "User updates an existing storage location" do
     storage_location = create(:storage_location)
-    visit "/storage_locations/#{storage_location.id}/edit"
+    visit url_prefix + "/storage_locations/#{storage_location.id}/edit"
     fill_in "Address", with: storage_location.name + " new"
     click_button "Update Storage location"
 
@@ -24,7 +24,7 @@ RSpec.feature "Barcode management", type: :feature do
     item2 = create(:item, name: "2T Diapers")
     location1 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Foo")
     location2 = create(:storage_location, name: "Bar")
-    visit "/storage_locations"
+    visit url_prefix + "/storage_locations"
 
     select item.name, from: "filters_containing"
     click_button "Filter"
@@ -39,10 +39,10 @@ RSpec.feature "Barcode management", type: :feature do
     item2 = create(:item, name: "ABC Diapers")
     item3 = create(:item, name: "Wonder Diapers")
     expected_order = [item1.name, item2.name, item3.name]
-    sotorage_location1 = create(:sotorage_location, :with_items, item: item2, item_quantity: 10, name: "Foo")
-    sotorage_location2 = create(:sotorage_location, :with_items, item: item1, item_quantity: 10, name: "Bar")
-    sotorage_location3 = create(:sotorage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
-    visit "/inventories"
+    sotorage_location1 = create(:storage_location, :with_items, item: item2, item_quantity: 10, name: "Foo")
+    sotorage_location2 = create(:storage_location, :with_items, item: item1, item_quantity: 10, name: "Bar")
+    sotorage_location3 = create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
+    visit url_prefix + "/storage_locations"
 
     expect(page.all('select#filters_containing option').map(&:text)).to eq(expected_order)
     expect(page.all('select#filters_containing option').map(&:text)).not_to eq(expected_order.reverse)
