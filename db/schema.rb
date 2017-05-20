@@ -49,7 +49,6 @@ ActiveRecord::Schema.define(version: 20170520183653) do
 
   create_table "donations", force: :cascade do |t|
     t.string   "source"
-    t.boolean  "completed",           default: false
     t.integer  "dropoff_location_id"
     t.datetime "created_at"
     t.datetime "updated_at"

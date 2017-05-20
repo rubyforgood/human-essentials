@@ -28,7 +28,6 @@ Rails.application.routes.draw do
     resources :donations do
       patch :add_item, on: :member
       patch :remove_item, on: :member
-      patch :complete, on: :member
     end
 
     get 'dashboard', to: 'dashboard#show'
