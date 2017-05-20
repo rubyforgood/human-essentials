@@ -1,6 +1,6 @@
 <h1>Create a new distribution</h1>
 
-<%= simple_form_for @distribution, url: new_distribution_path(organization_id: @organization.id) do |f| %>
+<%= simple_form_for @distribution, wrapper: :horizontal_form do |f| %>
 
 <%= f.association :partner,
   label: "Partner",

@@ -7,7 +7,7 @@ RSpec.describe "distributions/new.html.erb", type: :view do
     assign(:distribution, Distribution.new)
     assign(:storage_locations, [@storage_location])
     assign(:partner, @partner)
-    assign(:organization, @organization)
+    assign(:organization_id, @organization.id)
 
     render
   end

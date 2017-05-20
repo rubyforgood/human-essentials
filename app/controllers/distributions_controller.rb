@@ -15,7 +15,7 @@ class DistributionsController < ApplicationController
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
     if @distribution.save
-      redirect_to distribution_path(@distribution, organization_id: current_organization.short_name)
+      redirect_to distributions_path
     else
       flash[:notice] = "An error occurred, try again?"
       render :new
@@ -25,7 +25,6 @@ class DistributionsController < ApplicationController
   def new
     @distribution = Distribution.new
     @distribution.line_items.build
-    @organization = current_organization
     @items = Item.alphabetized
     @storage_locations = StorageLocation.all
   end
@@ -37,6 +36,6 @@ class DistributionsController < ApplicationController
   private
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :partner_id, :storage_location_id)
+    params.require(:distribution).permit(:comment, :partner_id, :storage_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
   end
 end
