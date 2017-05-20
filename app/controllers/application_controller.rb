@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user!
   before_action :authorize_user
+  before_action :swaddled
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
@@ -60,4 +61,8 @@ class ApplicationController < ActionController::Base
       # format.js   { head :forbidden, content_type: 'text/html' }
     # end
   # end
+
+  def swaddled
+    response.headers['swaddled-by'] = 'rubyforgood'
+  end
 end

@@ -1,0 +1,64 @@
+<% content_for :title, "#{current_organization.name} Dashboard" %>
+
+<div class='row'>
+  <div class="small-8 large-10 columns">
+    <h1><%= current_organization.name %></h1>
+  </div>
+
+  <div class="small-4 large-2 columns header-action">
+    <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
+      <%= f.select :interval, filter_intervals, selected: selected_interval %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class='medium-4 large-4 columns'>
+    <span class="float-center text-center">
+      <a class='button large primary' href='<%= new_donation_path %>'>New Inventory</a>
+    </span>
+    <h3 class="text-center"><%= total_received %> items received <%= display_interval %></h3>
+    <h4>Recent donations / purchases</h4>
+    <%= render partial: "donation", collection: @recent_donations, as: :donation %>
+    <%= link_to "See more...", donations_path(current_organization) %>
+  </div>
+
+  <div class='medium-4 large-4 columns'>
+    <span class="float-center text-center">
+      <a class='button large primary' href='<%= new_distribution_path %>'>New Distribution</a>
+    </span>
+    <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
+    <h4>Recent distributions</h4>
+    <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
+    <%= link_to "See more...", distributions_path(current_organization) %>
+  </div>
+
+  <div class='medium-4 large-4 columns'>
+    <h2 class="text-center" id="dashboard_inventory_header">Inventory</h2>
+    <h3 class="text-center"><%= total_on_hand %> items on-hand</h3>
+    <div class="inventory-actions">
+      <div class="text-center">
+        <%= link_to "Make a transfer", new_transfer_path(current_organization), class: "button hollow secondary" %>
+      </div>
+      <div class="text-center">
+        <%= link_to "Make an adjustment", "#", class: "button hollow secondary disabled" %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class='small-12 large-6 columns'>
+    <div class="callout">
+      <h5 class="text-center">Distribution <%= display_interval %></h5>
+      <%= bar_chart received_distributed_data %>
+    </div>
+  </div>
+
+  <div class='small-12 large-6 columns'>
+    <div class="callout">
+      <h5 class="text-center">Item categories on hand <%= display_interval %></h5>
+      <%= pie_chart fake_pie_chart_data, legend: "right" %>
+    </div>
+  </div>
+</div>
