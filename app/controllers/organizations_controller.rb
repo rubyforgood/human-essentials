@@ -6,17 +6,19 @@ class OrganizationsController < ApplicationController
   def update
     @organization = current_organization
 
-    if current_organization.update_attributes(organization_params)
-      redirect_to edit_organization_path, notice: 'Updated organization!'
+    if @organization.update_attributes(organization_params)
+      redirect_to edit_organization_path(organization_id: current_organization.to_param), notice: 'Updated organization!'
     else
       flash[:alert] = 'Failed to update organization'
       render :edit
     end
   end
 
+  # TODO: who should be able to arrive here and how?
   def new
   end
 
+  # TODO: who should be able to arrive here and how?
   def create
   end
 

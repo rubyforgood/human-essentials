@@ -44,16 +44,25 @@
             </li>
           </ul>
         <% else %>
-          <ul>
-            <li class="menu-text organization-name"><span>DiaperBase™</span></li>
+          <ul class='menu'>
+            <li class="menu-text organization-name"><span>Diaper Base</span></li>
           </ul>
         <% end %>
       </div>
       <div class="top-bar-right">
-        <ul class="menu">
+        <ul class="menu dropdown" data-dropdown-menu>
           <% if user_signed_in? %>
             <li><%= current_user.email %></li>
-            <li><%= link_to('Settings', edit_user_registration_path(organization_id: nil)) %></li>
+            <li class='has-submenu'>
+              <a href='javascript:void(0)'>Settings</a>
+              <ul class="submenu vertical menu">
+                <li><%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %></li>
+                <% with_options organization_id: current_user.organization.to_param do |with_org| %>
+                  <li><%= navigation_link_to "Manage users", with_org.users_path %></li>
+                  <li><%= navigation_link_to "Modify organization", with_org.edit_organization_path %></li>
+                <% end %>
+              </ul>
+            </li>
             <li><%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete') %></li>
           <% else %>
             <li><%= link_to 'Sign In', new_user_session_path(organization_id: nil) %></li>

@@ -1,4 +1,6 @@
-<%= render 'devise/shared/account_management_menu' %>
+<div class="header-action">
+  <%= link_to "Add a user", new_user_path, class: "button float-right" %>
+</div>
 
 <h1><%= current_organization.name %> Users</h1>
 
