@@ -72,19 +72,12 @@ RSpec.describe DonationsController, type: :controller do
     end
 
     context "Looking at a different organization" do
-      it "Disallows all access" do
-        other_org = create(:organization)
-        get :index, params: { organization_id: other_org.to_param }
-        expect(response).to have_http_status(403)
+      let(:object) { create(:donation, organization: create(:organization) ) }
 
-        d = create(:donation, organization: other_org)
-        single_params = { organization_id: other_org.to_param, id: d.id }
-        
-        get :new, params: { organization_id: other_org.to_param }
-        expect(response).to have_http_status(403)
-        
-        get :show, params: single_params
-        expect(response).to have_http_status(403)
+      include_examples "requiring authorization"
+
+      it "Disallows all access for Donation-specific actions" do
+        single_params = { organization_id: object.organization.to_param, id: object.id }
 
         patch :add_item, params: single_params
         expect(response).to have_http_status(403)
@@ -94,39 +87,18 @@ RSpec.describe DonationsController, type: :controller do
 
         patch :complete, params: single_params
         expect(response).to have_http_status(403)
-
-        get :edit, params: single_params
-        expect(response).to have_http_status(403)
-
-        put :update, params: single_params
-        expect(response).to have_http_status(403)
-
-        post :create, params: { organization_id: other_org.to_param }
-        expect(response).to have_http_status(403)
-
-        delete :destroy, params: single_params
-        expect(response).to have_http_status(403)
       end
     end
 
   end
 
   context "While not signed in" do
-    it "redirects the user to the sign-in page" do
-      d = create(:donation)
-      single_params = { organization_id: d.organization.to_param, id: d.id }
+    let(:object) { create(:donation) }
 
-      get :index, params: { organization_id: d.organization.to_param }
-      expect(response).to be_redirect
-
-      get :new, params: { organization_id: d.organization.to_param }
-      expect(response).to be_redirect
-
-      post :create, params: { organization_id: d.organization.to_param }
-      expect(response).to be_redirect
-      
-      get :show, params: single_params
-      expect(response).to be_redirect
+    include_examples "requiring authentication"
+    
+    it "redirects the user to the sign-in page for Donation specific actions" do
+      single_params = { organization_id: object.organization.to_param, id: object.id }
 
       patch :add_item, params: single_params
       expect(response).to be_redirect
@@ -135,15 +107,6 @@ RSpec.describe DonationsController, type: :controller do
       expect(response).to be_redirect
 
       patch :complete, params: single_params
-      expect(response).to be_redirect
-
-      get :edit, params: single_params
-      expect(response).to be_redirect
-
-      put :update, params: single_params
-      expect(response).to be_redirect
-
-      delete :destroy, params: single_params
       expect(response).to be_redirect
     end
   end
