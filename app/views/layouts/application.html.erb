@@ -17,7 +17,7 @@
       <div class="top-bar-left">
         <% if user_signed_in? %>
           <ul class="dropdown menu" data-dropdown-menu>
-            <li class="menu-text organization-name">PDX Diaper Bank</li>
+            <li class="menu-text organization-name"><%= current_organization.name %></li>
             <li><%= link_to_unless_current('Dashboard', dashboard_path) %></li>
             <li><%= link_to_unless_current('Donations', donations_path) %></li>
             <li><%= link_to_unless_current('Distributions', distributions_path) %></li>
