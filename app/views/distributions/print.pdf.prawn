@@ -1,4 +1,6 @@
 prawn_document do |pdf|
+  pdf.image logo_file_path(current_organization), width: 250
+
   pdf.bounding_box [pdf.bounds.right - 200, pdf.bounds.top - 20], width: 200 do
     pdf.text current_organization.name, align: :right
     pdf.text current_organization.address, align: :right
@@ -24,7 +26,6 @@ prawn_document do |pdf|
 
   pdf.text "Comments:", style: :bold
   pdf.text @distribution.comment
-
 
 
   pdf.move_down 20
