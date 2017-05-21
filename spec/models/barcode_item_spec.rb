@@ -68,15 +68,6 @@ RSpec.describe BarcodeItem, type: :model do
     end
   end
 
-  describe "barcoded_items >" do
-    it "returns a collection of items that have barcodes associated with them" do
-      create_list(:item, 3)
-      create(:barcode_item, item: Item.first)
-      create(:barcode_item, item: Item.last)
-      expect(BarcodeItem.barcoded_items.length).to eq(2)
-    end
-  end
-
   describe "to_line_item >" do
     it "emits a hash for a line_item" do
       barcode_item = create :barcode_item

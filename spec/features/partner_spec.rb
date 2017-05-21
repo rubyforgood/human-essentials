@@ -1,4 +1,7 @@
 RSpec.feature "Partner management", type: :feature do
+  before do
+    sign_in(@user)
+  end
   let!(:url_prefix) { "/#{@organization.to_param}"}
   scenario "User can add a new partner" do
   	visit url_prefix + '/partners/new'
