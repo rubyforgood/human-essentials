@@ -20,14 +20,13 @@ module ApplicationHelper
 
   def after_sign_in_path_for(resource)
     # default to the stored location
-    stored_location_for(resource) ||
-      if resource.is_a?(User) && resource.organization.present?
-        # go to user's dashboard
-        dashboard_path(organization_id: resource.organization.id)
-      else
-        # send new users to organization creation page
-        new_organization_path
-      end
+    if resource.is_a?(User) && resource.organization.present?
+      # go to user's dashboard
+      dashboard_path(organization_id: resource.organization.id)
+    else
+      stored_location_for(resource) || new_organization_path
+      # send new users to organization creation page
+    end
   end
 
   # def after_sign_out_path_for(resource)
