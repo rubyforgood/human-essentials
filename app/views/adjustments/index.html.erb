@@ -1,4 +1,6 @@
-<p id="notice"><%= notice %></p>
+<div class="header-action">
+  <%= link_to "Create New Adjustment", new_adjustment_path, class: "button float-right" %>
+</div>
 
 <h1>Adjustments</h1>
 
@@ -28,7 +30,3 @@
     <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'New Adjustment', new_adjustment_path %>
