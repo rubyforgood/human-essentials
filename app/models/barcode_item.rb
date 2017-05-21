@@ -22,10 +22,6 @@ class BarcodeItem < ApplicationRecord
   include Filterable
   scope :item_id, ->(item_id) { where(item_id: item_id) }
 
-  def self.barcoded_items
-    Item.joins(:barcode_items).order(:name).group(:id)
-  end
-
   # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
   def to_line_item
     {

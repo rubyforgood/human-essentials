@@ -1,4 +1,7 @@
 RSpec.feature "Barcode management", type: :feature do
+  before do
+    sign_in(@user)
+  end
   let!(:url_prefix) { "/#{@organization.to_param}"}
   scenario "User creates a new storage location" do
     visit url_prefix + "/storage_locations/new"
@@ -39,9 +42,9 @@ RSpec.feature "Barcode management", type: :feature do
     item2 = create(:item, name: "ABC Diapers")
     item3 = create(:item, name: "Wonder Diapers")
     expected_order = [item1.name, item2.name, item3.name]
-    sotorage_location1 = create(:storage_location, :with_items, item: item2, item_quantity: 10, name: "Foo")
-    sotorage_location2 = create(:storage_location, :with_items, item: item1, item_quantity: 10, name: "Bar")
-    sotorage_location3 = create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
+    storage_location1 = create(:storage_location, :with_items, item: item2, item_quantity: 10, name: "Foo")
+    storage_location2 = create(:storage_location, :with_items, item: item1, item_quantity: 10, name: "Bar")
+    storage_location3 = create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
     visit url_prefix + "/storage_locations"
 
     expect(page.all('select#filters_containing option').map(&:text)).to eq(expected_order)

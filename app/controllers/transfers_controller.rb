@@ -16,6 +16,7 @@ class TransfersController < ApplicationController
         render :new
       end
     else
+      flash[:notice] = "There was an error creating the transfer"
       render :new
     end
   rescue Errors::InsufficientAllotment => ex

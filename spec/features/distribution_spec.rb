@@ -9,6 +9,7 @@ RSpec.feature "Distributions", type: :feature do
   end
 
   scenario "User creates a new distribution" do
+    pending "TODO - This spec. Or else."
   	visit @url_prefix + "/distributions/new"
   	select Partner.first, from: "distribution[partner_id]"
   	select StorageLocation.first, from: "distribution[storage_location_id]"

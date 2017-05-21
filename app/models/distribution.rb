@@ -32,6 +32,15 @@ class Distribution < ApplicationRecord
   validate :line_item_items_exist_in_inventory
   validate :item_inventory_is_sufficient
 
+  scope :recent, ->(count=3) { order(:created_at).limit(count) }
+  scope :during, ->(range) { where(distributions: { created_at: range }) }
+
+  delegate :name, to: :partner, prefix: true
+
+  def self.total_distributed
+    self.includes(:line_items).map(&:total_quantity).reduce(0, :+)
+  end
+
   def quantities_by_category
     line_items.includes(:item).group("items.category").sum(:quantity)
   end

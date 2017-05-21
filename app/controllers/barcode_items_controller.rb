@@ -1,36 +1,36 @@
 class BarcodeItemsController < ApplicationController
   def index
-    @barcode_items = BarcodeItem.includes(:item).filter(filter_params)
-    @items = BarcodeItem.barcoded_items
+    @barcode_items = current_organization.barcode_items.includes(:item).filter(filter_params)
+    @items = current_organization.items.barcoded_items
   end
 
   def create
-    @barcode_item = BarcodeItem.create(barcode_item_params)
+    @barcode_item = current_organization.barcode_items.create(barcode_item_params)
     redirect_to @barcode_item, notice: "New barcode added!"
   end
 
   def new
-    @barcode_item = BarcodeItem.new
-    @items = Item.all
+    @barcode_item = current_organization.barcode_items.new
+    @items = current_organization.items.all
   end
 
   def edit
-    @barcode_item = BarcodeItem.includes(:item).find(params[:id])
-    @items = Item.all
+    @barcode_item = current_organization.barcode_items.includes(:item).find(params[:id])
+    @items = current_organization.items.all
   end
 
   def show
-    @barcode_item = BarcodeItem.includes(:item).find(params[:id])
+    @barcode_item = current_organization.barcode_items.includes(:item).find(params[:id])
   end
 
   def update
-    @barcode_item = BarcodeItem.find(params[:id])
+    @barcode_item = current_organization.barcode_items.find(params[:id])
     @barcode_item.update_attributes(barcode_item_params)
     redirect_to @barcode_item, notice: "Barcode updated!"
   end
 
   def destroy
-    BarcodeItem.find(params[:id]).destroy
+    current_organization.barcode_items.find(params[:id]).destroy
     redirect_to barcode_items_path
   end
 
