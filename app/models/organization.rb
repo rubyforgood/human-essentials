@@ -29,6 +29,9 @@ class Organization < ApplicationRecord
   has_many :transfers
   has_many :users
 
+  has_attached_file :logo, default_url: "/DiaperBase-Logo.png"
+  validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
+
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name
