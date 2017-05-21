@@ -15,8 +15,8 @@ RSpec.describe DistributionsController, type: :controller do
       end
     end
 
-    describe "GET #reclaim" do
-      subject { get :reclaim, params: default_params.merge({ organization_id: @organization, id: create(:distribution).id }) }
+    describe "GET #reclaim", :focus do
+      subject { get :index, params: default_params.merge({ organization_id: @organization, id: create(:distribution).id }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -39,7 +39,7 @@ RSpec.describe DistributionsController, type: :controller do
 
         post :create, params: default_params.merge(distribution: { storage_location_id: i.id, partner_id: p.id })
         expect(response).to have_http_status(:redirect)
-  
+
         d = Distribution.last
         expect(response).to redirect_to(distributions_path)
       end
