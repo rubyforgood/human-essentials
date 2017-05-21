@@ -4,7 +4,7 @@ class DistributionsController < ApplicationController
 
   def print
     @distribution = Distribution.find(params[:id])
-    # Do the prawn thing
+    @filename = "distribution_#{@distribution.id}.pdf"
   end
 
   def reclaim
