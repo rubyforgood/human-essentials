@@ -38,6 +38,7 @@ class DistributionsController < ApplicationController
 
   def show
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @line_items = @distribution.line_items
   end
 
   private
