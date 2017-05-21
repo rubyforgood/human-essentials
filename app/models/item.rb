@@ -32,6 +32,10 @@ class Item < ApplicationRecord
     select(:category).group(:category).order(:category)
   end
 
+  def self.barcoded_items
+    joins(:barcode_items).order(:name).group(:id)
+  end
+
   def self.storage_locations_containing(item)
     StorageLocation.joins(:inventory_items).where('inventory_items.item_id = ?', item.id)
   end
