@@ -75,6 +75,10 @@ GEM
     capistrano-rbenv (2.1.1)
       capistrano (~> 3.1)
       sshkit (~> 1.3)
+    capistrano3-puma (3.1.0)
+      capistrano (~> 3.7)
+      capistrano-bundler
+      puma (~> 3.4)
     capybara (2.13.0)
       addressable
       mime-types (>= 1.16)
@@ -341,8 +345,10 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   byebug
+  capistrano-bundler
   capistrano-rails
   capistrano-rbenv
+  capistrano3-puma
   capybara
   chartkick
   cocoon
