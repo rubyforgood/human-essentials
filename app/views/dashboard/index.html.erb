@@ -20,7 +20,7 @@
     <h3 class="text-center"><%= total_received %> items received <%= display_interval %></h3>
     <h4>Recent donations / purchases</h4>
     <%= render partial: "donation", collection: @recent_donations, as: :donation %>
-    <%= link_to "See more...", donations_path(current_organization) %>
+    <%= link_to "See more...", donations_path %>
   </div>
 
   <div class='medium-4 large-4 columns'>
@@ -30,7 +30,7 @@
     <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
     <h4>Recent distributions</h4>
     <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
-    <%= link_to "See more...", distributions_path(current_organization) %>
+    <%= link_to "See more...", distributions_path %>
   </div>
 
   <div class='medium-4 large-4 columns'>
@@ -38,10 +38,10 @@
     <h3 class="text-center"><%= total_on_hand %> items on-hand</h3>
     <div class="inventory-actions">
       <div class="text-center">
-        <%= link_to "Make a transfer", new_transfer_path(current_organization), class: "button hollow secondary" %>
+        <%= link_to "Make a transfer", new_transfer_path, class: "button hollow secondary" %>
       </div>
       <div class="text-center">
-        <%= link_to "Make an adjustment", "#", class: "button hollow secondary disabled" %>
+        <%= link_to "Make an adjustment", new_adjustment_path, class: "button hollow secondary" %>
       </div>
     </div>
   </div>
