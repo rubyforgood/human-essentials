@@ -39,6 +39,8 @@ class DistributionsController < ApplicationController
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
+    @storage_locations = StorageLocation.all
+    @items = Item.all
     flash[:notice] = ex.message
     render :new
   end

@@ -24,3 +24,14 @@ $ ->
         $.each data, (index) ->
           options += "<option value=\"" + data[index].item_id + "\">" + data[index].item_name + " (#{data[index].quantity})" + "</option>\n"
         $("select", insertedItem).find('option').remove().end().append(options)
+
+  $(document).on "turbolinks:load", ->
+    control = $("select#distribution_storage_location_id")
+    $.ajax
+      url: control.data("storage-location-inventory-path").replace(":id", control.val())
+      dataType: "json"
+      success: (data) ->
+        options = ""
+        $.each data, (index) ->
+          options += "<option value=\"" + data[index].item_id + "\">" + data[index].item_name + " (#{data[index].quantity})" + "</option>\n"
+        $("#transfer_line_items select").find('option').remove().end().append(options)
