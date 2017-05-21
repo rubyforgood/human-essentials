@@ -1,3 +1,5 @@
+<% content_for :title, "#{current_organization.name} - Donations - Edit" %>
+
 <h1>Editing donation from <%= @donation.source %></h1>
 
 <%= render partial: "donation_form", object: @donation %>

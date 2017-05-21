@@ -1,3 +1,5 @@
+<% content_for :title, "#{current_organization.name} - Inventory - Transfers" %>
+
 <h1>Transfer from <%= @transfer.from.name %> to <%= @transfer.to.name %></h1>
 
 <% if @transfer.comment.present? %>

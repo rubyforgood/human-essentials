@@ -1,3 +1,5 @@
+<% content_for :title, "Users - Edit" %>
+
 <h2>Update your account information</h2>
 
 <%= simple_form_for(resource, as: resource_name, url: user_registration_path(resource), html: { method: :put }) do |f| %>

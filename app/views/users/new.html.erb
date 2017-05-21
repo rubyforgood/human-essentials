@@ -1,3 +1,5 @@
+<% content_for :title, "#{current_organization.name} - Users - New" %>
+
 <h1>Add a user to <%= current_organization.name %></h1>
 
 <%= simple_form_for(@user) do |f| %>

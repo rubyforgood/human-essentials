@@ -1,3 +1,5 @@
+<% content_for :title, "#{current_organization.name} - Edit" %>
+
 <h1>Edit <%= current_organization.name %></h1>
 
 <%= simple_form_for current_organization, url: organization_path do |f| %>
