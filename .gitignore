@@ -31,3 +31,4 @@ pdx_db_test
 
 .rails_routes*
 .rake_tasks~
+.DS_Store
