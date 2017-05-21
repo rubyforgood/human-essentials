@@ -47,7 +47,13 @@
           </ul>
         <% else %>
           <ul class='menu'>
-            <li class="menu-text organization-name"><span>Diaper Base</span></li>
+            <li class="logo">
+              <% if current_organization && current_organization.logo.present? %>
+                <%= image_tag current_organization.logo.url, alt: current_organization.name %>
+              <% else %>
+                <%= image_tag "DiaperBase-Logo.png", alt: "DiaperBase Logo" %>
+              <% end %>
+            </li>
           </ul>
         <% end %>
       </div>
