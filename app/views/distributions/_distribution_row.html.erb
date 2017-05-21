@@ -4,7 +4,7 @@
   <td><%= distribution_row.total_quantity %></td>
   <td>
     <%= link_to "View", distribution_path(distribution_row), class: "button" %>
-    <%= link_to "Print", print_distribution_path(distribution_row), class: "button", format: :pdf) %>
+    <%= link_to "Print", print_distribution_path(distribution_row, format: :pdf), class: "button" %>
     <%= link_to "Reclaim", reclaim_distribution_path(distribution_row), method: :post, data: { confirm: "Are you sure?" }, class: "button" %>
   </td>
 </tr>
