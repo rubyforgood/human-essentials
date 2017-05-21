@@ -15,7 +15,7 @@ RSpec.describe DistributionsController, type: :controller do
       end
     end
 
-    describe "GET #reclaim", :focus do
+    describe "GET #reclaim" do
       subject { get :index, params: default_params.merge({ organization_id: @organization, id: create(:distribution).id }) }
       it "returns http success" do
         expect(subject).to be_successful
