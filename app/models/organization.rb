@@ -33,4 +33,8 @@ class Organization < ApplicationRecord
   def to_param
     short_name
   end
+
+  def address_inline
+    address.split("\n").join(",")
+  end
 end
