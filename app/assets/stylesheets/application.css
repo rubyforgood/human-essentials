@@ -30,3 +30,6 @@ a.active[disabled] {
   color: #777;
 }
 
+.top-bar .logo img {
+  height: 40px;
+}

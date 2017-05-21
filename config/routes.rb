@@ -30,7 +30,7 @@ Rails.application.routes.draw do
       patch :remove_item, on: :member
     end
 
-    get 'dashboard', to: 'dashboard#show'
+    get 'dashboard', to: 'dashboard#index'
 
   end
 

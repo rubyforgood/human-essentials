@@ -28,11 +28,17 @@ class Donation < ApplicationRecord
   validates :dropoff_location, :storage_location, :source, :organization, presence: true
 
   scope :between, ->(start, stop) { where(donations: { created_at: start..stop }) }
+  scope :during, ->(range) { where(donations: { created_at: range }) }
   # TODO - change this to "by_source()" with an argument that accepts a source name
   scope :diaper_drive, -> { where(source: "Diaper Drive") }
+  scope :recent, ->(count=3) { order(:created_at).limit(count) }
 
   def self.daily_quantities_by_source(start, stop)
     joins(:line_items).includes(:line_items).between(start, stop).group(:source).group_by_day("donations.created_at").sum("line_items.quantity")
+  end
+
+  def self.total_received
+    self.includes(:line_items).map(&:total_quantity).reduce(0, :+)
   end
 
   ## TODO - Can this be simplified so that we can just pass it the donation_item_params hash?
@@ -50,6 +56,10 @@ class Donation < ApplicationRecord
     if (line_item)
       line_item.destroy
     end
+  end
+
+  def total_quantity
+    self.line_items.sum(:quantity)
   end
 
   ## TODO - Could this be made a member method "count" of the `items` association?
