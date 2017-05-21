@@ -30,7 +30,6 @@ class Distribution < ApplicationRecord
   validates :storage_location, :partner, :organization, presence: true
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
-  validate :item_inventory_is_sufficient
 
   scope :recent, ->(count=3) { order(:created_at).limit(count) }
   scope :during, ->(range) { where(distributions: { created_at: range }) }
@@ -55,8 +54,6 @@ class Distribution < ApplicationRecord
 
   private
 
-
-
   def line_item_items_exist_in_inventory
     self.line_items.each do |line_item|
       next unless line_item.item
@@ -64,18 +61,6 @@ class Distribution < ApplicationRecord
       if inventory_item.nil?
         errors.add(:storage_location,
                    "#{line_item.item.name} is not available " \
-                   "at this storage location")
-      end
-    end
-  end
-
-  def item_inventory_is_sufficient
-    self.line_items.each do |line_item|
-      next unless line_item.item
-      inventory_item = self.storage_location.inventory_items.find_by(item: line_item.item)
-      if inventory_item.quantity <= line_item.quantity
-        errors.add(:storage_location,
-                   "There are too few of #{line_item.item.name} " \
                    "at this storage location")
       end
     end

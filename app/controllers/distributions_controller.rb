@@ -23,14 +23,24 @@ class DistributionsController < ApplicationController
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
 
-    if @distribution.save
+    if @distribution.valid?
       @distribution.storage_location.distribute!(@distribution)
-      redirect_to distributions_path
+
+      if @distribution.save
+        redirect_to distributions_path
+      else
+        flash[:notice] = "There was an error, try again?"
+        render :new
+      end
     else
+      @storage_locations = StorageLocation.all
       flash[:notice] = "An error occurred, try again?"
       logger.error "failed to save distribution: #{ @distribution.errors.full_messages }"
       render :new
     end
+  rescue Errors::InsufficientAllotment => ex
+    flash[:notice] = ex.message
+    render :new
   end
 
   def new
