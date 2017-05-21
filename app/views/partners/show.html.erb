@@ -1,2 +1,4 @@
+<% content_for :title, "#{current_organization.name} - Agencies - Partners - #{@partner.name}" %>
+
 <h1><%= @partner.name %></h1>
 <p><%= link_to @partner.email, "mailto:#{@partner.email}" %></p>

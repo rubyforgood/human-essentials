@@ -1,3 +1,5 @@
+<% content_for :title, "#{current_organization.name} - Distributions" %>
+
 <div class="header-action">
   <%= link_to "New Distribution", new_distribution_path(organization_id: current_organization), class: "button float-right" %>
 </div>
