@@ -120,14 +120,23 @@ hr {
   background: $blue;
 }
 
+
 // nav links
 .top-bar, .top-bar li, .top-bar ul.menu, .top-bar a {
   // color: $grey;
   color: $white;
 }
 
-.top-bar li:hover, .top-bar ul.menu:hover, .top-bar a:hover {
+// .top-bar li:hover, .top-bar ul.menu:hover,
+.top-bar a:hover {
   color: $light-grey;
+}
+
+.top-bar {
+  a.active[disabled] {
+    color: $dark-grey;
+    cursor: default;
+  }
 }
 
 // dropdown menu arrow color
