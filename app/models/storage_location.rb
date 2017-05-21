@@ -57,7 +57,7 @@ class StorageLocation < ApplicationRecord
     insufficient_items = []
     distribution.line_items.each do |line_item|
       inventory_item = self.inventory_items.find_by(item: line_item.item)
-      next if inventory_item.nil? || inventory_item.quantity == 0
+      next if inventory_item.nil?
       if inventory_item.quantity >= line_item.quantity
         updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
       else
