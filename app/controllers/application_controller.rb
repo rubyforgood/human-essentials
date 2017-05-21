@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
-
   def current_organization
     # FIXME: should be short_name so that we get "/pdx/blah" rather than "/123/blah"
     @organization ||= Organization.find_by(short_name: params[:organization_id])

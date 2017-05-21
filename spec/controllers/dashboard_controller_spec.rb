@@ -14,17 +14,19 @@ RSpec.describe DashboardController, type: :controller do
         expect(response).to have_http_status(:success)
       end
 
-      it "requires authorization" do
-        pending "FIXME - Getting a 'nil doesn't have id' error on `current_organization` but unclear why that's happening"
-        get :index, params: { organization_id: create(:organization).id }
-        expect(response).to have_http_status(403)
+      context 'for another org' do
+        it "requires authorization" do
+          # nother org
+          get :index, params: { organization_id: create(:organization).to_param }
+          expect(response).to have_http_status(403)
+        end
       end
     end
   end
 
   context "While not signed in" do
     it "redirects for authentication" do
-      get :index, params: { organization_id: create(:organization).id }
+      get :index, params: { organization_id: create(:organization).to_param }
       expect(response).to be_redirect
     end
   end
