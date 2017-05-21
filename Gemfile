@@ -85,6 +85,8 @@ group :development do
   gem 'better_errors'
   gem 'capistrano-rails'
   gem 'capistrano-rbenv'
+  gem 'capistrano-bundler'
+  gem 'capistrano3-puma'
 #  gem 'quiet_assets' # Is this necessary? It's locked to rails 3.1
 end
 
