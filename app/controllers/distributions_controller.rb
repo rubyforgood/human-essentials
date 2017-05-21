@@ -1,4 +1,7 @@
 class DistributionsController < ApplicationController
+
+  rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
+
   def print
     @distribution = Distribution.find(params[:id])
     # Do the prawn thing
@@ -6,6 +9,11 @@ class DistributionsController < ApplicationController
 
   def reclaim
     @distribution = Distribution.find(params[:id])
+    @distribution.storage_location.reclaim!(@distribution)
+
+    flash[:notice] = "Distribution #{@distribution.id} has been reclaimed!"
+    redirect_to distributions_path
+
   end
 
   def index
@@ -14,7 +22,9 @@ class DistributionsController < ApplicationController
 
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
+
     if @distribution.save
+      @distribution.storage_location.distribute!(@distribution)
       redirect_to distributions_path
     else
       flash[:notice] = "An error occurred, try again?"
@@ -32,6 +42,14 @@ class DistributionsController < ApplicationController
 
   def show
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @line_items = @distribution.line_items
+  end
+
+  def insufficient_amount!
+    respond_to do |format|
+      format.html { render template: "errors/insufficient", layout: "layouts/application", status: 200 }
+      format.json { render nothing: true, status: 200 }
+    end
   end
 
   private

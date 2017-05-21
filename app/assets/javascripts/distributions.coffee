@@ -11,7 +11,7 @@ $ ->
       success: (data) ->
         options = ""
         $.each data, (index) ->
-          options += "<option value=\"" + data[index].item_id + "\">" + data[index].item_name + "</option>\n"
+          options += "<option value=\"" + data[index].item_id + "\">" + data[index].item_name + " (#{data[index].quantity})" + "</option>\n"
         $("#transfer_line_items select").find('option').remove().end().append(options)
 
   $(document).on "cocoon:after-insert", "form#new_distribution", (e, insertedItem) ->
@@ -22,5 +22,5 @@ $ ->
       success: (data) ->
         options = ""
         $.each data, (index) ->
-          options += "<option value=\"" + data[index].item_id + "\">" + data[index].item_name + "</option>\n"
+          options += "<option value=\"" + data[index].item_id + "\">" + data[index].item_name + " (#{data[index].quantity})" + "</option>\n"
         $("select", insertedItem).find('option').remove().end().append(options)

@@ -4,7 +4,7 @@
 
 item_option = (item) ->
   "<option value='#{item.item_id}'>
-     #{ item.item_name } -- #{ item.quantity }
+     #{ item.item_name }  (#{ item.quantity })
    </option>"
 
 $(document).on 'turbolinks:load', () ->
