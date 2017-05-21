@@ -7,7 +7,8 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 # Creates Seed Data for the organization
 
-pdx_org = Organization.find_or_create_by!(name: "Portland Diaper Bank", short_name: "pdx_bank") do |organization|
+pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organization|
+  organization.name = "PDX Diaper Bank"
   organization.address = "P.O. Box 22613, Portland OR 97269"
   organization.email = "info@pdxdiaperbank.org"
 end
@@ -228,4 +229,25 @@ BarcodeItem.find_or_create_by!(value: "311917152226") do |barcode|
   barcode.item =  Item.find_by(name: "Kids (Size 4)")
   barcode.quantity = 82
   barcode.organization = pdx_org
+end
+
+def random_record(klass)
+  klass.limit(1).order("random()").first
+end
+
+sources = ['Diaper Drive', 'Purchased Supplies', 'Dropoff Donation']
+20.times.each do
+  donation = Donation.create! source: sources.sample, dropoff_location: random_record(DropoffLocation), storage_location: random_record(StorageLocation), organization: pdx_org
+
+  rand(1..5).times.each do
+    LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: donation
+  end
+end
+
+20.times.each do
+  distribution = Distribution.create! storage_location: random_record(StorageLocation), partner: random_record(Partner), organization: pdx_org
+
+  rand(1..5).times.each do
+    LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: distribution
+  end
 end
