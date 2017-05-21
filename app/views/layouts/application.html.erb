@@ -26,16 +26,18 @@
             <li class="has-submenu">
               <a href="javascript:void(0)">Inventory</a>
               <ul class="submenu menu vertical" data-submenu>
+                <li><%= navigation_link_to('Items', items_path) %></li>
                 <li><%= navigation_link_to('Barcode Items', barcode_items_path) %></li>
+                <li><%= navigation_link_to('Storage Locations', storage_locations_path) %></li>
+                <li><%= navigation_link_to('Adjustments', adjustments_path) %></li>
                 <li><%= navigation_link_to('Transfers', transfers_path) %></li>
               </ul>
             </li>
             <li class="has-submenu">
-              <a href="javascript:void(0)">Address List</a>
+              <a href="javascript:void(0)">Agencies</a>
               <ul class="submenu menu vertical" data-submenu>
                 <li><%= navigation_link_to('Dropoff Locations', dropoff_locations_path) %></li>
                 <li><%= navigation_link_to('Partners', partners_path) %></li>
-                <li><%= navigation_link_to('Storage Locations', storage_locations_path) %></li>
               </ul>
             </li>
           </ul>
