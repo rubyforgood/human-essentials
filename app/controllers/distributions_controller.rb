@@ -18,6 +18,7 @@ class DistributionsController < ApplicationController
       redirect_to distributions_path
     else
       flash[:notice] = "An error occurred, try again?"
+      logger.error "failed to save distribution: #{ @distribution.errors.full_messages }"
       render :new
     end
   end

@@ -5,7 +5,6 @@ RSpec.feature "Item management", type: :feature do
   let!(:url_prefix) { "/#{@organization.to_param}" }
   scenario "User creates a new item" do
     visit url_prefix + '/items/new'
-    save_and_open_page
     item_traits = attributes_for(:item)
     fill_in "Name", with: item_traits[:name]
     fill_in "Category", with: item_traits[:category]
