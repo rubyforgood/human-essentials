@@ -7,11 +7,9 @@
 This project is taking what we built for the [Portland Diaper Bank in 2016](https://github.com/rubyforgood/pdx_diaper) and turning it into a multitenant application, something that all diaper banks can use. We will be re-using models, code and other documentation where applicable as well as implementing new features and functionality requested by the stakeholder. We're super excited to have Rachel Alston, the director of the Portland Diaper Bank, attending our event in 2017 to provide guidance and give us the best chance of success!
 
 ## Ruby Version
-This app uses Ruby version 2.3.0, indicated in `/.ruby-version`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
+This app uses Ruby version 2.3.3, indicated in `/.ruby-version`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
 
 ## Database Configuration
-*Note: The app currently uses SQLite3 for dev/test, but should be reconfigured to work as below, using PG.*
-
 This app uses PostgreSQL for all environments. When you first clone this app, you will need to create a `.env` file in the root of the application, and populate it with:
 
 ```
