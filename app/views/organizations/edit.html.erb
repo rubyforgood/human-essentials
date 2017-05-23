@@ -8,7 +8,7 @@
   <div class="form-inputs">
     <%= f.input :name, required: true, autofocus: true %>
     <%= f.input :short_name, required: true, autofocus: true %>
-    <%= f.input :url %>
+    <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
     <%= f.input :email %>
     <%= f.input :address %>
     <%= f.input :logo %>
