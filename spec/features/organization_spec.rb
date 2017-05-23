@@ -3,8 +3,8 @@ RSpec.feature "Organization management", type: :feature do
     sign_in(@user)
   end
   let!(:url_prefix) { "/#{@organization.to_param}"}
-  scenario "When editing their organization, the user can enter a URL with or without http://" do
-  	visit url_prefix + '/organization/edit'
+  scenario "When editing their organization, the user is prompted with placeholder text and a more helpful error message to ensure correct URL format" do
+    visit url_prefix + '/organization/edit'
     fill_in "Url", with: "www.diaperbase.com"
     click_button "Update"
 
