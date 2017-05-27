@@ -2,14 +2,18 @@
 #
 # Table name: organizations
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  short_name :string
-#  address    :text
-#  email      :string
-#  url        :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id                :integer          not null, primary key
+#  name              :string
+#  short_name        :string
+#  address           :text
+#  email             :string
+#  url               :string
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  logo_file_name    :string
+#  logo_content_type :string
+#  logo_file_size    :integer
+#  logo_updated_at   :datetime
 #
 
 class Organization < ApplicationRecord
@@ -23,6 +27,7 @@ class Organization < ApplicationRecord
   has_many :distributions
   has_many :donations
   has_many :dropoff_locations
+  has_many :diaper_drive_participants
   has_many :storage_locations
   has_many :items
   has_many :partners

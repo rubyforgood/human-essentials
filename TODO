@@ -1,38 +1,51 @@
 app/controllers/application_controller.rb:
-  * [  7] [FIXME] should be short_name so that we get "/pdx/blah" rather than "/123/blah"
+  * [ 12] [FIXME] should be short_name so that we get "/pdx/blah" rather than "/123/blah"
 
 app/controllers/donations_controller.rb:
   * [ 12] [TODO] - needs to be able to handle barcodes too
+  * [ 88] [FIXME] "magic string" for source field should be DRYed out.
+
+app/controllers/organizations_controller.rb:
+  * [ 17] [TODO] who should be able to arrive here and how?
+  * [ 21] [TODO] who should be able to arrive here and how?
 
 app/controllers/storage_locations_controller.rb:
   * [ 24] [TODO] - the intake! method needs to be worked into this controller somehow.
   * [ 25] [TODO] - the distribute! method needs to be worked into this controller somehow
 
+app/models/adjustment.rb:
+  * [ 36] [TODO] - this could probably be made an association method for the `line_items` association
+
 app/models/admin_user.rb:
   * [  2] [TODO] AdminUser should be rebuilt from scratch! 
 
 app/models/barcode_item.rb:
-  * [ 29] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
+  * [ 25] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
 
 app/models/donation.rb:
-  * [ 29] [TODO] - change this to "by_source()" with an argument that accepts a source name
-  * [ 36] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
-  * [ 45] [TODO] - Test coverage for this method
-  * [ 53] [TODO] - Could this be made a member method "count" of the `items` association?
-  * [ 58] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
-  * [ 63] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
-  * [ 72] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
+  * [ 32] [FIXME] - This validation can be removed because it's implicit in belongs_to as of Rails 5
+  * [ 37] [TODO] - change this to "by_source()" with an argument that accepts a source name
+  * [ 57] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
+  * [ 66] [TODO] - Test coverage for this method
+  * [ 78] [TODO] - Could this be made a member method "count" of the `items` association?
+  * [ 83] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
+  * [ 88] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
+  * [ 97] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
-  * [ 24] [TODO] - is there a reason for doing this instead of setting a DB default?
+  * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?
 
 app/models/storage_location.rb:
-  * [ 81] [TODO] - this action is happening in the Transfer model/controller - does this method belong here?
-  * [113] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
+  * [ 82] [TODO] - this action is happening in the Transfer model/controller - does this method belong here?
+  * [115] [TODO] - this is called from the AdjustmentsController, should probably be in a service, not this model
+  * [147] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
 
 app/models/transfer.rb:
-  * [ 28] [TODO] - this could probably be made an association method for the `line_items` association
-  * [ 33] [TODO] - this could probably be made an association method for the `line_items` association
-  * [ 38] [TODO] - this could probably be made an association method for the `line_items` association
-  * [ 45] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 29] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 34] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 39] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 58] [TODO] - this could probably be made an association method for the `line_items` association
+
+app/views/donations/_donation_form.html.erb:
+  * [ 10] [FIXME] - This isn't a transfer -- the id should be changed to "donation"
 

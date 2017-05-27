@@ -33,8 +33,9 @@ class DonationsController < ApplicationController
     if (@donation.save)
       redirect_to donations_path
     else
-      @storage_locations = StorageLocation.all
-      @dropoff_locations = DropoffLocation.all
+      @storage_locations = current_organization.storage_locations.all
+      @dropoff_locations = current_organization.dropoff_locations.all
+      @diaper_drive_participants = current_organization.diaper_drive_participants.all
       flash[:notice] = "There was an error starting this donation, try again?"
       render action: :new
     end
@@ -43,9 +44,10 @@ class DonationsController < ApplicationController
   def new
     @donation = Donation.new
     @donation.line_items.build
-    @storage_locations = StorageLocation.all
-    @dropoff_locations = DropoffLocation.all
-    @items = Item.alphabetized
+    @storage_locations = current_organization.storage_locations
+    @dropoff_locations = current_organization.dropoff_locations
+    @diaper_drive_participants = current_organization.diaper_drive_participants
+    @items = current_organization.items.alphabetized
   end
 
   def edit
@@ -74,10 +76,19 @@ class DonationsController < ApplicationController
 
 private
   def donation_params
-    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
+    params = strip_unnecessary_params
+    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
   end
 
   def donation_item_params
     params.require(:donation).permit(:barcode_id, :item_id, :quantity)
+  end
+
+  # Omits dropoff_location_id or diaper_drive_participant_id if those aren't selected as source
+  # FIXME "magic string" for source field should be DRYed out.
+  def strip_unnecessary_params
+    params[:donation].delete(:dropoff_location_id) unless params[:donation][:source] == "Donation Pickup Location"
+    params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == "Diaper Drive"
+    params
   end
 end

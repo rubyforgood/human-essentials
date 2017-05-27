@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: adjustments
+#
+#  id                  :integer          not null, primary key
+#  organization_id     :integer
+#  storage_location_id :integer
+#  comment             :text
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#
+
 class Adjustment < ApplicationRecord
   belongs_to :organization
   belongs_to :storage_location

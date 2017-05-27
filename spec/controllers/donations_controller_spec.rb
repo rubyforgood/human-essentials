@@ -33,7 +33,7 @@ RSpec.describe DonationsController, type: :controller do
         post :create, params: default_params.merge(
           donation: { storage_location_id: storage_location.id,
                       dropoff_location_id: dropoff_location.id,
-                      source: "foo",
+                      source: "Donation Pickup Location",
                       line_items: line_items } )
         d = Donation.last
         expect(response).to redirect_to(donations_path)
@@ -48,8 +48,8 @@ RSpec.describe DonationsController, type: :controller do
 
     describe "PUT#update" do
       it "redirects to #show" do
-        donation = create(:donation, source: "bar")
-        put :update, params: default_params.merge(id: donation.id, donation: { source: "foo" })
+        donation = create(:donation, source: "Purchased Supplies")
+        put :update, params: default_params.merge(id: donation.id, donation: { source: "Purchased Supplies" })
         expect(response).to redirect_to(donation_path(donation))
       end
     end
