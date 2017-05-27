@@ -87,16 +87,15 @@ group :development do
   gem 'capistrano-rbenv'
   gem 'capistrano-bundler'
   gem 'capistrano3-puma'
-#  gem 'quiet_assets' # Is this necessary? It's locked to rails 3.1
 end
 
 group :test do
-  # Inherited Gems
   gem 'capybara'
   gem 'factory_girl_rails'
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'launchy'
+  gem 'poltergeist'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

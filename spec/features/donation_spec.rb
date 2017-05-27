@@ -1,4 +1,4 @@
-RSpec.feature "Donations", type: :feature do
+RSpec.feature "Donations", type: :feature, js: true do
   before :each do
     sign_in @user
     @url_prefix = "/#{@organization.short_name}"
@@ -33,32 +33,36 @@ RSpec.feature "Donations", type: :feature do
 
       scenario "User can create a donation for a Diaper Drive source" do
         select "Diaper Drive", from: "donation_source"
+        expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
+        expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
         select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect {
-                  save_and_open_page
           click_button "Create Donation"
         }.to change{Donation.count}.by(1)
       end
 
       scenario "User can create a donation for a Donation Site source" do
         select "Donation Pickup Location", from: "donation_source"
+        expect(page).to have_xpath("//select[@id='donation_dropoff_location_id']")
+        expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select DropoffLocation.first.name, from: "donation_dropoff_location_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect {
-          save_and_open_page
           click_button "Create Donation"
         }.to change{Donation.count}.by(1)
       end
 
       scenario "User can create a donation for Purchased Supplies" do
         select "Purchased Supplies", from: "donation_source"
+        expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
+        expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -70,6 +74,8 @@ RSpec.feature "Donations", type: :feature do
 
       scenario "User can create a donation with a Miscellaneous source" do
         select "Misc. Donation", from: "donation_source"
+        expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
+        expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -77,7 +83,6 @@ RSpec.feature "Donations", type: :feature do
         expect {
           click_button "Create Donation"
         }.to change{Donation.count}.by(1)
-
       end
 
     end

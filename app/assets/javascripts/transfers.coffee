@@ -2,6 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+# FIXME - This file is generating --> undefined is not an object (evaluating 'control.data("storage-location-inventory-path").replace')
 item_option = (item) ->
   "<option value='#{item.item_id}'>
      #{ item.item_name }  (#{ item.quantity })

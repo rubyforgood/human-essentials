@@ -88,6 +88,7 @@ GEM
       xpath (~> 2.0)
     chartkick (2.2.3)
     climate_control (0.2.0)
+    cliver (0.3.2)
     cocaine (0.5.8)
       climate_control (>= 0.0.3, < 1.0)
     cocoon (1.2.10)
@@ -199,6 +200,10 @@ GEM
       mimemagic (~> 0.3.0)
     pdf-core (0.7.0)
     pg (0.20.0)
+    poltergeist (1.15.0)
+      capybara (~> 2.1)
+      cliver (~> 0.3.1)
+      websocket-driver (>= 0.2.0)
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
       ttfunk (~> 1.5)
@@ -368,6 +373,7 @@ DEPENDENCIES
   listen (~> 3.0.5)
   paperclip (= 5.1.0)
   pg (~> 0.18)
+  poltergeist
   prawn-rails
   pry
   puma (~> 3.0)

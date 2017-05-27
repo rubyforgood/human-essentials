@@ -6,6 +6,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'spec_helper'
 require 'rspec/rails'
 require 'capybara/rails'
+require 'capybara/poltergeist'
 require 'pry'
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -29,6 +30,11 @@ Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].each {|f| require 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
+
+# Enable JS for Capybara tests
+Capybara.javascript_driver = :poltergeist
+# If an element is hidden, Capybara should ignore it
+Capybara.ignore_hidden_elements = true
 
 RSpec.configure do |config|
 
