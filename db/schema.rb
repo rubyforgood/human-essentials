@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170521132736) do
+ActiveRecord::Schema.define(version: 20170527184803) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,17 @@ ActiveRecord::Schema.define(version: 20170521132736) do
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id", using: :btree
   end
 
+  create_table "diaper_drive_participants", force: :cascade do |t|
+    t.string   "name"
+    t.string   "contact_name"
+    t.string   "email"
+    t.string   "phone"
+    t.string   "comment"
+    t.integer  "organization_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
   create_table "distributions", force: :cascade do |t|
     t.text     "comment"
     t.datetime "created_at"
@@ -55,6 +66,7 @@ ActiveRecord::Schema.define(version: 20170521132736) do
     t.integer  "storage_location_id"
     t.text     "comment"
     t.integer  "organization_id"
+    t.integer  "diaper_drive_participant_id"
     t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id", using: :btree
     t.index ["organization_id"], name: "index_donations_on_organization_id", using: :btree
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id", using: :btree

@@ -2,20 +2,22 @@
 #
 # Table name: donations
 #
-#  id                  :integer          not null, primary key
-#  source              :string
-#  dropoff_location_id :integer
-#  created_at          :datetime
-#  updated_at          :datetime
-#  storage_location_id :integer
-#  comment             :text
-#  organization_id     :integer
+#  id                          :integer          not null, primary key
+#  source                      :string
+#  dropoff_location_id         :integer
+#  created_at                  :datetime
+#  updated_at                  :datetime
+#  storage_location_id         :integer
+#  comment                     :text
+#  organization_id             :integer
+#  diaper_drive_participant_id :integer
 #
 
 FactoryGirl.define do
   factory :donation do
     dropoff_location
-    source { Donation::SOURCES.first }
+    diaper_drive_participant
+    source { "Misc. Donation" }
     comment "It's a fine day for diapers."
     storage_location
     organization { Organization.try(:first) || create(:organization) }

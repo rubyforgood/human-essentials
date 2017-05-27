@@ -2,15 +2,15 @@
 #
 # Table name: donations
 #
-#  id                  :integer          not null, primary key
-#  source              :string
-#  completed           :boolean          default("false")
-#  dropoff_location_id :integer
-#  created_at          :datetime
-#  updated_at          :datetime
-#  comment             :text
-#  organization_id     :integer
-#  storage_location_id :integer
+#  id                          :integer          not null, primary key
+#  source                      :string
+#  dropoff_location_id         :integer
+#  created_at                  :datetime
+#  updated_at                  :datetime
+#  storage_location_id         :integer
+#  comment                     :text
+#  organization_id             :integer
+#  diaper_drive_participant_id :integer
 #
 
 class Donation < ApplicationRecord
@@ -19,13 +19,15 @@ class Donation < ApplicationRecord
   belongs_to :organization
 
   belongs_to :dropoff_location, optional: true              # Validation is conditionally handled below.
+  belongs_to :diaper_drive_participant, optional: true      # Validation is conditionally handled below.
   belongs_to :storage_location
   has_many :line_items, as: :itemizable, inverse_of: :itemizable
   has_many :items, through: :line_items
   accepts_nested_attributes_for :line_items,
     allow_destroy: true
 
-  validates :dropoff_location, presence: { message: "must be specified" }, if: :from_dropoff_location?
+  validates :dropoff_location, presence: { message: "must be specified since you chose 'Donation Pickup Location'" }, if: :from_dropoff_location?
+  validates :diaper_drive_participant, presence: { message: "must be specified since you chose 'Diaper Drive'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES, message: "Must be a valid source." }
   validates :storage_location, :organization, presence: true
 
@@ -34,6 +36,10 @@ class Donation < ApplicationRecord
   # TODO - change this to "by_source()" with an argument that accepts a source name
   scope :diaper_drive, -> { where(source: "Diaper Drive") }
   scope :recent, ->(count=3) { order(:created_at).limit(count) }
+
+  def from_diaper_drive?
+    source == "Diaper Drive"
+  end
 
   def from_dropoff_location?
     source == "Donation Pickup Location"

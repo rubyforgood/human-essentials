@@ -73,7 +73,6 @@ RSpec.feature "Donations", type: :feature do
 
         expect {
           click_button "Create Donation"
-          save_and_open_page
         }.to change{Donation.count}.by(1)
 
       end
