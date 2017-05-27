@@ -3,6 +3,7 @@ app/controllers/application_controller.rb:
 
 app/controllers/donations_controller.rb:
   * [ 12] [TODO] - needs to be able to handle barcodes too
+  * [ 88] [FIXME] "magic string" for source field should be DRYed out.
 
 app/controllers/organizations_controller.rb:
   * [ 17] [TODO] who should be able to arrive here and how?

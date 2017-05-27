@@ -85,6 +85,22 @@ RSpec.feature "Donations", type: :feature, js: true do
         }.to change{Donation.count}.by(1)
       end
 
+      # Since the form only shows/hides the irrelevant field, if the user already selected something it would still
+      # submit. The app should sanitize this so we aren't saving extraneous data
+      scenario "extraneous data is stripped if the user adds both dropoff_location and diaper_drive_participant" do
+        select "Donation Pickup Location", from: "donation_source"
+        select DropoffLocation.first.name, from: "donation_dropoff_location_id"
+        select "Diaper Drive", from: "donation_source"
+        select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "5"
+        click_button "Create Donation"
+        donation = Donation.last
+        expect(donation.diaper_drive_participant_id).to be_present
+        expect(donation.dropoff_location_id).to be_nil
+      end
+
     end
 
     context "via barcode entry" do

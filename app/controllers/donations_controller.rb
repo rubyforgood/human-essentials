@@ -76,10 +76,19 @@ class DonationsController < ApplicationController
 
 private
   def donation_params
+    params = strip_unnecessary_params
     params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
   end
 
   def donation_item_params
     params.require(:donation).permit(:barcode_id, :item_id, :quantity)
+  end
+
+  # Omits dropoff_location_id or diaper_drive_participant_id if those aren't selected as source
+  # FIXME "magic string" for source field should be DRYed out.
+  def strip_unnecessary_params
+    params[:donation].delete(:dropoff_location_id) unless params[:donation][:source] == "Donation Pickup Location"
+    params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == "Diaper Drive"
+    params
   end
 end
