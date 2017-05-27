@@ -25,7 +25,18 @@ You'll also need to create the `dev` and `test` databases, the app is expecting 
 
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
 
-Standard Github community processes apply -- fork the repo, make your changes, submit a pull-request with your change. Please indicate which issue it addresses in your pull-request title.
+Standard Github community processes apply -- fork the repo, make your changes, submit a pull-request with your change. Please indicate which issue it addresses in your pull-request title. Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, put a TODO, FIXME, or NOTE comment above it.
+
+## Testing
+
+This app uses RSpec, Capybara, Poltergeist, and FactoryGirl for testing. Make sure `rake spec` runs clean & green before submitting a Pull Request.
+
+## TODOs
+
+Before committing, please run `rake notes > TODO` in the root of the app. 
+
+Feel free to peruse the TODO file and tackle any issues found in there. These may or may not have actual issues associated with them.
+
 
 # Acknowledgements
 
