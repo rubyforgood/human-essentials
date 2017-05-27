@@ -17,11 +17,13 @@ RSpec.describe Donation, type: :model do
     it "must belong to an organization" do
       expect(build(:donation, organization_id: nil)).not_to be_valid
     end
-    it "requires a dropoff_location" do
-      expect(build(:donation, dropoff_location: nil)).not_to be_valid
+    it "requires a dropoff_location if the source is 'Donation Pickup Location'" do
+      expect(build(:donation, source: "Donation Pickup Location", dropoff_location: nil)).not_to be_valid
+      expect(build(:donation, source: "Purchased Supplies", dropoff_location: nil)).to be_valid
     end
-    it "requires a source" do
+    it "requires a source from the list of available sources" do
       expect(build(:donation, source: nil)).not_to be_valid
+      expect(build(:donation, source: "Something new")).not_to be_valid
     end
     it "requires an inventory (storage location)" do
       expect(build(:donation, storage_location_id: nil)).not_to be_valid
@@ -40,7 +42,7 @@ RSpec.describe Donation, type: :model do
 
     describe "diaper_drive >" do
       it "returns all donations with the source `Diaper Drive`" do
-        create(:donation, source: "Somewhere else")
+        create(:donation, source: "Misc. Donation")
         create(:donation, source: "Diaper Drive")
         expect(Donation.diaper_drive.count).to eq(1)
       end

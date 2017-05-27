@@ -30,17 +30,54 @@ RSpec.feature "Donations", type: :feature do
         visit @url_prefix + "/donations/new"
       end
 
-      scenario "User can fill out the form to create a new donation" do
-        select DropoffLocation.first.name, from: "donation_dropoff_location_id"
+      scenario "User can create a donation for a Diaper Drive source" do
+        select "Diaper Drive", from: "donation_source"
+        select DiaperDrive.first.name, from: "donation_diaper_drive"
         select StorageLocation.first.name, from: "donation_storage_location_id"
-        select Donation::SOURCES.first, from: "donation_source"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
-  
+
         expect {
           click_button "Create Donation"
         }.to change{Donation.count}.by(1)
       end
+
+      scenario "User can create a donation for a Donation Site source" do
+        select "Donation Pickup Location", from: "donation_source"
+        select DropoffLocation.first.name, from: "donation_dropoff_location_id"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "5"
+
+        expect {
+          click_button "Create Donation"
+        }.to change{Donation.count}.by(1)
+      end
+
+      scenario "User can create a donation for Purchased Supplies" do
+        select "Purchased Supplies", from: "donation_source"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "5"
+
+        expect {
+          click_button "Create Donation"
+        }.to change{Donation.count}.by(1)
+      end
+
+      scenario "User can create a donation with a Miscellaneous source" do
+        select "Misc. Donation", from: "donation_source"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "5"
+
+        expect {
+          click_button "Create Donation"
+          save_and_open_page
+        }.to change{Donation.count}.by(1)
+
+      end
+
     end
 
     context "via barcode entry" do
