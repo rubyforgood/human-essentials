@@ -27,6 +27,8 @@ $ ->
 
   $(document).on "turbolinks:load", ->
     control = $("select#distribution_storage_location_id")
+    if (control.length is 0)
+      return
     $.ajax
       url: control.data("storage-location-inventory-path").replace(":id", control.val())
       dataType: "json"
