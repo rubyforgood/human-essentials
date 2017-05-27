@@ -43,9 +43,10 @@ class DonationsController < ApplicationController
   def new
     @donation = Donation.new
     @donation.line_items.build
-    @storage_locations = StorageLocation.all
-    @dropoff_locations = DropoffLocation.all
-    @items = Item.alphabetized
+    @storage_locations = current_organization.storage_locations.all
+    @dropoff_locations = current_organization.dropoff_locations.all
+    @diaper_drive_participants = DiaperDriveParticipant.all #current_organization.diaper_drive_participants.all
+    @items = current_organization.items.alphabetized
   end
 
   def edit

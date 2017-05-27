@@ -19,26 +19,30 @@ RSpec.feature "Donations", type: :feature do
 
   context "When creating a new donation" do
     before(:each) do
-      create(:item)
-      create(:dropoff_location)
-      create(:storage_location)
-      
+      create(:item, organization: @organization)
+      create(:storage_location, organization: @organization)
+      create(:dropoff_location, organization: @organization)
+      create(:diaper_drive_participant, organization: @organization)
+      @organization.reload
     end
 
     context "via manual entry" do
-      before do
+      before(:each) do
         visit @url_prefix + "/donations/new"
       end
 
       scenario "User can create a donation for a Diaper Drive source" do
+        #binding.pry
+
         select "Diaper Drive", from: "donation_source"
-        select DiaperDrive.first.name, from: "donation_diaper_drive"
+        select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect {
           click_button "Create Donation"
+          save_and_open_page
         }.to change{Donation.count}.by(1)
       end
 
@@ -50,6 +54,7 @@ RSpec.feature "Donations", type: :feature do
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect {
+          save_and_open_page
           click_button "Create Donation"
         }.to change{Donation.count}.by(1)
       end

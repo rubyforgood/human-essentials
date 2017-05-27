@@ -27,6 +27,7 @@ class Organization < ApplicationRecord
   has_many :distributions
   has_many :donations
   has_many :dropoff_locations
+  has_many :diaper_drive_participants
   has_many :storage_locations
   has_many :items
   has_many :partners
