@@ -32,8 +32,6 @@ RSpec.feature "Donations", type: :feature do
       end
 
       scenario "User can create a donation for a Diaper Drive source" do
-        #binding.pry
-
         select "Diaper Drive", from: "donation_source"
         select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
@@ -41,8 +39,8 @@ RSpec.feature "Donations", type: :feature do
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect {
+                  save_and_open_page
           click_button "Create Donation"
-          save_and_open_page
         }.to change{Donation.count}.by(1)
       end
 

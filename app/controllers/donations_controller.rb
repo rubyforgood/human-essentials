@@ -33,8 +33,9 @@ class DonationsController < ApplicationController
     if (@donation.save)
       redirect_to donations_path
     else
-      @storage_locations = StorageLocation.all
-      @dropoff_locations = DropoffLocation.all
+      @storage_locations = current_organization.storage_locations.all
+      @dropoff_locations = current_organization.dropoff_locations.all
+      @diaper_drive_participants = current_organization.diaper_drive_participants.all
       flash[:notice] = "There was an error starting this donation, try again?"
       render action: :new
     end
@@ -45,7 +46,7 @@ class DonationsController < ApplicationController
     @donation.line_items.build
     @storage_locations = current_organization.storage_locations.all
     @dropoff_locations = current_organization.dropoff_locations.all
-    @diaper_drive_participants = DiaperDriveParticipant.all #current_organization.diaper_drive_participants.all
+    @diaper_drive_participants = current_organization.diaper_drive_participants.all
     @items = current_organization.items.alphabetized
   end
 
@@ -75,7 +76,7 @@ class DonationsController < ApplicationController
 
 private
   def donation_params
-    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
   end
 
   def donation_item_params
