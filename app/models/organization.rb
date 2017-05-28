@@ -29,6 +29,7 @@ class Organization < ApplicationRecord
   has_many :dropoff_locations
   has_many :diaper_drive_participants
   has_many :storage_locations
+  has_many :inventory_items, through: :storage_locations
   has_many :items
   has_many :partners
   has_many :transfers
@@ -44,5 +45,9 @@ class Organization < ApplicationRecord
 
   def address_inline
     address.split("\n").join(",")
+  end
+
+  def total_inventory
+    inventory_items.map(&:quantity).reduce(:+) || 0
   end
 end

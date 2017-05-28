@@ -100,8 +100,8 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(donation.diaper_drive_participant_id).to be_present
         expect(donation.dropoff_location_id).to be_nil
       end
-
     end
+
 
     context "via barcode entry" do
       before(:each) do

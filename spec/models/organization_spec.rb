@@ -23,4 +23,16 @@ RSpec.describe Organization, type: :model do
       expect(build(:organization, short_name: 'Not Legal!')).to_not be_valid
     end
   end
+
+  describe "total_inventory" do
+    it "returns a sum total of all inventory at all storage locations" do
+      item = create(:item)
+      create(:storage_location, :with_items, item: item, item_quantity: 100)
+      create(:storage_location, :with_items, item: item, item_quantity: 150)
+      expect(@organization.total_inventory).to eq(250)
+    end
+    it "returns 0 if there is nothing" do
+      expect(@organization.total_inventory).to eq(0)
+    end
+  end
 end
