@@ -31,6 +31,7 @@ class DonationsController < ApplicationController
   def create
     @donation = Donation.new(donation_params.merge(organization: current_organization))
     if (@donation.save)
+      @donation.storage_location.intake! @donation
       redirect_to donations_path
     else
       @storage_locations = current_organization.storage_locations.all

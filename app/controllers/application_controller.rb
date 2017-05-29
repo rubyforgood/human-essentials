@@ -37,14 +37,14 @@ class ApplicationController < ActionController::Base
   def not_found!
     respond_to do |format|
       format.html { render template: "errors/404", layout: "layouts/application", status: 404 }
-      format.json { render nothing: true, status: 404 }
+      format.json { render body: nil, status: 404 }
     end
   end
 
   def verboten!
     respond_to do |format|
       format.html { render template: "errors/403", layout: "layouts/application", status: 403 }
-      format.json { render nothing: true, status: 403 }
+      format.json { render body: nil, status: 403 }
     end
   end
 

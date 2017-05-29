@@ -53,8 +53,8 @@ module DashboardHelper
     }
   end
 
-  def total_on_hand
-    number_with_delimiter InventoryItem.sum(:quantity)
+  def total_on_hand(total = nil)
+    number_with_delimiter (total || "-1")
   end
 
   def total_received(range=selected_range)
