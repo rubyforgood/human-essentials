@@ -4,7 +4,7 @@ class AdjustmentsController < ApplicationController
   # GET /adjustments
   # GET /adjustments.json
   def index
-    @adjustments = current_organization.adjustments.all
+    @adjustments = current_organization.adjustments
   end
 
   # GET /adjustments/1
@@ -16,7 +16,7 @@ class AdjustmentsController < ApplicationController
   def new
     @adjustment = current_organization.adjustments.new
     @adjustment.line_items.build
-    @storage_locations = current_organization.storage_locations.all
+    @storage_locations = current_organization.storage_locations
     @items = current_organization.items.alphabetized
   end
 

@@ -11,12 +11,12 @@ class BarcodeItemsController < ApplicationController
 
   def new
     @barcode_item = current_organization.barcode_items.new
-    @items = current_organization.items.all
+    @items = current_organization.items
   end
 
   def edit
     @barcode_item = current_organization.barcode_items.includes(:item).find(params[:id])
-    @items = current_organization.items.all
+    @items = current_organization.items
   end
 
   def show
