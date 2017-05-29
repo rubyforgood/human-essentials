@@ -16,10 +16,10 @@
 @include foundation-forms;
 @include foundation-visibility-classes;
 @include foundation-float-classes;
-@include foundation-accordion;
-@include foundation-accordion-menu;
+// @include foundation-accordion;
+// @include foundation-accordion-menu;
 @include foundation-badge;
-@include foundation-breadcrumbs;
+// @include foundation-breadcrumbs;
 @include foundation-button-group;
 @include foundation-callout;
 @include foundation-card;
@@ -35,7 +35,7 @@
 @include foundation-off-canvas;
 @include foundation-orbit;
 @include foundation-pagination;
-@include foundation-progress-bar;
+// @include foundation-progress-bar;
 @include foundation-slider;
 @include foundation-sticky;
 @include foundation-reveal;
@@ -62,7 +62,7 @@ $blue: #0BA6CC;
 $light-blue: #CEE8F1;
 $lighter-blue: #EDFAFF;
 $error: #DE5347;
-$sucess: #6EB85B;
+$success: #6EB85B;
 
 h1, h2, h3, h4, p, th {
   color:$dark-grey;
@@ -113,71 +113,91 @@ hr {
   width: 100%;
 }
 
-// nav background color
-.top-bar, .top-bar li, .top-bar ul.menu  {
-  // background: $light-blue;
-  // background: $white;
-  background: $blue;
-}
-
-
-// nav links
-.top-bar, .top-bar li, .top-bar ul.menu, .top-bar a {
-  // color: $grey;
-  color: $white;
-  font-weight: bold;
-}
-
-// .top-bar li:hover, .top-bar ul.menu:hover,
-.top-bar a:hover {
-  color: $light-grey;
-}
-
 .top-bar {
-  a.active[disabled] {
-    color: $dark-grey;
-    cursor: default;
-  }
-}
-
-// dropdown menu arrow color
-.dropdown.menu li.is-dropdown-submenu-parent a::after  {
-  // border-color: $grey transparent transparent;
-  border-color: $white transparent transparent;
-}
-
-// nav dropdown menu
-.top-bar ul.menu {
-  border :none;
-}
-
-// add bottom border to dropdown menu items
-.top-bar li.is-submenu-item {
-  border-bottom: solid;
-  border-bottom-width: 1px;
-  border-color: $light-grey;
-}
-
-// remove border from last item in dropdown menu
-.top-bar li.is-submenu-item:last-child{
-    border-bottom: none;
-}
-
-// top-bar button style
-ul.menu .button {
-  background-color: $blue;
+  background: $blue;
   color: $white;
-  font-weight: 400;
-  border: solid;
-  border-width: 1px;
-  border-color: $white;
-  margin-top: 3px;
-}
 
-// top-bar button hover
-ul.menu .button:hover, ul.menu .button:focus {
-  color: $blue;
-  background-color: $white;
+  .top-bar-title {
+    padding: 0;
+
+    @media only screen and (max-width: #{map-get($breakpoints,medium)}) {
+      width: 100%;
+    }
+    img {
+      display: inline-block;
+    }
+  }
+
+  .menu-hamburger {
+    @media only screen and (max-width: #{map-get($breakpoints,medium)}) {
+      padding: .4rem;
+    }
+    float: right;
+    .menu-text {
+      color: $off-white;
+    }
+  }
+
+  ul.menu {
+    background: $blue;
+    border: none;
+
+    li {
+      a {
+        color: $off-white;
+        font-weight: bold;
+  
+        &.active[disabled] {
+          color: lighten($blue, 18%);
+          cursor: default;
+        }
+  
+        &:hover {
+          color: darken($off-white, 18%);
+        }
+      }
+    }
+
+    .button {
+      background-color: $blue;
+      color: $white;
+      font-weight: 400;
+      border: solid;
+      border-width: 1px;
+      border-color: $white;
+      margin-top: 3px;
+
+      &:hover, &:focus {
+        color: $blue;
+        background-color: $white;
+      }
+    }
+  }
+
+  .dropdown.menu .submenu {
+    border: none;
+  }
+
+  .dropdown.menu > li.is-dropdown-submenu-parent > a:after {
+    border-color: $white transparent transparent;
+  }
+  
+  /* No idea why -- but .menu > li is getting set to display as a table-cell
+     so we have to put this override in here so that it displays correctly
+     in responsive mode */
+  .is-drilldown li {
+    display: block;
+  }
+
+  .is-drilldown-submenu-parent > a::after,
+  .is-dropdown-submenu .is-dropdown-submenu-parent.opens-right > a:after {
+    border-color: transparent transparent transparent $white;
+  }
+
+  .js-drilldown-back > a:before, 
+  .is-dropdown-submenu .is-dropdown-submenu-parent.opens-left > a:after {
+    border-color: transparent $white transparent transparent;
+  }
 }
 
 // table header font
@@ -216,18 +236,17 @@ fieldset{
 
 // alert callout style sucess
 .callout.success {
-  background-color: $sucess;
+  background-color: $success;
   color: $white;
 }
 
 // X closeout for alert box
 button span {
 color: $white;
-}
-
-// X closeout for alert box hover
-button span:hover {
-color: $light-grey;
+  // X closeout for alert box hover
+  &:hover {
+    color: $light-grey;  
+  }
 }
 
 // style error alert text
@@ -248,7 +267,7 @@ small.error{
   margin-bottom: 16px;
 }
 
-// add radious and padding to buttons
+// add radius and padding to buttons
 div.button, .button, .button:hover, .button:focus, ul.menu .button, ul.menu .button:hover, ul.menu .button:focus, .input-group:last-child .button{
   border-radius: 4px;
   padding-top: 8px;
@@ -263,10 +282,10 @@ div.button, .button {
   border: solid;
   border-width: 1px;
   border-color: $blue;
-}
 
-// button hover style
-.button:hover, .button:focus {
-  color: white;
-  background-color: $blue;
+  // button hover style
+  &:hover, &:focus {
+    color: white;
+    background-color: $blue;
+  }
 }
