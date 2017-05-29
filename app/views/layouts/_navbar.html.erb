@@ -1,95 +1,91 @@
-<% if user_signed_in? %>
-  <div class="top-bar-container" data-sticky-container>
-    <div class="sticky" data-sticky data-options="anchor: page; marginTop: 0; stickyOn: small;">
-      <div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
-        <button class="menu-icon" type="button" data-toggle="example-menu"></button>
-        <div class="title-bar-title">
-          <% if current_organization.present?  %>
-            <%= current_organization.name %>
-          <% elsif current_user.organization.present?  %>
-            <%= current_user.organization.name %>
-          <% else %>
-            <span>DiaperBase</span>
-          <% end %>
-        </div>
-      </div>
-      <div class="top-bar" id="example-menu">
-        <div class="top-bar-left">
-          <ul class="dropdown menu" data-dropdown-menu>
-            <li class="menu-text organization-name">
-              <% if current_organization.present?  %>
-                <%= current_organization.name %>
-              <% elsif current_user.organization.present?  %>
-                <%= current_user.organization.name %>
-              <% else %>
-                <span>DiaperBase</span>
-              <% end %>
-            </li>
-            <li><%= navigation_link_to('Dashboard', dashboard_path) %></li>
-            <li><%= navigation_link_to('Donations', donations_path) %></li>
-            <li><%= navigation_link_to('Distributions', distributions_path) %></li>
-            <li><%= navigation_link_to('Transfers', transfers_path) %></li>
-            <li class="has-submenu">
-              <a href="javascript:void(0)">Inventory</a>
-              <ul class="submenu menu vertical" data-submenu>
-                <li><%= navigation_link_to('Barcode Items', barcode_items_path) %></li>
-              </ul>
-            </li>
-            <li class="has-submenu">
-              <a href="javascript:void(0)">Address List</a>
-              <ul class="submenu menu vertical" data-submenu>
-                <li><%= navigation_link_to('Dropoff Locations', dropoff_locations_path) %></li>
-                <li><%= navigation_link_to('Partners', partners_path) %></li>
-                <li><%= navigation_link_to('Storage Locations', storage_locations_path) %></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-        <div class="top-bar-right">
-          <ul class="menu dropdown" data-dropdown-menu>
-            <li><%= current_user.email %></li>
-            <li class='has-submenu'>
-              <a href='javascript:void(0)'>Settings</a>
-              <ul class="submenu vertical menu">
-                <li><%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %></li>
-                <% with_options organization_id: current_user.organization.to_param do |with_org| %>
-                  <li><%= navigation_link_to "Manage users", with_org.users_path %></li>
-                  <li><%= navigation_link_to "Modify organization", with_org.edit_organization_path %></li>
-                <% end %>
-              </ul>
-            </li>
-            <li><%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete') %></li>
-          </ul>
-        </div>
-          <ul class="menu">
-            <li><button type="button" class="button">Login</button></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-<% else %>
-<div class="top-bar-container" data-sticky-container>
-  <div class="sticky" data-sticky data-options="anchor: page; marginTop: 0; stickyOn: small;">
-    <div class="title-bar" data-responsive-toggle="example-menu" data-hide-for="medium">
-      <button class="menu-icon" type="button" data-toggle="example-menu"></button>
-      <div class="title-bar-title">
-        <span>DiaperBase</span>
-      </div>
-    </div>
-    <div class="top-bar" id="example-menu">
-        <div class="top-bar-left">
-          <ul class='menu'>
-            <li class="menu-text organization-name"><span>Diaper Base</span></li>
-          </ul>
-        </div>
+<div class="top-bar" id="main-menu">
+  <div class="top-bar-title">
+    <% if user_signed_in? %>
+      <% if current_organization && current_organization.logo.present? %>
+        <%= image_tag current_organization.logo.url, alt: current_organization.name, id: "logo" %>
+      <% else %>
+        <%= image_tag "DiaperBase-Logo.png", alt: "DiaperBase Logo", id: "logo" %>
+      <% end %>
+    <% end %>
+    <span class="menu-hamburger" data-responsive-toggle="responsive-menu" data-hide-for="medium">
+      <span class="menu-text" data-toggle>Menu</span>
+      <span class="menu-icon" data-toggle></span>
+    </span>
 
-        <div class="top-bar-right">
-          <ul class="menu dropdown" data-dropdown-menu>
-            <li><%= link_to 'Sign In', new_user_session_path(organization_id: nil) %></li>
-          </ul>
-        </div>
-      </div>
   </div>
-</div>
-<% end %>
+
+  <div id="responsive-menu">
+    <div class="top-bar-left">
+
+      <ul class="menu" data-responsive-menu="drilldown medium-dropdown" data-parent-link="true" data-back-button="<li class='js-drilldown-back'><a tabindex='0'>Back</a></li>">
+      <% ############# SIGNED IN ############### %>
+      <% if user_signed_in? %>
+        <li><%= navigation_link_to('Dashboard', dashboard_path) %></li>
+        <li><%= navigation_link_to('Donations', donations_path) %></li>
+        <li><%= navigation_link_to('Distributions', distributions_path)   %></li>
+        <li class="has-submenu">
+          <a href="javascript:void(0)">Inventory</a>
+          <ul class="submenu menu vertical" data-submenu>
+            <li><%= navigation_link_to('Items', items_path) %></li>
+            <li><%= navigation_link_to('Barcode Items', barcode_items_path) %></li>
+            <li><%= navigation_link_to('Storage Locations', storage_locations_path) %></li>
+            <li><%= navigation_link_to('Adjustments', adjustments_path) %></li>
+            <li><%= navigation_link_to('Transfers', transfers_path) %></li>
+          </ul>
+        </li>
+        <li>
+          <a href="javascript:void(0)">Community</a>
+          <ul class="submenu menu vertical" data-submenu>
+            <li><%= navigation_link_to('Donation Sites', dropoff_locations_path) %></li>
+            <li><%= navigation_link_to('Partner Agencies', partners_path) %></li>
+          </ul>
+        </li>
+      <% ############# END SIGNED IN ############### %>
+      <% end %>
+      <% ############# SIGNED IN ############### %>
+      <% # This should really be DRYed out %>
+      <% if user_signed_in? %>
+        <li class="has-submenu hide-for-medium">
+          <a href='javascript:void(0)'>Settings</a>
+          <ul class="submenu menu vertical" data-submenu>
+            <li><%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>      </li>
+            <% with_options organization_id: current_user.organization.to_param do |with_org| %>
+            <li><%= navigation_link_to "Manage users", with_org.users_path %></li>
+            <li><%= navigation_link_to "Modify organization", with_org.edit_organization_path %></li>
+            <% end %>
+          </ul>
+        </li>
+        <li class="hide-for-medium"><%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete') %></li>
+      <% ############### NOT SIGNED IN ########### %>        
+      <% else %>
+        <li class="hide-for-medium"><%= link_to 'Sign In', new_user_session_path(organization_id: nil) %></li>
+      <% end %>
+      <% ############### END #################### %>
+      </ul>
+    </div><!-- top-bar-left -->
+
+    <div class="top-bar-right">
+      <ul class="menu show-for-medium" data-responsive-menu="drilldown medium-dropdown" data-parent-link="true" data-back-button="<li class='js-drilldown-back'><a tabindex='0'>Back</a></li>">
+        <% ############# SIGNED IN ############### %>
+        <% if user_signed_in? %>
+          <li><%= current_user.email %></li>
+          <li class="has-submenu">
+            <a href='javascript:void(0)'>Settings</a>
+            <ul class="submenu menu vertical" data-submenu>
+              <li><%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>        </li>
+              <% with_options organization_id: current_user.organization.to_param do |with_org| %>
+              <li><%= navigation_link_to "Manage users", with_org.users_path %></li>
+              <li><%= navigation_link_to "Modify organization", with_org.edit_organization_path %></li>
+              <% end %>
+            </ul>
+          </li>
+          <li><%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete') %></li>
+        <% ############### NOT SIGNED IN ########### %>        
+        <% else %>
+          <li><%= link_to 'Sign In', new_user_session_path(organization_id: nil) %></li>
+        <% end %>
+        <% ############### END #################### %>
+      </ul>
+    </div><!-- top-bar-right -->
+  </div><!-- responsive-menu -->
+</div><!-- main-menu -->
