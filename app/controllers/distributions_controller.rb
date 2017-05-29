@@ -17,7 +17,13 @@ class DistributionsController < ApplicationController
   end
 
   def index
-    @distributions = Distribution.includes(:line_items).includes(:storage_location).includes(:items).all
+    @distributions = current_organization
+                      .distributions
+                      .includes(:partner)
+                      .includes(:storage_location)
+                      .includes(:line_items)
+                      .includes(:items)
+                      .order(created_at: :desc)
   end
 
   def create
