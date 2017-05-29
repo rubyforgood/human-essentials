@@ -43,13 +43,14 @@ module DashboardHelper
   end
 
   def fake_pie_chart_data
-    InventoryItem.quantity_by_category
+    #InventoryItem.quantity_by_category
+    current_organization.quantity_categories
   end
 
   def received_distributed_data(range=selected_range)
     {
-      'Received' => Donation.during(range).total_received,
-      'Distributed' => Distribution.during(range).total_distributed,
+      'Received' => current_organization.donations.during(range).total_received,
+      'Distributed' => current_organization.distributions.during(range).total_distributed,
     }
   end
 
@@ -58,10 +59,10 @@ module DashboardHelper
   end
 
   def total_received(range=selected_range)
-    number_with_delimiter Donation.during(range).total_received
+    number_with_delimiter current_organization.donations.during(range).total_received
   end
 
   def total_distributed(range=selected_range)
-    number_with_delimiter Distribution.during(range).total_distributed
+    number_with_delimiter current_organization.distributions.during(range).total_distributed
   end
 end

@@ -1,6 +1,6 @@
 class TransfersController < ApplicationController
   def index
-    @transfers = current_organization.transfers.includes(:line_items).includes(:from).includes(:to).all
+    @transfers = current_organization.transfers.includes(:line_items).includes(:from).includes(:to)
   end
 
   def create
