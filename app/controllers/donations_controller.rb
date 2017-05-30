@@ -86,10 +86,9 @@ private
   end
 
   # Omits dropoff_location_id or diaper_drive_participant_id if those aren't selected as source
-  # FIXME "magic string" for source field should be DRYed out.
   def strip_unnecessary_params
-    params[:donation].delete(:dropoff_location_id) unless params[:donation][:source] == "Donation Pickup Location"
-    params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == "Diaper Drive"
+    params[:donation].delete(:dropoff_location_id) unless params[:donation][:source] == Donation::SOURCES[:dropoff]
+    params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive]
     params
   end
 end

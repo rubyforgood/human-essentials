@@ -6,9 +6,8 @@
 
 $(document).on 'turbolinks:load', () ->
   control_id = "#donation_source"
-  # TODO: This is tightly coupled to the Donation::SOURCES and that's not too shiny.
-  ddp_text = "Diaper Drive"
-  dpl_text = "Donation Pickup Location"
+  ddp_text = "<%= Donation::SOURCES[:diaper_drive] %>"
+  dpl_text = "<%= Donation::SOURCES[:dropoff] %>"
   ddp_container_id = "div.donation_diaper_drive_participant"
   dpl_container_id = "div.donation_dropoff_location"
   $(ddp_container_id).hide()

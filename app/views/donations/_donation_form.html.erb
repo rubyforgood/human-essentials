@@ -1,6 +1,6 @@
 <%= simple_form_for @donation do |f| %>
 
-  <%= f.input :source, collection: Donation::SOURCES, label: "Source", error: "What effort or initiative did this donation come from?" %>
+  <%= f.input :source, collection: Donation::SOURCES.values, label: "Source", error: "What effort or initiative did this donation come from?" %>
   <%= f.association :dropoff_location, collection: @dropoff_locations, label: "Dropoff Location", error: "Where was this donation dropped off?" %>
   <%= f.association :diaper_drive_participant, collection: @diaper_drive_participants, label_method: :name, label: "Diaper Drive Participant", error: "Which diaper drive was this from?" %>
   <%= f.association :storage_location, collection: @storage_locations, label: "Storage Location", error: "Where is it being stored?" %>
