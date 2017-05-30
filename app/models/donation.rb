@@ -26,8 +26,8 @@ class Donation < ApplicationRecord
   accepts_nested_attributes_for :line_items,
     allow_destroy: true
 
-  validates :dropoff_location, presence: { message: "must be specified since you chose 'Donation Pickup Location'" }, if: :from_dropoff_location?
-  validates :diaper_drive_participant, presence: { message: "must be specified since you chose 'Diaper Drive'" }, if: :from_diaper_drive?
+  validates :dropoff_location, presence: { message: "must be specified since you chose '#{SOURCES[:dropoff]}'" }, if: :from_dropoff_location?
+  validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
   # FIXME - This validation can be removed because it's implicit in belongs_to as of Rails 5
   validates :storage_location, :organization, presence: true
@@ -35,15 +35,15 @@ class Donation < ApplicationRecord
   scope :between, ->(start, stop) { where(donations: { created_at: start..stop }) }
   scope :during, ->(range) { where(donations: { created_at: range }) }
   # TODO - change this to "by_source()" with an argument that accepts a source name
-  scope :diaper_drive, -> { where(source: "Diaper Drive") }
+  scope :diaper_drive, -> { where(source: SOURCES[:diaper_drive] ) }
   scope :recent, ->(count=3) { order(:created_at).limit(count) }
 
   def from_diaper_drive?
-    source == "Diaper Drive"
+    source == SOURCES[:diaper_drive]
   end
 
   def from_dropoff_location?
-    source == "Donation Pickup Location"
+    source == SOURCES[:dropoff]
   end
 
   def self.daily_quantities_by_source(start, stop)
