@@ -73,7 +73,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation with a Miscellaneous source" do
-        select "Misc. Donation", from: "donation_source"
+        select Donation::SOURCES[:misc], from: "donation_source"
         expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"

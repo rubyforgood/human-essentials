@@ -14,7 +14,7 @@
 #
 
 class Donation < ApplicationRecord
-  SOURCES = ["Diaper Drive", "Purchased Supplies", "Donation Pickup Location", "Misc. Donation"].freeze
+  SOURCES = { diaper_drive: "Diaper Drive", purchased: "Purchased Supplies", dropoff: "Donation Pickup Location", misc: "Misc. Donation" }.freeze
 
   belongs_to :organization
 
@@ -28,7 +28,7 @@ class Donation < ApplicationRecord
 
   validates :dropoff_location, presence: { message: "must be specified since you chose 'Donation Pickup Location'" }, if: :from_dropoff_location?
   validates :diaper_drive_participant, presence: { message: "must be specified since you chose 'Diaper Drive'" }, if: :from_diaper_drive?
-  validates :source, presence: true, inclusion: { in: SOURCES, message: "Must be a valid source." }
+  validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
   # FIXME - This validation can be removed because it's implicit in belongs_to as of Rails 5
   validates :storage_location, :organization, presence: true
 

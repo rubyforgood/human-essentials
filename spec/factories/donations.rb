@@ -17,7 +17,7 @@ FactoryGirl.define do
   factory :donation do
     dropoff_location
     diaper_drive_participant
-    source { "Misc. Donation" }
+    source { Donation::SOURCES[:misc] }
     comment "It's a fine day for diapers."
     storage_location
     organization { Organization.try(:first) || create(:organization) }
