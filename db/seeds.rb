@@ -13,7 +13,14 @@ pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organizati
   organization.email = "info@pdxdiaperbank.org"
 end
 
+sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
+  organization.name = "SF Diaper Bank"
+  organization.address = "P.O. Box 12345, San Francisco CA 90210"
+  organization.email = "info@sfdiaperbank.org"
+end
+
 user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org
+user2 = User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org
 
 DropoffLocation.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
   location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"

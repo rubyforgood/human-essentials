@@ -43,6 +43,11 @@ class Organization < ApplicationRecord
     short_name
   end
 
+  def quantity_categories
+    storage_locations.map {|i| i.inventory_items}.flatten.group_by{|i| i.item.category}
+      .map {|i| [i[0], i[1].map{|i|i.quantity}.sum]}.sort_by { |_, v| -v }
+  end
+
   def address_inline
     address.split("\n").join(",")
   end

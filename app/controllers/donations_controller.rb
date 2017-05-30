@@ -25,7 +25,9 @@ class DonationsController < ApplicationController
   end
 
   def index
-    @donations = Donation.includes(:line_items, :storage_location, :dropoff_location)
+    @donations = current_organization.donations
+                                      .includes(:line_items, :storage_location, :dropoff_location)
+                                      .order(created_at: :desc)
   end
 
   def create
@@ -34,9 +36,9 @@ class DonationsController < ApplicationController
       @donation.storage_location.intake! @donation
       redirect_to donations_path
     else
-      @storage_locations = current_organization.storage_locations.all
-      @dropoff_locations = current_organization.dropoff_locations.all
-      @diaper_drive_participants = current_organization.diaper_drive_participants.all
+      @storage_locations = current_organization.storage_locations
+      @dropoff_locations = current_organization.dropoff_locations
+      @diaper_drive_participants = current_organization.diaper_drive_participants
       flash[:notice] = "There was an error starting this donation, try again?"
       render action: :new
     end
