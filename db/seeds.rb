@@ -16,7 +16,7 @@ end
 sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
   organization.name = "SF Diaper Bank"
   organization.address = "P.O. Box 12345, San Francisco CA 90210"
-  organization.email = "infosfdiaperbank.org"
+  organization.email = "info@sfdiaperbank.org"
 end
 
 user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org
