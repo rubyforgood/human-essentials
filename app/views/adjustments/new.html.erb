@@ -7,7 +7,7 @@
   inventory in a particular storage location.
 </p>
 
-<%= simple_form_for @adjustment, wrapper: :horizontal_form do |f| %>
+<%= simple_form_for @adjustment do |f| %>
 
   <%= f.association :storage_location,
     collection: @storage_locations,
@@ -32,7 +32,7 @@
     </div>
 
     <div class="row links">
-      <div class="small-offset-3 small-9 columns">
+      <div class="medium-offset-3 medium-6 columns">
         <%= link_to_add_association "add line item", f, :line_items,
           data: {
             association_insertion_node: "#adjustment_storage_location_line_items",
@@ -44,12 +44,8 @@
     </div>
   <% end %>
 
-  <p>&nbsp;</p>
-
-  <div class="row">
-    <div class="small-offset-3 small-9 columns">
-      <%= f.button :submit %>
-    </div>
+  <div class="medium-offset-3 medium-6">
+    <%= f.button :submit %>
   </div>
 
 <% end %>
