@@ -1,0 +1,30 @@
+<% content_for :title, "#{current_organization.name} - Agencies - Diaper Drive Participants - #{@diaper_drive_participant.name}" %>
+
+<h1><%= @diaper_drive_participant.name %></h1>
+
+<ul>
+<% if @diaper_drive_participant.phone.present? %>
+  <li><%= @diaper_drive_participant.phone %></li>
+<% end %>
+<% if @diaper_drive_participant.email.present? %>
+  <li><%= link_to @diaper_drive_participant.email, "mailto:#{@diaper_drive_participant.email}" %></li>
+<% end %>
+</ul>
+
+<table id="diaper_drive_participants">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Volume</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @diaper_drive_participant.donations.each do |donation| %>
+      <tr>
+        <td><%= donation.created_at %></td>
+        <td><%= donation.total_items %></td>
+      </tr>
+    <% end %>
+  </tbody>  
+</table>
