@@ -1,0 +1,23 @@
+<% content_for :title, "#{current_organization.name} - Agencies - Diaper Drive Participants" %>
+
+<div class="header-action">
+  <%= link_to "New Diaper Drive Participant", new_diaper_drive_participant_path(organization_id: current_organization), class: "button float-right" %>
+</div>
+
+
+<h1>Diaper Drive Participants</h1>
+
+<table id="diaper_drive_participants">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Volume</th>
+      <th>&nbsp;</th>
+  </thead>
+
+  <tbody>
+    <%= render partial: "diaper_drive_participant_row", collection: @diaper_drive_participants %>
+  </tbody>
+</table>

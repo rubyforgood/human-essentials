@@ -1,0 +1,9 @@
+<%= simple_form_for form do |f| %>
+
+<%= f.input :name, label: "Name", error: "A name is required" %>
+<%= f.input :phone, label: "Phone", error: "Either a phone or an e-mail is required" %>
+<%= f.input :email, label: "Email", error: "Either a phone or an e-mail is required" %>
+
+<%= f.button :submit %>
+
+<% end %>

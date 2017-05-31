@@ -20,4 +20,9 @@ class DiaperDriveParticipant < ApplicationRecord
   validates :name, presence: true
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: Proc.new { |ddp| ddp.email.blank? }
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: Proc.new { |ddp| ddp.phone.blank? }
+
+  # TODO - This should be set up with a callback to cache the total so we're not hitting the DB
+  def volume
+  	donations.map(&:total_items).reduce(:+)
+  end  
 end

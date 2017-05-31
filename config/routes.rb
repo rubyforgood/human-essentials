@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 
     resources :barcode_items
     resources :dropoff_locations
+    resources :diaper_drive_participants, except: [:destroy]
     resources :items
     resources :partners
 
