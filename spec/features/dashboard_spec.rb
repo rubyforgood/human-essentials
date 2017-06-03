@@ -6,14 +6,34 @@ RSpec.feature "Dashboard", type: :feature do
 
   context "When visiting a new dashboard" do
     before(:each) do
-      sign_in @user
       visit @url_prefix + "/dashboard"
     end
 
     scenario "User should see their organization name" do
       expect(page.find('.organization-name')).to have_content(@organization.name)
     end
+
   end
+
+  # TODO - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
+  # if someone else wants to make this use an XHR instead, have at it!
+  scenario "The user can scope down what they see in the dashboard using the date-range drop down" do
+    item = create(:item, organization: @organization)
+    create(:storage_location, organization: @organization)
+    create(:donation, :with_item, item_id: item.id, item_quantity: 10, issued_at: 1.month.ago)
+    create(:donation, :with_item, item_id: item.id, item_quantity: 200, issued_at: Date.today)
+    @organization.reload
+
+    # Verify the initial totals are correct
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_content("210 items received year to date")
+
+    # Scope it down to just today, should omit the first donation
+    #select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
+    visit @url_prefix + "/dashboard?dashboard_filter[interval]=last_month"
+    expect(page).to have_content("10 items received last month")
+  end
+
 
   scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js:true do
     create(:partner)

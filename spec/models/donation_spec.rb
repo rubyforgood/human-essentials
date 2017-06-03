@@ -45,7 +45,7 @@ RSpec.describe Donation, type: :model do
   end
 
   context "Scopes >" do
-    describe "between >" do
+    describe "during >" do
       it "returns all donations created between two dates" do
         # The models should default to assigning the created_at time to the issued_at
         create(:donation, created_at: Date.today)
@@ -54,7 +54,7 @@ RSpec.describe Donation, type: :model do
         # and one outside the range
         create(:donation, issued_at: 1.year.ago)
         
-        expect(Donation.between(1.month.ago, Date.tomorrow).size).to eq(2)
+        expect(Donation.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end
 

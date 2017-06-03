@@ -34,12 +34,12 @@ class Donation < ApplicationRecord
 
   after_create :initialize_issued_at
 
+  # TODO - is `between` still used?
   scope :between, ->(start, stop) { where(donations: { issued_at: start..stop }) }
-  # TODO - is `during` still used?
-  scope :during, ->(range) { where(donations: { created_at: range }) }
+  scope :during, ->(range) { where(donations: { issued_at: range }) }
   # TODO - change this to "by_source()" with an argument that accepts a source name
   scope :diaper_drive, -> { where(source: SOURCES[:diaper_drive] ) }
-  scope :recent, ->(count=3) { order(:created_at).limit(count) }
+  scope :recent, ->(count=3) { order(:issued_at).limit(count) }
 
   def from_diaper_drive?
     source == SOURCES[:diaper_drive]

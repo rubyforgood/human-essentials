@@ -3,7 +3,6 @@ app/controllers/application_controller.rb:
 
 app/controllers/donations_controller.rb:
   * [ 12] [TODO] - needs to be able to handle barcodes too
-  * [ 88] [FIXME] "magic string" for source field should be DRYed out.
 
 app/controllers/organizations_controller.rb:
   * [ 17] [TODO] who should be able to arrive here and how?
@@ -22,15 +21,19 @@ app/models/admin_user.rb:
 app/models/barcode_item.rb:
   * [ 25] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
 
+app/models/diaper_drive_participant.rb:
+  * [ 24] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
+
 app/models/donation.rb:
   * [ 32] [FIXME] - This validation can be removed because it's implicit in belongs_to as of Rails 5
-  * [ 37] [TODO] - change this to "by_source()" with an argument that accepts a source name
-  * [ 57] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
-  * [ 66] [TODO] - Test coverage for this method
-  * [ 78] [TODO] - Could this be made a member method "count" of the `items` association?
-  * [ 83] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
-  * [ 88] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
-  * [ 97] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
+  * [ 37] [TODO] - is `between` still used?
+  * [ 40] [TODO] - change this to "by_source()" with an argument that accepts a source name
+  * [ 60] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
+  * [ 69] [TODO] - Test coverage for this method
+  * [ 81] [TODO] - Could this be made a member method "count" of the `items` association?
+  * [ 86] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
+  * [ 91] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
+  * [100] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
   * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?
@@ -45,7 +48,4 @@ app/models/transfer.rb:
   * [ 34] [TODO] - this could probably be made an association method for the `line_items` association
   * [ 39] [TODO] - this could probably be made an association method for the `line_items` association
   * [ 58] [TODO] - this could probably be made an association method for the `line_items` association
-
-app/views/donations/_donation_form.html.erb:
-  * [ 10] [FIXME] - This isn't a transfer -- the id should be changed to "donation"
 
