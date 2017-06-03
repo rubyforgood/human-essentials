@@ -25,15 +25,15 @@ app/models/diaper_drive_participant.rb:
   * [ 24] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
 
 app/models/donation.rb:
-  * [ 32] [FIXME] - This validation can be removed because it's implicit in belongs_to as of Rails 5
-  * [ 37] [TODO] - is `between` still used?
-  * [ 40] [TODO] - change this to "by_source()" with an argument that accepts a source name
-  * [ 60] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
-  * [ 69] [TODO] - Test coverage for this method
-  * [ 81] [TODO] - Could this be made a member method "count" of the `items` association?
-  * [ 86] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
-  * [ 91] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
-  * [100] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
+  * [ 33] [FIXME] - This validation can be removed because it's implicit in belongs_to as of Rails 5
+  * [ 38] [TODO] - is `between` still used?
+  * [ 41] [TODO] - change this to "by_source()" with an argument that accepts a source name
+  * [ 61] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
+  * [ 70] [TODO] - Test coverage for this method
+  * [ 82] [TODO] - Could this be made a member method "count" of the `items` association?
+  * [ 87] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
+  * [ 92] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
+  * [101] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
   * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?

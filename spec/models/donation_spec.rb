@@ -11,6 +11,7 @@
 #  comment                     :text
 #  organization_id             :integer
 #  diaper_drive_participant_id :integer
+#  issued_at                   :datetime
 #
 
 RSpec.describe Donation, type: :model do

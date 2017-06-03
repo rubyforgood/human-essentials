@@ -31,6 +31,20 @@ RSpec.feature "Donations", type: :feature, js: true do
         visit @url_prefix + "/donations/new"
       end
 
+      scenario "User can create a donation IN THE PAST" do
+        select Donation::SOURCES[:purchased], from: "donation_source"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "5"
+        fill_in "donation_issued_at", with: "01/01/2001"
+
+        expect {
+          click_button "Create Donation"
+        }.to change{Donation.count}.by(1)
+
+        expect(Donation.last.issued_at).to eq(Date.parse("01/01/2001"))
+      end
+
       scenario "User can create a donation for a Diaper Drive source" do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")

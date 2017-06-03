@@ -46,7 +46,7 @@ class DonationsController < ApplicationController
   end
 
   def new
-    @donation = Donation.new
+    @donation = Donation.new(issued_at: Date.today)
     @donation.line_items.build
     @storage_locations = current_organization.storage_locations
     @dropoff_locations = current_organization.dropoff_locations
@@ -81,7 +81,7 @@ class DonationsController < ApplicationController
 private
   def donation_params
     params = strip_unnecessary_params
-    params.require(:donation).permit(:source, :storage_location_id, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :storage_location_id, :issued_at, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
   end
 
   def donation_item_params

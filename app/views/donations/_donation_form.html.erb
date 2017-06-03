@@ -23,6 +23,12 @@
 
   <%= f.input :comment %>
 
+  <%= f.input :issued_at,
+     label: "Issued on",
+     as: :date, 
+     html5: true %>
+
+
   <%= f.simple_fields_for :line_items do |item| %>
     <div id="donation_line_items">
       <%= render 'line_item_fields', f: item %>
