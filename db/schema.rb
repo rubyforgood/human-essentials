@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170527184803) do
+ActiveRecord::Schema.define(version: 20170603022915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 20170527184803) do
     t.text     "comment"
     t.integer  "organization_id"
     t.integer  "diaper_drive_participant_id"
+    t.datetime "issued_at"
     t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id", using: :btree
     t.index ["organization_id"], name: "index_donations_on_organization_id", using: :btree
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id", using: :btree

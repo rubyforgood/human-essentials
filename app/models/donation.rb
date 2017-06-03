@@ -32,7 +32,10 @@ class Donation < ApplicationRecord
   # FIXME - This validation can be removed because it's implicit in belongs_to as of Rails 5
   validates :storage_location, :organization, presence: true
 
-  scope :between, ->(start, stop) { where(donations: { created_at: start..stop }) }
+  after_create :initialize_issued_at
+
+  scope :between, ->(start, stop) { where(donations: { issued_at: start..stop }) }
+  # TODO - is `during` still used?
   scope :during, ->(range) { where(donations: { created_at: range }) }
   # TODO - change this to "by_source()" with an argument that accepts a source name
   scope :diaper_drive, -> { where(source: SOURCES[:diaper_drive] ) }
@@ -99,6 +102,12 @@ class Donation < ApplicationRecord
     line_item = self.line_items.find_by(item_id: i.id)
     line_item.quantity += q
     line_item.save
+  end
+
+private
+  def initialize_issued_at
+    self.issued_at ||= self.created_at
+    save
   end
 
 end

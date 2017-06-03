@@ -21,6 +21,7 @@ FactoryGirl.define do
     comment "It's a fine day for diapers."
     storage_location
     organization { Organization.try(:first) || create(:organization) }
+    issued_at nil
 
     transient do
       item_quantity 10

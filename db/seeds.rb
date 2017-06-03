@@ -238,13 +238,24 @@ BarcodeItem.find_or_create_by!(value: "311917152226") do |barcode|
   barcode.organization = pdx_org
 end
 
+DiaperDriveParticipant.create! name: "A Good Place to Collect Diapers", email: "good@place.is", organization: pdx_org
+DiaperDriveParticipant.create! name: "A Mediocre Place to Collect Diapers", email: "ok@place.is", organization: pdx_org
+
 def random_record(klass)
   klass.limit(1).order("random()").first
 end
 
-sources = ['Diaper Drive', 'Purchased Supplies', 'Dropoff Donation']
 20.times.each do
-  donation = Donation.create! source: sources.sample, dropoff_location: random_record(DropoffLocation), storage_location: random_record(StorageLocation), organization: pdx_org
+  source = Donation::SOURCES.values.sample
+  # Depending on which source it uses, additional data may need to be provided.
+  case source
+  when Donation::SOURCES[:diaper_drive]
+    donation = Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
+  when Donation::SOURCES[:dropoff]
+    donation = Donation.create! source: source, dropoff_location: random_record(DropoffLocation), storage_location: random_record(StorageLocation), organization: pdx_org
+  else
+    donation = Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
+  end
 
   rand(1..5).times.each do
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: donation
