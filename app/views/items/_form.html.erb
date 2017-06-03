@@ -1,8 +1,15 @@
 <%= simple_form_for form do |f| %>
 
-<%= f.input :name, label: "Name", error: "Please provide a name" %>
-<%= f.input :category, label: "Category", error: "Please provide a category" %>
+  <%= f.input :name,
+    label: "Name",
+    error: "Please provide a name" %>
 
-<%= f.button :submit %>
+  <%= f.input :category,
+    label: "Category",
+    error: "Please provide a category" %>
+
+  <div class="medium-offset-3 medium-6">
+    <%= f.button :submit %>
+  </div>
 
 <% end %>

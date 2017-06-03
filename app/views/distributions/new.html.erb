@@ -2,47 +2,47 @@
 
 <h1>Create a new distribution</h1>
 
-<%= simple_form_for @distribution, wrapper: :horizontal_form do |f| %>
+<%= simple_form_for @distribution do |f| %>
 
-<%= f.association :partner,
-  label: "Partner",
-  error: "Which partner is this distribution going to?"
-%>
+  <%= f.association :partner,
+    label: "Partner",
+    error: "Which partner is this distribution going to?" %>
 
-<%= f.association :storage_location,
-  collection: @storage_locations,
-  label: "From storage location",
-  error: "Which location are you moving inventory from?",
-  input_html: {
-    data: {
-      storage_location_inventory_path: inventory_storage_location_path(
-        organization_id: current_organization,
-        id: ":id",
-        format: :json
-      )
+  <%= f.association :storage_location,
+    collection: @storage_locations,
+    label: "From storage location",
+    error: "Which location are you moving inventory from?",
+    input_html: {
+      data: {
+        storage_location_inventory_path: inventory_storage_location_path(
+          organization_id: current_organization,
+          id: ":id",
+          format: :json
+        )
+      }
     }
-  }
-%>
+  %>
 
-<%= f.input :comment,
-  label: "Comment" %>
+  <%= f.input :comment, label: "Comment" %>
 
-<%= f.simple_fields_for :line_items do |item| %>
-  <div id="transfer_line_items">
-    <%= render 'line_item_fields', f: item %>
-  </div>
-  <div class="row links">
-    <div class="small-offset-3 small-9 columns">
-      <%= link_to_add_association "add line item", f, :line_items,
-        data: {
-          association_insertion_node: "#transfer_line_items",
-          association_insertion_method: "append"
-        }
-      %>
+  <%= f.simple_fields_for :line_items do |item| %>
+    <div id="distribution_line_items">
+      <%= render 'line_item_fields', f: item %>
     </div>
-  </div>
-<% end %>
+    <div class="row links">
+      <div class="medium-offset-3 medium-6 columns">
+        <%= link_to_add_association "add line item", f, :line_items,
+          data: {
+            association_insertion_node: "#distribution_line_items",
+            association_insertion_method: "append"
+          }
+        %>
+      </div>
+    </div>
+  <% end %>
 
-<%= f.button :submit %>
+  <div class="medium-offset-3 medium-6">
+    <%= f.button :submit %>
+  </div>
 
 <% end %>

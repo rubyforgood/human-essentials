@@ -15,7 +15,7 @@ $(document).on 'turbolinks:load', () ->
 
   $(document).on "change", control_id, (evt) ->
     selection = $(control_id + " option").filter(':selected').text()
-    
+
     if (selection is ddp_text)
       $(ddp_container_id).show()
       $(dpl_container_id).hide()

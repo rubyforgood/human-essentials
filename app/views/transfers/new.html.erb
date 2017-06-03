@@ -7,7 +7,7 @@
   storage location to another.
 </p>
 
-<%= simple_form_for @transfer, wrapper: :horizontal_form do |f| %>
+<%= simple_form_for @transfer do |f| %>
 
   <%= f.association :from,
     collection: @storage_locations,
@@ -36,7 +36,7 @@
       <%= render 'line_item_fields', f: item %>
     </div>
     <div class="row links">
-      <div class="small-offset-3 small-9 columns">
+      <div class="medium-offset-3 medium-6 columns">
         <%= link_to_add_association "add line item", f, :line_items,
           data: {
             association_insertion_node: "#transfer_line_items",
@@ -47,9 +47,7 @@
     </div>
   <% end %>
 
-  <div class="row">
-    <div class="small-offset-3 small-9 columns">
-      <%= f.button :submit %>
-    </div>
+  <div class="medium-offset-3 medium-6">
+    <%= f.button :submit %>
   </div>
 <% end %>
