@@ -1,11 +1,20 @@
 Rails.application.routes.draw do
 
   devise_for :users
+  resources :admins do
+    collection do
+      post :invite_user
+    end
+  end
 
   scope path: ':organization_id' do
 
     resources :users
-    resource :organization
+    resource :organization do
+      collection do
+        get :manage
+      end
+    end
 
     resources :adjustments
     resources :transfers, only: [:index, :create, :new, :show]

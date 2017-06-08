@@ -54,6 +54,7 @@ gem 'unicorn', '~> 5.3'
 gem 'prawn-rails', '~> 1.0'
 gem 'therubyracer', '~> 0.12',  platforms: :ruby
 # Logo attachments
+gem 'devise_invitable'
 gem 'paperclip', '= 5.1.0'
 
 group :development, :test do

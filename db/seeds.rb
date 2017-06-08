@@ -242,7 +242,7 @@ def random_record(klass)
   klass.limit(1).order("random()").first
 end
 
-sources = ['Diaper Drive', 'Purchased Supplies', 'Dropoff Donation']
+sources = ['Purchased Supplies']
 20.times.each do
   donation = Donation.create! source: sources.sample, dropoff_location: random_record(DropoffLocation), storage_location: random_record(StorageLocation), organization: pdx_org
 
