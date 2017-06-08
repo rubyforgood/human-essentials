@@ -43,7 +43,6 @@ module DashboardHelper
   end
 
   def fake_pie_chart_data
-    #InventoryItem.quantity_by_category
     current_organization.quantity_categories
   end
 

@@ -4,9 +4,13 @@
     label: "Name",
     error: "A name is required" %>
 
-  <%= f.input :address,
-    label: "Address",
-    error: "An address is required" %>
+  <%= f.input :phone,
+    label: "Phone",
+    error: "Either a phone or an e-mail is required" %>
+
+  <%= f.input :email,
+    label: "Email",
+    error: "Either a phone or an e-mail is required" %>
 
   <div class="medium-offset-3 medium-6">
     <%= f.button :submit %>

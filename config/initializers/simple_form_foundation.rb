@@ -15,7 +15,9 @@ SimpleForm.setup do |config|
     b.optional :pattern
     b.optional :min_max
     b.optional :readonly
-    b.use :label_input
+    b.wrapper :responsive_wrapper, tag: :div, class: 'medium-offset-3 medium-6' do |ba|
+      ba.use :label_input
+    end
     b.use :error, wrap_with: { tag: :small, class: :error }
 
     # b.use :hint,  wrap_with: { tag: :span, class: :hint }

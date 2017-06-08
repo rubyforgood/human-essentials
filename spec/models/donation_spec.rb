@@ -129,4 +129,13 @@ RSpec.describe Donation, type: :model do
       end
     end
   end
+
+  describe "SOURCES" do
+    it "is a hash that is referenceable by key to avoid 'magic strings'" do
+      expect(Donation::SOURCES).to have_key(:diaper_drive)
+      expect(Donation::SOURCES).to have_key(:purchased)
+      expect(Donation::SOURCES).to have_key(:dropoff)
+      expect(Donation::SOURCES).to have_key(:misc)
+    end
+  end
 end

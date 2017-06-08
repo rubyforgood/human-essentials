@@ -32,7 +32,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation for a Diaper Drive source" do
-        select "Diaper Drive", from: "donation_source"
+        select Donation::SOURCES[:diaper_drive], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
         select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
@@ -46,7 +46,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation for a Donation Site source" do
-        select "Donation Pickup Location", from: "donation_source"
+        select Donation::SOURCES[:dropoff], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_dropoff_location_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select DropoffLocation.first.name, from: "donation_dropoff_location_id"
@@ -60,7 +60,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation for Purchased Supplies" do
-        select "Purchased Supplies", from: "donation_source"
+        select Donation::SOURCES[:purchased], from: "donation_source"
         expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"
@@ -73,7 +73,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation with a Miscellaneous source" do
-        select "Misc. Donation", from: "donation_source"
+        select Donation::SOURCES[:misc], from: "donation_source"
         expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"
@@ -88,9 +88,9 @@ RSpec.feature "Donations", type: :feature, js: true do
       # Since the form only shows/hides the irrelevant field, if the user already selected something it would still
       # submit. The app should sanitize this so we aren't saving extraneous data
       scenario "extraneous data is stripped if the user adds both dropoff_location and diaper_drive_participant" do
-        select "Donation Pickup Location", from: "donation_source"
+        select Donation::SOURCES[:dropoff], from: "donation_source"
         select DropoffLocation.first.name, from: "donation_dropoff_location_id"
-        select "Diaper Drive", from: "donation_source"
+        select Donation::SOURCES[:diaper_drive], from: "donation_source"
         select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -99,6 +99,18 @@ RSpec.feature "Donations", type: :feature, js: true do
         donation = Donation.last
         expect(donation.diaper_drive_participant_id).to be_present
         expect(donation.dropoff_location_id).to be_nil
+      end
+
+      # Bug fix -- Issue #71
+      # When a user creates a donation without it passing validation, the items
+      # dropdown is not populated on the return trip.
+      scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
+        item_count = @organization.items.count + 1  # Adds 1 for the "choose an item" option
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        click_button "Create Donation"
+
+        expect(page).to have_content("error")
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
       end
     end
 
