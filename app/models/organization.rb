@@ -21,6 +21,7 @@ class Organization < ApplicationRecord
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI.regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
+  validates :logo, dimensions: { width: 763, height: 188 }
 
   has_many :adjustments
   has_many :barcode_items
