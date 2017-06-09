@@ -3,3 +3,9 @@ script:
 - export RAILS_ENV=test
 - bundle exec rake db:create db:migrate
 - bundle exec rake spec
+env:
+  global:
+    secure: mNy1kbgi9KcRaja+3JLwysrz7sSqqPiJ1HCEHXsETSy3WzdnFgXIhmyfkdTWp901AANnL5Yjtifjvjf05DOxoU6WMkAQ63W9/1/rGMszq61Iq67IobCM/l1aQKvNY1NwTDmHE6LwTvxDq1+R8p2p9c6d4PLsMp6pFRhkL9XBi8kgHKj9H7xJ8siW7FcTQUQ2AmL7kqhabpTgT932UyDdof8bnL1fIfaIPGzUyBdzqXeIo5OYr/lyEF8uvhL/AjGr+DaDVqxIqomfUKAuKIAJwAFuB9If9V6jjvmQhNTZI7FaqIe6OJTCVrS/CaRuP/rBKT2z0uI1xSS49D48CfHj/7TlqI/WfAN4KZw88Z17rdfg7bm1LJjNGL6AzfvW4QltfBzYbvGTLgW2HtXEgIsOivQ4znXd+Zax9bAMI8e6QauXroEaawkFCxiane/1AvbpN01aCcGZs0OCMx64vQuQwaxzB/ssPmcff+RwdzwuS0PrJN8GqIwYt92nP3JQ3wYdJhCb34sPOX63ZRi75APrC0GOHBTrb3DhcwK/QhAojfeEMF7cNJUEUljG36FadcuPdbYz/3GMfFldgu7JYYSdP637H6tQNsf0jkOniYGPvfayq2lbVHtrKgNgBTaXS0C+ow6bsSDe8bz5Ur8bsqpHdjpBeABzrZmwsdoInwdlgSA=
+after_success:
+  - "openssl aes-256-cbc -k $DEPLOY_KEY -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa"
+  - [[ $TRAVIS_BRANCH = 'master' ]] && bundle exec cap deploy
