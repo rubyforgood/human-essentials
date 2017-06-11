@@ -1,8 +1,8 @@
-<% content_for :title, "Organization - New" %>
+<% content_for :title, "#{current_organization.name} - Edit" %>
 
-<h1>Add a new Organization</h1>
+<h1>Edit <%= @organization.name %></h1>
 
-<%= simple_form_for Organization.new, url: organization_path do |f| %>
+<%= simple_form_for @organization, url: admin_path do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">
@@ -25,6 +25,6 @@
   </div>
 
   <div class="form-actions">
-    <%= f.button :submit, "Create" %>
+    <%= f.button :submit, "Update" %>
   </div>
 <% end %>

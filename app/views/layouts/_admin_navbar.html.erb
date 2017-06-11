@@ -20,30 +20,6 @@
       <ul class="menu" data-responsive-menu="drilldown medium-dropdown" data-parent-link="true" data-back-button="<li class='js-drilldown-back'><a tabindex='0'>Back</a></li>">
       <% ############# SIGNED IN ############### %>
       <% if user_signed_in? %>
-        <li><%= navigation_link_to('Dashboard', dashboard_path) %></li>
-        <li><%= navigation_link_to('Donations', donations_path) %></li>
-        <li><%= navigation_link_to('Distributions', distributions_path)   %></li>
-        <li class="has-submenu">
-          <a href="javascript:void(0)">Inventory</a>
-          <ul class="submenu menu vertical" data-submenu>
-            <li><%= navigation_link_to('Items', items_path) %></li>
-            <li><%= navigation_link_to('Barcode Items', barcode_items_path) %></li>
-            <li><%= navigation_link_to('Storage Locations', storage_locations_path) %></li>
-            <li><%= navigation_link_to('Adjustments', adjustments_path) %></li>
-            <li><%= navigation_link_to('Transfers', transfers_path) %></li>
-          </ul>
-        </li>
-        <li>
-          <a href="javascript:void(0)">Community</a>
-          <ul class="submenu menu vertical" data-submenu>
-            <li><%= navigation_link_to('Donation Sites', dropoff_locations_path) %></li>
-            <li><%= navigation_link_to('Partner Agencies', partners_path) %></li>
-            <li>
-              <%= navigation_link_to('Diaper Drive Participants',
-                                     diaper_drive_participants_path) %>
-            </li>
-          </ul>
-        </li>
         <% if current_user.organization_admin? %>
         <li><%= navigation_link_to('Administration', admins_path) %>
         </li>

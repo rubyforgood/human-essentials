@@ -1,0 +1,19 @@
+<% content_for :title, "Organizations - Partners" %>
+
+<h1>Partner Agencies</h1>
+
+<table id="partners">
+  <thead>
+    <tr>
+      <th>Partner</th>
+      <th>E-mail</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "organization_row", collection: @organizations %>
+  </tbody>
+</table>
+<p><%= link_to "Add New Organization", new_admin_path, class: 'button success' %> 
+<%= link_to "Return to My Site", dashboard_path, class: 'button warning' %></p>
+

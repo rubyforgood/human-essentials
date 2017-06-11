@@ -54,6 +54,7 @@ gem 'unicorn', '~> 5.3'
 gem 'prawn-rails', '~> 1.0'
 gem 'therubyracer', '~> 0.12',  platforms: :ruby
 # Logo attachments
+gem 'devise_invitable'
 gem 'paperclip', '= 5.1.0'
 
 group :development, :test do
@@ -64,6 +65,8 @@ group :development, :test do
   # Inherited gems
   gem 'awesome_print', '~> 1.7'
   gem 'guard-rspec', '~> 4.7'
+  gem 'terminal-notifier-guard'
+  gem 'terminal-notifier'
   gem 'rspec-rails', '~> 3.5'
 end
 
