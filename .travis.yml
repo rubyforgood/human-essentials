@@ -4,7 +4,7 @@ script:
 - bundle exec rake db:create db:migrate
 - bundle exec rake spec
 after_success:
-- "openssl aes-256-cbc -k $DEPLOY_KEY -in deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa"
+- "openssl aes-256-cbc -k $DEPLOY_KEY -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa"
 - "[[ $TRAVIS_BRANCH = 'master' ]] && bundle exec cap production deploy"
 
 env:
