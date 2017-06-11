@@ -314,6 +314,8 @@ GEM
     sshkit (1.13.1)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    terminal-notifier (1.8.0)
+    terminal-notifier-guard (1.7.0)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -390,6 +392,8 @@ DEPENDENCIES
   simple_form (~> 3.4)
   spring (~> 2.0)
   spring-watcher-listen (~> 2.0.0)
+  terminal-notifier
+  terminal-notifier-guard
   therubyracer (~> 0.12)
   turbolinks (~> 5)
   tzinfo-data (~> 1.2)

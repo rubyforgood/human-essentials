@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   devise_for :users
-  resources :admins do
+  resources :admins, except: [:destroy] do
     collection do
       post :invite_user
     end

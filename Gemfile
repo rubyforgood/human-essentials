@@ -65,6 +65,8 @@ group :development, :test do
   # Inherited gems
   gem 'awesome_print', '~> 1.7'
   gem 'guard-rspec', '~> 4.7'
+  gem 'terminal-notifier-guard'
+  gem 'terminal-notifier'
   gem 'rspec-rails', '~> 3.5'
 end
 

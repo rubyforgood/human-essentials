@@ -66,6 +66,7 @@ RSpec.configure do |config|
 
     # prepare a default @organization and @user to always be available for testing
     @organization = create(:organization)
+    @organization_admin = create(:organization_admin)
     @user = create(:user)
   end
 

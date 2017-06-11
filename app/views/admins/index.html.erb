@@ -14,3 +14,6 @@
     <%= render partial: "organization_row", collection: @organizations %>
   </tbody>
 </table>
+<p><%= link_to "Add New Organization", new_admin_path, class: 'button success' %> 
+<%= link_to "Return to My Site", dashboard_path, class: 'button warning' %></p>
+

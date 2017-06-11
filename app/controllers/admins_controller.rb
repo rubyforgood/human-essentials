@@ -11,13 +11,13 @@ class AdminsController < ApplicationController
     if @organization.update_attributes(organization_params)
       redirect_to admins_path, notice: 'Updated organization!'
     else
-      flash[:alert] = 'Failed to update organization'
+      flash[:alert] = 'Failed to update this organization.'
       render :edit
     end
   end
 
   def index
-    @organizations = Organization.all    
+    @organizations = Organization.all
   end
 
   def invite_user
@@ -43,7 +43,7 @@ class AdminsController < ApplicationController
   private
 
   def authorize_user
-    #verboten! unless current_user.admin == true
+    verboten! unless current_user.organization_admin
   end
 
   def organization_params
