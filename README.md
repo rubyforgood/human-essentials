@@ -10,16 +10,7 @@ This project is taking what we built for the [Portland Diaper Bank in 2016](http
 This app uses Ruby version 2.4.1, indicated in `/.ruby-version`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
 
 ## Database Configuration
-This app uses PostgreSQL for all environments. When you first clone this app, you will need to create a `.env` file in the root of the application, and populate it with:
-
-```
-DEV_DB_USERNAME=dev_username
-DEV_DB_PASSWORD=dev_password
-TEST_DB_USERNAME=test_username
-TEST_DB_PASSWORD=test_password
-```
-
-You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_development` and `diaper_test`, respectively.
+This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_development` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.
 
 ## Contributing
 
