@@ -25,8 +25,6 @@ default: &default
 development:
   <<: *default
   database: diaper_dev
-  username: postgres
-  password: io
   timeout: 5000
 
   # The specified database role being used to connect to postgres.
@@ -62,8 +60,6 @@ development:
 test:
   <<: *default
   database: diaper_test
-  username: postgres
-  password: io
   timeout: 5000
 
 # As with config/secrets.yml, you never want to store sensitive information,
