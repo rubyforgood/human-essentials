@@ -93,17 +93,19 @@ prawn_document do |pdf|
 
   pdf.number_pages "Page <page> of <total>", {
     start_count_at: 1,
-    at: [pdf.bounds.right - 130, 37],
+    at: [pdf.bounds.right - 130, 73],
     align: :right
   }
 
   pdf.repeat :all do
     # Page footer
-    pdf.bounding_box [pdf.bounds.left, pdf.bounds.bottom + 50], width: pdf.bounds.width do
+    pdf.bounding_box [pdf.bounds.left, pdf.bounds.bottom + 85], width: pdf.bounds.width do
       pdf.font "Helvetica"
       pdf.stroke_horizontal_rule
       pdf.move_down(5)
-      pdf.table([[current_organization.name, current_organization.address_inline, ""]]) do
+      pdf.table([
+        [current_organization.name, current_organization.address_inline, ""],
+      ]) do
         self.width = pdf.bounds.width
         cells.borders = []
         column(0).width = 125
@@ -111,7 +113,15 @@ prawn_document do |pdf|
         column(1).style align: :center
         column(2).style align: :right
       end
+      pdf.move_down(10)
+      pdf.span(200, position: :center) do
+        pdf.text "Lovingly created with", align: :center
+      end
+      pdf.image logo_file_path,
+                width: 125,
+                position: (pdf.bounds.width - 125) / 2
     end
+
   end
 end
 
