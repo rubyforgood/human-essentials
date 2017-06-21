@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe LandingController, type: :controller do
+RSpec.describe StaticController, type: :controller do
 
   describe "Not signed in" do
 
@@ -9,8 +9,15 @@ RSpec.describe LandingController, type: :controller do
       it "returns http success" do
         expect(subject).to be_successful
       end
-      it "renders the landing index" do
+      it "renders the static index" do
         expect(subject).to render_template :index
+      end
+    end
+
+    describe "GET #page/content" do
+      subject { get :page, params:{name:"contact"} }
+      it "renders the contact page" do
+        expect(subject).to render_template :contact
       end
     end
 
