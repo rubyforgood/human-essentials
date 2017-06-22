@@ -13,7 +13,11 @@
   </head>
 
   <body>
+    <% if params[:controller].include?("admins") %>
+    <%= render partial: "layouts/admin_navbar" %>
+    <% else %>
     <%= render partial: "layouts/navbar" %>
+    <% end %>
     <%= display_flash_messages %>
 
     <div class="row">

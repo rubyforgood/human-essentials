@@ -44,6 +44,10 @@
             </li>
           </ul>
         </li>
+        <% if current_user.organization_admin? %>
+        <li><%= navigation_link_to('Administration', admins_path) %>
+        </li>
+        <% end %>
       <% ############# END SIGNED IN ############### %>
       <% end %>
       <% ############# SIGNED IN ############### %>

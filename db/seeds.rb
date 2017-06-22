@@ -19,7 +19,7 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
   organization.email = "info@sfdiaperbank.org"
 end
 
-user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org
+user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: true
 user2 = User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org
 
 DropoffLocation.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
@@ -245,6 +245,10 @@ def random_record(klass)
   klass.limit(1).order("random()").first
 end
 
+<<<<<<< HEAD
+=======
+sources = ['Purchased Supplies']
+>>>>>>> master
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.

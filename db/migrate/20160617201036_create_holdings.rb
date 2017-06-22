@@ -1,4 +1,4 @@
-class CreateHoldings < ActiveRecord::Migration
+class CreateHoldings < ActiveRecord::Migration[5.0]
   def change
     create_table :holdings do |t|
       t.integer :inventory_id

@@ -43,6 +43,19 @@ class Organization < ApplicationRecord
     short_name
   end
 
+  def display_users
+    users.map {|u| u.email }.join(", ")
+  end
+
+  def display_name
+    if logo.present?
+      "<image src=\"#{self.logo.url}\" style=\"height:188px;\">"
+    else
+      name
+    end
+  end
+
+
   def quantity_categories
     storage_locations.map {|i| i.inventory_items}.flatten.group_by{|i| i.item.category}
       .map {|i| [i[0], i[1].map{|i|i.quantity}.sum]}.sort_by { |_, v| -v }

@@ -1,11 +1,20 @@
 Rails.application.routes.draw do
 
   devise_for :users
+  resources :admins, except: [:destroy] do
+    collection do
+      post :invite_user
+    end
+  end
 
   scope path: ':organization_id' do
 
     resources :users
-    resource :organization
+    resource :organization do
+      collection do
+        get :manage
+      end
+    end
 
     resources :adjustments
     resources :transfers, only: [:index, :create, :new, :show]
@@ -36,5 +45,7 @@ Rails.application.routes.draw do
   end
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  root "landing#index"
+
+  get 'pages/:name', to: 'static#page'
+  root "static#index"
 end

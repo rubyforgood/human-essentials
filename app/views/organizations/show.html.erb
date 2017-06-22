@@ -1,0 +1,4 @@
+<% content_for :title, "Organization - #{@organization.name}" %>
+
+<h1><%= @organization.name %></h1>
+<p><%= link_to @organization.email, "mailto:#{@organization.email}" %></p>

@@ -1,4 +1,4 @@
-class CreateTransfers < ActiveRecord::Migration
+class CreateTransfers < ActiveRecord::Migration[5.0]
   def change
     create_table :transfers do |t|
       t.integer :from_id
