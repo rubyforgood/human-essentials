@@ -33,6 +33,7 @@ class Donation < ApplicationRecord
   # FIXME - This validation can be removed because it's implicit in belongs_to as of Rails 5
   validates :storage_location, :organization, presence: true
 
+  # TODO - Refactor this here and in distribution.rb to a concern
   after_create :initialize_issued_at
 
   # TODO - is `between` still used?

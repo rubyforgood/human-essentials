@@ -31,8 +31,11 @@ class Distribution < ApplicationRecord
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
 
-  scope :recent, ->(count=3) { order(:created_at).limit(count) }
-  scope :during, ->(range) { where(distributions: { created_at: range }) }
+  # TODO - Refactor this here and in donation.rb to a concern
+  after_create :initialize_issued_at
+
+  scope :recent, ->(count=3) { order(:issued_at).limit(count) }
+  scope :during, ->(range) { where(distributions: { issued_at: range }) }
 
   delegate :name, to: :partner, prefix: true
 
@@ -53,6 +56,11 @@ class Distribution < ApplicationRecord
   end
 
   private
+
+  def initialize_issued_at
+    self.issued_at ||= self.created_at
+    save
+  end
 
   def line_item_items_exist_in_inventory
     self.line_items.each do |line_item|

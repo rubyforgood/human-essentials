@@ -16,6 +16,7 @@ FactoryGirl.define do
     storage_location
     partner
     organization { Organization.try(:first) || create(:organization) }
+    issued_at nil
 
     trait :with_items do
       storage_location { create :storage_location, :with_items }
