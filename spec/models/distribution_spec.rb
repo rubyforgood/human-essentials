@@ -31,6 +31,15 @@ RSpec.describe Distribution, type: :model do
     end
   end
 
+  context "Callbacks >" do
+    it "initializes the issued_at field to default to created_at if it wasn't explicitly set" do
+      yesterday = 1.day.ago
+      today = Date.today
+      expect(create(:distribution, created_at: yesterday, issued_at: today).issued_at).to eq(today)
+      expect(create(:distribution, created_at: yesterday).issued_at).to eq(yesterday)
+    end
+  end
+
   context "Methods >" do
     before(:each) do
       @distribution = create(:distribution)

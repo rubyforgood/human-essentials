@@ -1,3 +1,7 @@
+app/controllers/admins_controller.rb:
+  * [ 28] [TODO] who should be able to arrive here and how?
+  * [ 33] [TODO] who should be able to arrive here and how?
+
 app/controllers/application_controller.rb:
   * [ 12] [FIXME] should be short_name so that we get "/pdx/blah" rather than "/123/blah"
 
@@ -15,25 +19,26 @@ app/controllers/storage_locations_controller.rb:
 app/models/adjustment.rb:
   * [ 36] [TODO] - this could probably be made an association method for the `line_items` association
 
-app/models/admin_user.rb:
-  * [  2] [TODO] AdminUser should be rebuilt from scratch! 
-
 app/models/barcode_item.rb:
   * [ 25] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
 
 app/models/diaper_drive_participant.rb:
   * [ 24] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
 
+app/models/distribution.rb:
+  * [ 34] [TODO] - Refactor this here and in donation.rb to a concern
+
 app/models/donation.rb:
   * [ 33] [FIXME] - This validation can be removed because it's implicit in belongs_to as of Rails 5
-  * [ 38] [TODO] - is `between` still used?
-  * [ 41] [TODO] - change this to "by_source()" with an argument that accepts a source name
-  * [ 61] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
-  * [ 70] [TODO] - Test coverage for this method
-  * [ 82] [TODO] - Could this be made a member method "count" of the `items` association?
-  * [ 87] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
-  * [ 92] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
-  * [101] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
+  * [ 36] [TODO] - Refactor this here and in distribution.rb to a concern
+  * [ 39] [TODO] - is `between` still used?
+  * [ 42] [TODO] - change this to "by_source()" with an argument that accepts a source name
+  * [ 62] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
+  * [ 71] [TODO] - Test coverage for this method
+  * [ 83] [TODO] - Could this be made a member method "count" of the `items` association?
+  * [ 88] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
+  * [ 93] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
+  * [102] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
   * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?
@@ -48,4 +53,11 @@ app/models/transfer.rb:
   * [ 34] [TODO] - this could probably be made an association method for the `line_items` association
   * [ 39] [TODO] - this could probably be made an association method for the `line_items` association
   * [ 58] [TODO] - this could probably be made an association method for the `line_items` association
+
+spec/controllers/shared_examples/authorization_specs.rb:
+  * [ 17] [FIXME] Not all controllers have `edit` actions (or other), and this should be able to adapt to that 
+  * [ 42] [FIXME] Not all controllers have `edit` actions, and this should be able to adapt to that 
+
+spec/features/dashboard_spec.rb:
+  * [ 18] [TODO] - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
 
