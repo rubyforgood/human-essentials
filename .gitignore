@@ -7,6 +7,10 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore floo files
+.floo
+.flooignore
+
 # Ignore system files that we don't want (these are linked in cap)
 /public/system
 /public/.htaccess

@@ -245,10 +245,6 @@ def random_record(klass)
   klass.limit(1).order("random()").first
 end
 
-<<<<<<< HEAD
-=======
-sources = ['Purchased Supplies']
->>>>>>> master
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
