@@ -24,10 +24,27 @@ RSpec.describe Distribution, type: :model do
       expect(build(:distribution, partner: nil)).not_to be_valid
     end
 
+    # TODO: distribution_spec: "ensures the associated line_items are valid"
     xit "ensures the associated line_items are valid" do
   	end
 
+    # TODO: distribution_spec: "ensures that any included items are found in the associated storage location"
     xit "ensures that any included items are found in the associated storage location" do
+    end
+  end
+
+  context "Scopes >" do
+    describe "during >" do
+      it "returns all distrbutions created between two dates" do
+        # The models should default to assigning the created_at time to the issued_at
+        create(:distribution, created_at: Date.today)
+        # but just for fun we'll force one in the past within the range
+        create(:distribution, issued_at: Date.yesterday)
+        # and one outside the range
+        create(:distribution, issued_at: 1.year.ago)
+        
+        expect(Distribution.during(1.month.ago..Date.tomorrow).size).to eq(2)
+      end
     end
   end
 

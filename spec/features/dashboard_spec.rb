@@ -19,19 +19,23 @@ RSpec.feature "Dashboard", type: :feature do
   # if someone else wants to make this use an XHR instead, have at it!
   scenario "The user can scope down what they see in the dashboard using the date-range drop down" do
     item = create(:item, organization: @organization)
-    create(:storage_location, organization: @organization)
-    create(:donation, :with_item, item_id: item.id, item_quantity: 10, issued_at: 1.month.ago)
-    create(:donation, :with_item, item_id: item.id, item_quantity: 200, issued_at: Date.today)
+    sl = create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
+    create(:donation, :with_item, item_id: item.id, item_quantity: 10, storage_location: sl, issued_at: 1.month.ago)
+    create(:donation, :with_item, item_id: item.id, item_quantity: 200, storage_location: sl, issued_at: Date.today)
+    create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago, )
+    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Date.today, )
     @organization.reload
 
     # Verify the initial totals are correct
     visit @url_prefix + "/dashboard"
     expect(page).to have_content("210 items received year to date")
+    expect(page).to have_content("105 items distributed year to date")
 
     # Scope it down to just today, should omit the first donation
     #select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
     visit @url_prefix + "/dashboard?dashboard_filter[interval]=last_month"
     expect(page).to have_content("10 items received last month")
+    expect(page).to have_content("5 items distributed last month")
   end
 
 
@@ -70,7 +74,7 @@ RSpec.feature "Dashboard", type: :feature do
     select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
     fill_in "distribution_line_items_attributes_0_quantity", with: "50"
     click_button "Create Distribution"
-    expect(page).to have_xpath("//table[@id='distributions']/tbody/tr/td", text: "50")      
+    expect(page).to have_xpath("//table[@id='distributions']/tbody/tr/td", text: "50")
 
     # Check the dashboard now
     visit @url_prefix + "/dashboard"
