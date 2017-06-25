@@ -31,8 +31,7 @@ class Donation < ApplicationRecord
   validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
 
-  # TODO - Refactor this here and in distribution.rb to a concern
-  after_create :initialize_issued_at
+  include IssuedAt
 
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   # TODO - change this to "by_source()" with an argument that accepts a source name
@@ -101,11 +100,4 @@ class Donation < ApplicationRecord
     line_item.quantity += q
     line_item.save
   end
-
-private
-  def initialize_issued_at
-    self.issued_at ||= self.created_at
-    save
-  end
-
 end
