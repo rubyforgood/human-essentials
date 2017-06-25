@@ -30,8 +30,7 @@ app/models/donation.rb:
   * [ 65] [TODO] - Test coverage for this method
   * [ 77] [TODO] - Could this be made a member method "count" of the `items` association?
   * [ 82] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
-  * [ 87] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
-  * [ 96] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
+  * [ 91] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
   * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?

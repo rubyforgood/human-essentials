@@ -124,10 +124,10 @@ RSpec.describe Donation, type: :model do
       end
     end
 
-    describe "check_existence" do
+    describe "contains_item_id?" do
       it "returns true if the item_id already exists" do
         donation = create(:donation, :with_item)
-        expect(donation.check_existence(donation.items.first.id)).to be_truthy
+        expect(donation.contains_item_id?(donation.items.first.id)).to be_truthy
       end
     end
 

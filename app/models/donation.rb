@@ -55,10 +55,10 @@ class Donation < ApplicationRecord
 
   ## TODO - Can this be simplified so that we can just pass it the donation_item_params hash?
   def track(item,quantity)
-    if !check_existence(item.id)
-      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
-    else
+    if contains_item_id?(item.id)
       update_quantity(quantity, item)
+    else
+      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
     end
   end
 
@@ -84,13 +84,8 @@ class Donation < ApplicationRecord
     LineItem.create(itemizable: self, item_id: barcode_hash[:item_id], quantity: barcode_hash[:quantity])
   end
 
-  ## TODO - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
-  def check_existence(id)
-    if line_item = self.line_items.find_by(item_id: id)
-      true
-    else
-      false
-    end
+  def contains_item_id? id
+    line_items.find_by(item_id: id).present?
   end
 
   ## TODO - Refactor this. "update" doesn't reflect that this "adds only"
