@@ -34,8 +34,7 @@ class Donation < ApplicationRecord
   include IssuedAt
 
   scope :during, ->(range) { where(donations: { issued_at: range }) }
-  # TODO - change this to "by_source()" with an argument that accepts a source name
-  scope :diaper_drive, -> { where(source: SOURCES[:diaper_drive] ) }
+  scope :by_source, ->(source) { source = SOURCES[source] if source.is_a?(Symbol); where(source: source)}
   scope :recent, ->(count=3) { order(:issued_at).limit(count) }
 
   def from_diaper_drive?

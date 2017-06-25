@@ -54,16 +54,23 @@ RSpec.describe Donation, type: :model do
         create(:donation, issued_at: Date.yesterday)
         # and one outside the range
         create(:donation, issued_at: 1.year.ago)
-        
+
         expect(Donation.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end
 
-    describe "diaper_drive >" do
-      it "returns all donations with the source `Diaper Drive`" do
-        create(:donation, source: "Misc. Donation")
-        create(:donation, source: "Diaper Drive")
-        expect(Donation.diaper_drive.count).to eq(1)
+    describe "by_source >" do
+      before(:each) do
+        create(:donation, source: Donation::SOURCES[:misc])
+        create(:donation, source: Donation::SOURCES[:diaper_drive])
+      end
+
+      it "returns all donations with the provided source" do
+        expect(Donation.by_source(Donation::SOURCES[:diaper_drive]).count).to eq(1)
+      end
+
+      it "allows a symbol as an argument, referencing the SOURCES hash" do
+        expect(Donation.by_source(:diaper_drive).count).to eq(1)
       end
     end
   end
