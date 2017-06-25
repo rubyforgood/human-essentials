@@ -49,7 +49,7 @@ class Organization < ApplicationRecord
 
   def display_name
     if logo.present?
-      "<image src=\"#{self.logo.url}\" style=\"height:188px;\">"
+      "<img src=\"#{self.logo.url}\" style=\"height:188px;\">"
     else
       name
     end

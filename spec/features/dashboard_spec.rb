@@ -12,7 +12,8 @@ RSpec.feature "Dashboard", type: :feature do
     scenario "User should see their organization name unless they have a logo set" do
       # extract just the filename
       header_logo = extract_image(:xpath, "//img[@id='logo']")
-      expect(header_logo).to eq("DiaperBase-Logo.png")
+      expect(header_logo).to be_include("DiaperBase-Logo")
+
       organization_logo = extract_image(:xpath, "//h1[@class='organization-name']/img")
       expect(organization_logo).to eq("logo.jpg")
 
@@ -20,7 +21,8 @@ RSpec.feature "Dashboard", type: :feature do
       @organization.save
       visit @url_prefix + "/dashboard"
 
-      expect(page).to have_content?(:xpath, "//h1[@class='organization-name']", text: @organization.name)
+      expect(page).not_to have_xpath("//h1[@class='organization-name']/img")
+      expect(page.find(:xpath, "//h1[@class='organization-name']")).to have_content(@organization.name)
     end
 
   end
