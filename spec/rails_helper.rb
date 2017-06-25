@@ -47,6 +47,9 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
+  # Location for fixtures (logo, etc)
+  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
   # Make FactoryGirl easier.
   config.include FactoryGirl::Syntax::Methods
 
@@ -54,10 +57,8 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.strategy = :transaction
-    #__start_db_cleaning_with_log
-    #__sweep_up_db_with_log
     __start_db_cleaning_with_log
-    # __lint_with_log
+     __lint_with_log
     __sweep_up_db_with_log
   end
 

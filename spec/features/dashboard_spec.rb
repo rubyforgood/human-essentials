@@ -9,8 +9,9 @@ RSpec.feature "Dashboard", type: :feature do
       visit @url_prefix + "/dashboard"
     end
 
-    scenario "User should see their organization name" do
+    scenario "User should see their organization name and logo" do
       expect(page.find('.organization-name')).to have_content(@organization.name)
+
     end
 
   end
