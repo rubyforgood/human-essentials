@@ -12,7 +12,7 @@
     <%= csrf_meta_tags %>
   </head>
 
-  <body>
+  <body id="<%= params[:controller] || "" %>" class="<%= params[:action] || "" %>">
     <% if params[:controller].include?("admins") %>
     <%= render partial: "layouts/admin_navbar" %>
     <% else %>
