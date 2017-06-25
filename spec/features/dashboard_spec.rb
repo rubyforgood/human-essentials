@@ -9,9 +9,18 @@ RSpec.feature "Dashboard", type: :feature do
       visit @url_prefix + "/dashboard"
     end
 
-    scenario "User should see their organization name and logo" do
-      expect(page.find('.organization-name')).to have_content(@organization.name)
+    scenario "User should see their organization name unless they have a logo set" do
+      # extract just the filename
+      header_logo = extract_image(:xpath, "//img[@id='logo']")
+      expect(header_logo).to eq("DiaperBase-Logo.png")
+      organization_logo = extract_image(:xpath, "//h1[@class='organization-name']/img")
+      expect(organization_logo).to eq("logo.jpg")
 
+      @organization.logo = nil
+      @organization.save
+      visit @url_prefix + "/dashboard"
+
+      expect(page).to have_content?(:xpath, "//h1[@class='organization-name']", text: @organization.name)
     end
 
   end
