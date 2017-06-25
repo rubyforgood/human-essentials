@@ -30,8 +30,6 @@ class Donation < ApplicationRecord
   validates :dropoff_location, presence: { message: "must be specified since you chose '#{SOURCES[:dropoff]}'" }, if: :from_dropoff_location?
   validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
-  # FIXME - This validation can be removed because it's implicit in belongs_to as of Rails 5
-  validates :storage_location, :organization, presence: true
 
   # TODO - Refactor this here and in distribution.rb to a concern
   after_create :initialize_issued_at
