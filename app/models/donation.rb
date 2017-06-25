@@ -34,8 +34,6 @@ class Donation < ApplicationRecord
   # TODO - Refactor this here and in distribution.rb to a concern
   after_create :initialize_issued_at
 
-  # TODO - is `between` still used?
-  scope :between, ->(start, stop) { where(donations: { issued_at: start..stop }) }
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   # TODO - change this to "by_source()" with an argument that accepts a source name
   scope :diaper_drive, -> { where(source: SOURCES[:diaper_drive] ) }
