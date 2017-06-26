@@ -1,11 +1,6 @@
 <div class="top-bar" id="main-menu">
   <div class="top-bar-title">
-
-    <% if current_organization && current_organization.logo.present? %>
-      <%= image_tag current_organization.logo.url, alt: current_organization.name, id: "logo" %>
-    <% else %>
-      <%= image_tag "DiaperBase-Logo.png", alt: "DiaperBase Logo", id: "logo" %>
-    <% end %>
+    <%= image_tag "DiaperBase-Logo.png", alt: "DiaperBase Logo", id: "logo" %>
 
     <span class="menu-hamburger" data-responsive-toggle="responsive-menu" data-hide-for="medium">
       <span class="menu-text" data-toggle>Menu</span>

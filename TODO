@@ -51,9 +51,9 @@ spec/controllers/shared_examples/authorization_specs.rb:
   * [ 42] [FIXME] Not all controllers have `edit` actions, and this should be able to adapt to that 
 
 spec/features/dashboard_spec.rb:
-  * [ 18] [TODO] - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
+  * [ 30] [TODO] - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
 
 spec/models/distribution_spec.rb:
-  * [ 27] [TODO] distribution_spec: "ensures the associated line_items are valid"
-  * [ 31] [TODO] distribution_spec: "ensures that any included items are found in the associated storage location"
+  * [ 28] [TODO] distribution_spec: "ensures the associated line_items are valid"
+  * [ 32] [TODO] distribution_spec: "ensures that any included items are found in the associated storage location"
 

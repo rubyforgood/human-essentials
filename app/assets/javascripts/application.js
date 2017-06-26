@@ -24,3 +24,7 @@
 $(document).on('turbolinks:load', function() {
   $(document).foundation();
 });
+
+window.setTimeout(function() {
+    $(".close-button").click();
+}, 3000);
