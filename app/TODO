@@ -25,12 +25,18 @@ app/models/barcode_item.rb:
 app/models/diaper_drive_participant.rb:
   * [ 24] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
 
+app/models/distribution.rb:
+  * [ 34] [TODO] - Refactor this here and in donation.rb to a concern
+
 app/models/donation.rb:
-  * [ 56] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
-  * [ 65] [TODO] - Test coverage for this method
-  * [ 77] [TODO] - Could this be made a member method "count" of the `items` association?
-  * [ 82] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
-  * [ 91] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
+  * [ 34] [TODO] - Refactor this here and in distribution.rb to a concern
+  * [ 38] [TODO] - change this to "by_source()" with an argument that accepts a source name
+  * [ 58] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
+  * [ 67] [TODO] - Test coverage for this method
+  * [ 79] [TODO] - Could this be made a member method "count" of the `items` association?
+  * [ 84] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
+  * [ 89] [TODO] - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
+  * [ 98] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
   * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?
@@ -51,9 +57,9 @@ spec/controllers/shared_examples/authorization_specs.rb:
   * [ 42] [FIXME] Not all controllers have `edit` actions, and this should be able to adapt to that 
 
 spec/features/dashboard_spec.rb:
-  * [ 30] [TODO] - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
+  * [ 18] [TODO] - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
 
 spec/models/distribution_spec.rb:
-  * [ 28] [TODO] distribution_spec: "ensures the associated line_items are valid"
-  * [ 32] [TODO] distribution_spec: "ensures that any included items are found in the associated storage location"
+  * [ 27] [TODO] distribution_spec: "ensures the associated line_items are valid"
+  * [ 31] [TODO] distribution_spec: "ensures that any included items are found in the associated storage location"
 

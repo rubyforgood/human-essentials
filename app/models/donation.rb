@@ -30,17 +30,11 @@ class Donation < ApplicationRecord
   validates :dropoff_location, presence: { message: "must be specified since you chose '#{SOURCES[:dropoff]}'" }, if: :from_dropoff_location?
   validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
-  # FIXME - This validation can be removed because it's implicit in belongs_to as of Rails 5
-  validates :storage_location, :organization, presence: true
 
-  # TODO - Refactor this here and in distribution.rb to a concern
-  after_create :initialize_issued_at
+  include IssuedAt
 
-  # TODO - is `between` still used?
-  scope :between, ->(start, stop) { where(donations: { issued_at: start..stop }) }
   scope :during, ->(range) { where(donations: { issued_at: range }) }
-  # TODO - change this to "by_source()" with an argument that accepts a source name
-  scope :diaper_drive, -> { where(source: SOURCES[:diaper_drive] ) }
+  scope :by_source, ->(source) { source = SOURCES[source] if source.is_a?(Symbol); where(source: source)}
   scope :recent, ->(count=3) { order(:issued_at).limit(count) }
 
   def from_diaper_drive?
@@ -61,10 +55,10 @@ class Donation < ApplicationRecord
 
   ## TODO - Can this be simplified so that we can just pass it the donation_item_params hash?
   def track(item,quantity)
-    if !check_existence(item.id)
-      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
-    else
+    if contains_item_id?(item.id)
       update_quantity(quantity, item)
+    else
+      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
     end
   end
 
@@ -90,13 +84,8 @@ class Donation < ApplicationRecord
     LineItem.create(itemizable: self, item_id: barcode_hash[:item_id], quantity: barcode_hash[:quantity])
   end
 
-  ## TODO - This can be refactored to just the find_by query; should also be made a predicate [contains_item_id?()]
-  def check_existence(id)
-    if line_item = self.line_items.find_by(item_id: id)
-      true
-    else
-      false
-    end
+  def contains_item_id? id
+    line_items.find_by(item_id: id).present?
   end
 
   ## TODO - Refactor this. "update" doesn't reflect that this "adds only"
@@ -105,11 +94,4 @@ class Donation < ApplicationRecord
     line_item.quantity += q
     line_item.save
   end
-
-private
-  def initialize_issued_at
-    self.issued_at ||= self.created_at
-    save
-  end
-
 end
