@@ -9,6 +9,7 @@
 #  storage_location_id :integer
 #  partner_id          :integer
 #  organization_id     :integer
+#  issued_at           :datetime
 #
 
 RSpec.describe Distribution, type: :model do

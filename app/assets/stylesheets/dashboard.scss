@@ -1,3 +1,3 @@
-// Place all the styles related to the dashboard controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+#dashboard .organization-logo {
+  max-height: 188px; /* TODO: We shouldn't be using a magic number here. */
+}
