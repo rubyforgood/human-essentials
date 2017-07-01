@@ -1,5 +1,7 @@
 <%= simple_form_for @donation do |f| %>
 
+  <%= react_component("Scale") %>
+
   <%= f.input :source,
     collection: Donation::SOURCES.values,
     label: "Source",
