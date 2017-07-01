@@ -30,6 +30,9 @@ class DonationsController < ApplicationController
                                       .order(created_at: :desc)
   end
 
+  def scale
+  end
+
   def create
     @donation = Donation.new(donation_params.merge(organization: current_organization))
     if (@donation.save)
