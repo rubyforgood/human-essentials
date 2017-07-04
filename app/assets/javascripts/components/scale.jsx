@@ -170,7 +170,7 @@ class Scale extends React.Component {
         {connected &&
           <span className="scale">
             <small>{scaleState}</small>
-            {weight}
+            <p id="scale_reading">{weight}</p>
             <small>{unit}</small>
           </span>}
       </main>
