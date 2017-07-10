@@ -29,6 +29,8 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 gem 'yajl-ruby'
 
+gem 'react-rails'
+
 # Use Foundation for layout
 gem 'foundation-rails', '~> 6.0'
 gem 'foundation_rails_helper', '>= 3.0.0.rc2', '< 4.0'

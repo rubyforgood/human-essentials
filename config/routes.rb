@@ -36,6 +36,9 @@ Rails.application.routes.draw do
     resources :partners
 
     resources :donations do
+      collection do
+        get :scale
+      end
       patch :add_item, on: :member
       patch :remove_item, on: :member
     end

@@ -101,6 +101,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
+    connection_pool (2.2.1)
     database_cleaner (1.6.1)
     debug_inspector (0.0.3)
     devise (4.3.0)
@@ -259,6 +260,12 @@ GEM
     rb-fsevent (0.9.8)
     rb-inotify (0.9.8)
       ffi (>= 0.5.0)
+    react-rails (2.2.1)
+      babel-transpiler (>= 0.7.0)
+      connection_pool
+      execjs
+      railties (>= 3.2)
+      tilt
     ref (2.0.0)
     responders (2.4.0)
       actionpack (>= 4.2.0, < 5.3)
@@ -388,6 +395,7 @@ DEPENDENCIES
   puma (~> 3.0)
   rails (~> 5.1.1)
   rails-controller-testing (~> 1.0)
+  react-rails
   rspec-rails (~> 3.5)
   sass-rails (~> 5.0)
   simple_form (~> 3.4)

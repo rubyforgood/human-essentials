@@ -30,6 +30,15 @@ class DonationsController < ApplicationController
                                       .order(created_at: :desc)
   end
 
+  def scale
+    @donation = Donation.new(issued_at: Date.today)
+    @donation.line_items.build
+    @storage_locations = current_organization.storage_locations
+    @dropoff_locations = current_organization.dropoff_locations
+    @diaper_drive_participants = current_organization.diaper_drive_participants
+    @items = current_organization.items.alphabetized    
+  end
+
   def create
     @donation = Donation.new(donation_params.merge(organization: current_organization))
     if (@donation.save)
