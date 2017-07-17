@@ -53,7 +53,7 @@ class Organization < ApplicationRecord
   end
 
   def address_inline
-    address.split("\n").join(",")
+    address.split("\n").map(&:strip).join(", ")
   end
 
   def total_inventory
