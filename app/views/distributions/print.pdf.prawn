@@ -93,13 +93,14 @@ prawn_document do |pdf|
 
   pdf.number_pages "Page <page> of <total>", {
     start_count_at: 1,
-    at: [pdf.bounds.right - 130, 73],
+    at: [pdf.bounds.right - 130, 22],
     align: :right
   }
 
   pdf.repeat :all do
     # Page footer
-    pdf.bounding_box [pdf.bounds.left, pdf.bounds.bottom + 85], width: pdf.bounds.width do
+    pdf.bounding_box [pdf.bounds.left, pdf.bounds.bottom + 35], width: pdf.bounds.width do
+      pdf.stroke_bounds
       pdf.font "Helvetica"
       pdf.stroke_horizontal_rule
       pdf.move_down(5)
@@ -113,13 +114,11 @@ prawn_document do |pdf|
         column(1).style align: :center
         column(2).style align: :right
       end
-      pdf.move_down(10)
-      pdf.span(200, position: :center) do
-        pdf.text "Lovingly created with", align: :center
+      logo_offset = (pdf.bounds.width - 190) / 2
+      pdf.bounding_box([logo_offset, 0], width: 190, height: 33) do
+        pdf.text "Lovingly created with", valign: :center
+        pdf.image logo_file_path, width: 75, vposition: :center, position: :right
       end
-      pdf.image logo_file_path,
-                width: 125,
-                position: (pdf.bounds.width - 125) / 2
     end
 
   end
