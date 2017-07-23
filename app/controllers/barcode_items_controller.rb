@@ -20,7 +20,11 @@ class BarcodeItemsController < ApplicationController
   end
 
   def show
-    @barcode_item = current_organization.barcode_items.includes(:item).find(params[:id])
+    respond_to do |format|
+      @barcode_item = current_organization.barcode_items.includes(:item).find(params[:id])
+      format.html
+      format.json { render json: @barcode_item }
+    end
   end
 
   def update
