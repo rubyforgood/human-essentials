@@ -29,7 +29,9 @@ Rails.application.routes.draw do
       post :reclaim, on: :member
     end
 
-    resources :barcode_items
+    resources :barcode_items do
+      get :find, on: :collection
+    end
     resources :dropoff_locations
     resources :diaper_drive_participants, except: [:destroy]
     resources :items

@@ -1,4 +1,5 @@
 <div class="nested-fields">
+  <%= render partial: "barcode_items/barcode_item_lookup" %>
   <div class="row">
     <div class="small-6 medium-offset-3 medium-4 columns">
       <%= f.input_field :item_id, collection: @items, prompt: "Choose an item" %>

@@ -1,0 +1,41 @@
+$(document).ready(function() {
+  /* Barcode readers will often "helpfully" send a CRLF at the end of the
+     scanned string. We're going to capture this and use it to invoke the
+     lookup method instead, since we don't want to submit the form just yet. */
+  $('.__barcode_item_lookup').keypress(function (event) {
+    if (event.which == '10' || event.which == '13') {
+      console.log(event.target.value);
+      response = barcode_item_lookup(event.target.value, $(event.target).data("organization-id"),event.target);
+      console.log(response);
+    }
+
+  });
+
+  /**
+  barcode_item_lookup
+   @brief Invokes an ajax lookup of a provided barcode value
+   @param value : the barcode
+   @param organization_id : passed in as a param. This constrains the lookup
+   @param src : the DOM source, so we can callback to it.
+   */
+  function barcode_item_lookup(value, organization_id,src) {
+    return $.ajax({
+      type: "GET",
+      // Hardcoding magic URLs isn't ideal but it works for now
+      url: "/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value,
+      success: function(data) {
+        // Return the data so we can do stuff with the response
+        console.log("Found it!");
+        return(data);
+      },
+      error: function(data) {
+        // Record it
+        console.log("Failed to locate a record for: " + $(src).val());
+        // Wipe the field
+        $(src).val('');
+        // TODO: Prompt the user with a dialog to create a new barcode entry, then add that to the form
+        return false;
+      }
+      });
+    }
+});
