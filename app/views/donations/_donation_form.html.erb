@@ -25,7 +25,7 @@
 
   <%= f.input :issued_at,
      label: "Issued on",
-     as: :date, 
+     as: :date,
      html5: true %>
 
 
@@ -39,7 +39,7 @@
         data: {
           association_insertion_node: "#donation_line_items",
           association_insertion_method: "append"
-        }
+        }, id: "__add_line_item"
         %>
       </div>
     </div>

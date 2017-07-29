@@ -19,34 +19,38 @@ $(document).ready(function() {
   function barcode_item_lookup(value, organization_id,src) {
     // Hardcoding magic URLs isn't ideal but it works for now
     $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, function(data) {
-         // ...
+         // Preserve this for reference of where we came from.
          data['src'] = src;
+         // Pass it all along to the .done() method
          return data;
       })
       .done(fill_fields_with_barcode_results)
-      /*function(data) {
-        // Return the data so we can do stuff with the response
-        console.log("Lookup: { id: " + data['id'] + ", item_id: " + data['item_id'] + ", quantity: " + data['quantity'] + "}");
-        return data;
-      })*/
-      .fail(function(data) {
-        // Record it
-        console.log("Failed to locate a record for: " + $(src).val());
-        // Wipe the field
-        $(src).val('');
-        // TODO: Prompt the user with a dialog to create a new barcode entry, then add that to the form
-        return false;
-      })
+      .fail(prompt_for_new_barcode_item)
       .always(function(data){
         // ...
     });
   }
 
+  /**
+  fill_fields_with_barcode_results
+    @brief Sets the fields for the line item with the results. Event handler for above.
+    @param data : JSON object result from the above method. Expecting a JSON-serialized BarcodeItem
+  */
   function fill_fields_with_barcode_results(data) {
-    console.log("Fill fields");
-    console.log(data);
     line_item = $(data['src']).closest('.nested-fields');
     $(line_item).find('input[type=number]').val(data['quantity']);
     $(line_item).find('select option[value="' + data['item_id'] + '"]').attr("selected", true);
+
+    // This will facilitate serial barcode inputs.
+    // First trigger the "add new line item"
+    $('#__add_line_item').trigger('click');
+    // Now focus on the barcode field
+    $(line_item).parent().find('.nested-fields:last-child input.__barcode_item_lookup').focus();
+  }
+
+  function prompt_for_new_barcode_item(data) {
+    console.log("prompts!");
+    $(data['src']).val('');
+    // TODO: Prompt the user with a dialog to create a new barcode entry, then add that to the form
   }
 });
