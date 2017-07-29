@@ -2,13 +2,11 @@ $(document).ready(function() {
   /* Barcode readers will often "helpfully" send a CRLF at the end of the
      scanned string. We're going to capture this and use it to invoke the
      lookup method instead, since we don't want to submit the form just yet. */
-  $('.__barcode_item_lookup').keypress(function (event) {
+  $('#donation_line_items').on('keypress', '.__barcode_item_lookup', function (event) {
     if (event.which == '10' || event.which == '13') {
-      console.log(event.target.value);
-      response = barcode_item_lookup(event.target.value, $(event.target).data("organization-id"),event.target);
-      console.log(response);
+      barcode_item_lookup(event.target.value, $(event.target).data("organization-id"),event.target);
+      event.preventDefault();
     }
-
   });
 
   /**
@@ -19,23 +17,36 @@ $(document).ready(function() {
    @param src : the DOM source, so we can callback to it.
    */
   function barcode_item_lookup(value, organization_id,src) {
-    return $.ajax({
-      type: "GET",
-      // Hardcoding magic URLs isn't ideal but it works for now
-      url: "/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value,
-      success: function(data) {
+    // Hardcoding magic URLs isn't ideal but it works for now
+    $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, function(data) {
+         // ...
+         data['src'] = src;
+         return data;
+      })
+      .done(fill_fields_with_barcode_results)
+      /*function(data) {
         // Return the data so we can do stuff with the response
-        console.log("Found it!");
-        return(data);
-      },
-      error: function(data) {
+        console.log("Lookup: { id: " + data['id'] + ", item_id: " + data['item_id'] + ", quantity: " + data['quantity'] + "}");
+        return data;
+      })*/
+      .fail(function(data) {
         // Record it
         console.log("Failed to locate a record for: " + $(src).val());
         // Wipe the field
         $(src).val('');
         // TODO: Prompt the user with a dialog to create a new barcode entry, then add that to the form
         return false;
-      }
-      });
-    }
+      })
+      .always(function(data){
+        // ...
+    });
+  }
+
+  function fill_fields_with_barcode_results(data) {
+    console.log("Fill fields");
+    console.log(data);
+    line_item = $(data['src']).closest('.nested-fields');
+    $(line_item).find('input[type=number]').val(data['quantity']);
+    $(line_item).find('select option[value="' + data['item_id'] + '"]').attr("selected", true);
+  }
 });

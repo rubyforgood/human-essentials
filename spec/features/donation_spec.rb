@@ -136,15 +136,22 @@ RSpec.feature "Donations", type: :feature, js: true do
         @item_with_barcode = @existing_barcode.item
         # create a new item that has no barcode existing for it yet
         @item_no_barcode = create(:item)
+
+        visit @url_prefix + "/donations/new"
       end
 
-      scenario "a user can add items via scanning them in by barcode" do
+      scenario "a user can add items via scanning them in by barcode", :focus do
+        pending "The JS doesn't appear to be executing in this correctly"
         # enter the barcode into the barcode field
+        Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>> Entering barcode"
+        fill_in "_barcode-lookup-0", with: @existing_barcode.value
         # the form should update
-        pending("TODO: adding items via an existing barcode")
-        raise
+        qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
+        Rails.logger.info "<<<<<<<<<<<<<<<<<<<<<< ENTERED"
+
+        expect(qty).to eq(@existing_barcode.quantity.to_s)
       end
-  
+
       scenario "a user can add items that do not yet have a barcode" do
         # enter a new barcode
         # form finds no barcode and responds by prompting user to choose an item and quantity
