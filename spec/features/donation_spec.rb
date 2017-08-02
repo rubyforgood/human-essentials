@@ -45,6 +45,25 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(Donation.last.issued_at).to eq(Date.parse("01/01/2001"))
       end
 
+      scenario "multiple line items for the same item type are accepted and combined on the backend" do
+        select Donation::SOURCES[:purchased], from: "donation_source"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "5"
+        page.find(:css, "#__add_line_item").click
+        select_id = page.find(:xpath, "//div[@id='donation_line_items']/div[2]/div[2]/div[1]/select")[:id]
+        select Item.alphabetized.first.name, from: select_id
+        text_id = page.find(:xpath, "//div[@id='donation_line_items']/div[2]/div[2]/div[2]/input")[:id]
+        fill_in text_id, with: "10"
+
+        expect {
+          click_button "Create Donation"
+        }.to change{Donation.count}.by(1)
+
+        expect(Donation.last.line_items.first.quantity).to eq(15)
+
+      end
+
       scenario "User can create a donation for a Diaper Drive source" do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
@@ -140,7 +159,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         visit @url_prefix + "/donations/new"
       end
 
-      scenario "a user can add items via scanning them in by barcode", :focus do
+      scenario "a user can add items via scanning them in by barcode" do
         pending "The JS doesn't appear to be executing in this correctly"
         # enter the barcode into the barcode field
         Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>> Entering barcode"

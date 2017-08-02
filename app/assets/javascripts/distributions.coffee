@@ -25,7 +25,7 @@ $ ->
           options += "<option value=\"" + data[index].item_id + "\">" + data[index].item_name + " (#{data[index].quantity})" + "</option>\n"
         $("select", insertedItem).find('option').remove().end().append(options)
 
-  $(document).on "turbolinks:load", ->
+  $ ->
     control = $("select#distribution_storage_location_id")
     if (control.length is 0)
       return

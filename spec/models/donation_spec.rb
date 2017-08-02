@@ -43,6 +43,16 @@ RSpec.describe Donation, type: :model do
       expect(create(:donation, created_at: yesterday, issued_at: today).issued_at).to eq(today)
       expect(create(:donation, created_at: yesterday).issued_at).to eq(yesterday)
     end
+
+    it "automatically combines duplicate line_item records when they're created" do
+      donation = build(:donation)
+      item = create(:item)
+      donation.line_items.build({item_id: item.id, quantity: 5})
+      donation.line_items.build({item_id: item.id, quantity: 10})
+      donation.save
+      expect(donation.line_items.size).to eq(1)
+      expect(donation.line_items.first.quantity).to eq(15)
+    end
   end
 
   context "Scopes >" do
@@ -83,6 +93,31 @@ RSpec.describe Donation, type: :model do
         # Using donation.track because it marshalls the HMT
         donation.track(item, 1)
         expect(donation.items.count).to eq(1)
+      end
+    end
+
+    describe "line_items >" do
+      describe ".combine" do
+        let!(:item) { create(:item) }
+        it "combines multiple line_items with the same item_id into a single record" do
+          donation = build(:donation)
+          donation.line_items.build({item_id: item.id, quantity: 5})
+          donation.line_items.build({item_id: item.id, quantity: 10})
+          donation.line_items.combine!
+          expect(donation.save).to eq(true)
+          expect(donation.line_items.count).to eq(1)
+          expect(donation.line_items.first.quantity).to eq(15)
+          expect(donation.line_items.first.item_id).to eq(item.id)
+        end
+
+        it "incrementally combines line_items on donations that have already been created" do
+          donation = create(:donation, :with_item, item_id: item.id, item_quantity: 10)
+          donation.line_items.build({item_id: item.id, quantity: 5})
+          donation.line_items.combine!
+          donation.save
+          expect(donation.line_items.count).to eq(1)
+          expect(donation.line_items.first.quantity).to eq(15)
+        end
       end
     end
 

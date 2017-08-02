@@ -8,7 +8,7 @@ item_option = (item) ->
      #{ item.item_name } -- #{ item.quantity }
    </option>"
 
-$(document).on 'turbolinks:load', () ->
+$ ->
   control_id = '#adjustment_storage_location_id'
 
   $(document).on "change", control_id, (evt) ->
@@ -29,4 +29,3 @@ $(document).on 'turbolinks:load', () ->
         options = $.map data, item_option
         console.log("inserted item", insertedItem)
         $("select", insertedItem).html(options)
-
