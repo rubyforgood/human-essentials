@@ -84,10 +84,10 @@ RSpec.describe DonationsController, type: :controller do
         single_params = { organization_id: object.organization.to_param, id: object.id }
 
         patch :add_item, params: single_params
-        expect(response).to have_http_status(403)
+        expect(response).to be_redirect
 
         patch :remove_item, params: single_params
-        expect(response).to have_http_status(403)
+        expect(response).to be_redirect
       end
     end
 
