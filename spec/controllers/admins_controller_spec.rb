@@ -67,37 +67,37 @@ RSpec.describe AdminsController, type: :controller do
     end
 
     describe "GET #new" do
-      it "denies access" do
+      it "redirects" do
         get :new
-        expect(response.status).to eq(403)
+        expect(response).to be_redirect
       end
     end
 
     describe "POST #create" do
-      it "returns http success" do
+      it "redirects" do
         post :create, params: { organization: attributes_for(:organization) }
-        expect(response.status).to eq(403)
+        expect(response).to be_redirect
       end
     end
 
     describe "GET #index" do
-      it "denies access" do
+      it "redirects" do
         get :index
-        expect(response.status).to eq(403)
+        expect(response).to be_redirect
       end
     end
 
     describe "GET #edit" do
-      it "denies access" do
+      it "redirects" do
         get :edit, params: { id: @organization.id }
-        expect(response.status).to eq(403)
+        expect(response).to be_redirect
       end
     end
 
     describe "PUT #update" do
-      it "redirect" do
+      it "redirects" do
         put :update, params: { id: @organization.id, organization: { name: "Foo" } }
-        expect(response.status).to eq(403)
+        expect(response).to be_redirect
       end
     end
   end

@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
 
   def verboten!
     respond_to do |format|
-      format.html { render template: "errors/403", layout: "layouts/application", status: 403 }
+      format.html { redirect_to dashboard_path, alert: "Access Denied." }
       format.json { render body: nil, status: 403 }
     end
   end
