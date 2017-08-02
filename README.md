@@ -12,6 +12,17 @@ This app uses Ruby version 2.4.1, indicated in `/.ruby-version`, which will be a
 ## Database Configuration
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_development` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.
 
+## Login
+To login, use these default credentials:
+
+    Organization Admin
+      Email: test@example.com
+      Password: password
+
+    User
+      Email: test2@example.com
+      Password: password
+
 ## Contributing
 
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
@@ -24,11 +35,11 @@ This app uses RSpec, Capybara, Poltergeist, and FactoryGirl for testing. Make su
 
 ## TODOs
 
-Before committing, please run `rake notes > TODO` in the root of the app. 
+Before committing, please run `rake notes > TODO` in the root of the app.
 
 Feel free to peruse the TODO file and tackle any issues found in there. These may or may not have actual issues associated with them.
 
 
 # Acknowledgements
 
-Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17! 
+Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
