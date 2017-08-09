@@ -150,23 +150,19 @@ RSpec.feature "Donations", type: :feature, js: true do
 
     context "via barcode entry" do
       before(:each) do
-        # create one pre-existing barcode associated with an item
-        @existing_barcode = create(:barcode_item)
-        @item_with_barcode = @existing_barcode.item
-        # create a new item that has no barcode existing for it yet
-        @item_no_barcode = create(:item)
-
+        initialize_barcodes
         visit @url_prefix + "/donations/new"
       end
 
       scenario "a user can add items via scanning them in by barcode" do
         pending "The JS doesn't appear to be executing in this correctly"
         # enter the barcode into the barcode field
-        Rails.logger.info ">>>>>>>>>>>>>>>>>>>>>> Entering barcode"
-        fill_in "_barcode-lookup-0", with: @existing_barcode.value
+        expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+        fill_in "Barcode Entry:", with: @existing_barcode.value + 13.chr
         # the form should update
+        #save_and_open_page
+        expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
         qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
-        Rails.logger.info "<<<<<<<<<<<<<<<<<<<<<< ENTERED"
 
         expect(qty).to eq(@existing_barcode.quantity.to_s)
       end
