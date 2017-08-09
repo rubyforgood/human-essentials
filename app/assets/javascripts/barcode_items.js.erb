@@ -2,12 +2,19 @@ $(document).ready(function() {
   /* Barcode readers will often "helpfully" send a CRLF at the end of the
      scanned string. We're going to capture this and use it to invoke the
      lookup method instead, since we don't want to submit the form just yet. */
-  $('#donation_line_items').on('keypress', '.__barcode_item_lookup', function (event) {
+  $('[data-capture-barcode="true"]').on('keypress', '.__barcode_item_lookup', capture_entry);
+
+  /**
+  capture_entry
+  @brief prevents the form from submitting and instead sends an XHR to lookup the barcode
+  @param event : the keypress event object
+  */
+  function capture_entry(event) {
     if (event.which == '10' || event.which == '13') {
       barcode_item_lookup(event.target.value, $(event.target).data("organization-id"),event.target);
       event.preventDefault();
     }
-  });
+  }
 
   /**
   barcode_item_lookup

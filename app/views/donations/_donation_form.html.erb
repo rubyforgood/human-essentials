@@ -30,7 +30,7 @@
 
 
   <%= f.simple_fields_for :line_items do |item| %>
-    <div id="donation_line_items">
+    <div id="donation_line_items" data-capture-barcode="true">
       <%= render 'line_item_fields', f: item %>
     </div>
     <div class="row links">
