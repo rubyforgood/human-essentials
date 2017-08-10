@@ -21,7 +21,6 @@ class Organization < ApplicationRecord
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI.regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
-  validates :logo, dimensions: { width: 763, height: 188 }
 
   has_many :adjustments
   has_many :barcode_items
@@ -36,7 +35,7 @@ class Organization < ApplicationRecord
   has_many :transfers
   has_many :users
 
-  has_attached_file :logo, styles: { medium: "300x300>" }, default_url: "/DiaperBase-Logo.png"
+  has_attached_file :logo, styles: { medium: "763x188>" }, default_url: "/DiaperBase-Logo.png"
   validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
