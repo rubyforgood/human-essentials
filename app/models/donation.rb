@@ -45,10 +45,10 @@ class Donation < ApplicationRecord
   end
   has_many :items, through: :line_items
   accepts_nested_attributes_for :line_items,
-    allow_destroy: true
+    allow_destroy: true,
+    :reject_if => proc { |li| li[:item_id].blank? && li[:quantity].blank? }
 
   before_create :combine_duplicates
-
   validates :dropoff_location, presence: { message: "must be specified since you chose '#{SOURCES[:dropoff]}'" }, if: :from_dropoff_location?
   validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
