@@ -26,7 +26,7 @@
   <%= f.input :comment, label: "Comment" %>
 
   <%= f.simple_fields_for :line_items do |item| %>
-    <div id="distribution_line_items">
+    <div id="distribution_line_items" data-capture-barcode="true">
       <%= render 'line_item_fields', f: item %>
     </div>
     <div class="row links">
@@ -35,7 +35,7 @@
           data: {
             association_insertion_node: "#distribution_line_items",
             association_insertion_method: "append"
-          }
+          }, id: "__add_line_item"
         %>
       </div>
     </div>

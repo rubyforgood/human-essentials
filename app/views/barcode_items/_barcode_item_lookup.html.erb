@@ -1,0 +1,5 @@
+<% # Increment a counter on how many we've seen so that we can create a unique ID -- really only necessary for test hooks # %>
+<% barcode_lookup_id = "_barcode-lookup-" + (@barcode_item_lookup_count = (@barcode_item_lookup_count || -1) + 1).to_s %>
+<label for="<%= barcode_lookup_id %>">Barcode Entry:
+<input type="text" id="<%= barcode_lookup_id %>" class="__barcode_item_lookup" value="" data-organization-id="<%= params[:organization_id] %>" />
+</label>

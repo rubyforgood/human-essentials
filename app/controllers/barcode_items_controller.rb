@@ -23,6 +23,13 @@ class BarcodeItemsController < ApplicationController
     @barcode_item = current_organization.barcode_items.includes(:item).find(params[:id])
   end
 
+  def find
+    @barcode_item = current_organization.barcode_items.includes(:item).find_by!(value: barcode_item_params[:value])
+    respond_to do |format|
+      format.json { render json: @barcode_item.to_json }
+    end
+  end
+
   def update
     @barcode_item = current_organization.barcode_items.find(params[:id])
     @barcode_item.update_attributes(barcode_item_params)

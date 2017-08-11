@@ -26,7 +26,8 @@ class Distribution < ApplicationRecord
   has_many :line_items, as: :itemizable, inverse_of: :itemizable
   has_many :items, through: :line_items
   accepts_nested_attributes_for :line_items,
-    allow_destroy: true
+    allow_destroy: true,
+    :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }
 
   validates :storage_location, :partner, :organization, presence: true
   validates_associated :line_items

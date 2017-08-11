@@ -22,11 +22,33 @@ class Donation < ApplicationRecord
   belongs_to :dropoff_location, optional: true              # Validation is conditionally handled below.
   belongs_to :diaper_drive_participant, optional: true      # Validation is conditionally handled below.
   belongs_to :storage_location
-  has_many :line_items, as: :itemizable, inverse_of: :itemizable
+  has_many :line_items, as: :itemizable, inverse_of: :itemizable do
+    def combine!
+      # Bail if there's nothing
+      return if self.size == 0
+      # First we'll collect all the line_items that are used
+      combined = {}
+      parent_id = first.itemizable_id
+      each do |i|
+        next unless i.valid?
+        combined[i.item_id] ||= 0
+        combined[i.item_id] += i.quantity
+      end
+      # Delete all the existing ones in this association -- this
+      # method aliases to `delete_all`
+      clear
+      # And now recreate a new array of line_items using the corrected totals
+      combined.each do |item_id,qty|
+        build(quantity: qty, item_id: item_id, itemizable_id: parent_id)
+      end
+    end
+  end
   has_many :items, through: :line_items
   accepts_nested_attributes_for :line_items,
-    allow_destroy: true
+    allow_destroy: true,
+    :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }
 
+  before_create :combine_duplicates
   validates :dropoff_location, presence: { message: "must be specified since you chose '#{SOURCES[:dropoff]}'" }, if: :from_dropoff_location?
   validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
@@ -93,5 +115,11 @@ class Donation < ApplicationRecord
     line_item = self.line_items.find_by(item_id: i.id)
     line_item.quantity += q
     line_item.save
+  end
+
+private
+  def combine_duplicates
+    Rails.logger.info "Combining!"
+    self.line_items.combine!
   end
 end

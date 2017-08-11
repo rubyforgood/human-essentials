@@ -36,7 +36,7 @@ class DonationsController < ApplicationController
     @storage_locations = current_organization.storage_locations
     @dropoff_locations = current_organization.dropoff_locations
     @diaper_drive_participants = current_organization.diaper_drive_participants
-    @items = current_organization.items.alphabetized    
+    @items = current_organization.items.alphabetized
   end
 
   def create
@@ -49,7 +49,9 @@ class DonationsController < ApplicationController
       @dropoff_locations = current_organization.dropoff_locations
       @diaper_drive_participants = current_organization.diaper_drive_participants
       @items = current_organization.items.alphabetized
+      @donation.line_items.build if @donation.line_items.count == 0
       flash[:notice] = "There was an error starting this donation, try again?"
+      Rails.logger.info "ERROR: #{@donation.errors}"
       render action: :new
     end
   end
@@ -90,7 +92,9 @@ class DonationsController < ApplicationController
 private
   def donation_params
     params = strip_unnecessary_params
-    params.require(:donation).permit(:source, :storage_location_id, :issued_at, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
+    params = compact_line_items
+    params.require(:donation).permit(:source, :comment, :storage_location_id, :issued_at, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
+
   end
 
   def donation_item_params
@@ -101,6 +105,13 @@ private
   def strip_unnecessary_params
     params[:donation].delete(:dropoff_location_id) unless params[:donation][:source] == Donation::SOURCES[:dropoff]
     params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive]
+    params
+  end
+
+  # If line_items have submitted with empty rows, clear those out first.
+  def compact_line_items
+    return params unless params[:donation].has_key?(:line_item_attributes)
+    params[:donation][:line_items_attributes].delete_if { |row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
   end
 end

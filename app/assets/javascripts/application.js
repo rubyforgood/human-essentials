@@ -13,7 +13,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require foundation
-//= require turbolinks
+// require turbolinks // Removed!
 //= require cocoon
 //
 //= require Chart.bundle
@@ -24,7 +24,7 @@
 //= require components
 //= require_tree .
 
-$(document).on('turbolinks:load', function() {
+$(document).ready(function() {
   $(document).foundation();
 });
 
