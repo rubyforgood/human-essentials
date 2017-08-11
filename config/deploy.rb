@@ -70,7 +70,6 @@ namespace :deploy do
     task :ensure_start do
       on roles(:app), in: :sequence, wait: 10 do
       invoke 'puma:stop'
-      invoke 'puma:start'
     end
   end
 
