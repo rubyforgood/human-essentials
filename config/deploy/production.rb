@@ -9,7 +9,13 @@
 set :stage, :production
 set :rails_env, :production
 
-server '45.79.146.211', roles: %w{web app db}, primary: true
+role :app, "deploy@45.79.146.211"
+
+server '45.79.146.211', roles: %w{web app db}, primary: true,
+  ssh_options: {
+  	forward_agent: true,
+  	keys: ["~/.ssh/id_rsa"],
+  }
 
 # role-based syntax
 # ==================
@@ -43,12 +49,12 @@ set :rbenv_ruby, '2.4.1'
 #
 # Global options
 # --------------
-set :ssh_options, {
-   keys: %w{~/.ssh/id_rsa},
-   forward_agent: true,
-   auth_methods: %w{publickey},
-   user: 'deploy'
-}
+# set :ssh_options, {
+#    keys: %w{~/.ssh/id_rsa},
+#    forward_agent: true,
+#    auth_methods: %w{publickey},
+#    user: 'deploy'
+# }
 
 set :pty, true
 #

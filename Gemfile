@@ -87,6 +87,7 @@ group :development do
   gem 'capistrano-rbenv', '~> 2.1'
   gem 'capistrano-bundler', '~> 1.2'
   gem 'capistrano3-puma', '~> 3.1'
+  gem 'capistrano-rails-console', require: false
 end
 
 group :test do
