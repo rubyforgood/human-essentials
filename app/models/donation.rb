@@ -49,6 +49,8 @@ class Donation < ApplicationRecord
     :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }
 
   before_create :combine_duplicates
+  before_destroy :remove_inventory
+
   validates :dropoff_location, presence: { message: "must be specified since you chose '#{SOURCES[:dropoff]}'" }, if: :from_dropoff_location?
   validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
@@ -100,6 +102,14 @@ class Donation < ApplicationRecord
     end
   end
 
+  def dropoff_view
+    dropoff_location.nil? ? "N/A" : dropoff_location.name 
+  end
+
+  def storage_view
+    storage_location.nil? ? "N/A" : storage_location.name
+  end
+
   def total_quantity
     self.line_items.sum(:quantity)
   end
@@ -123,6 +133,10 @@ class Donation < ApplicationRecord
     line_item = self.line_items.find_by(item_id: i.id)
     line_item.quantity += q
     line_item.save
+  end
+
+  def remove_inventory
+    storage_location.remove!(self)
   end
 
 private

@@ -184,6 +184,14 @@ RSpec.describe Donation, type: :model do
         }.to change{donation.line_items.first.quantity}.by(1)
       end
     end
+
+    describe "remove_inventory" do
+      it "removes inventory from the right storage location when donation deleted" do
+        donation = create(:donation, :with_item)
+        expect(donation.storage_location).to receive(:remove!)
+        donation.remove_inventory
+      end
+    end
   end
 
   describe "SOURCES" do

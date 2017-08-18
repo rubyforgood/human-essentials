@@ -6,8 +6,8 @@
 <p>This donation was started on <%= @donation.created_at.strftime("%B %-d %Y") %>:</p>
 <ul>
   <li>It was collected through: <%= @donation.source %></li>
-  <li>It was dropped off at: <%= @donation.dropoff_location.name %></li>
-  <li>It will be stored at: <%= @donation.storage_location.name %></li>
+  <li>It was dropped off at: <%= @donation.dropoff_view %></li>
+  <li>It will be stored at: <%= @donation.storage_view %></li>
 </ul>
 <%= link_to "Make a correction >", edit_donation_path(@donation) %>
 </fieldset>

@@ -52,6 +52,21 @@ class StorageLocation < ApplicationRecord
     log
   end
 
+  def remove!(donation)
+    log = {}
+    donation.line_items.each do |line_item|
+      inventory_item = InventoryItem.find_by(storage_location: id, item_id: line_item.item_id )
+      if inventory_item.quantity - line_item.quantity <= 0
+        inventory_item.destroy
+      else
+        inventory_item.quantity -= line_item.quantity
+        inventory_item.save
+      end
+      log[line_item.item_id] = "-#{line_item.quantity}"
+    end
+    log
+  end
+
   def distribute!(distribution)
     updated_quantities = {}
     insufficient_items = []
