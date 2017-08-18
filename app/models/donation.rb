@@ -67,6 +67,14 @@ class Donation < ApplicationRecord
     source == SOURCES[:dropoff]
   end
 
+  def source_view
+    from_diaper_drive? ? format_drive_name : source
+  end
+
+  def format_drive_name
+    diaper_drive_participant.name.present? ? "#{diaper_drive_participant.name} (diaper drive)" : source
+  end
+
   def self.daily_quantities_by_source(start, stop)
     joins(:line_items).includes(:line_items).between(start, stop).group(:source).group_by_day("donations.created_at").sum("line_items.quantity")
   end

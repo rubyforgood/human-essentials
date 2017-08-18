@@ -1,5 +1,11 @@
 <% content_for :title, "#{current_organization.name} - Agencies - Partners" %>
 
+
+<div class="header-action">
+  <%= link_to "New Partner Agency", new_partner_path(organization_id: current_organization), class: "button float-right" %>
+</div>
+
+
 <h1>Partner Agencies</h1>
 
 <table id="partners">

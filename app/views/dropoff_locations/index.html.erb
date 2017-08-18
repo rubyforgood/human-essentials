@@ -1,5 +1,12 @@
 <% content_for :title, "#{current_organization.name} - Agencies - Dropoff Locations" %>
 
+
+<div class="header-action">
+  <%= link_to "New Dropoff Location", new_dropoff_location_path(organization_id: current_organization), class: "button float-right" %>
+</div>
+
+
+
 <h1>Donation Sites</h1>
 
 <table id="dropoff_locations">
