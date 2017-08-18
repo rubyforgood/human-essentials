@@ -1,33 +1,33 @@
 class DropoffLocationsController < ApplicationController
   def index
-    @dropoff_locations = DropoffLocation.all
+    @dropoff_locations = current_organization.dropoff_locations.all
   end
 
   def create
-    @dropoff_location = DropoffLocation.create(dropoff_location_params)
+    @dropoff_location = current_organization.dropoff_locations.create(dropoff_location_params)
     redirect_to @dropoff_location, notice: "New dropoff location added!"
   end
 
   def new
-    @dropoff_location = DropoffLocation.new
+    @dropoff_location = current_organization.dropoff_locations.new
   end
 
   def edit
-    @dropoff_location = DropoffLocation.find(params[:id])
+    @dropoff_location = current_organization.dropoff_locations.find(params[:id])
   end
 
   def show
-    @dropoff_location = DropoffLocation.find(params[:id])
+    @dropoff_location = current_organization.dropoff_locations.find(params[:id])
   end
 
   def update
-    @dropoff_location = DropoffLocation.find(params[:id])
+    @dropoff_location = current_organization.dropoff_locations.find(params[:id])
     @dropoff_location.update_attributes(dropoff_location_params)
     redirect_to @dropoff_location, notice: "#{@dropoff_location.name} updated!"
   end
 
   def destroy
-    DropoffLocation.find(params[:id]).destroy
+    current_organization.dropoff_locations.find(params[:id]).destroy
     redirect_to dropoff_locations_path
   end
 
