@@ -50,10 +50,11 @@ RSpec.describe Item, type: :model do
         item = create(:item, category: "same")
         create(:item, category: "different")
         result = Item.categories
-        expect(result.length).to eq(2)
+        expect(result.length).to eq(10)
       end
 
       it "returns the list of categories alphabetized" do
+        Item.delete_all
         item1 = create(:item, category: "one")
         item2 = create(:item, category: "two")
         item3 = create(:item, category: "three")
@@ -92,6 +93,7 @@ RSpec.describe Item, type: :model do
 
   context "Alphabetized Scope >" do
     it "retrieves items in alphabetical order" do
+      Item.delete_all
       item_c = create(:item, name: "C")
       item_b = create(:item, name: "B")
       item_a = create(:item, name: "A")

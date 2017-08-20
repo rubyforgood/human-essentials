@@ -1,4 +1,4 @@
-RSpec.feature "Item management", type: :feature do
+  RSpec.feature "Item management", type: :feature do
   before do
     sign_in(@user)
   end
@@ -23,6 +23,7 @@ RSpec.feature "Item management", type: :feature do
   end
 
   scenario "User can filter the #index by category type" do
+    Item.delete_all
     item = create(:item, category: "same")
     item2 = create(:item, category: "different")
     visit url_prefix + "/items"
@@ -33,6 +34,7 @@ RSpec.feature "Item management", type: :feature do
   end
 
   scenario "Filters presented to user are alphabetized by category" do
+    Item.delete_all
     item = create(:item, category: "same")
     item2 = create(:item, category: "different")
     expected_order = [item2.category, item.category]
