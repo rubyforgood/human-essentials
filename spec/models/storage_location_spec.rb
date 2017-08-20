@@ -96,6 +96,37 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
+    describe "remove!" do
+      let(:storage_location) { create(:storage_location) }
+      let(:donation)         { create(:donation, :with_item, item_quantity: 10) }
+
+      before(:each) do
+        storage_location.intake!(donation)
+        storage_location.items.reload
+
+        expect(storage_location.size).to eq(10)
+        expect(storage_location.items.count).to eq(1)
+      end
+
+      it "removes items from a storage location" do
+        storage_location.remove!(donation)
+        storage_location.items.reload
+
+        expect(storage_location.size).to eq(0)
+        expect(storage_location.items.count).to eq(0)
+      end
+
+      it "removes the inventory item from the DB if the item's removal results in a 0 count" do
+        expect(InventoryItem.count).to eq(1)
+
+        storage_location.remove!(donation)
+        storage_location.items.reload
+
+        expect(InventoryItem.count).to eq(0)
+      end
+    end
+
+
     describe "distribute!" do
       it "distrbutes items from storage location" do
         storage_location = create :storage_location, :with_items, item_quantity: 300

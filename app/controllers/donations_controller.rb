@@ -68,8 +68,9 @@ class DonationsController < ApplicationController
   def edit
     @donation = Donation.find(params[:id])
     @donation.line_items.build
-    @storage_locations = StorageLocation.all
-    @dropoff_locations = DropoffLocation.all
+    @storage_locations = current_organization.storage_locations
+    @dropoff_locations = current_organization.dropoff_locations
+    @diaper_drive_participants = current_organization.diaper_drive_participants
   end
 
   def show
@@ -84,7 +85,7 @@ class DonationsController < ApplicationController
   end
 
   def destroy
-    @donation = current_organization.donations.find(params[:id])
+    @donation = current_organization.donations.includes(:line_items, storage_location: :inventory_items).find(params[:id])
     @donation.destroy
     redirect_to donations_path
   end
@@ -93,7 +94,7 @@ private
   def donation_params
     params = strip_unnecessary_params
     params = compact_line_items
-    params.require(:donation).permit(:source, :comment, :storage_location_id, :issued_at, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:item_id, :quantity, :_destroy]).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :comment, :storage_location_id, :issued_at, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:id, :item_id, :quantity, :_destroy]).merge(organization: current_organization)
 
   end
 

@@ -1,10 +1,10 @@
 class DiaperDriveParticipantsController < ApplicationController
   def index
-    @diaper_drive_participants = DiaperDriveParticipant.includes(:donations).all
+    @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all
   end
 
   def create
-    @diaper_drive_participant = DiaperDriveParticipant.new(diaper_drive_participant_params.merge(organization: current_organization))
+    @diaper_drive_participant = current_organization.diaper_drive_participants.new(diaper_drive_participant_params.merge(organization: current_organization))
     if (@diaper_drive_participant.save)
       redirect_to @diaper_drive_participant, notice: "New diaper drive participant added!"
     else
@@ -15,19 +15,19 @@ class DiaperDriveParticipantsController < ApplicationController
   end
 
   def new
-    @diaper_drive_participant = DiaperDriveParticipant.new
+    @diaper_drive_participant = current_organization.diaper_drive_participants.new
   end
 
   def edit
-    @diaper_drive_participant = DiaperDriveParticipant.find(params[:id])
+    @diaper_drive_participant = current_organization.diaper_drive_participants.find(params[:id])
   end
 
   def show
-    @diaper_drive_participant = DiaperDriveParticipant.includes(:donations).find(params[:id])
+    @diaper_drive_participant = current_organization.diaper_drive_participants.includes(:donations).find(params[:id])
   end
 
   def update
-    @diaper_drive_participant = DiaperDriveParticipant.find(params[:id])
+    @diaper_drive_participant = current_organization.diaper_drive_participants.find(params[:id])
     @diaper_drive_participant.update_attributes(diaper_drive_participant_params)
     redirect_to @diaper_drive_participant, notice: "#{@diaper_drive_participant.name} updated!"
   end

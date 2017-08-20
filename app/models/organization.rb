@@ -38,6 +38,10 @@ class Organization < ApplicationRecord
   has_attached_file :logo, styles: { medium: "763x188>" }, default_url: "/DiaperBase-Logo.png"
   validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
 
+  after_create { |org| seed_it!(org) }
+
+  include Seedable
+
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name
