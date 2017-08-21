@@ -1,7 +1,7 @@
 <div class="row">
   <div class="large-8 columns">
     <%= link_to donation do %>
-      <%= donation.total_quantity %> items from <%= donation.source %>
+      <%= donation.line_items.total %> items from <%= donation.source %>
     <% end %>
   </div>
   <div class="large-4 columns">

@@ -23,8 +23,8 @@
     <% @diaper_drive_participant.donations.each do |donation| %>
       <tr>
         <td><%= donation.created_at %></td>
-        <td><%= donation.total_items %></td>
+        <td><%= donation.line_items.total %></td>
       </tr>
     <% end %>
-  </tbody>  
+  </tbody>
 </table>

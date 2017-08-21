@@ -23,13 +23,10 @@ class Distribution < ApplicationRecord
   belongs_to :organization
 
   # Distributions contain many different items
-  has_many :line_items, as: :itemizable, inverse_of: :itemizable
-  has_many :items, through: :line_items
-  accepts_nested_attributes_for :line_items,
-    allow_destroy: true,
-    :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }
+  include Itemizable
 
   validates :storage_location, :partner, :organization, presence: true
+  # TODO Should these be added to Itemizable?
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
 
@@ -40,23 +37,8 @@ class Distribution < ApplicationRecord
 
   delegate :name, to: :partner, prefix: true
 
-  def self.total_distributed
-    self.includes(:line_items).map(&:total_quantity).reduce(0, :+)
-  end
-
-  def quantities_by_category
-    line_items.includes(:item).group("items.category").sum(:quantity)
-  end
-
-  def sorted_line_items
-    line_items.includes(:item).order("items.name")
-  end
-
-  def total_quantity
-    line_items.sum(:quantity)
-  end
-
   private
+  # TODO Should this be added to Itemizable?
   def line_item_items_exist_in_inventory
     self.line_items.each do |line_item|
       next unless line_item.item

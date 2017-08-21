@@ -43,7 +43,7 @@ RSpec.describe Distribution, type: :model do
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
         create(:distribution, issued_at: 1.year.ago)
-        
+
         expect(Distribution.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end
@@ -69,7 +69,7 @@ RSpec.describe Distribution, type: :model do
       @distribution.line_items << create(:line_item, item: @first, quantity: 5)
       @distribution.line_items << create(:line_item, item: @last, quantity: 10)
       @distribution.line_items << create(:line_item, item: create(:item, category: "Foo"), quantity: 10)
-      expect(@distribution.quantities_by_category).to eq({"Bar" => 10, "Foo" => 15})
+      expect(@distribution.line_items.quantities_by_category).to eq({"Bar" => 10, "Foo" => 15})
     end
 
     it "sorted_line_items" do
@@ -77,13 +77,13 @@ RSpec.describe Distribution, type: :model do
       c2 = create(:line_item, item: @last)
       @distribution.line_items << c1
       @distribution.line_items << c2
-      expect(@distribution.sorted_line_items.to_a).to match_array [c1,c2]
+      expect(@distribution.line_items.sorted.to_a).to match_array [c1,c2]
   	end
 
     it "total_quantity" do
       @distribution.line_items << create(:line_item, item: @first, quantity: 5)
       @distribution.line_items << create(:line_item, item: @last, quantity: 10)
-      expect(@distribution.total_quantity).to eq(15)
+      expect(@distribution.line_items.total).to eq(15)
     end
   end
 end

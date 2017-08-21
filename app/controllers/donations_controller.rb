@@ -13,7 +13,7 @@ class DonationsController < ApplicationController
   def add_item
     @donation = current_organization.donations.find(params[:id])
     if (donation_item_params.has_key?(:barcode_id))
-      @donation.track_from_barcode(Barcode.find(donation_item_params[:barcode_id]).to_line_item)
+      @donation.track_from_barcode(Barcode.find(donation_item_params[:barcode_id]).to_h)
     else
       @donation.track(donation_item_params[:item_id], donation_item_params[:quantity])
     end

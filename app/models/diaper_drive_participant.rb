@@ -23,6 +23,6 @@ class DiaperDriveParticipant < ApplicationRecord
 
   # TODO - This should be set up with a callback to cache the total so we're not hitting the DB
   def volume
-    donations.map(&:total_items).reduce(:+)
+    donations.map { |d| d.line_items.total }.reduce(:+)
   end
 end
