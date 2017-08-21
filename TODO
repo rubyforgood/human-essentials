@@ -17,7 +17,7 @@ app/controllers/storage_locations_controller.rb:
   * [ 25] [TODO] - the distribute! method needs to be worked into this controller somehow
 
 app/models/adjustment.rb:
-  * [ 36] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 38] [TODO] - this could probably be made an association method for the `line_items` association
 
 app/models/barcode_item.rb:
   * [ 25] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
@@ -26,29 +26,29 @@ app/models/diaper_drive_participant.rb:
   * [ 24] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
 
 app/models/donation.rb:
-  * [ 56] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
-  * [ 65] [TODO] - Test coverage for this method
-  * [ 77] [TODO] - Could this be made a member method "count" of the `items` association?
-  * [ 82] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
-  * [ 91] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
+  * [ 88] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
+  * [ 97] [TODO] - Test coverage for this method
+  * [117] [TODO] - Could this be made a member method "count" of the `items` association?
+  * [122] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
+  * [131] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
   * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?
 
 app/models/storage_location.rb:
-  * [ 82] [TODO] - this action is happening in the Transfer model/controller - does this method belong here?
-  * [115] [TODO] - this is called from the AdjustmentsController, should probably be in a service, not this model
-  * [147] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
+  * [ 97] [TODO] - this action is happening in the Transfer model/controller - does this method belong here?
+  * [130] [TODO] - this is called from the AdjustmentsController, should probably be in a service, not this model
+  * [162] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
 
 app/models/transfer.rb:
-  * [ 29] [TODO] - this could probably be made an association method for the `line_items` association
-  * [ 34] [TODO] - this could probably be made an association method for the `line_items` association
-  * [ 39] [TODO] - this could probably be made an association method for the `line_items` association
-  * [ 58] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 30] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 35] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 40] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 59] [TODO] - this could probably be made an association method for the `line_items` association
 
 spec/controllers/shared_examples/authorization_specs.rb:
-  * [ 17] [FIXME] Not all controllers have `edit` actions (or other), and this should be able to adapt to that 
-  * [ 42] [FIXME] Not all controllers have `edit` actions, and this should be able to adapt to that 
+  * [ 17] [FIXME] Not all controllers have `edit` actions (or other), and this should be able to adapt to that
+  * [ 42] [FIXME] Not all controllers have `edit` actions, and this should be able to adapt to that
 
 spec/features/dashboard_spec.rb:
   * [ 30] [TODO] - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
