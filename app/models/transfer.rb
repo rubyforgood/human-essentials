@@ -16,31 +16,12 @@ class Transfer < ApplicationRecord
   belongs_to :from, :class_name => 'StorageLocation', :foreign_key => :from_id
   belongs_to :to, :class_name => 'StorageLocation', :foreign_key => :to_id
 
-  has_many :line_items, as: :itemizable, inverse_of: :itemizable
-  has_many :items, through: :line_items
-  accepts_nested_attributes_for :line_items,
-    allow_destroy: true,
-    :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }
+  include Itemizable
 
   validates :from, :to, :organization, presence: true
   validates_associated :line_items
   validate :line_item_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
-
-  # TODO - this could probably be made an association method for the `line_items` association
-  def quantities_by_category
-    line_items.includes(:item).group("items.category").sum(:quantity)
-  end
-
-  # TODO - this could probably be made an association method for the `line_items` association
-  def sorted_line_items
-    line_items.includes(:item).order("items.name")
-  end
-
-  # TODO - this could probably be made an association method for the `line_items` association
-  def total_quantity
-    line_items.sum(:quantity)
-  end
 
   private
 

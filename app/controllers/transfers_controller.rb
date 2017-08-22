@@ -33,8 +33,8 @@ class TransfersController < ApplicationController
 
   def show
     @transfer = current_organization.transfers.includes(:line_items).includes(:from).includes(:to).includes(:items).find(params[:id])
-    @total = @transfer.total_quantity
-    @line_items = @transfer.sorted_line_items
+    @total = @transfer.line_items.total
+    @line_items = @transfer.line_items.sorted
   end
 
   private

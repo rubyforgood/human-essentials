@@ -48,8 +48,8 @@ module DashboardHelper
 
   def received_distributed_data(range=selected_range)
     {
-      'Received' => current_organization.donations.during(range).total_received,
-      'Distributed' => current_organization.distributions.during(range).total_distributed,
+      'Received' => current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(:+),
+      'Distributed' => current_organization.distributions.during(range).collect { |d| d.line_items.total }.reduce(:+),
     }
   end
 
@@ -58,10 +58,10 @@ module DashboardHelper
   end
 
   def total_received(range=selected_range)
-    number_with_delimiter current_organization.donations.during(range).total_received
+    number_with_delimiter current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(0,:+)
   end
 
   def total_distributed(range=selected_range)
-    number_with_delimiter current_organization.distributions.during(range).total_distributed
+    number_with_delimiter current_organization.distributions.during(range).collect { |d| d.line_items.total }.reduce(0,:+)
   end
 end

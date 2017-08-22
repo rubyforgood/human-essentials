@@ -23,7 +23,7 @@ class BarcodeItem < ApplicationRecord
   scope :item_id, ->(item_id) { where(item_id: item_id) }
 
   # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
-  def to_line_item
+  def to_h
     {
       item_id: item.id,
       quantity: quantity

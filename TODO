@@ -17,7 +17,7 @@ app/controllers/storage_locations_controller.rb:
   * [ 25] [TODO] - the distribute! method needs to be worked into this controller somehow
 
 app/models/adjustment.rb:
-  * [ 38] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 34] [TODO] - Can this be moved to Itemizable?
 
 app/models/barcode_item.rb:
   * [ 25] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
@@ -25,12 +25,15 @@ app/models/barcode_item.rb:
 app/models/diaper_drive_participant.rb:
   * [ 24] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
 
+app/models/distribution.rb:
+  * [ 29] [TODO] Should these be added to Itemizable?
+  * [ 41] [TODO] Should this be added to Itemizable?
+
 app/models/donation.rb:
-  * [ 88] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
-  * [ 97] [TODO] - Test coverage for this method
-  * [117] [TODO] - Could this be made a member method "count" of the `items` association?
-  * [122] [TODO] - This should check for existence of the item first. Also, I think there's a to_line_item method in Barcode, isn't there?
-  * [131] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
+  * [ 64] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
+  * [ 73] [TODO] - Test coverage for this method
+  * [ 94] [TODO] - This should check for existence of the item first. Also, I think there's a to_h method in Barcode, isn't there?
+  * [103] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
   * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?
@@ -41,10 +44,7 @@ app/models/storage_location.rb:
   * [162] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
 
 app/models/transfer.rb:
-  * [ 30] [TODO] - this could probably be made an association method for the `line_items` association
-  * [ 35] [TODO] - this could probably be made an association method for the `line_items` association
   * [ 40] [TODO] - this could probably be made an association method for the `line_items` association
-  * [ 59] [TODO] - this could probably be made an association method for the `line_items` association
 
 spec/controllers/shared_examples/authorization_specs.rb:
   * [ 17] [FIXME] Not all controllers have `edit` actions (or other), and this should be able to adapt to that

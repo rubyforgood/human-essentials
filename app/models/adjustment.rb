@@ -14,11 +14,7 @@ class Adjustment < ApplicationRecord
   belongs_to :organization
   belongs_to :storage_location
 
-  has_many :line_items, as: :itemizable, inverse_of: :itemizable
-  has_many :items, through: :line_items
-  accepts_nested_attributes_for :line_items,
-    allow_destroy: true,
-    :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }
+  include Itemizable
 
   validates :storage_location, :organization, presence: true
   validates_associated :line_items
@@ -35,7 +31,7 @@ class Adjustment < ApplicationRecord
     end
   end
 
-  # TODO - this could probably be made an association method for the `line_items` association
+  # TODO - Can this be moved to Itemizable?
   def line_item_items_exist_in_inventory
     self.line_items.each do |line_item|
       next unless line_item.item

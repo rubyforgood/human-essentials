@@ -124,14 +124,16 @@ RSpec.describe Donation, type: :model do
   end
 
   context "Methods >" do
-    describe "total_items" do
-      it "has an item total" do
-        donation = create(:donation)
-        item1 = create :item
-        item2 = create :item
-        donation.track(item1, 1)
-        donation.track(item2, 2)
-        expect(donation.total_items).to eq(3)
+    context "line_items >" do
+      describe "total" do
+        it "has an item total" do
+          donation = create(:donation)
+          item1 = create :item
+          item2 = create :item
+          donation.track(item1, 1)
+          donation.track(item2, 2)
+          expect(donation.line_items.total).to eq(3)
+        end
       end
     end
 
@@ -153,7 +155,7 @@ RSpec.describe Donation, type: :model do
         donation = create :donation
         barcode_item = create :barcode_item
         expect{
-          donation.track_from_barcode(barcode_item.to_line_item)
+          donation.track_from_barcode(barcode_item.to_h)
           donation.reload
         }.to change{donation.items.count}.by(1)
       end
