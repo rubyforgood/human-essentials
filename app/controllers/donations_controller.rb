@@ -43,13 +43,13 @@ class DonationsController < ApplicationController
   end
 
   def scale_intake
-    @donation = Donation.create(organization: current_organization,
-                                                   source: "Misc. Donation",
-                                                   storage_location_id: 1,
-                                                   issued_at: Date.today,
-                                                   line_items_attributes:{"0"=>{"item_id"=>params["diaper_type"], 
-                                                                                "quantity"=>params["number_of_diapers"], 
-                                                                                "_destroy"=>"false"}}
+    @donation = Donation.create( organization: current_organization,
+                                 source: "Misc. Donation",
+                                 storage_location_id: 1,
+                                 issued_at: Date.today,
+                                 line_items_attributes:{"0"=>{"item_id"=>params["diaper_type"], 
+                                                              "quantity"=>params["number_of_diapers"], 
+                                                              "_destroy"=>"false"}}
       )
   end
 
