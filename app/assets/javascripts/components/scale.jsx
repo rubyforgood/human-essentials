@@ -102,7 +102,8 @@ class Scale extends React.Component {
 
   getDiaper(event) {
     const count =  Math.trunc(this.state.weight / event.target.value)
-    const kind = event.target.name
+    const kind = event.target.attributes.getNamedItem('label').value
+    console.log(kind)
     this.setState({diaperCount: count})
     this.setState({diaperKind: kind})
   }
@@ -208,18 +209,16 @@ class Scale extends React.Component {
                 <br/>
 
       <div onChange={event => this.getDiaper(event)}>
-        <input type="radio" value="10" name="1"/> Size 1 &nbsp;
-        <input type="radio" value="12" name="2"/> Size 2 &nbsp;
-        <input type="radio" value="14" name="3"/> Size 3 &nbsp;
-        <input type="radio" value="16" name="4"/> Size 4 &nbsp;
+        <input type="radio" value="10" label={this.props.xl_briefs} name="diap"/> Adult XL Briefs &nbsp;
+        <input type="radio" value="12" label={this.props.l_briefs} name="diap"/> Adult L Briefs &nbsp;
+        <input type="radio" value="14" label={this.props.s_briefs} name="diap"/> Adult S Briefs &nbsp;
+        <input type="radio" value="16" label={this.props.k_size2} name="diap"/> Kids Size 2 &nbsp;
         <br/>
-        <input type="radio" value="18" name="5"/> Size 5 &nbsp;
-        <input type="radio" value="20" name="6"/> Size 6 &nbsp;
-        <input type="radio" value="22" name="7"/> Size 7 &nbsp;
-        <input type="radio" value="24" name="8"/> Size 8 &nbsp;
+        <input type="radio" value="18" label={this.props.k_size3} name="diap"/> Kids Size 3 &nbsp;
+        <input type="radio" value="20" label={this.props.k_size4} name="diap"/> Kids Size 4 &nbsp;
+        <input type="radio" value="22" label={this.props.k_size5} name="diap"/> Kids Size 5 &nbsp;
+        <input type="radio" value="24" label={this.props.k_size6} name="diap"/> Kids Size 6 &nbsp;
       </div>
-
-
       <div>
         {diaperCount} Diapers!
       </div>

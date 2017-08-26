@@ -1,4 +1,14 @@
-  <%= react_component("Scale", { diaperBank: current_organization.id }) %>
+  <%= react_component("Scale", { 
+  	diaperBank: current_organization.id,
+    xl_briefs:  current_organization.scale_values[:xl_briefs],
+    l_briefs:   current_organization.scale_values[:l_briefs],
+    s_briefs:   current_organization.scale_values[:s_briefs],
+    k_size2:    current_organization.scale_values[:k_size2],
+    k_size3:    current_organization.scale_values[:k_size3],
+    k_size4:    current_organization.scale_values[:k_size4],
+    k_size5:    current_organization.scale_values[:k_size5],
+    k_size6:    current_organization.scale_values[:k_size6]
+    }) %>
 
 <br>
 <br>

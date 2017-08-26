@@ -63,4 +63,17 @@ class Organization < ApplicationRecord
   def total_inventory
     inventory_items.map(&:quantity).reduce(:+) || 0
   end
+
+  def scale_values
+      {
+        xl_briefs:  items.find_by(name: "Adult Briefs (Large/X-Large)").id,
+        l_briefs:   items.find_by(name: "Adult Briefs (Medium/Large)").id,
+        s_briefs:   items.find_by(name: "Adult Briefs (Small/Medium)").id,
+        k_size2:    items.find_by(name: "Kids (Size 2)").id,
+        k_size3:    items.find_by(name: "Kids (Size 3)").id,
+        k_size4:    items.find_by(name: "Kids (Size 4)").id,
+        k_size5:    items.find_by(name: "Kids (Size 5)").id,
+        k_size6:    items.find_by(name: "Kids (Size 6)").id,
+      }
+  end
 end
