@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     resources :donations do
       collection do
         get :scale
+        post :scale_intake
       end
       patch :add_item, on: :member
       patch :remove_item, on: :member

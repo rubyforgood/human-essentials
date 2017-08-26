@@ -1,24 +1,7 @@
-  <%= react_component("Scale") %>
+  <%= react_component("Scale", { diaperBank: current_organization.id }) %>
 
 <br>
 <br>
   <div class="medium-offset-3 medium-6">
-  <fieldset class="scale_radio">Diaper Type: </legend>
-    <input type="radio" value="5" name="scale" id="something" checked><label for="adult_large">Adult Large</label>
-    <input type="radio" value="10" name="scale" id="something_1"><label for="child_size_1">Child Size 1</label>
-    <input type="radio" value="15" name="scale" id="something_2"><label for="cloth">Cloth</label>
-  </fieldset>
-Diaper Count from Scale: <input type="text" id="insert_diaper_count"><br>
-<span class="float-center text-center">
-  <a class='button large primary'>Add to Inventory</a>
-</span>
-</div>
 
-<script>
-$('#scale_reading').on('change', function() {
-  diaper_weight = $('input[type=radio]:checked').val();
-  scale_reading = $('#scale_reading').text();
-  total = parseInt(scale_reading) / parseInt(diaper_weight);
-  $('#insert_diaper_count').val(total);
-})
-</script>
+</div>

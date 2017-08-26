@@ -9,6 +9,9 @@ class DonationsController < ApplicationController
   # Cancan authorization
   #load_and_authorize_resource
 
+  skip_before_action :verify_authenticity_token, only: [:scale_intake, :scale]
+  skip_before_action :authenticate_user!, only: [:scale_intake, :scale]
+  skip_before_action :authorize_user, only: [:scale_intake, :scale]
   # TODO - needs to be able to handle barcodes too
   def add_item
     @donation = current_organization.donations.find(params[:id])
@@ -37,6 +40,17 @@ class DonationsController < ApplicationController
     @dropoff_locations = current_organization.dropoff_locations
     @diaper_drive_participants = current_organization.diaper_drive_participants
     @items = current_organization.items.alphabetized
+  end
+
+  def scale_intake
+    @donation = Donation.create(organization: current_organization,
+                                                   source: "Misc. Donation",
+                                                   storage_location_id: 1,
+                                                   issued_at: Date.today,
+                                                   line_items_attributes:{"0"=>{"item_id"=>params["diaper_type"], 
+                                                                                "quantity"=>params["number_of_diapers"], 
+                                                                                "_destroy"=>"false"}}
+      )
   end
 
   def create
