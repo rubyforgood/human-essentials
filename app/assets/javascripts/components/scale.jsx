@@ -17,7 +17,9 @@ class Scale extends React.Component {
       weight: "?",
       unit: "",
       scaleState: "",
-      errorMsg: null
+      errorMsg: null,
+      diaperCount: 0,
+      diaperKind: null
     };
 
     if (navigator.usb) {
@@ -98,6 +100,31 @@ class Scale extends React.Component {
     this.setState({ shouldRead: false });
   }
 
+  getDiaper(event) {
+    const count =  Math.trunc(this.state.weight / event.target.value)
+    const kind = event.target.attributes.getNamedItem('label').value
+    console.log(kind)
+    this.setState({diaperCount: count})
+    this.setState({diaperKind: kind})
+  }
+
+  postDiaperCount() {
+    const {diaperCount} = this.state;
+    const {diaperKind} = this.state;
+
+    fetch('/pdx_bank/donations/scale_intake', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },      
+      body: JSON.stringify({
+        number_of_diapers: diaperCount,
+        diaper_type: diaperKind,
+      })
+    })
+  }
+
   bindDevice(device) {
     device
       .open()
@@ -139,8 +166,11 @@ class Scale extends React.Component {
       shouldRead,
       weight,
       unit,
+      something,
       scaleState,
-      errorMsg
+      errorMsg,
+      diaperCount,
+      diaperKind
     } = this.state;
 
     return (
@@ -173,7 +203,39 @@ class Scale extends React.Component {
             <p id="scale_reading">{weight}</p>
             <small>{unit}</small>
           </span>}
+          <br/>
+          <br/>
+      Diaper Type
+                <br/>
+
+      <div onChange={event => this.getDiaper(event)}>
+        <input type="radio" value="10" label={this.props.xl_briefs} name="diap"/> Adult XL Briefs &nbsp;
+        <input type="radio" value="12" label={this.props.l_briefs} name="diap"/> Adult L Briefs &nbsp;
+        <input type="radio" value="14" label={this.props.s_briefs} name="diap"/> Adult S Briefs &nbsp;
+        <input type="radio" value="16" label={this.props.k_size2} name="diap"/> Kids Size 2 &nbsp;
+        <br/>
+        <input type="radio" value="18" label={this.props.k_size3} name="diap"/> Kids Size 3 &nbsp;
+        <input type="radio" value="20" label={this.props.k_size4} name="diap"/> Kids Size 4 &nbsp;
+        <input type="radio" value="22" label={this.props.k_size5} name="diap"/> Kids Size 5 &nbsp;
+        <input type="radio" value="24" label={this.props.k_size6} name="diap"/> Kids Size 6 &nbsp;
+      </div>
+      <div>
+        {diaperCount} Diapers!
+      </div>
+
+      <button onClick={() => this.postDiaperCount()} className='button large primary'>Add To Inventory</button>
       </main>
     );
+  }
+}
+
+class DiaperApp extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      type: 10,
+      sc
+    }
   }
 }
