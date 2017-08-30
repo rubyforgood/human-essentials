@@ -45,12 +45,14 @@ class DonationsController < ApplicationController
   def scale_intake
     @donation = Donation.create( organization: current_organization,
                                  source: "Misc. Donation",
-                                 storage_location_id: 1,
+                                 storage_location_id: current_organization.intake_location,
                                  issued_at: Date.today,
                                  line_items_attributes:{"0"=>{"item_id"=>params["diaper_type"], 
                                                               "quantity"=>params["number_of_diapers"], 
                                                               "_destroy"=>"false"}}
       )
+    binding.pry
+    render status: 200, json: @donation.to_json
   end
 
   def create

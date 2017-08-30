@@ -103,7 +103,6 @@ class Scale extends React.Component {
   getDiaper(event) {
     const count =  Math.trunc(this.state.weight / event.target.value)
     const kind = event.target.attributes.getNamedItem('label').value
-    console.log(kind)
     this.setState({diaperCount: count})
     this.setState({diaperKind: kind})
   }
@@ -122,7 +121,11 @@ class Scale extends React.Component {
         number_of_diapers: diaperCount,
         diaper_type: diaperKind,
       })
-    })
+    }).then(response => {
+      if (response.status == 200) {
+        alert("Diapers Added to Inventory!");
+      }
+    });
   }
 
   bindDevice(device) {
