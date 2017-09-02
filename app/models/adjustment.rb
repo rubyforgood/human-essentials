@@ -30,17 +30,4 @@ class Adjustment < ApplicationRecord
       errors.add :storage_location, 'storage location must belong to organization'
     end
   end
-
-  # TODO - Can this be moved to Itemizable?
-  def line_item_items_exist_in_inventory
-    self.line_items.each do |line_item|
-      next unless line_item.item
-      inventory_item = self.storage_location.inventory_items.find_by(item: line_item.item)
-      if inventory_item.nil?
-        errors.add(:inventory,
-                   "#{line_item.item.name} is not available " \
-                   "at this storage location")
-      end
-    end
-  end
 end
