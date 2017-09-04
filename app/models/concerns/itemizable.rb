@@ -43,4 +43,17 @@ module Itemizable
       :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }
 
 	end
+  private
+
+  def line_item_items_exist_in_inventory
+    self.line_items.each do |line_item|
+      next unless line_item.item
+      inventory_item = self.storage_location.inventory_items.find_by(item: line_item.item)
+      if inventory_item.nil?
+        errors.add(:inventory,
+                   "#{line_item.item.name} is not available " \
+                   "at this storage location")
+      end
+    end
+  end
 end
