@@ -51,7 +51,6 @@ class DonationsController < ApplicationController
                                                               "quantity"=>params["number_of_diapers"], 
                                                               "_destroy"=>"false"}}
       )
-    binding.pry
     render status: 200, json: @donation.to_json
   end
 
