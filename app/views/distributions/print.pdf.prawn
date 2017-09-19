@@ -8,10 +8,10 @@ prawn_document do |pdf|
   end
 
   data = [["Items Received", "Quantity"]]
-  data += @distribution.sorted_line_items.map do |c|
+  data += @distribution.line_items.sorted.map do |c|
     [c.item.name, c.quantity]
   end
-  data += [["", ""], ["Total Items Received", @distribution.total_quantity]]
+  data += [["", ""], ["Total Items Received", @distribution.line_items.total]]
 
   pdf.move_down 55
 
@@ -66,7 +66,7 @@ prawn_document do |pdf|
   pdf.move_down 50
 
   summary = [["Distribution Breakdown", "Quantity"]]
-  summary += @distribution.quantities_by_category.to_a
+  summary += @distribution.line_items.quantities_by_category.to_a
 
   pdf.table(summary) do
     self.header = true
