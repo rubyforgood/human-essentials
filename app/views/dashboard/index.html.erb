@@ -56,10 +56,12 @@
     </div>
   </div>
 
-  <div class='small-12 large-6 columns'>
-    <div class="callout">
-      <h5 class="text-center">Item categories on hand <%= display_interval %></h5>
-      <%= pie_chart fake_pie_chart_data, legend: "right" %>
+
+
+    <div class='small-12 large-6 columns'>
+      <div class="callout">
+        <h5 class="text-center">Item categories on hand <%= display_interval %></h5>
+        <%= pie_chart pie_chart_data, legend: "right" %>
+      </div>
     </div>
   </div>
-</div>
