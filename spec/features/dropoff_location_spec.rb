@@ -3,6 +3,21 @@ RSpec.feature "Dropoff location", type: :feature do
     sign_in(@user)
   end
   let(:url_prefix) { "/#{@organization.to_param}" }
+
+  context "When a user views the index page" do
+    before(:each) do
+      @second = create(:dropoff_location, name: "Bcd")
+      @first = create(:dropoff_location, name: "Abc")
+      @third = create(:dropoff_location, name: "Cde")
+      visit url_prefix + '/dropoff_locations'
+    end
+    scenario "the dropoff locations are in alphabetical order" do
+      expect(page).to have_xpath("//table[@id='dropoff_locations']/tbody/tr", count: 3)
+      expect(page.find(:xpath, "//table[@id='dropoff_locations']/tbody/tr[1]/td[1]")).to have_content(@first.name)
+      expect(page.find(:xpath, "//table[@id='dropoff_locations']/tbody/tr[3]/td[1]")).to have_content(@third.name)
+    end
+  end
+
   scenario "User creates a new dropoff location" do
     visit url_prefix + '/dropoff_locations/new'
     dropoff_location_traits = attributes_for(:dropoff_location)

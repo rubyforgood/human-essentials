@@ -1,6 +1,6 @@
 class PartnersController < ApplicationController
   def index
-    @partners = current_organization.partners
+    @partners = current_organization.partners.order(:name)
   end
 
   def create

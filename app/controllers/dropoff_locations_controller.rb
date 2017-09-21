@@ -1,6 +1,6 @@
 class DropoffLocationsController < ApplicationController
   def index
-    @dropoff_locations = current_organization.dropoff_locations.all
+    @dropoff_locations = current_organization.dropoff_locations.all.order(:name)
   end
 
   def create
