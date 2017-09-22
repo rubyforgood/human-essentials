@@ -1,6 +1,6 @@
 class DiaperDriveParticipantsController < ApplicationController
   def index
-    @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all
+    @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all.order(:name)
   end
 
   def create
@@ -11,7 +11,7 @@ class DiaperDriveParticipantsController < ApplicationController
       flash[:notice] = "Something didn't work quite right -- try again?"
       render action: :new
     end
-    
+
   end
 
   def new

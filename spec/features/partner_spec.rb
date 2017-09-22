@@ -3,6 +3,21 @@ RSpec.feature "Partner management", type: :feature do
     sign_in(@user)
   end
   let!(:url_prefix) { "/#{@organization.to_param}"}
+
+  context "When a user views the index page" do
+    before(:each) do
+      @second = create(:partner, name: "Bcd")
+      @first = create(:partner, name: "Abc")
+      @third = create(:partner, name: "Cde")
+      visit url_prefix + '/partners'
+    end
+    scenario "the partner agency names are in alphabetical order" do
+      expect(page).to have_xpath("//table[@id='partners']/tbody/tr", count: 3)
+      expect(page.find(:xpath, "//table[@id='partners']/tbody/tr[1]/td[1]")).to have_content(@first.name)
+      expect(page.find(:xpath, "//table[@id='partners']/tbody/tr[3]/td[1]")).to have_content(@third.name)
+    end
+  end
+
   scenario "User can add a new partner" do
   	visit url_prefix + '/partners/new'
     fill_in "Name", with: "Frank"

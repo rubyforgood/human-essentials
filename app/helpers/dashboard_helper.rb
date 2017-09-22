@@ -42,7 +42,7 @@ module DashboardHelper
     end
   end
 
-  def fake_pie_chart_data
+  def pie_chart_data
     current_organization.quantity_categories
   end
 

@@ -4,12 +4,27 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
   end
   let(:url_prefix) { "/#{@organization.to_param}" }
 
+  context "When a user views the index page" do
+    before(:each) do
+      @second = create(:diaper_drive_participant, name: "Bcd")
+      @first = create(:diaper_drive_participant, name: "Abc")
+      @third = create(:diaper_drive_participant, name: "Cde")
+      visit url_prefix + '/diaper_drive_participants'
+    end
+    scenario "the diaper drive participant names are in alphabetical order" do
+      expect(page).to have_xpath("//table[@id='diaper_drive_participants']/tbody/tr", count: 3)
+      expect(page.find(:xpath, "//table[@id='diaper_drive_participants']/tbody/tr[1]/td[1]")).to have_content(@first.name)
+      expect(page.find(:xpath, "//table[@id='diaper_drive_participants']/tbody/tr[3]/td[1]")).to have_content(@third.name)
+    end
+  end
+
+
   scenario "User can create a new diaper drive instance" do
     visit url_prefix + '/diaper_drive_participants/new'
     diaper_drive_participant_traits = attributes_for(:diaper_drive_participant)
     fill_in "Name", with: diaper_drive_participant_traits[:name]
     fill_in "Phone", with: diaper_drive_participant_traits[:phone]
-    
+
     expect {
       click_button "Create Diaper drive participant"
     }.to change{DiaperDriveParticipant.count}.by(1)
@@ -42,7 +57,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
       expect(page).to have_xpath("//table[@id='diaper_drive_participants']/tbody/tr/td", text: @ddp.name)
       expect(page).to have_xpath("//table[@id='diaper_drive_participants']/tbody/tr/td", text: "25")
     end
-  
+
     scenario "Single Diaper Drive Participants show semi-detailed stats about donations from that diaper drive" do
       visit url_prefix + "/diaper_drive_participants/#{@ddp.to_param}"
       expect(page).to have_xpath("//table[@id='diaper_drive_participants']/tbody/tr", count: 2)
