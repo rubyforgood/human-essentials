@@ -17,6 +17,7 @@ class Transfer < ApplicationRecord
   belongs_to :to, :class_name => 'StorageLocation', :foreign_key => :to_id
 
   include Itemizable
+  include Filterable
 
   validates :from, :to, :organization, presence: true
   validates_associated :line_items

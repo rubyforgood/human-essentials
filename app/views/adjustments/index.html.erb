@@ -32,3 +32,12 @@
     <% end %>
   </tbody>
 </table>
+
+<section id="filters">
+  <%= form_tag(adjustments_path, method: :get) do |f| %>
+    <%= label_tag "Filter by Storage Location" %>
+    <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name) %>
+    <%= submit_tag "Filter" %>
+  <% end %>
+  <%= link_to "Clear Filters", items_path %>
+</section>

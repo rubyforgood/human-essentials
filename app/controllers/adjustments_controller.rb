@@ -4,7 +4,8 @@ class AdjustmentsController < ApplicationController
   # GET /adjustments
   # GET /adjustments.json
   def index
-    @adjustments = current_organization.adjustments
+    @adjustments = current_organization.adjustments.filter(filter_params)
+    @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization)
   end
 
   # GET /adjustments/1
@@ -49,5 +50,10 @@ class AdjustmentsController < ApplicationController
   def adjustment_params
     params.require(:adjustment).permit(:organization_id, :storage_location_id, :comment,
                                        line_items_attributes: [:item_id, :quantity, :_destroy])
+  end
+
+  def filter_params
+    return {} unless params.has_key?(:filters)
+    params.require(:filters).slice(:at_location)
   end
 end

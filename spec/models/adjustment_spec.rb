@@ -19,6 +19,27 @@ RSpec.describe Adjustment, type: :model do
     end
   end
 
+  context "Scopes >" do
+    it "`at_location` can filter out adjustments to a specific location" do
+      adj1 = create(:adjustment)
+      create(:adjustment)
+      expect(Adjustment.at_location(adj1.storage_location_id).size).to eq(1)
+    end
+  end
+
+  context "Methods >" do
+    it "`self.storage_locations_adjusted_for` returns only storage_locations that are used in adjustments for one org" do
+      storage_location1 = create(:storage_location, organization: @organization)
+      storage_location2 = create(:storage_location, organization: @organization)
+      storage_location3 = create(:storage_location, organization: @organization)
+      storage_location4 = create(:storage_location, organization: create(:organization))
+      adj1 = create(:adjustment, storage_location: storage_location1, organization: @organization)
+      adj2 = create(:adjustment, storage_location: storage_location2, organization: @organization)
+      adj3 = create(:adjustment, storage_location: storage_location4, organization: storage_location4.organization)
+      expect(Adjustment.storage_locations_adjusted_for(@organization).to_a).to match_array([storage_location1, storage_location2])
+    end
+  end
+
   describe 'nested line item attributes' do
     it 'accepts them' do
       item = create(:item)

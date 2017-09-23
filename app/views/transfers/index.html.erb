@@ -19,3 +19,12 @@
     <%= render partial: "transfer_row", collection: @transfers %>
   </tbody>
 </table>
+
+<section id="filters">
+  <%= form_tag(transfers_path, method: :get) do |f| %>
+    <%= label_tag "Filter by Item" %>
+    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category) %>
+    <%= submit_tag "Filter" %>
+  <% end %>
+  <%= link_to "Clear Filters", items_path %>
+</section>

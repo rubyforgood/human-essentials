@@ -1,6 +1,7 @@
 class TransfersController < ApplicationController
   def index
     @transfers = current_organization.transfers.includes(:line_items).includes(:from).includes(:to)
+    @categories = Item.categories
   end
 
   def create
@@ -42,5 +43,10 @@ class TransfersController < ApplicationController
   def transfer_params
     params.require(:transfer).permit(:from_id, :to_id, :comment,
                                      line_items_attributes: [:item_id, :quantity, :_destroy])
+  end
+
+  def filter_params
+    return {} unless params.has_key?(:filters)
+    params.require(:filters).slice(:in_category)
   end
 end
