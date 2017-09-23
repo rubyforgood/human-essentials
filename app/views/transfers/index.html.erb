@@ -22,9 +22,12 @@
 
 <section id="filters">
   <%= form_tag(transfers_path, method: :get) do |f| %>
-    <%= label_tag "Filter by Item" %>
-    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category) %>
+    <%= label_tag "Show only transfers from" %>
+    <%= collection_select(:filters, :from_location, @from_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_from) }) %>
+    <%= label_tag "Show only transfers to" %>
+    <%= collection_select(:filters, :to_location, @to_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_to) }) %>
+
     <%= submit_tag "Filter" %>
   <% end %>
-  <%= link_to "Clear Filters", items_path %>
+  <%= link_to "Clear Filters", transfers_path %>
 </section>

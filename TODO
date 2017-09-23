@@ -6,7 +6,7 @@ app/controllers/application_controller.rb:
   * [ 12] [FIXME] should be short_name so that we get "/pdx/blah" rather than "/123/blah"
 
 app/controllers/donations_controller.rb:
-  * [ 12] [TODO] - needs to be able to handle barcodes too
+  * [ 15] [TODO] - needs to be able to handle barcodes too
 
 app/controllers/organizations_controller.rb:
   * [ 17] [TODO] who should be able to arrive here and how?
@@ -16,9 +16,6 @@ app/controllers/storage_locations_controller.rb:
   * [ 24] [TODO] - the intake! method needs to be worked into this controller somehow.
   * [ 25] [TODO] - the distribute! method needs to be worked into this controller somehow
 
-app/models/adjustment.rb:
-  * [ 34] [TODO] - Can this be moved to Itemizable?
-
 app/models/barcode_item.rb:
   * [ 25] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
 
@@ -27,7 +24,6 @@ app/models/diaper_drive_participant.rb:
 
 app/models/distribution.rb:
   * [ 29] [TODO] Should these be added to Itemizable?
-  * [ 41] [TODO] Should this be added to Itemizable?
 
 app/models/donation.rb:
   * [ 64] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
@@ -44,7 +40,8 @@ app/models/storage_location.rb:
   * [162] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
 
 app/models/transfer.rb:
-  * [ 40] [TODO] - this could probably be made an association method for the `line_items` association
+  * [ 25] [TODO] This query could probably be made more...better
+  * [ 32] [TODO] This query could probably be made more...better
 
 spec/controllers/shared_examples/authorization_specs.rb:
   * [ 17] [FIXME] Not all controllers have `edit` actions (or other), and this should be able to adapt to that

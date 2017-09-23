@@ -1,7 +1,10 @@
 class TransfersController < ApplicationController
   def index
-    @transfers = current_organization.transfers.includes(:line_items).includes(:from).includes(:to)
-    @categories = Item.categories
+    @transfers = current_organization.transfers.includes(:line_items).includes(:from).includes(:to).filter(filter_params)
+    @selected_from = filter_params[:from_location]
+    @selected_to = filter_params[:to_location]
+    @from_storage_locations = Transfer.storage_locations_transferred_from_in(current_organization)
+    @to_storage_locations = Transfer.storage_locations_transferred_to_in(current_organization)
   end
 
   def create
@@ -11,13 +14,16 @@ class TransfersController < ApplicationController
       @transfer.from.move_inventory!(@transfer)
 
       if @transfer.save
-        redirect_to transfer_path(organization_id: current_organization.short_name, id: @transfer)
+        redirect_to @transfer, notice: 'Transfer was successfully created.'
       else
         flash[:notice] = "There was an error, try again?"
         render :new
       end
     else
       flash[:notice] = "There was an error creating the transfer"
+      @storage_locations = current_organization.storage_locations.alphabetized
+      @items = current_organization.items.alphabetized
+      @transfer.line_items.build unless @transfer.line_items.size > 0
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
@@ -47,6 +53,6 @@ class TransfersController < ApplicationController
 
   def filter_params
     return {} unless params.has_key?(:filters)
-    params.require(:filters).slice(:in_category)
+    params.require(:filters).slice(:from_location, :to_location)
   end
 end
