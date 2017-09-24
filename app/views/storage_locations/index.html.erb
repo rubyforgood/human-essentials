@@ -8,7 +8,7 @@
 
 <section id="filters">
   <%= form_tag(storage_locations_path, method: :get) do |f| %>
-    <%= label_tag "Filter by Item Category" %>
+    <%= label_tag "Show only Storage Locations that contain this Item Category" %>
     <%= collection_select(:filters, :containing, @items || {}, :id, :name) %>
     <%= submit_tag "Filter" %>
   <% end %>
