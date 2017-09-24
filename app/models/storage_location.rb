@@ -19,6 +19,8 @@ class StorageLocation < ApplicationRecord
 
   validates :name, :address, :organization, presence: true
 
+  require 'csv'    
+
   include Filterable
   scope :containing, ->(item_id) { joins(:inventory_items).where('inventory_items.item_id = ?', item_id) }
   scope :alphabetized, -> { order(:name) }
@@ -93,6 +95,15 @@ class StorageLocation < ApplicationRecord
 
     update_inventory_inventory_items(updated_quantities)
   end
+
+  def self.import_csv(filename,organization)
+    CSV.parse(filename, :headers => true) do |row|
+      loc = StorageLocation.new(row.to_hash)
+      loc.organization_id = organization
+      loc.save!
+    end
+  end
+
 
   # TODO - this action is happening in the Transfer model/controller - does this method belong here?
   def move_inventory!(transfer)

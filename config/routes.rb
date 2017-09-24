@@ -19,6 +19,9 @@ Rails.application.routes.draw do
     resources :adjustments
     resources :transfers, only: [:index, :create, :new, :show]
     resources :storage_locations do
+      collection do
+        post :import_csv
+      end
       member do
         get :inventory
       end
