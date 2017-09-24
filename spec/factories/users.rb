@@ -25,10 +25,12 @@
 #  invited_by_id          :integer
 #  invitations_count      :integer          default(0)
 #  organization_admin     :boolean
+#  name                   :string           default("CHANGEME"), not null
 #
 
 FactoryGirl.define do
   factory :user do
+    name "Diaper McDiaperface"
     sequence(:email, 100) { |n| "person#{n}@example.com" }
     password "password"
     password_confirmation "password"

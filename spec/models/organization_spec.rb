@@ -14,6 +14,7 @@
 #  logo_content_type :string
 #  logo_file_size    :integer
 #  logo_updated_at   :datetime
+#  intake_location   :integer
 #
 
 RSpec.describe Organization, type: :model do
