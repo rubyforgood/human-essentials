@@ -6,6 +6,15 @@
 
 <h1>Storage Locations</h1>
 
+<section id="filters">
+  <%= form_tag(storage_locations_path, method: :get) do |f| %>
+    <%= label_tag "Filter by Item Category" %>
+    <%= collection_select(:filters, :containing, @items || {}, :id, :name) %>
+    <%= submit_tag "Filter" %>
+  <% end %>
+  <%= link_to "Clear Filters", storage_locations_path %>
+</section>
+
 <table id="storage_locations">
   <thead>
     <tr>
@@ -19,12 +28,3 @@
     <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
   </tbody>
 </table>
-
-<section id="filters">
-  <%= form_tag(storage_locations_path, method: :get) do |f| %>
-    <%= label_tag "Filter by Item" %>
-    <%= collection_select(:filters, :containing, @items || {}, :id, :name) %>
-    <%= submit_tag "Filter" %>
-  <% end %>
-  <%= link_to "Clear Filters", storage_locations_path %>
-</section>
