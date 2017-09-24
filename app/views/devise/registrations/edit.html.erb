@@ -1,7 +1,6 @@
 <% content_for :title, "Users - Edit" %>
 
-<h2>Update your account information</h2>
-<%= user_registration_path %>
+<h2 class="medium-offset-3 medium-6">Update your account information</h2>
 <%= simple_form_for(resource, as: resource_name, url: user_registration_path, html: { method: :put }) do |f| %>
   <%= f.error_notification %>
 
@@ -13,25 +12,24 @@
       <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
     <% end %>
 
-    <div class='change-password-link'>
+    <div class='change-password-link medium-offset-3 medium-6'>
       <a data-toggle="change-password">Change Password</a>
     </div>
 
     <fieldset id='change-password'  class='hide' data-toggler=".hide">
-      <legend>Password Changes</legend>
       <%= f.input :password, autocomplete: "off", required: false %>
-      <p class="help-text" id="password-help">leave it blank if you don't want to change it</p>
+      <p class="help-text medium-offset-3 medium-6" id="password-help">leave it blank if you don't want to change it</p>
       <%= f.input :password_confirmation, required: false %>
     </fieldset>
 
     <%= f.input :current_password, hint: "we need your current password to confirm your changes", required: true %>
-    <p class="help-text" id="password-confirmation-help">we need your current password to confirm your changes</p>
+    <p class="help-text medium-offset-3 medium-6" id="password-confirmation-help">we need your current password to confirm your changes</p>
 
   </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Update" %>
+  <br>
+  <div class="form-actions medium-offset-3 medium-6">
+    <%= f.button :submit, "Update" %> <%= link_to "Back", :back, class: "button" %>
   </div>
 <% end %>
 
-<%= link_to "Back", :back %>
+
