@@ -29,8 +29,19 @@ class DonationsController < ApplicationController
 
   def index
     @donations = current_organization.donations
-                                      .includes(:line_items, :storage_location, :dropoff_location)
+                                      .includes(:line_items, :storage_location, :dropoff_location, :diaper_drive_participant)
                                       .order(created_at: :desc)
+                                      .filter(filter_params)
+    # Are these going to be inefficient with large datasets?
+    # Using the @donations allows drilling down instead of always starting with the total dataset
+    @storage_locations = @donations.collect { |d| d.storage_location }.compact.uniq
+    @selected_storage_location = filter_params[:at_storage_location]
+    @sources = @donations.collect { |d| d.source }.uniq
+    @selected_source = filter_params[:by_source]
+    @dropoff_locations = @donations.collect { |d| d.dropoff_location }.compact.uniq
+    @selected_dropoff_location = filter_params[:from_dropoff_location]
+    @diaper_drives = @donations.collect { |d| next unless d.source ==  Donation::SOURCES[:diaper_drive]; d.diaper_drive_participant }.compact.uniq
+    @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
   end
 
   def scale
@@ -47,8 +58,8 @@ class DonationsController < ApplicationController
                                  source: "Misc. Donation",
                                  storage_location_id: current_organization.intake_location,
                                  issued_at: Date.today,
-                                 line_items_attributes:{"0"=>{"item_id"=>params["diaper_type"], 
-                                                              "quantity"=>params["number_of_diapers"], 
+                                 line_items_attributes:{"0"=>{"item_id"=>params["diaper_type"],
+                                                              "quantity"=>params["number_of_diapers"],
                                                               "_destroy"=>"false"}}
       )
     render status: 200, json: @donation.to_json
@@ -115,6 +126,11 @@ private
 
   def donation_item_params
     params.require(:donation).permit(:barcode_id, :item_id, :quantity)
+  end
+
+  def filter_params
+    return {} unless params.has_key?(:filters)
+    params.require(:filters).slice(:at_storage_location, :by_source, :from_dropoff_location, :by_diaper_drive_participant)
   end
 
   # Omits dropoff_location_id or diaper_drive_participant_id if those aren't selected as source

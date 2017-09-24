@@ -1,4 +1,5 @@
 <% content_for :title, "#{current_organization.name} - Inventory - Adjustments" %>
+
 <% content_for :sidebar do %>
 <section id="filters">
   <h2>Filters</h2>
@@ -8,7 +9,6 @@
     <%= submit_tag "Filter", class: "button primary" %>
     <%= link_to "Clear Filters", adjustments_path, class: "button secondary" %>
   <% end %>
-
 </section>
 <% end %>
 
