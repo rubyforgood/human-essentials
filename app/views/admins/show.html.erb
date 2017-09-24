@@ -12,8 +12,8 @@ Users:
 
 
   <%= form_tag invite_user_admins_path do %>
-  	<label for="lookup">Email address:</label>
-  	<%= text_field_tag :email %>
+  	Name:<%= text_field_tag :name %>
+  	Email:<%= text_field_tag :email %>
   	<%= hidden_field_tag :org , @organization.id %>
  		<%= submit_tag "Submit" %>
 	<% end %>

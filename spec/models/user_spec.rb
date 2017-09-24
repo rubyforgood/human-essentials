@@ -25,9 +25,18 @@
 #  invited_by_id          :integer
 #  invitations_count      :integer          default(0)
 #  organization_admin     :boolean
+#  name                   :string           default("CHANGEME"), not null
 #
 
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  context "Validations >" do
+    it "requires a name" do
+      expect(build(:user, name: nil)).not_to be_valid
+    end
+    it "requires an email" do
+      expect(build(:user, email: nil)).not_to be_valid
+    end
+  end
 end
