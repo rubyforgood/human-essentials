@@ -35,10 +35,23 @@ Rails.application.routes.draw do
     resources :barcode_items do
       get :find, on: :collection
     end
-    resources :dropoff_locations
-    resources :diaper_drive_participants, except: [:destroy]
+    resources :dropoff_locations do
+      collection do
+        post :import_csv
+      end
+    end
+    resources :diaper_drive_participants, except: [:destroy] do
+      collection do
+        post :import_csv
+      end
+    end
     resources :items
-    resources :partners
+    resources :partners do
+      collection do
+        post :import_csv
+      end
+    end
+
 
     resources :donations do
       collection do

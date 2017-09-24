@@ -156,7 +156,7 @@ RSpec.describe StorageLocation, type: :model do
     describe "import_csv" do
       it "imports storage locations from a csv file" do
         organization = create(:organization)
-        import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv")
+        import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv").read
         StorageLocation.import_csv(import_file_path, organization.id)
         expect(StorageLocation.count).to eq 3
       end

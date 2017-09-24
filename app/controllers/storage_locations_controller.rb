@@ -23,7 +23,7 @@ class StorageLocationsController < ApplicationController
 
   def import_csv
     if params[:file].nil?
-      redirect_back(fallback_location: admin_people_url)
+      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
       flash[:alert] = "No file was attached!"
     else
       filepath = params[:file].read
