@@ -26,6 +26,18 @@ class DropoffLocationsController < ApplicationController
     redirect_to @dropoff_location, notice: "#{@dropoff_location.name} updated!"
   end
 
+  def import_csv
+    if params[:file].nil?
+      redirect_back(fallback_location: dropoff_locations_path(organization_id: current_organization))
+      flash[:alert] = "No file was attached!"
+    else
+      filepath = params[:file].read
+      DropoffLocation.import_csv(filepath, current_organization.id)
+      flash[:notice] = "Dropoff locations were imported successfully!"
+      redirect_back(fallback_location: dropoff_locations_path(organization_id: current_organization))
+    end
+  end
+
   def destroy
     current_organization.dropoff_locations.find(params[:id]).destroy
     redirect_to dropoff_locations_path

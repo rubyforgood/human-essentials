@@ -11,10 +11,19 @@
 #
 
 class DropoffLocation < ApplicationRecord
+  require 'csv'
+
 	belongs_to :organization
 	
 	validates :name, :address, :organization, presence: true
    
 	has_many :donations
-
+	
+  def self.import_csv(filename,organization)
+    CSV.parse(filename, :headers => true) do |row|
+      loc = DropoffLocation.new(row.to_hash)
+      loc.organization_id = organization
+      loc.save!
+    end
+  end
 end
