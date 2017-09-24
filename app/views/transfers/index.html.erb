@@ -1,22 +1,26 @@
 <% content_for :title, "#{current_organization.name} - Inventory - Transfers" %>
 
+<% content_for :sidebar do %>
+<section id="filters">
+  <h2>Filters</h2>
+  <%= form_tag(transfers_path, method: :get) do |f| %>
+    <%= label_tag "From this Storage Location" %>
+    <%= collection_select(:filters, :from_location, @from_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_from) }) %>
+    <%= label_tag "To this Storage Location" %>
+    <%= collection_select(:filters, :to_location, @to_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_to) }) %>
+
+    <%= submit_tag "Filter", class: "button primary" %>
+    <%= link_to "Clear Filters", transfers_path, class: "button secondary" %>
+  <% end %>
+
+</section>
+<% end %>
+
 <div class="header-action">
   <%= link_to "New Transfer", new_transfer_path, class: "button float-right" %>
 </div>
 
 <h1>Transfers</h1>
-
-<section id="filters">
-  <%= form_tag(transfers_path, method: :get) do |f| %>
-    <%= label_tag "Show only transfers from this Storage Location" %>
-    <%= collection_select(:filters, :from_location, @from_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_from) }) %>
-    <%= label_tag "Show only transfers to this Storage Location" %>
-    <%= collection_select(:filters, :to_location, @to_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_to) }) %>
-
-    <%= submit_tag "Filter" %>
-  <% end %>
-  <%= link_to "Clear Filters", transfers_path %>
-</section>
 
 <table id="transfers">
   <thead>
