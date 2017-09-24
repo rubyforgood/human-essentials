@@ -8,12 +8,16 @@
 
 <table>
   <thead>
-    <tr>Email</tr>
-    <tr></tr>
+    <tr>
+      <td>Name</td>
+      <td>Email</td>
+      <td></td>
+    </tr>
   </thead>
   <tbody>
     <% @users.each do |user| %>
       <tr>
+        <td><%= user.name %></td>
         <td><%= user.email %></td>
         <td>
           <% if user != current_user %>
@@ -27,4 +31,3 @@
     <% end %>
   </tbody>
 </table>
-

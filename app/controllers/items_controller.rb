@@ -6,7 +6,7 @@ class ItemsController < ApplicationController
 
   def create
     @item = current_organization.items.create(item_params)
-    redirect_to @item, notice: "#{@item.name} added!"
+    redirect_to items_path, notice: "#{@item.name} added!"
   end
 
   def new
@@ -27,7 +27,7 @@ class ItemsController < ApplicationController
   def update
     @item = current_organization.items.find(params[:id])
     @item.update_attributes(item_params)
-    redirect_to @item, notice: "#{@item.name} updated!"
+    redirect_to items_path, notice: "#{@item.name} updated!"
   end
 
   def destroy

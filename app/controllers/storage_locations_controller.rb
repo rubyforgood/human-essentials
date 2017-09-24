@@ -6,7 +6,7 @@ class StorageLocationsController < ApplicationController
 
   def create
     @storage_location = current_organization.storage_locations.create(storage_location_params)
-    redirect_to @storage_location, notice: "New storage location added!"
+    redirect_to storage_locations_path, notice: "New storage location added!"
   end
 
   def new
@@ -26,7 +26,7 @@ class StorageLocationsController < ApplicationController
   def update
     @storage_location = current_organization.storage_locations.find(params[:id])
     @storage_location.update_attributes(storage_location_params)
-    redirect_to @storage_location, notice: "#{@storage_location.name} updated!"
+    redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
   end
 
   def destroy

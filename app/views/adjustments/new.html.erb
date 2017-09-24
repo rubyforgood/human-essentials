@@ -1,8 +1,8 @@
 <% content_for :title, "#{current_organization.name} - Inventory - Adjustments - New" %>
 
-<h1>New Adjustment</h1>
+<h1 class="medium-offset-3 medium-6">New Adjustment</h1>
 
-<p>
+<p class="medium-offset-3 medium-6">
   Create an <strong>Adjustment</strong> to manually reduce the amount of
   inventory in a particular storage location.
 </p>
@@ -43,11 +43,11 @@
       </div>
     </div>
   <% end %>
-
+  <br>
   <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
+    <%= f.button :submit %> <%= link_to 'Back', adjustments_path, class: "button" %>
   </div>
 
 <% end %>
 
-<%= link_to 'Back', adjustments_path %>
+

@@ -1,6 +1,8 @@
-<h1>Editing Adjustment</h1>
+<h1 class="medium-offset-3 medium-6">Editing Adjustment</h1>
 
 <%= render 'form', adjustment: @adjustment %>
 
-<%= link_to 'Show', @adjustment %> |
-<%= link_to 'Back', adjustments_path %>
+<div class="medium-offset-3 medium-6">
+<%= link_to 'Show', @adjustment, class: "button" %> 
+<%= link_to 'Back', adjustments_path, class: "button" %>
+</div>

@@ -36,6 +36,8 @@ class User < ApplicationRecord
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  validates_presence_of :name, :email
+
   def is_superadmin?
     false
   end
