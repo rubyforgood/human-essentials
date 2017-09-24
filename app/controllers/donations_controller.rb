@@ -96,7 +96,7 @@ class DonationsController < ApplicationController
   def update
     @donation = Donation.find(params[:id])
     @donation.update_attributes(donation_params)
-    redirect_to(donation_path(@donation))
+    redirect_to donations_path
   end
 
   def destroy

@@ -31,7 +31,7 @@ class AdjustmentsController < ApplicationController
       @adjustment.storage_location.adjust!(@adjustment)
 
       if @adjustment.save
-        redirect_to @adjustment, notice: 'Adjustment was successfully created.'
+        redirect_to adjustments_path, notice: 'Adjustment was successfully created.'
       else
         render :new
       end

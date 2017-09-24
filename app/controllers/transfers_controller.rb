@@ -14,7 +14,7 @@ class TransfersController < ApplicationController
       @transfer.from.move_inventory!(@transfer)
 
       if @transfer.save
-        redirect_to @transfer, notice: 'Transfer was successfully created.'
+        redirect_to transfers_path, notice: 'Transfer was successfully created.'
       else
         flash[:notice] = "There was an error, try again?"
         render :new
