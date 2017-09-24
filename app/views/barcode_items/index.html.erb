@@ -6,6 +6,15 @@
 
 <h1>Barcodes</h1>
 
+<section id="filters">
+  <%= form_tag(barcode_items_path, method: :get) do |f| %>
+    <%= label_tag "Show only Barcode records in this Item Category" %>
+    <%= collection_select(:filters, :item_id, @items, :id, :name) %>
+    <%= submit_tag "Filter" %>
+  <% end %>
+  <%= link_to "Clear Filters", barcode_items_path %>
+</section>
+
 <table id="barcode_items">
   <thead>
     <tr>
@@ -18,12 +27,3 @@
     <%= render partial: "barcode_item_row", collection: @barcode_items %>
   </tbody>
 </table>
-
-<section id="filters">
-  <%= form_tag(barcode_items_path, method: :get) do |f| %>
-    <%= label_tag "Filter by Item" %>
-    <%= collection_select(:filters, :item_id, @items, :id, :name) %>
-    <%= submit_tag "Filter" %>
-  <% end %>
-  <%= link_to "Clear Filters", barcode_items_path %>
-</section>

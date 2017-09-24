@@ -6,6 +6,15 @@
 
 <h1>Items</h1>
 
+<section id="filters">
+  <%= form_tag(items_path, method: :get) do |f| %>
+    <%= label_tag "Show Only Items in this Item Category" %>
+    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category) %>
+    <%= submit_tag "Filter" %>
+  <% end %>
+  <%= link_to "Clear Filters", items_path %>
+</section>
+
 <table id="items">
   <thead>
     <tr>
@@ -19,12 +28,3 @@
     <%= render partial: "item_row", collection: @items %>
   </tbody>
 </table>
-
-<section id="filters">
-  <%= form_tag(items_path, method: :get) do |f| %>
-    <%= label_tag "Filter by Item" %>
-    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category) %>
-    <%= submit_tag "Filter" %>
-  <% end %>
-  <%= link_to "Clear Filters", items_path %>
-</section>
