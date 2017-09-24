@@ -21,7 +21,7 @@ class AdminsController < ApplicationController
   end
 
   def invite_user
-    User.invite!(email: params[:email], organization_id: params[:org])
+    User.invite!(email: params[:email], name: params[:name], organization_id: params[:org])
     redirect_to admins_path, notice: 'User invited to organization!'
   end
 
