@@ -30,6 +30,7 @@ class DistributionsController < ApplicationController
       @distribution.storage_location.distribute!(@distribution)
 
       if @distribution.save
+        flash[:notice] = "Distribution created!"
         redirect_to distributions_path
       else
         flash[:notice] = "There was an error, try again?"
