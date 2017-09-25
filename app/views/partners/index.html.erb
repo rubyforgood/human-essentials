@@ -6,6 +6,30 @@
 </div>
 
 
+<% if @partners.empty? %>
+
+<div class="reveal" id="addStorageLocationModal" data-reveal>
+  <h2 id="modalTitle">Import Partners</h2>
+  <p class="lead">Instructions:</p>
+    <ol>
+      <li><%= link_to "Download example csv", "/partners.csv", :format => :csv, :class => "btn btn-info" %>.</li>
+      <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+      <li>Delete the sample data and enter your storage location names and addresses in the appropriate columns.</li>
+      <li>Save the file as a csv file.</li>
+      <li>Click the choose file button and navigate to the saved file and select it.</li>
+      <li>Then click the Import CSV button to import your storage locations.</li>
+    </ol>
+    <p class="help-text">Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</p>
+
+    <%= form_tag import_csv_partners_path, multipart: true do %>
+        <%= file_field_tag :file, :accept => 'text/csv' %>
+        <%= submit_tag "Import CSV", :class => "btn btn-white" %>
+    <% end %>
+</div>
+<br/>
+<p><a class="button success" data-open="addStorageLocationModal">Import Partners</a></p>
+<% end %>
+
 <h1>Partner Agencies</h1>
 
 <table id="partners">

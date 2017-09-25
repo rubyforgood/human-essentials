@@ -47,7 +47,7 @@ RSpec.describe DonationsController, type: :controller do
     end
 
     describe "PUT#update" do
-      it "redirects to #show" do
+      it "redirects to index after update" do
         donation = create(:donation, source: "Purchased Supplies")
         put :update, params: default_params.merge(id: donation.id, donation: { source: "Purchased Supplies" })
         expect(response).to redirect_to(donations_path)

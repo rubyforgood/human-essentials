@@ -24,5 +24,13 @@ RSpec.describe DropoffLocation, type: :model do
 		  expect(build(:dropoff_location, address: nil)).not_to be_valid
 		end
 	end
+  describe "import_csv" do
+    it "imports storage locations from a csv file" do
+      organization = create(:organization)
+      import_file_path = Rails.root.join("spec", "fixtures", "dropoff_locations.csv").read
+      DropoffLocation.import_csv(import_file_path, organization.id)
+      expect(DropoffLocation.count).to eq 3
+    end
+  end 	
 end
 

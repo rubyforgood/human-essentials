@@ -21,6 +21,18 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
   end
 
+  def import_csv
+    if params[:file].nil?
+      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
+      flash[:alert] = "No file was attached!"
+    else
+      filepath = params[:file].read
+      StorageLocation.import_csv(filepath, current_organization.id)
+      flash[:notice] = "Storage locations were imported successfully!"
+      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
+    end
+  end
+
   # TODO - the intake! method needs to be worked into this controller somehow.
   # TODO - the distribute! method needs to be worked into this controller somehow
   def update

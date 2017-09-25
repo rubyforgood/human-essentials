@@ -11,6 +11,8 @@
 #
 
 class StorageLocation < ApplicationRecord
+  require 'csv'
+
   belongs_to :organization
   has_many :inventory_items, -> { includes(:item).order("items.name") }
   has_many :donations
@@ -92,6 +94,14 @@ class StorageLocation < ApplicationRecord
     end
 
     update_inventory_inventory_items(updated_quantities)
+  end
+
+  def self.import_csv(filename,organization)
+    CSV.parse(filename, :headers => true) do |row|
+      loc = StorageLocation.new(row.to_hash)
+      loc.organization_id = organization
+      loc.save!
+    end
   end
 
   # TODO - this action is happening in the Transfer model/controller - does this method belong here?
