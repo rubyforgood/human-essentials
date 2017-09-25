@@ -22,7 +22,7 @@ RSpec.describe TransfersController, type: :controller do
 
         post :create, params: { organization_id: @organization.short_name, transfer: attributes }
         t = Transfer.last
-        expect(response).to redirect_to(transfer_path(id: t, organization_id: @organization.short_name))
+        expect(response).to redirect_to(transfers_path)
       end
 
       it "renders to #new when failing" do

@@ -69,7 +69,7 @@ RSpec.describe AdjustmentsController, type: :controller do
 
         it "redirects to the created adjustment" do
           post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
-          expect(response).to redirect_to(Adjustment.last)
+          expect(response).to redirect_to(adjustments_path)
         end
       end
 

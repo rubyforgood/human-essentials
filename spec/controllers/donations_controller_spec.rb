@@ -50,7 +50,7 @@ RSpec.describe DonationsController, type: :controller do
       it "redirects to #show" do
         donation = create(:donation, source: "Purchased Supplies")
         put :update, params: default_params.merge(id: donation.id, donation: { source: "Purchased Supplies" })
-        expect(response).to redirect_to(donation_path(donation))
+        expect(response).to redirect_to(donations_path)
       end
     end
 
