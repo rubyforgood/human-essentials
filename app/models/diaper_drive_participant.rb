@@ -14,6 +14,8 @@
 #
 
 class DiaperDriveParticipant < ApplicationRecord
+  require 'csv'
+
   belongs_to :organization  # Automatically validates presence as of Rails 5
   has_many :donations, inverse_of: :diaper_drive_participant
 
@@ -25,4 +27,12 @@ class DiaperDriveParticipant < ApplicationRecord
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)
   end
+  
+  def self.import_csv(filename,organization)
+    CSV.parse(filename, :headers => true) do |row|
+      loc = DiaperDriveParticipant.new(row.to_hash)
+      loc.organization_id = organization
+      loc.save!
+    end
+  end  
 end

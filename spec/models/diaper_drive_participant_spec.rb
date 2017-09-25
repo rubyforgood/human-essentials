@@ -41,4 +41,12 @@ RSpec.describe DiaperDriveParticipant, type: :model do
       end
     end
   end
+  describe "import_csv" do
+    it "imports storage locations from a csv file" do
+      organization = create(:organization)
+      import_file_path = Rails.root.join("spec", "fixtures", "diaper_drive_participants.csv").read
+      DiaperDriveParticipant.import_csv(import_file_path, organization.id)
+      expect(DiaperDriveParticipant.count).to eq 3
+    end
+  end     
 end

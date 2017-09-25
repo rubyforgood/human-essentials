@@ -27,4 +27,12 @@ RSpec.describe Partner, type: :model do
       expect(build(:partner, email: "boooooooooo")).not_to be_valid
     end
   end
+  describe "import_csv" do
+    it "imports storage locations from a csv file" do
+      organization = create(:organization)
+      import_file_path = Rails.root.join("spec", "fixtures", "partners.csv").read
+      Partner.import_csv(import_file_path, organization.id)
+      expect(Partner.count).to eq 3
+    end
+  end  
 end

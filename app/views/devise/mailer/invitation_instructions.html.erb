@@ -2,6 +2,16 @@
 
 <p><%= t("devise.mailer.invitation_instructions.someone_invited_you", url: root_url) %></p>
 
+The first things you'll want to do after you sign in and set a password are:
+
+1) Import the storage locations for your diaper bank. (inventory->storage locations)
+2) Import the partners agencies of your diaper bank. (community->partner agencies)
+3) Import the dropoff locations of your diaper bank. (community->donation dropoff locations)
+4) Import the diaper drive participants of your diaper bank. (community->diaper drive participants)
+
+On each of the pages there will be a button that will give insructions on how to do this.
+
+
 <p><%= link_to t("devise.mailer.invitation_instructions.accept"), accept_invitation_url(@resource, :invitation_token => @token) %></p>
 
 <% if @resource.invitation_due_at %>

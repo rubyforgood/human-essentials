@@ -20,8 +20,8 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
-    <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
 
+    <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
     <%= stylesheet_link_tag    "application" %>
     <%= javascript_include_tag "application", 'data-turbolinks-track' => true %>
 
@@ -47,3 +47,4 @@
 
   </body>
 </html>
+
