@@ -24,6 +24,12 @@ class Donation < ApplicationRecord
   belongs_to :storage_location
   include Itemizable
 
+  include Filterable
+  scope :at_storage_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
+  scope :by_source, ->(source) { where(source: source) }
+  scope :from_dropoff_location, ->(dropoff_location_id) { where(dropoff_location_id: dropoff_location_id) }
+  scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) { where(diaper_drive_participant_id: diaper_drive_participant_id) }
+
   before_create :combine_duplicates
   before_destroy :remove_inventory
 

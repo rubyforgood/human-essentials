@@ -17,6 +17,66 @@ RSpec.feature "Donations", type: :feature, js: true do
     end
   end
 
+  context "When filtering on the index page" do
+    let!(:item) { create(:item) }
+    scenario "User can filter by the source" do
+      create(:donation, source: Donation::SOURCES[:misc])
+      create(:donation, source: Donation::SOURCES[:purchased])
+      visit @url_prefix + "/donations"
+      expect(page).to have_css("table tbody tr", count: 2)
+      select Donation::SOURCES[:misc], from: "filters_by_source"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+    scenario "User can filter by diaper drive" do
+      a = create(:diaper_drive_participant, name: "A")
+      b = create(:diaper_drive_participant, name: "B")
+      create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: a)
+      create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: b)
+      visit @url_prefix + "/donations"
+      expect(page).to have_css("table tbody tr", count: 2)
+      select a.name, from: "filters_by_diaper_drive_participant"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+    scenario "User can filter by dropoff location" do
+      location1 = create(:dropoff_location, name: "location 1")
+      location2 = create(:dropoff_location, name: "location 2")
+      create(:donation, dropoff_location: location1)
+      create(:donation, dropoff_location: location2)
+      visit @url_prefix + "/donations"
+      select location1.name, from: "filters_from_dropoff_location"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+    scenario "User can filter the #index by storage location" do
+      storage1 = create(:storage_location, name: "storage1")
+      storage2 = create(:storage_location, name: "storage2")
+      create(:donation, storage_location: storage1)
+      create(:donation, storage_location: storage2)
+      visit @url_prefix + "/donations"
+      expect(page).to have_css("table tbody tr", count: 2)
+      select storage1.name, from: "filters_at_storage_location"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+    scenario "Filters drill down if you pick from multiples" do
+      storage1 = create(:storage_location, name: "storage1")
+      storage2 = create(:storage_location, name: "storage2")
+      create(:donation, storage_location: storage1, source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage2, source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage1, source: Donation::SOURCES[:purchased])
+      visit @url_prefix + "/donations"
+      expect(page).to have_css("table tbody tr", count: 3)
+      select Donation::SOURCES[:misc], from: "filters_by_source"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
+      select storage1.name, from: "filters_at_storage_location"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+  end
+
   context "When creating a new donation" do
     before(:each) do
       create(:item, organization: @organization)

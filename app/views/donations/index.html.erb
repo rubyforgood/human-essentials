@@ -1,5 +1,31 @@
 <% content_for :title, "#{current_organization.name} - Donations" %>
 
+<% content_for :sidebar do %>
+<section id="filters">
+  <h2>Filters</h2>
+  <%= form_tag(donations_path, method: :get) do |f| %>
+    <% if @storage_locations.present? %>
+      <%= label_tag "by Storage Location" %>
+      <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_storage_location }) %>
+    <% end %>
+    <% if @sources.present? %>
+      <%= label_tag "by Source" %>
+      <%= select_tag "filters[by_source]", options_for_select(@sources, @selected_source), { include_blank: true } %>
+    <% end %>
+    <% if @diaper_drives.present? %>
+      <%= label_tag "by Diaper Drive" %>
+      <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }) %>
+    <% end %>
+    <% if @dropoff_locations.present? %>
+      <%= label_tag "by Donation Location" %>
+      <%= collection_select(:filters, :from_dropoff_location, @dropoff_locations || {}, :id, :name, { include_blank: true, selected: @selected_dropoff_location }) %>
+    <% end %>
+    <%= submit_tag "Filter", class: "button primary" %>
+    <%= link_to "Clear Filters", donations_path, class: "button secondary" %>
+  <% end %>
+</section>
+<% end %>
+
 <div class="header-action">
   <%= link_to "New Donation", new_donation_path(organization_id: current_organization), class: "button float-right" %>
 </div>
