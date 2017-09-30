@@ -67,9 +67,12 @@ class Organization < ApplicationRecord
 
   def scale_values
       {
-        xl_briefs:  items.find_by(name: "Adult Briefs (Large/X-Large)").id,
-        l_briefs:   items.find_by(name: "Adult Briefs (Medium/Large)").id,
-        s_briefs:   items.find_by(name: "Adult Briefs (Small/Medium)").id,
+        pu_2t_3t:   items.find_by(name: "Kids Pull-Ups (2T-3T)").id,
+        pu_3t_4t:   items.find_by(name: "Kids Pull-Ups (3T-4T)").id,
+        pu_4t_5t:   items.find_by(name: "Kids Pull-Ups (4T-5T)").id,
+        k_preemie:  items.find_by(name: "Kids (Preemie)").id,
+        k_newborm:  items.find_by(name: "Kids (Newborn)").id,        
+        k_size1:    items.find_by(name: "Kids (Size 1)").id,
         k_size2:    items.find_by(name: "Kids (Size 2)").id,
         k_size3:    items.find_by(name: "Kids (Size 3)").id,
         k_size4:    items.find_by(name: "Kids (Size 4)").id,

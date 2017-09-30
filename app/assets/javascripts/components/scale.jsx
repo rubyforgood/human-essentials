@@ -16,11 +16,13 @@ class Scale extends React.Component {
       shouldRead: null,
       weight: "?",
       unit: "",
+      manualWeight: 0,
       scaleState: "",
       errorMsg: null,
       diaperCount: 0,
       diaperKind: null
     };
+    this.handleChange = this.handleChange.bind(this);
 
     if (navigator.usb) {
       navigator.usb.getDevices({ filters: this.USB_FILTERS }).then(devices => {
@@ -101,15 +103,23 @@ class Scale extends React.Component {
   }
 
   getDiaper(event) {
-    const count =  Math.trunc(this.state.weight / event.target.value)
+    var scaleWeight = parseInt(this.state.weight) || 0;
+    const totalWeight = scaleWeight + this.state.manualWeight
+    const count =  Math.trunc(totalWeight / event.target.value)
     const kind = event.target.attributes.getNamedItem('label').value
     this.setState({diaperCount: count})
     this.setState({diaperKind: kind})
   }
 
+  handleChange(event) {
+    this.setState({manualWeight: event.target.value});
+  }
+
   postDiaperCount() {
     const {diaperCount} = this.state;
     const {diaperKind} = this.state;
+    this.setState({manualWeight: 0})
+    this.setState({diaperCount: 0})
 
     fetch('/pdx_bank/donations/scale_intake', {
       method: 'POST',
@@ -172,6 +182,7 @@ class Scale extends React.Component {
       something,
       scaleState,
       errorMsg,
+      manualWeight,
       diaperCount,
       diaperKind
     } = this.state;
@@ -208,19 +219,28 @@ class Scale extends React.Component {
           </span>}
           <br/>
           <br/>
+          <br/>
+          <div className="large-6 small-centered">
+            Manual Scale Weight Reading (g):<input type="text" className="" value={this.state.manualWeight} onChange={this.handleChange} />
+          </div>
+          <br/>
       Diaper Type
                 <br/>
 
       <div onChange={event => this.getDiaper(event)}>
-        <input type="radio" value="10" label={this.props.xl_briefs} name="diap"/> Adult XL Briefs &nbsp;
-        <input type="radio" value="12" label={this.props.l_briefs} name="diap"/> Adult L Briefs &nbsp;
-        <input type="radio" value="14" label={this.props.s_briefs} name="diap"/> Adult S Briefs &nbsp;
-        <input type="radio" value="16" label={this.props.k_size2} name="diap"/> Kids Size 2 &nbsp;
+        <input type="radio" value="31.18" label={this.props.pu_2t_3t} name="diap"/> Kids Pull-Ups (2T-3T) &nbsp;
+        <input type="radio" value="34.02" label={this.props.pu_3t_4t} name="diap"/> Kids Pull-Ups (3T-4T) &nbsp;
+        <input type="radio" value="34.02" label={this.props.pu_4t_5t} name="diap"/> Kids Pull-Ups (4T-5T) &nbsp;
         <br/>
-        <input type="radio" value="18" label={this.props.k_size3} name="diap"/> Kids Size 3 &nbsp;
-        <input type="radio" value="20" label={this.props.k_size4} name="diap"/> Kids Size 4 &nbsp;
-        <input type="radio" value="22" label={this.props.k_size5} name="diap"/> Kids Size 5 &nbsp;
-        <input type="radio" value="24" label={this.props.k_size6} name="diap"/> Kids Size 6 &nbsp;
+        <input type="radio" value="11.34" label={this.props.k_preemie} name="diap"/> Kids (Preemie) &nbsp;
+        <input type="radio" value="17.84" label={this.props.k_newborm} name="diap"/> Kids (Newborn) &nbsp;
+        <input type="radio" value="22.68" label={this.props.k_size1} name="diap"/> Kids Size 1 &nbsp;        
+        <input type="radio" value="22.68" label={this.props.k_size2} name="diap"/> Kids Size 2 &nbsp;
+        <br/>
+        <input type="radio" value="25.51" label={this.props.k_size3} name="diap"/> Kids Size 3 &nbsp;
+        <input type="radio" value="36.85" label={this.props.k_size4} name="diap"/> Kids Size 4 &nbsp;
+        <input type="radio" value="36.69" label={this.props.k_size5} name="diap"/> Kids Size 5 &nbsp;
+        <input type="radio" value="36.69" label={this.props.k_size6} name="diap"/> Kids Size 6 &nbsp;
       </div>
       <div>
         {diaperCount} Diapers!
