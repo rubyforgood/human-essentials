@@ -1,4 +1,4 @@
-<% content_for :title, "#{current_organization.name} - Distributions" %>
+<% content_for :title, "#{current_organization.name} - Distributions - #{@distribution.storage_location.name}" %>
 
 <h1>Distribution Manifest for <%= @distribution.updated_at.strftime('%B %-d %Y') %> Distribution to <%= @distribution.partner.name %></h1>
 
