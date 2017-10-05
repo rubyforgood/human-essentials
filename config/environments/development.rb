@@ -56,7 +56,7 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # For forcing ssl in development
-  config.force_ssl = true
-  config.ssl_options = { hsts: false }
-  config.ssl_options = {  redirect: { status: 307 } }
+  # config.force_ssl = true
+  # config.ssl_options = { hsts: false }
+  # config.ssl_options = {  redirect: { status: 307 } }
 end
