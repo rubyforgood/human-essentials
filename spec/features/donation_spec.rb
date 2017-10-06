@@ -13,7 +13,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       click_link "New Donation"
 
       expect(current_path).to eq(new_donation_path(@organization))
-      expect(page).to have_content "Start a new donation"
+      expect(page).to have_content "Enter New Donation"
     end
   end
 
@@ -92,11 +92,13 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation IN THE PAST" do
+        fill_in "donation_issued_at", with: "01/01/2001"
         select Donation::SOURCES[:purchased], from: "donation_source"
         select StorageLocation.first.name, from: "donation_storage_location_id"
+
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
-        fill_in "donation_issued_at", with: "01/01/2001"
+
 
         expect {
           click_button "Create Donation"

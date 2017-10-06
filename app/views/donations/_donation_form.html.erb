@@ -1,5 +1,10 @@
 <%= simple_form_for @donation do |f| %>
 
+  <%= f.input :issued_at,
+     label: "Issued on",
+     as: :date,
+     html5: true %>
+
   <%= f.input :source,
     collection: Donation::SOURCES.values,
     label: "Source",
@@ -10,24 +15,18 @@
     label: "Dropoff Location",
     error: "Where was this donation dropped off?" %>
 
+  <%= f.association :storage_location,
+    collection: @storage_locations,
+    label: "Storage Location",
+    error: "Where is it being stored?" %>
+
   <%= f.association :diaper_drive_participant,
     collection: @diaper_drive_participants,
     label_method: :name,
     label: "Diaper Drive Participant",
     error: "Which diaper drive was this from?" %>
 
-  <%= f.association :storage_location,
-    collection: @storage_locations,
-    label: "Storage Location",
-    error: "Where is it being stored?" %>
-
   <%= f.input :comment %>
-
-  <%= f.input :issued_at,
-     label: "Issued on",
-     as: :date,
-     html5: true %>
-
 
   <%= f.simple_fields_for :line_items do |item| %>
     <div id="donation_line_items" data-capture-barcode="true">
