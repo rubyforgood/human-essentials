@@ -133,7 +133,7 @@ class Scale extends React.Component {
       })
     }).then(response => {
       if (response.status == 200) {
-        alert("Diapers Added to Inventory!");
+        toastr.success('Diapers Added to Inventory!');
       }
     });
   }
