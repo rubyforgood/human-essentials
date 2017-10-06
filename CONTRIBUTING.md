@@ -15,17 +15,19 @@ on an [open issue]–if the relevant issue doesn't exist, open it!
 
 2. Fork the repo.
 
-3. Run `./bin/setup`.
+3. `cd` into the repo. Install the correct version of ruby if prompted: `rvm install ruby-2.4.2`. Install ImageMagick if you don't have it installed already: `brew install imagemagick`
 
-4. Run the tests. We only take pull requests with passing tests, and it's great
+4. Run `./bin/setup`.
+
+5. Run the tests. We only take pull requests with passing tests, and it's great
    to know that you have a clean slate: `bundle exec rake`
 
-5. Add a test for your change. If you are adding functionality or fixing a
+6. Add a test for your change. If you are adding functionality or fixing a
    bug, you should add a test!
 
-6. Make the test pass.
+7. Make the test pass.
 
-7. Push to your fork and submit a pull request. Include the issue number
+8. Push to your fork and submit a pull request. Include the issue number
    (ex. `Resolves #1`) in the PR description.
 
 At this point you're waiting on us–we'll try to respond to your PR quickly.
