@@ -4,7 +4,8 @@ script:
 - bundle exec rake db:create db:migrate
 - bundle exec rake spec
 after_success:
-- if [ $TRAVIS_BRANCH == 'master' ]; then
+- if [ $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == "false" ]; then
+      echo $TRAVIS_PULL_REQUEST;
       echo $TRAVIS_PULL_REQUEST_BRANCH;
       echo $TRAVIS_REPO_SLUG;
       echo $TRAVIS_BRANCH;
