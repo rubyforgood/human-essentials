@@ -29,6 +29,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'therubyracer', '~> 0.12',  platforms: :ruby
 gem 'turbolinks', '~> 5'
 gem 'yajl-ruby'
+gem 'toastr-rails'
 
 group :development, :test do
   gem 'awesome_print', '~> 1.7'

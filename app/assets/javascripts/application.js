@@ -15,6 +15,7 @@
 //= require foundation
 // require turbolinks // Removed!
 //= require cocoon
+//= require toastr
 //
 //= require Chart.bundle
 //= require chartkick
@@ -31,3 +32,9 @@ $(document).ready(function() {
 window.setTimeout(function() {
     $(".close-button").click();
 }, 3000);
+
+// Global toastr options
+toastr.options = {
+  "timeOut": "700"
+}
+
