@@ -54,4 +54,9 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  # For forcing ssl in development
+  # config.force_ssl = true
+  # config.ssl_options = { hsts: false }
+  # config.ssl_options = {  redirect: { status: 307 } }
 end
