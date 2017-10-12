@@ -30,3 +30,7 @@
 img#logo {
   max-height: 40px;
 }
+
+#toast-container{
+  top: 70px;
+}

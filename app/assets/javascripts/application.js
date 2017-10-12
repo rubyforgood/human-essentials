@@ -35,6 +35,6 @@ window.setTimeout(function() {
 
 // Global toastr options
 toastr.options = {
-  "timeOut": "700"
+  "timeOut": "1400"
 }
 
