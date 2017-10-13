@@ -41,7 +41,7 @@ class Donation < ApplicationRecord
 
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   scope :by_source, ->(source) { source = SOURCES[source] if source.is_a?(Symbol); where(source: source)}
-  scope :recent, ->(count=3) { order(:issued_at).limit(count) }
+  scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
 
   def from_diaper_drive?
     source == SOURCES[:diaper_drive]
