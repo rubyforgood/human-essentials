@@ -12,11 +12,11 @@
 #
 
 class BarcodeItem < ApplicationRecord
-  belongs_to :organization
+  belongs_to :organization, optional: true
   belongs_to :item, dependent: :destroy, counter_cache: :barcode_count
 
   validates :value, presence: true, uniqueness: true
-  validates :quantity, :item, :organization, presence: true
+  validates :quantity, :item, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   include Filterable

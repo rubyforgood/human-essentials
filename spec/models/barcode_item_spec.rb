@@ -36,8 +36,10 @@ RSpec.describe BarcodeItem, type: :model do
   end
 
   context "validations >" do
-    it "is invalid without an organization" do
-      expect(build(:barcode_item, organization: nil)).not_to be_valid
+    it "is valid with or without an organization" do
+      expect(build(:barcode_item, organization: nil)).to be_valid
+      org = Organization.try(:first) || create(:organization)
+      expect(build(:barcode_item, organization: org)).to be_valid
     end
     describe "value >" do
       it "requires a value" do
