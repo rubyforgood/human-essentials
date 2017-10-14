@@ -32,7 +32,7 @@ class Distribution < ApplicationRecord
 
   include IssuedAt
 
-  scope :recent, ->(count=3) { order(:issued_at).limit(count) }
+  scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
 
   delegate :name, to: :partner, prefix: true
