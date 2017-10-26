@@ -66,10 +66,11 @@ RSpec.describe BarcodeItemsController, type: :controller do
     end
   end
 
-  context "While not signed in" do
-    let(:object) { create(:barcode_item) }
-
-    include_examples "requiring authentication"
-  end
+  # For the time being, users cannot access these routes, but this may change in
+  # the near future.
+  #context "While not signed in" do
+  #  let(:object) { create(:barcode_item) }
+  #  include_examples "requiring authentication"
+  #end
 
 end

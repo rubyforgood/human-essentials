@@ -24,7 +24,7 @@ class Organization < ApplicationRecord
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
 
   has_many :adjustments
-  has_many :barcode_items
+  has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where(organization_id: [nil,organization.id]) }
   has_many :distributions
   has_many :donations
   has_many :dropoff_locations
@@ -71,7 +71,7 @@ class Organization < ApplicationRecord
         pu_3t_4t:   items.find_by(name: "Kids Pull-Ups (3T-4T)").id,
         pu_4t_5t:   items.find_by(name: "Kids Pull-Ups (4T-5T)").id,
         k_preemie:  items.find_by(name: "Kids (Preemie)").id,
-        k_newborm:  items.find_by(name: "Kids (Newborn)").id,        
+        k_newborm:  items.find_by(name: "Kids (Newborn)").id,
         k_size1:    items.find_by(name: "Kids (Size 1)").id,
         k_size2:    items.find_by(name: "Kids (Size 2)").id,
         k_size3:    items.find_by(name: "Kids (Size 3)").id,
