@@ -28,7 +28,7 @@
 #  name                   :string           default("CHANGEME"), not null
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :user do
     name "Diaper McDiaperface"
     sequence(:email, 100) { |n| "person#{n}@example.com" }

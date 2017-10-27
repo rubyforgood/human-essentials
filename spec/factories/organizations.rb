@@ -17,7 +17,7 @@
 #  intake_location   :integer
 #
 
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :organization do
     sequence(:name) { |n| "Diaper Bank #{n}" } # 037000863427

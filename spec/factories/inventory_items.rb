@@ -10,7 +10,7 @@
 #  item_id             :integer
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :inventory_item do
     quantity 300
     item
