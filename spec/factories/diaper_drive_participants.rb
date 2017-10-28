@@ -13,7 +13,7 @@
 #  updated_at      :datetime         not null
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :diaper_drive_participant do
     organization { Organization.try(:first) || create(:organization) }
     sequence(:name) { |n| "DD Participant ##{n}" }

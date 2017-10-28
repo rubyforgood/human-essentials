@@ -31,7 +31,7 @@ Standard Github community processes apply -- fork the repo, make your changes, s
 
 ## Testing
 
-This app uses RSpec, Capybara, Poltergeist, and FactoryGirl for testing. Make sure `rake spec` runs clean & green before submitting a Pull Request.
+This app uses RSpec, Capybara, Poltergeist, and FactoryBot for testing. Make sure `rake spec` runs clean & green before submitting a Pull Request.
 
 ## TODOs
 

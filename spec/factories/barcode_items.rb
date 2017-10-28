@@ -11,7 +11,7 @@
 #  organization_id :integer
 #
 
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :barcode_item do
     organization { Organization.try(:first) || create(:organization) }

@@ -11,7 +11,7 @@
 #  organization_id :integer
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :transfer do
   	organization { Organization.try(:first) || create(:organization) }
     from_id { create(:storage_location).id }

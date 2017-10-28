@@ -50,8 +50,8 @@ RSpec.configure do |config|
   # Location for fixtures (logo, etc)
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
-  # Make FactoryGirl easier.
-  config.include FactoryGirl::Syntax::Methods
+  # Make FactoryBot easier.
+  config.include FactoryBot::Syntax::Methods
 
   # Preparatifyication
   config.before(:suite) do
@@ -108,6 +108,6 @@ end
 
 def __lint_with_log
   Rails.logger.info "////////////////// LINTING ////////////////////"
-  FactoryGirl.lint
+  FactoryBot.lint
   Rails.logger.info "////////////////// END LINT ///////////////////"
 end

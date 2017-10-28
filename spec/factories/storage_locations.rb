@@ -10,7 +10,7 @@
 #  organization_id :integer
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :storage_location do
     transient do
       item_quantity 100
