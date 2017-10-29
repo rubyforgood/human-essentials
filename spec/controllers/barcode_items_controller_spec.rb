@@ -37,15 +37,23 @@ RSpec.describe BarcodeItemsController, type: :controller do
     end
 
     describe "GET #find" do
+      let!(:global_barcode) { create(:barcode_item) }
+      let!(:organization_barcode) { create(:barcode_item, :for_organization, organization: @organization) }
+      let!(:other_barcode) { create(:barcode_item, :for_organization, organization: create(:organization)) }
       context "via ajax" do
-        subject { get :find, params: default_params.merge({ barcode_item: { value: create(:barcode_item).value }, format: :json}) }
-        it "returns http success" do
+        subject { get :find, params: default_params.merge({ barcode_item: { value: organization_barcode.value }, format: :json}) }
+        it "can find a barcode that is scoped to just this organization" do
           expect(subject).to be_successful
+        end
+
+        it "can find a barcode that's universally available" do
+          get :find, params: default_params.merge({ barcode_item: { value: global_barcode.value }, format: :json})
+          expect(response).to be_successful
         end
 
         context "when it's missing" do
           it "returns a 404" do
-            get :find, params: default_params.merge({ barcode_item: { value: 9999999 }, format: :json })
+            get :find, params: default_params.merge({ barcode_item: { value: other_barcode.value }, format: :json })
             expect(response.status).to eq(404)
           end
         end
@@ -66,10 +74,11 @@ RSpec.describe BarcodeItemsController, type: :controller do
     end
   end
 
-  context "While not signed in" do
-    let(:object) { create(:barcode_item) }
-
-    include_examples "requiring authentication"
-  end
+  # For the time being, users cannot access these routes, but this may change in
+  # the near future.
+  #context "While not signed in" do
+  #  let(:object) { create(:barcode_item) }
+  #  include_examples "requiring authentication"
+  #end
 
 end

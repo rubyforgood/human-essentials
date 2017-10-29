@@ -18,6 +18,18 @@
 #
 
 RSpec.describe Organization, type: :model do
+  let(:organization) { create(:organization) }
+  context "Associations >" do
+    describe "barcode_items" do
+      it "returns both this organizations barcodes as well as global ones" do
+        create(:barcode_item, :for_organization, organization: organization)
+        expect(organization.barcode_items.count).to eq(1)
+        create(:barcode_item, organization_id: nil) # global
+        expect(organization.barcode_items.count).to eq(2)
+      end
+    end
+  end
+
   describe "#short_name" do
     it "can only contain valid characters" do
       expect(build(:organization, short_name: 'asdf')).to be_valid
