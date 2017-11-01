@@ -5,8 +5,15 @@ class BarcodeItemsController < ApplicationController
   end
 
   def create
-    @barcode_item = current_organization.barcode_items.create(barcode_item_params)
-    redirect_to barcode_items_path, notice: "New barcode added!"
+    msg = "New barcode added"
+    if (barcode_item_params.delete(:global))
+      @barcode_item = BarcodeItem.create(barcode_item_params)
+      msg += " globally!"
+    else
+      @barcode_item = current_organization.barcode_items.create(barcode_item_params)
+      msg += " to your private set!"
+    end
+    redirect_to barcode_items_path, notice: msg
   end
 
   def new
@@ -43,7 +50,7 @@ class BarcodeItemsController < ApplicationController
 
 private
   def barcode_item_params
-    params.require(:barcode_item).permit(:value, :item_id, :quantity)
+    params.require(:barcode_item).permit(:value, :item_id, :quantity, :global)
   end
 
   def filter_params
