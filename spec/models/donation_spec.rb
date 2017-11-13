@@ -34,6 +34,11 @@ RSpec.describe Donation, type: :model do
     it "requires an inventory (storage location)" do
       expect(build(:donation, storage_location_id: nil)).not_to be_valid
     end
+    it "is invalid when the line items are invalid" do
+      d = build(:donation)
+      d.line_items << build(:line_item, quantity: nil)
+      expect(d).not_to be_valid
+    end
   end
 
   context "Callbacks >" do
@@ -144,6 +149,7 @@ RSpec.describe Donation, type: :model do
         donation.track(item, 5)
         expect {
           donation.track(item, 10)
+          donation.reload
         }.not_to change{donation.line_items.count}
 
         expect(donation.line_items.first.quantity).to eq(15)
@@ -184,6 +190,24 @@ RSpec.describe Donation, type: :model do
           donation.update_quantity(1, donation.items.first.id)
           donation.reload
         }.to change{donation.line_items.first.quantity}.by(1)
+      end
+    end
+
+    describe "remove" do
+      let!(:donation) { create(:donation, :with_item) }
+
+      it "removes the item from the donation" do
+        item_id = donation.line_items.last.item_id
+        expect {
+          donation.remove(item_id)
+        }.to change{donation.line_items.count}.by(-1)
+      end
+
+      it "fails gracefully if the item doesn't exist" do
+        item_id = create(:item).id
+        expect {
+          donation.remove(item_id)
+        }.not_to change{donation.line_items.count}
       end
     end
 

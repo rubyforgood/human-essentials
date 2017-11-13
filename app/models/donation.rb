@@ -97,7 +97,8 @@ class Donation < ApplicationRecord
   end
 
 
-  ## TODO - This should check for existence of the item first. Also, I think there's a to_h method in Barcode, isn't there?
+  ## TODO - This should check for existence of the item first.
+  # Also, I think there's a to_h method in Barcode, isn't there?
   def track_from_barcode(barcode_hash)
     LineItem.create(itemizable: self, item_id: barcode_hash[:item_id], quantity: barcode_hash[:quantity])
   end
