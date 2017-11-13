@@ -5,9 +5,6 @@ app/controllers/admins_controller.rb:
 app/controllers/application_controller.rb:
   * [ 13] [FIXME] should be short_name so that we get "/pdx/blah" rather than "/123/blah"
 
-app/controllers/donations_controller.rb:
-  * [ 15] [TODO] - needs to be able to handle barcodes too
-
 app/controllers/organizations_controller.rb:
   * [ 17] [TODO] who should be able to arrive here and how?
   * [ 21] [TODO] who should be able to arrive here and how?
@@ -21,12 +18,6 @@ app/models/barcode_item.rb:
 
 app/models/diaper_drive_participant.rb:
   * [ 26] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
-
-app/models/donation.rb:
-  * [ 70] [TODO] - Can this be simplified so that we can just pass it the donation_item_params hash?
-  * [ 79] [TODO] - Test coverage for this method
-  * [100] [TODO] - This should check for existence of the item first.
-  * [110] [TODO] - Refactor this. "update" doesn't reflect that this "adds only"
 
 app/models/inventory_item.rb:
   * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?

@@ -143,8 +143,10 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "track" do
+      let!(:donation) { create(:donation) }
+      let!(:item) { create(:item) }
+
       it "does not add a new line_item unnecessarily, updating existing line_item instead" do
-        donation = create(:donation)
         item = create :item
         donation.track(item, 5)
         expect {
@@ -156,17 +158,6 @@ RSpec.describe Donation, type: :model do
       end
     end
 
-    describe "track_from_barcode" do
-      it "tracks from a barcode" do
-        donation = create :donation
-        barcode_item = create :barcode_item
-        expect{
-          donation.track_from_barcode(barcode_item.to_h)
-          donation.reload
-        }.to change{donation.items.count}.by(1)
-      end
-    end
-
     describe "contains_item_id?" do
       it "returns true if the item_id already exists" do
         donation = create(:donation, :with_item)
@@ -175,17 +166,28 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "update_quantity" do
+      let!(:donation) { create(:donation, :with_item) }
       it "adds an additional quantity to the existing line_item" do
-        donation = create(:donation, :with_item)
         expect {
           donation.update_quantity(1, donation.items.first)
           donation.reload
         }.to change{donation.line_items.first.quantity}.by(1)
       end
 
+      it "can receive a negative quantity to subtract inventory" do
+        expect {
+          donation.update_quantity(-1, donation.items.first)
+        }.to change{donation.total_quantity}.by(-1)
+      end
+
+      it "can never go negative even if a very large negative quantity is given" do
+        reduce_by_quantity = -1 * (donation.total_quantity + 1)
+        expect {
+          donation.update_quantity(reduce_by_quantity, donation.items.first)
+        }.to change{donation.total_quantity}.to(0)
+      end
+
       it "works whether you give it an item or an id" do
-        pending "TODO: refactor & fix"
-        donation = create(:donation, :with_item)
         expect {
           donation.update_quantity(1, donation.items.first.id)
           donation.reload
@@ -201,6 +203,10 @@ RSpec.describe Donation, type: :model do
         expect {
           donation.remove(item_id)
         }.to change{donation.line_items.count}.by(-1)
+      end
+
+      it "works with either an id or an object" do
+
       end
 
       it "fails gracefully if the item doesn't exist" do
