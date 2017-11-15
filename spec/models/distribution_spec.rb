@@ -25,12 +25,17 @@ RSpec.describe Distribution, type: :model do
       expect(build(:distribution, partner: nil)).not_to be_valid
     end
 
-    # TODO: distribution_spec: "ensures the associated line_items are valid"
-    xit "ensures the associated line_items are valid" do
+    it "ensures the associated line_items are valid" do
+      d = build(:distribution)
+      d.line_items << build(:line_item, quantity: nil)
+      expect(d).not_to be_valid
   	end
 
-    # TODO: distribution_spec: "ensures that any included items are found in the associated storage location"
-    xit "ensures that any included items are found in the associated storage location" do
+    it "ensures that any included items are found in the associated storage location" do
+      d = build(:distribution)
+      item_missing = create(:item, name: "missing")
+      d.line_items << build(:line_item, item: item_missing)
+      expect(d).not_to be_valid
     end
   end
 

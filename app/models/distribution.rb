@@ -26,8 +26,6 @@ class Distribution < ApplicationRecord
   include Itemizable
 
   validates :storage_location, :partner, :organization, presence: true
-  # TODO Should these be added to Itemizable?
-  validates_associated :line_items
   validate :line_item_items_exist_in_inventory
 
   include IssuedAt

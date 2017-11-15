@@ -19,7 +19,6 @@ class Adjustment < ApplicationRecord
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
 
   validates :storage_location, :organization, presence: true
-  validates_associated :line_items
   validate :line_item_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
 

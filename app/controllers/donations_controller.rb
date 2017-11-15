@@ -12,20 +12,19 @@ class DonationsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:scale_intake, :scale]
   skip_before_action :authenticate_user!, only: [:scale_intake, :scale]
   skip_before_action :authorize_user, only: [:scale_intake, :scale]
-  # TODO - needs to be able to handle barcodes too
-  def add_item
-    @donation = current_organization.donations.find(params[:id])
-    if (donation_item_params.has_key?(:barcode_id))
-      @donation.track_from_barcode(Barcode.find(donation_item_params[:barcode_id]).to_h)
-    else
-      @donation.track(donation_item_params[:item_id], donation_item_params[:quantity])
-    end
-  end
 
-  def remove_item
-    @donation = current_organization.donations.find(params[:id])
-    @donation.remove(donation_item_params[:item_id])
-  end
+#  def add_item
+#    @donation = current_organization.donations.find(params[:id])
+#    if (donation_item_params.has_key?(:barcode_id))
+#      donation_item_params[:item_id] = BarcodeItem.find!(donation_item_params[:barcode_id]).item_id
+#    end
+#    @donation.track(donation_item_params[:item_id], donation_item_params[:quantity])
+#  end
+
+#  def remove_item
+#    @donation = current_organization.donations.find(params[:id])
+#    @donation.remove(donation_item_params[:item_id])
+#  end
 
   def index
     @donations = current_organization.donations
