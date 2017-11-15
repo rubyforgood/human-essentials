@@ -34,6 +34,11 @@ RSpec.describe Donation, type: :model do
     it "requires an inventory (storage location)" do
       expect(build(:donation, storage_location_id: nil)).not_to be_valid
     end
+    it "is invalid when the line items are invalid" do
+      d = build(:donation)
+      d.line_items << build(:line_item, quantity: nil)
+      expect(d).not_to be_valid
+    end
   end
 
   context "Callbacks >" do
@@ -138,26 +143,18 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "track" do
+      let!(:donation) { create(:donation) }
+      let!(:item) { create(:item) }
+
       it "does not add a new line_item unnecessarily, updating existing line_item instead" do
-        donation = create(:donation)
         item = create :item
         donation.track(item, 5)
         expect {
           donation.track(item, 10)
+          donation.reload
         }.not_to change{donation.line_items.count}
 
         expect(donation.line_items.first.quantity).to eq(15)
-      end
-    end
-
-    describe "track_from_barcode" do
-      it "tracks from a barcode" do
-        donation = create :donation
-        barcode_item = create :barcode_item
-        expect{
-          donation.track_from_barcode(barcode_item.to_h)
-          donation.reload
-        }.to change{donation.items.count}.by(1)
       end
     end
 
@@ -169,21 +166,54 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "update_quantity" do
+      let!(:donation) { create(:donation, :with_item) }
       it "adds an additional quantity to the existing line_item" do
-        donation = create(:donation, :with_item)
         expect {
           donation.update_quantity(1, donation.items.first)
           donation.reload
         }.to change{donation.line_items.first.quantity}.by(1)
       end
 
+      it "can receive a negative quantity to subtract inventory" do
+        expect {
+          donation.update_quantity(-1, donation.items.first)
+        }.to change{donation.total_quantity}.by(-1)
+      end
+
+      it "can never go negative even if a very large negative quantity is given" do
+        reduce_by_quantity = -1 * (donation.total_quantity + 1)
+        expect {
+          donation.update_quantity(reduce_by_quantity, donation.items.first)
+        }.to change{donation.total_quantity}.to(0)
+      end
+
       it "works whether you give it an item or an id" do
-        pending "TODO: refactor & fix"
-        donation = create(:donation, :with_item)
         expect {
           donation.update_quantity(1, donation.items.first.id)
           donation.reload
         }.to change{donation.line_items.first.quantity}.by(1)
+      end
+    end
+
+    describe "remove" do
+      let!(:donation) { create(:donation, :with_item) }
+
+      it "removes the item from the donation" do
+        item_id = donation.line_items.last.item_id
+        expect {
+          donation.remove(item_id)
+        }.to change{donation.line_items.count}.by(-1)
+      end
+
+      it "works with either an id or an object" do
+
+      end
+
+      it "fails gracefully if the item doesn't exist" do
+        item_id = create(:item).id
+        expect {
+          donation.remove(item_id)
+        }.not_to change{donation.line_items.count}
       end
     end
 

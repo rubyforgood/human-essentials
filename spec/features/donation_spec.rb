@@ -214,13 +214,15 @@ RSpec.feature "Donations", type: :feature, js: true do
         visit @url_prefix + "/donations/new"
       end
 
-      scenario "a user can add items via scanning them in by barcode" do
+      scenario "a user can add items via scanning them in by barcode", :js do
         pending "The JS doesn't appear to be executing in this correctly"
         # enter the barcode into the barcode field
-        expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-        fill_in "Barcode Entry:", with: @existing_barcode.value + 13.chr
+        within "#donation_line_items" do
+          expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
+        end
         # the form should update
-        #save_and_open_page
+        save_and_open_page
         expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
         qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
 
