@@ -2,4 +2,8 @@
 
 <h1>Enter New Donation</h1>
 
-<%= render partial: "donation_form", object: @donation %>
+<% if @something.nil? %>
+  <%= render partial: "donation_form", object: @donation %>
+<% else %>
+  <%= render partial: "line_items_form", object: @donation %>
+<% end %>

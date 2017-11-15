@@ -12,6 +12,9 @@ class DonationsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:scale_intake, :scale]
   skip_before_action :authenticate_user!, only: [:scale_intake, :scale]
   skip_before_action :authorize_user, only: [:scale_intake, :scale]
+
+  respond_to :html
+
   # TODO - needs to be able to handle barcodes too
   def add_item
     @donation = current_organization.donations.find(params[:id])
@@ -67,9 +70,18 @@ class DonationsController < ApplicationController
 
   def create
     @donation = Donation.new(donation_params.merge(organization: current_organization))
+
+    if(@donation.valid? && @something.nil?)
+      @donation.line_items.build
+      @something = true
+      render action: :new
+      return
+    end
+
     if (@donation.save)
+
       @donation.storage_location.intake! @donation
-      redirect_to donations_path
+      redirect_to new_donations_path
     else
       @storage_locations = current_organization.storage_locations
       @dropoff_locations = current_organization.dropoff_locations

@@ -28,22 +28,6 @@
 
   <%= f.input :comment %>
 
-  <%= f.simple_fields_for :line_items do |item| %>
-    <div id="donation_line_items" data-capture-barcode="true">
-      <%= render 'line_item_fields', f: item %>
-    </div>
-    <div class="row links">
-      <div class="medium-offset-3 medium-6 columns">
-        <%= link_to_add_association "add line item", f, :line_items,
-        data: {
-          association_insertion_node: "#donation_line_items",
-          association_insertion_method: "append"
-        }, id: "__add_line_item"
-        %>
-      </div>
-    </div>
-  <% end %>
-
   <div class="medium-offset-3 medium-9 columns">
     <%= f.button :submit %>
   </div>
