@@ -220,9 +220,10 @@ class Scale extends React.Component {
           <br/>
           <br/>
           <br/>
+          {!connected &&
           <div className="large-6 small-centered">
             Manual Scale Weight Reading (g):<input type="text" className="" value={this.state.manualWeight} onChange={this.handleChange} />
-          </div>
+          </div>}
           <br/>
       Diaper Type
                 <br/>
