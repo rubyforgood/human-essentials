@@ -16,7 +16,13 @@
       <% ############# SIGNED IN ############### %>
       <% if user_signed_in? %>
         <li><%= navigation_link_to('Dashboard', dashboard_path) %></li>
-        <li><%= navigation_link_to('Donations', donations_path) %></li>
+        <li class="has-submenu">
+          <a href="javascript:void(0)">Donations</a>
+          <ul class="submenu menu vertical" data-submenu>
+            <li><%= navigation_link_to('New Donation', donations_path) %></li>
+            <li><%= navigation_link_to('Loose Donation', scale_donations_path) %></li>
+          </ul>
+        </li>        
         <li><%= navigation_link_to('Distributions', distributions_path)   %></li>
         <li class="has-submenu">
           <a href="javascript:void(0)">Inventory</a>
