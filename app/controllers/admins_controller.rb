@@ -27,13 +27,19 @@ class AdminsController < ApplicationController
 
   # TODO: who should be able to arrive here and how?
   def new
-    @org = Organization.new
+    @organization = Organization.new
   end
 
   # TODO: who should be able to arrive here and how?
+
   def create
     @organization = Organization.create(organization_params)
-    redirect_to admins_path, notice: "Organization added!"
+    if @organization.save
+      redirect_to admins_path, notice: "Organization added!"
+    else
+      flash[:alert] = "Failed to create Organization."
+      render :new
+    end
   end
 
   def show
