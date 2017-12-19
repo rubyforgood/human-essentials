@@ -14,7 +14,8 @@ RSpec.feature "Site Administration", type: :feature do
     fill_in "Address", with: org_params["address"]
     click_button "Create"
 
-    expect(page.find('.flash.success')).to have_content "added"
+    expect(page).to have_content(org_params["name"])
+    expect(page).to have_current_path(admins_path)
   end
 
   scenario "Admin can bail back to their own site" do
