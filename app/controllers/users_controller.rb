@@ -14,6 +14,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params.merge(organization_id: current_organization.id))
 
     if @user.save
+      @user.invite!(@user)
       redirect_to users_path, notice: 'Created a new user!'
     else
       flash[:alert] = 'Failed to create user'
