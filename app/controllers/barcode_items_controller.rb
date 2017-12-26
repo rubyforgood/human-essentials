@@ -6,7 +6,10 @@ class BarcodeItemsController < ApplicationController
 
   def create
     msg = "New barcode added"
-    if (barcode_item_params.delete(:global))
+    # FIXME: The "global" thing is a bit klunky. Perhaps this can be done better?
+    global = barcode_item_params.delete(:global)
+    global = nil unless (global.present? && global.to_i > 0)
+    if (global)
       @barcode_item = BarcodeItem.create(barcode_item_params)
       msg += " globally!"
     else
