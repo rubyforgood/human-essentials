@@ -1,6 +1,6 @@
 class BarcodeItemsController < ApplicationController
   def index
-    @barcode_items = current_organization.barcode_items.includes(:item).filter(filter_params)
+    @barcode_items = BarcodeItem.includes(:item).where(organization_id: current_organization.id).filter(filter_params)
     @items = current_organization.items.barcoded_items
   end
 
