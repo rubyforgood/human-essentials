@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :dropoff_location do
     organization { Organization.try(:first) || create(:organization) }
     name "Smithsonian Conservation Center"

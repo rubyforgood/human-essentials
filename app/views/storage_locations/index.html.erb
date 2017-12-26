@@ -2,10 +2,6 @@
 
 <% content_for :sidebar do %>
 
-                             <div class="header-action">
-  <%= link_to "New Storage Location", new_storage_location_path, class: "button float-right" %>
-</div>
-
 <% if @storage_locations.empty? %>
 
 <div class="reveal" id="addStorageLocationModal" data-reveal>

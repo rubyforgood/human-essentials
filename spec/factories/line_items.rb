@@ -11,7 +11,7 @@
 #  itemizable_type :string
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :line_item do
     quantity 0
     item

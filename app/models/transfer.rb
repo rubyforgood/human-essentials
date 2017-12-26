@@ -38,7 +38,6 @@ class Transfer < ApplicationRecord
 
 
   validates :from, :to, :organization, presence: true
-  validates_associated :line_items
   validate :line_item_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
 

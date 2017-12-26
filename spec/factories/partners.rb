@@ -10,7 +10,7 @@
 #  organization_id :integer
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :partner do
     sequence(:name) { |n| "Leslie Sue, the #{n}" }
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
