@@ -3,6 +3,15 @@ RSpec.feature "Barcode management", type: :feature do
     sign_in(@user)
   end
 
+  scenario "The barcode index only shows the barcodes created within the organization" do
+    item = create(:item, name: "1T Diapers")
+    item2 = create(:item, name: "2T Diapers")
+    create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.first)
+    create(:barcode_item, item: Item.last)
+    visit "/#{@organization.short_name}/barcode_items"
+    expect(page).to have_xpath("//table[@id='barcode_items']/tbody/tr", count: 1)
+  end
+
   context "With organization-specific barcodes" do
     let(:barcode_traits) { attributes_for(:barcode_item, :for_organization, organization_id: @organization.id) }
     let(:barcode) { create(:barcode_item, :for_organization, organization_id: @organization.id) }
@@ -46,16 +55,14 @@ RSpec.feature "Barcode management", type: :feature do
 
       expect(page.find('.flash.success')).to have_content "added globally"
     end
-
-
   end
 
 
   scenario "User can filter the #index by item type" do
     item = create(:item, name: "1T Diapers")
     item2 = create(:item, name: "2T Diapers")
-    create(:barcode_item, item: Item.first)
-    create(:barcode_item, item: Item.last)
+    create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.first)
+    create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.last)
     visit "/#{@organization.short_name}/barcode_items"
     select Item.first.name, from: "filters_item_id"
     click_button "Filter"
