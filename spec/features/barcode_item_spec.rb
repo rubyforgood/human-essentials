@@ -41,9 +41,7 @@ RSpec.feature "Barcode management", type: :feature do
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
       expect(page).to have_xpath("//input[@id='barcode_item_global']")
-      p barcode_traits
-      p find("input#barcode_item_global").click #.click
-      save_and_open_page
+      check "barcode_item_global"
       click_button "Create Barcode item"
 
       expect(page.find('.flash.success')).to have_content "added globally"
