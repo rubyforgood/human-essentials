@@ -59,7 +59,7 @@ end
 group :test do
   gem 'capybara', '~> 2.13'
   gem 'database_cleaner', '~> 1.5'
-  gem 'factory_girl_rails', '~> 4.8'
+  gem 'factory_bot_rails', '~> 4.8'
   gem 'launchy', '~> 2.4'
   gem 'phantomjs', '~> 2.1', require: "phantomjs/poltergeist"
   gem 'poltergeist', '~> 1.15'

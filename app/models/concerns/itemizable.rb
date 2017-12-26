@@ -42,7 +42,11 @@ module Itemizable
       allow_destroy: true,
       :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }
 
+		# Anything using line_items should not be OK with an invalid line_item
+		validates_associated :line_items
 	end
+
+
   private
 
   def line_item_items_exist_in_inventory

@@ -67,7 +67,6 @@ class Donation < ApplicationRecord
 #    self.includes(:line_items).map(&:total_quantity).reduce(0, :+)
 #  end
 
-  ## TODO - Can this be simplified so that we can just pass it the donation_item_params hash?
   def track(item,quantity)
     if contains_item_id?(item.id)
       update_quantity(quantity, item)
@@ -76,8 +75,9 @@ class Donation < ApplicationRecord
     end
   end
 
-  ## TODO - Test coverage for this method
-  def remove(item_id)
+  def remove(item)
+    # doing this will handle either an id or an object
+    item_id = item.to_i
     line_item = self.line_items.find_by(item_id: item_id)
     if (line_item)
       line_item.destroy
@@ -96,20 +96,17 @@ class Donation < ApplicationRecord
     self.line_items.sum(:quantity)
   end
 
-
-  ## TODO - This should check for existence of the item first. Also, I think there's a to_h method in Barcode, isn't there?
-  def track_from_barcode(barcode_hash)
-    LineItem.create(itemizable: self, item_id: barcode_hash[:item_id], quantity: barcode_hash[:quantity])
-  end
-
   def contains_item_id? id
     line_items.find_by(item_id: id).present?
   end
 
-  ## TODO - Refactor this. "update" doesn't reflect that this "adds only"
-  def update_quantity(q, i)
-    line_item = self.line_items.find_by(item_id: i.id)
-    line_item.quantity += q
+  # Use a negative quantity to subtract inventory
+  def update_quantity(quantity, item)
+    item_id = item.to_i
+    line_item = self.line_items.find_by(item_id: item_id)
+    line_item.quantity += quantity
+    # Inventory can never be negative
+    line_item.quantity = 0 if line_item.quantity < 0
     line_item.save
   end
 

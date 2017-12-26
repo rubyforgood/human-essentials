@@ -10,7 +10,7 @@
 #  updated_at          :datetime         not null
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :adjustment do
     organization { Organization.try(:first) || create(:organization) }
     storage_location

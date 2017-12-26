@@ -12,7 +12,7 @@
 #  issued_at           :datetime
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :distribution do
     storage_location
     partner

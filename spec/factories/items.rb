@@ -11,7 +11,7 @@
 #  organization_id :integer
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :item do
     sequence(:name) { |n| "#{n}T Diapers" }
     category "disposable"

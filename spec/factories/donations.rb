@@ -14,7 +14,7 @@
 #  issued_at                   :datetime
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :donation do
     dropoff_location
     diaper_drive_participant
