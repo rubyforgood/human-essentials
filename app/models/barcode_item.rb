@@ -9,6 +9,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
+#  global          :boolean          default(FALSE)
 #
 
 class BarcodeItem < ApplicationRecord
@@ -21,6 +22,7 @@ class BarcodeItem < ApplicationRecord
 
   include Filterable
   scope :item_id, ->(item_id) { where(item_id: item_id) }
+  scope :only_global, ->(global) { where(global: true) if global }
 
   # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
   def to_h

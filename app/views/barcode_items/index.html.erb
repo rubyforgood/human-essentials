@@ -5,7 +5,13 @@
   <h2>Filters</h2>
   <%= form_tag(barcode_items_path, method: :get) do |f| %>
     <%= label_tag "By Item Category" %>
-    <%= collection_select(:filters, :item_id, @items, :id, :name) %>
+    <%= collection_select(:filters, :item_id, @items, :id, :name, include_blank: true) %>
+
+    <%= label_tag do %>
+      <%= check_box_tag "filters[only_global]", "true", @global %>
+      Only show global
+    <% end %>
+
     <%= submit_tag "Filter", class: "button primary" %>
     <%= link_to "Clear Filters", barcode_items_path, class: "button secondary" %>
   <% end %>
@@ -16,7 +22,7 @@
   <%= link_to "Create New Barcode", new_barcode_item_path, class: "button float-right" %>
 </div>
 
-<h1>Barcodes</h1>
+<h1>Barcodes Specific to Our Organization</h1>
 
 <table id="barcode_items">
   <thead>

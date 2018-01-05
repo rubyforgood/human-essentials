@@ -23,21 +23,21 @@ RSpec.describe BarcodeItemsController, type: :controller do
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge({ id: create(:barcode_item) }) }
+      subject { get :edit, params: default_params.merge({ id: create(:barcode_item, global: true) }) }
       it "returns http success" do
         expect(subject).to have_http_status(:success)
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge({ id: create(:barcode_item) }) }
+      subject { get :show, params: default_params.merge({ id: create(:barcode_item, global: true) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #find" do
-      let!(:global_barcode) { create(:barcode_item) }
+      let!(:global_barcode) { create(:barcode_item, global: true) }
       let!(:organization_barcode) { create(:barcode_item, :for_organization, organization: @organization) }
       let!(:other_barcode) { create(:barcode_item, :for_organization, organization: create(:organization)) }
       context "via ajax" do
@@ -60,9 +60,10 @@ RSpec.describe BarcodeItemsController, type: :controller do
       end
     end
 
-
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge({ id: create(:barcode_item) }) }
+      pending "it doesn't allow a user to delete someone else's barcode"
+      pending "it doesn't allow a non-admin to delete a global barcode"
+      subject { delete :destroy, params: default_params.merge({ id: create(:barcode_item, :for_organization, organization_id: @organization.id) }) }
       it "redirecst to the index" do
         expect(subject).to redirect_to(barcode_items_path)
       end
