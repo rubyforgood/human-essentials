@@ -9,6 +9,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
+#  global          :boolean          default(FALSE)
 #
 
 RSpec.describe BarcodeItem, type: :model do
