@@ -16,7 +16,15 @@
 <div class="row">
   <div class='medium-4 large-4 columns'>
     <span class="float-center text-center">
-      <a class='button large primary' href='<%= new_donation_path %>'>New Inventory</a>
+      <button class='button dropdown large primary' type="button" data-toggle="example-dropdown2">New Inventory</button>
+
+    <div class="dropdown-pane bottom" id="example-dropdown2" data-dropdown>
+      <ul id="drop1" data-dropdown-content class="f-dropdown" style="list-style:none;" aria-hidden="true">
+        <li><a href="<%= donations_path %>">All Donations</a></li>
+        <li><a href="<%= new_donation_path %>">New Donation</a></li>
+        <li><a href="<%= scale_donations_path %>">Repackaged Donation</a></li>        
+      </ul>
+    </div>
     </span>
     <h3 class="text-center"><%= total_received %> items received <%= display_interval %></h3>
     <h4>Recent donations / purchases</h4>
