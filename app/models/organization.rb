@@ -24,7 +24,7 @@ class Organization < ApplicationRecord
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
 
   has_many :adjustments
-  has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where(organization_id: [nil,organization.id]) }
+  has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', organization.id, true) }
   has_many :distributions
   has_many :donations
   has_many :dropoff_locations
