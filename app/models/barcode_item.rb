@@ -9,6 +9,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
+#  global          :boolean          default(FALSE)
 #
 
 class BarcodeItem < ApplicationRecord
@@ -19,21 +20,9 @@ class BarcodeItem < ApplicationRecord
   validates :quantity, :item, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
-  # Virtual Attribute for "global" to make it play nice with
-  # forms. There might be a cleaner way to do this -- please
-  # refactor if this VA dirtiness is spilling over into other
-  # features or it's causing code distortion.
-  def global
-    # If this is a totally new record, we want to default to `false`
-    id.present? && organization_id.nil?
-  end
-
-  def global=(boolean_make_global)
-    organization_id = nil if boolean_make_global
-  end
-
   include Filterable
   scope :item_id, ->(item_id) { where(item_id: item_id) }
+  scope :only_global, ->(global) { where(global: true) if global }
 
   # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
   def to_h

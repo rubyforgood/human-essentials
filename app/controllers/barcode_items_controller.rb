@@ -2,20 +2,13 @@ class BarcodeItemsController < ApplicationController
   def index
     @barcode_items = BarcodeItem.includes(:item).where(organization_id: current_organization.id).filter(filter_params)
     @items = current_organization.items.barcoded_items
+    @global = filter_params[:only_global]
   end
 
   def create
     msg = "New barcode added"
-    # FIXME: The "global" thing is a bit klunky. Perhaps this can be done better?
-    global = barcode_item_params.delete(:global)
-    global = nil unless (global.present? && global.to_i > 0)
-    if (global)
-      @barcode_item = BarcodeItem.create(barcode_item_params)
-      msg += " globally!"
-    else
-      @barcode_item = current_organization.barcode_items.create(barcode_item_params)
-      msg += " to your private set!"
-    end
+    @barcode_item = current_organization.barcode_items.create(barcode_item_params)
+    msg += barcode_item_params[:global] == "1" ? " globally!" : " to your private set!"
     redirect_to barcode_items_path, notice: msg
   end
 
@@ -58,6 +51,6 @@ private
 
   def filter_params
     return {} unless params.has_key?(:filters)
-    params.require(:filters).slice(:item_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity)
+    params.require(:filters).slice(:item_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :only_global)
   end
 end

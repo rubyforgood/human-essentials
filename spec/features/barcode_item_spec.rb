@@ -74,7 +74,7 @@ RSpec.feature "Barcode management", type: :feature do
     item1 = create(:item, name: "AAA Diapers")
     item2 = create(:item, name: "Wonder Diapers")
     item3 = create(:item, name: "ABC Diapers")
-    expected_order = [item1.name, item3.name, item2.name]
+    expected_order = ['', item1.name, item3.name, item2.name]
 
     create(:barcode_item, item: item3)
     create(:barcode_item, item: item2)
