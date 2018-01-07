@@ -12,8 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require foundation
-// require turbolinks // Removed!
 //= require cocoon
 //= require toastr
 //
@@ -25,9 +23,6 @@
 //= require components
 //= require_tree .
 
-$(document).ready(function() {
-  $(document).foundation();
-});
 
 window.setTimeout(function() {
     $(".close-button").click();
