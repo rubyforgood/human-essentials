@@ -1,7 +1,7 @@
 <tr>
   <td><%= partner_row.name %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
-  <td><%= link_to "View", partner_path(partner_row), class: "button" %>    
-      <%= link_to "Edit", edit_partner_path(partner_row), class: "button" %> 
-      <%= link_to "Delete", partner_path(partner_row), method: :delete, class: "button alert", data: { confirm: "Are you sure?" } %></td>
+  <td class="pull-right"><%= link_to "View", partner_path(partner_row), class: "btn btn-info btn-sm" %>    
+      <%= link_to "Edit", edit_partner_path(partner_row), class: "btn btn-success btn-sm" %> 
+      <%= link_to "Delete", partner_path(partner_row), method: :delete, class: "btn btn-danger btn-sm", data: { confirm: "Are you sure?" } %></td>
 </tr>

@@ -54,25 +54,49 @@
 
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-
+          <li class="dropdown notifications-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-calendar"></i>
+              <span class="label label-danger">6</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li>
+                    <a href="#">
+                      <i class="fa fa-users text-aqua"></i> 6 Pick-ups this week
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="footer"><a href="#">View Calendar</a></li>
+            </ul>
+          </li>
+          <% if current_user.organization_admin? %>
+              <li>          
+              <%= link_to(admins_path) do %>
+                <i class="fa fa-lock"></i> Administration
+              <% end %>
+            </li>
+        <% end %>
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
               <span class="label label-warning">10</span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li>
                     <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                      <i class="fa fa-file-text text-aqua"></i> 10 Diaper Requests 
                     </a>
                   </li>
                 </ul>
               </li>
-              <li class="footer"><a href="#">View all</a></li>
+              <li class="footer"><a href="#">View Requests</a></li>
             </ul>
           </li>
           <!-- User Account: style can be found in dropdown.less -->
