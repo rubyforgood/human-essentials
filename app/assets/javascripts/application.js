@@ -10,6 +10,8 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require jquery
+//= require jquery_ujs
 //= require cocoon
 //= require toastr
 //= require Chart.bundle
@@ -28,4 +30,3 @@ window.setTimeout(function() {
 toastr.options = {
   "timeOut": "1400"
 }
-

@@ -1,16 +1,19 @@
-<%= simple_form_for form do |f| %>
 
-  <%= f.input :name,
-    label: "Name",
-    error: "You must enter a name" %>
+<form role="form">
+  <div class="box-body">
+    <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
+        <%= f.input :name,
+          label: "Name",
+          class: "form-control",            
+          error: "You must enter a name" %>
+        <%= f.input :email,
+          label: "E-mail",
+          error: "You must enter a valid e-mail",
+          class: "form-control",
+          as: :email %>
+          <%= f.button :submit, class:"btn btn-info"%>
+    <% end %>    
 
-  <%= f.input :email,
-    label: "E-mail",
-    error: "You must enter a valid e-mail",
-    as: :email %>
-
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
   </div>
-
-<% end %>
+</form>
+  <!-- /.box-body -->
