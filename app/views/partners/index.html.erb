@@ -5,7 +5,10 @@
     <small>for <%= current_organization.name %></small>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li><%= link_to(root_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
     <li><a href="#">Partner Agencies</a></li>
   </ol>
 </section>
