@@ -10,14 +10,10 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
-//= require jquery_ujs
 //= require cocoon
 //= require toastr
-//
 //= require Chart.bundle
 //= require chartkick
-//
 //= require react
 //= require react_ujs
 //= require components
