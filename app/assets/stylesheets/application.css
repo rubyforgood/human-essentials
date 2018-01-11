@@ -14,6 +14,11 @@
  *= require_self
  */
 
+
+#logo img {
+max-height: 100%;
+max-width: 100%;
+}
 .header-action {
   float: right;
   padding-top: 15px;
