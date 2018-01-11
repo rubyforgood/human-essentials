@@ -40,6 +40,7 @@
             </div>
           </div>          
         </div>
+        <div class="dropdown">
         <!-- /.box-body -->
       </div>
       <!-- /.box -->
@@ -59,14 +60,12 @@
                 <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
               </div>
             </div>
-            <div class="box-body">
-              <div class="chart">
+            <div class="box-body text-center float-center">
                 <button class='btn btn-large btn-primary center-block' href='<%= new_distribution_path %>'>New Distribution</button>
                 <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
                 <h4>Recent distributions</h4>
                 <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
                 <%= link_to "See more...", distributions_path %>
-              </div>
             </div>
             <!-- /.box-body -->
           </div>
@@ -77,13 +76,13 @@
             <div class="box-header with-border">
               <h3 class="box-title">Distributions</h3>
 
-              <div class="box-tools pull-right">
+              <div class="box-tools">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
                 <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
               </div>
             </div>
-            <div class="box-body">
+            <div class="box-body text-center">
               <h5 class="text-center">Distribution <%= display_interval %></h5>
               <%= bar_chart received_distributed_data %>
             </div>
@@ -105,17 +104,17 @@
                 <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
               </div>
             </div>
-            <div class="box-body">
-              <div class="chart">
+            <div class="box-body text-center float-center">
               <span class="float-center text-center">
               <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle center-block" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">New Inventory
-                  <span class="caret"></span></button>
-
-                <ul class="dropdown-menu center-block" aria-labelledby="dropdownMenu1">
-                  <li class="center-block"><a href="<%= donations_path %>">All Donations</a></li>
-                  <li class="center-block"><a href="<%= new_donation_path %>">New Donation</a></li>
-                  <li class="center-block"><a href="<%= scale_donations_path %>">Repackaged Donation</a></li>        
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  New Inventory
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu float-center" style="position: absolute;text-align:center;top: 100%;right: 0;margin-left: -100px;" aria-labelledby="dropdownMenu1">
+                 <li class="center-block"><a href="<%= donations_path %>">All Donations</a></li>
+                 <li class="center-block"><a href="<%= new_donation_path %>">New Donation</a></li>
+                 <li class="center-block"><a href="<%= scale_donations_path %>">Repackaged Donation</a></li>
                 </ul>
               </div>
               </span>
@@ -123,7 +122,6 @@
               <h4>Recent donations / purchases</h4>
               <%= render partial: "donation", collection: @recent_donations, as: :donation %>
               <%= link_to "See more...", donations_path %>
-              </div>
             </div>
             <!-- /.box-body -->
           </div>
