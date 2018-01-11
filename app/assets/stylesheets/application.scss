@@ -11,11 +11,15 @@
  * It is generally better to create a new file per style scope.
  *
  *= require toastr
+ *= require foundation_and_overrides
+ *= app-dashboard-layout
  *= require_tree .
  *= require_self
- *= require foundation_and_overrides
-
  */
+
+body {
+  padding: 0;
+}
 
 .header-action {
   float: right;
