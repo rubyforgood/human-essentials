@@ -62,9 +62,11 @@
             <div class="box-body text-center float-center">
                 <button class='btn btn-large btn-primary center-block' href='<%= new_distribution_path %>'>New Distribution</button>
                 <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
+                <div class="box-body">
                 <h4>Recent distributions</h4>
                 <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
                 <%= link_to "See more...", distributions_path %>
+              </div>
             </div>
             <!-- /.box-body -->
           </div>
@@ -118,9 +120,11 @@
               </div>
               </span>
               <h3 class="text-center"><%= total_received %> items received <%= display_interval %></h3>
+              <div class="box-body">
               <h4>Recent donations / purchases</h4>
               <%= render partial: "donation", collection: @recent_donations, as: :donation %>
               <%= link_to "See more...", donations_path %>
+            </div>
             </div>
             <!-- /.box-body -->
           </div>

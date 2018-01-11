@@ -54,218 +54,22 @@
         <span class="icon-bar"></span>
       </a>
 
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-calendar"></i>
-              <span class="label label-danger">6</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 6 Pick-ups this week
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="footer"><a href="#">View Calendar</a></li>
-            </ul>
-          </li>
-          <% if current_user.organization_admin? %>
-              <li>          
-              <%= link_to(admins_path) do %>
-                <i class="fa fa-lock"></i> Administration
-              <% end %>
-            </li>
-        <% end %>
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-file-text text-aqua"></i> 10 Diaper Requests 
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="footer"><a href="#">View Requests</a></li>
-            </ul>
-          </li>
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="hidden-xs"><%= current_user.name %></span>
-            </a>
-            <ul class="dropdown-menu">
-              <!-- User image -->
-              <li class="user-header">
-                <p>
-                  <%= current_user.name %>
-                </p>
-              </li>
-              <!-- Menu Body -->
-              <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Followers</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Sales</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Friends</a>
-                  </div>
-                </div>
-                <!-- /.row -->
-              </li>
-              <!-- Menu Footer-->
-              <li class="user-footer">
-                <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                </div>
-                <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+  <% if user_signed_in? %>
+    <%= render partial: "layouts/lte_navbar" %>
+  <% end %>
+
+
+
+
     </nav>
   </header>
 
   <!-- =============================================== -->
 
-  <!-- Left side column. contains the sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MAIN NAVIGATION</li>
-        <li>
-          <%= link_to(dashboard_path) do %>
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-          <% end %>
+  <% if user_signed_in? %>
+    <%= render partial: "layouts/lte_sidebar" %>
+  <% end %>
 
-<!--           <ul class="treeview-menu">
-            <li><a href="/index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-            <li><a href="/index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-          </ul> -->
-        </li>
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-gratipay"></i>
-            <span>Donations</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li>          
-              <%= link_to(donations_path) do %>
-                <i class="fa fa-circle-o"></i> All Donations
-              <% end %>
-            </li>
-            <li>          
-              <%= link_to(new_donation_path) do %>
-                <i class="fa fa-circle-o"></i> New Donation
-              <% end %>
-            </li>
-            <li>          
-              <%= link_to(scale_donations_path) do %>
-                <i class="fa fa-circle-o"></i> Repackaged Donation
-              <% end %>
-            </li>
-          </ul>
-        </li>
-        <li>
-        <li>          
-          <%= link_to(distributions_path) do %>
-            <i class="fa fa-circle-o"></i> <span>Distributions</span>
-          <% end %>
-        </li>          
-        </li>
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-pie-chart"></i>
-            <span>Inventory</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li>          
-              <%= link_to(items_path) do %>
-                <i class="fa fa-circle-o"></i> Items
-              <% end %>
-            </li>
-            <% if current_user.organization_admin? %>
-            <li>          
-              <%= link_to(barcode_items_path) do %>
-                <i class="fa fa-circle-o"></i> Barcode Items
-              <% end %>
-            </li>
-            <% end %>
-            <li>          
-              <%= link_to(storage_locations_path) do %>
-                <i class="fa fa-circle-o"></i> Storage Locations
-              <% end %>
-            </li>
-            <li>          
-              <%= link_to(adjustments_path) do %>
-                <i class="fa fa-circle-o"></i> Adjustments
-              <% end %>
-            </li>
-            <li>          
-              <%= link_to(transfers_path) do %>
-                <i class="fa fa-circle-o"></i> Transfers
-              <% end %>
-            </li>
-          </ul>
-        </li>
-
-
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-laptop"></i>
-            <span>Community</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li>          
-              <%= link_to(dropoff_locations_path) do %>
-                <i class="fa fa-circle-o"></i> Donation Dropoff Locations
-              <% end %>
-            </li>
-            <li>          
-              <%= link_to(partners_path) do %>
-                <i class="fa fa-circle-o"></i> Partner Agencies
-              <% end %>
-            </li>
-            <li>          
-              <%= link_to(diaper_drive_participants_path) do %>
-                <i class="fa fa-circle-o"></i> Diaper Drive Participants
-              <% end %>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </section>
-    <!-- /.sidebar -->
-  </aside>
 
   <!-- =============================================== -->
 
