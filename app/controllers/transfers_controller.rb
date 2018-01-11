@@ -16,18 +16,18 @@ class TransfersController < ApplicationController
       if @transfer.save
         redirect_to transfers_path, notice: 'Transfer was successfully created.'
       else
-        flash[:notice] = "There was an error, try again?"
+        flash[:alert] = "There was an error, try again?"
         render :new
       end
     else
-      flash[:notice] = "There was an error creating the transfer"
+      flash[:alert] = "There was an error creating the transfer"
       @storage_locations = current_organization.storage_locations.alphabetized
       @items = current_organization.items.alphabetized
       @transfer.line_items.build unless @transfer.line_items.size > 0
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
-    flash[:notice] = ex.message
+    flash[:alert] = ex.message
     render :new
   end
 
