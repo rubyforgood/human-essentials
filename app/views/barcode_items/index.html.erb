@@ -1,38 +1,72 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Barcode Items" %>
-
-<% content_for :sidebar do %>
-<section id="filters">
-  <h2>Filters</h2>
-  <%= form_tag(barcode_items_path, method: :get) do |f| %>
-    <%= label_tag "By Item Category" %>
-    <%= collection_select(:filters, :item_id, @items, :id, :name, include_blank: true) %>
-
-    <%= label_tag do %>
-      <%= check_box_tag "filters[only_global]", "true", @global %>
-      Only show global
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Inventory - Barcode Items" %>
+  <h1>
+    Barcode Items
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
     <% end %>
-
-    <%= submit_tag "Filter", class: "button primary" %>
-    <%= link_to "Clear Filters", barcode_items_path, class: "button secondary" %>
-  <% end %>
+    </li>
+    <li><a href="#">Barcode Items</a></li>
+  </ol>
 </section>
-<% end %>
 
-<div class="header-action">
-  <%= link_to "Create New Barcode", new_barcode_item_path, class: "button float-right" %>
+<!-- Main content -->
+<section class="content">
+
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+      <div class="row">
+        <div class="col-xs-4">
+      <h3 class="box-title">Barcodes Unique to my Organization</h3>
+        </div>
+        <div class="col-xs-8">
+        <%= form_tag(barcode_items_path, method: :get) do |f| %>
+          <%= label_tag "Filter By Item Category" %>
+          <%= collection_select(:filters, :item_id, @items, :id, :name, include_blank: true) %>
+
+          <%= label_tag do %>
+            <%= check_box_tag "filters[only_global]", "true", @global %>
+            Only show global
+          <% end %>
+
+          <%= submit_tag "Filter", class: "btn btn-primary btn-xs" %>
+          <%= link_to "Clear Filters", barcode_items_path, class: "button secondary" %>
+        <% end %>
+        </div>
+      </div>
+      <%= link_to "Create New Barcode", new_barcode_item_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
+    </div>
+<div class="box-body">
+  <div class="row">
+    <div class="col-xs-12">
+        <!-- /.box-header -->
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+          <tr>
+            <th>Item Type</th>
+            <th>Quantity in the Box</th>
+            <th>Barcode</th>
+            <th>&nbsp;</th>
+          </tr>
+            <%= render partial: "barcode_item_row", collection: @barcode_items %>
+          </table>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+  </div>
 </div>
+</section>
 
-<h1>Barcodes Specific to Our Organization</h1>
 
-<table id="barcode_items">
-  <thead>
-    <tr>
-      <th>Item Type</th>
-      <th>Quantity in the Box</th>
-      <th>Barcode</th>
-      <th>&nbsp;</th>
-  </thead>
-  <tbody>
-    <%= render partial: "barcode_item_row", collection: @barcode_items %>
-  </tbody>
-</table>
+
+
+
+
+
+
+
