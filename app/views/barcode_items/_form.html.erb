@@ -1,25 +1,23 @@
-<%= simple_form_for form do |f| %>
+<form role="form">
+  <div class="box-body">
+    <%= simple_form_for form, html: { class: 'form-horizontal', method:'post' } do |f| %>
+      <%= f.input :quantity, label: "Quantity:", wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+        <%= f.input_field :quantity, class: "form-control" %>
+      <% end %>
 
-  <%= f.input :quantity,
-    label: "Quantity",
-    error: "Please enter a quantity for this package" %>
+      <%= f.association :item, collection: @items, label: "Item Type:" %>
 
-  <%= f.association :item,
-    collection: @items,
-    label: "Item",
-    error: "Choose an item from the list" %>
+      <%= f.input :value, label: "Value:", wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+        <%= f.input_field :value, class: "form-control" %>
+      <% end %>      
 
-  <%= f.input :value,
-    label: "Barcode",
-    error: "You must scan a barcode for this" %>
+      <%= f.input :global,
+        label: "Make this barcode available to everyone?" %>
+    
+      <%= f.button :submit, class:"btn btn-info"%>
 
-  <%= f.input :global,
-      label: "Make this barcode available to everyone?" %>
-  <% #<label for"barcode_item_global"><input type="checkbox" name="barcode_item_global" id="barcode_item_global" value="true" /> Make this barcode available to everyone?</label>
-  %>
-
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
+    <% end %>
   </div>
-
-<% end %>
+</form>

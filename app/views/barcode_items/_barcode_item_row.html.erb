@@ -2,7 +2,8 @@
   <td><%= barcode_item_row.item.name %></td>
   <td><%= barcode_item_row.quantity %></td>
   <td><%= barcode_item_row.value %></td>
-  <td><%= link_to "View", barcode_item_path(barcode_item_row), class: "button" %>
-      <%= link_to "Edit", edit_barcode_item_path(barcode_item_row), class: "button" %>
-      <%= link_to "Delete", barcode_item_path(barcode_item_row), method: :delete, class: "button alert", data: { confirm: "Are you sure?" } %>
+  <td class="pull-right">
+  		<%= link_to "View", barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" %>
+      <%= link_to "Edit", edit_barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" %>
+      <%= link_to "Delete", barcode_item_path(barcode_item_row), method: :delete, class: "btn btn-danger btn-xs", data: { confirm: "Are you sure?" } %>
 </tr>
