@@ -2,8 +2,9 @@
   <td><%= storage_location.name %></td>
   <td><%= storage_location.address %></td>
   <td><%= storage_location.size %></td>
-  <td><%= link_to "View", storage_location, class: "button" %>
-  <%= link_to "Edit", edit_storage_location_path(storage_location), class: "button" %>
-  <%= link_to "Delete", storage_location, method: :delete, class: "button alert", data: { confirm: "Are you sure?" } %>
+  <td class="pull-right">
+  <%= link_to "View", storage_location, class: "btn btn-info btn-xs" %>
+  <%= link_to "Edit", edit_storage_location_path(storage_location), class: "btn btn-info btn-xs" %>
+  <%= link_to "Delete", storage_location, method: :delete, class: "btn btn-danger btn-xs", data: { confirm: "Are you sure?" } %>
   </td>
 </tr>
