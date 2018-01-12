@@ -1,13 +1,19 @@
-<%= simple_form_for(@adjustment) do |f| %>
-  <%= f.error_notification %>
 
-  <div class="form-inputs">
-    <%= f.association :organization %>
-    <%= f.association :storage_location %>
-    <%= f.input :comment %>
-  </div>
 
-  <div class="form-actions medium-offset-3 medium-6">
-    <%= f.button :submit %>
+<form role="form">
+  <div class="box-body">
+    <%= simple_form_for @adjustment, html: { class: 'form-horizontal', method:'post' } do |f| %>
+	
+	    <%= f.association :organization %>
+	    <%= f.association :storage_location %>
+
+      <%= f.input :comment, label: "Comments:", wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-sticky-note-o"></i></span>
+        <%= f.input_field :comment, class: "form-control" %>
+      <% end %>
+
+      <%= f.button :submit, class:"btn btn-info"%>
+
+    <% end %>
   </div>
-<% end %>
+</form>
