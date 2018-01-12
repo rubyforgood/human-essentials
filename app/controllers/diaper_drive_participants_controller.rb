@@ -8,7 +8,7 @@ class DiaperDriveParticipantsController < ApplicationController
     if (@diaper_drive_participant.save)
       redirect_to diaper_drive_participants_path, notice: "New diaper drive participant added!"
     else
-      flash[:notice] = "Something didn't work quite right -- try again?"
+      flash[:alert] = "Something didn't work quite right -- try again?"
       render action: :new
     end
 
