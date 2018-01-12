@@ -39,7 +39,7 @@ class AdjustmentsController < ApplicationController
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
-    flash[:notice] = ex.message
+    flash[:alert] = ex.message
     render :new
   end
 
