@@ -1,7 +1,7 @@
 <section class="content-header">
 <% content_for :title, "#{current_organization.name} - Agencies - Partners - #{@partner.name} - Edit" %>
 <h1>
-  Dashboard
+  Editing Partner Information
   <small>for <%= current_organization.name %></small>
 </h1>
 <ol class="breadcrumb">
@@ -23,10 +23,7 @@
     <h3 class="box-title">Update record for <%= @partner.name %></h3>
   </div>
   <div class="box-body">
-
-  <h1 class="medium-offset-3 medium-6"></h1>
-  
-  <%= render partial: "form", object: @partner %>
+    <%= render partial: "form", object: @partner %>
   </div>
 </div>
 <!-- /.box -->
