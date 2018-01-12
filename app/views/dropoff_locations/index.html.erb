@@ -1,46 +1,87 @@
-<% content_for :title, "#{current_organization.name} - Agencies - Donation Dropoff Locations" %>
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Agencies - Donation Dropoff Locations" %>
+  <h1>
+    Dropoff Locations
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><a href="#">Dropoff Locations</a></li>
+  </ol>
+</section>
 
+<!-- Main content -->
+<section class="content">
 
-<div class="header-action">
-  <%= link_to "New Donation Dropoff Location", new_dropoff_location_path(organization_id: current_organization), class: "button float-right" %>
-</div>
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+      <h3 class="box-title">All Dropoff Locations</h3>  <%= link_to "New Dropoff Location", new_dropoff_location_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
+
+    </div>
+    <div class="box-body">
 
 <% if @dropoff_locations.empty? %>
 
-<div class="reveal" id="addStorageLocationModal" data-reveal>
-  <h2 id="modalTitle">Import Dropoff Locations</h2>
-  <p class="lead">Instructions:</p>
-    <ol>
-      <li><%= link_to "Download example csv", "/dropoff_locations.csv", :format => :csv, :class => "btn btn-info" %>.</li>
-      <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-      <li>Delete the sample data and enter your dropoff location names and addresses in the appropriate columns.</li>
-      <li>Save the file as a csv file.</li>
-      <li>Click the choose file button and navigate to the saved file and select it.</li>
-      <li>Then click the Import CSV button to import your storage locations.</li>
-    </ol>
-    <p class="help-text">Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</p>
-
-    <%= form_tag import_csv_dropoff_locations_path, multipart: true do %>
-        <%= file_field_tag :file, :accept => 'text/csv' %>
-        <%= submit_tag "Import CSV", :class => "btn btn-white" %>
-    <% end %>
+<div class="import-partners">
+    <!-- Button HTML (to Trigger Modal) -->
+    <a href="#importDropoffLocationModal" class="btn btn-xs btn-primary" data-toggle="modal">Import Dropoff Locations</a>
+    
+    <!-- Modal HTML -->
+    <div id="importDropoffLocationModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h2 class="modal-title">Import Dropoff Locations Instructions:</h4>
+                </div>
+                <div class="modal-body">
+                  <ol>
+                    <li><%= link_to "Download example csv", "/dropoff_locations.csv", :format => :csv, :class => "btn btn-xs btn-info" %>.</li>
+                    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+                    <li>Delete the sample data and enter your dropoff location names and addresses in the appropriate columns.</li>
+                    <li>Save the file as a csv file.</li>
+                    <li>Click the choose file button and navigate to the saved file and select it.</li>
+                    <li>Then click the Import CSV button to import your storage locations.</li>
+                  </ol>
+                <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
+                </div>
+                <div class="modal-footer">
+                  <%= form_tag import_csv_dropoff_locations_path, multipart: true do %>
+                    <%= file_field_tag :file, :accept => 'text/csv' %>
+                    <%= submit_tag "Import CSV", :class => "btn btn-sm btn-primary" %>
+                  <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<br/>
-<p><a class="button success" data-open="addStorageLocationModal">Import Dropoff Locations</a></p>
-<% end %>
+
+<% end %>                                                              
+
+<div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+        <tr>
+          <th>Dropoff Location</th>
+          <th>Address</th>
+          <th>&nbsp;</th>
+        </tr>
+          <%= render partial: "dropoff_location_row", collection: @dropoff_locations %>
+        </table>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+  </div>
+</div>
+</section>
 
 
-<h1 data-tooltip aria-haspopup="true" class="has-tip" title="Business Locations that accept donations on behalf of the organization.">Donation Dropoff Locations</h1>
 
-<table id="dropoff_locations">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Address</th>
-      <th>&nbsp;</th>
-  </thead>
 
-  <tbody>
-    <%= render partial: "dropoff_location_row", collection: @dropoff_locations %>
-  </tbody>
-</table>
+
