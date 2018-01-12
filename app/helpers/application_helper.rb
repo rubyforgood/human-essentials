@@ -9,6 +9,11 @@ module ApplicationHelper
     end
   end
 
+   def active_class(name)
+     name.include?(controller_name) ? 'active' : controller_name
+   end
+
+
   # wraps link_to_unless_current to provide Foundation6 friendly <a> tags
   def navigation_link_to(*args)
     link_to_unless_current(*args) do
