@@ -1,48 +1,93 @@
-<% content_for :title, "#{current_organization.name} - Distributions - New" %>
 
-<h1 class="medium-offset-3 medium-6">Create a new distribution</h1>
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Distributions - New" %>
+  <h1>
+    New Distribution
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Distributions", (distributions_path) %></li>  
+    <li class="active"> New Distribution</li>
+  </ol>
+</section>
 
-<%= simple_form_for @distribution do |f| %>
+<!-- Main content -->
+<section class="content">
 
-  <%= f.association :partner,
-    label: "Partner",
-    error: "Which partner is this distribution going to?" %>
-
-  <%= f.association :storage_location,
-    collection: @storage_locations,
-    label: "From storage location",
-    error: "Which location are you moving inventory from?",
-    input_html: {
-      data: {
-        storage_location_inventory_path: inventory_storage_location_path(
-          organization_id: current_organization,
-          id: ":id",
-          format: :json
-        )
-      }
-    }
-  %>
-
-  <%= f.input :comment, label: "Comment" %>
-
-  <%= f.simple_fields_for :line_items do |item| %>
-    <div id="distribution_line_items" data-capture-barcode="true">
-      <%= render 'line_item_fields', f: item %>
-    </div>
-    <div class="row links">
-      <div class="medium-offset-3 medium-6 columns">
-        <%= link_to_add_association "add line item", f, :line_items,
-          data: {
-            association_insertion_node: "#distribution_line_items",
-            association_insertion_method: "append"
-          }, id: "__add_line_item"
-        %>
-      </div>
-    </div>
-  <% end %>
-
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">New Distribution</h3>
   </div>
+  <div class="box-body">
 
-<% end %>
+  <%= simple_form_for @distribution do |f| %>
+
+    <%= f.association :partner,
+      label: "Partner",
+      error: "Which partner is this distribution going to?" %>
+
+    <%= f.association :storage_location,
+      collection: @storage_locations,
+      label: "From storage location",
+      error: "Which location are you moving inventory from?",
+      input_html: {
+        data: {
+          storage_location_inventory_path: inventory_storage_location_path(
+            organization_id: current_organization,
+            id: ":id",
+            format: :json
+          )
+        }
+      }
+    %>
+
+    <%= f.input :comment, label: "Comment" %>
+
+    <%= f.simple_fields_for :line_items do |item| %>
+      <div id="distribution_line_items" data-capture-barcode="true">
+        <%= render 'line_item_fields', f: item %>
+      </div>
+      <div class="row links">
+        <div class="medium-offset-3 medium-6 columns">
+          <%= link_to_add_association "add line item", f, :line_items,
+            data: {
+              association_insertion_node: "#distribution_line_items",
+              association_insertion_method: "append"
+            }, id: "__add_line_item"
+          %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="medium-offset-3 medium-6">
+      <%= f.button :submit %>
+    </div>
+
+  <% end %>
+  </div>
+</div>
+<!-- /.box -->
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,21 +1,55 @@
-<% content_for :title, "#{current_organization.name} - Distributions" %>
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Distributions" %>
+  <h1>
+    Distributions
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><a href="#">Distributions</a></li>
+  </ol>
+</section>
 
-<div class="header-action">
-  <%= link_to "New Distribution", new_distribution_path(organization_id: current_organization), class: "button float-right" %>
-</div>
+<!-- Main content -->
+<section class="content">
 
-<h1>Distributions</h1>
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+      <h3 class="box-title">All Distributions</h3>  <%= link_to "New Distribution", new_distribution_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
 
-<table id="distributions">
-  <thead>
-    <tr>
-      <th>Partner</th>
-      <th>Source Inventory</th>
-      <th>Total items</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render partial: "distribution_row", collection: @distributions %>
-  </tbody>
-</table>
+    </div>
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+              <tr>
+                <th>Partner</th>
+                <th>Source Inventory</th>
+                <th>Total items</th>
+                <th>&nbsp;</th>
+              </tr>
+                <%= render partial: "distribution_row", collection: @distributions %>
+              </table>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
