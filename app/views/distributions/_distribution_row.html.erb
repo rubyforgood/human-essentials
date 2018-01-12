@@ -2,9 +2,9 @@
   <td><%= distribution_row.partner.name %></td>
   <td><%= distribution_row.storage_location.name %></td>
   <td><%= distribution_row.line_items.total %></td>
-  <td>
-    <%= link_to "View", distribution_path(distribution_row), class: "button" %>
-    <%= link_to "Print", print_distribution_path(distribution_row, format: :pdf), class: "button" %>
-    <%= link_to "Reclaim", reclaim_distribution_path(distribution_row), method: :post, data: { confirm: "Are you sure?" }, class: "button" %>
+  <td class="pull-right">
+    <%= link_to "View", distribution_path(distribution_row), class: "btn btn-info btn-xs" %>
+    <%= link_to "Print", print_distribution_path(distribution_row, format: :pdf), class: "btn btn-info btn-xs" %>
+    <%= link_to "Reclaim", reclaim_distribution_path(distribution_row), method: :post, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-xs" %>
   </td>
 </tr>
