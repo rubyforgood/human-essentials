@@ -1,33 +1,67 @@
-<% content_for :title, "#{current_organization.name} - Users" %>
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Users" %>
+  <h1>
+    Users
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><a href="#"><%= current_organization.name %> Users</a></li>
+  </ol>
+</section>
 
-<div class="header-action">
-  <%= link_to "Add a user", new_user_path, class: "button float-right" %>
-</div>
+<!-- Main content -->
+<section class="content">
 
-<h1><%= current_organization.name %> Users</h1>
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+      <h3 class="box-title">All Users</h3>  <%= link_to "Add a user", new_user_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
 
-<table>
-  <thead>
-    <tr>
-      <td>Name</td>
-      <td>Email</td>
-      <td></td>
-    </tr>
-  </thead>
-  <tbody>
-    <% @users.each do |user| %>
+    </div>
+    <div class="box-body">                                                      
+
+<div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+        <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th></th>
+        </tr>
+        <% @users.each do |user| %>
       <tr>
         <td><%= user.name %></td>
         <td><%= user.email %></td>
-        <td>
+        <td class="pull-right">
           <% if user != current_user %>
-            <%= link_to "Edit", edit_user_path(user) %>
-            <%= link_to "Delete", user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?" %>
+            <%= link_to "Delete", user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?", class: "btn btn-danger btn-xs" %>
           <% else %>
-            <%= link_to "Edit", edit_user_registration_path(organization_id: nil) %>
+            <%= link_to "Edit", edit_user_registration_path(organization_id: nil), class: "btn btn-info btn-xs" %>
           <% end %>
         </td>
       </tr>
     <% end %>
-  </tbody>
-</table>
+      </table>
+      <!-- /.box-body -->
+    </div>
+  </div>
+    <!-- /.box -->
+  </div>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+
