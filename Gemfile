@@ -12,8 +12,8 @@ gem 'coffee-rails', '~> 4.2'
 gem 'devise', '~> 4.3'
 gem 'devise_invitable'
 gem 'dotenv-rails', '~> 2.2'
-# gem 'foundation-rails', '~> 6.3.0'
-# gem 'foundation_rails_helper', '>= 3.0.0.rc2', '< 4.0'
+gem "font-awesome-rails"
+gem "font-ionicons-rails"
 gem 'groupdate', '~> 3.2'
 gem 'jbuilder', '~> 2.5'
 gem 'jquery-rails', '~> 4.3'
