@@ -12,6 +12,9 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require bootstrap.min
+//= require fastclick
+//= require adminlte.min
 //= require cocoon
 //= require toastr
 //= require Chart.bundle
@@ -23,8 +26,10 @@
 
 
 window.setTimeout(function() {
-    $(".close-button").click();
-}, 3000);
+    $(".alert").fadeTo(1000, 0).slideUp(1000, function(){
+        $(this).remove(); 
+    });
+}, 2500);
 
 // Global toastr options
 toastr.options = {

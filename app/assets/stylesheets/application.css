@@ -11,9 +11,14 @@
  * It is generally better to create a new file per style scope.
  *
  *= require toastr
+ *= require font-awesome
+ *= require ionicons
+ *= require AdminLTE
+ *= require bootstrap.min
+ *= require _all-skins
+ *= require scale
  *= require_self
  */
-
 
 #logo img {
 max-height: 100%;

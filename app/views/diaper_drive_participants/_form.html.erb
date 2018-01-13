@@ -1,23 +1,21 @@
-<form role="form">
-  <div class="box-body">
-    <%= simple_form_for form, html: { class: 'form-horizontal', method:'post' } do |f| %>
-      <%= f.input :name, label: "Name:", wrapper: :vertical_input_group do %>
-        <span class="input-group-addon"><i class="fa fa-user"></i></span>
-        <%= f.input_field :name, class: "form-control" %>
-      <% end %>
-
-      <%= f.input :phone, label: "Phone:", wrapper: :vertical_input_group do %>
-        <span class="input-group-addon"><i class="fa fa-phone"></i></span>
-        <%= f.input_field :phone, class: "form-control" %>
-      <% end %>
-
-      <%= f.input :email, label: "E-mail:", wrapper: :vertical_input_group do %>
-        <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-        <%= f.input_field :email, class: "form-control" %>
-      <% end %>      
-
-      <%= f.button :submit, class:"btn btn-info"%>
-
+<div class="box-body">
+  <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
+    <%= f.input :name, label: "Name:", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :name, class: "form-control" %>
     <% end %>
-  </div>
-</form>
+
+    <%= f.input :phone, label: "Phone:", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+      <%= f.input_field :phone, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :email, label: "E-mail:", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+      <%= f.input_field :email, class: "form-control" %>
+    <% end %>      
+
+    <%= f.button :submit, class:"btn btn-info"%>
+
+  <% end %>
+</div>

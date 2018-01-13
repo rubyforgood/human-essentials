@@ -46,7 +46,7 @@ body {
   position: relative;
 }
 .layout-boxed {
-  background: url('../img/boxed-bg.jpg') repeat fixed;
+  background: url('/assets/boxed-bg.jpg') repeat fixed;
 }
 /*
  * Content Wrapper - contains the main content
@@ -2842,6 +2842,10 @@ table.text-center th {
   border-radius: 50%;
   width: 40px;
   float: left;
+}
+.logo img{
+  max-height: 100%;
+  max-width: 100%;
 }
 .contacts-list-info {
   margin-left: 45px;

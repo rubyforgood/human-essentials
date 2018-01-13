@@ -135,6 +135,10 @@ GEM
       factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
     ffi (1.9.18)
+    font-awesome-rails (4.7.0.3)
+      railties (>= 3.2, < 5.2)
+    font-ionicons-rails (2.0.1.5)
+      railties (>= 3.2, < 6.0)
     formatador (0.2.5)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -372,6 +376,8 @@ DEPENDENCIES
   devise_invitable
   dotenv-rails (~> 2.2)
   factory_bot_rails (~> 4.8)
+  font-awesome-rails
+  font-ionicons-rails
   groupdate (~> 3.2)
   guard-rspec (~> 4.7)
   jbuilder (~> 2.5)
