@@ -16,7 +16,9 @@
 
   <header class="main-header">
     <!-- Logo -->
+    <% if user_signed_in? %>
     <a href="<%= dashboard_path %>" class="logo">
+    <% end %>
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><img src="/apple-icon-180x180.png">
     </span>
@@ -33,13 +35,9 @@
         <span class="icon-bar"></span>
       </a>
 
-  <% if user_signed_in? %>
-    <%= render partial: "layouts/lte_navbar" %>
-  <% end %>
-
-
-
-
+    <% if user_signed_in? %>
+      <%= render partial: "layouts/lte_navbar" %>
+    <% end %>
     </nav>
   </header>
 
