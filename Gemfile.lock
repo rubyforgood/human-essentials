@@ -59,6 +59,8 @@ GEM
     bindex (0.5.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bugsnag (6.6.1)
+      concurrent-ruby (~> 1.0)
     builder (3.2.3)
     byebug (9.1.0)
     capistrano (3.9.1)
@@ -365,6 +367,7 @@ DEPENDENCIES
   awesome_print (~> 1.7)
   better_errors (~> 2.1)
   binding_of_caller (~> 0.7)
+  bugsnag
   byebug (~> 9.0)
   capistrano-bundler (~> 1.2)
   capistrano-rails (~> 1.2)
