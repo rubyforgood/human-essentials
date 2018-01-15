@@ -45,13 +45,17 @@
         <!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
           <table class="table table-hover">
-          <tr>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Barcodes</th>
-            <th>&nbsp;</th>
-          </tr>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Barcodes</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
             <%= render partial: "item_row", collection: @items %>
+          </tbody>
           </table>
         <!-- /.box-body -->
       </div>

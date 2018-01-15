@@ -78,13 +78,17 @@
           <!-- /.box-header -->
           <div class="box-body table-responsive no-padding">
             <table class="table table-hover">
-            <tr>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Total Inventory</th>
-              <th>&nbsp;</th>
-            </tr>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Total Inventory</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
               <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
+            </tbody>
             </table>
           <!-- /.box-body -->
         </div>

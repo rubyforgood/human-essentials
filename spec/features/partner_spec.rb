@@ -12,9 +12,9 @@ RSpec.feature "Partner management", type: :feature do
       visit url_prefix + '/partners'
     end
     scenario "the partner agency names are in alphabetical order" do
-      expect(page).to have_xpath("//table[@id='partners']/tbody/tr", count: 3)
-      expect(page.find(:xpath, "//table[@id='partners']/tbody/tr[1]/td[1]")).to have_content(@first.name)
-      expect(page.find(:xpath, "//table[@id='partners']/tbody/tr[3]/td[1]")).to have_content(@third.name)
+      expect(page).to have_css("table tr", count: 4)
+      expect(page.find(:xpath, "//table/tr[2]/td[1]")).to have_content(@first.name)
+      expect(page.find(:xpath, "//table/tr[4]/td[1]")).to have_content(@third.name)
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.feature "Partner management", type: :feature do
     fill_in "E-mail", with: "frank@frank.com"
     click_button "Create Partner"
 
-    expect(page.find('.flash.success')).to have_content "added"
+    expect(page.find('.alert')).to have_content "added"
   end
 
   scenario "User can update a partner" do
@@ -33,7 +33,7 @@ RSpec.feature "Partner management", type: :feature do
     fill_in "Name", with: "Franklin"
     click_button "Update Partner"
 
-    expect(page.find('.flash.success')).to have_content "updated"
+    expect(page.find('.alert')).to have_content "updated"
     partner.reload
     expect(partner.name).to eq('Franklin')
   end

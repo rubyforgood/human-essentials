@@ -67,12 +67,16 @@
       <!-- /.box-header -->
       <div class="box-body table-responsive no-padding">
         <table class="table table-hover">
-        <tr>
-          <th>Partner</th>
-          <th>E-mail</th>
-          <th>&nbsp;</th>
-        </tr>
-        <%= render partial: "partner_row", collection: @partners %>
+          <thead>  
+            <tr>
+              <th>Partner</th>
+              <th>E-mail</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "partner_row", collection: @partners %>
+          </tbody>
         </table>
       <!-- /.box-body -->
     </div>

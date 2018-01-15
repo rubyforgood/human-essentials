@@ -4,7 +4,7 @@
     <%= f.association :organization %>
     <%= f.association :storage_location %>
 
-    <%= f.input :comment, label: "Comments:", wrapper: :vertical_input_group do %>
+    <%= f.input :comment, label: "Comments", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-sticky-note-o"></i></span>
       <%= f.input_field :comment, class: "form-control" %>
     <% end %>
