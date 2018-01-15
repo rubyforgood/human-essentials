@@ -67,12 +67,16 @@
       <!-- /.box-header -->
       <div class="box-body table-responsive no-padding">
         <table class="table table-hover">
-        <tr>
-          <th>Dropoff Location</th>
-          <th>Address</th>
-          <th>&nbsp;</th>
-        </tr>
+        <thead>
+          <tr>
+            <th>Dropoff Location</th>
+            <th>Address</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>    
+        <tbody>      
           <%= render partial: "dropoff_location_row", collection: @dropoff_locations %>
+        </tbody>
         </table>
       <!-- /.box-body -->
     </div>

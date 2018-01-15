@@ -33,11 +33,21 @@
           </div>
           <div class="col-md-3">
             <div class="filter">
-              <h3>Select Time Frame</h3>
-              <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
-                <%= f.select :interval, filter_intervals, selected: selected_interval %>
-              <% end %>
+              <h3 class="text-center">Select Time Frame</h3>
+              <div class="text-center">
+                <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
+                  <%= f.select :interval, filter_intervals, selected: selected_interval, class: "text-center" %>
+                <% end %>
+              </div>
             </div>
+              <div class="text-center">
+    <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
+    <div class="inventory-actions">
+      <div class="text-center">
+        <%= link_to "Make a transfer", new_transfer_path, class: "btn btn-primary btn-xs" %>
+        <%= link_to "Make an adjustment", new_adjustment_path, class: "btn btn-primary btn-xs" %>
+      </div>
+    </div>
           </div>          
         </div>
         <!-- /.box-body -->
@@ -45,6 +55,27 @@
       <!-- /.box -->
     </div>
   </div>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <div class="row">
         <div class="col-md-6">

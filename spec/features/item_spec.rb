@@ -10,7 +10,7 @@
     fill_in "Category", with: item_traits[:category]
     click_button "Create Item"
 
-    expect(page.find('.flash.success')).to have_content "added"
+    expect(page.find('.alert')).to have_content "added"
   end
 
   scenario "User updates an existing item" do
@@ -19,7 +19,7 @@
     fill_in "Category", with: item.category + " new"
     click_button "Update Item"
 
-    expect(page.find('.flash.success')).to have_content "updated"
+    expect(page.find('.alert')).to have_content "updated"
   end
 
   scenario "User can filter the #index by category type" do
@@ -30,7 +30,7 @@
     select Item.first.category, from: "filters_in_category"
     click_button "Filter"
 
-    expect(page).to have_css("table tbody tr", count: 1)
+    expect(page).to have_css("table tr", count: 1)
   end
 
   scenario "Filters presented to user are alphabetized by category" do

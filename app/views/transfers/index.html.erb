@@ -43,14 +43,18 @@
         <!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
           <table class="table table-hover">
-          <tr>
-            <th>From</th>
-            <th>To</th>
-            <th>Comment</th>
-            <th>Total Moved</th>
-            <th>Details</th>
-          </tr>
+          <thead>
+            <tr>
+              <th>From</th>
+              <th>To</th>
+              <th>Comment</th>
+              <th>Total Moved</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
             <%= render partial: "transfer_row", collection: @transfers %>
+          </tbody>
           </table>
         <!-- /.box-body -->
       </div>

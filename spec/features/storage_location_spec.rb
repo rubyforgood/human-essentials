@@ -10,7 +10,7 @@ RSpec.feature "Barcode management", type: :feature do
     fill_in "Address", with: storage_location_traits[:address]
     click_button "Create Storage location"
 
-    expect(page.find('.flash.success')).to have_content "added"
+    expect(page.find('.alert')).to have_content "added"
   end
 
   scenario "User updates an existing storage location" do
@@ -19,7 +19,7 @@ RSpec.feature "Barcode management", type: :feature do
     fill_in "Address", with: storage_location.name + " new"
     click_button "Update Storage location"
 
-    expect(page.find('.flash.success')).to have_content "updated"
+    expect(page.find('.alert')).to have_content "updated"
   end
 
   scenario "User can filter the #index by those that contain certain items" do
@@ -32,9 +32,9 @@ RSpec.feature "Barcode management", type: :feature do
     select item.name, from: "filters_containing"
     click_button "Filter"
 
-    expect(page).to have_css("table#storage_locations tbody tr", count: 1)
-    expect(page).to have_xpath("//table[@id='storage_locations']/tbody/tr/td", text: location1.name)
-    expect(page).not_to have_xpath("//table[@id='storage_locations']/tbody/tr/td", text: location2.name)
+    expect(page).to have_css("table tr", count: 2)
+    expect(page).to have_xpath("//table/tr/td", text: location1.name)
+    expect(page).not_to have_xpath("//table/tr/td", text: location2.name)
   end
 
   scenario "Filter list presented to user is in alphabetical order by item name" do

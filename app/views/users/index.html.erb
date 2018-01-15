@@ -29,24 +29,28 @@
       <!-- /.box-header -->
       <div class="box-body table-responsive no-padding">
         <table class="table table-hover">
-        <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th></th>
-        </tr>
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
         <% @users.each do |user| %>
-      <tr>
-        <td><%= user.name %></td>
-        <td><%= user.email %></td>
-        <td class="pull-right">
-          <% if user != current_user %>
-            <%= link_to "Delete", user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?", class: "btn btn-danger btn-xs" %>
-          <% else %>
-            <%= link_to "Edit", edit_user_registration_path(organization_id: nil), class: "btn btn-info btn-xs" %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
+        <tr>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td class="pull-right">
+            <% if user != current_user %>
+              <%= link_to "Delete", user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?", class: "btn btn-danger btn-xs" %>
+            <% else %>
+              <%= link_to "Edit", edit_user_registration_path(organization_id: nil), class: "btn btn-info btn-xs" %>
+            <% end %>
+          </td>
+        </tr>
+        <% end %>
+        </tbody>
       </table>
       <!-- /.box-body -->
     </div>
