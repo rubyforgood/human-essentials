@@ -18,6 +18,7 @@ gem 'groupdate', '~> 3.2'
 gem 'jbuilder', '~> 2.5'
 gem 'jquery-rails', '~> 4.3'
 gem 'jquery-ui-rails', '~> 6.0'
+gem 'newrelic_rpm'
 gem 'paperclip', '= 5.1.0'
 gem 'pg', '~> 0.2'
 gem 'prawn-rails', '~> 1.0' # For PDF generation
