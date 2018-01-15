@@ -5,6 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem "bugsnag"
 gem 'chartkick', '~> 2.2'
 gem 'cocoon', '~> 1.2' # For nested resources in forms
 gem 'coffee-rails', '~> 4.2'
