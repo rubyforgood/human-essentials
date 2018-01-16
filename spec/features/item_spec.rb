@@ -37,11 +37,66 @@
     Item.delete_all
     item = create(:item, category: "same")
     item2 = create(:item, category: "different")
-    expected_order = [item2.category, item.category]
+    expected_order = ["", item2.category, item.category]
     visit url_prefix + "/items"
 
     expect(page.all('select#filters_in_category option').map(&:text)).to eq(expected_order)
     expect(page.all('select#filters_in_category option').map(&:text)).not_to eq(expected_order.reverse)
   end
 
+  scenario "Filter show items without quantity" do
+  Item.delete_all
+  item = create(:item, category: "same")
+  item2 = create(:item, category: "different")
+  storage = create(:storage_location, name: "Test storage")
+  visit url_prefix + "/items"
+  choose('filters_show_quantity_0')
+  click_button "Filter"
+  expect(page.find('table#items')).not_to have_content "Quantity"
+  end
+
+  scenario "Filter show items without quantity (without choosing radio button)" do
+    Item.delete_all
+    item = create(:item, category: "same")
+    item2 = create(:item, category: "different")
+    storage = create(:storage_location, name: "Test storage")
+    visit url_prefix + "/items"
+    click_button "Filter"
+    expect(page.find('table#items')).not_to have_content "Quantity"
+    page.should have_selector('table#items tr', :count => 3)
+  end
+
+  scenario "Filter show items with quantity and without storage" do
+    Item.delete_all
+    InventoryItem.delete_all
+    StorageLocation.delete_all
+    item = create(:item, category: "same", id: 1)
+    item2 = create(:item, category: "different", id: 2)
+    storage = create(:storage_location, name: "Test storage", id: 1)
+    inventory_item = create(:inventory_item, storage_location_id: 1, item_id: 1, quantity: 666)
+    visit url_prefix + "/items"
+    choose('filters_show_quantity_1')
+    click_button "Filter"
+    expect(page.find('table#items')).to have_content "Quantity"
+    expect(page.find('table#items')).not_to have_content "Test storage"
+    expect(page.find('table#items')).to have_content "666"
+    page.should have_selector('table#items tr', :count => 3)
+  end
+
+  scenario "Filter show items with quantity and storage" do
+    Item.delete_all
+    InventoryItem.delete_all
+    StorageLocation.delete_all
+    item = create(:item, category: "same", id: 1)
+    item2 = create(:item, category: "different", id: 2)
+    storage = create(:storage_location, name: "Test storage", id: 1)
+    inventory_item = create(:inventory_item, storage_location_id: 1, item_id: 1, quantity: 666)
+    visit url_prefix + "/items"
+    choose('filters_show_quantity_2')
+    click_button "Filter"
+    expect(page.find('table#items')).to have_content "Quantity"
+    expect(page.find('table#items')).to have_content "Test storage"
+    expect(page.find('table#items')).to have_content "666"
+    page.should have_selector('table#items tr', :count => 3)
+  end
 end

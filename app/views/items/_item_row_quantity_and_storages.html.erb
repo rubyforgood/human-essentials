@@ -1,0 +1,10 @@
+<td><%= @row_collection[:item_name] %></td>
+<td><%= @row_collection[:item_category] %></td>
+<td><%= @row_collection[:item_barcode_count] %></td>
+<% @storages.each do |storage| %>
+  <td><%= @row_collection[storage.id] %></td>
+<% end %>
+<td><%= @row_collection[:item_quantity] == 0? '': @row_collection[:item_quantity] %></td>
+<td><%= link_to "View", item_path(@row_collection[:item_id]) %>
+  <%= link_to "Edit", edit_item_path(@row_collection[:item_id]) %>
+  <%= link_to "Delete", item_path(@row_collection[:item_id]), method: :delete %></td>
