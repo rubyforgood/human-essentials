@@ -202,6 +202,8 @@ thead {
 // table even numbered row background color
 tbody tr:nth-child(even){
   background-color: $off-white;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 // add radious and margin bottom to form feilds
