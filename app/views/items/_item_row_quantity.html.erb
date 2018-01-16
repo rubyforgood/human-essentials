@@ -1,0 +1,9 @@
+<tr>
+  <td><%= item_row_quantity.name %></td>
+  <td><%= item_row_quantity.category %></td>
+  <td><%= item_row_quantity.barcode_count %></td>
+  <td><%= item_row_quantity.quantity %></td>
+  <td><%= link_to "View", item_path(item_row_quantity) %>
+    <%= link_to "Edit", edit_item_path(item_row_quantity) %>
+    <%= link_to "Delete", item_path(item_row_quantity), method: :delete %></td>
+</tr>
