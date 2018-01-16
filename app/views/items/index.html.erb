@@ -4,8 +4,20 @@
 <section id="filters">
   <h2>Filters</h2>
   <%= form_tag(items_path, method: :get) do |f| %>
+    <%= label_tag do %>
+      <%= radio_button_tag "filters[show_quantity]", "0", @show_quantity == "0" || @show_quantity.nil? ? true :false %>
+      Without quantity
+    <% end %>
+    <%= label_tag do %>
+      <%= radio_button_tag "filters[show_quantity]", "1", @show_quantity == "1" ? true :false %>
+      With quantity
+    <% end %>
+    <%= label_tag do %>
+      <%= radio_button_tag "filters[show_quantity]", "2", @show_quantity == "2" ? true :false %>
+      With quantity and storages
+    <% end %>
     <%= label_tag "by Item Category" %>
-    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category) %>
+    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category, { include_blank: true, selected: (@selected_category) }) %>
     <%= submit_tag "Filter", class: "button primary" %>
     <%= link_to "Clear Filters", items_path, class: "button secondary" %>
   <% end %>
@@ -24,10 +36,31 @@
       <th>Name</th>
       <th>Category</th>
       <th>Barcodes</th>
+      <% if @show_quantity == "2" %>
+      <%= render partial: "storage_column", collection: @storages %>
+      <% end %>
+      <% if @show_quantity == "1" || @show_quantity == "2" %>
+        <th>Quantity</th>
+      <% end %>
       <th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
+  <% if @show_quantity == "0" || @show_quantity.nil? %>
     <%= render partial: "item_row", collection: @items %>
+  <% elsif @show_quantity == "1" %>
+    <%= render partial: "item_row_quantity", collection: @items %>
+  <% elsif @show_quantity == "2" %>
+    <% @items.each do |item| %>
+      <tr>
+        <% if item.id != @row_collection[:item_id] && @row_collection[:item_id] != nil %>
+          <%= render partial: "item_row_quantity_and_storages" %>
+          <% new_storage_collection %>
+        <% end %>
+        <% update_storage_collection(item) %>
+      </tr>
+    <% end %>
+    <%= render partial: "item_row_quantity_and_storages" %>
+  <% end %>
   </tbody>
 </table>
