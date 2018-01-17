@@ -5,7 +5,12 @@ class DropoffLocationsController < ApplicationController
 
   def create
     @dropoff_location = current_organization.dropoff_locations.create(dropoff_location_params)
-    redirect_to dropoff_locations_path, notice: "New dropoff location added!"
+    if @dropoff_location.save
+      redirect_to dropoff_locations_path, notice: "New dropoff location added!"
+    else
+      flash[:alert] = "There was an error with this dropoff location, try again?"
+      render action: :new
+    end      
   end
 
   def new
