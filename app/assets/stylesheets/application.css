@@ -41,3 +41,7 @@ img#logo {
 #toast-container{
   top: 70px;
 }
+
+.nav li.active {
+  background-color: #ecf0f5;
+}

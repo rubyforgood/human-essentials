@@ -1,48 +1,79 @@
+<section class="content-header">
 <% content_for :title, "#{current_organization.name} - Donations" %>
-
-<% content_for :sidebar do %>
-<section id="filters">
-  <h2>Filters</h2>
-  <%= form_tag(donations_path, method: :get) do |f| %>
-    <% if @storage_locations.present? %>
-      <%= label_tag "by Storage Location" %>
-      <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_storage_location }) %>
-    <% end %>
-    <% if @sources.present? %>
-      <%= label_tag "by Source" %>
-      <%= select_tag "filters[by_source]", options_for_select(@sources, @selected_source), { include_blank: true } %>
-    <% end %>
-    <% if @diaper_drives.present? %>
-      <%= label_tag "by Diaper Drive" %>
-      <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }) %>
-    <% end %>
-    <% if @dropoff_locations.present? %>
-      <%= label_tag "by Donation Location" %>
-      <%= collection_select(:filters, :from_dropoff_location, @dropoff_locations || {}, :id, :name, { include_blank: true, selected: @selected_dropoff_location }) %>
-    <% end %>
-    <%= submit_tag "Filter", class: "button primary" %>
-    <%= link_to "Clear Filters", donations_path, class: "button secondary" %>
+<h1>
+  Donations
+  <small>for <%= current_organization.name %></small>
+</h1>
+<ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+    <i class="fa fa-dashboard"></i> Home
   <% end %>
+  </li>
+  <li><a href="#">Donations</a></li>
+</ol>
 </section>
-<% end %>
 
-<div class="header-action">
-  <%= link_to "New Donation", new_donation_path(organization_id: current_organization), class: "button float-right" %>
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <div class="row">
+      <div class="col-xs-4">
+    <h3 class="box-title">Donations</h3>
+      </div>
+      <div class="col-xs-8">
+      <%= form_tag(donations_path, method: :get) do |f| %>
+        <% if @storage_locations.present? %>
+          <%= label_tag "by Storage Location" %>
+          <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_storage_location }) %>
+        <% end %>
+        <% if @sources.present? %>
+          <%= label_tag "by Source" %>
+          <%= select_tag "filters[by_source]", options_for_select(@sources, @selected_source), { include_blank: true } %>
+        <% end %>
+        <br>
+        <% if @diaper_drives.present? %>
+          <%= label_tag "by Diaper Drive" %>
+          <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }) %>
+        <% end %>
+        <% if @dropoff_locations.present? %>
+          <%= label_tag "by Donation Location" %>
+          <%= collection_select(:filters, :from_dropoff_location, @dropoff_locations || {}, :id, :name, { include_blank: true, selected: @selected_dropoff_location }) %>
+        <% end %>
+        <br>
+        <%= submit_tag "Filter", class: "btn btn-info btn-xs" %>
+        <%= link_to "Clear Filters", donations_path, class: "btn btn-info btn-xs secondary" %>
+      <% end %>
+      </div>
+    </div>
+    <%= link_to "New Donation", new_donation_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
+  </div>
+<div class="box-body">
+<div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Dropoff Location</th>
+            <th>Storage Location</th>
+            <th>Quantity of Items</th>
+            <th>Variety of Items</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "donation_row", collection: @donations %>
+        </tbody>
+        </table>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+  </div>
 </div>
-
-<h1>Donations</h1>
-
-<table id="donations">
-  <thead>
-    <tr>
-      <th>Source</th>
-      <th>Dropoff Location</th>
-      <th>Storage Location</th>
-      <th>Quantity of Items</th>
-      <th>Variety of Items</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render partial: "donation_row", collection: @donations %>
-  </tbody>
-</table>
+</div>
+</div>
+</section>
