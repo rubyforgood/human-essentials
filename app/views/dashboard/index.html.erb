@@ -15,11 +15,9 @@
 <section class="content">
   <div class="row">
     <div class="col-md-12">
-      <!-- AREA CHART -->
       <div class="box box-primary">
         <div class="box-header with-border">
           <h3 class="box-title"><%= current_organization.name %></h3>
-
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
             </button>
@@ -40,28 +38,24 @@
                 <% end %>
               </div>
             </div>
-              <div class="text-center">
-    <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
-    <div class="inventory-actions">
-      <div class="text-center">
-        <%= link_to "Make a transfer", new_transfer_path, class: "btn btn-primary btn-xs" %>
-        <%= link_to "Make an adjustment", new_adjustment_path, class: "btn btn-primary btn-xs" %>
-      </div>
-    </div>
-          </div>          
+            <div class="text-center">
+              <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
+              <div class="inventory-actions">
+                <div class="text-center">
+                  <%= link_to "Make a transfer", new_transfer_path, class: "btn btn-primary btn-xs" %>
+                  <%= link_to "Make an adjustment", new_adjustment_path, class: "btn btn-primary btn-xs" %>
+                </div>
+              </div>
+            </div>          
+          </div>
         </div>
-        <!-- /.box-body -->
       </div>
-      <!-- /.box -->
-    </div>
-    
+
       <div class="row">
         <div class="col-md-6">
-          <!-- AREA CHART -->
           <div class="box box-primary">
             <div class="box-header with-border">
               <h3 class="box-title">Distribution</h3>
-
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
@@ -69,23 +63,18 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-                <button class='btn btn-large btn-primary center-block' href='<%= new_distribution_path %>'>New Distribution</button>
-                <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
-                <div class="box-body">
+              <button class='btn btn-large btn-primary center-block' href='<%= new_distribution_path %>'>New Distribution</button>
+              <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
+              <div class="box-body">
                 <h4>Recent distributions</h4>
                 <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
                 <%= link_to "See more...", distributions_path %>
               </div>
             </div>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
-
-          <!-- DONUT CHART -->
           <div class="box box-danger">
             <div class="box-header with-border">
               <h3 class="box-title">Distributions</h3>
-
               <div class="box-tools">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
@@ -96,18 +85,12 @@
               <h5 class="text-center">Distribution <%= display_interval %></h5>
               <%= bar_chart received_distributed_data %>
             </div>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
-
         </div>
-        <!-- /.col (LEFT) -->
         <div class="col-md-6">
-          <!-- LINE CHART -->
           <div class="box box-info">
             <div class="box-header with-border">
               <h3 class="box-title">Donations</h3>
-
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
@@ -133,16 +116,12 @@
               <h4>Recent donations / purchases</h4>
               <%= render partial: "donation", collection: @recent_donations, as: :donation %>
               <%= link_to "See more...", donations_path %>
+              </div>
             </div>
-            </div>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
-          <!-- BAR CHART -->
           <div class="box box-success">
             <div class="box-header with-border">
               <h3 class="box-title">Items on Hand</h3>
-
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
@@ -155,13 +134,9 @@
                 <%= pie_chart pie_chart_data, legend: "right" %> 
               </div>
             </div>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
-
         </div>
-        <!-- /.col (RIGHT) -->
       </div>
-      <!-- /.row -->
-
-    </section>
+    </div>
+  </div>  
+</section>
