@@ -21,48 +21,121 @@
     <div class="box-header with-border">
       <div class="row">
         <div class="col-xs-4">
-      <h3 class="box-title">Barcodes Unique to my Organization</h3>
+      <h3 class="box-title">All Items</h3>
         </div>
         <div class="col-xs-8">
-        <%= form_tag(barcode_items_path, method: :get) do |f| %>
-          <%= label_tag "Filter By Item Category" %>
+        <%= form_tag(items_path, method: :get) do |f| %>
+          <%= label_tag "Filter by Item Category" %>
           <%= collection_select(:filters, :in_category, @categories || {}, :category, :category) %>
-          <%= label_tag do %>
-            <%= check_box_tag "filters[only_global]", "true", @global %>
-            Only show global
-          <% end %>
-
           <%= submit_tag "Filter", class: "btn btn-primary btn-xs" %>
-          <%= link_to "Clear Filters", barcode_items_path, class: "btn btn-info btn-xs secondary" %>
+          <%= link_to "Clear Filters", items_path, class: "btn btn-info btn-xs secondary" %>
         <% end %>
         </div>
       </div>
       <%= link_to "Create New Item", new_item_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
     </div>
 <div class="box-body">
-  <div class="row">
-    <div class="col-xs-12">
-        <!-- /.box-header -->
-        <div class="box-body table-responsive no-padding">
-          <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Barcodes</th>
-              <th>&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= render partial: "item_row", collection: @items %>
-          </tbody>
-          </table>
-        <!-- /.box-body -->
+  <ul class="nav nav-justified">
+    <li class="active"><a data-toggle="tab" href="#sectionA">Item List</a></li>
+    <li><a data-toggle="tab" href="#sectionB">Items and Quantity</a></li>
+    <li><a data-toggle="tab" href="#sectionC">Items, Quantity, and Location</a></li>
+  </ul>
+<div class="tab-content">
+  <div id="sectionA" class="tab-pane fade in active">
+
+    <div class="row">
+      <div class="col-xs-12">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Barcodes</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= render partial: "item_row", collection: @items %>
+            </tbody>
+            </table>
+          <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
       </div>
-      <!-- /.box -->
+    </div> 
+  
     </div>
+  <div id="sectionB" class="tab-pane fade info">
+
+  <div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Barcodes</th>
+            <th>Quantity</th>                        
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+        <%= render partial: "item_row_quantity", collection: @items2 %>
+        </tbody>
+        </table>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
   </div>
+</div> 
+
+  </div>
+  <div id="sectionC" class="tab-pane fade">
+  
+  <div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Barcodes</th>
+            <%= render partial: "storage_column", collection: @storages %>
+            <th>Total Quantity</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% @items3.each do |item| %>
+          <tr>
+            <% if item.id != @row_collection[:item_id] && @row_collection[:item_id] != nil %>
+              <%= render partial: "item_row_quantity_and_storages" %>
+              <% new_storage_collection %>
+            <% end %>
+            <% update_storage_collection(item) %>
+          </tr>
+        <% end %>
+        <%= render partial: "item_row_quantity_and_storages" %>
+        </tbody>
+        </table>
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+  </div>
+</div>   
+  </div>  
 </div>
+
+
+  </div>
+
+
 </section>
 
 
