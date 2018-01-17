@@ -5,7 +5,12 @@ class PartnersController < ApplicationController
 
   def create
     @partner = current_organization.partners.create(partner_params)
-    redirect_to partners_path, notice: "Partner added!"
+    if @partner.save
+      redirect_to partners_path, notice: "Partner added!"
+    else
+      flash[:alert] = "There was an error adding this Partner."
+      render action: :new
+    end     
   end
 
   def show
