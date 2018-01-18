@@ -5,8 +5,13 @@ class StorageLocationsController < ApplicationController
   end
 
   def create
-    @storage_location = current_organization.storage_locations.create(storage_location_params)
+    @storage_location = current_organization.storage_locations.new(storage_location_params)
+    if @storage_location.save
     redirect_to storage_locations_path, notice: "New storage location added!"
+    else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :new
+    end
   end
 
   def new
@@ -37,8 +42,12 @@ class StorageLocationsController < ApplicationController
   # TODO - the distribute! method needs to be worked into this controller somehow
   def update
     @storage_location = current_organization.storage_locations.find(params[:id])
-    @storage_location.update_attributes(storage_location_params)
+    if @storage_location.update_attributes(storage_location_params)
     redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
+    else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :edit
+    end
   end
 
   def destroy

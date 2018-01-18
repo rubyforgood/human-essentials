@@ -30,8 +30,13 @@ class ItemsController < ApplicationController
   end
 
   def create
-    @item = current_organization.items.create(item_params)
+    @item = current_organization.items.new(item_params)
+    if @item.save
     redirect_to items_path, notice: "#{@item.name} added!"
+      else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :new
+    end
   end
 
   def new
@@ -51,8 +56,12 @@ class ItemsController < ApplicationController
 
   def update
     @item = current_organization.items.find(params[:id])
-    @item.update_attributes(item_params)
+    if @item.update_attributes(item_params)
     redirect_to items_path, notice: "#{@item.name} updated!"
+    else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :edit
+    end
   end
 
   def destroy

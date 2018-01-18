@@ -6,10 +6,15 @@ class BarcodeItemsController < ApplicationController
   end
 
   def create
-    msg = "New barcode added"
-    @barcode_item = current_organization.barcode_items.create(barcode_item_params)
-    msg += barcode_item_params[:global] == "1" ? " globally!" : " to your private set!"
-    redirect_to barcode_items_path, notice: msg
+    @barcode_item = current_organization.barcode_items.new(barcode_item_params)
+    if @barcode_item.save
+      msg = "New barcode added"
+      msg += barcode_item_params[:global] == "1" ? " globally!" : " to your private set!"
+      redirect_to barcode_items_path, notice: msg
+    else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :new
+    end
   end
 
   def new
@@ -35,8 +40,12 @@ class BarcodeItemsController < ApplicationController
 
   def update
     @barcode_item = current_organization.barcode_items.find(params[:id])
-    @barcode_item.update_attributes(barcode_item_params)
+    if @barcode_item.update_attributes(barcode_item_params)
     redirect_to barcode_items_path, notice: "Barcode updated!"
+    else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :edit
+    end
   end
 
   def destroy
