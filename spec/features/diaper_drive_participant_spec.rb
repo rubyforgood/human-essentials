@@ -13,8 +13,8 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     end
     scenario "the diaper drive participant names are in alphabetical order" do
       expect(page).to have_xpath("//table//tr", count: 4)
-      expect(page.find(:xpath, "//table/tr[2]/td[1]")).to have_content(@first.name)
-      expect(page.find(:xpath, "//table/tr[4]/td[1]")).to have_content(@third.name)
+      expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
+      expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
     end
   end
 
@@ -54,8 +54,8 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
 
     scenario "Existing Diaper Drive Participants show in the #index with some summary stats" do
       visit url_prefix + "/diaper_drive_participants"
-      expect(page).to have_xpath("//table/tr/td", text: @ddp.name)
-      expect(page).to have_xpath("//table/tr/td", text: "25")
+      expect(page).to have_xpath("//table/tbody/tr/td", text: @ddp.name)
+      expect(page).to have_xpath("//table/tbody/tr/td", text: "25")
     end
 
     scenario "Single Diaper Drive Participants show semi-detailed stats about donations from that diaper drive" do
