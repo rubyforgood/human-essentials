@@ -27,6 +27,13 @@ RSpec.feature "Partner management", type: :feature do
     expect(page.find('.alert')).to have_content "added"
   end
 
+  scenario "User creates a new partner with empty name" do
+    visit url_prefix + '/partners/new'
+    click_button "Create Partner"
+
+    expect(page.find('.alert')).to have_content "didn't work"
+  end
+
   scenario "User can update a partner" do
     partner = create(:partner, name: "Frank")
     visit url_prefix + "/partners/#{partner.id}/edit"
@@ -36,6 +43,15 @@ RSpec.feature "Partner management", type: :feature do
     expect(page.find('.alert')).to have_content "updated"
     partner.reload
     expect(partner.name).to eq('Franklin')
+  end
+
+  scenario "User updates a partner with empty name" do
+    partner = create(:partner, name: "Frank")
+    visit url_prefix + "/partners/#{partner.id}/edit"
+    fill_in "Name", with: ""
+    click_button "Update Partner"
+
+    expect(page.find('.alert')).to have_content "didn't work"
   end
 
 end

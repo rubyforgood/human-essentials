@@ -53,10 +53,9 @@ RSpec.describe AdminsController, type: :controller do
     end
 
     describe "DELETE #destroy" do
-      it "does not exist" do
-        expect {
-          delete :destroy, params: { id: @organization.id }
-        }.to raise_exception(ActionController::UrlGenerationError)
+      it "redirects" do
+        delete :destroy, params: { id: @organization.id }
+        expect(response).to be_redirect
       end
     end
   end

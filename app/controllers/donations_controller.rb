@@ -75,7 +75,7 @@ class DonationsController < ApplicationController
       @diaper_drive_participants = current_organization.diaper_drive_participants
       @items = current_organization.items.alphabetized
       @donation.line_items.build if @donation.line_items.count == 0
-      flash[:notice] = "There was an error starting this donation, try again?"
+      flash[:alert] = "There was an error starting this donation, try again?"
       Rails.logger.info "ERROR: #{@donation.errors}"
       render action: :new
     end

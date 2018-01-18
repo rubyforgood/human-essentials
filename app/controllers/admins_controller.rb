@@ -46,6 +46,15 @@ class AdminsController < ApplicationController
     @organization = Organization.find(params[:id])
   end
 
+  def destroy
+    @organization = Organization.find(params[:id])
+    if @organization.destroy
+      redirect_to admins_path, notice: "Organization deleted!"
+    else
+      redirect_to admins_path, alert: "Failed to delete Organization."  
+    end
+  end
+
   private
 
   def authorize_user
