@@ -32,6 +32,14 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     expect(page.find('.alert')).to have_content "added"
   end
 
+  scenario "User add a new diaper drive instance with empty attributes" do
+    visit url_prefix + '/diaper_drive_participants/new'
+      click_button "Create Diaper drive participant"
+
+    expect(page.find('.alert')).to have_content "didn't work"
+  end
+
+
   scenario "User can update the contact info for a diaper drive participant" do
     diaper_drive_participant = create(:diaper_drive_participant)
     new_email = 'foo@bar.com'
@@ -43,6 +51,15 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     expect(page.find('.alert')).to have_content "updated"
     expect(page).to have_content(diaper_drive_participant.name)
     expect(page).to have_content(new_email)
+  end
+
+  scenario "User updates a diaper drive participant with empty attributes" do
+    diaper_drive_participant = create(:diaper_drive_participant)
+    visit url_prefix + "/diaper_drive_participants/#{diaper_drive_participant.id}/edit"
+    fill_in "Name", with: ''
+    click_button "Update Diaper drive participant"
+
+    expect(page.find('.alert')).to have_content "didn't work"
   end
 
   context "When the Diaper Drives have donations associated with them already" do

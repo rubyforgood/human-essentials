@@ -4,13 +4,13 @@ class PartnersController < ApplicationController
   end
 
   def create
-    @partner = current_organization.partners.create(partner_params)
+    @partner = current_organization.partners.new(partner_params)
     if @partner.save
-      redirect_to partners_path, notice: "Partner added!"
+    redirect_to partners_path, notice: "Partner added!"
     else
-      flash[:alert] = "There was an error adding this Partner."
+      flash[:alert] = "Something didn't work quite right -- try again?"
       render action: :new
-    end     
+    end
   end
 
   def show
@@ -27,8 +27,12 @@ class PartnersController < ApplicationController
 
   def update
     @partner = current_organization.partners.find(params[:id])
-    @partner.update_attributes(partner_params)
+    if @partner.update_attributes(partner_params)
     redirect_to partners_path, notice: "#{@partner.name} updated!"
+    else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :edit
+    end
   end
 
   def import_csv

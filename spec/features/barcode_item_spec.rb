@@ -37,6 +37,15 @@ RSpec.feature "Barcode management", type: :feature do
 
       expect(page.find('.alert')).to have_content "updated"
     end
+
+    scenario "User updates an existing barcode with empty attributes" do
+      barcode
+      visit "/#{@organization.short_name}/barcode_items/#{barcode.id}/edit"
+      fill_in "Quantity", id: "barcode_item_quantity", with: ""
+      click_button "Update Barcode item"
+
+      expect(page.find('.alert')).to have_content "didn't work"
+    end
   end
 
   context "With global barcodes" do
@@ -83,5 +92,13 @@ RSpec.feature "Barcode management", type: :feature do
 
     expect(page.all('select#filters_item_id option').map(&:text)).to eq(expected_order)
     expect(page.all('select#filters_item_id option').map(&:text)).not_to eq(expected_order.reverse)
+  end
+
+
+  scenario "User add a new barcode with empty attributes" do
+    visit "/#{@organization.short_name}/barcode_items/new"
+    click_button "Create Barcode item"
+
+    expect(page.find('.alert')).to have_content "didn't work"
   end
 end
