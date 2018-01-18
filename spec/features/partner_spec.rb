@@ -13,8 +13,8 @@ RSpec.feature "Partner management", type: :feature do
     end
     scenario "the partner agency names are in alphabetical order" do
       expect(page).to have_css("table tr", count: 4)
-      expect(page.find(:xpath, "//table/tr[2]/td[1]")).to have_content(@first.name)
-      expect(page.find(:xpath, "//table/tr[4]/td[1]")).to have_content(@third.name)
+      expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
+      expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
     end
   end
 
