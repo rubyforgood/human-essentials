@@ -13,6 +13,14 @@
     expect(page.find('.flash.success')).to have_content "added"
   end
 
+  scenario "User creates a new item with empty attributes" do
+    visit url_prefix + '/items/new'
+    item_traits = attributes_for(:item)
+    click_button "Create Item"
+
+    expect(page.find('.flash.alert')).to have_content "didn't work"
+  end
+
   scenario "User updates an existing item" do
     item = create(:item)
     visit url_prefix + "/items/#{item.id}/edit"
@@ -20,6 +28,15 @@
     click_button "Update Item"
 
     expect(page.find('.flash.success')).to have_content "updated"
+  end
+
+  scenario "User updates an existing item with empty attributes" do
+    item = create(:item)
+    visit url_prefix + "/items/#{item.id}/edit"
+    fill_in "Name", with: ""
+    click_button "Update Item"
+
+    expect(page.find('.flash.alert')).to have_content "didn't work"
   end
 
   scenario "User can filter the #index by category type" do
