@@ -30,7 +30,7 @@
     select Item.first.category, from: "filters_in_category"
     click_button "Filter"
 
-    expect(page).to have_css("table tr", count: 1)
+    expect(page).to have_css("table tbody tr", count: 3)
   end
 
   scenario "Filters presented to user are alphabetized by category" do
