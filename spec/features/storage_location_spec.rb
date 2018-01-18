@@ -33,8 +33,8 @@ RSpec.feature "Barcode management", type: :feature do
     click_button "Filter"
 
     expect(page).to have_css("table tr", count: 2)
-    expect(page).to have_xpath("//table/tr/td", text: location1.name)
-    expect(page).not_to have_xpath("//table/tr/td", text: location2.name)
+    expect(page).to have_xpath("//table/tbody/tr/td", text: location1.name)
+    expect(page).not_to have_xpath("//table/tbody/tr/td", text: location2.name)
   end
 
   scenario "Filter list presented to user is in alphabetical order by item name" do
