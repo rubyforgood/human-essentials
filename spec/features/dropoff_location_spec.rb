@@ -28,6 +28,13 @@ RSpec.feature "Dropoff location", type: :feature do
     expect(page.find('.flash.success')).to have_content "added"
   end
 
+  scenario "User creates a new dropoff location with empty attributes" do
+    visit url_prefix + '/dropoff_locations/new'
+    click_button "Create Dropoff location"
+
+    expect(page.find('.flash.alert')).to have_content "didn't work"
+  end
+
   scenario "User updates an existing dropoff location" do
     dropoff_location = create(:dropoff_location)
     visit url_prefix + "/dropoff_locations/#{dropoff_location.id}/edit"
@@ -37,4 +44,12 @@ RSpec.feature "Dropoff location", type: :feature do
     expect(page.find('.flash.success')).to have_content "updated"
   end
 
+  scenario "User updates an existing dropoff location with empty attributes" do
+    dropoff_location = create(:dropoff_location)
+    visit url_prefix + "/dropoff_locations/#{dropoff_location.id}/edit"
+    fill_in "Name", with: ""
+    click_button "Update Dropoff location"
+
+    expect(page.find('.flash.alert')).to have_content "didn't work"
+  end
 end

@@ -4,8 +4,13 @@ class DropoffLocationsController < ApplicationController
   end
 
   def create
-    @dropoff_location = current_organization.dropoff_locations.create(dropoff_location_params)
+    @dropoff_location = current_organization.dropoff_locations.new(dropoff_location_params)
+    if @dropoff_location.save
     redirect_to dropoff_locations_path, notice: "New dropoff location added!"
+    else
+    flash[:alert] = "Something didn't work quite right -- try again?"
+    render action: :new
+    end
   end
 
   def new
@@ -22,8 +27,12 @@ class DropoffLocationsController < ApplicationController
 
   def update
     @dropoff_location = current_organization.dropoff_locations.find(params[:id])
-    @dropoff_location.update_attributes(dropoff_location_params)
+    if @dropoff_location.update_attributes(dropoff_location_params)
     redirect_to dropoff_locations_path, notice: "#{@dropoff_location.name} updated!"
+    else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :edit
+    end
   end
 
   def import_csv

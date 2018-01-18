@@ -13,6 +13,13 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.find('.flash.success')).to have_content "added"
   end
 
+  scenario "User creates a new storage location with empty attributes" do
+    visit url_prefix + "/storage_locations/new"
+    click_button "Create Storage location"
+
+    expect(page.find('.flash.alert')).to have_content "didn't work"
+  end
+
   scenario "User updates an existing storage location" do
     storage_location = create(:storage_location)
     visit url_prefix + "/storage_locations/#{storage_location.id}/edit"
@@ -20,6 +27,15 @@ RSpec.feature "Barcode management", type: :feature do
     click_button "Update Storage location"
 
     expect(page.find('.flash.success')).to have_content "updated"
+  end
+
+  scenario "User updates an existing storage location with empty name" do
+    storage_location = create(:storage_location)
+    visit url_prefix + "/storage_locations/#{storage_location.id}/edit"
+    fill_in "Name", with: ""
+    click_button "Update Storage location"
+
+    expect(page.find('.flash.alert')).to have_content "didn't work"
   end
 
   scenario "User can filter the #index by those that contain certain items" do

@@ -28,8 +28,12 @@ class DiaperDriveParticipantsController < ApplicationController
 
   def update
     @diaper_drive_participant = current_organization.diaper_drive_participants.find(params[:id])
-    @diaper_drive_participant.update_attributes(diaper_drive_participant_params)
+    if @diaper_drive_participant.update_attributes(diaper_drive_participant_params)
     redirect_to diaper_drive_participants_path, notice: "#{@diaper_drive_participant.name} updated!"
+    else
+      flash[:alert] = "Something didn't work quite right -- try again?"
+      render action: :edit
+    end
   end
 
   def import_csv
