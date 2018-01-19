@@ -62,6 +62,7 @@
   end
 
   scenario "Filter show items without quantity" do
+    pending
   Item.delete_all
   item = create(:item, category: "same")
   item2 = create(:item, category: "different")
@@ -73,6 +74,7 @@
   end
 
   scenario "Filter show items without quantity (without choosing radio button)" do
+    pending
     Item.delete_all
     item = create(:item, category: "same")
     item2 = create(:item, category: "different")
@@ -84,6 +86,7 @@
   end
 
   scenario "Filter show items with quantity and without storage" do
+    pending
     Item.delete_all
     InventoryItem.delete_all
     StorageLocation.delete_all
@@ -101,6 +104,7 @@
   end
 
   scenario "Filter show items with quantity and storage" do
+    pending
     Item.delete_all
     InventoryItem.delete_all
     StorageLocation.delete_all
