@@ -59,35 +59,33 @@
         <% end %>
         </section>
       </div>
-    </div>
-  </div>
-<div class="box-body">
-  <%= link_to new_donation_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left"  do %>
-    <i class="fa fa-plus"></i> New Donation
-  <% end %>
-<div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Source</th>
-            <th>Dropoff Location</th>
-            <th>Storage Location</th>
-            <th>Quantity of Items</th>
-            <th>Variety of Items</th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render partial: "donation_row", collection: @donations %>
-        </tbody>
-        </table>
-      <!-- /.box-body -->
-    </div>
-    <!-- /.box -->
-  </div>
-</div>
-</div>
-</div>
+    </div><!-- /.row -->
+  </div><!-- /.box-header -->
+
+  <div class="box-body">
+    <%= link_to new_donation_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left"  do %>
+      <i class="fa fa-plus"></i> New Donation
+    <% end %>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Dropoff Location</th>
+                <th>Storage Location</th>
+                <th>Quantity of Items</th>
+                <th>Variety of Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= render partial: "donation_row", collection: @donations %>
+            </tbody>
+          </table>
+        </div><!-- /.box-body.table-responsive -->
+      </div><!-- /.col-xs-12 -->
+    </div><!-- /.row -->
+  </div><!-- /.box-body -->
+</div><!-- /.box -->
 </section>
