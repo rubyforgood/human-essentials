@@ -18,39 +18,53 @@
 
 <!-- Default box -->
 <div class="box">
-  <div class="box-header with-border">
+  <div class="box-header with-border bg-aqua">
     <div class="row">
-      <div class="col-xs-4">
-    <h3 class="box-title">Donations</h3>
-      </div>
-      <div class="col-xs-8">
-      <%= form_tag(donations_path, method: :get) do |f| %>
-        <% if @storage_locations.present? %>
-          <%= label_tag "by Storage Location" %>
-          <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_storage_location }) %>
+      <div class="col-xs-12">
+        <section id="filters">
+        <%= form_tag(donations_path, method: :get) do |f| %>
+          <% if @storage_locations.present? %>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "by Storage Location" %>
+              <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_storage_location }, class: "form-control") %>
+            </div>
+          <% end %>
+          <% if @sources.present? %>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "by Source" %>
+              <%= select_tag "filters[by_source]", options_for_select(@sources, @selected_source), { include_blank: true, class: "form-control" } %>
+            </div>
+          <% end %>
+          <% if @diaper_drives.present? %>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "by Diaper Drive" %>
+              <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
+            </div>
+          <% end %>
+          <% if @dropoff_locations.present? %>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "by Donation Location" %>
+              <%= collection_select(:filters, :from_dropoff_location, @dropoff_locations || {}, :id, :name, { include_blank: true, selected: @selected_dropoff_location }, class: "form-control") %>
+            </div>
+          <% end %>
+
+          <div class="col-xs-12">
+            <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+              <i class="fa fa-filter"></i> Filter
+            <% end %>
+            <%= link_to donations_path, class: "btn btn-outline-primary btn-md" do %>
+              <i class="fa fa-ban"></i> Clear Filters
+            <% end %>
+          </div>
         <% end %>
-        <% if @sources.present? %>
-          <%= label_tag "by Source" %>
-          <%= select_tag "filters[by_source]", options_for_select(@sources, @selected_source), { include_blank: true } %>
-        <% end %>
-        <br>
-        <% if @diaper_drives.present? %>
-          <%= label_tag "by Diaper Drive" %>
-          <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }) %>
-        <% end %>
-        <% if @dropoff_locations.present? %>
-          <%= label_tag "by Donation Location" %>
-          <%= collection_select(:filters, :from_dropoff_location, @dropoff_locations || {}, :id, :name, { include_blank: true, selected: @selected_dropoff_location }) %>
-        <% end %>
-        <br>
-        <%= submit_tag "Filter", class: "btn btn-info btn-xs" %>
-        <%= link_to "Clear Filters", donations_path, class: "btn btn-info btn-xs secondary" %>
-      <% end %>
+        </section>
       </div>
     </div>
-    <%= link_to "New Donation", new_donation_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
   </div>
 <div class="box-body">
+  <%= link_to new_donation_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left"  do %>
+    <i class="fa fa-plus"></i> New Donation
+  <% end %>
 <div class="row">
   <div class="col-xs-12">
       <!-- /.box-header -->
