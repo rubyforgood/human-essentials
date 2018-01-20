@@ -18,11 +18,15 @@
 
   <!-- Default box -->
   <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title">All Distributions</h3>  <%= link_to "New Distribution", new_distribution_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
-
-    </div>
+    <!--
+    <section id="filters" class="box-header with-border bg-aqua">
+        <!-- we need to add filters to this, they'll go here
+    </section>
+  -->
     <div class="box-body">
+      <%= link_to new_distribution_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left" do %>
+        <i class="fa fa-plus"></i> New Distribution
+      <% end %>
       <div class="row">
         <div class="col-xs-12">
             <!-- /.box-header -->
@@ -48,12 +52,3 @@
     </div>
   </div>
 </section>
-
-
-
-
-
-
-
-
-
