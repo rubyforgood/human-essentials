@@ -4,6 +4,10 @@
   <td><%= barcode_item_row.value %></td>
   <td class="pull-right">
   		<%= link_to "View", barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" %>
-      <%= link_to "Edit", edit_barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" %>
-      <%= link_to "Delete", barcode_item_path(barcode_item_row), method: :delete, class: "btn btn-danger btn-xs", data: { confirm: "Are you sure?" } %>
+      <%= link_to edit_barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" do %>
+        <i class="fa fa-edit"></i> Edit
+      <% end %>
+      <%= link_to barcode_item_path(barcode_item_row), method: :delete, class: "btn btn-danger btn-xs", data: { confirm: "Are you sure?" } do %>
+        <i class="fa fa-trash"></i> Delete
+      <% end %>
 </tr>

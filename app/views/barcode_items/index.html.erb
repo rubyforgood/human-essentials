@@ -2,7 +2,7 @@
   <% content_for :title, "#{current_organization.name} - Inventory - Barcode Items" %>
   <h1>
     Barcode Items
-    <small>for <%= current_organization.name %></small>
+    <small>(unique to <%= current_organization.name %>)</small>
   </h1>
   <ol class="breadcrumb">
     <li><%= link_to(dashboard_path) do %>
@@ -15,63 +15,59 @@
 
 <!-- Main content -->
 <section class="content">
-
-  <!-- Default box -->
   <div class="box">
-    <div class="box-header with-border">
-      <div class="row">
-        <div class="col-xs-4">
-      <h3 class="box-title">Barcodes Unique to my Organization</h3>
-        </div>
-        <div class="col-xs-8">
+    <div class="box-header with-border bg-aqua">
+      <section id="filters">
         <%= form_tag(barcode_items_path, method: :get) do |f| %>
-          <%= label_tag "Filter By Item Category" %>
-          <%= collection_select(:filters, :item_id, @items, :id, :name, include_blank: true) %>
+          <div class="row">
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter By Item Category" %>
+              <%= collection_select(:filters, :item_id, @items, :id, :name, { include_blank: true }, class: "form-control") %>
+            </div>
+          </div><!-- /.row -->
+          <div class="row">
+            <div class="form-check col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <%= check_box_tag "filters[only_global]", "true", @global %>
+              <%= label_tag 'Only show barcodes that are globally available' %>
+            </div>
+          </div><!-- /.row -->
+          <div class="row">
+            <div class="col-xs-12">
+              <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+                <i class="fa fa-filter"></i> Filter
+              <% end %>
+              <%= link_to barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
+                <i class="fa fa-ban"></i> Clear Filters
+              <% end %>
+            </div>
+          </div><!-- /.row -->
+        <% end #form %>
+      </section><!-- /#filters -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <%= link_to new_barcode_item_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left" do %>
+        <i class="fa fa-plus"></i> Add New Barcode
+      <% end %>
 
-          <%= label_tag do %>
-            <%= check_box_tag "filters[only_global]", "true", @global %>
-            Only show global
-          <% end %>
-
-          <%= submit_tag "Filter", class: "btn btn-primary btn-xs" %>
-          <%= link_to "Clear Filters", barcode_items_path, class: "btn btn-info btn-xs secondary" %>
-        <% end %>
-        </div>
-      </div>
-      <%= link_to "Create New Barcode", new_barcode_item_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
-    </div>
-<div class="box-body">
-  <div class="row">
-    <div class="col-xs-12">
-        <!-- /.box-header -->
-        <div class="box-body table-responsive no-padding">
-          <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Item Type</th>
-              <th>Quantity in the Box</th>
-              <th>Barcode</th>
-              <th>&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= render partial: "barcode_item_row", collection: @barcode_items %>
-          </tbody>
-          </table>
-        <!-- /.box-body -->
-      </div>
-      <!-- /.box -->
-    </div>
-  </div>
-</div>
-</div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Item Type</th>
+                  <th>Quantity in the Box</th>
+                  <th>Barcode</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "barcode_item_row", collection: @barcode_items %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
 </section>
-
-
-
-
-
-
-
-
-
