@@ -15,30 +15,29 @@
 
 <!-- Main content -->
 <section class="content">
-
-  <!-- Default box -->
   <div class="box">
     <!--
     <div class="box-header with-border bg-aqua">
-      <div class="row">
-        <div class="col-xs-12">
-
-          <section id="filters" class="box-header with-border bg-aqua">
-            <!-- we need to add filters to this, they'll go here
-          </section>
+      <section id="filters" class="box-header with-border bg-aqua">
+        # form
+        <div class="row">
+        <!-- we need to add filters to this, they'll go here
         </div>
-      </div>
-    </div>
+        <div class="row">
+        <!-- filter buttons
+        </div><!-- /.row
+      </section><!-- /#filters
+    </div><!-- /.box-header
   -->
-    <div class="box-body">
-      <%= link_to new_distribution_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left" do %>
-        <i class="fa fa-plus"></i> New Distribution
-      <% end %>
-      <div class="row">
-        <div class="col-xs-12">
-            <!-- /.box-header -->
-            <div class="box-body table-responsive no-padding">
-              <table class="table table-hover">
+  <div class="box-body">
+    <%= link_to new_distribution_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left" do %>
+      <i class="fa fa-plus"></i> New Distribution
+    <% end %>
+    <div class="row">
+      <div class="col-xs-12">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
               <thead>
                 <tr>
                   <th>Partner</th>
@@ -50,12 +49,10 @@
               <tbody>
                 <%= render partial: "distribution_row", collection: @distributions %>
               </tbody>
-              </table>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+            </table>
+          </div><!-- /.box-body.table-responsive -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section><!-- /.content -->

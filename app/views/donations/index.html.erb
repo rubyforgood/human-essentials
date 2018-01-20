@@ -15,14 +15,11 @@
 
 <!-- Main content -->
 <section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border bg-aqua">
-    <div class="row">
-      <div class="col-xs-12">
-        <section id="filters">
+  <div class="box">
+    <div class="box-header with-border bg-aqua">
+      <section id="filters">
         <%= form_tag(donations_path, method: :get) do |f| %>
+        <div class="row">
           <% if @storage_locations.present? %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
               <%= label_tag "by Storage Location" %>
@@ -47,7 +44,8 @@
               <%= collection_select(:filters, :from_dropoff_location, @dropoff_locations || {}, :id, :name, { include_blank: true, selected: @selected_dropoff_location }, class: "form-control") %>
             </div>
           <% end %>
-
+        </div><!-- /.row -->
+        <div class="row">
           <div class="col-xs-12">
             <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
               <i class="fa fa-filter"></i> Filter
@@ -56,36 +54,35 @@
               <i class="fa fa-ban"></i> Clear Filters
             <% end %>
           </div>
-        <% end %>
-        </section>
-      </div>
-    </div><!-- /.row -->
-  </div><!-- /.box-header -->
+        </div><!-- /.row -->
+        <% end # form %>
+      </section><!-- /#filters -->
+    </div><!-- /.box-header -->
 
-  <div class="box-body">
-    <%= link_to new_donation_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left"  do %>
-      <i class="fa fa-plus"></i> New Donation
-    <% end %>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="box-body table-responsive no-padding">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Source</th>
-                <th>Dropoff Location</th>
-                <th>Storage Location</th>
-                <th>Quantity of Items</th>
-                <th>Variety of Items</th>
-              </tr>
-            </thead>
-            <tbody>
-              <%= render partial: "donation_row", collection: @donations %>
-            </tbody>
-          </table>
-        </div><!-- /.box-body.table-responsive -->
-      </div><!-- /.col-xs-12 -->
-    </div><!-- /.row -->
-  </div><!-- /.box-body -->
-</div><!-- /.box -->
+    <div class="box-body">
+      <%= link_to new_donation_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left"  do %>
+        <i class="fa fa-plus"></i> New Donation
+      <% end %>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Dropoff Location</th>
+                  <th>Storage Location</th>
+                  <th>Quantity of Items</th>
+                  <th>Variety of Items</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "donation_row", collection: @donations %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body.table-responsive -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
 </section>

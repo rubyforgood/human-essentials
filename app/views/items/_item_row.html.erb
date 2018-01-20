@@ -3,7 +3,12 @@
   <td><%= item_row.category %></td>
   <td><%= item_row.barcode_count %></td>
   <td class="pull-right">
-  		<%= link_to "View", item_path(item_row), class: "btn btn-info btn-xs" %>    
-      <%= link_to "Edit", edit_item_path(item_row), class: "btn btn-info btn-xs" %> 
-      <%= link_to "Delete", item_path(item_row), method: :delete, class: "btn btn-danger btn-xs" %></td>
+  		<%= link_to "View", item_path(item_row), class: "btn btn-info btn-xs" %>
+      <%= link_to edit_item_path(item_row), class: "btn btn-info btn-xs" do %>
+        <i class="fa fa-edit"></i> Edit
+      <% end %>
+      <%= link_to item_path(item_row), method: :delete, class: "btn btn-danger btn-xs" do %>
+        <i class="fa fa-trash"></i> Delete
+      <% end %>
+    </td>
 </tr>
