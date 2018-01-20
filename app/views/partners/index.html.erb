@@ -15,77 +15,73 @@
 
 <!-- Main content -->
 <section class="content">
-
-  <!-- Default box -->
   <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title">All Partner Agencies</h3>  <%= link_to "New Partner Agency", new_partner_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
-
-    </div>
+    <div class="box-header with-border bg-aqua">
+      <section id="filters">
+      </section><!-- /#filters -->
+    </div><!-- /.box-header -->
     <div class="box-body">
+      <%= link_to new_partner_path(organization_id: current_organization), class: "btn btn-success btn-lg pull-left", style: "margin-right: 1rem;" do %>
+        <i class="fa fa-plus"></i> New Partner Agency
+      <% end #+link %>
+      <% if @partners.empty? %>
+        <div class="import-partners">
+          <!-- Button HTML (to Trigger Modal) -->
+          <a href="#importPartnerModal" class="btn btn-lg btn-primary" data-toggle="modal"><i class="fa fa-upload"></i> Import Partners</a>
 
-<% if @partners.empty? %>
-
-<div class="import-partners">
-    <!-- Button HTML (to Trigger Modal) -->
-    <a href="#importPartnerModal" class="btn btn-xs btn-primary" data-toggle="modal">Import Partners</a>
-    
-    <!-- Modal HTML -->
-    <div id="importPartnerModal" class="modal fade">
-        <div class="modal-dialog">
+          <!-- Modal HTML -->
+          <div id="importPartnerModal" class="modal fade">
+          <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h2 class="modal-title">Import Partners Instructions:</h4>
-                </div>
+                </div><!-- /.modal-header -->
                 <div class="modal-body">
                   <ol>
-                    <li><%= link_to "Download example csv", "/partners.csv", :format => :csv, :class => "btn btn-xs btn-info" %></li>
+                    <li><%= link_to "/partners.csv", :format => :csv, :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example CSV <% end %></li>
                     <li>Open the csv file with excel or your favourite spreadsheet program.</li>
                     <li>Delete the sample data and enter your partner agency names and addresses in the appropriate columns.</li>
                     <li>Save the file as a csv file.</li>
                     <li>Click the choose file button and navigate to the saved file and select it.</li>
                     <li>Then click the Import CSV button to import your storage locations.</li>
                   </ol>
-                <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
-                </div>
+                  <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
+                </div><!-- /.modal-body -->
                 <div class="modal-footer">
                   <%= form_tag import_csv_partners_path, multipart: true do %>
-                    <%= file_field_tag :file, :accept => 'text/csv' %>
-                    <%= submit_tag "Import CSV", :class => "btn btn-sm btn-primary" %>
-                  <% end %>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<% end %>                                                              
-
-<div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-          <thead>  
-            <tr>
-              <th>Partner</th>
-              <th>E-mail</th>
-              <th>Approved?</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= render partial: "partner_row", collection: @partners %>
-          </tbody>
-        </table>
-      <!-- /.box-body -->
-    </div>
-    <!-- /.box -->
-  </div>
-</div>
-</section>
-
-
-
-
+                    <div class="form-group">
+                      <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
+                    </div>
+                    <%= button_tag :class => "btn btn-lg btn-primary" do %>
+                      <i class="fa fa-upload"></i> Import CSV
+                    <% end #button %>
+                  <% end #form %>
+                </div><!-- /.modal-footer -->
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
+        </div><!-- /.import-partners -->
+      <% end #if %>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>E-mail</th>
+                  <th title="This field is currently mock data">Approved?</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "partner_row", collection: @partners %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body.table-responsive -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section><!-- /.content -->
