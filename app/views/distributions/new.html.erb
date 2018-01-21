@@ -1,4 +1,3 @@
-
 <section class="content-header">
   <% content_for :title, "#{current_organization.name} - Distributions - New" %>
   <h1>
@@ -20,10 +19,7 @@
 
 <!-- Default box -->
 <div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title">New Distribution</h3>
-  </div>
-  <div class="box-body">
+  <div class="box-body container">
 
   <%= simple_form_for @distribution do |f| %>
 
@@ -48,26 +44,33 @@
 
     <%= f.input :comment, label: "Comment" %>
 
-    <%= f.simple_fields_for :line_items do |item| %>
-      <div id="distribution_line_items" data-capture-barcode="true">
-        <%= render 'line_item_fields', f: item %>
-      </div>
-      <div class="row links">
-        <div class="medium-offset-3 medium-6 columns">
-          <%= link_to_add_association "add line item", f, :line_items,
-            data: {
-              association_insertion_node: "#distribution_line_items",
-              association_insertion_method: "append"
-            }, id: "__add_line_item"
-          %>
+
+    <fieldset style="margin-bottom: 2rem;">
+      <legend>Items in this donation</legend>
+      <%= f.simple_fields_for :line_items do |item| %>
+        <div id="donation_line_items" data-capture-barcode="true">
+          <%= render 'line_item_fields', f: item %>
         </div>
+        <div class="row links">
+          <div class="col-xs-12">
+            <%= link_to_add_association f, :line_items,
+            data: {
+              association_insertion_node: "#donation_line_items",
+              association_insertion_method: "append"
+            }, id: "__add_line_item", class: "btn btn-md btn-success", style: "margin-top: 1rem;" do
+            %>
+              <i class="fa fa-plus"></i> Add another item
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+    </fieldset>
+      <div class="row">
+        <div class="col-xs-12">
+        <%= f.button :submit, class: "btn btn-lg btn-primary" %>
       </div>
-    <% end %>
-
-    <div class="medium-offset-3 medium-6">
-      <%= f.button :submit %>
     </div>
-
   <% end %>
   </div>
 </div>
