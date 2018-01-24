@@ -1,20 +1,19 @@
-  <%= react_component("Scale", { 
-  	diaperBank: current_organization.id,
-    pu_2t_3t:  current_organization.scale_values[:pu_2t_3t],
-    pu_3t_4t:   current_organization.scale_values[:pu_3t_4t],
-    pu_4t_5t:   current_organization.scale_values[:pu_4t_5t],
-    k_preemie:  current_organization.scale_values[:k_preemie],
-    k_newborm:  current_organization.scale_values[:k_newborm],
-    k_size1:    current_organization.scale_values[:k_size1],
-    k_size2:    current_organization.scale_values[:k_size2],
-    k_size3:    current_organization.scale_values[:k_size3],
-    k_size4:    current_organization.scale_values[:k_size4],
-    k_size5:    current_organization.scale_values[:k_size5],
-    k_size6:    current_organization.scale_values[:k_size6]
-    }) %>
+<!-- Main content -->
+<section class="content">
+    <div class="box">
+      <%= react_component("Scale", { diaperBank: current_organization.id,
+        pu_2t_3t:  current_organization.scale_values[:pu_2t_3t],
+        pu_3t_4t:   current_organization.scale_values[:pu_3t_4t],
+        pu_4t_5t:   current_organization.scale_values[:pu_4t_5t],
+        k_preemie:  current_organization.scale_values[:k_preemie],
+        k_newborm:  current_organization.scale_values[:k_newborm],
+        k_size1:    current_organization.scale_values[:k_size1],
+        k_size2:    current_organization.scale_values[:k_size2],
+        k_size3:    current_organization.scale_values[:k_size3],
+        k_size4:    current_organization.scale_values[:k_size4],
+        k_size5:    current_organization.scale_values[:k_size5],
+        k_size6:    current_organization.scale_values[:k_size6]
+        }) %>
+    </div>
 
-<br>
-<br>
-  <div class="medium-offset-3 medium-6">
-
-</div>
+</section>
