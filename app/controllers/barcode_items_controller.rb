@@ -1,8 +1,12 @@
 class BarcodeItemsController < ApplicationController
   def index
-    @barcode_items = BarcodeItem.includes(:item).where(organization_id: current_organization.id).filter(filter_params)
     @items = current_organization.items.barcoded_items
     @global = filter_params[:only_global]
+    if @global
+      @barcode_items = BarcodeItem.includes(:item).filter(filter_params)
+    else
+      @barcode_items = BarcodeItem.includes(:item).where(organization_id: current_organization.id).filter(filter_params)
+    end
   end
 
   def create
