@@ -59,7 +59,7 @@ class BarcodeItemsController < ApplicationController
 
 private
   def barcode_item_params
-    params.require(:barcode_item).permit(:value, :item_id, :quantity, :global)
+    params.require(:barcode_item).permit(:value, :item_id, :quantity, :global).merge(organization_id: current_organization.id)
   end
 
   def filter_params
