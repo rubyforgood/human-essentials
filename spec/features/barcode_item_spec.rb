@@ -116,32 +116,4 @@ RSpec.feature "Barcode management", type: :feature do
 
     expect(page.find('.flash.alert')).to have_content "didn't work"
   end
-
-  scenario "User add a new barcode and check index page" do
-    Item.delete_all
-    item1 = create(:item, name: "AAA Diapers")
-
-    visit "/#{@organization.short_name}/barcode_items/new"
-    select "AAA Diapers", from: "barcode_item_item_id"
-    fill_in "barcode_item_quantity", with: "777"
-    fill_in "barcode_item_value", with: "123"
-    click_button "Create Barcode item"
-
-    expect(page.find('.flash.success')).to have_content "New barcode added to your private set!"
-    expect(page.find('table#barcode_items')).to have_content "AAA Diapers"
-  end
-
-  scenario "User add a new global barcode and check index page" do
-    Item.delete_all
-    item1 = create(:item, name: "AAA Diapers")
-
-    visit "/#{@organization.short_name}/barcode_items/new"
-    select "AAA Diapers", from: "barcode_item_item_id"
-    fill_in "barcode_item_quantity", with: "777"
-    fill_in "barcode_item_value", with: "123"
-    click_button "Create Barcode item"
-
-    expect(page.find('.flash.success')).to have_content "New barcode added to your private set!"
-    expect(page.find('table#barcode_items')).to have_content "AAA Diapers"
-  end
 end
