@@ -17,7 +17,8 @@ RSpec.feature "Barcode management", type: :feature do
     let(:barcode) { create(:barcode_item, :for_organization, organization_id: @organization.id) }
 
     scenario "User adds a new barcode" do
-      item = create(:item)
+      Item.delete_all
+      item = create(:item, name: "1T Diapers")
       visit "/#{@organization.short_name}/barcode_items/new"
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
@@ -26,6 +27,12 @@ RSpec.feature "Barcode management", type: :feature do
       click_button "Create Barcode item"
 
       expect(page.find('.flash.success')).to have_content "added to your"
+      expect(page.find('table#barcode_items')).to have_content "1T Diapers"
+
+      check "filters_only_global"
+      click_button "Filter"
+
+      expect(page.find('table#barcode_items')).not_to have_content "1T Diapers"
     end
 
     scenario "User updates an existing barcode" do
@@ -54,7 +61,8 @@ RSpec.feature "Barcode management", type: :feature do
     let(:barcode) { create(:barcode_item, organization_id: nil) }
 
     scenario "User adds a new barcode to the global pool" do
-      item = create(:item)
+      Item.delete_all
+      item = create(:item, name: "1T Diapers")
       visit "/#{@organization.short_name}/barcode_items/new"
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
@@ -64,6 +72,12 @@ RSpec.feature "Barcode management", type: :feature do
       click_button "Create Barcode item"
 
       expect(page.find('.flash.success')).to have_content "added globally"
+      expect(page.find('table#barcode_items')).to have_content "1T Diapers"
+
+      check "filters_only_global"
+      click_button "Filter"
+
+      expect(page.find('table#barcode_items')).to have_content "1T Diapers"
     end
   end
 
