@@ -17,7 +17,7 @@
             <li><a href="/index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
           </ul> -->
         </li>
-        <li class="treeview">
+        <li class="<%= active_class(['donations']) %> treeview">
           <a href="#">
             <i class="fa fa-gratipay"></i>
             <span>Donations</span>
@@ -26,17 +26,17 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li>          
+            <li class="<%= 'active' if current_page?(donations_path) %>">          
               <%= link_to(donations_path) do %>
                 <i class="fa fa-circle-o"></i> All Donations
               <% end %>
             </li>
-            <li>          
+            <li class="<%= 'active' if current_page?(new_donation_path) %>">          
               <%= link_to(new_donation_path) do %>
                 <i class="fa fa-circle-o"></i> New Donation
               <% end %>
             </li>
-            <li>          
+            <li class="<%= 'active' if current_page?(scale_donations_path) %>">          
               <%= link_to(scale_donations_path) do %>
                 <i class="fa fa-circle-o"></i> Repackaged Donation
               <% end %>

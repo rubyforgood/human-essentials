@@ -64,7 +64,7 @@
                     <td><%= adjustment.storage_location.name %></td>
                     <td><%= adjustment.comment %></td>
                     <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
-                    <td class="pull-right">
+                    <td class="text-right">
                       <%= link_to 'View', adjustment, class: "btn btn-primary btn-xs" %>
                       <%= link_to edit_adjustment_path(adjustment), class: "btn btn-info btn-xs" do %>
                           <i class="fa fa-edit"></i> Edit
