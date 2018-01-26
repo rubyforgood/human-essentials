@@ -27,19 +27,19 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :name, required: true, autofocus: true %>
-    <%= f.input :short_name, required: true, autofocus: true %>
-    <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
-    <%= f.input :email %>
-    <%= f.input :address %>
-    <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true %>
-    <%= f.input :logo %>
+    <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group %>
+    <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group %>
+    <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group %>
+    <%= f.input :email, wrapper: :vertical_input_group %>
+    <%= f.input :address, wrapper: :vertical_input_group %>
+    <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
+    <%= f.input :logo, wrapper: :vertical_input_group %>
     <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)</p>
 
   <% if current_organization.logo.present? %>
       <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">Preview Current Logo</a>
 
-      <!-- Button HTML (to Trigger Modal) -->      
+      <!-- Button HTML (to Trigger Modal) -->
       <!-- Modal HTML -->
       <div id="showTheLogo" class="modal fade">
           <div class="modal-dialog">
@@ -48,32 +48,15 @@
           </div>
       </div>
 
-    <% end %> 
+    <% end %>
       <%= f.button :submit, "Update", class: "btn btn-primary pull-right" %>
   </div>
 
   </div>
 
-<% end %>  
+<% end %>
 </div>
 </div>
 <!-- /.box -->
 
 </section>
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -30,7 +30,7 @@
       <%= f.input :name, label: "Name:", required: true, autofocus: true, wrapper: :vertical_input_group do %>
           <span class="input-group-addon"><i class="fa fa-user"></i></span>
           <%= f.input_field :name, class: "form-control" %>
-        <% end %>    
+        <% end %>
       <%= f.input :email, label: "Email:", wrapper: :vertical_input_group do %>
           <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
           <%= f.input_field :email, class: "form-control" %>
@@ -38,7 +38,7 @@
       <%= f.input :current_password, label: "Current Password:", wrapper: :vertical_input_group do %>
           <span class="input-group-addon"><i class="fa fa-lock"></i></span>
           <%= f.input_field :current_password, class: "form-control" %>
-        <% end %>        
+        <% end %>
     <p class="help-block" id="password-confirmation-help">we need your current password to confirm your changes</p>
 
 
@@ -54,15 +54,15 @@
         <div class="box-body">
           <p class="help-block" id="password-help">leave it blank if you don't want to change it</p>
           <%= f.input :password, label: "New Password:", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+          <span class="input-group-addon"><%= fa_icon "lock" %></span>
           <%= f.input_field :password, class: "form-control" %>
-          <% end %>   
+          <% end %>
           <%= f.input :password_confirmation, label: "New Password Confirmation:", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+          <span class="input-group-addon"><%= fa_icon "check" %></span>
           <%= f.input_field :password_confirmation, class: "form-control" %>
-          <% end %>   
+          <% end %>
 
-       
+
         </div>
         <!-- /.box-body -->
       </div>
@@ -71,7 +71,8 @@
 
   <br>
   <div class="form-actions medium-offset-3 medium-6">
-    <%= f.button :submit, "Update" %>
+    <%= f.button :submit, "Update", class: "btn btn-primary" %>
+    <%= link_to "Cancel", users_path, class: "btn btn-secondary" %>
   </div>
 <% end %>
 </div>
@@ -79,20 +80,3 @@
 <!-- /.box -->
 
 </section>
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
