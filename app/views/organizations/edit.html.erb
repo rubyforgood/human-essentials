@@ -27,11 +27,26 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group %>
-    <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group %>
-    <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group %>
-    <%= f.input :email, wrapper: :vertical_input_group %>
-    <%= f.input :address, wrapper: :vertical_input_group %>
+    <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :name, class: "form-control" %>
+    <% end %>
+    <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-desktop"></i></span>
+      <%= f.input_field :short_name, class: "form-control" %>
+    <% end %>    
+    <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-link"></i></span>
+      <%= f.input_field :url, class: "form-control" %>
+    <% end %>    
+    <%= f.input :email, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+      <%= f.input_field :email, class: "form-control" %>
+    <% end %>    
+    <%= f.input :address, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-address-book"></i></span>
+      <%= f.input_field :address, class: "form-control" %>
+    <% end %>   
     <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
     <%= f.input :logo, wrapper: :vertical_input_group %>
     <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)</p>
