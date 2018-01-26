@@ -17,22 +17,17 @@ All Diaperbase Organizations
 <section class="content">
 <!-- Default box -->
 <div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title">All Partner Agencies</h3>
-    <span class="pull-right">
-    <%= link_to "Add New Organization", new_admin_path(organization_id: current_user.organization.id), class: "btn btn-success btn-xs"  %> 
-    <%= link_to "Return to My Site", dashboard_path, class: "btn btn-warning btn-xs"  %></p>
-    </span>
-    
-  </div>
   <div class="box-body">
+    <%= link_to new_admin_path(organization_id: current_user.organization.id), class: "btn btn-success btn-lg" do %>
+      <%= fa_icon "plus" %> Add New Organization
+    <% end %>
 
 <div class="row">
 <div class="col-xs-12">
     <!-- /.box-header -->
     <div class="box-body table-responsive no-padding">
       <table class="table table-hover">
-        <thead>  
+        <thead>
           <tr>
             <th>Organization</th>
             <th>Contact E-mail</th>
@@ -49,7 +44,3 @@ All Diaperbase Organizations
 </div>
 </div>
 </section>
-
-
-
-
