@@ -2,7 +2,7 @@
   <td><%= barcode_item_row.item.name %></td>
   <td><%= barcode_item_row.quantity %></td>
   <td><%= barcode_item_row.value %></td>
-  <td class="pull-right">
+  <td class="text-right">
   		<%= link_to "View", barcode_item_path(barcode_item_row), class: "btn btn-primary btn-xs" %>
       <%= link_to edit_barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" do %>
         <i class="fa fa-edit"></i> Edit
