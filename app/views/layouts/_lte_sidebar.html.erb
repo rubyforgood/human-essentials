@@ -64,13 +64,11 @@
                 <i class="fa fa-circle-o"></i> Items & Inventory
               <% end %>
             </li>
-            <% if current_user.organization_admin? %>
             <li class="<%= active_class(['barcode_items']) %>">          
               <%= link_to(barcode_items_path) do %>
                 <i class="fa fa-circle-o"></i> Barcode Items
               <% end %>
             </li>
-            <% end %>
             <li class="<%= active_class(['storage_locations']) %>">          
               <%= link_to(storage_locations_path) do %>
                 <i class="fa fa-circle-o"></i> Storage Locations
