@@ -1,6 +1,7 @@
 <% if controller.controller_name != "admins" %>
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
+          <% if current_user.organization_admin? %>        
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-calendar"></i>
@@ -20,13 +21,11 @@
               <li class="footer"><a href="#">View Calendar</a></li>
             </ul>
           </li>
-          <% if current_user.organization_admin? %>
               <li>          
               <%= link_to(admins_path) do %>
                 <i class="fa fa-lock"></i> Administration
               <% end %>
             </li>
-        <% end %>
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
@@ -46,6 +45,7 @@
               <li class="footer"><a href="#">View Requests</a></li>
             </ul>
           </li>
+          <% end %>
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
