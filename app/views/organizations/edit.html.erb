@@ -27,53 +27,65 @@
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :name, required: true, autofocus: true %>
-    <%= f.input :short_name, required: true, autofocus: true %>
-    <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
-    <%= f.input :email %>
-    <%= f.input :address %>
-    <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true %>
-    <%= f.input :logo %>
-    <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)</p>
+    <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :name, class: "form-control" %>
+    <% end %>
+    <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-desktop"></i></span>
+      <%= f.input_field :short_name, class: "form-control" %>
+    <% end %>
+    <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-link"></i></span>
+      <%= f.input_field :url, class: "form-control" %>
+    <% end %>
+    <%= f.input :email, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+      <%= f.input_field :email, class: "form-control" %>
+    <% end %>
+    <%= f.input :address, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-address-book"></i></span>
+      <%= f.input_field :address, class: "form-control" %>
+    <% end %>
+    <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
+    
+    <%= f.input :logo, wrapper: :vertical_input_group do %>
 
-  <% if current_organization.logo.present? %>
-      <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">Preview Current Logo</a>
-
-      <!-- Button HTML (to Trigger Modal) -->      
-      <!-- Modal HTML -->
-      <div id="showTheLogo" class="modal fade">
-          <div class="modal-dialog">
-
-                    <%= image_tag current_organization.logo.url %>
+      <% if current_organization.logo.present? %>
+        <div>
+          <p>
+            <%= image_tag current_organization.logo.url(:small) %>
+          </p>
+          <p>
+            <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+              View Original
+            </a>
+          </p>
+          <div id="showTheLogo" class="modal fade">
+            <div class="modal-dialog">
+              <%= image_tag current_organization.logo.url, class: "thumbnail" %>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
           </div>
-      </div>
-
-    <% end %> 
-      <%= f.button :submit, "Update", class: "btn btn-primary pull-right" %>
+        </div>
+        <label class="control-label">Update Logo</label>
+      <% end %>
+              
+      <%= f.input_field :logo, as: :file %>
+      <p class="help-block">
+        Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)
+      </p>
+      
+    <% end %>
+    <%= f.button :submit, "Update", class: "btn btn-lg btn-primary pull-left" %>
+    <%= link_to "Cancel", dashboard_path, class: "btn btn-lg btn-secondary" %>
   </div>
 
   </div>
 
-<% end %>  
+<% end %>
 </div>
 </div>
 <!-- /.box -->
 
 </section>
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

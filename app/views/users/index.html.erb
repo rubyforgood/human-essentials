@@ -18,12 +18,10 @@
 
   <!-- Default box -->
   <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title">All Users</h3>  <%= link_to "Add a user", new_user_path(organization_id: current_organization), class: "btn btn-success btn-xs pull-right" %>
-
-    </div>
-    <div class="box-body">                                                      
-
+    <div class="box-body">
+<%= link_to new_user_path(organization_id: current_organization), class: "btn btn-success btn-lg" do %>
+  <%= fa_icon "plus" %> Add a user
+<% end %>
 <div class="row">
   <div class="col-xs-12">
       <!-- /.box-header -->
@@ -43,9 +41,13 @@
           <td><%= user.email %></td>
           <td class="text-right">
             <% if user != current_user %>
-              <%= link_to "Delete", user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?", class: "btn btn-danger btn-xs" %>
+              <%= link_to user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?", class: "btn btn-danger btn-xs" do %>
+                <%= fa_icon "trash" %> Delete
+              <% end %>
             <% else %>
-              <%= link_to "Edit", edit_user_registration_path(organization_id: nil), class: "btn btn-info btn-xs" %>
+              <%= link_to edit_user_registration_path(organization_id: nil), class: "btn btn-info btn-xs" do %>
+                <%= fa_icon "edit" %> Edit
+              <% end %>
             <% end %>
           </td>
         </tr>
@@ -59,13 +61,3 @@
   </div>
 </div>
 </section>
-
-
-
-
-
-
-
-
-
-
