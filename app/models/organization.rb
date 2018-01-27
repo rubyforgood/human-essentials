@@ -62,7 +62,7 @@ class Organization < ApplicationRecord
   end
 
   def total_inventory
-    inventory_items.map(&:quantity).reduce(:+) || 0
+    inventory_items.sum(:quantity) || 0
   end
 
   def scale_values
