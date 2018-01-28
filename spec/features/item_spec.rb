@@ -57,8 +57,8 @@
     expected_order = [item2.category, item.category]
     visit url_prefix + "/items"
 
-    expect(page.all('select#filters_in_category option').map(&:text)).to eq(expected_order)
-    expect(page.all('select#filters_in_category option').map(&:text)).not_to eq(expected_order.reverse)
+    expect(page.all('select#filters_in_category option').map(&:text).select(&:present?)).to eq(expected_order)
+    expect(page.all('select#filters_in_category option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
   end
 
   scenario "Filter show items without quantity" do

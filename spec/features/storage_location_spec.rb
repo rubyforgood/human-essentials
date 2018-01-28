@@ -63,8 +63,8 @@ RSpec.feature "Barcode management", type: :feature do
     storage_location3 = create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
     visit url_prefix + "/storage_locations"
 
-    expect(page.all('select#filters_containing option').map(&:text)).to eq(expected_order)
-    expect(page.all('select#filters_containing option').map(&:text)).not_to eq(expected_order.reverse)
+    expect(page.all('select#filters_containing option').map(&:text).select(&:present?)).to eq(expected_order)
+    expect(page.all('select#filters_containing option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
   end
 
 end

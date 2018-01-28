@@ -48,7 +48,7 @@ RSpec.feature "Site Administration", type: :feature do
       allow(User).to receive(:invite!).and_return(true)
       within "#addUserModal" do
         fill_in "email", with: "some_new_user@website.com"
-        click_button "Submit"
+        click_button "Invite User"
       end
       expect(page).to have_content("invited to organization")
     end
