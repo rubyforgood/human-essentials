@@ -5,11 +5,11 @@ New Organization
 <small></small>
 </h1>
 <ol class="breadcrumb">
-<li><%= link_to(root_path) do %>
-  <i class="fa fa-dashboard"></i> Home
-<% end %>
-</li>
-  <li><%= link_to "Administration", (admins_path) %></li>
+  <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li><%= link_to "Administration", (admins_path(organization_id: current_user.organization)) %></li>
   <li><a href="#">New Organization</a></li>
 </ol>
 </section>
@@ -20,7 +20,7 @@ New Organization
 <!-- Default box -->
 <div class="box">
 <div class="box-header with-border">
-  <h3 class="box-title">New Organization</h3>
+  <h3 class="box-title">Add New Diaperbase Organization</h3>
 </div>
 <div class="box-body">
 <%= simple_form_for @organization, url: admins_path do |f| %>
