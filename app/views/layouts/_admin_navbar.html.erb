@@ -35,7 +35,7 @@
             <% end %>
           </ul>
         </li>
-        <li class="hide-for-medium"><%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete') %></li>
+        <li class="hide-for-medium"><%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete'), class: 'btn btn-default' %></li>
       <% ############### NOT SIGNED IN ########### %>
       <% else %>
         <li class="hide-for-medium"><%= link_to 'Sign In', new_user_session_path(organization_id: nil) %></li>

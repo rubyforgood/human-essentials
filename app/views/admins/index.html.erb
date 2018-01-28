@@ -18,10 +18,11 @@ All Diaperbase Organizations
 <!-- Default box -->
 <div class="box">
   <div class="box-body">
-    <%= link_to new_admin_path(organization_id: current_user.organization.id), class: "btn btn-success btn-lg" do %>
-      <%= fa_icon "plus" %> Add New Organization
-    <% end %>
-
+    <div class="text-right">
+      <%= link_to new_admin_path(organization_id: current_user.organization.id), class: "btn btn-success" do %>
+        <%= fa_icon "plus" %> Add New Organization
+      <% end %>
+    </div>
 <div class="row">
 <div class="col-xs-12">
     <!-- /.box-header -->
@@ -31,7 +32,7 @@ All Diaperbase Organizations
           <tr>
             <th>Organization</th>
             <th>Contact E-mail</th>
-            <th>Actions</th>
+            <th class="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>

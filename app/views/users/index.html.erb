@@ -19,9 +19,11 @@
   <!-- Default box -->
   <div class="box">
     <div class="box-body">
-<%= link_to new_user_path(organization_id: current_organization), class: "btn btn-success btn-lg" do %>
-  <%= fa_icon "plus" %> Add a user
-<% end %>
+      <div class="text-right">
+        <%= link_to new_user_path(organization_id: current_organization), class: "btn btn-success" do %>
+          <%= fa_icon "plus" %> Add a user
+        <% end %>
+      </div>
 <div class="row">
   <div class="col-xs-12">
       <!-- /.box-header -->
