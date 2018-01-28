@@ -13,7 +13,7 @@
 
 FactoryBot.define do
   factory :line_item do
-    quantity 0
+    quantity 1
     item
     itemizable_type "Donation"
     itemizable_id { create(:donation).id }
