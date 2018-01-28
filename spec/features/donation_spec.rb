@@ -10,7 +10,7 @@ RSpec.feature "Donations", type: :feature, js: true do
     end
 
     scenario "User can click to the new donation form" do
-      click_link "New Donation"
+      find(".fa-plus").click
 
       expect(current_path).to eq(new_donation_path(@organization))
       expect(page).to have_content "Start a new donation"
