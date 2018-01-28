@@ -96,6 +96,7 @@ class DonationsController < ApplicationController
     @storage_locations = current_organization.storage_locations
     @dropoff_locations = current_organization.dropoff_locations
     @diaper_drive_participants = current_organization.diaper_drive_participants
+    @items = current_organization.items.alphabetized
   end
 
   def show
