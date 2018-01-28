@@ -37,13 +37,13 @@ class DistributionsController < ApplicationController
         render :new
       end
     else
-      @storage_locations = StorageLocation.all
+      @storage_locations = current_organization.storage_locations
       flash[:alert] = "An error occurred, try again?"
       logger.error "failed to save distribution: #{ @distribution.errors.full_messages }"
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
-    @storage_locations = StorageLocation.all
+    @storage_locations = current_organization.storage_locations
     @items = Item.all
     flash[:alert] = ex.message
     render :new
@@ -53,7 +53,7 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.new
     @distribution.line_items.build
     @items = Item.alphabetized
-    @storage_locations = StorageLocation.all
+    @storage_locations = current_organization.storage_locations
   end
 
   def show
