@@ -18,8 +18,6 @@
 #
 
 class Organization < ApplicationRecord
-  include Seedable
-
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI.regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
@@ -38,11 +36,13 @@ class Organization < ApplicationRecord
   has_many :transfers
   has_many :users
 
-  has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>"}, default_url: "/DiaperBase-Logo.png"
+  has_attached_file :logo, styles: { medium: "763x188>" }, default_url: "/DiaperBase-Logo.png"
   validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
 
   after_create { |org| seed_it!(org) }
-  
+
+  include Seedable
+
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name
@@ -62,7 +62,7 @@ class Organization < ApplicationRecord
   end
 
   def total_inventory
-    inventory_items.sum(:quantity) || 0
+    inventory_items.map(&:quantity).reduce(:+) || 0
   end
 
   def scale_values

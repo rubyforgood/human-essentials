@@ -1,15 +1,15 @@
-<div class="box-body">
-  <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
-      <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
-    <span class="input-group-addon"><i class="fa fa-user"></i></span>
-    <%= f.input_field :name, class: "form-control" %>
-  <% end %>
-      <%= f.input :address, label: "Address", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-address-card-o"></i></span>
-          <%= f.input_field :address, class: "form-control" %>
-        <% end %>
+<%= simple_form_for form do |f| %>
 
-        <%= f.button :submit, class:"btn btn-info"%>
-  <% end %>    
+  <%= f.input :name,
+    label: "Name",
+    error: "A name is required" %>
 
-</div>
+  <%= f.input :address,
+    label: "Address",
+    error: "An address is required" %>
+
+  <div class="medium-offset-3 medium-6">
+    <%= f.button :submit %>
+  </div>
+
+<% end %>

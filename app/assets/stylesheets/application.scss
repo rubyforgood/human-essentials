@@ -11,18 +11,14 @@
  * It is generally better to create a new file per style scope.
  *
  *= require toastr
- *= require font-awesome
- *= require ionicons
- *= require AdminLTE
- *= require bootstrap.min
- *= require _all-skins
- *= require scale
+ *= require foundation_and_overrides
+ *= app-dashboard-layout
+ *= require_tree .
  *= require_self
  */
 
-#logo img {
-max-height: 100%;
-max-width: 100%;
+body {
+  padding: 0;
 }
 
 .header-action {
@@ -41,8 +37,4 @@ img#logo {
 
 #toast-container{
   top: 70px;
-}
-
-.nav li.active {
-  background-color: #ecf0f5;
 }

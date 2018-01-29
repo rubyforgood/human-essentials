@@ -1,63 +1,31 @@
-<section class="content-header">
-  <% content_for :title, "#{current_organization.name} - Donations - #{@donation.source}" %>
-  <h1>
-    Donation
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Donations", (donations_path) %></li>  
-    <li class="active"> <%= @donation.source %> on <%= @donation.created_at.strftime("%B %-d %Y") %></li>
-  </ol>
+<% content_for :title, "#{current_organization.name} - Donations - #{@donation.source}" %>
+
+<h1>Donation from <%= @donation.source %></h1>
+
+<fieldset>
+<p>This donation was started on <%= @donation.created_at.strftime("%B %-d %Y") %>:</p>
+<ul>
+  <li>It was collected through: <%= @donation.source %></li>
+  <li>It was dropped off at: <%= @donation.dropoff_view %></li>
+  <li>It will be stored at: <%= @donation.storage_view %></li>
+</ul>
+<%= link_to "Make a correction >", edit_donation_path(@donation) %>
+</fieldset>
+
+
+<section id="line_items">
+  <table>
+    <thead>
+      <th>Item</th>
+      <th>Quantity</th>
+    </thead>
+
+    <tbody>
+      <%= render partial: "donation_item_row", collection: @line_items %>
+    </tbody>
+  </table>
+
+<!--
+TODO: What's the best way to do this? Should we use a new workflow?
+-->
 </section>
-
-<section class="content">
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <fieldset>
-        <p>This donation was started on <%= @donation.created_at.strftime("%B %-d %Y") %>:</p>
-        <ul class="list-group">
-          <li class="list-group-item">It was collected through: <%= @donation.source %></li>
-          <li class="list-group-item">It was dropped off at: <%= @donation.dropoff_view %></li>
-          <li class="list-group-item">It will be stored at: <%= @donation.storage_view %></li>
-        </ul>
-
-        <section id="line_items">
-          <!-- /.box-header -->
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="box-body table-responsive no-padding">
-                <table class="table table-hover">
-                  <thead>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                  </thead>
-
-                  <tbody>
-                    <%= render partial: "donation_item_row", collection: @line_items %>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        <!--
-        TODO: What's the best way to do this? Should we use a new workflow?
-        -->
-        </section>
-
-
-       <h2> <%= link_to "Make a correction", edit_donation_path(@donation), class: "btn btn-primary" %> </h2>
-      </fieldset>
-      
-    </div>
-  </div>
-</section>  
-
-
-
-
-

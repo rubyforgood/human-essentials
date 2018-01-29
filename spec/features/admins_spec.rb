@@ -44,11 +44,11 @@ RSpec.feature "Site Administration", type: :feature do
     end
 
     scenario "An admin can add a new user to an organization" do
-      page.find('a', text: "Invite User to this Organization").click
+      page.find('a', text: "Add User to Organization").click
       allow(User).to receive(:invite!).and_return(true)
       within "#addUserModal" do
         fill_in "email", with: "some_new_user@website.com"
-        click_button "Invite User"
+        click_button "Submit"
       end
       expect(page).to have_content("invited to organization")
     end
