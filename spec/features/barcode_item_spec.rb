@@ -9,7 +9,7 @@ RSpec.feature "Barcode management", type: :feature do
     create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.first)
     create(:barcode_item, item: Item.last)
     visit "/#{@organization.short_name}/barcode_items"
-    expect(page).to have_css("table tr", count: 2)
+    expect(page).to have_xpath("//table[@id='barcode_items']/tbody/tr", count: 1)
   end
 
   context "With organization-specific barcodes" do
@@ -26,14 +26,13 @@ RSpec.feature "Barcode management", type: :feature do
       uncheck 'barcode_item_global'
       click_button "Create Barcode item"
 
-      expect(page.find('.alert')).to have_content "added to your"
-
-      expect(page.find('table')).to have_content "1T Diapers"
+      expect(page.find('.flash.success')).to have_content "added to your"
+      expect(page.find('table#barcode_items')).to have_content "1T Diapers"
 
       check "filters_only_global"
       click_button "Filter"
 
-      expect(page.find('table')).not_to have_content "1T Diapers"
+      expect(page.find('table#barcode_items')).not_to have_content "1T Diapers"
     end
 
     scenario "User updates an existing barcode" do
@@ -43,7 +42,7 @@ RSpec.feature "Barcode management", type: :feature do
       fill_in "Quantity", id: "barcode_item_quantity", with: (barcode.quantity.to_i + 10).to_s
       click_button "Update Barcode item"
 
-      expect(page.find('.alert')).to have_content "updated"
+      expect(page.find('.flash.success')).to have_content "updated"
     end
 
     scenario "User updates an existing barcode with empty attributes" do
@@ -52,7 +51,8 @@ RSpec.feature "Barcode management", type: :feature do
       fill_in "Quantity", id: "barcode_item_quantity", with: ""
       click_button "Update Barcode item"
 
-      expect(page.find('.alert')).to have_content "didn't work"
+      expect(page.find('.flash.alert')).to have_content "didn't work"
+      expect(page.find('.error',match: :first)).to have_content "Please enter a quantity for this package"
     end
   end
 
@@ -71,14 +71,13 @@ RSpec.feature "Barcode management", type: :feature do
       check "barcode_item_global"
       click_button "Create Barcode item"
 
-      expect(page.find('.alert')).to have_content "added globally"
-
-      expect(page.find('table')).to have_content "1T Diapers"
+      expect(page.find('.flash.success')).to have_content "added globally"
+      expect(page.find('table#barcode_items')).to have_content "1T Diapers"
 
       check "filters_only_global"
       click_button "Filter"
 
-      expect(page.find('table')).to have_content "1T Diapers"
+      expect(page.find('table#barcode_items')).to have_content "1T Diapers"
     end
   end
 
@@ -92,7 +91,7 @@ RSpec.feature "Barcode management", type: :feature do
     select Item.first.name, from: "filters_item_id"
     click_button "Filter"
 
-    expect(page).to have_css("table tr", count: 2)
+    expect(page).to have_css("table tbody tr", count: 1)
   end
 
   scenario "Filter presented to user lists items in alphabetical order" do
@@ -115,6 +114,6 @@ RSpec.feature "Barcode management", type: :feature do
     visit "/#{@organization.short_name}/barcode_items/new"
     click_button "Create Barcode item"
 
-    expect(page.find('.alert')).to have_content "didn't work"
+    expect(page.find('.flash.alert')).to have_content "didn't work"
   end
 end

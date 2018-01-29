@@ -3,10 +3,8 @@
   <td><%= diaper_drive_participant_row.try(:phone) rescue "" %></td>
   <td><%= diaper_drive_participant_row.try(:email) rescue "" %></td>
   <td><%= diaper_drive_participant_row.volume %></td>
-  <td class="text-right">
-    <%= link_to "View", diaper_drive_participant_row, class: "btn btn-primary btn-xs"  %>
-    <%= link_to edit_diaper_drive_participant_path(diaper_drive_participant_row), class: "btn btn-info btn-xs" do %>
-      <i class="fa fa-edit"></i> Edit
-    <% end %>
+  <td>
+    <%= link_to "View", diaper_drive_participant_row, class: "button"  %>
+    <%= link_to "Edit", edit_diaper_drive_participant_path(diaper_drive_participant_row), class: "button"  %>
   </td>
 </tr>

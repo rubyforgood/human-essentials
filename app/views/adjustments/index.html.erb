@@ -1,82 +1,46 @@
-<section class="content-header">
-  <% content_for :title, "#{current_organization.name} - Inventory - Adjustments" %>
-  <h1>
-    Inventory Adjustments
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Adjustments</a></li>
-  </ol>
-</section>
+<% content_for :title, "#{current_organization.name} - Inventory - Adjustments" %>
 
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(adjustments_path, method: :get) do |f| %>
-          <div class="row">
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter by Storage Location" %>
-              <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }, class: "form-control") %>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
-                <i class="fa fa-filter"></i> Filter
-              <% end %>
-              <%= link_to adjustments_path, class: "btn btn-outline-primary btn-md" do %>
-                <i class="fa fa-ban"></i> Clear Filters
-              <% end %>
-              <%= link_to new_adjustment_path(organization_id: current_organization), class: "btn btn-success btn pull-right" do %>
-                <i class="fa fa-plus"></i> New Adjustment
-              <% end %>
-            </div>
-          </div><!-- /.row -->
-        <% end %>
-      </section>
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Created</th>
-                  <th>Organization</th>
-                  <th>Storage location</th>
-                  <th>Comment</th>
-                  <th>Summary</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @adjustments.each do |adjustment| %>
-                  <tr>
-                    <td><time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y (%l:%M%P %Z)") %></time></td>
-                    <td><%= adjustment.organization.name %></td>
-                    <td><%= adjustment.storage_location.name %></td>
-                    <td><%= adjustment.comment %></td>
-                    <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
-                    <td class="text-right">
-                      <%= link_to 'View', adjustment, class: "btn btn-primary btn-xs" %>
-                      <%= link_to edit_adjustment_path(adjustment), class: "btn btn-info btn-xs" do %>
-                          <i class="fa fa-edit"></i> Edit
-                        <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+<% content_for :sidebar do %>
+<section id="filters">
+  <h2>Filters</h2>
+  <%= form_tag(adjustments_path, method: :get) do |f| %>
+    <%= label_tag "by Storage Location" %>
+    <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }) %>
+    <%= submit_tag "Filter", class: "button primary" %>
+    <%= link_to "Clear Filters", adjustments_path, class: "button secondary" %>
+  <% end %>
+</section>
+<% end %>
+
+<div class="header-action">
+  <%= link_to "New Adjustment", new_adjustment_path, class: "button float-right" %>
+</div>
+
+<h1>Adjustments</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Created</th>
+      <th>Organization</th>
+      <th>Storage location</th>
+      <th>Comment</th>
+      <th>Summary</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @adjustments.each do |adjustment| %>
+      <tr>
+        <td><%= adjustment.created_at %></td>
+        <td><%= adjustment.organization.name %></td>
+        <td><%= adjustment.storage_location.name %></td>
+        <td><%= adjustment.comment %></td>
+        <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
+        <td><%= link_to 'Show', adjustment %></td>
+        <td><%= link_to 'Edit', edit_adjustment_path(adjustment) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

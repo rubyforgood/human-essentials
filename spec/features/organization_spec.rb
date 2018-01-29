@@ -8,8 +8,10 @@ RSpec.feature "Organization management", type: :feature do
     fill_in "Url", with: "www.diaperbase.com"
     click_button "Update"
 
+    expect(page.find('.url .error')).to have_content "www.example.com"
+
     fill_in "Url", with: "http://www.diaperbase.com"
     click_button "Update"
-    expect(page.find('.alert')).to have_content "pdated"
+    expect(page.find('.flash.success')).to have_content "pdated"
   end
 end

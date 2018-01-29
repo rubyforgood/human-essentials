@@ -1,47 +1,19 @@
-<section class="content-header">
-<% content_for :title, "Admin - Organizations" %>
-<h1>
-All Diaperbase Organizations
-  <small></small>
-</h1>
-<ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
-  </li>
-  <li><a href="#">Administration</a></li>
-</ol>
-</section>
+<% content_for :title, "Organizations - Partners" %>
 
-<!-- Main content -->
-<section class="content">
-<!-- Default box -->
-<div class="box">
-  <div class="box-body">
-    <div class="text-right">
-      <%= link_to new_admin_path(organization_id: current_user.organization.id), class: "btn btn-success" do %>
-        <%= fa_icon "plus" %> Add New Organization
-      <% end %>
-    </div>
-<div class="row">
-<div class="col-xs-12">
-    <!-- /.box-header -->
-    <div class="box-body table-responsive no-padding">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Organization</th>
-            <th>Contact E-mail</th>
-            <th class="text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-        <%= render partial: "organization_row", collection: @organizations %>
-        </tbody>
-      </table>
-    <!-- /.box-body -->
-  </div>
-  <!-- /.box -->
-</div>
-</div>
-</section>
+<h1>All Diaperbase Organizations</h1>
+
+<table id="Organizations">
+  <thead>
+    <tr>
+      <th>Organization</th>
+      <th>Contact E-mail</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "organization_row", collection: @organizations %>
+  </tbody>
+</table>
+<p><%= link_to "Add New Organization", new_admin_path, class: 'button success' %> 
+<%= link_to "Return to My Site", dashboard_path, class: 'button warning' %></p>
+

@@ -1,88 +1,49 @@
-<section class="content-header">
-  <% content_for :title, "#{current_organization.name} - Agencies - Diaper Drive Participants" %>
-  <h1>
-    Diaper Drive Participants
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Dropoff Locations</a></li>
-  </ol>
-</section>
+<% content_for :title, "#{current_organization.name} - Agencies - Diaper Drive Participants" %>
 
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <!-- TBA -- duplicate layout from other index views -->
-        <%= link_to new_diaper_drive_participant_path(organization_id: current_organization), class: "btn btn-success btn pull-right", style: "margin-right: 1rem;" do %>
-          <i class="fa fa-plus"></i> New Diaper Drive Participant
-        <% end %>
-        
-      </section>
-    </div>
-    <div class="box-body">
-      <% if @diaper_drive_participants.empty? %>
-        <div class="import-partners">
-          <!-- Button HTML (to Trigger Modal) -->
-          <a href="#importDropoffLocationModal" class="btn btn-lg btn-primary" data-toggle="modal"><i class="fa fa-upload"></i> Import Dropoff Locations</a>
-          <!-- Modal HTML -->
-          <div id="importDropoffLocationModal" class="modal fade">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                  <h2 class="modal-title">Import Dropoff Locations Instructions:</h4>
-                </div><!-- /.modal-header -->
-                <div class="modal-body">
-                  <ol>
-                    <li><%= link_to "/diaper_drive_participants.csv", :format => :csv, :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i>Download example csv<% end %></li>
-                    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-                    <li>Delete the sample data and enter the diaper drive participant names, emails and phone numbers in the appropriate columns.</li>
-                    <li>Save the file as a csv file.</li>
-                    <li>Click the choose file button and navigate to the saved file and select it.</li>
-                    <li>Then click the Import CSV button to import your storage locations.</li>
-                  </ol>
-                  <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
-                </div><!-- /.modal-body -->
-                <div class="modal-footer">
-                  <%= form_tag import_csv_diaper_drive_participants_path, multipart: true do %>
-                    <div class="form-group">
-                      <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
-                    </div>
-                    <%= button_tag :class => "btn btn-sm btn-primary" do %>
-                      <i class="fa fa-upload"></i> Import CSV
-                    <% end #button %>
-                  <% end #form %>
-                </div><!-- /.modal-footer -->
-            </div><!-- /.modal-content -->
-          </div><!-- /.modal-dialog -->
-        </div><!-- .import-partners -->
-      </div><!-- /.modal -->
+<div class="header-action">
+  <%= link_to "New Diaper Drive Participant", new_diaper_drive_participant_path(organization_id: current_organization), class: "button float-right" %>
+</div>
+
+
+<% if @diaper_drive_participants.empty? %>
+
+<div class="reveal" id="addStorageLocationModal" data-reveal>
+  <h2 id="modalTitle">Import Diaper Drive Participants</h2>
+  <p class="lead">Instructions:</p>
+    <ol>
+      <li><%= link_to "Download example csv", "/diaper_drive_participants.csv", :format => :csv, :class => "btn btn-info" %>.</li>
+      <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+      <li>Delete the sample data and enter the diaper drive participant names, emails and phone numbers in the appropriate columns.</li>
+      <li>Save the file as a csv file.</li>
+      <li>Click the choose file button and navigate to the saved file and select it.</li>
+      <li>Then click the Import CSV button to import your storage locations.</li>
+    </ol>
+    <p class="help-text">Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</p>
+
+    <%= form_tag import_csv_diaper_drive_participants_path, multipart: true do %>
+        <%= file_field_tag :file, :accept => 'text/csv' %>
+        <%= submit_tag "Import CSV", :class => "btn btn-white" %>
     <% end %>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="box-body table-responsive no-padding">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Volume</th>
-                <th>&nbsp;</th>
-              </tr>
-            </thead>
-            <tbody>
-              <%= render partial: "diaper_drive_participant_row", collection: @diaper_drive_participants %>
-            </tbody>
-          </table>
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+</div>
+<br/>
+<p><a class="button success" data-open="addStorageLocationModal">Import Diaper Drive Participants</a></p>
+<% end %>
+
+
+<h1>Diaper Drive Participants</h1>
+
+<table id="diaper_drive_participants">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Volume</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <%= render partial: "diaper_drive_participant_row", collection: @diaper_drive_participants %>
+  </tbody>
+</table>

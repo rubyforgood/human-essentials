@@ -46,7 +46,10 @@ class DonationsController < ApplicationController
   def scale
     @donation = Donation.new(issued_at: Date.today)
     @donation.line_items.build
-    load_form_collections
+    @storage_locations = current_organization.storage_locations
+    @dropoff_locations = current_organization.dropoff_locations
+    @diaper_drive_participants = current_organization.diaper_drive_participants
+    @items = current_organization.items.alphabetized
   end
 
   def scale_intake
@@ -67,7 +70,10 @@ class DonationsController < ApplicationController
       @donation.storage_location.intake! @donation
       redirect_to donations_path
     else
-      load_form_collections
+      @storage_locations = current_organization.storage_locations
+      @dropoff_locations = current_organization.dropoff_locations
+      @diaper_drive_participants = current_organization.diaper_drive_participants
+      @items = current_organization.items.alphabetized
       @donation.line_items.build if @donation.line_items.count == 0
       flash[:alert] = "There was an error starting this donation, try again?"
       Rails.logger.info "ERROR: #{@donation.errors}"
@@ -78,13 +84,18 @@ class DonationsController < ApplicationController
   def new
     @donation = Donation.new(issued_at: Date.today)
     @donation.line_items.build
-    load_form_collections
+    @storage_locations = current_organization.storage_locations
+    @dropoff_locations = current_organization.dropoff_locations
+    @diaper_drive_participants = current_organization.diaper_drive_participants
+    @items = current_organization.items.alphabetized
   end
 
   def edit
     @donation = Donation.find(params[:id])
     @donation.line_items.build
-    load_form_collections
+    @storage_locations = current_organization.storage_locations
+    @dropoff_locations = current_organization.dropoff_locations
+    @diaper_drive_participants = current_organization.diaper_drive_participants
   end
 
   def show
@@ -105,14 +116,6 @@ class DonationsController < ApplicationController
   end
 
 private
-  
-  def load_form_collections
-    @storage_locations = current_organization.storage_locations
-    @dropoff_locations = current_organization.dropoff_locations
-    @diaper_drive_participants = current_organization.diaper_drive_participants
-    @items = current_organization.items.alphabetized
-  end
-
   def donation_params
     params = strip_unnecessary_params
     params = compact_line_items

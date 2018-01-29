@@ -12,26 +12,29 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require bootstrap.min
-//= require fastclick
-//= require adminlte.min
+//= require foundation
+// require turbolinks // Removed!
 //= require cocoon
 //= require toastr
+//
 //= require Chart.bundle
 //= require chartkick
+//
 //= require react
 //= require react_ujs
 //= require components
 //= require_tree .
 
+$(document).ready(function() {
+  $(document).foundation();
+});
 
 window.setTimeout(function() {
-    $(".alert").fadeTo(1000, 0).slideUp(1000, function(){
-        $(this).remove(); 
-    });
-}, 2500);
+    $(".close-button").click();
+}, 3000);
 
 // Global toastr options
 toastr.options = {
   "timeOut": "1400"
 }
+

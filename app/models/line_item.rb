@@ -16,5 +16,5 @@ class LineItem < ApplicationRecord
   belongs_to :item
 
   validates :item_id, presence: true
-  validates :quantity, numericality: { greater_than: 0 }
+  validates :quantity, presence: true
 end

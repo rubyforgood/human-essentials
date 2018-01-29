@@ -1,27 +1,5 @@
-<section class="content-header">
 <% content_for :title, "#{current_organization.name} - Donations - New" %>
 
-<h1>
-  Start a new donation
-  <small>for <%= current_organization.name %></small>
-</h1>
+<h1>Start a new donation</h1>
 
-<ol class="breadcrumb">
-<li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
-  </li>
-  <li><%= link_to "Donations", (donations_path) %></li>
-  <li class="active"> New Donation</li>
-</ol>
-</section>
-
-<!-- Main content -->
-<section class="content">
-
-	<!-- Default box -->
-	<div class="box">
-    <%= render partial: "donation_form", object: @donation %>
-	</div><!-- /.box -->
-
-</section>
+<%= render partial: "donation_form", object: @donation %>
