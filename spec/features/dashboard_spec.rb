@@ -14,15 +14,15 @@ RSpec.feature "Dashboard", type: :feature do
       header_logo = extract_image(:xpath, "//img[@id='logo']")
       expect(header_logo).to be_include("DiaperBase-Logo")
 
-      organization_logo = extract_image(:xpath, "//div/img")
+      organization_logo = extract_image(:xpath, "//h1[@class='organization-name']/img")
       expect(organization_logo).to eq("logo.jpg")
 
       @organization.logo = nil
       @organization.save
       visit @url_prefix + "/dashboard"
 
-      expect(page).not_to have_xpath("//div/img")
-      expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@organization.name)
+      expect(page).not_to have_xpath("//h1[@class='organization-name']/img")
+      expect(page.find(:xpath, "//h1[@class='organization-name']")).to have_content(@organization.name)
     end
 
   end
@@ -87,7 +87,7 @@ RSpec.feature "Dashboard", type: :feature do
     select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
     fill_in "distribution_line_items_attributes_0_quantity", with: "50"
     click_button "Create Distribution"
-    expect(page).to have_xpath("//table/tbody/tr/td", text: "50")
+    expect(page).to have_xpath("//table[@id='distributions']/tbody/tr/td", text: "50")
 
     # Check the dashboard now
     visit @url_prefix + "/dashboard"

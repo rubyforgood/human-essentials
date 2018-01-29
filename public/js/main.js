@@ -1,7 +1,10 @@
 $(document).ready(function(){
 	
+
 	/*  Foundation Init    */
 	$(document).foundation();
+
+
 
 	/*  carousel Init    */
 	$('#carousel').carouFredSel({
@@ -9,8 +12,7 @@ $(document).ready(function(){
 	 	pagination  : ".pagination",
 	 	responsive : true,
 	 	scroll :{
-	 		fx : 'fade',
-      duration: 700
+	 		fx : 'fade'
 	 	},
 	 	items :{
 	 		visible : 1,
@@ -22,10 +24,19 @@ $(document).ready(function(){
 		}
     });
 
-    /*    Mean navigation menu scroll to    */
+
+
+
+
+	/*    Mean navigation menu scroll to    */
     $('#mean_nav ul li a').click(function(e){
     	scrollTo($(this).attr('href'), 900, 'easeInOutCubic');
     });
+
+
+
+
+
 
     /*    Back to top button    */
     var back_top = $('#back_top');

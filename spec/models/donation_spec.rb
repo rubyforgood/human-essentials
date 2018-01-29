@@ -180,6 +180,13 @@ RSpec.describe Donation, type: :model do
         }.to change{donation.total_quantity}.by(-1)
       end
 
+      it "can never go negative even if a very large negative quantity is given" do
+        reduce_by_quantity = -1 * (donation.total_quantity + 1)
+        expect {
+          donation.update_quantity(reduce_by_quantity, donation.items.first)
+        }.to change{donation.total_quantity}.to(0)
+      end
+
       it "works whether you give it an item or an id" do
         expect {
           donation.update_quantity(1, donation.items.first.id)

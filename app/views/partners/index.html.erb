@@ -1,87 +1,46 @@
-<section class="content-header">
-  <% content_for :title, "#{current_organization.name} - Agencies - Partners" %>
-  <h1>
-    Partner Agencies
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
+<% content_for :title, "#{current_organization.name} - Agencies - Partners" %>
+
+
+<div class="header-action">
+  <%= link_to "New Partner Agency", new_partner_path(organization_id: current_organization), class: "button float-right" %>
+</div>
+
+
+<% if @partners.empty? %>
+
+<div class="reveal" id="addStorageLocationModal" data-reveal>
+  <h2 id="modalTitle">Import Partners</h2>
+  <p class="lead">Instructions:</p>
+    <ol>
+      <li><%= link_to "Download example csv", "/partners.csv", :format => :csv, :class => "btn btn-info" %>.</li>
+      <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+      <li>Delete the sample data and enter your partner agency names and addresses in the appropriate columns.</li>
+      <li>Save the file as a csv file.</li>
+      <li>Click the choose file button and navigate to the saved file and select it.</li>
+      <li>Then click the Import CSV button to import your storage locations.</li>
+    </ol>
+    <p class="help-text">Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</p>
+
+    <%= form_tag import_csv_partners_path, multipart: true do %>
+        <%= file_field_tag :file, :accept => 'text/csv' %>
+        <%= submit_tag "Import CSV", :class => "btn btn-white" %>
     <% end %>
-    </li>
-    <li><a href="#">Partner Agencies</a></li>
-  </ol>
-</section>
+</div>
+<br/>
+<p><a class="button success" data-open="addStorageLocationModal">Import Partners</a></p>
+<% end %>
 
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= link_to new_partner_path(organization_id: current_organization), class: "btn btn-success btn pull-right", style: "margin-right: 1rem;" do %>
-          <i class="fa fa-plus"></i> New Partner Agency
-        <% end %>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <% if @partners.empty? %>
-        <div class="import-partners">
-          <!-- Button HTML (to Trigger Modal) -->
-          <a href="#importPartnerModal" class="btn btn-lg btn-primary" data-toggle="modal"><i class="fa fa-upload"></i> Import Partners</a>
+<h1>Partner Agencies</h1>
 
-          <!-- Modal HTML -->
-          <div id="importPartnerModal" class="modal fade">
-          <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h2 class="modal-title">Import Partners Instructions:</h4>
-                </div><!-- /.modal-header -->
-                <div class="modal-body">
-                  <ol>
-                    <li><%= link_to "/partners.csv", :format => :csv, :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example CSV <% end %></li>
-                    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-                    <li>Delete the sample data and enter your partner agency names and addresses in the appropriate columns.</li>
-                    <li>Save the file as a csv file.</li>
-                    <li>Click the choose file button and navigate to the saved file and select it.</li>
-                    <li>Then click the Import CSV button to import your storage locations.</li>
-                  </ol>
-                  <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
-                </div><!-- /.modal-body -->
-                <div class="modal-footer">
-                  <%= form_tag import_csv_partners_path, multipart: true do %>
-                    <div class="form-group">
-                      <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
-                    </div>
-                    <%= button_tag :class => "btn btn-lg btn-primary" do %>
-                      <i class="fa fa-upload"></i> Import CSV
-                    <% end #button %>
-                  <% end #form %>
-                </div><!-- /.modal-footer -->
-              </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-          </div><!-- /.modal -->
-        </div><!-- /.import-partners -->
-      <% end #if %>
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Partner</th>
-                  <th>E-mail</th>
-                  <!-- <th title="This field is currently mock data">Approved?</th> -->
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "partner_row", collection: @partners %>
-              </tbody>
-            </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+<table id="partners">
+  <thead>
+    <tr>
+      <th>Partner</th>
+      <th>E-mail</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "partner_row", collection: @partners %>
+  </tbody>
+</table>

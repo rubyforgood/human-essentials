@@ -1,90 +1,52 @@
 <%= simple_form_for @donation do |f| %>
-  <div class="box-body">
 
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
   <%= f.input :source,
     collection: Donation::SOURCES.values,
     label: "Source",
-    error: "What effort or initiative did this donation come from?",
-    wrapper: :vertical_input_group %>
-</div>
-</div>
+    error: "What effort or initiative did this donation come from?" %>
 
-<div class="row">
-  <div class="col-xs-8 col-md-6 col-lg-3">
   <%= f.association :dropoff_location,
     collection: @dropoff_locations,
     label: "Dropoff Location",
-    error: "Where was this donation dropped off?",
-    wrapper: :vertical_input_group %>
-</div>
-</div>
+    error: "Where was this donation dropped off?" %>
 
-<div class="row">
-  <div class="col-xs-8 col-md-6 col-lg-3">
   <%= f.association :diaper_drive_participant,
     collection: @diaper_drive_participants,
     label_method: :name,
     label: "Diaper Drive Participant",
-    error: "Which diaper drive was this from?",
-    wrapper: :vertical_input_group %>
-</div>
-</div>
+    error: "Which diaper drive was this from?" %>
 
-<div class="row">
-  <div class="col-xs-8 col-md-6 col-lg-3">
   <%= f.association :storage_location,
     collection: @storage_locations,
     label: "Storage Location",
-    error: "Where is it being stored?",
-    wrapper: :vertical_input_group %>
-</div>
-</div>
+    error: "Where is it being stored?" %>
 
-<div class="row">
-  <div class="col-xs-8 col-md-6">
-  <%= f.input :comment,
-    wrapper: :vertical_input_group %>
-</div>
-</div>
+  <%= f.input :comment %>
 
-<div class="row">
-  <div class="col-xs-8 col-md-6 col-lg-3">
   <%= f.input :issued_at,
      label: "Issued on",
      as: :date,
-     html5: true,
-     wrapper: :vertical_input_group %>
-</div>
-</div>
+     html5: true %>
 
-<fieldset style="margin-bottom: 2rem;">
-  <legend>Items in this donation</legend>
-  <div id="donation_line_items" data-capture-barcode="true">
-    
-    <%= f.simple_fields_for :line_items do |item| %>
+
+  <%= f.simple_fields_for :line_items do |item| %>
+    <div id="donation_line_items" data-capture-barcode="true">
       <%= render 'line_item_fields', f: item %>
-    <% end %>
-  </div>
-
-  <div class="row links">
-      <div class="col-xs-12">
-        <%= link_to_add_association f, :line_items,
+    </div>
+    <div class="row links">
+      <div class="medium-offset-3 medium-6 columns">
+        <%= link_to_add_association "add line item", f, :line_items,
         data: {
           association_insertion_node: "#donation_line_items",
           association_insertion_method: "append"
-        }, id: "__add_line_item", class: "btn btn-success", style: "margin-top: 1rem;" do
+        }, id: "__add_line_item"
         %>
-          <i class="fa fa-plus"></i> Add another item
-        <% end %>
       </div>
     </div>
-</fieldset>
-  <div class="row">
-    <div class="col-xs-12">
-    <%= f.button :submit, class: "btn btn-lg btn-primary" %>
+  <% end %>
+
+  <div class="medium-offset-3 medium-9 columns">
+    <%= f.button :submit %>
   </div>
-</div>
-</div><!-- /.box-body.container -->
+
 <% end %>

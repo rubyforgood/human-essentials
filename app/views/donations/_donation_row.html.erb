@@ -1,10 +1,7 @@
 <tr>
-  <td><%= donation_row.source_view %></td>
+  <td><%= link_to donation_row.source_view, donation_row %></td>
   <td><%= donation_row.dropoff_location.name if donation_row.dropoff_location.present? %></td>
   <td><%= donation_row.storage_location.name %></td>
   <td><%= donation_row.line_items.total %></td>
   <td><%= donation_row.line_items.size %></td>
-  <td class="text-right">
-   <%= link_to "View", donation_path(donation_row), class: "btn btn-primary btn-xs" %>
-  </td>
 </tr>

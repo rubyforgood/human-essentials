@@ -542,6 +542,14 @@ header .top-bar-section li:not(.has-form) a:not(.button):hover{
 }
 
 
+
+
+
+
+
+
+
+
 /*    Testimonials    */
 
 .testimonials{
@@ -552,16 +560,11 @@ header .top-bar-section li:not(.has-form) a:not(.button):hover{
 
 .testimonials .tesimonial{
 	max-width: 670px;
-  height: auto;
+	height: auto;
 	margin: 0 auto;
 	padding: 0 20px;
 	text-align: center;
 	float: left;
-} 
-
-.testimonials .tesimonial img {
-  width: 100px;
-  height: 100px;
 } 
 
 .slider_container{
