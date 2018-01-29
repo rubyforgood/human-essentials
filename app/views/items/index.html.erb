@@ -1,66 +1,134 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Items" %>
-
-<% content_for :sidebar do %>
-<section id="filters">
-  <h2>Filters</h2>
-  <%= form_tag(items_path, method: :get) do |f| %>
-    <%= label_tag do %>
-      <%= radio_button_tag "filters[show_quantity]", "0", @show_quantity == "0" || @show_quantity.nil? ? true :false %>
-      Without quantity
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Inventory - Items" %>
+  <h1>
+    Item Types
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
     <% end %>
-    <%= label_tag do %>
-      <%= radio_button_tag "filters[show_quantity]", "1", @show_quantity == "1" ? true :false %>
-      With quantity
-    <% end %>
-    <%= label_tag do %>
-      <%= radio_button_tag "filters[show_quantity]", "2", @show_quantity == "2" ? true :false %>
-      With quantity and storages
-    <% end %>
-    <%= label_tag "by Item Category" %>
-    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category, { include_blank: true, selected: (@selected_category) }) %>
-    <%= submit_tag "Filter", class: "button primary" %>
-    <%= link_to "Clear Filters", items_path, class: "button secondary" %>
-  <% end %>
+    </li>
+    <li><a href="#">All Items</a></li>
+  </ol>
 </section>
-<% end %>
 
-<div class="header-action">
-  <%= link_to "Create New Item", new_item_path, class: "button float-right" %>
-</div>
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+        <section id="filters">
+        <%= form_tag(items_path, method: :get) do |f| %>
+          <div class="row">
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter by Item Category" %>
+              <%= collection_select(:filters, :in_category, @categories || {}, :category, :category, { include_blank: true }, class: "form-control") %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+            <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+              <i class="fa fa-filter"></i> Filter
+            <% end %>
+            <%= link_to items_path, class: "btn btn-outline-primary btn-md" do %>
+              <i class="fa fa-ban"></i> Clear Filters
+            <% end %>
+              <%= link_to new_item_path(organization_id: current_organization), class: "btn btn-success btn pull-right" do %>
+            <i class="fa fa-plus"></i> Create New Item
+          <% end %>
+          </div>
+        </div><!-- /.row -->
+        <% end #form %>
+        </section>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a data-toggle="tab" href="#sectionA">Item List</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#sectionB">Items and Quantity</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#sectionC">Items, Quantity, and Location</a></li>
+          </ul>
 
-<h1>Items</h1>
+          <div class="tab-content">
+            <div id="sectionA" class="tab-pane fade in active">
 
-<table id="items">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Category</th>
-      <th>Barcodes</th>
-      <% if @show_quantity == "2" %>
-      <%= render partial: "storage_column", collection: @storages %>
-      <% end %>
-      <% if @show_quantity == "1" || @show_quantity == "2" %>
-        <th>Quantity</th>
-      <% end %>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% if @show_quantity == "0" || @show_quantity.nil? %>
-    <%= render partial: "item_row", collection: @items %>
-  <% elsif @show_quantity == "1" %>
-    <%= render partial: "item_row_quantity", collection: @items %>
-  <% elsif @show_quantity == "2" %>
-    <% @items.each do |item| %>
-      <tr>
-        <% if item.id != @row_collection[:item_id] && @row_collection[:item_id] != nil %>
-          <%= render partial: "item_row_quantity_and_storages" %>
-          <% new_storage_collection %>
-        <% end %>
-        <% update_storage_collection(item) %>
-      </tr>
-    <% end %>
-    <%= render partial: "item_row_quantity_and_storages" %>
-  <% end %>
-  </tbody>
-</table>
+              <div class="row">
+                <div class="col-xs-12">
+
+                  <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Barcodes</th>
+                          <th>&nbsp;</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <%= render partial: "item_row", collection: @items %>
+                      </tbody>
+                    </table>
+                  </div><!-- /.box-body.table-responsive -->
+                </div><!-- /.col-xs-12 -->
+              </div><!-- /.row -->
+            </div><!-- /#sectionA -->
+            <div id="sectionB" class="tab-pane fade info">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Barcodes</th>
+                          <th>Quantity</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <%= render partial: "item_row_quantity", collection: @items2 %>
+                      </tbody>
+                    </table>
+                  </div><!-- /.box-body -->
+                </div><!-- /.col-xs-12 -->
+              </div><!-- /.row -->
+            </div><!-- /#sectionB -->
+            <div id="sectionC" class="tab-pane fade">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <%= render partial: "storage_column", collection: @storages %>
+                          <th>Total Quantity</th>
+                          <th>&nbsp;</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @items3.each do |item| %>
+                        <tr>
+                          <% if item.id != @row_collection[:item_id] && @row_collection[:item_id] != nil %>
+                            <%= render partial: "item_row_quantity_and_storages" %>
+                            <% new_storage_collection %>
+                          <% end %>
+                          <% update_storage_collection(item) %>
+                        </tr>
+                        <% end %>
+                        <%= render partial: "item_row_quantity_and_storages" %>
+                      </tbody>
+                    </table>
+                  </div><!-- /.box-body.table-responsive -->
+                </div><!-- /.col-xs-12 -->
+              </div><!-- /.row -->
+            </div><!-- /#sectionC -->
+          </div><!-- /.tab-content -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section><!-- /.content -->

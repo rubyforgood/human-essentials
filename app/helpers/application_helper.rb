@@ -9,6 +9,11 @@ module ApplicationHelper
     end
   end
 
+   def active_class(name)
+     name.include?(controller_name) ? 'active' : controller_name
+   end
+
+
   # wraps link_to_unless_current to provide Foundation6 friendly <a> tags
   def navigation_link_to(*args)
     link_to_unless_current(*args) do
@@ -16,6 +21,14 @@ module ApplicationHelper
     end
   end
 
+  def flash_class(level)
+    case level
+      when 'notice' then "alert alert-info"
+      when 'success' then "alert alert-success"
+      when 'error' then "alert alert-danger"
+      when 'alert' then "alert alert-warning"
+    end
+  end
   ## Devise overrides
 
   def after_sign_in_path_for(resource)

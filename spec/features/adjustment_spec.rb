@@ -27,7 +27,7 @@ scenario "User can filter the #index by storage location" do
   select storage_location.name, from: "filters_at_location"
   click_button "Filter"
 
-  expect(page).to have_css("table tbody tr", count: 1)
+  expect(page).to have_css("table tr", count: 2)
 end
 
 end
