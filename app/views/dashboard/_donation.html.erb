@@ -1,10 +1,10 @@
 <div class="row">
-  <div class="large-8 columns">
+  <div class="pull-left">
     <%= link_to donation do %>
       <%= donation.line_items.total %> items from <%= donation.source %>
     <% end %>
   </div>
-  <div class="large-4 columns">
+  <div class="pull-right">
     <%= distance_of_time_in_words_to_now donation.created_at %> ago
   </div>
 </div>
