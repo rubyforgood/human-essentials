@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "adjustments", force: :cascade do |t|
+  create_table "adjustments", id: :serial, force: :cascade do |t|
     t.integer "organization_id"
     t.integer "storage_location_id"
     t.text "comment"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["storage_location_id"], name: "index_adjustments_on_storage_location_id"
   end
 
-  create_table "barcode_items", force: :cascade do |t|
+  create_table "barcode_items", id: :serial, force: :cascade do |t|
     t.string "value"
     t.integer "item_id"
     t.integer "quantity"
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
   end
 
-  create_table "diaper_drive_participants", force: :cascade do |t|
+  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "contact_name"
     t.string "email"
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "distributions", force: :cascade do |t|
+  create_table "distributions", id: :serial, force: :cascade do |t|
     t.text "comment"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -60,7 +60,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
   end
 
-  create_table "donations", force: :cascade do |t|
+  create_table "donations", id: :serial, force: :cascade do |t|
     t.string "source"
     t.integer "dropoff_location_id"
     t.datetime "created_at"
@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
 
-  create_table "dropoff_locations", force: :cascade do |t|
+  create_table "dropoff_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.datetime "created_at"
@@ -84,7 +84,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["organization_id"], name: "index_dropoff_locations_on_organization_id"
   end
 
-  create_table "inventory_items", force: :cascade do |t|
+  create_table "inventory_items", id: :serial, force: :cascade do |t|
     t.integer "storage_location_id"
     t.integer "item_id"
     t.integer "quantity"
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.datetime "updated_at"
   end
 
-  create_table "items", force: :cascade do |t|
+  create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "category"
     t.datetime "created_at"
@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["organization_id"], name: "index_items_on_organization_id"
   end
 
-  create_table "line_items", force: :cascade do |t|
+  create_table "line_items", id: :serial, force: :cascade do |t|
     t.integer "quantity"
     t.integer "item_id"
     t.integer "itemizable_id"
@@ -112,7 +112,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
   end
 
-  create_table "organizations", force: :cascade do |t|
+  create_table "organizations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "short_name"
     t.text "address"
@@ -128,7 +128,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
-  create_table "partners", force: :cascade do |t|
+  create_table "partners", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "email"
     t.datetime "created_at"
@@ -137,7 +137,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 
-  create_table "storage_locations", force: :cascade do |t|
+  create_table "storage_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.datetime "created_at"
@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end
 
-  create_table "transfers", force: :cascade do |t|
+  create_table "transfers", id: :serial, force: :cascade do |t|
     t.integer "from_id"
     t.integer "to_id"
     t.string "comment"
@@ -156,7 +156,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :serial, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -184,7 +184,6 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

@@ -1,75 +1,142 @@
-<% content_for :title, "#{current_organization.name} - Dashboard" %>
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Dashboard" %>
+  <h1>
+    Dashboard
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li><a href="#">Dashboard</a></li>
+    <li class="active"><%= current_organization.name %></li>
+  </ol>
+</section>
 
-<div class='row'>
-  <div class="small-8 large-10 columns">
-    <%- # TODO - For good responsiveness, this should probably show the name instead of the image at small widths # -%>
-    <h1 class="organization-name"><%== display_logo_or_name %></h1>
-  </div>
-
-  <div class="small-4 large-2 columns header-action">
-    <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
-      <%= f.select :interval, filter_intervals, selected: selected_interval %>
-    <% end %>
-  </div>
-</div>
-
-<div class="row">
-  <div class='medium-4 large-4 columns'>
-    <span class="float-center text-center">
-      <button class='button dropdown large primary' type="button" data-toggle="example-dropdown2">New Inventory</button>
-
-    <div class="dropdown-pane bottom" id="example-dropdown2" data-dropdown>
-      <ul id="drop1" data-dropdown-content class="f-dropdown" style="list-style:none;" aria-hidden="true">
-        <li><a href="<%= donations_path %>">All Donations</a></li>
-        <li><a href="<%= new_donation_path %>">New Donation</a></li>
-        <li><a href="<%= scale_donations_path %>">Repackaged Donation</a></li>        
-      </ul>
-    </div>
-    </span>
-    <h3 class="text-center"><%= total_received %> items received <%= display_interval %></h3>
-    <h4>Recent donations / purchases</h4>
-    <%= render partial: "donation", collection: @recent_donations, as: :donation %>
-    <%= link_to "See more...", donations_path %>
-  </div>
-
-  <div class='medium-4 large-4 columns'>
-    <span class="float-center text-center">
-      <a class='button large primary' href='<%= new_distribution_path %>'>New Distribution</a>
-    </span>
-    <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
-    <h4>Recent distributions</h4>
-    <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
-    <%= link_to "See more...", distributions_path %>
-  </div>
-
-  <div class='medium-4 large-4 columns'>
-    <h2 class="text-center" id="dashboard_inventory_header">Inventory</h2>
-    <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
-    <div class="inventory-actions">
-      <div class="text-center">
-        <%= link_to "Make a transfer", new_transfer_path, class: "button hollow secondary" %>
+    <!-- Main content -->
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title"><%= current_organization.name %></h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body">
+          <div class="col-md-9">
+            <div class="logo">
+              <%== display_logo_or_name %>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="filter">
+              <h3 class="text-center">Select Time Frame</h3>
+              <div class="text-center">
+                <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
+                  <%= f.select :interval, filter_intervals, selected: selected_interval, class: "text-center" %>
+                <% end %>
+              </div>
+            </div>
+            <div class="text-center">
+              <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
+              <div class="inventory-actions">
+                <div class="text-center">
+                  <%= link_to "Make a transfer", new_transfer_path, class: "btn btn-primary btn-xs" %>
+                  <%= link_to "Make an adjustment", new_adjustment_path, class: "btn btn-primary btn-xs" %>
+                </div>
+              </div>
+            </div>          
+          </div>
+        </div>
       </div>
-      <div class="text-center">
-        <%= link_to "Make an adjustment", new_adjustment_path, class: "button hollow secondary" %>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">Distribution</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body text-center float-center">
+              <button class='btn btn-large btn-primary center-block' href='<%= new_distribution_path %>'>New Distribution</button>
+              <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
+              <div class="box-body">
+                <h4>Recent distributions</h4>
+                <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
+                <%= link_to "See more...", distributions_path %>
+              </div>
+            </div>
+          </div>
+          <div class="box box-danger">
+            <div class="box-header with-border">
+              <h3 class="box-title">Distributions</h3>
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body text-center">
+              <h5 class="text-center">Distribution <%= display_interval %></h5>
+              <%= bar_chart received_distributed_data %>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Donations</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body text-center float-center">
+              <span class="float-center text-center">
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  New Inventory
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu1">
+                 <li class="center-block"><a href="<%= donations_path %>">All Donations</a></li>
+                 <li class="center-block"><a href="<%= new_donation_path %>">New Donation</a></li>
+                 <li class="center-block"><a href="<%= scale_donations_path %>">Repackaged Donation</a></li>
+                </ul>
+              </div>
+              </span>
+              <h3 class="text-center"><%= total_received %> items received <%= display_interval %></h3>
+              <div class="box-body">
+              <h4>Recent donations / purchases</h4>
+              <%= render partial: "donation", collection: @recent_donations, as: :donation %>
+              <%= link_to "See more...", donations_path %>
+              </div>
+            </div>
+          </div>
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Items on Hand</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="chart">
+                <h5 class="text-center">Item categories on hand <%= display_interval %></h5>
+                <%= pie_chart pie_chart_data, legend: "right" %> 
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class='small-12 large-6 columns'>
-    <div class="callout">
-      <h5 class="text-center">Distribution <%= display_interval %></h5>
-      <%= bar_chart received_distributed_data %>
-    </div>
-  </div>
-
-
-
-    <div class='small-12 large-6 columns'>
-      <div class="callout">
-        <h5 class="text-center">Item categories on hand <%= display_interval %></h5>
-        <%= pie_chart pie_chart_data, legend: "right" %>
-      </div>
-    </div>
-  </div>
+  </div>  
+</section>

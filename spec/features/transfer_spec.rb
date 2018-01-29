@@ -29,13 +29,13 @@ scenario "User can filter the #index by storage location both from and to" do
   select to_storage_location.name, from: "filters_to_location"
   click_button "Filter"
 
-  expect(page).to have_css("table tbody tr", count: 1)
+  expect(page).to have_css("table tr", count: 2)
 
   visit url_prefix + "/transfers"
   select from_storage_location.name, from: "filters_from_location"
   click_button "Filter"
 
-  expect(page).to have_css("table tbody tr", count: 1)
+  expect(page).to have_css("table tr", count: 2)
 end
 
 end

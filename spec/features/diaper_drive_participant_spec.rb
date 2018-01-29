@@ -12,9 +12,9 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
       visit url_prefix + '/diaper_drive_participants'
     end
     scenario "the diaper drive participant names are in alphabetical order" do
-      expect(page).to have_xpath("//table[@id='diaper_drive_participants']/tbody/tr", count: 3)
-      expect(page.find(:xpath, "//table[@id='diaper_drive_participants']/tbody/tr[1]/td[1]")).to have_content(@first.name)
-      expect(page.find(:xpath, "//table[@id='diaper_drive_participants']/tbody/tr[3]/td[1]")).to have_content(@third.name)
+      expect(page).to have_xpath("//table//tr", count: 4)
+      expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
+      expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
     end
   end
 
@@ -29,14 +29,14 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
       click_button "Create Diaper drive participant"
     }.to change{DiaperDriveParticipant.count}.by(1)
 
-    expect(page.find('.flash.success')).to have_content "added"
+    expect(page.find('.alert')).to have_content "added"
   end
 
   scenario "User add a new diaper drive instance with empty attributes" do
     visit url_prefix + '/diaper_drive_participants/new'
       click_button "Create Diaper drive participant"
 
-    expect(page.find('.flash.alert')).to have_content "didn't work"
+    expect(page.find('.alert')).to have_content "didn't work"
   end
 
 
@@ -45,10 +45,10 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     new_email = 'foo@bar.com'
     visit url_prefix + "/diaper_drive_participants/#{diaper_drive_participant.id}/edit"
     fill_in "Phone", with: ''
-    fill_in "Email", with: new_email
+    fill_in "E-mail", with: new_email
     click_button "Update Diaper drive participant"
 
-    expect(page.find('.flash.success')).to have_content "updated"
+    expect(page.find('.alert')).to have_content "updated"
     expect(page).to have_content(diaper_drive_participant.name)
     expect(page).to have_content(new_email)
   end
@@ -59,7 +59,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     fill_in "Name", with: ''
     click_button "Update Diaper drive participant"
 
-    expect(page.find('.flash.alert')).to have_content "didn't work"
+    expect(page.find('.alert')).to have_content "didn't work"
   end
 
   context "When the Diaper Drives have donations associated with them already" do
@@ -71,13 +71,13 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
 
     scenario "Existing Diaper Drive Participants show in the #index with some summary stats" do
       visit url_prefix + "/diaper_drive_participants"
-      expect(page).to have_xpath("//table[@id='diaper_drive_participants']/tbody/tr/td", text: @ddp.name)
-      expect(page).to have_xpath("//table[@id='diaper_drive_participants']/tbody/tr/td", text: "25")
+      expect(page).to have_xpath("//table/tbody/tr/td", text: @ddp.name)
+      expect(page).to have_xpath("//table/tbody/tr/td", text: "25")
     end
 
     scenario "Single Diaper Drive Participants show semi-detailed stats about donations from that diaper drive" do
       visit url_prefix + "/diaper_drive_participants/#{@ddp.to_param}"
-      expect(page).to have_xpath("//table[@id='diaper_drive_participants']/tbody/tr", count: 2)
+      expect(page).to have_xpath("//table/tr", count: 3)
     end
   end
 end

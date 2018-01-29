@@ -1,23 +1,79 @@
-<% content_for :title, "Organizations - #{@organization.name}" %>
+<section class="content-header">
+	<% content_for :title, "Organizations - #{@organization.name}" %>
+<h1>
+  Organization info
+  <small>for <%= @organization.name %></small>
+</h1>
+<ol class="breadcrumb">
+  <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li><%= link_to "Administration", (admins_path(organization_id: current_user.organization)) %></li>
+  <li class="active"><%= @organization.name %></li>
+</ol>
+</section>
 
-<h1><%= @organization.name %></h1>
-<p><%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
-<p><%= @organization.address %></p>
-Users:
-<%= @organization.display_users %>
+<!-- Main content -->
+<section class="content">
 
-<div class="reveal" id="addUserModal" data-reveal>
-  <h2 id="modalTitle">New User</h2>
-  <p class="lead">Invite User to this Organization</p>
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title"><%= @organization.name %></h3>
+  </div>
+  <div class="box-body">
+		<div class="col-md-6">
+		  <h4>Contact Info</h4>
+			<p><%= fa_icon "envelope" %> <%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
+			<address><%= fa_icon "map-marker" %> <%= @organization.address %></address>
+    </div>
+		<div class="col-md-6">
+			<h4>Users</h4>
+			  <ul class="list-group">
+					<li class="list-group-item">
+			<%= @organization.display_users.split(",").join("</li><li class=\"list-group-item\">").html_safe %>
+			    </li>
+				</ul>
 
+			<a href="#addUserModal" class="btn btn-success" data-toggle="modal"><%= fa_icon "plus" %> Invite User to this Organization</a>
+    </div>
+	<div id="addUserModal" class="modal fade">
 
-  <%= form_tag invite_user_admins_path do %>
-  	Name:<%= text_field_tag :name %>
-  	Email:<%= text_field_tag :email %>
-  	<%= hidden_field_tag :org , @organization.id %>
- 		<%= submit_tag "Submit" %>
-	<% end %>
+  <div class="modal-dialog">
 
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Add User to <%= @organization.name %></h4>
+				</div>
+				<div class="modal-body">
+					<div class="box-body">
+						<% # TODO: Make this use simple_form %>
+						<%= form_tag invite_user_admins_path do %>
+							<div class="input-group">
+							  <span class="input-group-addon" id="spn_usr_fa_icon"><%= fa_icon "user" %></span>
+							  <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="spn_usr_fa_icon">
+							</div>
+							<br>
+							<div class="input-group">
+							  <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
+							  <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
+							</div>
+							<%= hidden_field_tag :org , @organization.id %><br>
+							<%= button_tag :submit, class:"btn btn-primary btn-lg" do %>
+							  Invite User
+							<% end %>
+						<% end %>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal"><%= fa_icon "close" %> Close</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	</div>
 </div>
-<br/>
-<p><a class="button success" data-open="addUserModal">Add User to Organization</a></p>
