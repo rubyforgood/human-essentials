@@ -1,27 +1,53 @@
-<% content_for :title, "#{current_organization.name} - Distributions - #{@distribution.storage_location.name}" %>
-
-<h1>Distribution Manifest for <%= @distribution.updated_at.strftime('%B %-d %Y') %> Distribution to <%= @distribution.partner.name %></h1>
-
-<fieldset>
-<ul>
-  <li>Source location: <%= @distribution.storage_location.name %></li>
-</ul>
-</fieldset>
-
-
-<section id="line_items">
-  <table>
-    <thead>
-      <th><b>Quantity<b></th>
-      <th><b>Item<b></th>
-    </thead>
-
-    <tbody>
-      <%= render partial: "distribution_item_row", collection: @line_items %>
-    </tbody>
-  </table>
-
-
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Distributions - #{@distribution.storage_location.name}" %>
+  <h1>
+    Distribution
+    <small>for <%= @distribution.storage_location.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Distributions", (distributions_path) %></li>  
+    <li class="active"> <%= @distribution.partner.name %> <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})"%></li>
+  </ol>
 </section>
 
-<%= link_to "Back", distributions_path, class: "button" %>
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">Distribution Manifest for <%= @distribution.updated_at.strftime('%B %-d %Y') %> to <%= @distribution.partner.name %></h3>
+  </div>
+  <div class="box-body">
+
+  <p>Source location: <%= @distribution.storage_location.name %></p>
+  
+  <h4>Past Diaper Drives with this Partner</h3>
+  <div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover">
+        <tr>
+          <th><b>Quantity<b></th>
+          <th><b>Item<b></th>
+        </tr>
+          <%= render partial: "distribution_item_row", collection: @line_items %>
+        </table>
+      <!-- /.box-body -->
+
+      </div>
+    <!-- /.box -->
+    </div>
+  </div>
+  </div>
+</div>
+
+
+
+
+
