@@ -43,9 +43,9 @@ class ItemsController < ApplicationController
 
   def show
     @item = current_organization.items.find(params[:id])
-    @items_in_category = Item.in_same_category_as(@item)
-    @storage_locations_containing = Item.storage_locations_containing(@item)
-    @barcodes_for = Item.barcodes_for(@item)
+    @items_in_category = current_organization.items.in_same_category_as(@item)
+    @storage_locations_containing = current_organization.items.storage_locations_containing(@item)
+    @barcodes_for = current_organization.items.barcodes_for(@item)
   end
 
   def update
