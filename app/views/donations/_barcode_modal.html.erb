@@ -1,0 +1,39 @@
+<div id="newBarcode" class="modal fade">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h2 class="modal-title">Add New Barcode</h4>
+    </div>
+    <div class="modal-body">
+    <%= simple_form_for BarcodeItem.new, html: { role: "form" }, :remote => true do |f| %>
+      <div class="box-body ">
+        <div class="row">
+          <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
+            <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+            <%= f.input_field :quantity, class: "form-control" %>
+            <% end %>
+        </div><!-- /.row -->
+        <div class="row">
+          <%= f.association :item, collection: @items, label: "Item" %>
+        </div>
+        <div class="row">
+          <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
+            <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+            <%= f.input_field :value, class: "form-control" %>
+          <% end %>
+        </div><!-- /.row -->
+        <div class="row">
+          <div class="checkbox form-group-check">
+            <%= f.input :global,
+                  label: "Make this barcode available to everyone?",
+                  class: "form-control" %>
+          </div>
+        </div><!-- /.row -->
+        <%= f.button :submit, id: "awesomebutton", class:"btn btn-primary btn-lg"%>
+      </div><!-- /.box-body -->
+      <% end #form %>
+    </div>
+  </div>
+</div>
+</div>

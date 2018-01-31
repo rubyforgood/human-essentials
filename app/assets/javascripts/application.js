@@ -35,3 +35,9 @@ window.setTimeout(function() {
 toastr.options = {
   "timeOut": "1400"
 }
+
+
+$(document).on("click", '#awesomebutton', function(e){
+    $('#newBarcode').modal('hide');
+    toastr.success("Barcode Added to Inventory");
+});

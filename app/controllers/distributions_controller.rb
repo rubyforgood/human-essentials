@@ -44,7 +44,7 @@ class DistributionsController < ApplicationController
     end
   rescue Errors::InsufficientAllotment => ex
     @storage_locations = current_organization.storage_locations
-    @items = Item.all
+    @items = current_organization.items.alphabetized
     flash[:alert] = ex.message
     render :new
   end
@@ -52,7 +52,7 @@ class DistributionsController < ApplicationController
   def new
     @distribution = Distribution.new
     @distribution.line_items.build
-    @items = Item.alphabetized
+    @items = current_organization.items.alphabetized
     @storage_locations = current_organization.storage_locations
   end
 

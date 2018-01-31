@@ -14,7 +14,10 @@ class BarcodeItemsController < ApplicationController
     if @barcode_item.save
       msg = "New barcode added"
       msg += barcode_item_params[:global] == "1" ? " globally!" : " to your private set!"
-      redirect_to barcode_items_path, notice: msg
+      respond_to do |format|
+        format.json { render json: @barcode_item.to_json }
+        format.html { redirect_to barcode_items_path, notice: msg }
+      end
     else
       flash[:alert] = "Something didn't work quite right -- try again?"
       render action: :new
