@@ -57,6 +57,7 @@ $(document).ready(function() {
 
   function prompt_for_new_barcode_item(data) {
     $(data['src']).val('');
+    $("#newBarcode").modal();
     // TODO: Prompt the user with a dialog to create a new barcode entry, then add that to the form
   }
 });
