@@ -1,7 +1,7 @@
 <section class="content-header">
-  <% content_for :title, "#{current_organization.name} - Agencies - Donation Dropoff Locations" %>
+  <% content_for :title, "#{current_organization.name} - Agencies - Donation Sites" %>
   <h1>
-    Donation Dropoff Locations
+    Donation Sites
     <small>for <%= current_organization.name %></small>
   </h1>
   <ol class="breadcrumb">
@@ -9,7 +9,7 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><a href="#">Dropoff Locations</a></li>
+    <li><a href="#">Donation Sites</a></li>
   </ol>
 </section>
 
@@ -20,7 +20,7 @@
       <section id="filters">
         <!-- TBA; replicate HTML from other #index views -->
         <%= link_to new_dropoff_location_path(organization_id: current_organization), class: "btn btn-success btn pull-right" do %>
-          <i class="fa fa-plus"></i> New Dropoff Location
+          <i class="fa fa-plus"></i> New Donation Site
         <% end %>
       </section><!-- /#filters -->
     </div><!-- /.box-header -->
@@ -28,20 +28,20 @@
       <% if @dropoff_locations.empty? %>
         <div class="import-partners">
           <!-- Button HTML (to Trigger Modal) -->
-          <a href="#importDropoffLocationModal" class="btn btn-lg btn-secondary" style="padding-left: 1rem;" data-toggle="modal"><i class="fa fa-upload"></i> Import Dropoff Locations</a>
+          <a href="#importDonationSiteModal" class="btn btn-lg btn-secondary" style="padding-left: 1rem;" data-toggle="modal"><i class="fa fa-upload"></i> Import Donation Sites</a>
           <!-- Modal HTML -->
-          <div id="importDropoffLocationModal" class="modal fade">
+          <div id="importDonationSiteModal" class="modal fade">
           <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                      <h2 class="modal-title">Import Dropoff Locations Instructions:</h4>
+                      <h2 class="modal-title">Import Donation Sites Instructions:</h4>
                   </div>
                   <div class="modal-body">
                     <ol>
                       <li><%= link_to "/dropoff_locations.csv", :format => :csv, :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example csv<% end %></li>
                       <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-                      <li>Delete the sample data and enter your dropoff location names and addresses in the appropriate columns.</li>
+                      <li>Delete the sample data and enter your donation site names and addresses in the appropriate columns.</li>
                       <li>Save the file as a csv file.</li>
                       <li>Click the choose file button and navigate to the saved file and select it.</li>
                       <li>Then click the Import CSV button to import your storage locations.</li>
@@ -60,7 +60,7 @@
                   </div><!-- /.modal-footer -->
               </div><!-- /.modal-content -->
           </div><!-- /.modal-dialog -->
-        </div><!-- /#importDropoffLocationModal -->
+        </div><!-- /#importDonationSiteModal -->
         </div><!-- /.import-partners -->
       <% end %>
       <div class="row">
@@ -69,7 +69,7 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>Dropoff Location</th>
+                  <th>Donation Site</th>
                   <th>Address</th>
                   <th>&nbsp;</th>
                 </tr>
