@@ -229,6 +229,25 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(qty).to eq(@existing_barcode.quantity.to_s)
       end
 
+      scenario "User scan same barcode 2 times", :js do
+        pending "The JS doesn't appear to be executing in this correctly"
+        within "#donation_line_items" do
+          expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
+        end
+
+        expect(page).to have_field 'donation_line_items_attributes_0_quantity', with: @existing_barcode.quantity.to_s
+
+        page.find(:css, "#__add_line_item").click
+
+        within "#donation_line_items" do
+          expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
+          fill_in "_barcode-lookup-1", with: @existing_barcode.value + 13.chr
+        end
+
+        expect(page).to have_field 'donation_line_items_attributes_0_quantity', with: (@existing_barcode.quantity*2).to_s
+      end
+
       scenario "a user can add items that do not yet have a barcode" do
         # enter a new barcode
         # form finds no barcode and responds by prompting user to choose an item and quantity
