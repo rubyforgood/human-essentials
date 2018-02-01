@@ -1,7 +1,7 @@
 <section class="content-header">
-<% content_for :title, "#{current_organization.name} - Agencies - Dropoff Locations - #{@dropoff_location.name}" %>
+<% content_for :title, "#{current_organization.name} - Agencies - Donation Sites - #{@dropoff_location.name}" %>
 <h1>
-  Dropoff Location Information
+  Donation Site Information
   <small>for <%= @dropoff_location.name %></small>
 </h1>
 <ol class="breadcrumb">
@@ -9,7 +9,7 @@
     <i class="fa fa-dashboard"></i> Home
   <% end %>
   </li>
-  <li><%= link_to "Dropoff Locations", (dropoff_locations_path) %></li>  
+  <li><%= link_to "Donation Sites", (dropoff_locations_path) %></li>  
   <li class="active"><%= @dropoff_location.name %></li>
 </ol>
 </section>
@@ -27,7 +27,7 @@
   <p><%= @dropoff_location.address %></p>
   
   <% if @dropoff_location.donations.present? %>
-  <h4>Past Donations Recieved at this Location</h3>
+  <h4>Past Donations Received at this Location</h3>
   <div class="row">
   <div class="col-xs-12">
       <!-- /.box-header -->

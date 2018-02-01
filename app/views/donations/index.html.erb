@@ -40,7 +40,7 @@
           <% end %>
           <% if @dropoff_locations.present? %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "by Donation Location" %>
+              <%= label_tag "by Donation Site" %>
               <%= collection_select(:filters, :from_dropoff_location, @dropoff_locations || {}, :id, :name, { include_blank: true, selected: @selected_dropoff_location }, class: "form-control") %>
             </div>
           <% end %>
@@ -71,7 +71,7 @@
               <thead>
                 <tr>
                   <th>Source</th>
-                  <th>Dropoff Location</th>
+                  <th>Donation Site</th>
                   <th>Storage Location</th>
                   <th>Quantity of Items</th>
                   <th>Variety of Items</th>
