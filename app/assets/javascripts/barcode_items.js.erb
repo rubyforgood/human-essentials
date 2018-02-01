@@ -45,9 +45,28 @@ $(document).ready(function() {
   */
   function fill_fields_with_barcode_results(data) {
     line_item = $(data['src']).closest('.nested-fields');
-    $(line_item).find('input[type=number]').val(data['quantity']);
+      line_item_quantity = data['quantity'];
+      $('input[type=text]').each(function () {
+          if (data['src'] != this && data['value'] == this.value) {
+              line_item = this.closest('.nested-fields');
+              if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
+                  prompt_value = prompt('Enter quantity', line_item_quantity);
+                  if (prompt_value != null) {
+                      line_item_quantity = parseInt(prompt_value);
+                  } else {
+                      line_item_quantity = 0;
+                  }
+              }
+              $(line_item).attr('scanned_more_than_two_times', true);
+              line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('input[type=number]').val());
+          }
+      })
+      $(line_item).find('input[type=number]').val(line_item_quantity);
     $(line_item).find('select option[value="' + data['item_id'] + '"]').attr("selected", true);
 
+      if (data['src'] != $(line_item).closest('.__barcode_item_lookup').context) {
+          $(data['src']).closest('.nested-fields').remove();
+      }
     // This will facilitate serial barcode inputs.
     // First trigger the "add new line item"
     $('#__add_line_item').trigger('click');
