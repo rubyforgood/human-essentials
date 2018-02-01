@@ -1,7 +1,7 @@
 <section class="content-header">
-<% content_for :title, "#{current_organization.name} - Agencies - Dropoff Locations - #{@dropoff_location.name} - Edit" %>
+<% content_for :title, "#{current_organization.name} - Agencies - Donation Sites - #{@dropoff_location.name} - Edit" %>
 <h1>
-  Editing Dropoff Locations
+  Editing Donation Sites
   <small>for <%= current_organization.name %></small>
 </h1>
 <ol class="breadcrumb">
@@ -9,7 +9,7 @@
     <i class="fa fa-dashboard"></i> Home
   <% end %>
   </li>
-  <li><%= link_to "Dropoff Locations", (dropoff_locations_path) %></li>  
+  <li><%= link_to "Donation Sites", (dropoff_locations_path) %></li>  
   <li class="active">Editing <%= @dropoff_location.name %></li>
 </ol>
 </section>

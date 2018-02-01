@@ -6,22 +6,23 @@
 
 $ ->
   control_id = "#donation_source"
-  ddp_text = "<%= Donation::SOURCES[:diaper_drive] %>"
-  dpl_text = "<%= Donation::SOURCES[:dropoff] %>"
-  ddp_container_id = "div.donation_diaper_drive_participant"
-  dpl_container_id = "div.donation_dropoff_location"
-  $(ddp_container_id).hide()
-  $(dpl_container_id).hide()
+  diaper_drive_participant_text = "<%= Donation::SOURCES[:diaper_drive] %>"
+  donation_site_text = "<%= Donation::SOURCES[:dropoff] %>"
+  diaper_drive_participant_container_id = "div.donation_diaper_drive_participant"
+  # TODO : #225 - Rename to match new container name when model changes:
+  donation_site_container_id = "div.donation_dropoff_location" 
+  $(diaper_drive_participant_container_id).hide()
+  $(donation_site_container_id).hide()
 
   $(document).on "change", control_id, (evt) ->
     selection = $(control_id + " option").filter(':selected').text()
 
-    if (selection is ddp_text)
-      $(ddp_container_id).show()
-      $(dpl_container_id).hide()
-    else if (selection is dpl_text)
-      $(ddp_container_id).hide()
-      $(dpl_container_id).show()
+    if (selection is diaper_drive_participant_text)
+      $(diaper_drive_participant_container_id).show()
+      $(donation_site_container_id).hide()
+    else if (selection is donation_site_text)
+      $(diaper_drive_participant_container_id).hide()
+      $(donation_site_container_id).show()
     else
-      $(ddp_container_id).hide()
-      $(dpl_container_id).hide()
+      $(diaper_drive_participant_container_id).hide()
+      $(donation_site_container_id).hide()

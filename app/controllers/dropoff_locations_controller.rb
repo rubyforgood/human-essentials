@@ -6,7 +6,7 @@ class DropoffLocationsController < ApplicationController
   def create
     @dropoff_location = current_organization.dropoff_locations.new(dropoff_location_params)
     if @dropoff_location.save
-    redirect_to dropoff_locations_path, notice: "New dropoff location added!"
+    redirect_to dropoff_locations_path, notice: "New donation site added!"
     else
     flash[:alert] = "Something didn't work quite right -- try again?"
     render action: :new
@@ -42,7 +42,7 @@ class DropoffLocationsController < ApplicationController
     else
       filepath = params[:file].read
       DropoffLocation.import_csv(filepath, current_organization.id)
-      flash[:notice] = "Dropoff locations were imported successfully!"
+      flash[:notice] = "Donation sites were imported successfully!"
       redirect_back(fallback_location: dropoff_locations_path(organization_id: current_organization))
     end
   end
