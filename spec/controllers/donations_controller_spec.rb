@@ -26,13 +26,13 @@ RSpec.describe DonationsController, type: :controller do
 
     describe "POST#create" do
       let!(:storage_location) { create(:storage_location) }
-      let!(:dropoff_location) { create(:dropoff_location) }
+      let!(:donation_site) { create(:donation_site) }
       let(:line_items) { [create(:line_item)] }
 
       it "redirects to GET#edit on success" do
         post :create, params: default_params.merge(
           donation: { storage_location_id: storage_location.id,
-                      dropoff_location_id: dropoff_location.id,
+                      donation_site_id: donation_site.id,
                       source: "Donation Pickup Location",
                       line_items: line_items } )
         d = Donation.last
@@ -40,7 +40,7 @@ RSpec.describe DonationsController, type: :controller do
       end
 
       it "renders GET#new with notice on failure" do
-        post :create, params: default_params.merge(donation: { storage_location_id: nil, dropoff_location_id: nil, source: nil } )
+        post :create, params: default_params.merge(donation: { storage_location_id: nil, donation_site_id: nil, source: nil } )
         expect(response).to be_successful # Will render :new
         expect(flash[:alert]).to match(/error/i)
       end

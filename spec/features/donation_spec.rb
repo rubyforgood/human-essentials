@@ -39,13 +39,13 @@ RSpec.feature "Donations", type: :feature, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
     end
-    scenario "User can filter by dropoff location" do
-      location1 = create(:dropoff_location, name: "location 1")
-      location2 = create(:dropoff_location, name: "location 2")
-      create(:donation, dropoff_location: location1)
-      create(:donation, dropoff_location: location2)
+    scenario "User can filter by donation site" do
+      location1 = create(:donation_site, name: "location 1")
+      location2 = create(:donation_site, name: "location 2")
+      create(:donation, donation_site: location1)
+      create(:donation, donation_site: location2)
       visit @url_prefix + "/donations"
-      select location1.name, from: "filters_from_dropoff_location"
+      select location1.name, from: "filters_from_donation_site"
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
     end
@@ -81,7 +81,7 @@ RSpec.feature "Donations", type: :feature, js: true do
     before(:each) do
       create(:item, organization: @organization)
       create(:storage_location, organization: @organization)
-      create(:dropoff_location, organization: @organization)
+      create(:donation_site, organization: @organization)
       create(:diaper_drive_participant, organization: @organization)
       @organization.reload
     end
@@ -127,7 +127,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       scenario "User can create a donation for a Diaper Drive source" do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
-        expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
+        expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
         select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -139,10 +139,10 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation for a Donation Site source" do
-        select Donation::SOURCES[:dropoff], from: "donation_source"
-        expect(page).to have_xpath("//select[@id='donation_dropoff_location_id']")
+        select Donation::SOURCES[:donation_site], from: "donation_source"
+        expect(page).to have_xpath("//select[@id='donation_donation_site_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
-        select DropoffLocation.first.name, from: "donation_dropoff_location_id"
+        select DonationSite.first.name, from: "donation_donation_site_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -154,7 +154,7 @@ RSpec.feature "Donations", type: :feature, js: true do
 
       scenario "User can create a donation for Purchased Supplies" do
         select Donation::SOURCES[:purchased], from: "donation_source"
-        expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
+        expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -167,7 +167,7 @@ RSpec.feature "Donations", type: :feature, js: true do
 
       scenario "User can create a donation with a Miscellaneous source" do
         select Donation::SOURCES[:misc], from: "donation_source"
-        expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
+        expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -180,9 +180,9 @@ RSpec.feature "Donations", type: :feature, js: true do
 
       # Since the form only shows/hides the irrelevant field, if the user already selected something it would still
       # submit. The app should sanitize this so we aren't saving extraneous data
-      scenario "extraneous data is stripped if the user adds both dropoff_location and diaper_drive_participant" do
-        select Donation::SOURCES[:dropoff], from: "donation_source"
-        select DropoffLocation.first.name, from: "donation_dropoff_location_id"
+      scenario "extraneous data is stripped if the user adds both donation_site and diaper_drive_participant" do
+        select Donation::SOURCES[:donation_site], from: "donation_source"
+        select DonationSite.first.name, from: "donation_donation_site_id"
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
@@ -191,7 +191,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         click_button "Create Donation"
         donation = Donation.last
         expect(donation.diaper_drive_participant_id).to be_present
-        expect(donation.dropoff_location_id).to be_nil
+        expect(donation.donation_site_id).to be_nil
       end
 
       # Bug fix -- Issue #71

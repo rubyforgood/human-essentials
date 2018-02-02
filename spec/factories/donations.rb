@@ -4,7 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  source                      :string
-#  dropoff_location_id         :integer
+#  donation_site_id            :integer
 #  created_at                  :datetime
 #  updated_at                  :datetime
 #  storage_location_id         :integer
@@ -16,7 +16,7 @@
 
 FactoryBot.define do
   factory :donation do
-    dropoff_location
+    donation_site
     diaper_drive_participant
     source { Donation::SOURCES[:misc] }
     comment "It's a fine day for diapers."

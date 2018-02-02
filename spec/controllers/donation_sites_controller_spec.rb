@@ -1,6 +1,6 @@
 
 
-RSpec.describe DropoffLocationsController, type: :controller do
+RSpec.describe DonationSitesController, type: :controller do
   let(:default_params) {
     { organization_id: @organization.to_param }
   }
@@ -26,34 +26,34 @@ RSpec.describe DropoffLocationsController, type: :controller do
     end
   
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge({ id: create(:dropoff_location) }) }
+      subject { get :edit, params: default_params.merge({ id: create(:donation_site) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "GET #show" do
-      subject { get :show, params: default_params.merge({ id: create(:dropoff_location) }) }
+      subject { get :show, params: default_params.merge({ id: create(:donation_site) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge({ id: create(:dropoff_location) }) }
+      subject { delete :destroy, params: default_params.merge({ id: create(:donation_site) }) }
       it "returns http success" do
-        expect(subject).to redirect_to(dropoff_locations_path)
+        expect(subject).to redirect_to(donation_sites_path)
       end
     end
 
     context "Looking at a different organization" do
-        let(:object) { create(:dropoff_location, organization: create(:organization) ) }
+        let(:object) { create(:donation_site, organization: create(:organization) ) }
         include_examples "requiring authorization"
     end
   end
   
   context "While not signed in" do
-    let(:object) { create(:dropoff_location) }
+    let(:object) { create(:donation_site) }
   
     include_examples "requiring authentication"
   end

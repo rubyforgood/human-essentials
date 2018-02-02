@@ -3,7 +3,7 @@ class CreateDonations < ActiveRecord::Migration[5.0]
     create_table :donations do |t|
     	t.string :source
     	t.boolean :completed, :default => false
-    	t.belongs_to :dropoff_location, index:true
+    	t.belongs_to :donation_site, index:true
 
       t.timestamps
     end

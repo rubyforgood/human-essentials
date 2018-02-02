@@ -56,7 +56,7 @@ RSpec.feature "Dashboard", type: :feature do
     create(:partner)
     create(:item, organization: @organization)
     create(:storage_location, organization: @organization)
-    create(:dropoff_location, organization: @organization)
+    create(:donation_site, organization: @organization)
     create(:diaper_drive_participant, organization: @organization)
     @organization.reload
 
@@ -68,7 +68,7 @@ RSpec.feature "Dashboard", type: :feature do
     # Make a donation
     visit @url_prefix + "/donations/new"
     select "Misc. Donation", from: "donation_source"
-    expect(page).not_to have_xpath("//select[@id='donation_dropoff_location_id']")
+    expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
     expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
     select StorageLocation.first.name, from: "donation_storage_location_id"
     select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
