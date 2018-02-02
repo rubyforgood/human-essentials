@@ -4,7 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  source                      :string
-#  dropoff_location_id         :integer
+#  donation_site_id            :integer
 #  created_at                  :datetime
 #  updated_at                  :datetime
 #  storage_location_id         :integer
@@ -15,11 +15,11 @@
 #
 
 class Donation < ApplicationRecord
-  SOURCES = { diaper_drive: "Diaper Drive", purchased: "Purchased Supplies", dropoff: "Donation Pickup Location", misc: "Misc. Donation" }.freeze
+  SOURCES = { diaper_drive: "Diaper Drive", purchased: "Purchased Supplies", donation_site: "Donation Site", misc: "Misc. Donation" }.freeze
 
   belongs_to :organization
 
-  belongs_to :dropoff_location, optional: true              # Validation is conditionally handled below.
+  belongs_to :donation_site, optional: true              # Validation is conditionally handled below.
   belongs_to :diaper_drive_participant, optional: true      # Validation is conditionally handled below.
   belongs_to :storage_location
   include Itemizable
@@ -27,13 +27,13 @@ class Donation < ApplicationRecord
   include Filterable
   scope :at_storage_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
   scope :by_source, ->(source) { where(source: source) }
-  scope :from_dropoff_location, ->(dropoff_location_id) { where(dropoff_location_id: dropoff_location_id) }
+  scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) { where(diaper_drive_participant_id: diaper_drive_participant_id) }
 
   before_create :combine_duplicates
   before_destroy :remove_inventory
 
-  validates :dropoff_location, presence: { message: "must be specified since you chose '#{SOURCES[:dropoff]}'" }, if: :from_dropoff_location?
+  validates :donation_site, presence: { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" }, if: :from_donation_site?
   validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
 
@@ -47,8 +47,8 @@ class Donation < ApplicationRecord
     source == SOURCES[:diaper_drive]
   end
 
-  def from_dropoff_location?
-    source == SOURCES[:dropoff]
+  def from_donation_site?
+    source == SOURCES[:donation_site]
   end
 
   def source_view
@@ -84,8 +84,8 @@ class Donation < ApplicationRecord
     end
   end
 
-  def dropoff_view
-    dropoff_location.nil? ? "N/A" : dropoff_location.name
+  def donation_site_view
+    donation_site.nil? ? "N/A" : donation_site.name
   end
 
   def storage_view

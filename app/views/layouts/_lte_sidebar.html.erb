@@ -88,7 +88,7 @@
         </li>
 
 
-        <li class="<%= active_class(['partners','dropoff_locations','diaper_drive_participants']) %> treeview">
+        <li class="<%= active_class(['partners','donation_sites','diaper_drive_participants']) %> treeview">
           <a href="#">
             <i class="fa fa-laptop"></i>
             <span>Community</span>
@@ -97,8 +97,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="<%= active_class(['dropoff_locations']) %>">          
-              <%= link_to(dropoff_locations_path) do %>
+            <li class="<%= active_class(['donation_sites']) %>">          
+              <%= link_to(donation_sites_path) do %>
                 <i class="fa fa-circle-o"></i> Donation Sites
               <% end %>
             </li>

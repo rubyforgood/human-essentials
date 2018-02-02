@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: dropoff_locations
+# Table name: donation_sites
 #
 #  id              :integer          not null, primary key
 #  name            :string
@@ -10,7 +10,7 @@
 #  organization_id :integer
 #
 
-class DropoffLocation < ApplicationRecord
+class DonationSite < ApplicationRecord
   require 'csv'
 
 	belongs_to :organization
@@ -21,7 +21,7 @@ class DropoffLocation < ApplicationRecord
 	
   def self.import_csv(filename,organization)
     CSV.parse(filename, :headers => true) do |row|
-      loc = DropoffLocation.new(row.to_hash)
+      loc = DonationSite.new(row.to_hash)
       loc.organization_id = organization
       loc.save!
     end
