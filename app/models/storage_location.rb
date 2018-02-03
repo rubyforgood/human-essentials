@@ -127,7 +127,7 @@ class StorageLocation < ApplicationRecord
   # TODO - this action is happening in the Transfer model/controller - does this method belong here?
   def move_inventory!(transfer)
     updated_quantities = {}
-    insufficient_items = []
+    item_validator = Errors::InsufficientAllotment.new("Transfer items exceeds the available inventory")
     transfer.line_items.each do |line_item|
       inventory_item = self.inventory_items.find_by(item: line_item.item)
       new_inventory_item = transfer.to.inventory_items.find_or_create_by(item: line_item.item)
@@ -137,20 +137,11 @@ class StorageLocation < ApplicationRecord
         updated_quantities[new_inventory_item.id] = (updated_quantities[new_inventory_item.id] ||
           new_inventory_item.quantity) + line_item.quantity
       else
-        insufficient_items << {
-          item_id: line_item.item.id,
-          item_name: line_item.item.name,
-          quantity_on_hand: inventory_item.quantity,
-          quantity_requested: line_item.quantity
-        }
+        item_validator.add_insufficiency(line_item.item, inventory_item.quantity, line_item.quantity)
       end
     end
-
-    unless insufficient_items.empty?
-      raise Errors::InsufficientAllotment.new(
-        "Oh no! Transfer line items exceed the available inventory",
-        insufficient_items)
-    end
+    
+    raise item_validator unless item_validator.satisfied?
 
     update_inventory_inventory_items(updated_quantities)
   end
