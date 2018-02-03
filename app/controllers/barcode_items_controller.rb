@@ -19,7 +19,7 @@ class BarcodeItemsController < ApplicationController
         format.html { redirect_to barcode_items_path, notice: msg }
       end
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
@@ -50,7 +50,7 @@ class BarcodeItemsController < ApplicationController
     if @barcode_item.update_attributes(barcode_item_params)
     redirect_to barcode_items_path, notice: "Barcode updated!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

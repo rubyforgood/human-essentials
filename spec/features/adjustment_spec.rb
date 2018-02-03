@@ -4,16 +4,35 @@ before do
 end
 let!(:url_prefix) { "/#{@organization.to_param}" }
 
-scenario "User can adjust an inventory at a storage location" do
+scenario "User can add an inventory adjustment at a storage location" do
+  add_quantity = 10
   storage_location = create(:storage_location, :with_items, organization: @organization)
   visit url_prefix + "/adjustments"
   click_link "New Adjustment"
   select storage_location.name, from: "From storage location"
   fill_in "Comment", with: "something"
   select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
-  fill_in "adjustment_line_items_attributes_0_quantity", with: "10"
-  click_button "Create Adjustment"
+  fill_in "adjustment_line_items_attributes_0_quantity", with: "#{add_quantity}"
 
+  expect {
+    click_button "Create Adjustment"
+  }.to change{storage_location.size}.by(add_quantity)
+  expect(page).to have_content("Adjustment was successfully created")
+end
+
+scenario "User can subtract an inventory adjustment at a storage location" do
+  sub_quantity = -10
+  storage_location = create(:storage_location, :with_items, organization: @organization)
+  visit url_prefix + "/adjustments"
+  click_link "New Adjustment"
+  select storage_location.name, from: "From storage location"
+  fill_in "Comment", with: "something"
+  select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+  fill_in "adjustment_line_items_attributes_0_quantity", with: "#{sub_quantity}"
+
+  expect {
+    click_button "Create Adjustment"
+  }.to change{storage_location.size}.by(sub_quantity)
   expect(page).to have_content("Adjustment was successfully created")
 end
 
