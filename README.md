@@ -59,7 +59,7 @@ To contribute, do these things:
  * **Final commit** if any tests had to be fixed
  * **Push** up the branch
  * **Create a Pull Request** - Please indicate which issue it addresses in your pull-request title.
- 
+
 ### Pull Request Merging
 
 At that point, someone will work with you on doing a code review (typically pretty minor unless it's a very significant PR). If TravisCI gives :+1: to the PR merging, we can then merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged.
@@ -79,6 +79,10 @@ The one situation where you probably don't need to write new tests is when simpl
 Before committing, please run `rake notes > TODO` in the root of the app.
 
 Feel free to peruse the TODO file and tackle any issues found in there. These may or may not have actual issues associated with them. If they do not have actual issues, use `TODO-Brief-Description` as the the branch naming scheme, instead; similar changes for commit message.
+
+### In-flight Pull Requests
+
+Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it. 
 
 ### Becoming a Repo Contributor 
 
