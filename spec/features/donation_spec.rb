@@ -111,9 +111,9 @@ RSpec.feature "Donations", type: :feature, js: true do
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
         page.find(:css, "#__add_line_item").click
-        select_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/div/div[5]/select')[:id]
+        select_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/select')[:id]
         select Item.alphabetized.first.name, from: select_id
-        text_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/div/div[4]/input')[:id]
+        text_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/input[3]')[:id]
         fill_in text_id, with: "10"
 
         expect {
