@@ -11,6 +11,8 @@
 #
 
 RSpec.describe StorageLocation, type: :model do
+  let(:organization) { create(:organization) }
+
   context "Validations >" do
     it "requires a name" do
       expect(build(:storage_location, name: nil)).not_to be_valid
@@ -155,7 +157,7 @@ RSpec.describe StorageLocation, type: :model do
 
     describe "import_csv" do
       it "imports storage locations from a csv file" do
-        organization = create(:organization)
+        organization
         import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv").read
         StorageLocation.import_csv(import_file_path, organization.id)
         expect(StorageLocation.count).to eq 3
@@ -164,11 +166,31 @@ RSpec.describe StorageLocation, type: :model do
 
     describe "import_inventory" do
       it "imports storage locations from a csv file" do
-        organization = create(:organization)
+        organization
         storage_location = create(:storage_location)
         import_file_path = Rails.root.join("spec", "fixtures", "inventory.csv").read
         StorageLocation.import_inventory(import_file_path, organization.id, storage_location.id)
         expect(storage_location.size).to eq 14842
+      end
+    end
+
+    describe "adjust!" do
+      it "combines line item quantities with inventory amounts" do
+        storage_location = create :storage_location, :with_items, item_quantity: 300
+        adjustment = build :adjustment, :with_items, storage_location: storage_location, item_quantity: 50
+        storage_location.adjust!(adjustment)
+        expect(storage_location.inventory_items.first.quantity).to eq 350
+
+        adjustment2 = build :adjustment, :with_items, storage_location: storage_location, item_quantity: -50
+        storage_location.adjust!(adjustment2)
+        expect(storage_location.inventory_items.first.quantity).to eq 300
+      end
+      it "ensures that a user cannot adjust an inventory into the negative" do
+        storage_location = create :storage_location, :with_items, item_quantity: 300
+        adjustment = build :adjustment, :with_items, storage_location: storage_location, item_quantity: -301
+        expect {
+          storage_location.adjust!(adjustment)
+        }.to raise_error(Errors::InsufficientAllotment)
       end
     end
 

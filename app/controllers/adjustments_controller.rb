@@ -33,7 +33,7 @@ class AdjustmentsController < ApplicationController
       @adjustment.storage_location.adjust!(@adjustment)
 
       if @adjustment.save
-        redirect_to adjustments_path, notice: 'Adjustment was successfully created.'
+        redirect_to adjustment_path(@adjustment), notice: 'Adjustment was successfully created.'
       else
         flash[:error] = @adjustment.errors.collect { |model,message| "#{model}: " + message }.join("<br />".html_safe)
         render :new
