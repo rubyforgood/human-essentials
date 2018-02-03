@@ -33,19 +33,19 @@ class DistributionsController < ApplicationController
         flash[:notice] = "Distribution created!"
         redirect_to distributions_path
       else
-        flash[:alert] = "There was an error, try again?"
+        flash[:error] = "There was an error, try again?"
         render :new
       end
     else
       @storage_locations = current_organization.storage_locations
-      flash[:alert] = "An error occurred, try again?"
+      flash[:error] = "An error occurred, try again?"
       logger.error "failed to save distribution: #{ @distribution.errors.full_messages }"
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
     @storage_locations = current_organization.storage_locations
     @items = current_organization.items.alphabetized
-    flash[:alert] = ex.message
+    flash[:error] = ex.message
     render :new
   end
 

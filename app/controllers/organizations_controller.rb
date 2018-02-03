@@ -9,7 +9,7 @@ class OrganizationsController < ApplicationController
     if @organization.update_attributes(organization_params)
       redirect_to edit_organization_path(organization_id: current_organization.to_param), notice: 'Updated organization!'
     else
-      flash[:alert] = 'Failed to update organization'
+      flash[:error] = 'Failed to update organization'
       render :edit
     end
   end

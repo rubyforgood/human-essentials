@@ -17,7 +17,7 @@ class UsersController < ApplicationController
       @user.invite!(@user)
       redirect_to users_path, notice: 'Created a new user!'
     else
-      flash[:alert] = 'Failed to create user'
+      flash[:error] = 'Failed to create user'
       render :new
     end
   end
@@ -28,7 +28,7 @@ class UsersController < ApplicationController
       @user.destroy
       redirect_to users_path, notice: "Deleted that user"
     else
-      redirect_to users_path, notice: "Couldn't find that user, sorry"
+      redirect_to users_path, flash: { error: "Couldn't find that user, sorry" }
     end
 
   end
