@@ -8,7 +8,7 @@ class DiaperDriveParticipantsController < ApplicationController
     if (@diaper_drive_participant.save)
       redirect_to diaper_drive_participants_path, notice: "New diaper drive participant added!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
 
@@ -31,7 +31,7 @@ class DiaperDriveParticipantsController < ApplicationController
     if @diaper_drive_participant.update_attributes(diaper_drive_participant_params)
     redirect_to diaper_drive_participants_path, notice: "#{@diaper_drive_participant.name} updated!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end
@@ -39,7 +39,7 @@ class DiaperDriveParticipantsController < ApplicationController
   def import_csv
     if params[:file].nil?
       redirect_back(fallback_location: diaper_drive_participants_path(organization_id: current_organization))
-      flash[:alert] = "No file was attached!"
+      flash[:error] = "No file was attached!"
     else
       filepath = params[:file].read
       DiaperDriveParticipant.import_csv(filepath, current_organization.id)

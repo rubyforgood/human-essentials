@@ -28,7 +28,7 @@ class ItemsController < ApplicationController
     if @item.save
     redirect_to items_path, notice: "#{@item.name} added!"
       else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
@@ -53,7 +53,7 @@ class ItemsController < ApplicationController
     if @item.update_attributes(item_params)
     redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end
