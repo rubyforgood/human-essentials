@@ -1,7 +1,7 @@
 <section class="content-header">
   <% content_for :title, "#{current_organization.name} - Inventory - Transfers - #{@transfer.from.name} to #{@transfer.to.name}" %>
   <h1>
-    Transfer
+    Inventory Transfer
     <small>for <%= @transfer.from.name %> to <%= @transfer.to.name %></small>
   </h1>
   <ol class="breadcrumb">
@@ -9,7 +9,7 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "All Transfers", (transfers_path) %></li>  
+    <li><%= link_to "All Transfers", (transfers_path) %></li>
     <li class="active"><%= @transfer.from.name %> to <%= @transfer.to.name %></li>
   </ol>
 </section>
@@ -51,12 +51,3 @@
   </div>
 </div>
 </section>
-
-
-
-
-
-
-
-
-
