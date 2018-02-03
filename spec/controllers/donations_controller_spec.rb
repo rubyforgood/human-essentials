@@ -39,10 +39,10 @@ RSpec.describe DonationsController, type: :controller do
         expect(response).to redirect_to(donations_path)
       end
 
-      it "renders GET#new with notice on failure" do
+      it "renders GET#new with error on failure" do
         post :create, params: default_params.merge(donation: { storage_location_id: nil, donation_site_id: nil, source: nil } )
         expect(response).to be_successful # Will render :new
-        expect(flash[:alert]).to match(/error/i)
+        expect(flash[:error]).to match(/error/i)
       end
     end
 

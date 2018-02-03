@@ -8,7 +8,7 @@ class PartnersController < ApplicationController
     if @partner.save
     redirect_to partners_path, notice: "Partner added!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
@@ -30,7 +30,7 @@ class PartnersController < ApplicationController
     if @partner.update_attributes(partner_params)
     redirect_to partners_path, notice: "#{@partner.name} updated!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end
@@ -38,7 +38,7 @@ class PartnersController < ApplicationController
   def import_csv
     if params[:file].nil?
       redirect_back(fallback_location: partners_path(organization_id: current_organization))
-      flash[:alert] = "No file was attached!"
+      flash[:error] = "No file was attached!"
     else
       filepath = params[:file].read
       Partner.import_csv(filepath, current_organization.id)

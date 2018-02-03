@@ -11,11 +11,6 @@
           <%= link_to(dashboard_path) do %>
             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
           <% end %>
-
-<!--           <ul class="treeview-menu">
-            <li><a href="/index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-            <li><a href="/index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-          </ul> -->
         </li>
         <li class="<%= active_class(['donations']) %> treeview">
           <a href="#">
@@ -26,17 +21,17 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="<%= 'active' if current_page?(donations_path) %>">          
+            <li class="<%= 'active' if current_page?(donations_path) %>">
               <%= link_to(donations_path) do %>
                 <i class="fa fa-circle-o"></i> All Donations
               <% end %>
             </li>
-            <li class="<%= 'active' if current_page?(new_donation_path) %>">          
+            <li class="<%= 'active' if current_page?(new_donation_path) %>">
               <%= link_to(new_donation_path) do %>
                 <i class="fa fa-circle-o"></i> New Donation
               <% end %>
             </li>
-            <li class="<%= 'active' if current_page?(scale_donations_path) %>">          
+            <li class="<%= 'active' if current_page?(scale_donations_path) %>">
               <%= link_to(scale_donations_path) do %>
                 <i class="fa fa-circle-o"></i> Repackaged Donation
               <% end %>
@@ -44,11 +39,11 @@
           </ul>
         </li>
         <li>
-        <li class="<%= active_class(['distributions']) %>">          
+        <li class="<%= active_class(['distributions']) %>">
           <%= link_to(distributions_path) do %>
             <i class="fa fa-circle-o"></i> <span>Distributions</span>
           <% end %>
-        </li>          
+        </li>
         </li>
         <li class="<%= active_class(['items','barcode_items','storage_locations','adjustments','transfers']) %> treeview">
           <a href="#">
@@ -59,27 +54,27 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="<%= active_class(['items']) %>">          
+            <li class="<%= active_class(['items']) %>">
               <%= link_to(items_path) do %>
-                <i class="fa fa-circle-o"></i> Items & Inventory
+                <i class="fa fa-circle-o"></i> Items &amp; Inventory
               <% end %>
             </li>
-            <li class="<%= active_class(['barcode_items']) %>">          
+            <li class="<%= active_class(['barcode_items']) %>">
               <%= link_to(barcode_items_path) do %>
                 <i class="fa fa-circle-o"></i> Barcode Items
               <% end %>
             </li>
-            <li class="<%= active_class(['storage_locations']) %>">          
+            <li class="<%= active_class(['storage_locations']) %>">
               <%= link_to(storage_locations_path) do %>
                 <i class="fa fa-circle-o"></i> Storage Locations
               <% end %>
             </li>
-            <li class="<%= active_class(['adjustments']) %>">          
+            <li class="<%= active_class(['adjustments']) %>">
               <%= link_to(adjustments_path) do %>
-                <i class="fa fa-circle-o"></i> Adjustments
+                <i class="fa fa-circle-o"></i> Inventory Adjustments
               <% end %>
             </li>
-            <li class="<%= active_class(['transfers']) %>">          
+            <li class="<%= active_class(['transfers']) %>">
               <%= link_to(transfers_path) do %>
                 <i class="fa fa-circle-o"></i> Transfers
               <% end %>
@@ -97,17 +92,17 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="<%= active_class(['donation_sites']) %>">          
+            <li class="<%= active_class(['donation_sites']) %>">
               <%= link_to(donation_sites_path) do %>
                 <i class="fa fa-circle-o"></i> Donation Sites
               <% end %>
             </li>
-            <li class="<%= active_class(['partners']) %>">          
+            <li class="<%= active_class(['partners']) %>">
               <%= link_to(partners_path) do %>
                 <i class="fa fa-circle-o"></i> Partner Agencies
               <% end %>
             </li>
-            <li class="<%= active_class(['diaper_drive_participants']) %>">          
+            <li class="<%= active_class(['diaper_drive_participants']) %>">
               <%= link_to(diaper_drive_participants_path) do %>
                 <i class="fa fa-circle-o"></i> Diaper Drive Participants
               <% end %>

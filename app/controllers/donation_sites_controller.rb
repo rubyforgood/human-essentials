@@ -8,7 +8,7 @@ class DonationSitesController < ApplicationController
     if @donation_site.save
     redirect_to donation_sites_path, notice: "New donation site added!"
     else
-    flash[:alert] = "Something didn't work quite right -- try again?"
+    flash[:error] = "Something didn't work quite right -- try again?"
     render action: :new
     end
   end
@@ -30,7 +30,7 @@ class DonationSitesController < ApplicationController
     if @donation_site.update_attributes(donation_site_params)
     redirect_to donation_sites_path, notice: "#{@donation_site.name} updated!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end
@@ -38,7 +38,7 @@ class DonationSitesController < ApplicationController
   def import_csv
     if params[:file].nil?
       redirect_back(fallback_location: donation_sites_path(organization_id: current_organization))
-      flash[:alert] = "No file was attached!"
+      flash[:error] = "No file was attached!"
     else
       filepath = params[:file].read
       DonationSite.import_csv(filepath, current_organization.id)

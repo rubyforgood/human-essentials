@@ -1,7 +1,7 @@
 <section class="content-header">
 <% content_for :title, "#{current_organization.name} - Inventory - Adjustments - New" %>
   <h1>
-    New Adjustment
+    New Inventory Adjustment
     <small>for <%= current_organization.name %></small>
   </h1>
   <ol class="breadcrumb">
@@ -9,7 +9,7 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "Distributions", (adjustments_path) %></li>
+    <li><%= link_to "Inventory Adjustments", (adjustments_path) %></li>
     <li class="active"> New Adjustment</li>
   </ol>
 </section>
@@ -24,7 +24,7 @@
   </div>
 
   <div class="box-body">
-
+<p class="help">Enter a negative amount for <code>quantity</code> if you want to subtract that kind of item.</p>
 <%= simple_form_for @adjustment do |f| %>
 
   <%= f.association :storage_location,
@@ -48,7 +48,7 @@
     <fieldset style="margin-bottom: 2rem;" class="form-inline">
       <legend>Items in this donation</legend>
       <%= f.simple_fields_for :line_items do |item| %>
-        <div id="donation_line_items" data-capture-barcode="true">
+        <div id="adjustment_line_items" data-capture-barcode="true">
           <%= render 'line_item_fields', f: item %>
         </div>
       <% end %>

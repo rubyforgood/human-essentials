@@ -1,7 +1,7 @@
 <section class="content-header">
 	<% content_for :title, "#{current_organization.name} - Inventory - Adjustments - Edit" %>
 	<h1>
-	  Editing Adjustment
+	  Editing Inventory Adjustment
 	  <small>for <%= current_organization.name %></small>
 	</h1>
 	<ol class="breadcrumb">
@@ -9,7 +9,7 @@
 	    <i class="fa fa-dashboard"></i> Home
 	  <% end %>
 	  </li>
-	  <li><%= link_to "All Adjustment", (adjustments_path) %></li>  
+	  <li><%= link_to "All Adjustment", (adjustments_path) %></li>
 	  <li class="active">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</li>
 	</ol>
 </section>
