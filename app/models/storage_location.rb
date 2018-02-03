@@ -167,8 +167,8 @@ class StorageLocation < ApplicationRecord
       inventory_item = self.inventory_items.find_by(item: line_item.item)
       next if inventory_item.nil? || inventory_item.quantity == 0
 
-      if inventory_item.quantity >= line_item.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
+      if ((inventory_item.quantity + line_item.quantity) >= 0)
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) + line_item.quantity
       else
         item_validator.add_insufficiency(line_item.item, inventory_item.quantity, line_item.quantity)
       end
