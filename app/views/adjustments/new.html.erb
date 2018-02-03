@@ -1,7 +1,7 @@
 <section class="content-header">
 <% content_for :title, "#{current_organization.name} - Inventory - Adjustments - New" %>
   <h1>
-    New Adjustment
+    New Inventory Adjustment
     <small>for <%= current_organization.name %></small>
   </h1>
   <ol class="breadcrumb">
@@ -9,7 +9,7 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "Distributions", (adjustments_path) %></li>  
+    <li><%= link_to "Distributions", (adjustments_path) %></li>
     <li class="active"> New Adjustment</li>
   </ol>
 </section>
