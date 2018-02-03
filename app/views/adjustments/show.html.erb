@@ -2,7 +2,7 @@
 <section class="content-header">
   <% content_for :title, "#{current_organization.name} - Inventory - Adjustments" %>
   <h1>
-    Adjustment
+    Inventory Adjustment
     <small>for <%= current_organization.name %></small>
   </h1>
   <ol class="breadcrumb">
@@ -10,7 +10,7 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "All Adjustments", (adjustments_path) %></li>  
+    <li><%= link_to "All Adjustments", (adjustments_path) %></li>
     <li class="active">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</li>
   </ol>
 </section>
@@ -38,13 +38,15 @@
   <div class="box-body table-responsive no-padding">
     <table class="table table-hover">
     <tr>
+      <th>&nbsp;</th>
       <th>Item</th>
       <th>Quantity</th>
     </tr>
-  <% @adjustment.line_items.each do |line_item| %>
-    <tr>
+  <% @adjustment.line_items.each do |line_item|  %>
+    <tr class="<%= line_item.quantity > 0 ? "positive" : "negative" %>">
+      <td><%= (line_item.quantity > 0) ? "Added " : "Removed " %></td>
+      <td><%= line_item.quantity.abs %></td>
       <td><%= line_item.item.name %></td>
-      <td><%= line_item.quantity %></td>
     </tr>
   <% end %>
     </table>
@@ -55,11 +57,6 @@
       <!-- /.box -->
   <strong>Comments:</strong>
   <%= @adjustment.comment %>
-</p>    
+</p>
   </div>
 </div>
-
-
-
-
-
