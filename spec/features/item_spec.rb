@@ -61,63 +61,36 @@
     expect(page.all('select#filters_in_category option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
   end
 
-  scenario "Filter show items without quantity" do
-    pending
-  Item.delete_all
-  item = create(:item, category: "same")
-  item2 = create(:item, category: "different")
-  storage = create(:storage_location, name: "Test storage")
-  visit url_prefix + "/items"
-  choose('filters_show_quantity_0')
-  click_button "Filter"
-  expect(page.find('table#items')).not_to have_content "Quantity"
-  end
+  describe "Item Table Tabs >" do
+    before :each do
+      # FIXME why isn't this handled by DatabaseCleaner?
+      Item.delete_all
+      InventoryItem.delete_all
+      StorageLocation.delete_all
+      @item = create(:item, name: "an item", category: "same")
+      @item2 = create(:item, name: "another item", category: "different")
+      @storage = create(:storage_location, :with_items, item: @item, item_quantity: 666, name: "Test storage")
+      visit url_prefix + "/items"
+    end
+    # Consolidated these into one to reduce the setup/teardown
+    scenario "Displays items in separate tabs", js: true do
+      expect(page.find('table#tbl_items', visible: true)).not_to have_content "Quantity"
+      expect(page.find(:css, 'table#tbl_items', visible: true)).to have_content(@item.name)
+      expect(page).to have_selector('table#tbl_items tbody tr', count: 2)
 
-  scenario "Filter show items without quantity (without choosing radio button)" do
-    pending
-    Item.delete_all
-    item = create(:item, category: "same")
-    item2 = create(:item, category: "different")
-    storage = create(:storage_location, name: "Test storage")
-    visit url_prefix + "/items"
-    click_button "Filter"
-    expect(page.find('table#items')).not_to have_content "Quantity"
-    page.should have_selector('table#items tr', :count => 3)
-  end
+      click_link "Items and Quantity" # href="#sectionB"
+      expect(page.find('table#tbl_items_quantity', visible: true)).to have_content "Quantity"
+      expect(page.find('table#tbl_items_quantity', visible: true)).not_to have_content "Test storage"
+      expect(page.find('table#tbl_items_quantity', visible: true)).to have_content "666"
+      expect(page).to have_selector('table#tbl_items_quantity tbody tr', count: 2)
 
-  scenario "Filter show items with quantity and without storage" do
-    pending
-    Item.delete_all
-    InventoryItem.delete_all
-    StorageLocation.delete_all
-    item = create(:item, category: "same", id: 1)
-    item2 = create(:item, category: "different", id: 2)
-    storage = create(:storage_location, name: "Test storage", id: 1)
-    inventory_item = create(:inventory_item, storage_location_id: 1, item_id: 1, quantity: 666)
-    visit url_prefix + "/items"
-    choose('filters_show_quantity_1')
-    click_button "Filter"
-    expect(page.find('table#items')).to have_content "Quantity"
-    expect(page.find('table#items')).not_to have_content "Test storage"
-    expect(page.find('table#items')).to have_content "666"
-    page.should have_selector('table#items tr', :count => 3)
-  end
+      click_link "Items, Quantity, and Location" # href="#sectionC"
+      expect(page.find('table#tbl_items_location', visible: true)).to have_content "Quantity"
+      expect(page.find('table#tbl_items_location', visible: true)).to have_content "Test storage"
+      expect(page.find('table#tbl_items_location', visible: true)).to have_content "666"
 
-  scenario "Filter show items with quantity and storage" do
-    pending
-    Item.delete_all
-    InventoryItem.delete_all
-    StorageLocation.delete_all
-    item = create(:item, category: "same", id: 1)
-    item2 = create(:item, category: "different", id: 2)
-    storage = create(:storage_location, name: "Test storage", id: 1)
-    inventory_item = create(:inventory_item, storage_location_id: 1, item_id: 1, quantity: 666)
-    visit url_prefix + "/items"
-    choose('filters_show_quantity_2')
-    click_button "Filter"
-    expect(page.find('table#items')).to have_content "Quantity"
-    expect(page.find('table#items')).to have_content "Test storage"
-    expect(page.find('table#items')).to have_content "666"
-    page.should have_selector('table#items tr', :count => 3)
+      # FIXME -- this should be 2. It's 3 because an unnecessary TR is being created.
+      expect(page).to have_selector('table#tbl_items_location tbody tr', count: 3)
+    end
   end
 end
