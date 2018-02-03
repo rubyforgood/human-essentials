@@ -9,7 +9,7 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "Distributions", (distributions_path) %></li>  
+    <li><%= link_to "Distributions", (distributions_path) %></li>
     <li class="active"> New Distribution</li>
   </ol>
 </section>
@@ -51,19 +51,19 @@
         <div id="donation_line_items" data-capture-barcode="true">
           <%= render 'line_item_fields', f: item %>
         </div>
-        <div class="row links">
-          <div class="col-xs-12">
-            <%= link_to_add_association f, :line_items,
-            data: {
-              association_insertion_node: "#donation_line_items",
-              association_insertion_method: "append"
-            }, id: "__add_line_item", class: "btn btn-md btn-success", style: "margin-top: 1rem;" do
-            %>
-              <i class="fa fa-plus"></i> Add another item
-            <% end %>
-          </div>
-        </div>
       <% end %>
+      <div class="row links">
+        <div class="col-xs-12">
+          <%= link_to_add_association f, :line_items,
+          data: {
+            association_insertion_node: "#donation_line_items",
+            association_insertion_method: "append"
+          }, id: "__add_line_item", class: "btn btn-md btn-success", style: "margin-top: 1rem;" do
+          %>
+            <i class="fa fa-plus"></i> Add another item
+          <% end %>
+        </div>
+      </div>
 
     </fieldset>
       <div class="row">
@@ -79,20 +79,3 @@
 <%= render partial: "donations/barcode_modal" %>
 
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
