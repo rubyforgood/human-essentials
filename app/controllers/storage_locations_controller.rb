@@ -24,7 +24,24 @@ class StorageLocationsController < ApplicationController
 
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
+    respond_to do |format|
+      format.html
+      format.csv { send_data @storage_location.to_csv }
+      format.xls 
+    end
   end
+
+  def import_inventory
+    if params[:file].nil?
+      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
+      flash[:alert] = "No file was attached!"
+    else
+      filepath = params[:file].read
+      StorageLocation.import_inventory(filepath, current_organization.id, params[:storage_location])
+      flash[:notice] = "Inventory imported successfully!"
+      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
+    end
+  end    
 
   def import_csv
     if params[:file].nil?
