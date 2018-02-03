@@ -1,24 +1,7 @@
 <div class="nested-fields">
-  <div class="row">
-    <div class="col-xs-1 col-sm-1">
-      <%= link_to_remove_association "X", f, class: "btn btn-sm btn-danger" %>
-    </div>
-    <div class="col-xs-11 col-sm-4">
-      <div class="input text optional barcode-item-lookup">
-        <%= render partial: "barcode_items/barcode_item_lookup" %>
-      </div>
-    </div>
-
-    <div class="col-xs-1 col-sm-1">
-      <strong>OR</strong>
-    </div>
-
-    <div class="col-xs-4 col-sm-2">
-      <%= f.input_field :quantity, placeholder: "Quantity" %>
-    </div>
-    <div class="col-xs-7 col-sm-4">
-      <%= f.input_field :item_id, collection: @items, prompt: "Choose an item" %>
-    </div>
-
-  </div>
+  <%= link_to_remove_association "X", f, class: "btn btn-sm btn-danger" %>
+  <%= render partial: "barcode_items/barcode_item_lookup" %>
+  <label>OR</label>
+  <%= f.input_field :item_id, collection: @items, prompt: "Choose an item", class: 'form-control' %>
+  <%= f.input_field :quantity, placeholder: "Quantity", class: 'form-control' %>
 </div>
