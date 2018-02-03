@@ -26,6 +26,8 @@ class AdjustmentsController < ApplicationController
   # POST /adjustments
   def create
     @adjustment = current_organization.adjustments.new(adjustment_params)
+    @storage_locations = current_organization.storage_locations
+    @items = current_organization.items.alphabetized
 
     if @adjustment.valid?
       @adjustment.storage_location.adjust!(@adjustment)
@@ -33,13 +35,15 @@ class AdjustmentsController < ApplicationController
       if @adjustment.save
         redirect_to adjustments_path, notice: 'Adjustment was successfully created.'
       else
+        flash[:error] = @adjustment.errors.collect { |model,message| "#{model}: " + message }.join("<br />".html_safe)
         render :new
       end
     else
+      flash[:error] = @adjustment.errors.collect { |model,message| "#{model}: " + message }.join("<br />".html_safe)
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
-    flash[:alert] = ex.message
+    flash[:error] = ex.message
     render :new
   end
 

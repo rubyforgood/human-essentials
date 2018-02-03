@@ -160,7 +160,7 @@ class StorageLocation < ApplicationRecord
   # TODO - this is called from the AdjustmentsController, should probably be in a service, not this model
   def adjust!(adjustment)
     updated_quantities = {}
-    insufficient_items = []
+    item_validator = Errors::InsufficientAllotment.new("Adjustment exceeds the available inventory")
 
     adjustment.line_items.each do |line_item|
 
@@ -170,21 +170,12 @@ class StorageLocation < ApplicationRecord
       if inventory_item.quantity >= line_item.quantity
         updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
       else
-        insufficient_items << {
-          item_id: line_item.item.id,
-          item_name: line_item.item.name,
-          quantity_on_hand: inventory_item.quantity,
-          quantity_requested: line_item.quantity
-        }
+        item_validator.add_insufficiency(line_item.item, inventory_item.quantity, line_item.quantity)
       end
 
     end
 
-    unless insufficient_items.empty?
-      raise Errors::InsufficientAllotment.new(
-        "Transfer line_items exceed the available inventory",
-        insufficient_items)
-    end
+    raise item_validator unless item_validator.satisfied?
 
     update_inventory_inventory_items(updated_quantities)
   end
