@@ -251,7 +251,7 @@ end
   case source
   when Donation::SOURCES[:diaper_drive]
     donation = Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
-  when Donation::SOURCES[:dropoff]
+  when Donation::SOURCES[:donation_site]
     donation = Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org
   else
     donation = Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
