@@ -22,23 +22,23 @@ end
 user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: true
 user2 = User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org
 
-DropoffLocation.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
+DonationSite.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
   location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"
   location.organization = pdx_org
 end
-DropoffLocation.find_or_create_by!(name: "Tidee Didee Diaper Service") do |location|
+DonationSite.find_or_create_by!(name: "Tidee Didee Diaper Service") do |location|
   location.address = "6011 SE 92nd Ave., Portland,OR 97266"
   location.organization = pdx_org
 end
-DropoffLocation.find_or_create_by!(name: "Southside Swap & Play") do |location|
+DonationSite.find_or_create_by!(name: "Southside Swap & Play") do |location|
   location.address = "5239 SE Woodstock Ave, Portland, OR 97206"
   location.organization = pdx_org
 end
-DropoffLocation.find_or_create_by!(name: "Kuts 4 Kids & Adults") do |location|
+DonationSite.find_or_create_by!(name: "Kuts 4 Kids & Adults") do |location|
   location.address = "4423 SE Hawthorne Blvd., Portland, OR 97215"
   location.organization = pdx_org
 end
-DropoffLocation.find_or_create_by!(name: "JJ Jump") do |location|
+DonationSite.find_or_create_by!(name: "JJ Jump") do |location|
   location.address = "9057 SE Jannsen Rd., Clackamas, OR 97015"
   location.organization = pdx_org
 end
@@ -251,8 +251,8 @@ end
   case source
   when Donation::SOURCES[:diaper_drive]
     donation = Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
-  when Donation::SOURCES[:dropoff]
-    donation = Donation.create! source: source, dropoff_location: random_record(DropoffLocation), storage_location: random_record(StorageLocation), organization: pdx_org
+  when Donation::SOURCES[:donation_site]
+    donation = Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org
   else
     donation = Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
   end

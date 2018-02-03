@@ -38,10 +38,10 @@
               <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
             </div>
           <% end %>
-          <% if @dropoff_locations.present? %>
+          <% if @donation_sites.present? %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
               <%= label_tag "by Donation Site" %>
-              <%= collection_select(:filters, :from_dropoff_location, @dropoff_locations || {}, :id, :name, { include_blank: true, selected: @selected_dropoff_location }, class: "form-control") %>
+              <%= collection_select(:filters, :from_donation_site, @donation_sites || {}, :id, :name, { include_blank: true, selected: @selected_donation_site }, class: "form-control") %>
             </div>
           <% end %>
         </div><!-- /.row -->
