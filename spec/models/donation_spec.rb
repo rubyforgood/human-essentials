@@ -19,8 +19,8 @@ RSpec.describe Donation, type: :model do
     it "must belong to an organization" do
       expect(build(:donation, organization_id: nil)).not_to be_valid
     end
-    it "requires a donation_site if the source is 'Donation Pickup Location'" do
-      expect(build(:donation, source: "Donation Pickup Location", donation_site: nil)).not_to be_valid
+    it "requires a donation_site if the source is 'Donation Site'" do
+      expect(build(:donation, source: "Donation Site", donation_site: nil)).not_to be_valid
       expect(build(:donation, source: "Purchased Supplies", donation_site: nil)).to be_valid
     end
     it "requires a diaper drive participant if the source is 'Diaper Drive'" do

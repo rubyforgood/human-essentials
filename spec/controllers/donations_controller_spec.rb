@@ -33,7 +33,7 @@ RSpec.describe DonationsController, type: :controller do
         post :create, params: default_params.merge(
           donation: { storage_location_id: storage_location.id,
                       donation_site_id: donation_site.id,
-                      source: "Donation Pickup Location",
+                      source: "Donation Site",
                       line_items: line_items } )
         d = Donation.last
         expect(response).to redirect_to(donations_path)
