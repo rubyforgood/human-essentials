@@ -58,6 +58,7 @@ class DonationsController < ApplicationController
                                                               "quantity"=>params["number_of_diapers"],
                                                               "_destroy"=>"false"}}
       )
+    @donation.storage_location.intake! @donation
     render status: 200, json: @donation.to_json
   end
 
