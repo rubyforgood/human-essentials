@@ -9,7 +9,7 @@ class StorageLocationsController < ApplicationController
     if @storage_location.save
     redirect_to storage_locations_path, notice: "New storage location added!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
@@ -27,26 +27,26 @@ class StorageLocationsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv { send_data @storage_location.to_csv }
-      format.xls 
+      format.xls
     end
   end
 
   def import_inventory
     if params[:file].nil?
       redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
-      flash[:alert] = "No file was attached!"
+      flash[:error] = "No file was attached!"
     else
       filepath = params[:file].read
       StorageLocation.import_inventory(filepath, current_organization.id, params[:storage_location])
       flash[:notice] = "Inventory imported successfully!"
       redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
     end
-  end    
+  end
 
   def import_csv
     if params[:file].nil?
       redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
-      flash[:alert] = "No file was attached!"
+      flash[:error] = "No file was attached!"
     else
       filepath = params[:file].read
       StorageLocation.import_csv(filepath, current_organization.id)
@@ -62,7 +62,7 @@ class StorageLocationsController < ApplicationController
     if @storage_location.update_attributes(storage_location_params)
     redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
     else
-      flash[:alert] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

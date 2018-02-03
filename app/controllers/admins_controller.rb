@@ -11,7 +11,7 @@ class AdminsController < ApplicationController
     if @organization.update_attributes(organization_params)
       redirect_to admins_path, notice: 'Updated organization!'
     else
-      flash[:alert] = 'Failed to update this organization.'
+      flash[:error] = 'Failed to update this organization.'
       render :edit
     end
   end
@@ -37,7 +37,7 @@ class AdminsController < ApplicationController
     if @organization.save
       redirect_to admins_path, notice: "Organization added!"
     else
-      flash[:alert] = "Failed to create Organization."
+      flash[:error] = "Failed to create Organization."
       render :new
     end
   end
@@ -51,7 +51,7 @@ class AdminsController < ApplicationController
     if @organization.destroy
       redirect_to admins_path, notice: "Organization deleted!"
     else
-      redirect_to admins_path, alert: "Failed to delete Organization."  
+      redirect_to admins_path, alert: "Failed to delete Organization."
     end
   end
 

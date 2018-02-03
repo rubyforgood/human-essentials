@@ -70,8 +70,8 @@ class DonationsController < ApplicationController
     else
       load_form_collections
       @donation.line_items.build if @donation.line_items.count == 0
-      flash[:alert] = "There was an error starting this donation, try again?"
-      Rails.logger.info "ERROR: #{@donation.errors}"
+      flash[:error] = "There was an error starting this donation, try again?"
+      Rails.logger.error "ERROR: #{@donation.errors}"
       render action: :new
     end
   end
@@ -106,7 +106,7 @@ class DonationsController < ApplicationController
   end
 
 private
-  
+
   def load_form_collections
     @storage_locations = current_organization.storage_locations
     @donation_sites = current_organization.donation_sites

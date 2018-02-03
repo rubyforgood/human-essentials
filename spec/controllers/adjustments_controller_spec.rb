@@ -67,9 +67,9 @@ RSpec.describe AdjustmentsController, type: :controller do
           expect(assigns(:adjustment)).to be_persisted
         end
 
-        it "redirects to the index after created adjustment" do
+        it "redirects to the #show after created adjustment" do
           post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
-          expect(response).to redirect_to(adjustments_path)
+          expect(response).to redirect_to(adjustment_path(Adjustment.last))
         end
       end
 
