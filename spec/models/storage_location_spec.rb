@@ -195,10 +195,13 @@ RSpec.describe StorageLocation, type: :model do
     end
 
 
-    describe "move_inventory!" do
-      pending "removes inventory from a storage location and adds them to another storage location"
+    describe "move_inventory!", :focus do
+      it "removes inventory from a storage location and adds them to another storage location" do
+      end
 
-      pending "raises error when distribution exceeds inventory in a storage facility"
+      it "raises error when distribution exceeds inventory in a storage facility" do
+
+      end
     end
 
     describe "reclaim!" do
