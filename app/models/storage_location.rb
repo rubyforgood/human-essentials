@@ -41,6 +41,17 @@ class StorageLocation < ApplicationRecord
     inventory_items.sum(:quantity)
   end
 
+  def to_csv()
+    org = self.organization
+
+    CSV.generate(headers: true) do |csv|
+      csv << ["Quantity", "DO NOT CHANGE ANYTHING IN THIS ROW"]
+      org.items.each do |item|
+        csv << ["", item.name]
+      end
+    end
+  end
+
   def intake!(donation)
     log = {}
     donation.line_items.each do |line_item|
@@ -102,6 +113,15 @@ class StorageLocation < ApplicationRecord
       loc.organization_id = organization
       loc.save!
     end
+  end
+
+  def self.import_inventory(filename, org, loc)
+    current_org = Organization.find(org)
+    donation = current_org.donations.create(storage_location_id: loc.to_i, source: "Misc. Donation", organization_id: current_org.id)
+    CSV.parse(filename, :headers => false) do |row|
+      donation.line_items.create(quantity: row[0].to_i, item_id: current_org.items.find_by_name(row[1]))
+    end
+    donation.storage_location.intake!(donation)
   end
 
   # TODO - this action is happening in the Transfer model/controller - does this method belong here?

@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :storage_locations do
       collection do
         post :import_csv
+        post :import_inventory
       end
       member do
         get :inventory
