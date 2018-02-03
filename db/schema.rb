@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180105005725) do
+ActiveRecord::Schema.define(version: 20180202152055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,9 +60,18 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
   end
 
+  create_table "donation_sites", id: :serial, force: :cascade do |t|
+    t.string "name"
+    t.string "address"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "organization_id"
+    t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
+  end
+
   create_table "donations", id: :serial, force: :cascade do |t|
     t.string "source"
-    t.integer "dropoff_location_id"
+    t.integer "donation_site_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "storage_location_id"
@@ -70,18 +79,9 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.integer "organization_id"
     t.integer "diaper_drive_participant_id"
     t.datetime "issued_at"
-    t.index ["dropoff_location_id"], name: "index_donations_on_dropoff_location_id"
+    t.index ["donation_site_id"], name: "index_donations_on_donation_site_id"
     t.index ["organization_id"], name: "index_donations_on_organization_id"
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
-  end
-
-  create_table "dropoff_locations", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.string "address"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "organization_id"
-    t.index ["organization_id"], name: "index_dropoff_locations_on_organization_id"
   end
 
   create_table "inventory_items", id: :serial, force: :cascade do |t|
@@ -184,6 +184,7 @@ ActiveRecord::Schema.define(version: 20180105005725) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

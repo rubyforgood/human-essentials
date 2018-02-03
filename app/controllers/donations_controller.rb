@@ -28,7 +28,7 @@ class DonationsController < ApplicationController
 
   def index
     @donations = current_organization.donations
-                                      .includes(:line_items, :storage_location, :dropoff_location, :diaper_drive_participant)
+                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant)
                                       .order(created_at: :desc)
                                       .filter(filter_params)
     # Are these going to be inefficient with large datasets?
@@ -37,8 +37,8 @@ class DonationsController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @sources = @donations.collect { |d| d.source }.uniq
     @selected_source = filter_params[:by_source]
-    @dropoff_locations = @donations.collect { |d| d.dropoff_location }.compact.uniq
-    @selected_dropoff_location = filter_params[:from_dropoff_location]
+    @donation_sites = @donations.collect { |d| d.donation_site }.compact.uniq
+    @selected_donation_site = filter_params[:from_donation_site]
     @diaper_drives = @donations.collect { |d| next unless d.source ==  Donation::SOURCES[:diaper_drive]; d.diaper_drive_participant }.compact.uniq
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
   end
@@ -109,7 +109,7 @@ private
   
   def load_form_collections
     @storage_locations = current_organization.storage_locations
-    @dropoff_locations = current_organization.dropoff_locations
+    @donation_sites = current_organization.donation_sites
     @diaper_drive_participants = current_organization.diaper_drive_participants
     @items = current_organization.items.alphabetized
   end
@@ -117,7 +117,7 @@ private
   def donation_params
     params = strip_unnecessary_params
     params = compact_line_items
-    params.require(:donation).permit(:source, :comment, :storage_location_id, :issued_at, :dropoff_location_id, :diaper_drive_participant_id, line_items_attributes: [:id, :item_id, :quantity, :_destroy]).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :comment, :storage_location_id, :issued_at, :donation_site_id, :diaper_drive_participant_id, line_items_attributes: [:id, :item_id, :quantity, :_destroy]).merge(organization: current_organization)
 
   end
 
@@ -127,12 +127,12 @@ private
 
   def filter_params
     return {} unless params.has_key?(:filters)
-    params.require(:filters).slice(:at_storage_location, :by_source, :from_dropoff_location, :by_diaper_drive_participant)
+    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant)
   end
 
-  # Omits dropoff_location_id or diaper_drive_participant_id if those aren't selected as source
+  # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source
   def strip_unnecessary_params
-    params[:donation].delete(:dropoff_location_id) unless params[:donation][:source] == Donation::SOURCES[:dropoff]
+    params[:donation].delete(:donation_site_id) unless params[:donation][:source] == Donation::SOURCES[:donation_site]
     params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive]
     params
   end

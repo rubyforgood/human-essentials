@@ -1,16 +1,16 @@
 <section class="content-header">
-<% content_for :title, "#{current_organization.name} - Agencies - Donation Sites - #{@dropoff_location.name}" %>
+<% content_for :title, "#{current_organization.name} - Agencies - Donation Sites - #{@donation_site.name}" %>
 <h1>
   Donation Site Information
-  <small>for <%= @dropoff_location.name %></small>
+  <small>for <%= @donation_site.name %></small>
 </h1>
 <ol class="breadcrumb">
   <li><%= link_to(dashboard_path) do %>
     <i class="fa fa-dashboard"></i> Home
   <% end %>
   </li>
-  <li><%= link_to "Donation Sites", (dropoff_locations_path) %></li>  
-  <li class="active"><%= @dropoff_location.name %></li>
+  <li><%= link_to "Donation Sites", (donation_sites_path) %></li>  
+  <li class="active"><%= @donation_site.name %></li>
 </ol>
 </section>
 
@@ -20,13 +20,13 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <h3 class="box-title"><%= @dropoff_location.name %></h3>
+    <h3 class="box-title"><%= @donation_site.name %></h3>
   </div>
   <div class="box-body">
 
-  <p><%= @dropoff_location.address %></p>
+  <p><%= @donation_site.address %></p>
   
-  <% if @dropoff_location.donations.present? %>
+  <% if @donation_site.donations.present? %>
   <h4>Past Donations Received at this Location</h3>
   <div class="row">
   <div class="col-xs-12">
@@ -40,7 +40,7 @@
 	      <th>Source</th>
         </tr>
 
-        <% @dropoff_location.donations.each do |donation| %>  
+        <% @donation_site.donations.each do |donation| %>  
             <tr>
 					  <td><%= donation.storage_location&.name %></td>
   					<td><%= donation.line_items.total %></td>

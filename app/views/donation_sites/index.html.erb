@@ -19,13 +19,13 @@
     <div class="box-header with-border bg-gray">
       <section id="filters">
         <!-- TBA; replicate HTML from other #index views -->
-        <%= link_to new_dropoff_location_path(organization_id: current_organization), class: "btn btn-success btn pull-right" do %>
+        <%= link_to new_donation_site_path(organization_id: current_organization), class: "btn btn-success btn pull-right" do %>
           <i class="fa fa-plus"></i> New Donation Site
         <% end %>
       </section><!-- /#filters -->
     </div><!-- /.box-header -->
     <div class="box-body">
-      <% if @dropoff_locations.empty? %>
+      <% if @donation_sites.empty? %>
         <div class="import-partners">
           <!-- Button HTML (to Trigger Modal) -->
           <a href="#importDonationSiteModal" class="btn btn-lg btn-secondary" style="padding-left: 1rem;" data-toggle="modal"><i class="fa fa-upload"></i> Import Donation Sites</a>
@@ -39,7 +39,7 @@
                   </div>
                   <div class="modal-body">
                     <ol>
-                      <li><%= link_to "/dropoff_locations.csv", :format => :csv, :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example csv<% end %></li>
+                      <li><%= link_to "/donation_sites.csv", :format => :csv, :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example csv<% end %></li>
                       <li>Open the csv file with excel or your favourite spreadsheet program.</li>
                       <li>Delete the sample data and enter your donation site names and addresses in the appropriate columns.</li>
                       <li>Save the file as a csv file.</li>
@@ -49,7 +49,7 @@
                   <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
                   </div><!-- /.modal-body -->
                   <div class="modal-footer">
-                    <%= form_tag import_csv_dropoff_locations_path, multipart: true do %>
+                    <%= form_tag import_csv_donation_sites_path, multipart: true do %>
                       <div class="form-group">
                         <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
                       </div>
@@ -75,7 +75,7 @@
                 </tr>
               </thead>
               <tbody>
-                <%= render partial: "dropoff_location_row", collection: @dropoff_locations %>
+                <%= render partial: "donation_site_row", collection: @donation_sites %>
               </tbody>
             </table>
           </div><!-- /.box-body.table-responsive -->

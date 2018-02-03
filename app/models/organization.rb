@@ -29,7 +29,7 @@ class Organization < ApplicationRecord
   has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', organization.id, true) }
   has_many :distributions
   has_many :donations
-  has_many :dropoff_locations
+  has_many :donation_sites
   has_many :diaper_drive_participants
   has_many :storage_locations
   has_many :inventory_items, through: :storage_locations
