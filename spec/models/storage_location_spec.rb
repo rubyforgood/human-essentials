@@ -195,12 +195,27 @@ RSpec.describe StorageLocation, type: :model do
     end
 
 
-    describe "move_inventory!", :focus do
+    describe "move_inventory!" do
       it "removes inventory from a storage location and adds them to another storage location" do
+        item = create(:item)
+        storage_location = create :storage_location, :with_items, item: item, item_quantity: 300
+        storage_location2 = create :storage_location, :with_items, item: item, item_quantity: 100
+        transfer = build :transfer, :with_items, item: item, item_quantity: 100,
+                                                 from_id: storage_location.id, to_id: storage_location2.id
+        storage_location.move_inventory!(transfer)
+        expect(storage_location.inventory_items.first.quantity).to eq 200
+        expect(storage_location2.inventory_items.first.quantity).to eq 200
       end
 
       it "raises error when distribution exceeds inventory in a storage facility" do
-
+        item = create(:item)
+        storage_location = create :storage_location, :with_items, item: item, item_quantity: 100
+        storage_location2 = create :storage_location, :with_items, item: item, item_quantity: 100
+        transfer = build :transfer, :with_items, item: item, item_quantity: 200,
+                                                 from_id: storage_location.id, to_id: storage_location2.id
+        expect {
+          storage_location.move_inventory!(transfer)
+        }.to raise_error(Errors::InsufficientAllotment)
       end
     end
 
