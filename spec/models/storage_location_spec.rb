@@ -162,6 +162,17 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
+    describe "import_inventory" do
+      it "imports storage locations from a csv file" do
+        organization = create(:organization)
+        storage_location = create(:storage_location)
+        import_file_path = Rails.root.join("spec", "fixtures", "inventory.csv").read
+        StorageLocation.import_inventory(import_file_path, organization.id, storage_location.id)
+        expect(storage_location.size).to eq 14842
+      end
+    end
+
+
     describe "move_inventory!" do
       pending "removes inventory from a storage location and adds them to another storage location"
 
