@@ -46,9 +46,9 @@
 
 
     <fieldset style="margin-bottom: 2rem;" class="form-inline">
-      <legend>Items in this donation</legend>
+      <legend>Items in this distribution</legend>
       <%= f.simple_fields_for :line_items do |item| %>
-        <div id="donation_line_items" data-capture-barcode="true">
+        <div id="distribution_line_items" data-capture-barcode="true">
           <%= render 'line_item_fields', f: item %>
         </div>
       <% end %>
@@ -56,7 +56,7 @@
         <div class="col-xs-12">
           <%= link_to_add_association f, :line_items,
           data: {
-            association_insertion_node: "#donation_line_items",
+            association_insertion_node: "#distribution_line_items",
             association_insertion_method: "append"
           }, id: "__add_line_item", class: "btn btn-md btn-success", style: "margin-top: 1rem;" do
           %>
