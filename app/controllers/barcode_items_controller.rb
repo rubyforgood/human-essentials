@@ -56,7 +56,19 @@ class BarcodeItemsController < ApplicationController
   end
 
   def destroy
-    current_organization.barcode_items.find(params[:id]).destroy
+    begin
+      # If the user is a superadmin, they can delete any Barcode
+      if (current_user.is_superadmin?)
+        barcode = BarcodeItem.find(params[:id])
+      # Otherwise it has to be non-global in their organization
+      else
+        barcode = current_organization.barcode_items.find(params[:id])
+        raise if barcode.nil? || barcode.global?
+      end
+      barcode.destroy
+    rescue Exception => e
+      flash[:error] = "Sorry, you don't have permission to delete this barcode."
+    end
     redirect_to barcode_items_path
   end
 
