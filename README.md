@@ -13,10 +13,16 @@ There are currently 5 Diaper Banks, across America, that are working with our or
 ### Origins
 This project took what we built for the [Portland Diaper Bank in 2016](https://github.com/rubyforgood/pdx_diaper) and turned it into a multitenant application, something that all diaper banks can use. We re-used models, code and other documentation where applicable as well as implemented new features and functionality requested by the prime stakeholder (PDXDB). We're super excited to have had Rachel Alston, the director of the Portland Diaper Bank, attending our event in 2017, providing guidance and giving us the best chance of success!
 
-## Ruby Version
+## Development with Docker
+
+`docker-compose run rails db:setup`, then `docker-compose up web`.
+
+## Development without Docker
+
+### Ruby Version
 This app uses Ruby version 2.4.2, indicated in `/.ruby-version`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
 
-## Database Configuration
+### Database Configuration
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_development` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.
 
 ### Create your .env with database credentials
@@ -27,7 +33,7 @@ PG_PASSWORD=password
 ```
 If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplied`, it's because you have probably not done this.
 
-### Seed the database
+## Seed the database
 From the root of the app, run `bundle exec rake db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user. 
 
 ## Login
