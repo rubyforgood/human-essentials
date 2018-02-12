@@ -67,4 +67,25 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.all('select#filters_containing option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
   end
 
+  scenario "Items in (adjustments)" do
+    item = create(:item, name: "AAA Diapers")
+    storage_location = create(:storage_location, :with_items,  item: item, name: "here")
+    adjustment = create(:adjustment, :with_items, storage_location: storage_location)
+    visit url_prefix + "/storage_locations/" + storage_location.id.to_s
+    click_link "Inventory coming in"
+
+    expect(page.find('table#sectionB.table.table-hover', visible: true)).to have_content "100"
+  end
+
+  scenario "Items out (distributions)" do
+    item = create(:item, name: "AAA Diapers")
+    storage_location = create(:storage_location, :with_items,  item: item, name: "here")
+    adjustment = create(:adjustment, :with_items, storage_location: storage_location)
+    distribution = create(:distribution, :with_items, storage_location: storage_location)
+    visit url_prefix + "/storage_locations/" + storage_location.id.to_s
+    click_link "Inventory coming out"
+
+    expect(page.find('table#sectionC.table.table-hover', visible: true)).to have_content "100"
+  end
+
 end
