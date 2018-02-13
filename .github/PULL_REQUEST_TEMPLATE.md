@@ -1,5 +1,4 @@
-<!--Read comments, before commiting pull request 
-read checklist again
+<!--Read comments, before commiting pull request read checklist again
 
 # Checklist:
 
@@ -31,7 +30,18 @@ Include anything else we should know about. -->
 <!-- Please delete options that are not relevant. -->
 
 * Bug fix (non-breaking change which fixes an issue)
-* New feature (non-breaking change which adds functional* New feature (non-breaking change which adds functional* New featurct* New feature (non-breaking change which adds functionals * New feature (non-breaking change which adds functional* New feature (non-b
+* New feature (non-breaking change which adds functionality)
+* Breaking change (fix or feature that would cause existing functionality to not work as expected)
+* This change requires a documentation update
+* Documentation update
 
+### How Has This Been Tested?
 
- New feature (non-breaking change which adds functional* New feature (non-breast New feature (non-breaking change which adds do Nnyt New feature (non-breaking change whi so New feature tru New feature (non-breaking change which adds functional* New feature ce New feature (non-breaking change which adds functire New feature (ne  New feature (non-breaking change which adds functional* New feature ment.-->
+<!-- Please describe the tests that you ran to verify your changes. 
+Provide instructions so we can reproduce. 
+Do we need to do anything else to verify your changes? 
+If so, provide instructions (including any relevant configuration) so that we can reproduce? -->
+
+### Screenshots
+<!--Optional. Delete if not relevant. 
+Include screenshots (before / after) for style changes, highlight edited element.-->
