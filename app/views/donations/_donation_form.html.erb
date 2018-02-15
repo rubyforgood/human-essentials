@@ -64,7 +64,7 @@
   <div id="donation_line_items" data-capture-barcode="true">
     
     <%= f.simple_fields_for :line_items do |item| %>
-      <%= render 'line_item_fields', f: item %>
+      <%= render 'line_items/line_item_fields', f: item %>
     <% end %>
   </div>
 
@@ -74,7 +74,7 @@
         data: {
           association_insertion_node: "#donation_line_items",
           association_insertion_method: "append"
-        }, id: "__add_line_item", class: "btn btn-success", style: "margin-top: 1rem;" do
+        }, id: "__add_line_item", class: "btn btn-success", style: "margin-top: 1rem;", partial: "line_items/line_item_fields" do
         %>
           <i class="fa fa-plus"></i> Add another item
         <% end %>
