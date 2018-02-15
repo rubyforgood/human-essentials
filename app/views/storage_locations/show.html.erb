@@ -33,7 +33,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h2 class="modal-title">Import Storage Locations Instructions:</h4>
+                    <h2 class="modal-title">Import Storage Locations Instructions:</h2>
                 </div>
                 <div class="modal-body">
                   <ol>
@@ -65,23 +65,68 @@
   <p><%= @storage_location.address %></p>
   
   <div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-        <tr>
-          <th>Item</th>
-          <th>Quantity</th>
-        </tr>
-        <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
-        <tr>
-          <td>Total</td>
-          <td><%= @storage_location.size %></td>
-        </tr>
-        </table>
-      <!-- /.box-body -->
-    </div>
-    <!-- /.box -->
+    <div class="col-xs-12">
+      <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a data-toggle="tab" href="#sectionA">Inventory</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#sectionB">Inventory coming in</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#sectionC">Inventory coming out</a></li>
+      </ul>
+      <div class="tab-content">
+        <div id="sectionA" class="tab-pane fade in active">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table id="sectionA" class="table table-hover">
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+              </tr>
+              <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
+              <tr>
+                <td>Total</td>
+                <td><%= @storage_location.size %></td>
+              </tr>
+            </table>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div><!-- /#sectionA -->
+        <div id="sectionB" class="tab-pane fade info">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table id="sectionB" class="table table-hover">
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+              </tr>
+              <%= render partial: "line_item_row", collection: @items_in %>
+              <tr>
+                <td>Total</td>
+                <td><%= @items_in_total %></td>
+              </tr>
+            </table>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <div id="sectionC" class="tab-pane fade">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table id="sectionC" class="table table-hover">
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+              </tr>
+              <%= render partial: "line_item_row", collection: @items_out %>
+              <tr>
+                <td>Total</td>
+                <td><%= @items_out_total %></td>
+              </tr>
+            </table>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
   </div>
   </div>
   </div>
