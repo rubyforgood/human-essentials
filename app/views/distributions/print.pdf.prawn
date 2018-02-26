@@ -21,7 +21,7 @@ prawn_document do |pdf|
   pdf.move_down 10
 
   pdf.text "Issued on:", style: :bold
-  pdf.text @distribution.distribution_date.nil? ? @distribution.updated_at.strftime('%B %-d %Y') : @distribution.distribution_date.strftime('%B %-d %Y')
+  pdf.text @distribution.distributed_at
   pdf.move_down 10
 
   pdf.text "Comments:", style: :bold
