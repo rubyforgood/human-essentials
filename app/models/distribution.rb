@@ -35,4 +35,7 @@ class Distribution < ApplicationRecord
 
   delegate :name, to: :partner, prefix: true
 
+  def distributed_at
+    distribution_date.nil? ? updated_at.strftime('%B %-d %Y') : distribution_date.strftime('%B %-d %Y')
+  end
 end
