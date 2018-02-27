@@ -35,4 +35,7 @@ class Distribution < ApplicationRecord
 
   delegate :name, to: :partner, prefix: true
 
+  def distributed_at
+    issued_at.strftime("%B %-d %Y")
+  end
 end

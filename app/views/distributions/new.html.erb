@@ -27,6 +27,9 @@
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
 
+      <%= f.input :issued_at, as: :date, label: "Distribution date" %>
+      <%= f.input :agency_rep, label: "Agency representative" %>
+
     <%= f.association :storage_location,
       collection: @storage_locations,
       label: "From storage location",

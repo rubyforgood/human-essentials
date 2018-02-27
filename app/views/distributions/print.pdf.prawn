@@ -21,7 +21,7 @@ prawn_document do |pdf|
   pdf.move_down 10
 
   pdf.text "Issued on:", style: :bold
-  pdf.text @distribution.created_at.strftime("%m/%d/%Y")
+  pdf.text @distribution.distributed_at
   pdf.move_down 10
 
   pdf.text "Comments:", style: :bold

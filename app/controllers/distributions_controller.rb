@@ -71,6 +71,6 @@ class DistributionsController < ApplicationController
   private
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :partner_id, :storage_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
   end
 end
