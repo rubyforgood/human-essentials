@@ -55,7 +55,6 @@ ActiveRecord::Schema.define(version: 20180226140217) do
     t.integer "partner_id"
     t.integer "organization_id"
     t.datetime "issued_at"
-    t.date "distribution_date"
     t.string "agency_rep"
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
