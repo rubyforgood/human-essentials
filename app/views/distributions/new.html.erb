@@ -24,6 +24,7 @@
   <%= simple_form_for @distribution do |f| %>
 
     <%= f.association :partner,
+      collection: current_organization.partners,    
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
 
