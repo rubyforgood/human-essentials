@@ -93,7 +93,7 @@ RSpec.describe Distribution, type: :model do
 
     it "distributed_at" do
       two_days_ago = 2.day.ago
-      expect(create(:distribution, distribution_date: two_days_ago).distributed_at).to eq(two_days_ago.strftime('%B %-d %Y'))
+      expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime('%B %-d %Y'))
       expect(create(:distribution).distributed_at).to eq(Date.today.strftime('%B %-d %Y'))
     end
   end
