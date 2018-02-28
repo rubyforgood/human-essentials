@@ -21,11 +21,11 @@ RSpec.describe Donation, type: :model do
     end
     it "requires a donation_site if the source is 'Donation Site'" do
       expect(build(:donation, source: "Donation Site", donation_site: nil)).not_to be_valid
-      expect(build(:donation, source: "Purchased Supplies", donation_site: nil)).to be_valid
+      expect(build(:donation, source: "Misc. Donation", donation_site: nil)).to be_valid
     end
     it "requires a diaper drive participant if the source is 'Diaper Drive'" do
       expect(build(:donation, source: "Diaper Drive", diaper_drive_participant_id: nil)).not_to be_valid
-      expect(build(:donation, source: "Purchased Supplies", diaper_drive_participant_id: nil)).to be_valid
+      expect(build(:donation, source: "Misc. Donation", diaper_drive_participant_id: nil)).to be_valid
     end
     it "requires a source from the list of available sources" do
       expect(build(:donation, source: nil)).not_to be_valid
@@ -222,7 +222,6 @@ RSpec.describe Donation, type: :model do
   describe "SOURCES" do
     it "is a hash that is referenceable by key to avoid 'magic strings'" do
       expect(Donation::SOURCES).to have_key(:diaper_drive)
-      expect(Donation::SOURCES).to have_key(:purchased)
       expect(Donation::SOURCES).to have_key(:donation_site)
       expect(Donation::SOURCES).to have_key(:misc)
     end
