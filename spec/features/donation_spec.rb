@@ -21,7 +21,7 @@ RSpec.feature "Donations", type: :feature, js: true do
     let!(:item) { create(:item) }
     scenario "User can filter by the source" do
       create(:donation, source: Donation::SOURCES[:misc])
-      create(:donation, source: Donation::SOURCES[:purchased])
+      create(:donation, source: Donation::SOURCES[:donation_site])
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 2)
       select Donation::SOURCES[:misc], from: "filters_by_source"
@@ -65,7 +65,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       storage2 = create(:storage_location, name: "storage2")
       create(:donation, storage_location: storage1, source: Donation::SOURCES[:misc])
       create(:donation, storage_location: storage2, source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage1, source: Donation::SOURCES[:purchased])
+      create(:donation, storage_location: storage1, source: Donation::SOURCES[:donation_site])
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
       select Donation::SOURCES[:misc], from: "filters_by_source"
@@ -92,7 +92,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation IN THE PAST" do
-        select Donation::SOURCES[:purchased], from: "donation_source"
+        select Donation::SOURCES[:misc], from: "donation_source"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -106,7 +106,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "multiple line items for the same item type are accepted and combined on the backend" do
-        select Donation::SOURCES[:purchased], from: "donation_source"
+        select Donation::SOURCES[:misc], from: "donation_source"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -153,7 +153,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation for Purchased Supplies" do
-        select Donation::SOURCES[:purchased], from: "donation_source"
+        select Donation::SOURCES[:misc], from: "donation_source"
         expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"
