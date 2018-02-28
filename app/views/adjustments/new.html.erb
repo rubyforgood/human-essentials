@@ -48,7 +48,7 @@
     <fieldset style="margin-bottom: 2rem;" class="form-inline">
       <legend>Items in this donation</legend>
       <%= f.simple_fields_for :line_items do |item| %>
-        <div id="adjustment_line_items" data-capture-barcode="true">
+        <div id="donation_line_items" data-capture-barcode="true">
           <%= render 'line_items/line_item_fields', f: item %>
         </div>
       <% end %>
