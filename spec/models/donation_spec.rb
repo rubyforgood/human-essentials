@@ -4,7 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  source                      :string
-#  donation_site_id         :integer
+#  donation_site_id            :integer
 #  created_at                  :datetime
 #  updated_at                  :datetime
 #  storage_location_id         :integer
