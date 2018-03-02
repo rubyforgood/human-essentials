@@ -16,7 +16,7 @@ class PurchasesController < ApplicationController
   end
 
   def create
-    @purchase = Purchase.new(purchase_params.merge(organization: current_organization))
+    @purchase = Purchase.new(purchase_params)
     if (@purchase.save)
       @purchase.storage_location.intake! @purchase
       redirect_to purchases_path
@@ -48,8 +48,11 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = Purchase.find(params[:id])
-    @purchase.update_attributes(purchase_params)
+   if @purchase.update_attributes(purchase_params)
     redirect_to purchases_path
+   else
+     render 'edit'
+   end
   end
 
   def destroy
@@ -67,11 +70,7 @@ class PurchasesController < ApplicationController
 
   def purchase_params
     params = compact_line_items
-    params.require(:purchase).permit(:comment, :storage_location_id, :issued_at, line_items_attributes: [:id, :item_id, :quantity, :_destroy]).merge(organization: current_organization)
-  end
-
-  def purchase_item_params
-    params.require(:purchase).permit(:barcode_id, :item_id, :quantity)
+    params.require(:purchase).permit(:comment, :amount_spent, :purchased_from, :storage_location_id, :issued_at, line_items_attributes: [:id, :item_id, :quantity, :_destroy]).merge(organization: current_organization)
   end
 
   def filter_params
