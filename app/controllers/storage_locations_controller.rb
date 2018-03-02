@@ -46,20 +46,22 @@ LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_it
     @items_in = LineItem.
         joins("
 LEFT OUTER JOIN donations ON donations.id = line_items.itemizable_id AND line_items.itemizable_type = 'Donation'
+LEFT OUTER JOIN purchases ON purchases.id = line_items.itemizable_id AND line_items.itemizable_type = 'Purchase'
 LEFT OUTER JOIN items ON items.id = line_items.item_id
 LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
 LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'").
-        where('(donations.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organisation_id',  {id: params[:id], organisation_id: current_organization.id}).
+        where('(donations.storage_location_id = :id or purchases.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organisation_id',  {id: params[:id], organisation_id: current_organization.id}).
         select('sum(line_items.quantity) as quantity, items.id, items.name').
         group('items.name, items.id').
         order('items.name')
     @items_in_total = LineItem.
         joins("
 LEFT OUTER JOIN donations ON donations.id = line_items.itemizable_id AND line_items.itemizable_type = 'Donation'
+LEFT OUTER JOIN purchases ON purchases.id = line_items.itemizable_id AND line_items.itemizable_type = 'Purchase'
 LEFT OUTER JOIN items ON items.id = line_items.item_id
 LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
 LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'").
-        where('(donations.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organisation_id',  {id: params[:id], organisation_id: current_organization.id}).
+        where('(donations.storage_location_id = :id or purchases.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organisation_id',  {id: params[:id], organisation_id: current_organization.id}).
         sum('line_items.quantity')
     respond_to do |format|
       format.html
