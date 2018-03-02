@@ -111,11 +111,41 @@
                 </ul>
               </div>
               </span>
-              <h3 class="text-center"><%= total_received %> items received <%= display_interval %></h3>
+              <h3 class="text-center"><%= total_received_donations %> items received <%= display_interval %></h3>
               <div class="box-body">
-              <h4>Recent donations / purchases</h4>
+              <h4>Recent donations</h4>
               <%= render partial: "donation", collection: @recent_donations, as: :donation %>
               <%= link_to "See more...", donations_path %>
+              </div>
+            </div>
+          </div>
+          <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Purchases</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body text-center float-center">
+              <span class="float-center text-center">
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  New Inventory
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu1">
+                 <li class="center-block"><a href="<%= donations_path %>">All Purchases</a></li>
+                 <li class="center-block"><a href="<%= new_donation_path %>">New Purchase</a></li>
+                </ul>
+              </div>
+              </span>
+              <h3 class="text-center"><%= total_purchased %> items received <%= display_interval %></h3>
+              <div class="box-body">
+                <h4>Recent purchases</h4>
+                <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>
+                <%= link_to "See more...", purchases_path %>
               </div>
             </div>
           </div>
