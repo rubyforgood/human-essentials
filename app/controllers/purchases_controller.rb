@@ -48,8 +48,9 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = Purchase.find(params[:id])
+    @purchase.changed?
    if @purchase.update_attributes(purchase_params)
-     @purchase.storage_location.intake! @purchase
+     @purchase.storage_location.edit! @purchase
     redirect_to purchases_path
    else
      render 'edit'
