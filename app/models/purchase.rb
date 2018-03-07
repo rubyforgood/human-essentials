@@ -40,6 +40,28 @@ class Purchase < ApplicationRecord
     storage_location.remove!(self)
   end
 
+  def track(item,quantity)
+    if contains_item_id?(item.id)
+      update_quantity(quantity, item)
+    else
+      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
+    end
+  end
+
+  def contains_item_id? id
+    line_items.find_by(item_id: id).present?
+  end
+
+  # Use a negative quantity to subtract inventory
+  def update_quantity(quantity, item)
+    item_id = item.to_i
+    line_item = self.line_items.find_by(item_id: item_id)
+    line_item.quantity += quantity
+    # Inventory can never be negative
+    line_item.quantity = 0 if line_item.quantity < 0
+    line_item.save
+  end
+
   private
   def combine_duplicates
     Rails.logger.info "Combining!"
