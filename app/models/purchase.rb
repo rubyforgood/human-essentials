@@ -52,6 +52,19 @@ class Purchase < ApplicationRecord
     line_items.find_by(item_id: id).present?
   end
 
+  def total_quantity
+    self.line_items.sum(:quantity)
+  end
+
+  def remove(item)
+    # doing this will handle either an id or an object
+    item_id = item.to_i
+    line_item = self.line_items.find_by(item_id: item_id)
+    if (line_item)
+      line_item.destroy
+    end
+  end
+
   # Use a negative quantity to subtract inventory
   def update_quantity(quantity, item)
     item_id = item.to_i
