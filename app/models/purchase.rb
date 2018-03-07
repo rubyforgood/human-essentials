@@ -27,9 +27,22 @@ class Purchase < ApplicationRecord
   scope :during, ->(range) { where(purchases: { issued_at: range }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
 
+  before_create :combine_duplicates
+  before_destroy :remove_inventory
+
   validates_numericality_of :amount_spent, greater_than: 0
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
+  end
+
+  def remove_inventory
+    storage_location.remove!(self)
+  end
+
+  private
+  def combine_duplicates
+    Rails.logger.info "Combining!"
+    self.line_items.combine!
   end
 end
