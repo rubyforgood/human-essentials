@@ -3,6 +3,7 @@
   <td><%= purchase_row.storage_location.name %></td>
   <td><%= purchase_row.line_items.total %></td>
   <td><%= purchase_row.line_items.size %></td>
+  <td><%= purchase_row.amount_spent %></td>
   <td class="text-right">
    <%= link_to "View", purchase_path(purchase_row), class: "btn btn-primary btn-xs" %>
   </td>
