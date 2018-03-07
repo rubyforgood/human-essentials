@@ -128,6 +128,35 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
+    describe "edit!" do
+
+      let(:storage_location) { create(:storage_location) }
+      let(:purchase)         { create(:purchase, :with_item, item_quantity: 10) }
+
+      before(:each) do
+        storage_location.intake!(purchase)
+        storage_location.items.reload
+
+        expect(storage_location.size).to eq(10)
+        expect(storage_location.items.count).to eq(1)
+      end
+
+      it "adds items to a storage location even if none exist" do
+        purchase.line_items.first.quantity = 5
+        storage_location.edit!(purchase)
+        storage_location.items.reload
+
+        expect(InventoryItem.first.quantity).to eq(5)
+      end
+
+      it "removes the inventory item from the DB if the item's removal results in a 0 count" do
+        purchase.line_items.first.quantity = 0
+        storage_location.edit!(purchase)
+        storage_location.items.reload
+
+        expect(InventoryItem.count).to eq(0)
+      end
+    end
 
     describe "distribute!" do
       it "distrbutes items from storage location" do
