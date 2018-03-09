@@ -82,7 +82,7 @@ The one situation where you probably don't need to write new tests is when simpl
 
 ### Linting with RuboCop
 
-We are using the [rubocop](https://github.com/bbatsov/rubocop) gem for linting. It is configured to run after all of your specs are passing and will print out any errors it finds in your terminal. If RuboCop finds linting errors, you can try fixing them automatically by running `rubocop --auto-correct`. Once you make and save any fixes, you can re-run RuboCop manually with `rubocop`. If you want to run your specs without triggering Rubocop, use `bundle exec rake spec DISABLE_POSTCHECKS=true`. See the docs for instructions on how to tell RuboCop to skip certain lines or entire files - this should be avoided, if possible. If you believe any of the settings in the RuboCop config file need updating, please open a pull request.
+We are using the [rubocop](https://github.com/bbatsov/rubocop) gem for linting. It is configured to run after all of your specs are passing and will print out any errors it finds in your terminal. If RuboCop finds linting errors, you can try fixing them automatically by running `rubocop --auto-correct`. Once you make and save any fixes, you can re-run RuboCop manually with `rubocop`. If you want to run your specs without triggering Rubocop, use `bundle exec rake spec DISABLE_POSTCHECKS=true`. See the docs for instructions on how to tell RuboCop to skip certain lines or entire files - this should be avoided, if possible. If you believe any of the settings in the RuboCop config file need updating, please open an issue.
 
 ### TODOs
 
