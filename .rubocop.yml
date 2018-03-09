@@ -1,14 +1,16 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.4.2
   Exclude:
     - "vendor/**/*"
-    - "db/**/*"
+    - "db/schema.rb"
+    - "db/migrate/*"
     - "bin/*"
     - "lib/files/cucumber.rake"
     - "lib/tasks/*"
     - "config/initializers/*"
     - "Vagrantfile"
     - "Rakefile"
+    - "tmp/*"
   UseCache: false
 Bundler/OrderedGems:
   Enabled: false
@@ -91,6 +93,9 @@ Style/RaiseArgs:
   SupportedStyles:
   - compact
   - exploded
+Style/RegexpLiteral:
+  EnforcedStyle: mixed
+  AllowInnerSlashes: false
 Style/SignalException:
   Description: Checks for proper usage of fail and raise.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#fail-method
@@ -136,7 +141,7 @@ Style/TrailingCommaInArguments:
   - comma
   - consistent_comma
   - no_comma
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
   Description: Checks for trailing comma in array and hash literals.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#no-trailing-array-commas
   Enabled: false
@@ -288,6 +293,5 @@ Rails/TimeZone:
 Rails/UnknownEnv:
   Environments:
     - production
-    - staging
     - development
     - test
