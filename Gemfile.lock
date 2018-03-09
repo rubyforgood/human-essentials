@@ -45,6 +45,7 @@ GEM
     annotate (2.7.2)
       activerecord (>= 3.2, < 6.0)
       rake (>= 10.4, < 13.0)
+    api-auth (1.5.0)
     arel (8.0.0)
     autoprefixer-rails (7.1.6)
       execjs
@@ -361,6 +362,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate (~> 2.6)
+  api-auth (~> 1.5)
   awesome_print (~> 1.7)
   better_errors (~> 2.1)
   binding_of_caller (~> 0.7)
