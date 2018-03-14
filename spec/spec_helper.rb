@@ -17,6 +17,20 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  config.after(:suite) do
+    examples = RSpec.world.filtered_examples.values.flatten
+    after_hooks = [
+      "bundle exec rubocop"
+    ]
+    if examples.none?(&:exception) && ENV['DISABLE_POSTCHECKS'] != 'true'
+      after_hooks.each do |hook_command|
+        system("echo ' ' && #{hook_command}")
+        exitstatus = $?.exitstatus
+        exit exitstatus if exitstatus.nonzero?
+      end
+    end
+  end
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
