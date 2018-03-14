@@ -34,7 +34,7 @@ FactoryBot.define do
     sequence(:email, 100) { |n| "person#{n}@example.com" }
     password "password"
     password_confirmation "password"
-  	organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization) }
 
     factory :organization_admin do
       organization_admin true
