@@ -10,6 +10,7 @@
 #  partner_id          :integer
 #  organization_id     :integer
 #  issued_at           :datetime
+#  agency_rep          :string
 #
 
 RSpec.describe Distribution, type: :model do
