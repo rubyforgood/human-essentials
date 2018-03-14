@@ -63,6 +63,8 @@ Rails.application.routes.draw do
       patch :remove_item, on: :member
     end
 
+    resources :purchases
+
     get 'dashboard', to: 'dashboard#index'
 
   end
