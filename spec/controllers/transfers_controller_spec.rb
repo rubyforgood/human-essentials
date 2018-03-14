@@ -21,12 +21,12 @@ RSpec.describe TransfersController, type: :controller do
         )
 
         post :create, params: { organization_id: @organization.short_name, transfer: attributes }
-        t = Transfer.last
         expect(response).to redirect_to(transfers_path)
       end
 
       it "renders to #new when failing" do
-        post :create, params: { organization_id: @organization.short_name, transfer: { from_id: nil, to_id: nil } }
+        post :create, params: { organization_id: @organization.short_name,
+                                transfer: { from_id: nil, to_id: nil } }
         expect(response).to be_successful # Will render :new
         expect(response).to render_template("new")
         expect(flash[:error]).to match(/error/i)
@@ -41,19 +41,22 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: { organization_id: @organization.short_name, id: create(:transfer) } }
+      subject do
+        get :show, params: { organization_id: @organization.short_name, id: create(:transfer) }
+      end
+
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
     context "Looking at a different organization" do
-      let(:object) {
+      let(:object) do
         org = create(:organization)
         create(:transfer,
                to_id: create(:storage_location, organization: org).id,
                from_id: create(:storage_location, organization: org).id,
-               organization_id: org.id )
-      }
+               organization_id: org.id)
+      end
       let!(:skip) { [:edit] }
       include_examples "requiring authorization"
     end
