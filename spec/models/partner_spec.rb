@@ -34,5 +34,5 @@ RSpec.describe Partner, type: :model do
       Partner.import_csv(import_file_path, organization.id)
       expect(Partner.count).to eq 3
     end
-  end  
+  end
 end

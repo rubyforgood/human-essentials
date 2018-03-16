@@ -11,17 +11,17 @@
 #
 
 class Partner < ApplicationRecord
-  require 'csv'
+  require "csv"
 
   belongs_to :organization
   has_many :distributions
 
   validates :organization, presence: true
   validates :name, :email, presence: true, uniqueness: true
-  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create
+  validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, on: :create }
 
-  def self.import_csv(filename,organization)
-    CSV.parse(filename, :headers => true) do |row|
+  def self.import_csv(filename, organization)
+    CSV.parse(filename, headers: true) do |row|
       loc = Partner.new(row.to_hash)
       loc.organization_id = organization
       loc.save!

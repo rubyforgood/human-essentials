@@ -52,8 +52,8 @@ RSpec.describe Donation, type: :model do
     it "automatically combines duplicate line_item records when they're created" do
       donation = build(:donation)
       item = create(:item)
-      donation.line_items.build({item_id: item.id, quantity: 5})
-      donation.line_items.build({item_id: item.id, quantity: 10})
+      donation.line_items.build(item_id: item.id, quantity: 5)
+      donation.line_items.build(item_id: item.id, quantity: 10)
       donation.save
       expect(donation.line_items.size).to eq(1)
       expect(donation.line_items.first.quantity).to eq(15)
@@ -106,8 +106,8 @@ RSpec.describe Donation, type: :model do
         let!(:item) { create(:item) }
         it "combines multiple line_items with the same item_id into a single record" do
           donation = build(:donation)
-          donation.line_items.build({item_id: item.id, quantity: 5})
-          donation.line_items.build({item_id: item.id, quantity: 10})
+          donation.line_items.build(item_id: item.id, quantity: 5)
+          donation.line_items.build(item_id: item.id, quantity: 10)
           donation.line_items.combine!
           expect(donation.save).to eq(true)
           expect(donation.line_items.count).to eq(1)
@@ -117,7 +117,7 @@ RSpec.describe Donation, type: :model do
 
         it "incrementally combines line_items on donations that have already been created" do
           donation = create(:donation, :with_item, item_id: item.id, item_quantity: 10)
-          donation.line_items.build({item_id: item.id, quantity: 5})
+          donation.line_items.build(item_id: item.id, quantity: 5)
           donation.line_items.combine!
           donation.save
           expect(donation.line_items.count).to eq(1)
@@ -125,7 +125,6 @@ RSpec.describe Donation, type: :model do
         end
       end
     end
-
   end
 
   context "Methods >" do
@@ -149,10 +148,10 @@ RSpec.describe Donation, type: :model do
       it "does not add a new line_item unnecessarily, updating existing line_item instead" do
         item = create :item
         donation.track(item, 5)
-        expect {
+        expect do
           donation.track(item, 10)
           donation.reload
-        }.not_to change{donation.line_items.count}
+        end.not_to change { donation.line_items.count }
 
         expect(donation.line_items.first.quantity).to eq(15)
       end
@@ -168,23 +167,23 @@ RSpec.describe Donation, type: :model do
     describe "update_quantity" do
       let!(:donation) { create(:donation, :with_item) }
       it "adds an additional quantity to the existing line_item" do
-        expect {
+        expect do
           donation.update_quantity(1, donation.items.first)
           donation.reload
-        }.to change{donation.line_items.first.quantity}.by(1)
+        end.to change { donation.line_items.first.quantity }.by(1)
       end
 
       it "can receive a negative quantity to subtract inventory" do
-        expect {
+        expect do
           donation.update_quantity(-1, donation.items.first)
-        }.to change{donation.total_quantity}.by(-1)
+        end.to change { donation.total_quantity }.by(-1)
       end
 
       it "works whether you give it an item or an id" do
-        expect {
+        expect do
           donation.update_quantity(1, donation.items.first.id)
           donation.reload
-        }.to change{donation.line_items.first.quantity}.by(1)
+        end.to change { donation.line_items.first.quantity }.by(1)
       end
     end
 
@@ -193,20 +192,19 @@ RSpec.describe Donation, type: :model do
 
       it "removes the item from the donation" do
         item_id = donation.line_items.last.item_id
-        expect {
+        expect do
           donation.remove(item_id)
-        }.to change{donation.line_items.count}.by(-1)
+        end.to change { donation.line_items.count }.by(-1)
       end
 
       it "works with either an id or an object" do
-
       end
 
       it "fails gracefully if the item doesn't exist" do
         item_id = create(:item).id
-        expect {
+        expect do
           donation.remove(item_id)
-        }.not_to change{donation.line_items.count}
+        end.not_to change { donation.line_items.count }
       end
     end
 

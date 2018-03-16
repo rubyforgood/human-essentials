@@ -81,10 +81,10 @@ RSpec.describe StorageLocation, type: :model do
       it "adds items to a storage location even if none exist" do
         storage_location = create(:storage_location)
         donation = create(:donation, :with_item, item_quantity: 10)
-        expect{
+        expect do
           storage_location.intake!(donation)
           storage_location.items.reload
-        }.to change{storage_location.items.count}.by(1)
+        end.to change { storage_location.items.count }.by(1)
         expect(storage_location.size).to eq(10)
       end
 
@@ -128,7 +128,6 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-
     describe "distribute!" do
       it "distrbutes items from storage location" do
         storage_location = create :storage_location, :with_items, item_quantity: 300
@@ -141,16 +140,16 @@ RSpec.describe StorageLocation, type: :model do
         storage_location = create :storage_location, :with_items, item_quantity: 300
         distribution = build :distribution, :with_items, storage_location: storage_location, item_quantity: 350
         item = distribution.line_items.first.item
-        expect {
+        expect do
           storage_location.distribute!(distribution)
-        }.to raise_error do |error|
+        end.to raise_error do |error|
           expect(error).to be_a Errors::InsufficientAllotment
-          expect(error.insufficient_items).to include({
+          expect(error.insufficient_items).to include(
             item_id: item.id,
             item_name: item.name,
             quantity_on_hand: 300,
             quantity_requested: 350
-          })
+          )
         end
       end
     end
@@ -170,7 +169,7 @@ RSpec.describe StorageLocation, type: :model do
         storage_location = create(:storage_location)
         import_file_path = Rails.root.join("spec", "fixtures", "inventory.csv").read
         StorageLocation.import_inventory(import_file_path, organization.id, storage_location.id)
-        expect(storage_location.size).to eq 14842
+        expect(storage_location.size).to eq 14_842
       end
     end
 
@@ -188,12 +187,11 @@ RSpec.describe StorageLocation, type: :model do
       it "ensures that a user cannot adjust an inventory into the negative" do
         storage_location = create :storage_location, :with_items, item_quantity: 300
         adjustment = build :adjustment, :with_items, storage_location: storage_location, item_quantity: -301
-        expect {
+        expect do
           storage_location.adjust!(adjustment)
-        }.to raise_error(Errors::InsufficientAllotment)
+        end.to raise_error(Errors::InsufficientAllotment)
       end
     end
-
 
     describe "move_inventory!" do
       it "removes inventory from a storage location and adds them to another storage location" do
@@ -213,9 +211,9 @@ RSpec.describe StorageLocation, type: :model do
         storage_location2 = create :storage_location, :with_items, item: item, item_quantity: 100
         transfer = build :transfer, :with_items, item: item, item_quantity: 200,
                                                  from_id: storage_location.id, to_id: storage_location2.id
-        expect {
+        expect do
           storage_location.move_inventory!(transfer)
-        }.to raise_error(Errors::InsufficientAllotment)
+        end.to raise_error(Errors::InsufficientAllotment)
       end
     end
 

@@ -15,10 +15,10 @@
 RSpec.describe BarcodeItem, type: :model do
   it "updates a counter in Item whenever it tracks a new barcode" do
     item = create(:item)
-    expect {
+    expect do
       create(:barcode_item, item: item)
       item.reload
-    }.to change{item.barcode_items.size}.by(1)
+    end.to change { item.barcode_items.size }.by(1)
   end
 
   context "Filters >" do
@@ -63,7 +63,7 @@ RSpec.describe BarcodeItem, type: :model do
         expect(build(:barcode_item, quantity: nil)).not_to be_valid
       end
       it "is an integer" do
-        expect(build(:barcode_item, quantity: 'aaa')).not_to be_valid
+        expect(build(:barcode_item, quantity: "aaa")).not_to be_valid
       end
       it "is not a negative number" do
         expect(build(:barcode_item, quantity: -1)).not_to be_valid
@@ -74,7 +74,7 @@ RSpec.describe BarcodeItem, type: :model do
   describe "to_h >" do
     it "emits a hash for a line_item" do
       barcode_item = create :barcode_item
-      expect(barcode_item.to_h).to eq({item_id: barcode_item.item_id, quantity: barcode_item.quantity})
+      expect(barcode_item.to_h).to eq(item_id: barcode_item.item_id, quantity: barcode_item.quantity)
     end
   end
 end

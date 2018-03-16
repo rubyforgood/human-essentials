@@ -18,13 +18,13 @@ class BarcodeItem < ApplicationRecord
 
   validates :value, presence: true, uniqueness: true
   validates :quantity, :item, presence: true
-  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
+  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   include Filterable
   scope :item_id, ->(item_id) { where(item_id: item_id) }
   scope :only_global, ->(global) { where(global: true) if global }
 
-  # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
+  # TODO: - this should be renamed to something more specific -- it produces a hash, not a line_item object
   def to_h
     {
       item_id: item.id,

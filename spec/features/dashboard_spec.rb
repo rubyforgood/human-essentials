@@ -24,19 +24,18 @@ RSpec.feature "Dashboard", type: :feature do
       expect(page).not_to have_xpath("//div/img")
       expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@organization.name)
     end
-
   end
 
-  # TODO - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
+  # TODO: - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
   # if someone else wants to make this use an XHR instead, have at it!
   scenario "The user can scope down what they see in the dashboard using the date-range drop down" do
-    # TODO - This spec fails in January because Year-to-date... need to use TimeCop or something"
+    # TODO: - This spec fails in January because Year-to-date... need to use TimeCop or something"
     item = create(:item, organization: @organization)
     sl = create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
     create(:donation, :with_item, item_id: item.id, item_quantity: 10, storage_location: sl, issued_at: 1.month.ago)
     create(:donation, :with_item, item_id: item.id, item_quantity: 200, storage_location: sl, issued_at: Date.today)
-    create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago, )
-    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Date.today, )
+    create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago,)
+    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Date.today,)
     @organization.reload
 
     # Verify the initial totals are correct
@@ -45,14 +44,13 @@ RSpec.feature "Dashboard", type: :feature do
     expect(page).to have_content("105 items distributed year to date")
 
     # Scope it down to just today, should omit the first donation
-    #select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
+    # select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
     visit @url_prefix + "/dashboard?dashboard_filter[interval]=last_month"
     expect(page).to have_content("10 items received last month")
     expect(page).to have_content("5 items distributed last month")
   end
 
-
-  scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js:true do
+  scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js: true do
     create(:partner)
     create(:item, organization: @organization)
     create(:storage_location, organization: @organization)

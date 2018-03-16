@@ -3,7 +3,7 @@ module Errors
     # TODO: This should be removed once other models no longer depend on it; it should be encapsulated and accessed through an interface
     attr_accessor :insufficient_items
 
-    def initialize(message, insufficient_items=[])
+    def initialize(message, insufficient_items = [])
       super(message)
       @insufficient_items = insufficient_items
     end
@@ -35,10 +35,10 @@ module Errors
     #   that are insufficient.
     ###
     def message
-      super.to_s + ("<ul><li>" + insufficient_items.map { |i|
-        "#{i[:quantity_requested]} #{i[:item]} requested, only #{i[:quantity_on_hand]} available." +
+      super.to_s + ("<ul><li>" + insufficient_items.map do |i|
+        "#{i[:quantity_requested]} #{i[:item]} requested, only #{i[:quantity_on_hand]} available." \
         "(Reduce by #{i[:quantity_requested].to_i - i[:quantity_on_hand].to_i})"
-      }.join("</li><li>") + "</li></ul>")
+      end.join("</li><li>") + "</li></ul>")
     end
   end
 end

@@ -31,7 +31,6 @@ RSpec.describe Transfer, type: :model do
     end
   end
 
-
   context "Methods >" do
     it "`self.storage_locations_transferred_to` and `..._from` constrains appropriately" do
       storage_location1 = create(:storage_location, name: "loc1", organization: @organization)
@@ -46,5 +45,4 @@ RSpec.describe Transfer, type: :model do
       expect(Transfer.storage_locations_transferred_from_in(@organization).to_a).to match_array([storage_location3])
     end
   end
-
 end

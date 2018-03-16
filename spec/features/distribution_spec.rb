@@ -16,7 +16,7 @@ RSpec.feature "Distributions", type: :feature do
 
     fill_in "Comment", with: "Take my wipes... please"
     click_button "Create Distribution"
-    expect(page.find('.alert-info')).to have_content "reated"
+    expect(page.find(".alert-info")).to have_content "reated"
   end
 
   context "via barcode entry" do
@@ -34,7 +34,7 @@ RSpec.feature "Distributions", type: :feature do
       page.fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
-#save_and_open_page
+      # save_and_open_page
 
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
@@ -48,7 +48,5 @@ RSpec.feature "Distributions", type: :feature do
       pending "TODO: adding items with a new barcode"
       raise
     end
-
   end
-
 end

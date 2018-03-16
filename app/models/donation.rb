@@ -19,8 +19,8 @@ class Donation < ApplicationRecord
 
   belongs_to :organization
 
-  belongs_to :donation_site, optional: true              # Validation is conditionally handled below.
-  belongs_to :diaper_drive_participant, optional: true      # Validation is conditionally handled below.
+  belongs_to :donation_site, optional: true # Validation is conditionally handled below.
+  belongs_to :diaper_drive_participant, optional: true # Validation is conditionally handled below.
   belongs_to :storage_location
   include Itemizable
 
@@ -40,7 +40,7 @@ class Donation < ApplicationRecord
   include IssuedAt
 
   scope :during, ->(range) { where(donations: { issued_at: range }) }
-  scope :by_source, ->(source) { source = SOURCES[source] if source.is_a?(Symbol); where(source: source)}
+  scope :by_source, ->(source) { source = SOURCES[source] if source.is_a?(Symbol); where(source: source) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
 
   def from_diaper_drive?
@@ -63,11 +63,11 @@ class Donation < ApplicationRecord
     joins(:line_items).includes(:line_items).between(start, stop).group(:source).group_by_day("donations.created_at").sum("line_items.quantity")
   end
 
-  #def self.total_received
-#    self.includes(:line_items).map(&:total_quantity).reduce(0, :+)
-#  end
+  # def self.total_received
+  #    self.includes(:line_items).map(&:total_quantity).reduce(0, :+)
+  #  end
 
-  def track(item,quantity)
+  def track(item, quantity)
     if contains_item_id?(item.id)
       update_quantity(quantity, item)
     else
@@ -78,10 +78,8 @@ class Donation < ApplicationRecord
   def remove(item)
     # doing this will handle either an id or an object
     item_id = item.to_i
-    line_item = self.line_items.find_by(item_id: item_id)
-    if (line_item)
-      line_item.destroy
-    end
+    line_item = line_items.find_by(item_id: item_id)
+    line_item&.destroy
   end
 
   def donation_site_view
@@ -93,17 +91,17 @@ class Donation < ApplicationRecord
   end
 
   def total_quantity
-    self.line_items.sum(:quantity)
+    line_items.sum(:quantity)
   end
 
-  def contains_item_id? id
+  def contains_item_id?(id)
     line_items.find_by(item_id: id).present?
   end
 
   # Use a negative quantity to subtract inventory
   def update_quantity(quantity, item)
     item_id = item.to_i
-    line_item = self.line_items.find_by(item_id: item_id)
+    line_item = line_items.find_by(item_id: item_id)
     line_item.quantity += quantity
     # Inventory can never be negative
     line_item.quantity = 0 if line_item.quantity < 0
@@ -114,9 +112,10 @@ class Donation < ApplicationRecord
     storage_location.remove!(self)
   end
 
-private
+  private
+
   def combine_duplicates
     Rails.logger.info "Combining!"
-    self.line_items.combine!
+    line_items.combine!
   end
 end
