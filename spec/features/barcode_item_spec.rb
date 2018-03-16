@@ -23,7 +23,6 @@ RSpec.feature "Barcode management", type: :feature do
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
-      uncheck 'barcode_item_global'
       click_button "Create Barcode item"
 
       expect(page.find('.alert')).to have_content "added to your"
@@ -67,8 +66,8 @@ RSpec.feature "Barcode management", type: :feature do
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
-      expect(page).to have_xpath("//input[@id='barcode_item_global']")
-      check "barcode_item_global"
+      expect(page).to have_xpath("//input[@id='barcode_item_global_true']")
+      choose "barcode_item_global_true"
       click_button "Create Barcode item"
 
       expect(page.find('.alert')).to have_content "added globally"
