@@ -50,6 +50,6 @@ class DiaperDriveParticipantsController < ApplicationController
 
 private
   def diaper_drive_participant_params
-    params.require(:diaper_drive_participant).permit(:name, :phone, :email)
+    params.require(:diaper_drive_participant).permit(:name, :phone, :email, :business_name, :address)
   end
 end
