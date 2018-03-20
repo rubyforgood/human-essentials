@@ -24,11 +24,9 @@
           <% end %>
         </div><!-- /.row -->
         <div class="row">
-          <div class="checkbox form-group-check" checked>
-            <%= f.input :global,
-                  label: "Make this barcode available to everyone?",
-                  class: "form-control",
-                  :input_html => { :checked => true } %>
+          <%= f.input :global,
+                as: :radio_buttons,
+                label: "Make this barcode available to everyone?" %>
           </div>
         </div><!-- /.row -->
         <%= f.button :submit, id: "awesomebutton", class:"btn btn-primary btn-lg"%>
