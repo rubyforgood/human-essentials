@@ -86,7 +86,9 @@ RSpec.feature "Dashboard", type: :feature do
     select @organization.storage_locations.first.name, from: "distribution_storage_location_id"
     select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
     fill_in "distribution_line_items_attributes_0_quantity", with: "50"
-    click_button "Create Distribution"
+    click_button "Preview Distribution"
+    expect(page).to have_content "Distribution Manifest for"
+    click_button "Confirm Distribution"
     expect(page).to have_xpath("//table/tbody/tr/td", text: "50")
 
     # Check the dashboard now

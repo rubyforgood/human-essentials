@@ -9,9 +9,12 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "Distributions", (distributions_path) %></li>  
-    <li class="active"> <%= @distribution.partner.name %> <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})"%></li>
-  </ol>
+    <li><%= link_to "Distributions", (distributions_path) %></li>
+    <li class="active"> <%= @distribution.partner.name %>
+      <% if !@distribution.new_record? %>
+        <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})" %></li>
+      <% end %>
+      </ol>
 </section>
 
 <!-- Main content -->
@@ -44,6 +47,18 @@
     <!-- /.box -->
     </div>
   </div>
+    <% if @distribution.new_record? %>
+      <%= simple_form_for @distribution do |f| %>
+        <% @distribution.attributes.each do |attribute| %>
+          <%= f.hidden_field attribute.first.to_sym %>
+        <% end %>
+        <%= f.simple_fields_for :line_items do |item| %>
+          <%= item.hidden_field :item_id %>
+          <%= item.hidden_field :quantity %>
+        <% end %>
+        <%= f.submit "Confirm Distribution", class: "btn btn-lg btn-primary" %>
+      <% end %>
+    <% end %>
   </div>
 </div>
 </section>
