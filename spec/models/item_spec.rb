@@ -28,13 +28,13 @@ RSpec.describe Item, type: :model do
       expect(subject.class).to respond_to :filter
     end
 
-    it "->in_category returns all items in the provided category" do
+    it "->in_category yields items in the provided category" do
       create(:item, category: "same")
       create(:item, category: "not same")
       expect(Item.in_category("same").length).to eq(1)
     end
 
-    it "->in_same_category_as returns all items in the same category other than the provided item" do
+    it "->in_same_category_as yields items in the same category other than the provided item" do
       item = create(:item, name: "Foo", category: "same")
       other = create(:item, name: "Bar", category: "same")
       create(:item, category: "not same")
@@ -47,7 +47,6 @@ RSpec.describe Item, type: :model do
   context "Methods >" do
     describe "categories" do
       it "returns a list of all categories, unique" do
-        item = create(:item, category: "same")
         create(:item, category: "different")
         result = Item.categories
         expect(result.length).to eq(10)

@@ -26,16 +26,41 @@ RSpec.feature "Dashboard", type: :feature do
     end
   end
 
-  # TODO: - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
+  # TODO: For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
   # if someone else wants to make this use an XHR instead, have at it!
-  scenario "The user can scope down what they see in the dashboard using the date-range drop down" do
-    # TODO: - This spec fails in January because Year-to-date... need to use TimeCop or something"
+  scenario "The user can scope down what they see in the dashboard\
+            using the date-range drop down" do
+    # TODO: This spec fails in January because Year-to-date... need to use TimeCop or something"
     item = create(:item, organization: @organization)
-    sl = create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
-    create(:donation, :with_item, item_id: item.id, item_quantity: 10, storage_location: sl, issued_at: 1.month.ago)
-    create(:donation, :with_item, item_id: item.id, item_quantity: 200, storage_location: sl, issued_at: Date.today)
-    create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago,)
-    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Date.today,)
+    sl = create(:storage_location,
+                :with_items,
+                item: item,
+                item_quantity: 125,
+                organization: @organization)
+    create(:donation,
+           :with_item,
+           item_id: item.id,
+           item_quantity: 10,
+           storage_location: sl,
+           issued_at: 1.month.ago)
+    create(:donation,
+           :with_item,
+           item_id: item.id,
+           item_quantity: 200,
+           storage_location: sl,
+           issued_at: Time.zone.today)
+    create(:distribution,
+           :with_items,
+           item: item,
+           item_quantity: 5,
+           storage_location: sl,
+           issued_at: 1.month.ago)
+    create(:distribution,
+           :with_items,
+           item: item,
+           item_quantity: 100,
+           storage_location: sl,
+           issued_at: Time.zone.today)
     @organization.reload
 
     # Verify the initial totals are correct
@@ -50,7 +75,8 @@ RSpec.feature "Dashboard", type: :feature do
     expect(page).to have_content("5 items distributed last month")
   end
 
-  scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js: true do
+  scenario "inventory totals on dashboard are updated immediately after\
+    donations and distributions are made", js: true do
     create(:partner)
     create(:item, organization: @organization)
     create(:storage_location, organization: @organization)
@@ -84,7 +110,9 @@ RSpec.feature "Dashboard", type: :feature do
     select @organization.storage_locations.first.name, from: "distribution_storage_location_id"
     select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
     fill_in "distribution_line_items_attributes_0_quantity", with: "50"
-    click_button "Create Distribution"
+    click_button "Preview Distribution"
+    expect(page).to have_content "Distribution Manifest for"
+    click_button "Confirm Distribution"
     expect(page).to have_xpath("//table/tbody/tr/td", text: "50")
 
     # Check the dashboard now

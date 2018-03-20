@@ -21,7 +21,7 @@ RSpec.feature "Donations", type: :feature, js: true do
     let!(:item) { create(:item) }
     scenario "User can filter by the source" do
       create(:donation, source: Donation::SOURCES[:misc])
-      create(:donation, source: Donation::SOURCES[:purchased])
+      create(:donation, source: Donation::SOURCES[:donation_site])
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 2)
       select Donation::SOURCES[:misc], from: "filters_by_source"
@@ -65,7 +65,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       storage2 = create(:storage_location, name: "storage2")
       create(:donation, storage_location: storage1, source: Donation::SOURCES[:misc])
       create(:donation, storage_location: storage2, source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage1, source: Donation::SOURCES[:purchased])
+      create(:donation, storage_location: storage1, source: Donation::SOURCES[:donation_site])
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
       select Donation::SOURCES[:misc], from: "filters_by_source"
@@ -92,7 +92,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation IN THE PAST" do
-        select Donation::SOURCES[:purchased], from: "donation_source"
+        select Donation::SOURCES[:misc], from: "donation_source"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -105,8 +105,9 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(Donation.last.issued_at).to eq(Date.parse("01/01/2001"))
       end
 
-      scenario "multiple line items for the same item type are accepted and combined on the backend" do
-        select Donation::SOURCES[:purchased], from: "donation_source"
+      scenario "multiple line items for the same item type are accepted\
+                and combined on the backend" do
+        select Donation::SOURCES[:misc], from: "donation_source"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -152,7 +153,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "User can create a donation for Purchased Supplies" do
-        select Donation::SOURCES[:purchased], from: "donation_source"
+        select Donation::SOURCES[:misc], from: "donation_source"
         expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         select StorageLocation.first.name, from: "donation_storage_location_id"
@@ -179,7 +180,8 @@ RSpec.feature "Donations", type: :feature, js: true do
 
       # Since the form only shows/hides the irrelevant field, if the user already selected something it would still
       # submit. The app should sanitize this so we aren't saving extraneous data
-      scenario "extraneous data is stripped if the user adds both donation_site and diaper_drive_participant" do
+      scenario "extraneous data is stripped if the user adds both donation_site and\
+                diaper_drive_participant" do
         select Donation::SOURCES[:donation_site], from: "donation_source"
         select DonationSite.first.name, from: "donation_donation_site_id"
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
@@ -198,11 +200,14 @@ RSpec.feature "Donations", type: :feature, js: true do
       # dropdown is not populated on the return trip.
       scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to
+        have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option",
+                   count: item_count)
         click_button "Create Donation"
-
         expect(page).to have_content("error")
-        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to
+        have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option",
+                   count: item_count)
       end
     end
 
@@ -234,7 +239,8 @@ RSpec.feature "Donations", type: :feature, js: true do
           fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
         end
 
-        expect(page).to have_field "donation_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
+        expect(page).to have_field("donation_line_items_attributes_0_quantity",
+                                   with: @existing_barcode.quantity.to_s)
 
         page.find(:css, "#__add_line_item").click
 
@@ -243,7 +249,8 @@ RSpec.feature "Donations", type: :feature, js: true do
           fill_in "_barcode-lookup-1", with: @existing_barcode.value + 13.chr
         end
 
-        expect(page).to have_field "donation_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
+        expect(page).to have_field("donation_line_items_attributes_0_quantity",
+                                   with: (@existing_barcode.quantity * 2).to_s)
       end
 
       scenario "a user can add items that do not yet have a barcode" do

@@ -15,7 +15,9 @@ RSpec.feature "Distributions", type: :feature do
     select @storage_location.name, from: "From storage location"
 
     fill_in "Comment", with: "Take my wipes... please"
-    click_button "Create Distribution"
+    click_button "Preview Distribution"
+    expect(page).to have_content "Distribution Manifest for"
+    click_button "Confirm Distribution"
     expect(page.find(".alert-info")).to have_content "reated"
   end
 
@@ -35,7 +37,6 @@ RSpec.feature "Distributions", type: :feature do
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
       # save_and_open_page
-
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
 

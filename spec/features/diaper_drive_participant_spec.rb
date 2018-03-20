@@ -63,8 +63,18 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
   context "When the Diaper Drives have donations associated with them already" do
     before(:each) do
       @ddp = create(:diaper_drive_participant)
-      create(:donation, :with_item, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: @ddp)
-      create(:donation, :with_item, created_at: 1.week.ago, item_quantity: 15, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: @ddp)
+      create(:donation,
+             :with_item,
+             created_at: 1.day.ago,
+             item_quantity: 10,
+             source: Donation::SOURCES[:diaper_drive],
+             diaper_drive_participant: @ddp)
+      create(:donation,
+             :with_item,
+             created_at: 1.week.ago,
+             item_quantity: 15,
+             source: Donation::SOURCES[:diaper_drive],
+             diaper_drive_participant: @ddp)
     end
 
     scenario "Existing Diaper Drive Participants show in the #index with some summary stats" do
@@ -73,7 +83,8 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
       expect(page).to have_xpath("//table/tbody/tr/td", text: "25")
     end
 
-    scenario "Single Diaper Drive Participants show semi-detailed stats about donations from that diaper drive" do
+    scenario "Single Diaper Drive Participants show semi-detailed stats\
+      about donations from that diaper drive" do
       visit url_prefix + "/diaper_drive_participants/#{@ddp.to_param}"
       expect(page).to have_xpath("//table/tr", count: 3)
     end

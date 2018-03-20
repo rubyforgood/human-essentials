@@ -4,7 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  source                      :string
-#  donation_site_id         :integer
+#  donation_site_id            :integer
 #  created_at                  :datetime
 #  updated_at                  :datetime
 #  storage_location_id         :integer
@@ -21,11 +21,15 @@ RSpec.describe Donation, type: :model do
     end
     it "requires a donation_site if the source is 'Donation Site'" do
       expect(build(:donation, source: "Donation Site", donation_site: nil)).not_to be_valid
-      expect(build(:donation, source: "Purchased Supplies", donation_site: nil)).to be_valid
+      expect(build(:donation, source: "Misc. Donation", donation_site: nil)).to be_valid
     end
     it "requires a diaper drive participant if the source is 'Diaper Drive'" do
-      expect(build(:donation, source: "Diaper Drive", diaper_drive_participant_id: nil)).not_to be_valid
-      expect(build(:donation, source: "Purchased Supplies", diaper_drive_participant_id: nil)).to be_valid
+      expect(build(:donation,
+                   source: "Diaper Drive",
+                   diaper_drive_participant_id: nil)).not_to be_valid
+      expect(build(:donation,
+                   source: "Misc. Donation",
+                   diaper_drive_participant_id: nil)).to be_valid
     end
     it "requires a source from the list of available sources" do
       expect(build(:donation, source: nil)).not_to be_valid
@@ -44,7 +48,7 @@ RSpec.describe Donation, type: :model do
   context "Callbacks >" do
     it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
-      today = Date.today
+      today = Time.zone.today
       expect(create(:donation, created_at: yesterday, issued_at: today).issued_at).to eq(today)
       expect(create(:donation, created_at: yesterday).issued_at).to eq(yesterday)
     end
@@ -64,7 +68,7 @@ RSpec.describe Donation, type: :model do
     describe "during >" do
       it "returns all donations created between two dates" do
         # The models should default to assigning the created_at time to the issued_at
-        create(:donation, created_at: Date.today)
+        create(:donation, created_at: Time.zone.today)
         # but just for fun we'll force one in the past within the range
         create(:donation, issued_at: Date.yesterday)
         # and one outside the range
@@ -151,7 +155,7 @@ RSpec.describe Donation, type: :model do
         expect do
           donation.track(item, 10)
           donation.reload
-        end.not_to change { donation.line_items.count }
+        end.not_to change(donation.line_items.count)
 
         expect(donation.line_items.first.quantity).to eq(15)
       end
@@ -183,7 +187,7 @@ RSpec.describe Donation, type: :model do
         expect do
           donation.update_quantity(1, donation.items.first.id)
           donation.reload
-        end.to change { donation.line_items.first.quantity }.by(1)
+        end.to change(donation.line_items.first.quantity).by(1)
       end
     end
 
@@ -194,17 +198,17 @@ RSpec.describe Donation, type: :model do
         item_id = donation.line_items.last.item_id
         expect do
           donation.remove(item_id)
-        end.to change { donation.line_items.count }.by(-1)
+        end.to change(donation.line_items.count).by(-1)
       end
 
-      it "works with either an id or an object" do
-      end
+      it "works with either an id or an object"
 
       it "fails gracefully if the item doesn't exist" do
         item_id = create(:item).id
         expect do
           donation.remove(item_id)
-        end.not_to change { donation.line_items.count }
+
+        end.not_to change(donation.line_items.count)
       end
     end
 
@@ -220,7 +224,6 @@ RSpec.describe Donation, type: :model do
   describe "SOURCES" do
     it "is a hash that is referenceable by key to avoid 'magic strings'" do
       expect(Donation::SOURCES).to have_key(:diaper_drive)
-      expect(Donation::SOURCES).to have_key(:purchased)
       expect(Donation::SOURCES).to have_key(:donation_site)
       expect(Donation::SOURCES).to have_key(:misc)
     end

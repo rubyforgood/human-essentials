@@ -38,6 +38,27 @@
             </li>
           </ul>
         </li>
+        <li class="<%= active_class(['purchases']) %> treeview">
+          <a href="#">
+            <i class="fa fa-money"></i>
+            <span>Purchases</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="<%= 'active' if current_page?(purchases_path) %>">
+              <%= link_to(purchases_path) do %>
+                <i class="fa fa-circle-o"></i> All Purchases
+              <% end %>
+            </li>
+            <li class="<%= 'active' if current_page?(new_purchase_path) %>">
+              <%= link_to(new_purchase_path) do %>
+                <i class="fa fa-circle-o"></i> New Purchase
+              <% end %>
+            </li>
+          </ul>
+        </li>
         <li>
         <li class="<%= active_class(['distributions']) %>">
           <%= link_to(distributions_path) do %>

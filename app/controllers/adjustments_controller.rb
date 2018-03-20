@@ -1,5 +1,5 @@
 class AdjustmentsController < ApplicationController
-  before_action :set_adjustment, only: %i(show edit update destroy)
+  before_action :set_adjustment, only: %i[show]
 
   # GET /adjustments
   # GET /adjustments.json
@@ -34,11 +34,16 @@ class AdjustmentsController < ApplicationController
       if @adjustment.save
         redirect_to adjustment_path(@adjustment), notice: "Adjustment was successfully created."
       else
-        flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }.join("<br />".html_safe)
+        # FIXME: don't use html_Safe
+        flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }
+                                   .join("<br />".html_safe)
         render :new
       end
+
     else
-      flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }.join("<br />".html_safe)
+      # FIXME: don't use html_Safe
+      flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }
+                                 .join("<br />".html_safe)
       render :new
     end
   rescue Errors::InsufficientAllotment => ex

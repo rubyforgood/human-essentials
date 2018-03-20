@@ -36,7 +36,11 @@ RSpec.describe DiaperDriveParticipant, type: :model do
     describe "volume" do
       it "retrieves the amount of product that has been donated through this diaper drive" do
         ddp = create(:diaper_drive_participant)
-        create(:donation, :with_item, item_quantity: 10, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: ddp)
+        create(:donation,
+               :with_item,
+               item_quantity: 10,
+               source: Donation::SOURCES[:diaper_drive],
+               diaper_drive_participant: ddp)
         expect(ddp.volume).to eq(10)
       end
     end

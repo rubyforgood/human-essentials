@@ -74,7 +74,8 @@ RSpec.describe BarcodeItem, type: :model do
   describe "to_h >" do
     it "emits a hash for a line_item" do
       barcode_item = create :barcode_item
-      expect(barcode_item.to_h).to eq(item_id: barcode_item.item_id, quantity: barcode_item.quantity)
+      expect(barcode_item.to_h).to eq(item_id: barcode_item.item_id,
+                                      quantity: barcode_item.quantity)
     end
   end
 end

@@ -2,18 +2,20 @@ class BarcodeItemsController < ApplicationController
   def index
     @items = current_organization.items.barcoded_items
     @global = filter_params[:only_global]
-    if @global
-      @barcode_items = BarcodeItem.includes(:item).filter(filter_params)
-    else
-      @barcode_items = BarcodeItem.includes(:item).where(organization_id: current_organization.id).filter(filter_params)
-    end
+    @barcode_items = if @global
+                       BarcodeItem.includes(:item).filter(filter_params)
+                     else
+                       BarcodeItem.includes(:item)
+                                  .where(organization_id: current_organization.id)
+                                  .filter(filter_params)
+                     end
   end
 
   def create
     @barcode_item = current_organization.barcode_items.new(barcode_item_params)
     if @barcode_item.save
       msg = "New barcode added"
-      msg += barcode_item_params[:global] == "1" ? " globally!" : " to your private set!"
+      msg += barcode_item_params[:global] == "true" ? " globally!" : " to your private set!"
       respond_to do |format|
         format.json { render json: @barcode_item.to_json }
         format.html { redirect_to barcode_items_path, notice: msg }
@@ -39,7 +41,9 @@ class BarcodeItemsController < ApplicationController
   end
 
   def find
-    @barcode_item = current_organization.barcode_items.includes(:item).find_by!(value: barcode_item_params[:value])
+    @barcode_item = current_organization.barcode_items
+                                        .includes(:item)
+                                        .find_by!(value: barcode_item_params[:value])
     respond_to do |format|
       format.json { render json: @barcode_item.to_json }
     end
@@ -66,7 +70,7 @@ class BarcodeItemsController < ApplicationController
         raise if barcode.nil? || barcode.global?
       end
       barcode.destroy
-    rescue Exception => e
+    rescue StandardError
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
     redirect_to barcode_items_path
@@ -75,11 +79,18 @@ class BarcodeItemsController < ApplicationController
   private
 
   def barcode_item_params
-    params.require(:barcode_item).permit(:value, :item_id, :quantity, :global).merge(organization_id: current_organization.id)
+    params.require(:barcode_item).permit(:value,
+                                         :item_id,
+                                         :quantity,
+                                         :global).merge(organization_id: current_organization.id)
   end
 
   def filter_params
     return {} unless params.key?(:filters)
-    params.require(:filters).slice(:item_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :only_global)
+    params.require(:filters).slice(:item_id,
+                                   :less_than_quantity,
+                                   :greater_than_quantity,
+                                   :equal_to_quantity,
+                                   :only_global)
   end
 end

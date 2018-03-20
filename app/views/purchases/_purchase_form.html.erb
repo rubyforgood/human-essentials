@@ -1,0 +1,74 @@
+<%= simple_form_for @purchase do |f| %>
+  <div class="box-body">
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :purchased_from,
+                    wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :storage_location,
+                          collection: @storage_locations,
+                          label: "Storage Location",
+                          error: "Where is it being stored?",
+                          wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6">
+        <%= f.input :amount_spent,
+                    wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6">
+        <%= f.input :comment,
+                    wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :issued_at,
+                    label: "Issued on",
+                    as: :date,
+                    html5: true,
+                    wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+      <legend>Items in this purchase</legend>
+      <div id="purchase_line_items" data-capture-barcode="true">
+
+        <%= f.simple_fields_for :line_items do |item| %>
+          <%= render 'line_items/line_item_fields', f: item %>
+        <% end %>
+      </div>
+
+      <div class="row links">
+        <div class="col-xs-12">
+          <%= link_to_add_association f, :line_items,
+                                      data: {
+                                          association_insertion_node: "#purchase_line_items",
+                                          association_insertion_method: "append"
+                                      }, id: "__add_line_item", class: "btn btn-success", style: "margin-top: 1rem;", partial: "line_items/line_item_fields" do
+          %>
+            <i class="fa fa-plus"></i> Add another item
+          <% end %>
+        </div>
+      </div>
+    </fieldset>
+    <div class="row">
+      <div class="col-xs-12">
+        <%= f.button :submit, class: "btn btn-lg btn-primary" %>
+      </div>
+    </div>
+  </div><!-- /.box-body.container -->
+<% end %>

@@ -32,4 +32,3 @@ RSpec.describe DonationSite, type: :model do
     end
   end
 end
-

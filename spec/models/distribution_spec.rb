@@ -10,6 +10,7 @@
 #  partner_id          :integer
 #  organization_id     :integer
 #  issued_at           :datetime
+#  agency_rep          :string
 #
 
 RSpec.describe Distribution, type: :model do
@@ -43,7 +44,7 @@ RSpec.describe Distribution, type: :model do
     describe "during >" do
       it "returns all distrbutions created between two dates" do
         # The models should default to assigning the created_at time to the issued_at
-        create(:distribution, created_at: Date.today)
+        create(:distribution, created_at: Time.zone.today)
         # but just for fun we'll force one in the past within the range
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
@@ -57,7 +58,7 @@ RSpec.describe Distribution, type: :model do
   context "Callbacks >" do
     it "initializes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
-      today = Date.today
+      today = Time.zone.today
       expect(create(:distribution, created_at: yesterday, issued_at: today).issued_at).to eq(today)
       expect(create(:distribution, created_at: yesterday).issued_at).to eq(yesterday)
     end
@@ -73,7 +74,9 @@ RSpec.describe Distribution, type: :model do
     it "quantities_by_category" do
       @distribution.line_items << create(:line_item, item: @first, quantity: 5)
       @distribution.line_items << create(:line_item, item: @last, quantity: 10)
-      @distribution.line_items << create(:line_item, item: create(:item, category: "Foo"), quantity: 10)
+      @distribution.line_items << create(:line_item,
+                                         item: create(:item, category: "Foo"),
+                                         quantity: 10)
       expect(@distribution.line_items.quantities_by_category).to eq("Bar" => 10, "Foo" => 15)
     end
 
@@ -93,8 +96,19 @@ RSpec.describe Distribution, type: :model do
 
     it "distributed_at" do
       two_days_ago = 2.days.ago
-      expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime("%B %-d %Y"))
-      expect(create(:distribution).distributed_at).to eq(Date.today.strftime("%B %-d %Y"))
+      expect(
+        create(:distribution,
+               issued_at: two_days_ago).distributed_at
+      ).to eq(two_days_ago.strftime("%B %-d %Y"))
+      expect(create(:distribution).distributed_at).to eq(Time.zone.today.strftime("%B %-d %Y"))
+    end
+
+    it "combine_duplicates" do
+      @distribution.line_items << create(:line_item, item: @first, quantity: 5)
+      @distribution.line_items << create(:line_item, item: @first, quantity: 10)
+      @distribution.combine_duplicates
+      expect(@distribution.line_items.size).to eq 1
+      expect(@distribution.line_items.first.quantity).to eq 15
     end
   end
 end

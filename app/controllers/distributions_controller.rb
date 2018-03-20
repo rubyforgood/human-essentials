@@ -25,14 +25,20 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
 
     if @distribution.valid?
-      @distribution.storage_location.distribute!(@distribution)
-
-      if @distribution.save
-        flash[:notice] = "Distribution created!"
-        redirect_to distributions_path
+      if params[:commit] == "Preview Distribution"
+        @distribution.combine_duplicates
+        @line_items = @distribution.line_items
+        render :show
       else
-        flash[:error] = "There was an error, try again?"
-        render :new
+        @distribution.storage_location.distribute!(@distribution)
+
+        if @distribution.save
+          flash[:notice] = "Distribution created!"
+          redirect_to distributions_path
+        else
+          flash[:error] = "There was an error, try again?"
+          render :new
+        end
       end
     else
       @storage_locations = current_organization.storage_locations

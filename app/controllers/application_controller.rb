@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   end
   helper_method :organization_url_options
 
-  # override Rails' default_url_options to ensure organization_id is added to
+  # override Rails" default_url_options to ensure organization_id is added to
   # each URL generated
   def default_url_options(options = {})
     if current_organization.present? && !options.key?(:organization_id)
@@ -32,7 +32,8 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_user
-    verboten! unless params[:controller].include?("devise") || current_organization.id == current_user.organization_id
+    verboten! unless params[:controller].include?("devise") ||
+                     current_organization.id == current_user.organization_id
   end
 
   def not_found!
@@ -58,9 +59,9 @@ class ApplicationController < ActionController::Base
 
   # rescue_from CanCan::AccessDenied do |exception|
   # respond_to do |format|
-  # format.json { head :forbidden, content_type: 'text/html' }
+  # format.json { head :forbidden, content_type: "text/html" }
   # format.html { redirect_to main_app.root_url, notice: exception.message }
-  # format.js   { head :forbidden, content_type: 'text/html' }
+  # format.js   { head :forbidden, content_type: "text/html" }
   # end
   # end
 

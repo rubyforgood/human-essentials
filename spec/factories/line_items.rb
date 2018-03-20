@@ -21,6 +21,9 @@ FactoryBot.define do
     trait :donation do
     end
 
+    trait :purchase do
+    end
+
     trait :distribution do
       itemizable_type "Distribution"
       itemizable_id { create(:distribution).id }

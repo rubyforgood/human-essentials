@@ -4,8 +4,8 @@ RSpec.feature "Barcode management", type: :feature do
   end
 
   scenario "The barcode index only shows the barcodes created within the organization" do
-    item = create(:item, name: "1T Diapers")
-    item2 = create(:item, name: "2T Diapers")
+    create(:item, name: "1T Diapers")
+    create(:item, name: "2T Diapers")
     create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.first)
     create(:barcode_item, item: Item.last)
     visit "/#{@organization.short_name}/barcode_items"
@@ -13,8 +13,16 @@ RSpec.feature "Barcode management", type: :feature do
   end
 
   context "With organization-specific barcodes" do
-    let(:barcode_traits) { attributes_for(:barcode_item, :for_organization, organization_id: @organization.id) }
-    let(:barcode) { create(:barcode_item, :for_organization, organization_id: @organization.id) }
+    let(:barcode_traits) do
+      attributes_for(:barcode_item,
+                     :for_organization,
+                     organization_id: @organization.id)
+    end
+    let(:barcode) do
+      create(:barcode_item,
+             :for_organization,
+             organization_id: @organization.id)
+    end
 
     scenario "User adds a new barcode" do
       Item.delete_all
@@ -23,7 +31,6 @@ RSpec.feature "Barcode management", type: :feature do
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
-      uncheck "barcode_item_global"
       click_button "Create Barcode item"
 
       expect(page.find(".alert")).to have_content "added to your"
@@ -37,7 +44,7 @@ RSpec.feature "Barcode management", type: :feature do
     end
 
     scenario "User updates an existing barcode" do
-      item = create(:item)
+      create(:item)
       barcode
       visit "/#{@organization.short_name}/barcode_items/#{barcode.id}/edit"
       fill_in "Quantity", id: "barcode_item_quantity", with: (barcode.quantity.to_i + 10).to_s
@@ -67,8 +74,8 @@ RSpec.feature "Barcode management", type: :feature do
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
-      expect(page).to have_xpath("//input[@id='barcode_item_global']")
-      check "barcode_item_global"
+      expect(page).to have_xpath("//input[@id='barcode_item_global_true']")
+      choose "barcode_item_global_true"
       click_button "Create Barcode item"
 
       expect(page.find(".alert")).to have_content "added globally"
@@ -83,8 +90,8 @@ RSpec.feature "Barcode management", type: :feature do
   end
 
   scenario "User can filter the #index by item type" do
-    item = create(:item, name: "1T Diapers")
-    item2 = create(:item, name: "2T Diapers")
+    create(:item, name: "1T Diapers")
+    create(:item, name: "2T Diapers")
     create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.first)
     create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.last)
     visit "/#{@organization.short_name}/barcode_items"

@@ -15,7 +15,7 @@
 #
 
 class Donation < ApplicationRecord
-  SOURCES = { diaper_drive: "Diaper Drive", purchased: "Purchased Supplies", donation_site: "Donation Site", misc: "Misc. Donation" }.freeze
+  SOURCES = { diaper_drive: "Diaper Drive", donation_site: "Donation Site", misc: "Misc. Donation" }.freeze
 
   belongs_to :organization
 
