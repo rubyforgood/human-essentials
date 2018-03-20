@@ -12,9 +12,7 @@ class AdjustmentsController < ApplicationController
 
   # GET /adjustments/1
   # GET /adjustments/1.json
-  def show
-    # Stuff!
-  end
+  def show; end
 
   # GET /adjustments/new
   def new
@@ -61,7 +59,7 @@ class AdjustmentsController < ApplicationController
 
   def adjustment_params
     params.require(:adjustment).permit(:organization_id, :storage_location_id, :comment,
-                                       line_items_attributes: %I[item_id quantity _destroy])
+                                       line_items_attributes: %i(item_id quantity _destroy))
   end
 
   def filter_params

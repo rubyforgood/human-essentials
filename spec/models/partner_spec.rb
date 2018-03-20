@@ -36,3 +36,4 @@ RSpec.describe Partner, type: :model do
     end
   end
 end
+

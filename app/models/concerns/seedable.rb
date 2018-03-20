@@ -43,15 +43,15 @@ module Seedable
       { name: "Bed Pads (Cloth)" },
       { name: "Bed Pads (Disposable)" },
       { name: "Bibs (Adult & Child)" },
-      { name: "Diaper Rash Cream/Powder" },
+      { name: "Diaper Rash Cream/Powder" }
     ],
     "Training Pants" => [
-      { name: "Cloth Potty Training Pants/Underwear" },
+      { name: "Cloth Potty Training Pants/Underwear" }
     ],
     "Wipes - Childrens" => [
-      { name: "Wipes (Baby)" },
+      { name: "Wipes (Baby)" }
     ]
-  }
+  }.freeze
 
   def seed_it!(org)
     ITEMS_BY_CATEGORY.each do |category, entries|

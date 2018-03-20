@@ -5,14 +5,14 @@ module DashboardHelper
 
   def filter_intervals
     [
-      ["Today", "today"],
-      ["Yesterday", "yesterday"],
+      %w(Today today),
+      %w(Yesterday yesterday),
       ["Week to date", "week_to_date"],
       ["Month to date", "month_to_date"],
       ["Last month", "last_month"],
       ["Year to date", "year_to_date"],
       ["Last year", "last_year"],
-      ["All time", "all_time"],
+      ["All time", "all_time"]
     ]
   end
 
@@ -46,7 +46,7 @@ module DashboardHelper
     current_organization.quantity_categories
   end
 
-  def received_distributed_data(range=selected_range)
+  def received_distributed_data(range = selected_range)
     {
       'Received donations' => current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(:+),
       'Purchased' => current_organization.purchases.during(range).collect { |d| d.line_items.total }.reduce(:+),
