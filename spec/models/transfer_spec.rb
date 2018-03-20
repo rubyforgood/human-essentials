@@ -55,9 +55,9 @@ RSpec.describe Transfer, type: :model do
              to: storage_location4,
              organization: storage_location4.organization)
       expect(Transfer.storage_locations_transferred_to_in(@organization).to_a).to \
-      match_array([storage_location1, storage_location2])
+        match_array([storage_location1, storage_location2])
       expect(Transfer.storage_locations_transferred_from_in(@organization).to_a).to \
-      match_array([storage_location3])
+        match_array([storage_location3])
     end
   end
 end

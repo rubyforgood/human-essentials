@@ -1,5 +1,5 @@
 class AdjustmentsController < ApplicationController
-  before_action :set_adjustment, only: [:show, :edit, :update, :destroy]
+  before_action :set_adjustment, only: %i[show]
 
   # GET /adjustments
   # GET /adjustments.json
@@ -13,6 +13,7 @@ class AdjustmentsController < ApplicationController
   # GET /adjustments/1
   # GET /adjustments/1.json
   def show
+    # Stuff!
   end
 
   # GET /adjustments/new
@@ -33,13 +34,18 @@ class AdjustmentsController < ApplicationController
       @adjustment.storage_location.adjust!(@adjustment)
 
       if @adjustment.save
-        redirect_to adjustment_path(@adjustment), notice: 'Adjustment was successfully created.'
+        redirect_to adjustment_path(@adjustment), notice: "Adjustment was successfully created."
       else
-        flash[:error] = @adjustment.errors.collect { |model,message| "#{model}: " + message }.join("<br />".html_safe)
+        # FIXME: don't use html_Safe
+        flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }
+                                   .join("<br />".html_safe)
         render :new
       end
+
     else
-      flash[:error] = @adjustment.errors.collect { |model,message| "#{model}: " + message }.join("<br />".html_safe)
+      # FIXME: don't use html_Safe
+      flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }
+                                 .join("<br />".html_safe)
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
@@ -55,11 +61,11 @@ class AdjustmentsController < ApplicationController
 
   def adjustment_params
     params.require(:adjustment).permit(:organization_id, :storage_location_id, :comment,
-                                       line_items_attributes: [:item_id, :quantity, :_destroy])
+                                       line_items_attributes: %I[item_id quantity _destroy])
   end
 
   def filter_params
-    return {} unless params.has_key?(:filters)
+    return {} unless params.key?(:filters)
     params.require(:filters).slice(:at_location)
   end
 end
