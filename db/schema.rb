@@ -151,7 +151,7 @@ ActiveRecord::Schema.define(version: 20180301135506) do
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end
 
-  create_table "storage_locations", force: :cascade do |t|
+  create_table "storage_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.datetime "created_at"

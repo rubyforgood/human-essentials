@@ -10,6 +10,7 @@
 #  partner_id          :integer
 #  organization_id     :integer
 #  issued_at           :datetime
+#  agency_rep          :string
 #
 
 RSpec.describe Distribution, type: :model do
@@ -95,6 +96,14 @@ RSpec.describe Distribution, type: :model do
       two_days_ago = 2.day.ago
       expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime('%B %-d %Y'))
       expect(create(:distribution).distributed_at).to eq(Date.today.strftime('%B %-d %Y'))
+    end
+
+    it "combine_duplicates" do
+      @distribution.line_items << create(:line_item, item: @first, quantity: 5)
+      @distribution.line_items << create(:line_item, item: @first, quantity: 10)
+      @distribution.combine_duplicates
+      expect(@distribution.line_items.size).to eq 1
+      expect(@distribution.line_items.first.quantity).to eq 15
     end
   end
 end

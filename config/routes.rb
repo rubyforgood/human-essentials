@@ -60,7 +60,10 @@ Rails.application.routes.draw do
       patch :remove_item, on: :member
     end
 
-    get "dashboard", to: "dashboard#index"
+    resources :purchases
+
+    get 'dashboard', to: 'dashboard#index'
+
   end
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
