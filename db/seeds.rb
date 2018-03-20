@@ -6,6 +6,22 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 # Creates Seed Data for the organization
+PARTNERS = [
+  ["Teen Parent Services - PPS", "someone@teenservices.org"],
+  ["Portland Homeless Family Solutions", "anyone@portlandhomeless.com"],
+  ["Pregnancy Resource Center", "contactus@pregnancyresources.com"],
+  ["Rose Haven", "contact@rosehaven.com"],
+  ["Volunteers of America", "info@volunteersofamerica.org"],
+  ["Clackamas Service Center", "outreach@clackamas.com"],
+  ["Housing Alternatives", "support@housingalternatives.com"],
+  ["JOIN", "info@join.org"],
+  ["Emmanuel Housing Center", "contact@emmanuelhousingcenter.com"],
+  ["Catholic Charities", "contactus@catholiccharities.org"],
+  ["Healthy Families of Oregon", "info@oregonfamilies.org"],
+  ["NARA Northwest", "contactus@naranorthwest.org"],
+  ["Job Corps", "someone@jobcorps.org"],
+  ["Helensview Middle and High School", "programs@helensviewschooldistrict.edu"]
+].freeze
 
 pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organization|
   organization.name = "PDX Diaper Bank"
@@ -19,8 +35,20 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
   organization.email = "info@sfdiaperbank.org"
 end
 
-user = User.create email: "test@example.com", password: "password", password_confirmation: "password", organization: pdx_org, organization_admin: true
-user2 = User.create email: "test2@example.com", password: "password", password_confirmation: "password", organization: sf_org
+User.create(
+  email: "test@example.com",
+  password: "password",
+  password_confirmation: "password",
+  organization: pdx_org,
+  organization_admin: true
+)
+
+User.create(
+  email: "test2@example.com",
+  password: "password",
+  password_confirmation: "password",
+  organization: sf_org
+)
 
 DonationSite.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
   location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"
@@ -43,47 +71,8 @@ DonationSite.find_or_create_by!(name: "JJ Jump") do |location|
   location.organization = pdx_org
 end
 
-Partner.find_or_create_by!(name: "Teen Parent Services - PPS", email: "someone@teenservices.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Portland Homeless Family Solutions", email: "anyone@portlandhomeless.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Pregnancy Resource Center", email: "contactus@pregnancyresources.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Rose Haven", email: "contact@rosehaven.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Volunteers of America", email: "info@volunteersofamerica.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Clackamas Service Center", email: "outreach@clackamas.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Housing Alternatives", email: "support@housingalternatives.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "JOIN", email: "info@join.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Emmanuel Housing Center", email: "contact@emmanuelhousingcenter.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Catholic Charities", email: "contactus@catholiccharities.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Healthy Families of Oregon", email: "info@oregonfamilies.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "NARA Northwest", email: "contactus@naranorthwest.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Job Corps", email: "someone@jobcorps.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Helensview Middle and High School", email: "programs@helensviewschooldistrict.edu") do |partner|
-  partner.organization = pdx_org
+PARTNERS.each do |partner|
+  pdx_org.partners.create(name: partner[0], email: partner[1])
 end
 
 inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage (Arborscape)") do |inventory|
@@ -155,7 +144,7 @@ items_by_category = {
 }
 
 def seed_quantity(item_id, storage_location_id, quantity)
-  return if quantity == 0
+  return if quantity.zero?
   InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) do |h|
     h.quantity = quantity
   end
@@ -238,8 +227,16 @@ BarcodeItem.find_or_create_by!(value: "311917152226") do |barcode|
   barcode.organization = pdx_org
 end
 
-DiaperDriveParticipant.create! name: "A Good Place to Collect Diapers", email: "good@place.is", organization: pdx_org
-DiaperDriveParticipant.create! name: "A Mediocre Place to Collect Diapers", email: "ok@place.is", organization: pdx_org
+DiaperDriveParticipant.create!(
+  name: "A Good Place to Collect Diapers",
+  email: "good@place.is",
+  organization: pdx_org
+)
+DiaperDriveParticipant.create!(
+  name: "A Mediocre Place to Collect Diapers",
+  email: "ok@place.is",
+  organization: pdx_org
+)
 
 def random_record(klass)
   klass.limit(1).order("random()").first
@@ -250,20 +247,40 @@ end
   # Depending on which source it uses, additional data may need to be provided.
   case source
   when Donation::SOURCES[:diaper_drive]
-    donation = Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
+    Donation.create!(
+      source: source,
+      diaper_drive_participant: random_record(DiaperDriveParticipant),
+      storage_location: random_record(StorageLocation),
+      organization: pdx_org
+    )
   when Donation::SOURCES[:donation_site]
-    donation = Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org
+    Donation.create!(
+      source: source,
+      donation_site: random_record(DonationSite),
+      storage_location: random_record(StorageLocation),
+      organization: pdx_org
+    )
   else
-    donation = Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
+    Donation.create!(
+      source: source,
+      storage_location: random_record(StorageLocation),
+      organization: pdx_org
+    )
   end
+end
 
+Donation.all.each do |donation|
   rand(1..5).times.each do
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: donation
   end
 end
 
 20.times.each do
-  distribution = Distribution.create! storage_location: random_record(StorageLocation), partner: random_record(Partner), organization: pdx_org
+  distribution = Distribution.create!(
+    storage_location: random_record(StorageLocation),
+    partner: random_record(Partner),
+    organization: pdx_org
+  )
 
   rand(1..5).times.each do
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: distribution

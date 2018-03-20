@@ -27,10 +27,13 @@ class DonationsController < ApplicationController
   #  end
 
   def index
-    @donations = current_organization.donations
-                                     .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant)
-                                     .order(created_at: :desc)
-                                     .filter(filter_params)
+    @donations = current_organization
+                 .donations
+                 .includes(
+                   :line_items, :storage_location, :donation_site, :diaper_drive_participant
+                 )
+                 .order(created_at: :desc)
+                 .filter(filter_params)
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @storage_locations = @donations.collect(&:storage_location).compact.uniq
@@ -39,12 +42,16 @@ class DonationsController < ApplicationController
     @selected_source = filter_params[:by_source]
     @donation_sites = @donations.collect(&:donation_site).compact.uniq
     @selected_donation_site = filter_params[:from_donation_site]
-    @diaper_drives = @donations.collect { |d| next unless d.source == Donation::SOURCES[:diaper_drive]; d.diaper_drive_participant }.compact.uniq
+    @diaper_drives = @donations
+                     .select { |donation| donation.source == "Diaper Drive" }
+                     .collect(&:diaper_drive_participant)
+                     .compact
+                     .uniq
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
   end
 
   def scale
-    @donation = Donation.new(issued_at: Date.today)
+    @donation = Donation.new(issued_at: Time.zone.today)
     @donation.line_items.build
     load_form_collections
   end
@@ -53,7 +60,7 @@ class DonationsController < ApplicationController
     @donation = Donation.create(organization: current_organization,
                                 source: "Misc. Donation",
                                 storage_location_id: current_organization.intake_location,
-                                issued_at: Date.today,
+                                issued_at: Time.zone.today,
                                 line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
                                                                   "quantity" => params["number_of_diapers"],
                                                                   "_destroy" => "false" } })
@@ -68,7 +75,7 @@ class DonationsController < ApplicationController
       redirect_to donations_path
     else
       load_form_collections
-      @donation.line_items.build if @donation.line_items.count == 0
+      @donation.line_items.build if @donation.line_items.count.zero?
       flash[:error] = "There was an error starting this donation, try again?"
       Rails.logger.error "ERROR: #{@donation.errors}"
       render action: :new
@@ -76,7 +83,7 @@ class DonationsController < ApplicationController
   end
 
   def new
-    @donation = Donation.new(issued_at: Date.today)
+    @donation = Donation.new(issued_at: Time.zone.today)
     @donation.line_items.build
     load_form_collections
   end
@@ -96,9 +103,9 @@ class DonationsController < ApplicationController
     @donation = Donation.find(params[:id])
     if @donation.update_attributes(donation_params)
       @donation.storage_location.edit! @donation
-    redirect_to donations_path
+      redirect_to donations_path
     else
-      render 'edit'
+      render "edit"
     end
   end
 

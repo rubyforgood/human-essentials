@@ -207,7 +207,6 @@ RSpec.describe Donation, type: :model do
         item_id = create(:item).id
         expect do
           donation.remove(item_id)
-
         end.not_to change(donation.line_items.count)
       end
     end

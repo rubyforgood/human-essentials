@@ -41,6 +41,6 @@ class Distribution < ApplicationRecord
 
   def combine_duplicates
     Rails.logger.info "Combining!"
-    self.line_items.combine!
+    line_items.combine!
   end
 end

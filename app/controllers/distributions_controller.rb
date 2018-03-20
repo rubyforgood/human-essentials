@@ -3,7 +3,9 @@ class DistributionsController < ApplicationController
 
   def print
     @distribution = Distribution.find(params[:id])
-    @filename = format("%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at))
+    @filename = format(
+      "%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at)
+    )
   end
 
   def reclaim

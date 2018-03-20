@@ -48,9 +48,9 @@ module DashboardHelper
 
   def received_distributed_data(range = selected_range)
     {
-      'Received donations' => current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(:+),
-      'Purchased' => current_organization.purchases.during(range).collect { |d| d.line_items.total }.reduce(:+),
-      'Distributed' => current_organization.distributions.during(range).collect { |d| d.line_items.total }.reduce(:+),
+      "Received donations" => current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(:+),
+      "Purchased" => current_organization.purchases.during(range).collect { |d| d.line_items.total }.reduce(:+),
+      "Distributed" => current_organization.distributions.during(range).collect { |d| d.line_items.total }.reduce(:+)
     }
   end
 
@@ -58,15 +58,15 @@ module DashboardHelper
     number_with_delimiter (total || "-1")
   end
 
-  def total_received_donations(range=selected_range)
-    number_with_delimiter current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(0,:+)
+  def total_received_donations(range = selected_range)
+    number_with_delimiter current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(0, :+)
   end
 
-  def total_purchased(range=selected_range)
-    number_with_delimiter current_organization.purchases.during(range).collect { |d| d.line_items.total }.reduce(0,:+)
+  def total_purchased(range = selected_range)
+    number_with_delimiter current_organization.purchases.during(range).collect { |d| d.line_items.total }.reduce(0, :+)
   end
 
-  def total_distributed(range=selected_range)
-    number_with_delimiter current_organization.distributions.during(range).collect { |d| d.line_items.total }.reduce(0,:+)
+  def total_distributed(range = selected_range)
+    number_with_delimiter current_organization.distributions.during(range).collect { |d| d.line_items.total }.reduce(0, :+)
   end
 end
