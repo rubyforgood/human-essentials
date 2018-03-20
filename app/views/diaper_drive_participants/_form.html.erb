@@ -5,6 +5,11 @@
       <%= f.input_field :name, class: "form-control" %>
     <% end %>
 
+    <%= f.input :name, label: "Business name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-suitcase"></i></span>
+      <%= f.input_field :business_name, class: "form-control" %>
+    <% end %>
+
     <%= f.input :phone, label: "Phone", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-phone"></i></span>
       <%= f.input_field :phone, class: "form-control" %>
@@ -13,7 +18,12 @@
     <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
       <%= f.input_field :email, class: "form-control" %>
-    <% end %>      
+    <% end %>
+
+    <%= f.input :email, label: "Address", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-home"></i></span>
+      <%= f.input_field :address, class: "form-control" %>
+    <% end %>
 
     <%= f.button :submit, class:"btn btn-info"%>
 
