@@ -13,7 +13,7 @@ class BarcodeItemsController < ApplicationController
     @barcode_item = current_organization.barcode_items.new(barcode_item_params)
     if @barcode_item.save
       msg = "New barcode added"
-      msg += barcode_item_params[:global] == "1" ? " globally!" : " to your private set!"
+      msg += barcode_item_params[:global] == "true" ? " globally!" : " to your private set!"
       respond_to do |format|
         format.json { render json: @barcode_item.to_json }
         format.html { redirect_to barcode_items_path, notice: msg }
