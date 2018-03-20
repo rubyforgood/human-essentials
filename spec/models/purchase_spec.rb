@@ -13,7 +13,7 @@
 #  updated_at          :datetime         not null
 #
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Purchase, type: :model do
   context "Validations >" do
@@ -33,7 +33,7 @@ RSpec.describe Purchase, type: :model do
   context "Callbacks >" do
     it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
-      today = Date.today
+      today = Time.zone.today
       expect(create(:purchase, created_at: yesterday, issued_at: today).issued_at).to eq(today)
       expect(create(:purchase, created_at: yesterday).issued_at).to eq(yesterday)
     end
@@ -41,8 +41,8 @@ RSpec.describe Purchase, type: :model do
     it "automatically combines duplicate line_item records when they're created" do
       purchase = build(:purchase)
       item = create(:item)
-      purchase.line_items.build({item_id: item.id, quantity: 5})
-      purchase.line_items.build({item_id: item.id, quantity: 10})
+      purchase.line_items.build(item_id: item.id, quantity: 5)
+      purchase.line_items.build(item_id: item.id, quantity: 10)
       purchase.save
       expect(purchase.line_items.size).to eq(1)
       expect(purchase.line_items.first.quantity).to eq(15)
@@ -53,7 +53,7 @@ RSpec.describe Purchase, type: :model do
     describe "during >" do
       it "returns all purchases created between two dates" do
         # The models should default to assigning the created_at time to the issued_at
-        create(:purchase, created_at: Date.today)
+        create(:purchase, created_at: Time.zone.today)
         # but just for fun we'll force one in the past within the range
         create(:purchase, issued_at: Date.yesterday)
         # and one outside the range
@@ -80,8 +80,8 @@ RSpec.describe Purchase, type: :model do
         let!(:item) { create(:item) }
         it "combines multiple line_items with the same item_id into a single record" do
           purchase = build(:purchase)
-          purchase.line_items.build({item_id: item.id, quantity: 5})
-          purchase.line_items.build({item_id: item.id, quantity: 10})
+          purchase.line_items.build(item_id: item.id, quantity: 5)
+          purchase.line_items.build(item_id: item.id, quantity: 10)
           purchase.line_items.combine!
           expect(purchase.save).to eq(true)
           expect(purchase.line_items.count).to eq(1)
@@ -91,7 +91,7 @@ RSpec.describe Purchase, type: :model do
 
         it "incrementally combines line_items on purchases that have already been created" do
           purchase = create(:purchase, :with_item, item_id: item.id, item_quantity: 10)
-          purchase.line_items.build({item_id: item.id, quantity: 5})
+          purchase.line_items.build(item_id: item.id, quantity: 5)
           purchase.line_items.combine!
           purchase.save
           expect(purchase.line_items.count).to eq(1)
@@ -99,7 +99,6 @@ RSpec.describe Purchase, type: :model do
         end
       end
     end
-
   end
 
   context "Methods >" do
@@ -123,10 +122,10 @@ RSpec.describe Purchase, type: :model do
       it "does not add a new line_item unnecessarily, updating existing line_item instead" do
         item = create :item
         purchase.track(item, 5)
-        expect {
+        expect do
           purchase.track(item, 10)
           purchase.reload
-        }.not_to change{purchase.line_items.count}
+        end.not_to change(purchase.line_items.count)
 
         expect(purchase.line_items.first.quantity).to eq(15)
       end
@@ -142,23 +141,23 @@ RSpec.describe Purchase, type: :model do
     describe "update_quantity" do
       let!(:purchase) { create(:purchase, :with_item) }
       it "adds an additional quantity to the existing line_item" do
-        expect {
+        expect do
           purchase.update_quantity(1, purchase.items.first)
           purchase.reload
-        }.to change{purchase.line_items.first.quantity}.by(1)
+        end.to change { purchase.line_items.first.quantity }.by(1)
       end
 
       it "can receive a negative quantity to subtract inventory" do
-        expect {
+        expect do
           purchase.update_quantity(-1, purchase.items.first)
-        }.to change{purchase.total_quantity}.by(-1)
+        end.to change { purchase.total_quantity }.by(-1)
       end
 
       it "works whether you give it an item or an id" do
-        expect {
+        expect do
           purchase.update_quantity(1, purchase.items.first.id)
           purchase.reload
-        }.to change{purchase.line_items.first.quantity}.by(1)
+        end.to change { purchase.line_items.first.quantity }.by(1)
       end
     end
 
@@ -167,16 +166,16 @@ RSpec.describe Purchase, type: :model do
 
       it "removes the item from the purchase" do
         item_id = purchase.line_items.last.item_id
-        expect {
+        expect do
           purchase.remove(item_id)
-        }.to change{purchase.line_items.count}.by(-1)
+        end.to change { purchase.line_items.count }.by(-1)
       end
-      
+
       it "fails gracefully if the item doesn't exist" do
         item_id = create(:item).id
-        expect {
+        expect do
           purchase.remove(item_id)
-        }.not_to change{purchase.line_items.count}
+        end.not_to change(purchase.line_items.count)
       end
     end
 

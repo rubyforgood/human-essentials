@@ -11,24 +11,22 @@
 #  itemizable_type :string
 #
 
-
-
 RSpec.describe LineItem, type: :model do
-	context "Validations >" do
-		it "requires an item" do
-			expect(build(:line_item, item: nil)).not_to be_valid
-		end
+  context "Validations >" do
+    it "requires an item" do
+      expect(build(:line_item, item: nil)).not_to be_valid
+    end
 
-		it "requires a quantity" do
-			expect(build(:line_item, quantity: nil)).not_to be_valid
-		end
+    it "requires a quantity" do
+      expect(build(:line_item, quantity: nil)).not_to be_valid
+    end
 
-		it "the quantity must be an integer and cannot be 0" do
-			expect(build(:line_item, quantity: 'a')).not_to be_valid
-			expect(build(:line_item, quantity: '1.0')).not_to be_valid
-			expect(build(:line_item, quantity: 0)).not_to be_valid
-			expect(build(:line_item, quantity: -1)).to be_valid
-			expect(build(:line_item, quantity: 1)).to be_valid
-		end
-	end
+    it "the quantity must be an integer and cannot be 0" do
+      expect(build(:line_item, quantity: "a")).not_to be_valid
+      expect(build(:line_item, quantity: "1.0")).not_to be_valid
+      expect(build(:line_item, quantity: 0)).not_to be_valid
+      expect(build(:line_item, quantity: -1)).to be_valid
+      expect(build(:line_item, quantity: 1)).to be_valid
+    end
+  end
 end
