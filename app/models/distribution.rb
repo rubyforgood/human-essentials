@@ -39,4 +39,9 @@ class Distribution < ApplicationRecord
   def distributed_at
     issued_at.strftime("%B %-d %Y")
   end
+
+  def combine_duplicates
+    Rails.logger.info "Combining!"
+    self.line_items.combine!
+  end
 end
