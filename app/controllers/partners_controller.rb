@@ -6,7 +6,7 @@ class PartnersController < ApplicationController
   def create
     @partner = current_organization.partners.new(partner_params)
     if @partner.save
-    redirect_to partners_path, notice: "Partner added!"
+      redirect_to partners_path, notice: "Partner added!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
@@ -28,7 +28,7 @@ class PartnersController < ApplicationController
   def update
     @partner = current_organization.partners.find(params[:id])
     if @partner.update_attributes(partner_params)
-    redirect_to partners_path, notice: "#{@partner.name} updated!"
+      redirect_to partners_path, notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -52,7 +52,8 @@ class PartnersController < ApplicationController
     redirect_to partners_path
   end
 
-private
+  private
+
   def partner_params
     params.require(:partner).permit(:name, :email)
   end

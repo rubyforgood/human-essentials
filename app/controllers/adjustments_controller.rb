@@ -37,15 +37,18 @@ class AdjustmentsController < ApplicationController
         redirect_to adjustment_path(@adjustment), notice: "Adjustment was successfully created."
       else
         # FIXME: don't use html_Safe
-        flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }
-                                   .join("<br />".html_safe)
+        flash[:error] = safe_join(@adjustment.errors
+                                           .collect do |model, message|
+                                             ["#{model}: " + message, content_tag(:br)]
+                                           end.flatten)
         render :new
       end
 
     else
-      # FIXME: don't use html_Safe
-      flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }
-                                 .join("<br />".html_safe)
+      flash[:error] = safe_join(@adjustment.errors
+                                           .collect do |model, message|
+                                             ["#{model}: " + message, content_tag(:br)]
+                                           end.flatten)
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
