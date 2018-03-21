@@ -15,7 +15,6 @@ RSpec.feature "Item management", type: :feature do
 
   scenario "User creates a new item with empty attributes" do
     visit url_prefix + "/items/new"
-    attributes_for(:item)
     click_button "Create Item"
 
     expect(page.find(".alert")).to have_content "didn't work"
@@ -86,8 +85,10 @@ RSpec.feature "Item management", type: :feature do
 
       click_link "Items and Quantity" # href="#sectionB"
       expect(page.find("table#tbl_items_quantity", visible: true)).to have_content "Quantity"
+
       expect(page.find("table#tbl_items_quantity", visible: true)).not_to
       have_content "Test storage"
+
       expect(page.find("table#tbl_items_quantity", visible: true)).to have_content "666"
       expect(page).to have_selector("table#tbl_items_quantity tbody tr", count: 2)
 

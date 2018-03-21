@@ -9,9 +9,9 @@ class DonationsController < ApplicationController
   # Cancan authorization
   # load_and_authorize_resource
 
-  skip_before_action :verify_authenticity_token, only: %i[scale_intake scale]
-  skip_before_action :authenticate_user!, only: %i[scale_intake scale]
-  skip_before_action :authorize_user, only: %i[scale_intake scale]
+  skip_before_action :verify_authenticity_token, only: %i(scale_intake scale)
+  skip_before_action :authenticate_user!, only: %i(scale_intake scale)
+  skip_before_action :authorize_user, only: %i(scale_intake scale)
 
   #  def add_item
   #    @donation = current_organization.donations.find(params[:id])
@@ -26,13 +26,13 @@ class DonationsController < ApplicationController
   #  end
 
   def index
-    @donations = current_organization.donations
-                                     .includes(:line_items,
-                                               :storage_location,
-                                               :donation_site,
-                                               :diaper_drive_participant)
-                                     .order(created_at: :desc)
-                                     .filter(filter_params)
+    @donations = current_organization
+                 .donations
+                 .includes(
+                   :line_items, :storage_location, :donation_site, :diaper_drive_participant
+                 )
+                 .order(created_at: :desc)
+                 .filter(filter_params)
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @storage_locations = @donations.collect(&:storage_location).compact.uniq
@@ -41,10 +41,11 @@ class DonationsController < ApplicationController
     @selected_source = filter_params[:by_source]
     @donation_sites = @donations.collect(&:donation_site).compact.uniq
     @selected_donation_site = filter_params[:from_donation_site]
-    @diaper_drives = @donations.collect do |d|
-      next unless d.source == Donation::SOURCES[:diaper_drive]
-      d.diaper_drive_participant
-    end.compact.uniq
+    @diaper_drives = @donations
+                     .select { |donation| donation.source == "Diaper Drive" }
+                     .collect(&:diaper_drive_participant)
+                     .compact
+                     .uniq
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
   end
 
@@ -59,10 +60,9 @@ class DonationsController < ApplicationController
                                 source: "Misc. Donation",
                                 storage_location_id: current_organization.intake_location,
                                 issued_at: Time.zone.today,
-                                line_items_attributes:
-                                  { "0" => { "item_id" => params["diaper_type"],
-                                             "quantity" => params["number_of_diapers"],
-                                             "_destroy" => "false" } })
+                                line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
+                                                                  "quantity" => params["number_of_diapers"],
+                                                                  "_destroy" => "false" } })
     @donation.storage_location.intake! @donation
     render status: 200, json: @donation.to_json
   end
@@ -128,10 +128,7 @@ class DonationsController < ApplicationController
   def donation_params
     strip_unnecessary_params
     params = compact_line_items
-    params.require(:donation).permit(:source, :comment, :storage_location_id,
-                                     :issued_at, :donation_site_id, :diaper_drive_participant_id,
-                                     line_items_attributes: %I[id item_id quantity _destroy])
-          .merge(organization: current_organization)
+    params.require(:donation).permit(:source, :comment, :storage_location_id, :issued_at, :donation_site_id, :diaper_drive_participant_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
 
   def donation_item_params
@@ -140,10 +137,7 @@ class DonationsController < ApplicationController
 
   def filter_params
     return {} unless params.key?(:filters)
-    params.require(:filters).slice(:at_storage_location,
-                                   :by_source,
-                                   :from_donation_site,
-                                   :by_diaper_drive_participant)
+    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant)
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source
@@ -158,9 +152,7 @@ class DonationsController < ApplicationController
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
     return params unless params[:donation].key?(:line_item_attributes)
-    params[:donation][:line_items_attributes].delete_if do |_, data|
-      data["quantity"].blank? && data["item_id"].blank?
-    end
+    params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
   end
 end

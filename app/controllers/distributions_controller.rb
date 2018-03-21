@@ -3,9 +3,15 @@ class DistributionsController < ApplicationController
 
   def print
     @distribution = Distribution.find(params[:id])
+<<<<<<< HEAD
     @filename = format("%s %s.pdf",
                        @distribution.partner.name,
                        sortable_date(@distribution.created_at))
+=======
+    @filename = format(
+      "%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at)
+    )
+>>>>>>> 195144a2678c4df1fc4d844bd17c1e44c94d8811
   end
 
   def reclaim
@@ -81,8 +87,12 @@ class DistributionsController < ApplicationController
   private
 
   def distribution_params
+<<<<<<< HEAD
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at,
                                          :partner_id, :storage_location_id,
                                          line_items_attributes: %i[item_id quantity _destroy])
+=======
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))
+>>>>>>> 195144a2678c4df1fc4d844bd17c1e44c94d8811
   end
 end

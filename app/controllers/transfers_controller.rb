@@ -59,7 +59,7 @@ class TransfersController < ApplicationController
 
   def transfer_params
     params.require(:transfer).permit(:from_id, :to_id, :comment,
-                                     line_items_attributes: %i[item_id quantity _destroy])
+                                     line_items_attributes: %i(item_id quantity _destroy))
   end
 
   def filter_params
