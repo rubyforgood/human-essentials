@@ -29,21 +29,24 @@ RSpec.describe Partner, type: :model do
   end
   context "Callbacks >" do
     describe "when DIAPER_PARTNER_URL is present" do
-      let(:diaper_partner_url) { 'http://diaper.partner.io' }
+      let(:diaper_partner_url) { "http://diaper.partner.io" }
       let(:callback_url) { "#{diaper_partner_url}/partners" }
 
       before do
-        allow(ENV).to receive(:[]).with('DIAPER_PARTNER_URL') { diaper_partner_url }
-        allow(ENV).to receive(:[]).with('DIAPER_PARTNER_SECRET_KEY') { 'secretkey123' }
-
+        stub_env "DIAPER_PARTNER_URL", diaper_partner_url
+        stub_env "DIAPER_PARTNER_SECRET_KEY", "secretkey123"
         stub_request :post, callback_url
       end
 
       it "notifies the Diaper Partner app" do
         partner = create :partner
-        headers = { 'Authorization'=>/APIAuth diaperbase:.*/, 'Content-Type'=>'application/x-www-form-urlencoded' }
+        headers = {
+          "Authorization" => /APIAuth diaperbase:.*/,
+          "Content-Type" => "application/x-www-form-urlencoded"
+        }
         body = URI.encode_www_form partner.attributes
-        expect(WebMock).to have_requested(:post, callback_url).with(headers: headers, body: body).once
+        expect(WebMock).to have_requested(:post, callback_url).
+          with(headers: headers, body: body).once
       end
     end
   end
