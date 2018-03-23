@@ -49,7 +49,7 @@ RSpec.describe Item, type: :model do
       it "returns a list of all categories, unique" do
         create(:item, category: "different")
         result = Item.categories
-        expect(result.length).to eq(10)
+        expect(result.length).to eq(9)
       end
 
       it "returns the list of categories alphabetized" do
