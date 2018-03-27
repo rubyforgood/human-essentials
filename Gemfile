@@ -5,6 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'api-auth', '~> 1.5'
 gem 'bootstrap-sass'
 gem "bugsnag"
 gem 'chartkick', '~> 2.2'
@@ -66,6 +67,7 @@ group :test do
   gem 'phantomjs', '~> 2.1', require: "phantomjs/poltergeist"
   gem 'poltergeist', '~> 1.15'
   gem 'rails-controller-testing', '~> 1.0'
+  gem 'webmock', '~> 2.1'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
