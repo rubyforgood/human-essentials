@@ -27,7 +27,9 @@ on an [open issue]–if the relevant issue doesn't exist, open it!
 
 7. Make the test pass.
 
-8. Push to your fork and submit a pull request. Include the issue number
+8. Your code is automatically linted after all tests successfully pass. Make sure there are no linting errors before submitting your pull request. See the README for more information on linting. 
+
+9. Push to your fork and submit a pull request. Include the issue number
    (ex. `Resolves #1`) in the PR description.
 
 At this point you're waiting on us–we'll try to respond to your PR quickly.

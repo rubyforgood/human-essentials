@@ -13,13 +13,13 @@
 
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
-  validates_uniqueness_of :name, :scope => :organization
-  validates_presence_of :name
+  validates :name, uniqueness: { scope: :organization }
+  validates :name, presence: true
   validates :organization, presence: true
 
-  has_many :line_items
-  has_many :inventory_items
-  has_many :barcode_items
+  has_many :line_items, dependent: :destroy
+  has_many :inventory_items, dependent: :destroy
+  has_many :barcode_items, dependent: :destroy
   has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: Donation
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
@@ -38,11 +38,11 @@ class Item < ApplicationRecord
   end
 
   def self.storage_locations_containing(item)
-    StorageLocation.joins(:inventory_items).where('inventory_items.item_id = ?', item.id)
+    StorageLocation.joins(:inventory_items).where("inventory_items.item_id = ?", item.id)
   end
 
   def self.barcodes_for(item)
-    BarcodeItem.where('item_id = ?', item.id)
+    BarcodeItem.where("item_id = ?", item.id)
   end
 
   # Convenience method so that other methods can be simplified to

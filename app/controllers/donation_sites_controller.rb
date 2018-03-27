@@ -6,10 +6,10 @@ class DonationSitesController < ApplicationController
   def create
     @donation_site = current_organization.donation_sites.new(donation_site_params)
     if @donation_site.save
-    redirect_to donation_sites_path, notice: "New donation site added!"
+      redirect_to donation_sites_path, notice: "New donation site added!"
     else
-    flash[:error] = "Something didn't work quite right -- try again?"
-    render action: :new
+      flash[:error] = "Something didn't work quite right -- try again?"
+      render action: :new
     end
   end
 
@@ -27,8 +27,8 @@ class DonationSitesController < ApplicationController
 
   def update
     @donation_site = current_organization.donation_sites.find(params[:id])
-    if @donation_site.update_attributes(donation_site_params)
-    redirect_to donation_sites_path, notice: "#{@donation_site.name} updated!"
+    if @donation_site.update(donation_site_params)
+      redirect_to donation_sites_path, notice: "#{@donation_site.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -52,7 +52,8 @@ class DonationSitesController < ApplicationController
     redirect_to donation_sites_path
   end
 
-private
+  private
+
   def donation_site_params
     params.require(:donation_site).permit(:name, :address)
   end

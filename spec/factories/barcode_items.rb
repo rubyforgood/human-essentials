@@ -13,10 +13,9 @@
 #
 
 FactoryBot.define do
-
   factory :barcode_item do
     organization nil
-    sequence(:value) { |n| "#{n}" * 12 } # 037000863427
+    sequence(:value) { |n| n.to_s * 12 } # 037000863427
     item
     quantity 50
 

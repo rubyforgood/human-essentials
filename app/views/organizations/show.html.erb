@@ -1,4 +1,4 @@
-<% content_for :title, "Organizations - #{@organization.name}" %>
+<% content_for :title, "Organizations - #{@current_organization.name}" %>
 
-<h1><%= @organization.name %></h1>
-<p><%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
+<h1><%= @current_organization.name %></h1>
+<p><%= link_to @current_organization.email, "mailto:#{@current_organization.email}" %></p>

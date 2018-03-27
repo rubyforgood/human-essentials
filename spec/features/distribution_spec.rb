@@ -1,10 +1,10 @@
 RSpec.feature "Distributions", type: :feature do
   before do
     sign_in(@user)
-    @url_prefix = "/#{@organization.to_param}"
+    @url_prefix = "/#{@current_organization.to_param}"
 
-    @partner = create(:partner, organization: @organization)
-    @storage_location = create(:storage_location, organization: @organization)
+    @partner = create(:partner, organization: @current_organization)
+    @storage_location = create(:storage_location, organization: @current_organization)
     setup_storage_location(@storage_location)
   end
 
@@ -18,7 +18,7 @@ RSpec.feature "Distributions", type: :feature do
     click_button "Preview Distribution"
     expect(page).to have_content "Distribution Manifest for"
     click_button "Confirm Distribution"
-    expect(page.find('.alert-info')).to have_content "reated"
+    expect(page.find(".alert-info")).to have_content "reated"
   end
 
   context "via barcode entry" do
@@ -36,8 +36,7 @@ RSpec.feature "Distributions", type: :feature do
       page.fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
-#save_and_open_page
-
+      # save_and_open_page
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
 
@@ -50,7 +49,5 @@ RSpec.feature "Distributions", type: :feature do
       pending "TODO: adding items with a new barcode"
       raise
     end
-
   end
-
 end

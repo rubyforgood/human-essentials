@@ -1,7 +1,7 @@
 RSpec.feature "Dashboard", type: :feature do
   before :each do
     sign_in(@user)
-    @url_prefix = "/#{@organization.short_name}"
+    @url_prefix = "/#{@current_organization.short_name}"
   end
 
   context "When visiting a new dashboard" do
@@ -17,27 +17,51 @@ RSpec.feature "Dashboard", type: :feature do
       organization_logo = extract_image(:xpath, "//div/img")
       expect(organization_logo).to eq("logo.jpg")
 
-      @organization.logo = nil
-      @organization.save
+      @current_organization.logo = nil
+      @current_organization.save
       visit @url_prefix + "/dashboard"
 
       expect(page).not_to have_xpath("//div/img")
-      expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@organization.name)
+      expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@current_organization.name)
     end
-
   end
 
-  # TODO - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
+  # TODO: For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
   # if someone else wants to make this use an XHR instead, have at it!
-  scenario "The user can scope down what they see in the dashboard using the date-range drop down" do
-    # TODO - This spec fails in January because Year-to-date... need to use TimeCop or something"
-    item = create(:item, organization: @organization)
-    sl = create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
-    create(:donation, :with_item, item_id: item.id, item_quantity: 10, storage_location: sl, issued_at: 1.month.ago)
-    create(:donation, :with_item, item_id: item.id, item_quantity: 200, storage_location: sl, issued_at: Date.today)
-    create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago, )
-    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Date.today, )
-    @organization.reload
+  scenario "The user can scope down what they see in the dashboard\
+            using the date-range drop down" do
+    # TODO: This spec fails in January because Year-to-date... need to use TimeCop or something"
+    item = create(:item, organization: @current_organization)
+    sl = create(:storage_location,
+                :with_items,
+                item: item,
+                item_quantity: 125,
+                organization: @current_organization)
+    create(:donation,
+           :with_item,
+           item_id: item.id,
+           item_quantity: 10,
+           storage_location: sl,
+           issued_at: 1.month.ago)
+    create(:donation,
+           :with_item,
+           item_id: item.id,
+           item_quantity: 200,
+           storage_location: sl,
+           issued_at: Time.zone.today)
+    create(:distribution,
+           :with_items,
+           item: item,
+           item_quantity: 5,
+           storage_location: sl,
+           issued_at: 1.month.ago)
+    create(:distribution,
+           :with_items,
+           item: item,
+           item_quantity: 100,
+           storage_location: sl,
+           issued_at: Time.zone.today)
+    @current_organization.reload
 
     # Verify the initial totals are correct
     visit @url_prefix + "/dashboard"
@@ -45,20 +69,20 @@ RSpec.feature "Dashboard", type: :feature do
     expect(page).to have_content("105 items distributed year to date")
 
     # Scope it down to just today, should omit the first donation
-    #select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
+    # select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
     visit @url_prefix + "/dashboard?dashboard_filter[interval]=last_month"
     expect(page).to have_content("10 items received last month")
     expect(page).to have_content("5 items distributed last month")
   end
 
-
-  scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js:true do
+  fscenario "inventory totals on dashboard are updated immediately after \
+    donations and distributions are made", js: true do
     create(:partner)
-    create(:item, organization: @organization)
-    create(:storage_location, organization: @organization)
-    create(:donation_site, organization: @organization)
-    create(:diaper_drive_participant, organization: @organization)
-    @organization.reload
+    create(:item, organization: @current_organization)
+    create(:storage_location, organization: @current_organization)
+    create(:donation_site, organization: @current_organization)
+    create(:diaper_drive_participant, organization: @current_organization)
+    @current_organization.reload
 
     # Verify the initial totals on dashboard
     visit @url_prefix + "/dashboard"
@@ -83,7 +107,8 @@ RSpec.feature "Dashboard", type: :feature do
     # Check distributions
     visit @url_prefix + "/distributions/new"
     select Partner.last.name, from: "distribution_partner_id"
-    select @organization.storage_locations.first.name, from: "distribution_storage_location_id"
+    select @current_organization.storage_locations.first.name,
+           from: "distribution_storage_location_id"
     select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
     fill_in "distribution_line_items_attributes_0_quantity", with: "50"
     click_button "Preview Distribution"

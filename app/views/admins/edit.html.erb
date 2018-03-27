@@ -2,7 +2,7 @@
 <% content_for :title, "Organizations - #{current_organization.name} - Edit" %>
 <h1>
 Editing
-<small><%= @organization.name %></small>
+<small><%= @current_organization.name %></small>
 </h1>
 <ol class="breadcrumb">
   <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
@@ -10,7 +10,7 @@ Editing
   <% end %>
   </li>
   <li><%= link_to "Administration", (admins_path(organization_id: current_user.organization)) %></li>
-  <li><a href="#">Editing <%= @organization.name %></a></li>
+  <li><a href="#">Editing <%= @current_organization.name %></a></li>
 </ol>
 </section>
 
@@ -23,7 +23,7 @@ Editing
   <h3 class="box-title">Update record for <%= current_organization.name %></h3>
 </div>
 <div class="box-body">
-<%= simple_form_for @organization, url: admin_path do |f| %>
+<%= simple_form_for @current_organization, url: admin_path do |f| %>
 
 <div class="form-inputs">
   <%= f.input :name, required: true, autofocus: true %>
@@ -35,7 +35,7 @@ Editing
   <%= f.input :logo %>
   <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)</p>
 
-<% if @organization.logo.present? %>
+<% if @current_organization.logo.present? %>
     <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">Preview Current Logo</a>
 
     <!-- Button HTML (to Trigger Modal) -->      

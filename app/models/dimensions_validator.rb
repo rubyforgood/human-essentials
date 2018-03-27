@@ -5,8 +5,10 @@ class DimensionsValidator < ActiveModel::EachValidator
       width = options[:width]
       height = options[:height]
 
-      record.errors[attribute] << "Width must be less than #{width}px" unless dimensions.width <= width
-      record.errors[attribute] << "Height must be less than #{height}px" unless dimensions.height <= height
+      record.errors[attribute] << "Width must be less than #{width}px" \
+        unless dimensions.width <= width
+      record.errors[attribute] << "Height must be less than #{height}px" \
+        unless dimensions.height <= height
     end
   end
 end

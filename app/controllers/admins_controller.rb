@@ -2,39 +2,39 @@ class AdminsController < ApplicationController
   before_action :authorize_user
 
   def edit
-    @organization = Organization.find(params[:id])
+    @current_organization = Organization.find(params[:id])
   end
 
   def update
-    @organization = Organization.find(params[:id])
+    @current_organization = Organization.find(params[:id])
 
-    if @organization.update_attributes(organization_params)
-      redirect_to admins_path, notice: 'Updated organization!'
+    if @current_organization.update(organization_params)
+      redirect_to admins_path, notice: "Updated organization!"
     else
-      flash[:error] = 'Failed to update this organization.'
+      flash[:error] = "Failed to update this organization."
       render :edit
     end
   end
 
   def index
-    @organizations = Organization.all
+    @current_organizations = Organization.all
   end
 
   def invite_user
     User.invite!(email: params[:email], name: params[:name], organization_id: params[:org])
-    redirect_to admins_path, notice: 'User invited to organization!'
+    redirect_to admins_path, notice: "User invited to organization!"
   end
 
   # TODO: who should be able to arrive here and how?
   def new
-    @organization = Organization.new
+    @current_organization = Organization.new
   end
 
   # TODO: who should be able to arrive here and how?
 
   def create
-    @organization = Organization.create(organization_params)
-    if @organization.save
+    @current_organization = Organization.create(organization_params)
+    if @current_organization.save
       redirect_to admins_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
@@ -43,12 +43,12 @@ class AdminsController < ApplicationController
   end
 
   def show
-    @organization = Organization.find(params[:id])
+    @current_organization = Organization.find(params[:id])
   end
 
   def destroy
-    @organization = Organization.find(params[:id])
-    if @organization.destroy
+    @current_organization = Organization.find(params[:id])
+    if @current_organization.destroy
       redirect_to admins_path, notice: "Organization deleted!"
     else
       redirect_to admins_path, alert: "Failed to delete Organization."

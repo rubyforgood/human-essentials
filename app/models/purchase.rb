@@ -14,7 +14,6 @@
 #
 
 class Purchase < ApplicationRecord
-
   belongs_to :organization
   belongs_to :storage_location
 
@@ -22,7 +21,9 @@ class Purchase < ApplicationRecord
   include Filterable
   include IssuedAt
 
-  scope :at_storage_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
+  scope :at_storage_location, ->(storage_location_id) {
+                                where(storage_location_id: storage_location_id)
+                              }
   scope :purchased_from, ->(purchased_from) { where(purchased_from: purchased_from) }
   scope :during, ->(range) { where(purchases: { issued_at: range }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
@@ -30,7 +31,7 @@ class Purchase < ApplicationRecord
   before_create :combine_duplicates
   before_destroy :remove_inventory
 
-  validates_numericality_of :amount_spent, greater_than: 0
+  validates :amount_spent, numericality: { greater_than: 0 }
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
@@ -40,7 +41,7 @@ class Purchase < ApplicationRecord
     storage_location.remove!(self)
   end
 
-  def track(item,quantity)
+  def track(item, quantity)
     if contains_item_id?(item.id)
       update_quantity(quantity, item)
     else
@@ -48,36 +49,35 @@ class Purchase < ApplicationRecord
     end
   end
 
-  def contains_item_id? id
+  def contains_item_id?(id)
     line_items.find_by(item_id: id).present?
   end
 
   def total_quantity
-    self.line_items.sum(:quantity)
+    line_items.sum(:quantity)
   end
 
   def remove(item)
     # doing this will handle either an id or an object
     item_id = item.to_i
-    line_item = self.line_items.find_by(item_id: item_id)
-    if (line_item)
-      line_item.destroy
-    end
+    line_item = line_items.find_by(item_id: item_id)
+    line_item&.destroy
   end
 
   # Use a negative quantity to subtract inventory
   def update_quantity(quantity, item)
     item_id = item.to_i
-    line_item = self.line_items.find_by(item_id: item_id)
+    line_item = line_items.find_by(item_id: item_id)
     line_item.quantity += quantity
     # Inventory can never be negative
-    line_item.quantity = 0 if line_item.quantity < 0
+    line_item.quantity = 0 if line_item.quantity.negative?
     line_item.save
   end
 
   private
+
   def combine_duplicates
     Rails.logger.info "Combining!"
-    self.line_items.combine!
+    line_items.combine!
   end
 end

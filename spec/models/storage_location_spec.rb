@@ -81,20 +81,25 @@ RSpec.describe StorageLocation, type: :model do
       it "adds items to a storage location even if none exist" do
         storage_location = create(:storage_location)
         donation = create(:donation, :with_item, item_quantity: 10)
-        expect{
+        expect do
           storage_location.intake!(donation)
           storage_location.items.reload
-        }.to change{storage_location.items.count}.by(1)
+        end.to change { storage_location.items.count }.by(1)
         expect(storage_location.size).to eq(10)
       end
 
       it "adds items to the storage location total if that item already exists in inventory" do
         storage_location = create(:storage_location, :with_items, item_quantity: 10)
-        donation = create(:donation, :with_item, item_quantity: 10, item_id: storage_location.inventory_items.first.item.id)
+        donation = create(:donation,
+                          :with_item,
+                          item_quantity: 10,
+                          item_id: storage_location.inventory_items.first.item.id)
         storage_location.intake!(donation)
 
         expect(storage_location.inventory_items.count).to eq(1)
-        expect(storage_location.inventory_items.where(item_id: donation.line_items.first.item.id).first.quantity).to eq(20)
+        expect(storage_location.inventory_items.where(
+          item_id: donation.line_items.first.item.id
+        ).first.quantity).to eq(20)
       end
     end
 
@@ -129,7 +134,6 @@ RSpec.describe StorageLocation, type: :model do
     end
 
     describe "edit!" do
-
       let(:storage_location) { create(:storage_location) }
       let(:purchase)         { create(:purchase, :with_item, item_quantity: 10) }
 
@@ -161,26 +165,31 @@ RSpec.describe StorageLocation, type: :model do
     describe "distribute!" do
       it "distrbutes items from storage location" do
         storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = build :distribution, :with_items, storage_location: storage_location, item_quantity: 50
+        distribution = build :distribution,
+                             :with_items,
+                             storage_location: storage_location,
+                             item_quantity: 50
         storage_location.distribute!(distribution)
         expect(storage_location.inventory_items.first.quantity).to eq 250
       end
 
       it "raises error when distribution exceeds storage location inventory" do
         storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = build :distribution, :with_items, storage_location: storage_location, item_quantity: 350
+        distribution = build :distribution,
+                             :with_items,
+                             storage_location: storage_location,
+                             item_quantity: 350
         item = distribution.line_items.first.item
-        expect {
-          storage_location.distribute!(distribution)
-        }.to raise_error do |error|
-          expect(error).to be_a Errors::InsufficientAllotment
-          expect(error.insufficient_items).to include({
-            item_id: item.id,
-            item_name: item.name,
-            quantity_on_hand: 300,
-            quantity_requested: 350
-          })
-        end
+        expect { storage_location.distribute!(distribution) }.to \
+          raise_error do |error|
+            expect(error).to be_a Errors::InsufficientAllotment
+            expect(error.insufficient_items).to include(
+              item_id: item.id,
+              item_name: item.name,
+              quantity_on_hand: 300,
+              quantity_requested: 350
+            )
+          end
       end
     end
 
@@ -199,38 +208,50 @@ RSpec.describe StorageLocation, type: :model do
         storage_location = create(:storage_location)
         import_file_path = Rails.root.join("spec", "fixtures", "inventory.csv").read
         StorageLocation.import_inventory(import_file_path, organization.id, storage_location.id)
-        expect(storage_location.size).to eq 14842
+        expect(storage_location.size).to eq 14_842
       end
     end
 
     describe "adjust!" do
       it "combines line item quantities with inventory amounts" do
         storage_location = create :storage_location, :with_items, item_quantity: 300
-        adjustment = build :adjustment, :with_items, storage_location: storage_location, item_quantity: 50
+        adjustment = build :adjustment,
+                           :with_items,
+                           storage_location: storage_location,
+                           item_quantity: 50
         storage_location.adjust!(adjustment)
         expect(storage_location.inventory_items.first.quantity).to eq 350
 
-        adjustment2 = build :adjustment, :with_items, storage_location: storage_location, item_quantity: -50
+        adjustment2 = build :adjustment,
+                            :with_items,
+                            storage_location: storage_location,
+                            item_quantity: -50
         storage_location.adjust!(adjustment2)
         expect(storage_location.inventory_items.first.quantity).to eq 300
       end
       it "ensures that a user cannot adjust an inventory into the negative" do
         storage_location = create :storage_location, :with_items, item_quantity: 300
-        adjustment = build :adjustment, :with_items, storage_location: storage_location, item_quantity: -301
-        expect {
+        adjustment = build :adjustment,
+                           :with_items,
+                           storage_location: storage_location,
+                           item_quantity: -301
+        expect do
           storage_location.adjust!(adjustment)
-        }.to raise_error(Errors::InsufficientAllotment)
+        end.to raise_error(Errors::InsufficientAllotment)
       end
     end
-
 
     describe "move_inventory!" do
       it "removes inventory from a storage location and adds them to another storage location" do
         item = create(:item)
         storage_location = create :storage_location, :with_items, item: item, item_quantity: 300
         storage_location2 = create :storage_location, :with_items, item: item, item_quantity: 100
-        transfer = build :transfer, :with_items, item: item, item_quantity: 100,
-                                                 from_id: storage_location.id, to_id: storage_location2.id
+        transfer = build :transfer,
+                         :with_items,
+                         item: item,
+                         item_quantity: 100,
+                         from_id: storage_location.id,
+                         to_id: storage_location2.id
         storage_location.move_inventory!(transfer)
         expect(storage_location.inventory_items.first.quantity).to eq 200
         expect(storage_location2.inventory_items.first.quantity).to eq 200
@@ -240,18 +261,25 @@ RSpec.describe StorageLocation, type: :model do
         item = create(:item)
         storage_location = create :storage_location, :with_items, item: item, item_quantity: 100
         storage_location2 = create :storage_location, :with_items, item: item, item_quantity: 100
-        transfer = build :transfer, :with_items, item: item, item_quantity: 200,
-                                                 from_id: storage_location.id, to_id: storage_location2.id
-        expect {
+        transfer = build :transfer,
+                         :with_items,
+                         item: item,
+                         item_quantity: 200,
+                         from_id: storage_location.id,
+                         to_id: storage_location2.id
+        expect do
           storage_location.move_inventory!(transfer)
-        }.to raise_error(Errors::InsufficientAllotment)
+        end.to raise_error(Errors::InsufficientAllotment)
       end
     end
 
     describe "reclaim!" do
       it "adds distribution items back to storage location" do
         storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
+        distribution = create :distribution,
+                              :with_items,
+                              storage_location: storage_location,
+                              item_quantity: 50
         storage_location.reclaim!(distribution)
         expect(storage_location.inventory_items.first.quantity).to eq 350
       end

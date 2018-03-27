@@ -11,11 +11,10 @@ set :rails_env, :production
 
 role :app, "deploy@45.79.146.211"
 
-server '45.79.146.211', roles: %w{web app db}, primary: true,
-  ssh_options: {
-  	forward_agent: true,
-  	keys: ["~/.ssh/id_rsa"],
-  }
+server "45.79.146.211", roles: %w{web app db}, primary: true, ssh_options: {
+  forward_agent: true,
+  keys: ["~/.ssh/id_rsa"]
+}
 
 # role-based syntax
 # ==================
@@ -23,12 +22,11 @@ server '45.79.146.211', roles: %w{web app db}, primary: true,
 # Defines a role with one or multiple servers. The primary server in each
 # group is considered to be the first unless any hosts have the primary
 # property set. Specify the username and a domain or IP for the server.
-# Don't use `:all`, it's a meta role.
+# Don"t use `:all`, it"s a meta role.
 
 # role :app, %w{deploy@example.com}, my_property: :my_value
 # role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
 # role :db,  %w{deploy@example.com}
-
 
 # Configuration
 # =============
@@ -39,7 +37,7 @@ server '45.79.146.211', roles: %w{web app db}, primary: true,
 # Feel free to add new variables to customise your setup.
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.4.1'
+set :rbenv_ruby, "2.4.1"
 
 # Custom SSH Options
 # ==================
@@ -53,21 +51,20 @@ set :rbenv_ruby, '2.4.1'
 #    keys: %w{~/.ssh/id_rsa},
 #    forward_agent: true,
 #    auth_methods: %w{publickey},
-#    user: 'deploy'
+#    user: "deploy"
 # }
 
 set :pty, true
 #
 # The server-based syntax can be used to override options:
 # ------------------------------------
-# server 'example.com',
-#   user: 'user_name',
+# server "example.com",
+#   user: "user_name",
 #   roles: %w{web app},
 #   ssh_options: {
-#     user: 'user_name', # overrides user setting above
+#     user: "user_name", # overrides user setting above
 #     keys: %w(/home/user_name/.ssh/id_rsa),
 #     forward_agent: false,
 #     auth_methods: %w(publickey password)
-#     # password: 'please use keys'
+#     # password: "please use keys"
 #   }
-

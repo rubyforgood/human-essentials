@@ -80,7 +80,11 @@ If you are using Docker you may run the tests with `docker-compose run test`, ot
 
 This app uses RSpec, Capybara, Poltergeist, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :) 
 
-The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes). 
+The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
+
+### Linting with RuboCop
+
+We are using the [rubocop](https://github.com/bbatsov/rubocop) gem for linting. It is configured to run after all of your specs are passing and will print out any errors it finds in your terminal. If RuboCop finds linting errors, you can try fixing them automatically by running `rubocop --auto-correct`. Once you make and save any fixes, you can re-run RuboCop manually with `rubocop`. If you want to run your specs without triggering Rubocop, use `bundle exec rake spec DISABLE_POSTCHECKS=true`. See the docs for instructions on how to tell RuboCop to skip certain lines or entire files - this should be avoided, if possible. If you believe any of the settings in the RuboCop config file need updating, please open an issue.
 
 ### TODOs
 

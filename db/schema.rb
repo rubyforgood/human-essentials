@@ -49,8 +49,8 @@ ActiveRecord::Schema.define(version: 20180301135506) do
 
   create_table "distributions", id: :serial, force: :cascade do |t|
     t.text "comment"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "storage_location_id"
     t.integer "partner_id"
     t.integer "organization_id"
@@ -64,8 +64,8 @@ ActiveRecord::Schema.define(version: 20180301135506) do
   create_table "donation_sites", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "organization_id"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
@@ -73,8 +73,8 @@ ActiveRecord::Schema.define(version: 20180301135506) do
   create_table "donations", id: :serial, force: :cascade do |t|
     t.string "source"
     t.integer "donation_site_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "storage_location_id"
     t.text "comment"
     t.integer "organization_id"
@@ -89,15 +89,15 @@ ActiveRecord::Schema.define(version: 20180301135506) do
     t.integer "storage_location_id"
     t.integer "item_id"
     t.integer "quantity"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "category"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "barcode_count"
     t.integer "organization_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
@@ -132,8 +132,8 @@ ActiveRecord::Schema.define(version: 20180301135506) do
   create_table "partners", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "organization_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
@@ -154,8 +154,8 @@ ActiveRecord::Schema.define(version: 20180301135506) do
   create_table "storage_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "organization_id"
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end
