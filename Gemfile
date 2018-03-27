@@ -5,7 +5,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem "bootstrap-sass"
+gem 'api-auth', '~> 1.5'
+gem 'bootstrap-sass'
 gem "bugsnag"
 gem "chartkick", "~> 2.2"
 gem "cocoon", "~> 1.2" # For nested resources in forms
@@ -60,13 +61,14 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 2.13"
-  gem "database_cleaner", "~> 1.5"
-  gem "factory_bot_rails", "~> 4.8"
-  gem "launchy", "~> 2.4"
-  gem "phantomjs", "~> 2.1", require: "phantomjs/poltergeist"
-  gem "poltergeist", "~> 1.15"
-  gem "rails-controller-testing", "~> 1.0"
+  gem 'capybara', '~> 2.13'
+  gem 'database_cleaner', '~> 1.5'
+  gem 'factory_bot_rails', '~> 4.8'
+  gem 'launchy', '~> 2.4'
+  gem 'phantomjs', '~> 2.1', require: "phantomjs/poltergeist"
+  gem 'poltergeist', '~> 1.15'
+  gem 'rails-controller-testing', '~> 1.0'
+  gem 'webmock', '~> 2.1'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
