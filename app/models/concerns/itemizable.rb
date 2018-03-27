@@ -4,10 +4,10 @@ module Itemizable
   extend ActiveSupport::Concern
 
   included do
-    has_many :line_items, as: :itemizable, inverse_of: :itemizable do
+    has_many :line_items, as: :itemizable, inverse_of: :itemizable, dependent: :destroy do
       def combine!
         # Bail if there's nothing
-        return if size == 0
+        return if size.zero?
         # First we'll collect all the line_items that are used
         combined = {}
         parent_id = first.itemizable_id
@@ -40,7 +40,7 @@ module Itemizable
     has_many :items, through: :line_items
     accepts_nested_attributes_for :line_items,
                                   allow_destroy: true,
-                                  reject_if: proc { |li| li[:item_id].blank? || li[:quantity].blank? }
+                                  reject_if: proc { |l| l[:item_id].blank? || l[:quantity].blank? }
 
     # Anything using line_items should not be OK with an invalid line_item
     validates_associated :line_items

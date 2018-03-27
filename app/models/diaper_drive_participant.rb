@@ -17,11 +17,13 @@ class DiaperDriveParticipant < ApplicationRecord
   require "csv"
 
   belongs_to :organization # Automatically validates presence as of Rails 5
-  has_many :donations, inverse_of: :diaper_drive_participant
+  has_many :donations, inverse_of: :diaper_drive_participant, dependent: :destroy
 
   validates :name, presence: true
-  validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
-  validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
+  validates :phone, presence: { message: "Must provide a phone or an e-mail" },
+                    if: proc { |ddp| ddp.email.blank? }
+  validates :email, presence: { message: "Must provide a phone or an e-mail" },
+                    if: proc { |ddp| ddp.phone.blank? }
 
   # TODO: - This should be set up with a callback to cache the total so we're not hitting the DB
   def volume

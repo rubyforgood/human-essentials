@@ -155,7 +155,7 @@ RSpec.describe Donation, type: :model do
         expect do
           donation.track(item, 10)
           donation.reload
-        end.not_to change { donation.line_items.count }
+        end.not_to change(donation.line_items.count)
 
         expect(donation.line_items.first.quantity).to eq(15)
       end
@@ -207,7 +207,7 @@ RSpec.describe Donation, type: :model do
         item_id = create(:item).id
         expect do
           donation.remove(item_id)
-        end.not_to change { donation.line_items.count }
+        end.not_to change(donation.line_items.count)
       end
     end
 

@@ -22,25 +22,33 @@ class Organization < ApplicationRecord
 
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
-  validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
+  validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp,
+                            message: "it should look like 'http://www.example.com'" },
+                  allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
 
-  has_many :adjustments
-  has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.global = ?", organization.id, true) }
-  has_many :distributions
-  has_many :donations
-  has_many :purchases
-  has_many :donation_sites
-  has_many :diaper_drive_participants
-  has_many :storage_locations
+  has_many :adjustments, dependent: :destroy
+  has_many :barcode_items, ->(organization) {
+                             unscope(where: :organization_id)
+                               .where("barcode_items.organization_id = ? OR
+                                       barcode_items.global = ?",
+                                      organization.id, true)
+                           }, inverse_of: :organization
+  has_many :distributions, dependent: :destroy
+  has_many :donations, dependent: :destroy
+  has_many :purchases, dependent: :destroy
+  has_many :donation_sites, dependent: :destroy
+  has_many :diaper_drive_participants, dependent: :destroy
+  has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
-  has_many :items
-  has_many :partners
-  has_many :transfers
-  has_many :users
+  has_many :items, dependent: :destroy
+  has_many :partners, dependent: :destroy
+  has_many :transfers, dependent: :destroy
+  has_many :users, dependent: :destroy
 
-  has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>" }, default_url: "/DiaperBase-Logo.png"
-  validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
+  has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>" },
+                           default_url: "/DiaperBase-Logo.png"
+  validates_attachment_content_type :logo, content_type: %r{\Aimage/.*\z}
 
   after_create { |org| seed_it!(org) }
 
@@ -54,8 +62,12 @@ class Organization < ApplicationRecord
   end
 
   def quantity_categories
-    storage_locations.map(&:inventory_items).flatten.reject { |i| i.item.nil? }.group_by { |i| i.item.category }
-                     .map { |i| [i[0], i[1].map(&:quantity).sum] }.sort_by { |_, v| -v }
+    storage_locations.map(&:inventory_items)
+                     .flatten
+                     .reject { |i| i.item.nil? }
+                     .group_by { |i| i.item.category }
+                     .map { |i| [i[0], i[1].map(&:quantity).sum] }
+                     .sort_by { |_, v| -v }
   end
 
   def address_inline

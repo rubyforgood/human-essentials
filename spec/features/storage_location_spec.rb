@@ -75,8 +75,10 @@ RSpec.feature "Barcode management", type: :feature do
            name: "Baz")
     visit url_prefix + "/storage_locations"
 
-    expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).to eq(expected_order)
-    expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
+    expect(page.all("select#filters_containing option").map(&:text).select(&:present?))
+      .to eq(expected_order)
+    expect(page.all("select#filters_containing option").map(&:text).select(&:present?))
+      .not_to eq(expected_order.reverse)
   end
 
   scenario "Items in (adjustments)" do

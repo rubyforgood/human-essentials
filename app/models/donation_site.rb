@@ -17,7 +17,7 @@ class DonationSite < ApplicationRecord
 
   validates :name, :address, :organization, presence: true
 
-  has_many :donations
+  has_many :donations, dependent: :destroy
 
   def self.import_csv(filename, organization)
     CSV.parse(filename, headers: true) do |row|

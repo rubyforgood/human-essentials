@@ -14,7 +14,7 @@ class Partner < ApplicationRecord
   require "csv"
 
   belongs_to :organization
-  has_many :distributions
+  has_many :distributions, dependent: :destroy
 
   validates :organization, presence: true
   validates :name, :email, presence: true, uniqueness: true

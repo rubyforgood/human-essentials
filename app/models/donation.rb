@@ -15,7 +15,9 @@
 #
 
 class Donation < ApplicationRecord
-  SOURCES = { diaper_drive: "Diaper Drive", donation_site: "Donation Site", misc: "Misc. Donation" }.freeze
+  SOURCES = { diaper_drive: "Diaper Drive",
+              donation_site: "Donation Site",
+              misc: "Misc. Donation" }.freeze
 
   belongs_to :organization
 
@@ -25,22 +27,34 @@ class Donation < ApplicationRecord
   include Itemizable
 
   include Filterable
-  scope :at_storage_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
+  scope :at_storage_location, ->(storage_location_id) {
+    where(storage_location_id: storage_location_id)
+  }
   scope :by_source, ->(source) { where(source: source) }
   scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
-  scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) { where(diaper_drive_participant_id: diaper_drive_participant_id) }
+  scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
+    where(diaper_drive_participant_id: diaper_drive_participant_id)
+  }
 
   before_create :combine_duplicates
   before_destroy :remove_inventory
 
-  validates :donation_site, presence: { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" }, if: :from_donation_site?
-  validates :diaper_drive_participant, presence: { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" }, if: :from_diaper_drive?
-  validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
+  validates :donation_site, presence:
+    { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
+                            if: :from_donation_site?
+  validates :diaper_drive_participant, presence:
+    { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" },
+                                       if: :from_diaper_drive?
+  validates :source, presence: true, inclusion: { in: SOURCES.values,
+                                                  message: "Must be a valid source." }
 
   include IssuedAt
 
   scope :during, ->(range) { where(donations: { issued_at: range }) }
-  scope :by_source, ->(source) { source = SOURCES[source] if source.is_a?(Symbol); where(source: source) }
+  scope :by_source, ->(source) {
+    source = SOURCES[source] if source.is_a?(Symbol)
+    where(source: source)
+  }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
 
   def from_diaper_drive?
@@ -56,11 +70,19 @@ class Donation < ApplicationRecord
   end
 
   def format_drive_name
-    diaper_drive_participant.name.present? ? "#{diaper_drive_participant.name} (diaper drive)" : source
+    if diaper_drive_participant.name.present?
+      "#{diaper_drive_participant.name} (diaper drive)"
+    else
+      source
+    end
   end
 
   def self.daily_quantities_by_source(start, stop)
-    joins(:line_items).includes(:line_items).between(start, stop).group(:source).group_by_day("donations.created_at").sum("line_items.quantity")
+    joins(:line_items).includes(:line_items)
+                      .between(start, stop)
+                      .group(:source)
+                      .group_by_day("donations.created_at")
+                      .sum("line_items.quantity")
   end
 
   # def self.total_received
@@ -104,7 +126,7 @@ class Donation < ApplicationRecord
     line_item = line_items.find_by(item_id: item_id)
     line_item.quantity += quantity
     # Inventory can never be negative
-    line_item.quantity = 0 if line_item.quantity < 0
+    line_item.quantity = 0 if line_item.quantity.negative?
     line_item.save
   end
 

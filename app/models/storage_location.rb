@@ -14,19 +14,34 @@ class StorageLocation < ApplicationRecord
   require "csv"
 
   belongs_to :organization
-  has_many :inventory_items, -> { includes(:item).order("items.name") }
-  has_many :donations
-  has_many :distributions
+  has_many :inventory_items, -> { includes(:item).order("items.name") },
+           inverse_of: :storage_location
+  has_many :donations, dependent: :destroy
+  has_many :distributions, dependent: :destroy
   has_many :items, through: :inventory_items
+  has_many :transfers_from, class_name: "Transfer",
+                            inverse_of: :from,
+                            foreign_key: :id,
+                            dependent: :destroy
+  has_many :transfers_to, class_name: "Transfer",
+                          inverse_of: :to,
+                          foreign_key: :id,
+                          dependent: :destroy
 
   validates :name, :address, :organization, presence: true
 
   include Filterable
-  scope :containing, ->(item_id) { joins(:inventory_items).where("inventory_items.item_id = ?", item_id) }
+  scope :containing, ->(item_id) {
+    joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
+  }
   scope :alphabetized, -> { order(:name) }
 
   def self.item_total(item_id)
-    StorageLocation.select("quantity").joins(:inventory_items).where("inventory_items.item_id = ?", item_id).collect(&:quantity).reduce(:+)
+    StorageLocation.select("quantity")
+                   .joins(:inventory_items)
+                   .where("inventory_items.item_id = ?", item_id)
+                   .collect(&:quantity)
+                   .reduce(:+)
   end
 
   def self.items_inventoried
@@ -55,8 +70,9 @@ class StorageLocation < ApplicationRecord
   def intake!(donation)
     log = {}
     donation.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id, item_id: line_item.item_id) do |inventory_item|
-        inventory_item.quantity = 0
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id,
+                                                       item_id: line_item.item_id) do |inv_item|
+        inv_item.quantity = 0
       end
       inventory_item.quantity += begin
                                    line_item.quantity
@@ -87,7 +103,8 @@ class StorageLocation < ApplicationRecord
   def edit!(donation_or_purchase)
     log = {}
     donation_or_purchase.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id, item_id: line_item.item_id)
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id,
+                                                       item_id: line_item.item_id)
       delta = line_item.quantity - line_item.quantity_before_last_save
       inventory_item.quantity += begin
                                    delta
@@ -111,7 +128,8 @@ class StorageLocation < ApplicationRecord
       inventory_item = inventory_items.find_by(item: line_item.item)
       next if inventory_item.nil?
       if inventory_item.quantity >= line_item.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
+                                                 inventory_item.quantity) - line_item.quantity
       else
         insufficient_items << {
           item_id: line_item.item.id,
@@ -142,9 +160,12 @@ class StorageLocation < ApplicationRecord
 
   def self.import_inventory(filename, org, loc)
     current_org = Organization.find(org)
-    donation = current_org.donations.create(storage_location_id: loc.to_i, source: "Misc. Donation", organization_id: current_org.id)
+    donation = current_org.donations.create(storage_location_id: loc.to_i,
+                                            source: "Misc. Donation",
+                                            organization_id: current_org.id)
     CSV.parse(filename, headers: false) do |row|
-      donation.line_items.create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
+      donation.line_items
+              .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
     donation.storage_location.intake!(donation)
   end
@@ -152,17 +173,21 @@ class StorageLocation < ApplicationRecord
   # TODO: - this action is happening in the Transfer model/controller - does this method belong here?
   def move_inventory!(transfer)
     updated_quantities = {}
-    item_validator = Errors::InsufficientAllotment.new("Transfer items exceeds the available inventory")
+    item_validator = Errors::InsufficientAllotment.new("Transfer items exceeds \
+                                                        the available inventory")
     transfer.line_items.each do |line_item|
       inventory_item = inventory_items.find_by(item: line_item.item)
       new_inventory_item = transfer.to.inventory_items.find_or_create_by(item: line_item.item)
-      next if inventory_item.nil? || inventory_item.quantity == 0
+      next if inventory_item.nil? || inventory_item.quantity.zero?
       if inventory_item.quantity >= line_item.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
+                                                 inventory_item.quantity) - line_item.quantity
         updated_quantities[new_inventory_item.id] = (updated_quantities[new_inventory_item.id] ||
           new_inventory_item.quantity) + line_item.quantity
       else
-        item_validator.add_insufficiency(line_item.item, inventory_item.quantity, line_item.quantity)
+        item_validator.add_insufficiency(line_item.item,
+                                         inventory_item.quantity,
+                                         line_item.quantity)
       end
     end
 
@@ -179,12 +204,15 @@ class StorageLocation < ApplicationRecord
 
     adjustment.line_items.each do |line_item|
       inventory_item = inventory_items.find_by(item: line_item.item)
-      next if inventory_item.nil? || inventory_item.quantity == 0
+      next if inventory_item.nil? || inventory_item.quantity.zero?
 
       if (inventory_item.quantity + line_item.quantity) >= 0
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) + line_item.quantity
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
+                                                 inventory_item.quantity) + line_item.quantity
       else
-        item_validator.add_insufficiency(line_item.item, inventory_item.quantity, line_item.quantity)
+        item_validator.add_insufficiency(line_item.item,
+                                         inventory_item.quantity,
+                                         line_item.quantity)
       end
     end
 
@@ -198,7 +226,7 @@ class StorageLocation < ApplicationRecord
     ActiveRecord::Base.transaction do
       distribution.line_items.each do |line_item|
         inventory_item = inventory_items.find_by(item: line_item.item)
-        inventory_item.update_attribute(:quantity, inventory_item.quantity + line_item.quantity)
+        inventory_item.update(:quantity, inventory_item.quantity + line_item.quantity)
       end
     end
     distribution.destroy
@@ -209,7 +237,7 @@ class StorageLocation < ApplicationRecord
   def update_inventory_inventory_items(records)
     ActiveRecord::Base.transaction do
       records.each do |inventory_item_id, quantity|
-        InventoryItem.find(inventory_item_id).update_attribute("quantity", quantity)
+        InventoryItem.find(inventory_item_id).update("quantity", quantity)
       end
     end
   end

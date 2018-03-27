@@ -60,9 +60,13 @@ class DonationsController < ApplicationController
                                 source: "Misc. Donation",
                                 storage_location_id: current_organization.intake_location,
                                 issued_at: Time.zone.today,
-                                line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
-                                                                  "quantity" => params["number_of_diapers"],
-                                                                  "_destroy" => "false" } })
+                                line_items_attributes: { "0" =>
+                                                         {
+                                                           "item_id" => params["diaper_type"],
+                                                           "quantity" =>
+                                                             params["number_of_diapers"],
+                                                           "_destroy" => "false"
+                                                         } })
     @donation.storage_location.intake! @donation
     render status: 200, json: @donation.to_json
   end
@@ -128,7 +132,10 @@ class DonationsController < ApplicationController
   def donation_params
     strip_unnecessary_params
     params = compact_line_items
-    params.require(:donation).permit(:source, :comment, :storage_location_id, :issued_at, :donation_site_id, :diaper_drive_participant_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :comment, :storage_location_id, :issued_at,
+                                     :donation_site_id, :diaper_drive_participant_id,
+                                     line_items_attributes: %i(id item_id quantity _destroy))
+          .merge(organization: current_organization)
   end
 
   def donation_item_params
@@ -137,7 +144,8 @@ class DonationsController < ApplicationController
 
   def filter_params
     return {} unless params.key?(:filters)
-    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant)
+    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site,
+                                   :by_diaper_drive_participant)
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source
@@ -152,7 +160,9 @@ class DonationsController < ApplicationController
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
     return params unless params[:donation].key?(:line_item_attributes)
-    params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
+    params[:donation][:line_items_attributes].delete_if do |_row, data|
+      data["quantity"].blank? && data["item_id"].blank?
+    end
     params
   end
 end

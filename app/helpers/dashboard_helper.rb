@@ -21,7 +21,7 @@ module DashboardHelper
   end
 
   def selected_range
-    now = DateTime.now
+    now = Date.now
     case selected_interval
     when "today"
       now.beginning_of_day..now
@@ -36,9 +36,9 @@ module DashboardHelper
     when "year_to_date"
       now.beginning_of_year..now
     when "last_year"
-      (now - 1.year).beginning_of_year..(now - 1.year).end_of_year
+      (Date.current - 1.year).beginning_of_year..(Date.current - 1.year).end_of_year
     else
-      DateTime.new(2017, 1, 1, 0, 0, 0)..now
+      Date.new(2017, 1, 1)..Date.current
     end
   end
 
@@ -48,25 +48,43 @@ module DashboardHelper
 
   def received_distributed_data(range = selected_range)
     {
-      "Received donations" => current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(:+),
-      "Purchased" => current_organization.purchases.during(range).collect { |d| d.line_items.total }.reduce(:+),
-      "Distributed" => current_organization.distributions.during(range).collect { |d| d.line_items.total }.reduce(:+)
+      "Received donations" => current_organization.donations
+                                                  .during(range)
+                                                  .collect { |d| d.line_items.total }
+                                                  .reduce(:+),
+      "Purchased" => current_organization.purchases
+                                         .during(range)
+                                         .collect { |d| d.line_items.total }
+                                         .reduce(:+),
+      "Distributed" => current_organization.distributions
+                                           .during(range)
+                                           .collect { |d| d.line_items.total }
+                                           .reduce(:+)
     }
   end
 
   def total_on_hand(total = nil)
-    number_with_delimiter (total || "-1")
+    number_with_delimiter(total || "-1")
   end
 
   def total_received_donations(range = selected_range)
-    number_with_delimiter current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(0, :+)
+    number_with_delimiter current_organization.donations
+                                              .during(range)
+                                              .collect { |d| d.line_items.total }
+                                              .reduce(0, :+)
   end
 
   def total_purchased(range = selected_range)
-    number_with_delimiter current_organization.purchases.during(range).collect { |d| d.line_items.total }.reduce(0, :+)
+    number_with_delimiter current_organization.purchases
+                                              .during(range)
+                                              .collect { |d| d.line_items.total }
+                                              .reduce(0, :+)
   end
 
   def total_distributed(range = selected_range)
-    number_with_delimiter current_organization.distributions.during(range).collect { |d| d.line_items.total }.reduce(0, :+)
+    number_with_delimiter current_organization.distributions
+                                              .during(range)
+                                              .collect { |d| d.line_items.total }
+                                              .reduce(0, :+)
   end
 end

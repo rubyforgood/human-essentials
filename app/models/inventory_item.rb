@@ -24,7 +24,10 @@ class InventoryItem < ApplicationRecord
   delegate :name, to: :item, prefix: true
 
   def self.quantity_by_category
-    includes(:item).select("items.category").group("items.category").sum(:quantity).sort_by { |_, v| -v }
+    includes(:item).select("items.category")
+                   .group("items.category")
+                   .sum(:quantity)
+                   .sort_by { |_, v| -v }
   end
 
   # TODO: - is there a reason for doing this instead of setting a DB default?

@@ -1,13 +1,14 @@
 class OrganizationsController < ApplicationController
   def edit
-    @organization = current_organization
+    @current_organization = current_organization
   end
 
   def update
-    @organization = current_organization
+    @current_organization = current_organization
 
-    if @organization.update(organization_params)
-      redirect_to edit_organization_path(organization_id: current_organization.to_param), notice: "Updated organization!"
+    if @current_organization.update(organization_params)
+      redirect_to edit_organization_path(organization_id: current_organization.to_param),
+                  notice: "Updated organization!"
     else
       flash[:error] = "Failed to update organization"
       render :edit

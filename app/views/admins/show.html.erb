@@ -1,8 +1,8 @@
 <section class="content-header">
-	<% content_for :title, "Organizations - #{@organization.name}" %>
+	<% content_for :title, "Organizations - #{@current_organization.name}" %>
 <h1>
   Organization info
-  <small>for <%= @organization.name %></small>
+  <small>for <%= @current_organization.name %></small>
 </h1>
 <ol class="breadcrumb">
   <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
@@ -10,7 +10,7 @@
   <% end %>
   </li>
   <li><%= link_to "Administration", (admins_path(organization_id: current_user.organization)) %></li>
-  <li class="active"><%= @organization.name %></li>
+  <li class="active"><%= @current_organization.name %></li>
 </ol>
 </section>
 
@@ -20,19 +20,19 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <h3 class="box-title"><%= @organization.name %></h3>
+    <h3 class="box-title"><%= @current_organization.name %></h3>
   </div>
   <div class="box-body">
 		<div class="col-md-6">
 		  <h4>Contact Info</h4>
-			<p><%= fa_icon "envelope" %> <%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
-			<address><%= fa_icon "map-marker" %> <%= @organization.address %></address>
+			<p><%= fa_icon "envelope" %> <%= link_to @current_organization.email, "mailto:#{@current_organization.email}" %></p>
+			<address><%= fa_icon "map-marker" %> <%= @current_organization.address %></address>
     </div>
 		<div class="col-md-6">
 			<h4>Users</h4>
 			  <ul class="list-group">
 					<li class="list-group-item">
-			<%= @organization.display_users.split(",").join("</li><li class=\"list-group-item\">").html_safe %>
+			<%= @current_organization.display_users.split(",").join("</li><li class=\"list-group-item\">").html_safe %>
 			    </li>
 				</ul>
 
@@ -45,7 +45,7 @@
 			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title">Add User to <%= @organization.name %></h4>
+					<h4 class="modal-title">Add User to <%= @current_organization.name %></h4>
 				</div>
 				<div class="modal-body">
 					<div class="box-body">
@@ -60,7 +60,7 @@
 							  <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
 							  <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
 							</div>
-							<%= hidden_field_tag :org , @organization.id %><br>
+							<%= hidden_field_tag :org , @current_organization.id %><br>
 							<%= button_tag :submit, class:"btn btn-primary btn-lg" do %>
 							  Invite User
 							<% end %>

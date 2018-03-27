@@ -21,7 +21,9 @@ class Purchase < ApplicationRecord
   include Filterable
   include IssuedAt
 
-  scope :at_storage_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
+  scope :at_storage_location, ->(storage_location_id) {
+                                where(storage_location_id: storage_location_id)
+                              }
   scope :purchased_from, ->(purchased_from) { where(purchased_from: purchased_from) }
   scope :during, ->(range) { where(purchases: { issued_at: range }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
@@ -68,7 +70,7 @@ class Purchase < ApplicationRecord
     line_item = line_items.find_by(item_id: item_id)
     line_item.quantity += quantity
     # Inventory can never be negative
-    line_item.quantity = 0 if line_item.quantity < 0
+    line_item.quantity = 0 if line_item.quantity.negative?
     line_item.save
   end
 

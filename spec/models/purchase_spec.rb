@@ -125,7 +125,7 @@ RSpec.describe Purchase, type: :model do
         expect do
           purchase.track(item, 10)
           purchase.reload
-        end.not_to change { purchase.line_items.count }
+        end.not_to change(purchase.line_items.count)
 
         expect(purchase.line_items.first.quantity).to eq(15)
       end
@@ -175,7 +175,7 @@ RSpec.describe Purchase, type: :model do
         item_id = create(:item).id
         expect do
           purchase.remove(item_id)
-        end.not_to change { purchase.line_items.count }
+        end.not_to change(purchase.line_items.count)
       end
     end
 
