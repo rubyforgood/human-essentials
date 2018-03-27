@@ -74,7 +74,7 @@ class DistributionsController < ApplicationController
                layout: "layouts/application",
                status: 200
       end
-      format.json { render nothing: true, status: 200 }
+      format.json { render nothing: true, status: :ok }
     end
   end
 

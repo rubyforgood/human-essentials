@@ -153,7 +153,7 @@ end
 items_by_category.each do |category, entries|
   entries.each do |entry|
     item = Item.find_or_create_by!(name: entry[:name], organization: pdx_org)
-    item.update_attributes(entry.except(:name).except(:qty).merge(category: category))
+    item.update(entry.except(:name).except(:qty).merge(category: category))
 
     seed_quantity(item.id, inv_arbor.id, entry[:qty][0])
     seed_quantity(item.id, inv_dsu.id, entry[:qty][1])

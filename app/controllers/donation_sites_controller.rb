@@ -27,7 +27,7 @@ class DonationSitesController < ApplicationController
 
   def update
     @donation_site = current_organization.donation_sites.find(params[:id])
-    if @donation_site.update_attributes(donation_site_params)
+    if @donation_site.update(donation_site_params)
       redirect_to donation_sites_path, notice: "#{@donation_site.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"

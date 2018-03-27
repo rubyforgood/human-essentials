@@ -45,8 +45,8 @@ RSpec.describe Partner, type: :model do
           "Content-Type" => "application/x-www-form-urlencoded"
         }
         body = URI.encode_www_form partner.attributes
-        expect(WebMock).to have_requested(:post, callback_url).
-          with(headers: headers, body: body).once
+        expect(WebMock).to have_requested(:post, callback_url)
+          .with(headers: headers, body: body).once
       end
     end
   end

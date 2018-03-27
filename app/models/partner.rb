@@ -22,8 +22,8 @@ class Partner < ApplicationRecord
 
   after_create :notify_diaper_partner
 
-  def self.import_csv(filename,organization)
-    CSV.parse(filename, :headers => true) do |row|
+  def self.import_csv(filename, organization)
+    CSV.parse(filename, headers: true) do |row|
       loc = Partner.new(row.to_hash)
       loc.organization_id = organization
       loc.save!
@@ -34,7 +34,7 @@ class Partner < ApplicationRecord
 
   def notify_diaper_partner
     diaper_partner_url = ENV["DIAPER_PARTNER_URL"]
-    return unless diaper_partner_url.present?
+    return if diaper_partner_url.blank?
 
     uri = URI(diaper_partner_url + "/partners")
     request = Net::HTTP::Post.new uri

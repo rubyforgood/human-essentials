@@ -39,21 +39,21 @@ class ApplicationController < ActionController::Base
   def not_found!
     respond_to do |format|
       format.html { render template: "errors/404", layout: "layouts/application", status: 404 }
-      format.json { render body: nil, status: 404 }
+      format.json { render body: nil, status: :not_found }
     end
   end
 
   def verboten!
     respond_to do |format|
       format.html { redirect_to dashboard_path, flash: { error: "Access Denied." } }
-      format.json { render body: nil, status: 403 }
+      format.json { render body: nil, status: :forbidden }
     end
   end
 
   def omgwtfbbq!
     respond_to do |format|
       format.html { render template: "errors/500", layout: "layouts/error", status: 500 }
-      format.json { render nothing: true, status: 500 }
+      format.json { render nothing: true, status: :internal_server_error }
     end
   end
 

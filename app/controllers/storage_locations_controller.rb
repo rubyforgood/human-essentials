@@ -136,7 +136,7 @@ line_items.itemizable_type = 'Transfer'")
   # TODO: the distribute! method needs to be worked into this controller somehow
   def update
     @storage_location = current_organization.storage_locations.find(params[:id])
-    if @storage_location.update_attributes(storage_location_params)
+    if @storage_location.update(storage_location_params)
       redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"

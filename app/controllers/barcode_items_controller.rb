@@ -51,7 +51,7 @@ class BarcodeItemsController < ApplicationController
 
   def update
     @barcode_item = current_organization.barcode_items.find(params[:id])
-    if @barcode_item.update_attributes(barcode_item_params)
+    if @barcode_item.update(barcode_item_params)
       redirect_to barcode_items_path, notice: "Barcode updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"

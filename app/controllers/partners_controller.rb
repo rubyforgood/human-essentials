@@ -27,7 +27,7 @@ class PartnersController < ApplicationController
 
   def update
     @partner = current_organization.partners.find(params[:id])
-    if @partner.update_attributes(partner_params)
+    if @partner.update(partner_params)
       redirect_to partners_path, notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"

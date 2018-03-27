@@ -39,7 +39,7 @@ class DiaperDriveParticipantsController < ApplicationController
 
   def update
     @diaper_drive_participant = current_organization.diaper_drive_participants.find(params[:id])
-    if @diaper_drive_participant.update_attributes(diaper_drive_participant_params)
+    if @diaper_drive_participant.update(diaper_drive_participant_params)
       redirect_to(
         diaper_drive_participants_path, notice: "#{@diaper_drive_participant.name} updated!"
       )

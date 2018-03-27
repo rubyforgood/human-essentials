@@ -50,7 +50,7 @@ class ItemsController < ApplicationController
 
   def update
     @item = current_organization.items.find(params[:id])
-    if @item.update_attributes(item_params)
+    if @item.update(item_params)
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
