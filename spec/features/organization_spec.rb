@@ -2,7 +2,7 @@ RSpec.feature "Organization management", type: :feature do
   before do
     sign_in(@user)
   end
-  let!(:url_prefix) { "/#{@organization.to_param}" }
+  let!(:url_prefix) { "/#{@current_organization.to_param}" }
   scenario "When editing their organization, the user is prompted with placeholder text\
             and a more helpful error message to ensure correct URL format" do
     visit url_prefix + "/organization/edit"

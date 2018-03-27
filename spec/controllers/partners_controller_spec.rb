@@ -2,7 +2,7 @@
 
 RSpec.describe PartnersController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_id: @current_organization.to_param }
   end
 
   before do

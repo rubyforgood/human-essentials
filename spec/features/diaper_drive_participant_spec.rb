@@ -2,7 +2,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
   before do
     sign_in(@user)
   end
-  let(:url_prefix) { "/#{@organization.to_param}" }
+  let(:url_prefix) { "/#{@current_organization.to_param}" }
 
   context "When a user views the index page" do
     before(:each) do

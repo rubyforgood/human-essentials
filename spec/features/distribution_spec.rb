@@ -1,10 +1,10 @@
 RSpec.feature "Distributions", type: :feature do
   before do
     sign_in(@user)
-    @url_prefix = "/#{@organization.to_param}"
+    @url_prefix = "/#{@current_organization.to_param}"
 
-    @partner = create(:partner, organization: @organization)
-    @storage_location = create(:storage_location, organization: @organization)
+    @partner = create(:partner, organization: @current_organization)
+    @storage_location = create(:storage_location, organization: @current_organization)
     setup_storage_location(@storage_location)
   end
 

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe AdjustmentsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_id: @current_organization.to_param }
   end
 
   # This should return the minimal set of attributes required to create a valid
@@ -10,8 +10,8 @@ RSpec.describe AdjustmentsController, type: :controller do
   # adjust the attributes here as well.
   let(:valid_attributes) do
     {
-      organization_id: @organization.id,
-      storage_location_id: create(:storage_location, organization: @organization).id
+      organization_id: @current_organization.id,
+      storage_location_id: create(:storage_location, organization: @current_organization).id
     }
   end
 

@@ -42,10 +42,10 @@ RSpec.describe Organization, type: :model do
       item = create(:item)
       create(:storage_location, :with_items, item: item, item_quantity: 100)
       create(:storage_location, :with_items, item: item, item_quantity: 150)
-      expect(@organization.total_inventory).to eq(250)
+      expect(@current_organization.total_inventory).to eq(250)
     end
     it "returns 0 if there is nothing" do
-      expect(@organization.total_inventory).to eq(0)
+      expect(@current_organization.total_inventory).to eq(0)
     end
   end
 end

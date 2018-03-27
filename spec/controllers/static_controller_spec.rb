@@ -28,7 +28,7 @@ RSpec.describe StaticController, type: :controller do
     describe "GET #index" do
       subject { get :index }
       it "redirects to organization dashboard" do
-        expect(subject).to redirect_to(dashboard_url(@organization))
+        expect(subject).to redirect_to(dashboard_url(@current_organization))
       end
     end
   end

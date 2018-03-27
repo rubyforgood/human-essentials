@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe AdminsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.id }
+    { organization_id: @current_organization.id }
   end
 
   context "When logged in as an organization admin" do
@@ -33,28 +33,28 @@ RSpec.describe AdminsController, type: :controller do
 
     describe "GET #show" do
       it "returns http success" do
-        get :show, params: { id: @organization.id }
+        get :show, params: { id: @current_organization.id }
         expect(response).to be_successful
       end
     end
 
     describe "GET #edit" do
       it "returns http success" do
-        get :edit, params: { id: @organization.id }
+        get :edit, params: { id: @current_organization.id }
         expect(response).to be_successful
       end
     end
 
     describe "PUT #update" do
       it "redirect" do
-        put :update, params: { id: @organization.id, organization: { name: "Foo" } }
+        put :update, params: { id: @current_organization.id, organization: { name: "Foo" } }
         expect(response).to be_redirect
       end
     end
 
     describe "DELETE #destroy" do
       it "redirects" do
-        delete :destroy, params: { id: @organization.id }
+        delete :destroy, params: { id: @current_organization.id }
         expect(response).to be_redirect
       end
     end
@@ -88,14 +88,14 @@ RSpec.describe AdminsController, type: :controller do
 
     describe "GET #edit" do
       it "redirects" do
-        get :edit, params: { id: @organization.id }
+        get :edit, params: { id: @current_organization.id }
         expect(response).to be_redirect
       end
     end
 
     describe "PUT #update" do
       it "redirects" do
-        put :update, params: { id: @organization.id, organization: { name: "Foo" } }
+        put :update, params: { id: @current_organization.id, organization: { name: "Foo" } }
         expect(response).to be_redirect
       end
     end

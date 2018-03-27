@@ -1,6 +1,6 @@
 RSpec.describe ItemsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_id: @current_organization.to_param }
   end
 
   context "While signed in" do

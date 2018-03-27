@@ -5,7 +5,7 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "GET #index" do
-      subject { get :index, params: { organization_id: @organization.short_name } }
+      subject { get :index, params: { organization_id: @current_organization.short_name } }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -15,17 +15,18 @@ RSpec.describe TransfersController, type: :controller do
       it "redirects to #show when successful" do
         attributes = attributes_for(
           :transfer,
-          organization_id: @organization.id,
-          to_id: create(:storage_location, organization: @organization).id,
-          from_id: create(:storage_location, organization: @organization).id
+          organization_id: @current_organization.id,
+          to_id: create(:storage_location, organization: @current_organization).id,
+          from_id: create(:storage_location, organization: @current_organization).id
         )
 
-        post :create, params: { organization_id: @organization.short_name, transfer: attributes }
+        post :create, params: { organization_id: @current_organization.short_name,
+                                transfer: attributes }
         expect(response).to redirect_to(transfers_path)
       end
 
       it "renders to #new when failing" do
-        post :create, params: { organization_id: @organization.short_name,
+        post :create, params: { organization_id: @current_organization.short_name,
                                 transfer: { from_id: nil, to_id: nil } }
         expect(response).to be_successful # Will render :new
         expect(response).to render_template("new")
@@ -34,7 +35,7 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "GET #new" do
-      subject { get :new, params: { organization_id: @organization.short_name } }
+      subject { get :new, params: { organization_id: @current_organization.short_name } }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -42,7 +43,8 @@ RSpec.describe TransfersController, type: :controller do
 
     describe "GET #show" do
       subject do
-        get :show, params: { organization_id: @organization.short_name, id: create(:transfer) }
+        get :show, params: { organization_id: @current_organization.short_name,
+                             id: create(:transfer) }
       end
 
       it "returns http success" do

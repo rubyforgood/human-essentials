@@ -1,8 +1,8 @@
 def setup_storage_location(storage_location, *items)
   if items.empty?
-    items << create(:item, organization: @organization)
-    items << create(:item, organization: @organization)
-    items << create(:item, organization: @organization)
+    items << create(:item, organization: @current_organization)
+    items << create(:item, organization: @current_organization)
+    items << create(:item, organization: @current_organization)
   end
 
   items.each do |item|

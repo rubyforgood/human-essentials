@@ -2,7 +2,7 @@ RSpec.feature "Item management", type: :feature do
   before do
     sign_in(@user)
   end
-  let!(:url_prefix) { "/#{@organization.to_param}" }
+  let!(:url_prefix) { "/#{@current_organization.to_param}" }
   scenario "User creates a new item" do
     visit url_prefix + "/items/new"
     item_traits = attributes_for(:item)

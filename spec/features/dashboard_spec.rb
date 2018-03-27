@@ -1,7 +1,7 @@
 RSpec.feature "Dashboard", type: :feature do
   before :each do
     sign_in(@user)
-    @url_prefix = "/#{@organization.short_name}"
+    @url_prefix = "/#{@current_organization.short_name}"
   end
 
   context "When visiting a new dashboard" do
@@ -17,12 +17,12 @@ RSpec.feature "Dashboard", type: :feature do
       organization_logo = extract_image(:xpath, "//div/img")
       expect(organization_logo).to eq("logo.jpg")
 
-      @organization.logo = nil
-      @organization.save
+      @current_organization.logo = nil
+      @current_organization.save
       visit @url_prefix + "/dashboard"
 
       expect(page).not_to have_xpath("//div/img")
-      expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@organization.name)
+      expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@current_organization.name)
     end
   end
 
@@ -31,12 +31,12 @@ RSpec.feature "Dashboard", type: :feature do
   scenario "The user can scope down what they see in the dashboard\
             using the date-range drop down" do
     # TODO: This spec fails in January because Year-to-date... need to use TimeCop or something"
-    item = create(:item, organization: @organization)
+    item = create(:item, organization: @current_organization)
     sl = create(:storage_location,
                 :with_items,
                 item: item,
                 item_quantity: 125,
-                organization: @organization)
+                organization: @current_organization)
     create(:donation,
            :with_item,
            item_id: item.id,
@@ -61,7 +61,7 @@ RSpec.feature "Dashboard", type: :feature do
            item_quantity: 100,
            storage_location: sl,
            issued_at: Time.zone.today)
-    @organization.reload
+    @current_organization.reload
 
     # Verify the initial totals are correct
     visit @url_prefix + "/dashboard"
@@ -75,14 +75,14 @@ RSpec.feature "Dashboard", type: :feature do
     expect(page).to have_content("5 items distributed last month")
   end
 
-  scenario "inventory totals on dashboard are updated immediately after\
+  fscenario "inventory totals on dashboard are updated immediately after \
     donations and distributions are made", js: true do
     create(:partner)
-    create(:item, organization: @organization)
-    create(:storage_location, organization: @organization)
-    create(:donation_site, organization: @organization)
-    create(:diaper_drive_participant, organization: @organization)
-    @organization.reload
+    create(:item, organization: @current_organization)
+    create(:storage_location, organization: @current_organization)
+    create(:donation_site, organization: @current_organization)
+    create(:diaper_drive_participant, organization: @current_organization)
+    @current_organization.reload
 
     # Verify the initial totals on dashboard
     visit @url_prefix + "/dashboard"
@@ -107,7 +107,8 @@ RSpec.feature "Dashboard", type: :feature do
     # Check distributions
     visit @url_prefix + "/distributions/new"
     select Partner.last.name, from: "distribution_partner_id"
-    select @organization.storage_locations.first.name, from: "distribution_storage_location_id"
+    select @current_organization.storage_locations.first.name,
+           from: "distribution_storage_location_id"
     select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
     fill_in "distribution_line_items_attributes_0_quantity", with: "50"
     click_button "Preview Distribution"

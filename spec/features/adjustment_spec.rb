@@ -2,11 +2,11 @@ RSpec.feature "Adjustment management", type: :feature do
   before do
     sign_in(@user)
   end
-  let!(:url_prefix) { "/#{@organization.to_param}" }
+  let!(:url_prefix) { "/#{@current_organization.to_param}" }
 
   scenario "User can add an inventory adjustment at a storage location" do
     add_quantity = 10
-    storage_location = create(:storage_location, :with_items, organization: @organization)
+    storage_location = create(:storage_location, :with_items, organization: @current_organization)
     visit url_prefix + "/adjustments"
     click_link "New Adjustment"
     select storage_location.name, from: "From storage location"
@@ -22,7 +22,7 @@ RSpec.feature "Adjustment management", type: :feature do
 
   scenario "User can subtract an inventory adjustment at a storage location" do
     sub_quantity = -10
-    storage_location = create(:storage_location, :with_items, organization: @organization)
+    storage_location = create(:storage_location, :with_items, organization: @current_organization)
     visit url_prefix + "/adjustments"
     click_link "New Adjustment"
     select storage_location.name, from: "From storage location"
@@ -39,15 +39,15 @@ RSpec.feature "Adjustment management", type: :feature do
   scenario "User can filter the #index by storage location" do
     storage_location = create(:storage_location,
                               name: "here",
-                              organization: @organization)
+                              organization: @current_organization)
     storage_location2 = create(:storage_location,
                                name: "there",
-                               organization: @organization)
+                               organization: @current_organization)
     create(:adjustment,
-           organization: @organization,
+           organization: @current_organization,
            storage_location: storage_location)
     create(:adjustment,
-           organization: @organization,
+           organization: @current_organization,
            storage_location: storage_location2)
 
     visit url_prefix + "/adjustments"

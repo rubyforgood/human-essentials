@@ -6,7 +6,6 @@ class AdjustmentsController < ApplicationController
   def index
     @selected_location = filter_params[:at_location]
     @adjustments = current_organization.adjustments.filter(filter_params)
-
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
   end
 
@@ -35,18 +34,12 @@ class AdjustmentsController < ApplicationController
         redirect_to adjustment_path(@adjustment), notice: "Adjustment was successfully created."
       else
         # FIXME: don't use html_Safe
-        flash[:error] = safe_join(@adjustment.errors
-                                           .collect do |model, message|
-                                             ["#{model}: " + message, content_tag(:br)]
-                                           end.flatten)
+        flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }
         render :new
       end
 
     else
-      flash[:error] = safe_join(@adjustment.errors
-                                           .collect do |model, message|
-                                             ["#{model}: " + message, content_tag(:br)]
-                                           end.flatten)
+      flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }
       render :new
     end
   rescue Errors::InsufficientAllotment => ex

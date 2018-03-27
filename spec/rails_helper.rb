@@ -64,8 +64,10 @@ RSpec.configure do |config|
   config.before(:each) do
     __start_db_cleaning_with_log
 
-    # prepare a default @organization and @user to always be available for testing
-    @organization = create(:organization)
+    # prepare a default @current_organization and @user to always be available for testing
+    # TODO: This is a lot of setup/teardown each time -- there is probably a more
+    #       efficient way to do this.
+    @current_organization = create(:organization)
     @organization_admin = create(:organization_admin)
     @user = create(:user)
   end

@@ -30,21 +30,21 @@ RSpec.describe Adjustment, type: :model do
   context "Methods >" do
     it "`self.storage_locations_adjusted_for` returns only storage_locations\
        that are used in adjustments for one org" do
-      storage_location1 = create(:storage_location, organization: @organization)
-      storage_location2 = create(:storage_location, organization: @organization)
-      create(:storage_location, organization: @organization)
+      storage_location1 = create(:storage_location, organization: @current_organization)
+      storage_location2 = create(:storage_location, organization: @current_organization)
+      create(:storage_location, organization: @current_organization)
       storage_location4 = create(:storage_location, organization: create(:organization))
       create(:adjustment,
              storage_location: storage_location1,
-             organization: @organization)
+             organization: @current_organization)
       create(:adjustment,
              storage_location: storage_location2,
-             organization: @organization)
+             organization: @current_organization)
       create(:adjustment,
              storage_location: storage_location4,
              organization: storage_location4.organization)
-      expect(Adjustment.storage_locations_adjusted_for(@organization).to_a).to
-      match_array([storage_location1, storage_location2])
+      expect(Adjustment.storage_locations_adjusted_for(@current_organization).to_a).to \
+        match_array([storage_location1, storage_location2])
     end
   end
 

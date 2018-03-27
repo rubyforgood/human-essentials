@@ -1,6 +1,6 @@
 RSpec.describe BarcodeItemsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_id: @current_organization.to_param }
   end
 
   context "While signed in" do
@@ -41,7 +41,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
       let!(:organization_barcode) do
         create(:barcode_item,
                :for_organization,
-               organization: @organization)
+               organization: @current_organization)
       end
       let!(:other_barcode) do
         create(:barcode_item,
@@ -90,7 +90,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
         allow_any_instance_of(User).to receive(:is_superadmin?).and_return(false)
         global_barcode = create(:barcode_item,
                                 :for_organization,
-                                organization_id: @organization.id,
+                                organization_id: @current_organization.id,
                                 global: true)
         delete :destroy, params: default_params.merge(id: global_barcode.to_param)
         expect(response).not_to be_successful
@@ -115,7 +115,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
                params: default_params.merge(id: create(:barcode_item,
                                                        :for_organization,
                                                        global: false,
-                                                       organization_id: @organization.id))
+                                                       organization_id: @current_organization.id))
         expect(subject).to redirect_to(barcode_items_path)
       end
     end

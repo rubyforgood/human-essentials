@@ -2,17 +2,17 @@ RSpec.feature "Transfer management", type: :feature do
   before do
     sign_in(@user)
   end
-  let!(:url_prefix) { "/#{@organization.to_param}" }
+  let!(:url_prefix) { "/#{@current_organization.to_param}" }
 
   scenario "User can transfer an inventory from a storage location to another" do
     from_storage_location = create(:storage_location,
                                    :with_items,
                                    name: "From me",
-                                   organization: @organization)
+                                   organization: @current_organization)
     to_storage_location = create(:storage_location,
                                  :with_items,
                                  name: "To me",
-                                 organization: @organization)
+                                 organization: @current_organization)
     visit url_prefix + "/transfers"
     click_link "New Transfer"
     select from_storage_location.name, from: "From storage location"
@@ -26,14 +26,16 @@ RSpec.feature "Transfer management", type: :feature do
   end
 
   scenario "User can filter the #index by storage location both from and to" do
-    from_storage_location = create(:storage_location, name: "here", organization: @organization)
-    to_storage_location = create(:storage_location, name: "there", organization: @organization)
+    from_storage_location = create(:storage_location, name: "here",
+                                                      organization: @current_organization)
+    to_storage_location = create(:storage_location, name: "there",
+                                                    organization: @current_organization)
     create(:transfer,
-           organization: @organization,
+           organization: @current_organization,
            from: from_storage_location,
            to: to_storage_location)
     create(:transfer,
-           organization: @organization,
+           organization: @current_organization,
            from: to_storage_location,
            to: from_storage_location)
 

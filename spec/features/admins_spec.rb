@@ -19,8 +19,8 @@ RSpec.feature "Site Administration", type: :feature do
   end
 
   scenario "Admin can bail back to their own site" do
-    expect(page).to
-    have_xpath("//a[@href='#{dashboard_path(organization_id: @organization.to_param)}']")
+    expect(page).to \
+      have_xpath("//a[@href='#{dashboard_path(organization_id: @current_organization.to_param)}']")
   end
 
   scenario "An admin can edit the properties for an organization" do
@@ -33,13 +33,13 @@ RSpec.feature "Site Administration", type: :feature do
 
   context "When looking at a single organization" do
     before do
-      @organization.users << create(:user, email: "yet_another_user@website.com")
-      visit admin_path(@organization.id)
+      @current_organization.users << create(:user, email: "yet_another_user@website.com")
+      visit admin_path(@current_organization.id)
     end
     scenario "Admin can view details about an organization, including the users" do
-      expect(page).to have_content(@organization.email)
-      expect(page).to have_content(@organization.address)
-      @organization.users.each do |u|
+      expect(page).to have_content(@current_organization.email)
+      expect(page).to have_content(@current_organization.address)
+      @current_organization.users.each do |u|
         expect(page).to have_content(u.email)
       end
     end

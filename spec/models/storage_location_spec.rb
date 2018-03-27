@@ -180,18 +180,16 @@ RSpec.describe StorageLocation, type: :model do
                              storage_location: storage_location,
                              item_quantity: 350
         item = distribution.line_items.first.item
-        expect do
-          storage_location.distribute!(distribution)
-        end.to
-        raise_error do |error|
-          expect(error).to be_a Errors::InsufficientAllotment
-          expect(error.insufficient_items).to include(
-            item_id: item.id,
-            item_name: item.name,
-            quantity_on_hand: 300,
-            quantity_requested: 350
-          )
-        end
+        expect { storage_location.distribute!(distribution) }.to \
+          raise_error do |error|
+            expect(error).to be_a Errors::InsufficientAllotment
+            expect(error.insufficient_items).to include(
+              item_id: item.id,
+              item_name: item.name,
+              quantity_on_hand: 300,
+              quantity_requested: 350
+            )
+          end
       end
     end
 

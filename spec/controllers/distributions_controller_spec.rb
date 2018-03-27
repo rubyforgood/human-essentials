@@ -1,6 +1,6 @@
 RSpec.describe DistributionsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_id: @current_organization.to_param }
   end
 
   context "While signed in" do
@@ -17,7 +17,7 @@ RSpec.describe DistributionsController, type: :controller do
 
     describe "GET #reclaim" do
       subject do
-        get :index, params: default_params.merge(organization_id: @organization,
+        get :index, params: default_params.merge(organization_id: @current_organization,
                                                  id: create(:distribution).id)
       end
       it "returns http success" do

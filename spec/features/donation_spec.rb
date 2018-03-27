@@ -1,7 +1,7 @@
 RSpec.feature "Donations", type: :feature, js: true do
   before :each do
     sign_in @user
-    @url_prefix = "/#{@organization.short_name}"
+    @url_prefix = "/#{@current_organization.short_name}"
   end
 
   context "When visiting the index page" do
@@ -11,8 +11,7 @@ RSpec.feature "Donations", type: :feature, js: true do
 
     scenario "User can click to the new donation form" do
       find(".fa-plus").click
-
-      expect(current_path).to eq(new_donation_path(@organization))
+      expect(current_path).to eq(new_donation_path(@current_organization))
       expect(page).to have_content "Start a new donation"
     end
   end
@@ -79,11 +78,11 @@ RSpec.feature "Donations", type: :feature, js: true do
 
   context "When creating a new donation" do
     before(:each) do
-      create(:item, organization: @organization)
-      create(:storage_location, organization: @organization)
-      create(:donation_site, organization: @organization)
-      create(:diaper_drive_participant, organization: @organization)
-      @organization.reload
+      create(:item, organization: @current_organization)
+      create(:storage_location, organization: @current_organization)
+      create(:donation_site, organization: @current_organization)
+      create(:diaper_drive_participant, organization: @current_organization)
+      @current_organization.reload
     end
 
     context "via manual entry" do
@@ -199,15 +198,15 @@ RSpec.feature "Donations", type: :feature, js: true do
       # When a user creates a donation without it passing validation, the items
       # dropdown is not populated on the return trip.
       scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
-        item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-        expect(page).to
-        have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option",
-                   count: item_count)
+        item_count = @current_organization.items.count + 1 # Adds 1 for the "choose an item" option
+        expect(page).to \
+          have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option",
+                     count: item_count)
         click_button "Create Donation"
         expect(page).to have_content("error")
-        expect(page).to
-        have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option",
-                   count: item_count)
+        expect(page).to \
+          have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option",
+                     count: item_count)
       end
     end
 

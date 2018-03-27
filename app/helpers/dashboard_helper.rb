@@ -21,7 +21,7 @@ module DashboardHelper
   end
 
   def selected_range
-    now = Date.now
+    now = Date.current
     case selected_interval
     when "today"
       now.beginning_of_day..now
