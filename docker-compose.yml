@@ -14,6 +14,22 @@ services:
     environment:
       - PG_USERNAME=postgres
       - PG_HOST=postgres
+      - DIAPER_PARTNER_URL=http://diaperpartner:3000
+      - DIAPER_PARTNER_SECRET_KEY=secretkey123
+
+  test:
+    build:
+      context: .
+    volumes:
+      - .:/usr/src/app
+    working_dir: '/usr/src/app'
+    command: [rake, spec]
+    links:
+      - postgres
+    environment:
+      - PG_USERNAME=postgres
+      - PG_HOST=postgres
+      - RAILS_ENV=test
 
   postgres:
     image: postgres:9.5
