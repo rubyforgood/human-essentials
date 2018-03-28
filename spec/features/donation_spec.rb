@@ -141,7 +141,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       scenario "User can create a Diaper Drive from donation" do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         select "---Create new diaper drive---", from: "donation_diaper_drive_participant_id"
-        expect(page).to have_content('New Diaper Drive Participant')
+        expect(page).to have_content("New Diaper Drive Participant")
         fill_in "diaper_drive_participant_name", with: "test"
         fill_in "diaper_drive_participant_email", with: "123@mail.ru"
         click_button "Create Diaper drive participant"
