@@ -138,6 +138,16 @@ RSpec.feature "Donations", type: :feature, js: true do
         }.to change{Donation.count}.by(1)
       end
 
+      scenario "User can create a Diaper Drive from donation" do
+        select Donation::SOURCES[:diaper_drive], from: "donation_source"
+        select "---Create new diaper drive---", from: "donation_diaper_drive_participant_id"
+        expect(page).to have_content('New Diaper Drive Participant')
+        fill_in "diaper_drive_participant_name", with: "test"
+        fill_in "diaper_drive_participant_email", with: "123@mail.ru"
+        click_button "Create Diaper drive participant"
+        select "test", from: "donation_diaper_drive_participant_id"
+      end
+
       scenario "User can create a donation for a Donation Site source" do
         select Donation::SOURCES[:donation_site], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_donation_site_id']")

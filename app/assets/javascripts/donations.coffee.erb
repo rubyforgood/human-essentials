@@ -4,12 +4,21 @@
 
 $ ->
   control_id = "#donation_source"
+  diaper_drive_participant_id = "#donation_diaper_drive_participant_id"
   diaper_drive_participant_text = "<%= Donation::SOURCES[:diaper_drive] %>"
   donation_site_text = "<%= Donation::SOURCES[:donation_site] %>"
   diaper_drive_participant_container_id = "div.donation_diaper_drive_participant"
   donation_site_container_id = "div.donation_donation_site" 
   $(diaper_drive_participant_container_id).hide()
   $(donation_site_container_id).hide()
+  create_new_diaper_drive_text = "---Create new diaper drive---"
+  $(diaper_drive_participant_id).append('<option value="">---Create new diaper drive---</option>')
+
+  $(document).on "change", diaper_drive_participant_id, (evt) ->
+    selection = $(diaper_drive_participant_id + " option").filter(':selected').text()
+    if (selection is create_new_diaper_drive_text)
+      $("#new_diaper_drive").click()
+
 
   $(document).on "change", control_id, (evt) ->
     selection = $(control_id + " option").filter(':selected').text()

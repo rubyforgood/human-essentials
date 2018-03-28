@@ -6,16 +6,26 @@ class DiaperDriveParticipantsController < ApplicationController
   def create
     @diaper_drive_participant = current_organization.diaper_drive_participants.new(diaper_drive_participant_params.merge(organization: current_organization))
     if (@diaper_drive_participant.save)
-      redirect_to diaper_drive_participants_path, notice: "New diaper drive participant added!"
+      redirect_to diaper_drive_participants_path, notice: "New diaper drive participant added!" unless request.xhr?
     else
       flash[:error] = "Something didn't work quite right -- try again?"
-      render action: :new
+      if request.xhr?
+        render template: 'diaper_drive_participants/new_modal.js.erb'
+        flash.discard
+      else
+        render action: :new
+      end
     end
 
   end
 
   def new
     @diaper_drive_participant = current_organization.diaper_drive_participants.new
+    if request.xhr?
+      respond_to do |format|
+        format.js {render template: 'diaper_drive_participants/new_modal.js.erb'}
+      end
+    end
   end
 
   def edit
