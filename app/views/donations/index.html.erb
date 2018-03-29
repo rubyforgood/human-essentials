@@ -71,6 +71,7 @@
               <thead>
                 <tr>
                   <th>Source</th>
+                  <th>Date</th>
                   <th>Donation Site</th>
                   <th>Storage Location</th>
                   <th>Quantity of Items</th>
@@ -80,6 +81,15 @@
               </thead>
               <tbody>
                 <%= render partial: "donation_row", collection: @donations %>
+                <tr>
+                  <td>Total</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><%= @donations_quantity %></td>
+                  <td></td>
+                  <td></td>
+                </tr>
               </tbody>
             </table>
           </div><!-- /.box-body.table-responsive -->
