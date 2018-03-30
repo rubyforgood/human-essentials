@@ -42,6 +42,7 @@ class DonationsController < ApplicationController
     @selected_donation_site = filter_params[:from_donation_site]
     @diaper_drives = @donations.collect { |d| next unless d.source ==  Donation::SOURCES[:diaper_drive]; d.diaper_drive_participant }.compact.uniq
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
+    @selected_date = date_filter
   end
 
   def scale
@@ -132,7 +133,18 @@ private
 
   def filter_params
     return {} unless params.has_key?(:filters)
-    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant)
+    fp = params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant)
+    date_params = params.require(:date_filters)
+    fp.merge(by_issued_at: date_filter)
+  end
+
+  def date_filter
+    return nil unless params.has_key?(:date_filters)
+    date_params = params.require(:date_filters)
+    if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
+      return nil
+    end
+    Date.new(date_params["issued_at(1i)"].to_i, date_params["issued_at(2i)"].to_i, date_params["issued_at(3i)"].to_i)
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source
