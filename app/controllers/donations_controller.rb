@@ -33,7 +33,7 @@ class DonationsController < ApplicationController
                                       .filter(filter_params)
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
-    @donations_quantity = @donations.collect{ |d| d.total_quantity }.sum
+    @donations_quantity = @donations.collect(&:total_quantity).sum
     @storage_locations = @donations.collect { |d| d.storage_location }.compact.uniq
     @selected_storage_location = filter_params[:at_storage_location]
     @sources = @donations.collect { |d| d.source }.uniq
@@ -139,7 +139,7 @@ private
   end
 
   def date_filter
-    return nil unless params.has_key?(:date_filters)
+    return nil unless params.key?(:date_filters)
     date_params = params.require(:date_filters)
     if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
       return nil
