@@ -19,7 +19,7 @@ RSpec.feature "Donations", type: :feature, js: true do
     end
 
     scenario "Total quantity on the index page" do
-      expect(page.find(:css, 'table.table-hover', visible: true)).to have_content("20")
+      expect(page.find(:css, "table.table-hover", visible: true)).to have_content("20")
     end
   end
 
@@ -83,9 +83,9 @@ RSpec.feature "Donations", type: :feature, js: true do
     end
     scenario "Filter by issued_at" do
       storage = create(:storage_location, name: "storage")
-      create(:donation, storage_location: storage, issued_at: Date.new(2018,3,1), source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage, issued_at: Date.new(2018,3,1), source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage, issued_at: Date.new(2018,2,1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1), source: Donation::SOURCES[:misc])
       visit @url_prefix + "/donations"
       select "March", from: "date_filters_issued_at_2i"
       select "2018", from: "date_filters_issued_at_1i"
