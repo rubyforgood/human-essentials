@@ -25,6 +25,8 @@ class StorageLocation < ApplicationRecord
   scope :containing, ->(item_id) { joins(:inventory_items).where('inventory_items.item_id = ?', item_id) }
   scope :alphabetized, -> { order(:name) }
 
+  # TODO: Add a before_save callback that checks if the quantity for a line item is < 0, then destroy it
+
   def self.item_total(item_id)
     StorageLocation.select('quantity').joins(:inventory_items).where('inventory_items.item_id = ?', item_id).collect { |h| h.quantity }.reduce(:+)
   end
@@ -65,29 +67,35 @@ class StorageLocation < ApplicationRecord
     log
   end
 
-  def remove!(donation)
+  # TODO: Can remove! and adjust_from_past! be refactored into one method?
+  def remove!(donation_or_purchase)
     log = {}
-    donation.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_by(storage_location: id, item_id: line_item.item_id )
-      if inventory_item.quantity - line_item.quantity <= 0
+    donation_or_purchase.line_items.each do |line_item|
+      inventory_item = InventoryItem.find_by(storage_location: id, item_id: line_item.item_id)
+      if (inventory_item.quantity - line_item.quantity) <= 0
         inventory_item.destroy
       else
-        inventory_item.quantity -= line_item.quantity
-        inventory_item.save
+        inventory_item.update(quantity: inventory_item.quantity - line_item.quantity)
       end
       log[line_item.item_id] = "-#{line_item.quantity}"
     end
     log
   end
 
-  def edit!(donation_or_purchase)
+  def adjust_from_past!(donation_or_purchase)
     log = {}
     donation_or_purchase.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: line_item.item_id)
-      delta = line_item.quantity - line_item.quantity_before_last_save
-      inventory_item.quantity += delta rescue 0
+      # Pull up the inventory item entry
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id,
+                                                       item_id: line_item.item_id)
+      # Compare the current line item to what we had on file and get the difference
+      delta = line_item.quantity - inventory_item.quantity
+      # Apply the difference
+      inventory_item.quantity = inventory_item.quantity + delta
+      # If it zeroes out the line, just destroy the item altogether
       if inventory_item.quantity <= 0
         inventory_item.destroy
+      # Otherwise update it
       else
         inventory_item.save
       end

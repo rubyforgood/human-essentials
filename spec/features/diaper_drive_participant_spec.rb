@@ -65,8 +65,8 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
   context "When the Diaper Drives have donations associated with them already" do
     before(:each) do
       @ddp = create(:diaper_drive_participant)
-      create(:donation, :with_item, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: @ddp)
-      create(:donation, :with_item, created_at: 1.week.ago, item_quantity: 15, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: @ddp)
+      create(:donation, :with_items, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: @ddp)
+      create(:donation, :with_items, created_at: 1.week.ago, item_quantity: 15, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: @ddp)
     end
 
     scenario "Existing Diaper Drive Participants show in the #index with some summary stats" do

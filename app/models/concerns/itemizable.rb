@@ -29,6 +29,15 @@ module Itemizable
         includes(:item).group("items.category").sum(:quantity)
       end
 
+      def quantities_by_name(omit_zero = false)
+        results = {}
+        each do |li|
+          next if li.quantity.zero?
+          results[li.id] = { item_id: li.item.id, name: li.item.name, quantity: li.quantity }
+        end
+        results
+      end
+
       def sorted
         includes(:item).order("items.name")
       end
@@ -38,6 +47,7 @@ module Itemizable
       end
     end
     has_many :items, through: :line_items
+
     accepts_nested_attributes_for :line_items,
       allow_destroy: true,
       :reject_if => proc { |li| li[:item_id].blank? || li[:quantity].blank? }

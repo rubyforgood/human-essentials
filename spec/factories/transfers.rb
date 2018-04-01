@@ -19,20 +19,20 @@ FactoryBot.define do
   	comment "A comment"
 
     trait :with_items do
-      storage_location { create :storage_location, :with_items }
-
       transient do
         item_quantity 100
         item nil
       end
+      
+      storage_location { create :storage_location, :with_items, item: item }      
 
-      after(:build) do |transfer, evaluator|
+      after(:build) do |instance, evaluator|
         item = if evaluator.item.nil?
-                 transfer.storage_location.inventory_items.first.item
+                 instance.storage_location.inventory_items.first.item
                else
                  evaluator.item
                end
-        transfer.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
 

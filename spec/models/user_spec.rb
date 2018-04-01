@@ -28,8 +28,6 @@
 #  name                   :string           default("CHANGEME"), not null
 #
 
-require 'rails_helper'
-
 RSpec.describe User, type: :model do
   context "Validations >" do
     it "requires a name" do

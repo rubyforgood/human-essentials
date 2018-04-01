@@ -15,6 +15,8 @@
 #
 
 RSpec.describe Donation, type: :model do
+  it_behaves_like "itemizable"
+
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:donation, organization_id: nil)).not_to be_valid
@@ -100,48 +102,9 @@ RSpec.describe Donation, type: :model do
         expect(donation.items.count).to eq(1)
       end
     end
-
-    describe "line_items >" do
-      describe ".combine" do
-        let!(:item) { create(:item) }
-        it "combines multiple line_items with the same item_id into a single record" do
-          donation = build(:donation)
-          donation.line_items.build({item_id: item.id, quantity: 5})
-          donation.line_items.build({item_id: item.id, quantity: 10})
-          donation.line_items.combine!
-          expect(donation.save).to eq(true)
-          expect(donation.line_items.count).to eq(1)
-          expect(donation.line_items.first.quantity).to eq(15)
-          expect(donation.line_items.first.item_id).to eq(item.id)
-        end
-
-        it "incrementally combines line_items on donations that have already been created" do
-          donation = create(:donation, :with_item, item_id: item.id, item_quantity: 10)
-          donation.line_items.build({item_id: item.id, quantity: 5})
-          donation.line_items.combine!
-          donation.save
-          expect(donation.line_items.count).to eq(1)
-          expect(donation.line_items.first.quantity).to eq(15)
-        end
-      end
-    end
-
   end
 
   context "Methods >" do
-    context "line_items >" do
-      describe "total" do
-        it "has an item total" do
-          donation = create(:donation)
-          item1 = create :item
-          item2 = create :item
-          donation.track(item1, 1)
-          donation.track(item2, 2)
-          expect(donation.line_items.total).to eq(3)
-        end
-      end
-    end
-
     describe "track" do
       let!(:donation) { create(:donation) }
       let!(:item) { create(:item) }
@@ -160,13 +123,13 @@ RSpec.describe Donation, type: :model do
 
     describe "contains_item_id?" do
       it "returns true if the item_id already exists" do
-        donation = create(:donation, :with_item)
+        donation = create(:donation, :with_items)
         expect(donation.contains_item_id?(donation.items.first.id)).to be_truthy
       end
     end
 
     describe "update_quantity" do
-      let!(:donation) { create(:donation, :with_item) }
+      let!(:donation) { create(:donation, :with_items) }
       it "adds an additional quantity to the existing line_item" do
         expect {
           donation.update_quantity(1, donation.items.first)
@@ -189,7 +152,7 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "remove" do
-      let!(:donation) { create(:donation, :with_item) }
+      let!(:donation) { create(:donation, :with_items) }
 
       it "removes the item from the donation" do
         item_id = donation.line_items.last.item_id
@@ -211,11 +174,12 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "remove_inventory" do
-      it "removes inventory from the right storage location when donation deleted" do
-        donation = create(:donation, :with_item)
-        expect(donation.storage_location).to receive(:remove!)
-        donation.remove_inventory
-      end
+      it "removes inventory from the right storage location when donation is destroyed" do
+        donation = create(:donation, :with_items)
+        expect {
+          donation.destroy
+        }.to change{donation.storage_location.size}.by(-donation.total_quantity)
+      end      
     end
   end
 
