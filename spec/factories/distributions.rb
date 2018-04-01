@@ -21,20 +21,20 @@ FactoryBot.define do
     issued_at nil
 
     trait :with_items do
-      storage_location { create :storage_location, :with_items }
-
       transient do
         item_quantity 100
         item nil
       end
 
-      after(:build) do |distribution, evaluator|
+      storage_location { create :storage_location, :with_items, item: item }
+
+      after(:build) do |instance, evaluator|
         item = if evaluator.item.nil?
-                 distribution.storage_location.inventory_items.first.item
+                 instance.storage_location.inventory_items.first.item
                else
                  evaluator.item
                end
-        distribution.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
   end

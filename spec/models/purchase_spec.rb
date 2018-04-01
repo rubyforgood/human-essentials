@@ -13,9 +13,9 @@
 #  updated_at          :datetime         not null
 #
 
-require 'rails_helper'
-
 RSpec.describe Purchase, type: :model do
+  it_behaves_like "itemizable"
+
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:purchase, organization_id: nil)).not_to be_valid
@@ -75,46 +75,9 @@ RSpec.describe Purchase, type: :model do
       end
     end
 
-    describe "line_items >" do
-      describe ".combine" do
-        let!(:item) { create(:item) }
-        it "combines multiple line_items with the same item_id into a single record" do
-          purchase = build(:purchase)
-          purchase.line_items.build({item_id: item.id, quantity: 5})
-          purchase.line_items.build({item_id: item.id, quantity: 10})
-          purchase.line_items.combine!
-          expect(purchase.save).to eq(true)
-          expect(purchase.line_items.count).to eq(1)
-          expect(purchase.line_items.first.quantity).to eq(15)
-          expect(purchase.line_items.first.item_id).to eq(item.id)
-        end
-
-        it "incrementally combines line_items on purchases that have already been created" do
-          purchase = create(:purchase, :with_item, item_id: item.id, item_quantity: 10)
-          purchase.line_items.build({item_id: item.id, quantity: 5})
-          purchase.line_items.combine!
-          purchase.save
-          expect(purchase.line_items.count).to eq(1)
-          expect(purchase.line_items.first.quantity).to eq(15)
-        end
-      end
-    end
-
   end
 
   context "Methods >" do
-    context "line_items >" do
-      describe "total" do
-        it "has an item total" do
-          purchase = create(:purchase)
-          item1 = create :item
-          item2 = create :item
-          purchase.track(item1, 1)
-          purchase.track(item2, 2)
-          expect(purchase.line_items.total).to eq(3)
-        end
-      end
-    end
 
     describe "track" do
       let!(:purchase) { create(:purchase) }
@@ -134,13 +97,13 @@ RSpec.describe Purchase, type: :model do
 
     describe "contains_item_id?" do
       it "returns true if the item_id already exists" do
-        purchase = create(:purchase, :with_item)
+        purchase = create(:purchase, :with_items)
         expect(purchase.contains_item_id?(purchase.items.first.id)).to be_truthy
       end
     end
 
     describe "update_quantity" do
-      let!(:purchase) { create(:purchase, :with_item) }
+      let!(:purchase) { create(:purchase, :with_items) }
       it "adds an additional quantity to the existing line_item" do
         expect {
           purchase.update_quantity(1, purchase.items.first)
@@ -163,7 +126,7 @@ RSpec.describe Purchase, type: :model do
     end
 
     describe "remove" do
-      let!(:purchase) { create(:purchase, :with_item) }
+      let!(:purchase) { create(:purchase, :with_items) }
 
       it "removes the item from the purchase" do
         item_id = purchase.line_items.last.item_id
@@ -180,11 +143,12 @@ RSpec.describe Purchase, type: :model do
       end
     end
 
-    describe "remove_inventory" do
+     describe "remove_inventory" do
       it "removes inventory from the right storage location when purchase deleted" do
-        purchase = create(:purchase, :with_item)
-        expect(purchase.storage_location).to receive(:remove!)
-        purchase.remove_inventory
+        purchase = create(:purchase, :with_items)
+        expect {
+          purchase.remove_inventory
+        }.to change{purchase.storage_location.size}.by(-purchase.total_quantity)
       end
     end
   end
