@@ -45,8 +45,8 @@ ActiveRecord::Schema.define(version: 20180320065800) do
     t.integer "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "business_name"
     t.string "address"
+    t.string "business_name"
   end
 
   create_table "distributions", id: :serial, force: :cascade do |t|
