@@ -44,6 +44,10 @@
               <%= collection_select(:filters, :from_donation_site, @donation_sites || {}, :id, :name, { include_blank: true, selected: @selected_donation_site }, class: "form-control") %>
             </div>
           <% end %>
+          <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+            <%= label_tag "by Date" %>
+            <%= date_select :date_filters, :issued_at, order: [:month,  :year], include_blank: true, selected: @selected_date %>
+          </div>
         </div><!-- /.row -->
         <div class="row">
           <div class="col-xs-12">
@@ -71,6 +75,7 @@
               <thead>
                 <tr>
                   <th>Source</th>
+                  <th>Date</th>
                   <th>Donation Site</th>
                   <th>Storage Location</th>
                   <th>Quantity of Items</th>
@@ -80,6 +85,15 @@
               </thead>
               <tbody>
                 <%= render partial: "donation_row", collection: @donations %>
+                <tr>
+                  <td><strong>Total</strong></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><strong><%= @donations_quantity %></strong></td>
+                  <td></td>
+                  <td></td>
+                </tr>
               </tbody>
             </table>
           </div><!-- /.box-body.table-responsive -->
