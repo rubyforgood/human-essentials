@@ -28,6 +28,9 @@ class TransfersController < ApplicationController
     end
   rescue Errors::InsufficientAllotment => ex
     flash[:error] = ex.message
+    @storage_locations = current_organization.storage_locations.alphabetized
+    @items = current_organization.items.alphabetized
+    @transfer.line_items.build unless @transfer.line_items.size > 0
     render :new
   end
 
