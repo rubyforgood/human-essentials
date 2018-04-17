@@ -43,6 +43,33 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
       end
     end
 
+    describe "XHR #create" do
+      it "successful create" do
+        post :create, xhr: true, params: default_params.merge( diaper_drive_participant: { name: "test", email: "123@mail.ru" } )
+        expect(response).to be_successful
+      end
+
+      it "flash error" do
+      post :create, xhr: true, params: default_params.merge( diaper_drive_participant: { name: "test" } )
+      expect(response).to be_successful
+      expect(flash[:error]).to match(/try again/i)
+      end
+    end
+
+    describe "POST #create" do
+      it "successful create" do
+        post :create, params: default_params.merge( diaper_drive_participant: { name: "test", email: "123@mail.ru" } )
+        expect(response).to redirect_to(diaper_drive_participants_path)
+        expect(flash[:notice]).to match(/added!/i)
+      end
+
+      it "flash error" do
+        post :create, xhr: true, params: default_params.merge( diaper_drive_participant: { name: "test" } )
+        expect(response).to be_successful
+        expect(flash[:error]).to match(/try again/i)
+      end
+    end
+
     context "Looking at a different organization" do
         let(:object) { create(:diaper_drive_participant, organization: create(:organization) ) }
         include_examples "requiring authorization"
