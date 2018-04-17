@@ -24,16 +24,18 @@
   </div>
   <div class="box-body">
 
+    <p>Business name: <%= @diaper_drive_participant.business_name %></p>
+
   <% if @diaper_drive_participant.phone.present? %>
     <p>Phone: <%= @diaper_drive_participant.phone %></p>
   <% end %>
   <% if @diaper_drive_participant.email.present? %>
     <p>Email: <%= link_to @diaper_drive_participant.email, "mailto:#{@diaper_drive_participant.email}" %></p>
   <% end %>
-  
+    <p>Address: <%= @diaper_drive_participant.address %></p>
   <% if @diaper_drive_participant.present? %>
 
-  <h4>Past Diaper Drives with this Partner</h3>
+  <h4>Past Diaper Drives with this Partner</h4>
   <div class="row">
   <div class="col-xs-12">
       <!-- /.box-header -->
@@ -62,6 +64,7 @@
   <% end %>
   </div>
 </div>
+</section>
 
 
 
