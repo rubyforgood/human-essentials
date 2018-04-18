@@ -46,7 +46,7 @@ $(document).ready(function() {
   function fill_fields_with_barcode_results(data) {
     line_item = $(data['src']).closest('.nested-fields');
       line_item_quantity = data['quantity'];
-      $('input[type=text]').each(function () {
+      $('.__barcode_item_lookup').each(function () {
           if (data['src'] != this && data['value'] == this.value) {
               line_item = this.closest('.nested-fields');
               if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
