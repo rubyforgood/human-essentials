@@ -149,6 +149,13 @@ RSpec.describe StorageLocation, type: :model do
         expect(InventoryItem.first.quantity).to eq(5)
       end
 
+      it "add additional line item" do
+        item = create(:item)
+        purchase.line_items.create(item_id: item.id, quantity: 6)
+        storage_location.edit!(purchase)
+        storage_location.items.reload
+      end
+
       it "removes the inventory item from the DB if the item's removal results in a 0 count" do
         purchase.line_items.first.quantity = 0
         storage_location.edit!(purchase)
