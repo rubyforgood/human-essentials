@@ -86,8 +86,9 @@ class StorageLocation < ApplicationRecord
     log = {}
     donation_or_purchase.line_items.each do |line_item|
       inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: line_item.item_id)
-      before_last_save = line_item.quantity_before_last_save.nil? ? 0 : line_item.quantity_before_last_save
-      delta = line_item.quantity - before_last_save
+      before_last_save = line_item.quantity.nil? ? 0 : line_item.quantity
+      updated_quantity = inventory_item.quantity.nil? ? 0 : inventory_item.quantity
+      delta = before_last_save - updated_quantity
       inventory_item.quantity += delta rescue 0
       if inventory_item.quantity <= 0
         inventory_item.destroy
