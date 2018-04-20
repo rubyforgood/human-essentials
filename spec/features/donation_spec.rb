@@ -6,6 +6,8 @@ RSpec.feature "Donations", type: :feature, js: true do
 
   context "When visiting the index page" do
     before(:each) do
+      create(:donation, source: Donation::SOURCES[:misc])
+      create(:donation, source: Donation::SOURCES[:misc])
       visit @url_prefix + "/donations"
     end
 
@@ -15,6 +17,10 @@ RSpec.feature "Donations", type: :feature, js: true do
       expect(current_path).to eq(new_donation_path(@organization))
       expect(page).to have_content "Start a new donation"
     end
+
+    scenario "Total quantity on the index page" do
+      expect(page.find(:css, "table.table-hover", visible: true)).to have_content("20")
+    end
   end
 
   context "When filtering on the index page" do
@@ -23,10 +29,10 @@ RSpec.feature "Donations", type: :feature, js: true do
       create(:donation, source: Donation::SOURCES[:misc])
       create(:donation, source: Donation::SOURCES[:donation_site])
       visit @url_prefix + "/donations"
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
       select Donation::SOURCES[:misc], from: "filters_by_source"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 2)
     end
     scenario "User can filter by diaper drive" do
       a = create(:diaper_drive_participant, name: "A")
@@ -34,10 +40,10 @@ RSpec.feature "Donations", type: :feature, js: true do
       create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: a)
       create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: b)
       visit @url_prefix + "/donations"
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
       select a.name, from: "filters_by_diaper_drive_participant"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 2)
     end
     scenario "User can filter by donation site" do
       location1 = create(:donation_site, name: "location 1")
@@ -47,7 +53,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       visit @url_prefix + "/donations"
       select location1.name, from: "filters_from_donation_site"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 2)
     end
     scenario "User can filter the #index by storage location" do
       storage1 = create(:storage_location, name: "storage1")
@@ -55,10 +61,10 @@ RSpec.feature "Donations", type: :feature, js: true do
       create(:donation, storage_location: storage1)
       create(:donation, storage_location: storage2)
       visit @url_prefix + "/donations"
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
       select storage1.name, from: "filters_at_storage_location"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 2)
     end
     scenario "Filters drill down if you pick from multiples" do
       storage1 = create(:storage_location, name: "storage1")
@@ -67,13 +73,27 @@ RSpec.feature "Donations", type: :feature, js: true do
       create(:donation, storage_location: storage2, source: Donation::SOURCES[:misc])
       create(:donation, storage_location: storage1, source: Donation::SOURCES[:donation_site])
       visit @url_prefix + "/donations"
-      expect(page).to have_css("table tbody tr", count: 3)
+      expect(page).to have_css("table tbody tr", count: 4)
       select Donation::SOURCES[:misc], from: "filters_by_source"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
       select storage1.name, from: "filters_at_storage_location"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 2)
+    end
+    scenario "Filter by issued_at" do
+      storage = create(:storage_location, name: "storage")
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1), source: Donation::SOURCES[:misc])
+      visit @url_prefix + "/donations"
+      select "March", from: "date_filters_issued_at_2i"
+      select "2018", from: "date_filters_issued_at_1i"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+      select "February", from: "date_filters_issued_at_2i"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
     end
   end
 
@@ -136,6 +156,16 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect {
           click_button "Create Donation"
         }.to change{Donation.count}.by(1)
+      end
+
+      scenario "User can create a Diaper Drive from donation" do
+        select Donation::SOURCES[:diaper_drive], from: "donation_source"
+        select "---Create new diaper drive---", from: "donation_diaper_drive_participant_id"
+        expect(page).to have_content("New Diaper Drive Participant")
+        fill_in "diaper_drive_participant_name", with: "test"
+        fill_in "diaper_drive_participant_email", with: "123@mail.ru"
+        click_button "Create Diaper drive participant"
+        select "test", from: "donation_diaper_drive_participant_id"
       end
 
       scenario "User can create a donation for a Donation Site source" do

@@ -29,6 +29,7 @@ class Donation < ApplicationRecord
   scope :by_source, ->(source) { where(source: source) }
   scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) { where(diaper_drive_participant_id: diaper_drive_participant_id) }
+  scope :by_issued_at, ->(issued_at) { where(issued_at: issued_at.beginning_of_month..issued_at.end_of_month) }
 
   before_create :combine_duplicates
   before_destroy :remove_inventory

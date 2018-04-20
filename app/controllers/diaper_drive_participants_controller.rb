@@ -5,17 +5,25 @@ class DiaperDriveParticipantsController < ApplicationController
 
   def create
     @diaper_drive_participant = current_organization.diaper_drive_participants.new(diaper_drive_participant_params.merge(organization: current_organization))
-    if (@diaper_drive_participant.save)
-      redirect_to diaper_drive_participants_path, notice: "New diaper drive participant added!"
-    else
-      flash[:error] = "Something didn't work quite right -- try again?"
-      render action: :new
+    respond_to do |format|
+      if (@diaper_drive_participant.save)
+        format.html {redirect_to diaper_drive_participants_path, notice: "New diaper drive participant added!"}
+        format.js
+      else
+        flash[:error] = "Something didn't work quite right -- try again?"
+        format.html {render action: :new}
+        format.js {render template: "diaper_drive_participants/new_modal.js.erb"}
+      end
     end
-
   end
 
   def new
     @diaper_drive_participant = current_organization.diaper_drive_participants.new
+    if request.xhr?
+      respond_to do |format|
+        format.js { render template: "diaper_drive_participants/new_modal.js.erb" }
+      end
+    end
   end
 
   def edit
@@ -49,7 +57,9 @@ class DiaperDriveParticipantsController < ApplicationController
   end
 
 private
+
   def diaper_drive_participant_params
-    params.require(:diaper_drive_participant).permit(:name, :phone, :email)
+    params.require(:diaper_drive_participant)
+      .permit(:name, :phone, :email, :business_name, :address)
   end
 end

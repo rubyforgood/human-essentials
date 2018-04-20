@@ -160,9 +160,17 @@ RSpec.describe StorageLocation, type: :model do
           storage_location.intake!(purchase)
           storage_location.items.reload  
         end
+      it "add additional line item" do
+        item = create(:item)
+        purchase.line_items.create(item_id: item.id, quantity: 6)
+        storage_location.edit!(purchase)
+        storage_location.items.reload
+      end
 
-        it "updates the quantity of items" do
-          purchase.line_items.first.update(quantity: 5)
+      it "removes the inventory item from the DB if the item's removal results in a 0 count" do
+        purchase.line_items.first.quantity = 0
+        storage_location.edit!(purchase)
+        storage_location.items.reload
 
           expect {
             storage_location.adjust_from_past!(purchase)
