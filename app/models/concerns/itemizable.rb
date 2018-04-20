@@ -28,7 +28,8 @@ module Itemizable
       def quantities_by_category
         includes(:item).group("items.category").sum(:quantity)
       end
-
+		
+  # TODO: omit_zero is not used. Remove or incorporate it.
       def quantities_by_name(omit_zero = false)
         results = {}
         each do |li|
