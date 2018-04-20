@@ -27,10 +27,21 @@ FactoryBot.define do
       item_id nil
     end
 
-    trait :with_item do
-      after(:create) do |instance, evaluator|
-        item_id = (evaluator.item_id.nil?) ? create(:item).id : evaluator.item_id
-        instance.line_items << create(:line_item, :purchase, quantity: evaluator.item_quantity, item_id: item_id)
+    trait :with_items do
+      storage_location { create :storage_location, :with_items }
+
+      transient do
+        item_quantity 100
+        item nil
+      end
+
+      after(:build) do |instance, evaluator|
+        item = if evaluator.item.nil?
+                 instance.storage_location.inventory_items.first.item
+               else
+                 evaluator.item
+               end
+        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
   end

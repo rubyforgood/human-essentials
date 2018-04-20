@@ -1,3 +1,4 @@
+# TODO: Why are there two groups that are doing the same thing?
 RSpec.shared_examples "requiring authentication" do
   it "redirects the user to the sign-in page for CRUD actions" do
     single_params = { organization_id: object.organization.to_param, id: object.id }

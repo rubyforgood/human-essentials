@@ -98,7 +98,7 @@ class DonationsController < ApplicationController
   def update
     @donation = Donation.find(params[:id])
     if @donation.update_attributes(donation_params)
-      @donation.storage_location.edit! @donation
+      @donation.storage_location.adjust_from_past! @donation
     redirect_to donations_path
     else
       render 'edit'
