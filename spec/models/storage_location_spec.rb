@@ -80,7 +80,7 @@ RSpec.describe StorageLocation, type: :model do
     describe "intake!" do
       it "adds items to a storage location even if none exist" do
         storage_location = create(:storage_location)
-        donation = create(:donation, :with_item, item_quantity: 10)
+        donation = create(:donation, :with_items, item_quantity: 10)
         expect{
           storage_location.intake!(donation)
           storage_location.items.reload
@@ -90,78 +90,113 @@ RSpec.describe StorageLocation, type: :model do
 
       it "adds items to the storage location total if that item already exists in inventory" do
         storage_location = create(:storage_location, :with_items, item_quantity: 10)
-        donation = create(:donation, :with_item, item_quantity: 10, item_id: storage_location.inventory_items.first.item.id)
+        donation = create(:donation, :with_items, item_quantity: 10, item: storage_location.inventory_items.first.item)
         storage_location.intake!(donation)
 
         expect(storage_location.inventory_items.count).to eq(1)
-        expect(storage_location.inventory_items.where(item_id: donation.line_items.first.item.id).first.quantity).to eq(20)
+        expect(storage_location.inventory_items.where(item_id: donation.line_items.first.item).first.quantity).to eq(20)
       end
     end
 
     describe "remove!" do
       let(:storage_location) { create(:storage_location) }
-      let(:donation)         { create(:donation, :with_item, item_quantity: 10) }
+      let(:donation)         { create(:donation, :with_items, item_quantity: 10) }
 
       before(:each) do
         storage_location.intake!(donation)
-        storage_location.items.reload
-
-        expect(storage_location.size).to eq(10)
-        expect(storage_location.items.count).to eq(1)
       end
 
       it "removes items from a storage location" do
-        storage_location.remove!(donation)
-        storage_location.items.reload
-
-        expect(storage_location.size).to eq(0)
-        expect(storage_location.items.count).to eq(0)
-      end
-
-      it "removes the inventory item from the DB if the item's removal results in a 0 count" do
-        expect(InventoryItem.count).to eq(1)
-
-        storage_location.remove!(donation)
-        storage_location.items.reload
-
-        expect(InventoryItem.count).to eq(0)
+        expect {
+          storage_location.remove!(donation)
+        }.to change{storage_location.size}.by(-donation.total_quantity)
+        .and change{storage_location.inventory_items.size}.by(-donation.line_items.count)
+        .and change{InventoryItem.count}.by(-donation.line_items.count)
       end
     end
 
-    describe "edit!" do
+    describe "adjust_from_past!" do
 
       let(:storage_location) { create(:storage_location) }
-      let(:purchase)         { create(:purchase, :with_item, item_quantity: 10) }
+      let(:purchase)         { create(:purchase, :with_items, item_quantity: 10) }
+      let(:donation)         { create(:donation, :with_items, item_quantity: 10) }
 
-      before(:each) do
-        storage_location.intake!(purchase)
-        storage_location.items.reload
+      context "with donations" do
+        before(:each) do
+          storage_location.intake!(donation)
+        end
+        it "updates the quantity of items" do
+          donation.line_items.first.update(quantity: 5)
 
-        expect(storage_location.size).to eq(10)
-        expect(storage_location.items.count).to eq(1)
+          expect {
+            storage_location.adjust_from_past!(donation)
+            storage_location.reload
+          }.to change{storage_location.size}.by(-5)
+        end
+
+        it "adds an inventory item if it doesn't already exist" do
+          donation.line_items << create(:line_item, quantity: 5)
+
+          expect {
+            storage_location.adjust_from_past!(donation)
+            storage_location.reload
+          }.to change{storage_location.size}.by(5)
+          .and change{InventoryItem.count}.by(1)
+        end
+  
+        it "removes the inventory item from the DB if the item's removal results in a 0 count" do
+          donation.line_items.first.update(quantity: 0)
+
+          expect {
+            storage_location.adjust_from_past!(donation)
+            storage_location.reload
+          }.to change{storage_location.inventory_items.size}.by(-1)
+          .and change{InventoryItem.count}.by(-1)
+        end
       end
-
-      it "adds items to a storage location even if none exist" do
-        purchase.line_items.first.quantity = 5
-        storage_location.edit!(purchase)
-        storage_location.items.reload
-
-        expect(InventoryItem.first.quantity).to eq(5)
-      end
-
+      # TODO: This should probably be DRYed out with a shared_example
+      context "With purchases" do
+        before(:each) do
+          storage_location.intake!(purchase)
+          storage_location.items.reload  
+        end
       it "add additional line item" do
         item = create(:item)
         purchase.line_items.create(item_id: item.id, quantity: 6)
-        storage_location.edit!(purchase)
+        storage_location.adjust_from_past!(purchase)
         storage_location.items.reload
       end
 
-      it "removes the inventory item from the DB if the item's removal results in a 0 count" do
-        purchase.line_items.first.quantity = 0
-        storage_location.edit!(purchase)
-        storage_location.items.reload
+      # it "removes the inventory item from the DB if the item's removal results in a 0 count" do
+      #   purchase.line_items.first.quantity = 0
+      #   storage_location.adjust_from_past!(purchase)
+      #   storage_location.items.reload
 
-        expect(InventoryItem.count).to eq(0)
+      #     expect {
+      #       storage_location.adjust_from_past!(purchase)
+      #       storage_location.reload
+      #     }.to change{storage_location.size}.by(-5)
+      #   end
+
+        it "adds an inventory item if it doesn't already exist" do
+          purchase.line_items << create(:line_item, quantity: 5)
+
+          expect {
+            storage_location.adjust_from_past!(purchase)
+            storage_location.reload
+          }.to change{storage_location.size}.by(5)
+          .and change{InventoryItem.count}.by(1)
+        end
+  
+        it "removes the inventory item from the DB if the item's removal results in a 0 count" do
+          purchase.line_items.first.update(quantity: 0)
+
+          expect {
+            storage_location.adjust_from_past!(purchase)
+            storage_location.reload
+          }.to change{storage_location.inventory_items.size}.by(-1)
+          .and change{InventoryItem.count}.by(-1)
+        end
       end
     end
 

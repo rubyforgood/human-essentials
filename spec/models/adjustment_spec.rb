@@ -10,9 +10,9 @@
 #  updated_at          :datetime         not null
 #
 
-require 'rails_helper'
-
 RSpec.describe Adjustment, type: :model do
+  it_behaves_like "itemizable"
+
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:adjustment, organization_id: nil)).not_to be_valid

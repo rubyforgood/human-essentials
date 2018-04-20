@@ -14,6 +14,8 @@
 #
 
 RSpec.describe Distribution, type: :model do
+  it_behaves_like "itemizable"
+
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:distribution, organization: nil)).not_to be_valid
@@ -71,33 +73,13 @@ RSpec.describe Distribution, type: :model do
       @last = create(:item, name: "ZZZ", category: "Bar")
     end
 
-    it "quantities_by_category" do
-      @distribution.line_items << create(:line_item, item: @first, quantity: 5)
-      @distribution.line_items << create(:line_item, item: @last, quantity: 10)
-      @distribution.line_items << create(:line_item, item: create(:item, category: "Foo"), quantity: 10)
-      expect(@distribution.line_items.quantities_by_category).to eq({"Bar" => 10, "Foo" => 15})
-    end
-
-    it "sorted_line_items" do
-      c1 = create(:line_item, item: @first)
-      c2 = create(:line_item, item: @last)
-      @distribution.line_items << c1
-      @distribution.line_items << c2
-      expect(@distribution.line_items.sorted.to_a).to match_array [c1,c2]
-  	end
-
-    it "total_quantity" do
-      @distribution.line_items << create(:line_item, item: @first, quantity: 5)
-      @distribution.line_items << create(:line_item, item: @last, quantity: 10)
-      expect(@distribution.line_items.total).to eq(15)
-    end
-
     it "distributed_at" do
       two_days_ago = 2.day.ago
       expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime('%B %-d %Y'))
       expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime('%B %-d %Y'))
     end
 
+    # TODO: Can this be replaced with the `combine!` method from `Itemizable`?
     it "combine_duplicates" do
       @distribution.line_items << create(:line_item, item: @first, quantity: 5)
       @distribution.line_items << create(:line_item, item: @first, quantity: 10)
