@@ -50,15 +50,17 @@ $(document).ready(function() {
           if (data['src'] != this && data['value'] == this.value) {
               line_item = this.closest('.nested-fields');
               if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
-                  prompt_value = prompt('Enter quantity of additional items', line_item_quantity);
+                  prompt_value = prompt('Enter total quantity of items', line_item_quantity);
                   if (prompt_value != null) {
                       line_item_quantity = parseInt(prompt_value);
                   } else {
                       line_item_quantity = 0;
                   }
               }
+              if ($(line_item).attr('scanned_more_than_two_times') != "true") {
+                line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('input[type=number]').val());
+              }
               $(line_item).attr('scanned_more_than_two_times', true);
-              line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('input[type=number]').val());
           }
       })
       $(line_item).find('input[type=number]').val(line_item_quantity);
