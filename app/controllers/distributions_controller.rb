@@ -58,6 +58,7 @@ class DistributionsController < ApplicationController
   def new
     @distribution = Distribution.new
     @distribution.line_items.build
+    copy_from_donation
     @items = current_organization.items.alphabetized
     @storage_locations = current_organization.storage_locations
   end
@@ -78,5 +79,10 @@ class DistributionsController < ApplicationController
 
   def distribution_params
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
+  end
+
+  def copy_from_donation
+    @distribution.copy_line_items(params[:donation_id]) if params[:donation_id]
+    @distribution.storage_location = StorageLocation.find(params[:storage_location_id]) if params[:storage_location_id]
   end
 end
