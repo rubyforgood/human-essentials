@@ -25,8 +25,6 @@ class StorageLocation < ApplicationRecord
   scope :containing, ->(item_id) { joins(:inventory_items).where('inventory_items.item_id = ?', item_id) }
   scope :alphabetized, -> { order(:name) }
 
-  # TODO: Add a before_save callback that checks if the quantity for a line item is < 0, then destroy it
-
   def self.item_total(item_id)
     StorageLocation.select('quantity').joins(:inventory_items).where('inventory_items.item_id = ?', item_id).collect { |h| h.quantity }.reduce(:+)
   end
