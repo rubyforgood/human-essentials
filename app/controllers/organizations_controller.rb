@@ -14,14 +14,6 @@ class OrganizationsController < ApplicationController
     end
   end
 
-  # TODO: who should be able to arrive here and how?
-  def new
-  end
-
-  # TODO: who should be able to arrive here and how?
-  def create
-  end
-
   private
 
   def organization_params
