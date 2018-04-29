@@ -25,12 +25,9 @@ class AdminsController < ApplicationController
     redirect_to admins_path, notice: 'User invited to organization!'
   end
 
-  # TODO: who should be able to arrive here and how?
   def new
     @organization = Organization.new
   end
-
-  # TODO: who should be able to arrive here and how?
 
   def create
     @organization = Organization.create(organization_params)
