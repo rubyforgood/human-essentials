@@ -13,6 +13,7 @@
 
 FactoryBot.define do
   factory :item do
+    canonical_item
     sequence(:name) { |n| "#{n}T Diapers" }
     category "disposable"
     organization { Organization.try(:first) || create(:organization) }
