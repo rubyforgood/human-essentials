@@ -16,6 +16,9 @@ RSpec.describe Item, type: :model do
     it "must belong to an organization" do
       expect(build(:item, organization_id: nil)).not_to be_valid
     end
+    it "requires a Canonical Item base" do
+      expect(build(:item, canonical_item_id: nil)).not_to be_valid
+    end
     it "requires a unique name" do
       item = create(:item)
       expect(build(:item, name: nil)).not_to be_valid

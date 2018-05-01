@@ -13,6 +13,7 @@
 
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
+  belongs_to :canonical_item
   validates_uniqueness_of :name, :scope => :organization
   validates_presence_of :name
   validates :organization, presence: true
