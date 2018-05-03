@@ -11,7 +11,7 @@ gem "bugsnag"
 gem 'chartkick', '~> 2.2'
 gem 'cocoon', '~> 1.2' # For nested resources in forms
 gem 'coffee-rails', '~> 4.2'
-gem 'devise', '~> 4.3'
+gem 'devise', '~> 4.4'
 gem 'devise_invitable'
 gem 'dotenv-rails', '~> 2.2'
 gem "font-awesome-rails"
@@ -60,7 +60,7 @@ group :development do
 end
 
 group :test do
-  gem 'capybara', '~> 2.13'
+  gem 'capybara', '~> 2.18'
   gem 'database_cleaner', '~> 1.5'
   gem 'factory_bot_rails', '~> 4.8'
   gem 'launchy', '~> 2.4'

@@ -56,8 +56,7 @@
     <% flash.each do |key, value| %>
       <div class="<%= flash_class(key) %> alert-dismissible">
             <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-            <% # TODO: is using .html_safe ok here? Are there potential security considerations? %>
-            <%= value.html_safe %>
+            <%= value %>
       </div>
     <% end %>
     <%= yield %>
