@@ -15,7 +15,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 ## Development with Docker
 
-`docker-compose run rails db:setup`, then `docker-compose up web`.
+`docker-compose run web rails db:setup`, then `docker-compose up web`.
 
 ## Development without Docker
 
