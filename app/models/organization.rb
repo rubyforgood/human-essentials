@@ -34,7 +34,11 @@ class Organization < ApplicationRecord
   has_many :diaper_drive_participants
   has_many :storage_locations
   has_many :inventory_items, through: :storage_locations
-  has_many :items
+  has_many :items do
+    def add_from_canonical canonical_item
+      find_or_create_by(name: canonical_item.name, category: canonical_item.category, organization: self)
+    end
+  end
   has_many :partners
   has_many :transfers
   has_many :users
