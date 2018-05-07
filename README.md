@@ -65,6 +65,11 @@ To contribute, do these things:
  * **Final commit** if any tests had to be fixed
  * **Push** up the branch
  * **Create a Pull Request** - Please indicate which issue it addresses in your pull-request title.
+ 
+### Squashing Commits
+Squashing your own commits before pushing is totally fine. Please don't squash other people's commits. (Everyone who contributes here deserves credit for their work! :) ). Also, consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several (or many) smaller commits that all serve one purpose, and these can be squashed into a single commit whose message describes the thing, you're encouraged to squash.
+
+There's no hard and fast rule here about this (for now), just use your best judgement.
 
 ### Pull Request Merging
 
