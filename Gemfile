@@ -29,6 +29,7 @@ gem 'rails', '~> 5.1.1'
 gem 'react-rails'
 gem 'sass-rails', '~> 5.0'
 gem 'simple_form', '~> 3.4'
+gem 'skylight'
 gem 'uglifier', '>= 1.3.0'
 gem 'therubyracer', '~> 0.12',  platforms: :ruby
 gem 'yajl-ruby'
