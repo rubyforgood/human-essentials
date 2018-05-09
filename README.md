@@ -15,7 +15,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 ## Development with Docker
 
-`docker-compose run rails db:setup`, then `docker-compose up web`.
+`docker-compose run web rails db:setup`, then `docker-compose up web`.
 
 ## Development without Docker
 
@@ -34,7 +34,7 @@ PG_PASSWORD=password
 If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplied`, it's because you have probably not done this.
 
 ## Seed the database
-From the root of the app, run `bundle exec rake db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user. 
+From the root of the app, run `bundle exec rake db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
 ## Login
 To login, use these default credentials:
@@ -78,9 +78,9 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 If you are using Docker you may run the tests with `docker-compose run test`, otherwise run `bundle exec rake spec`.
 
-This app uses RSpec, Capybara, Poltergeist, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :) 
+This app uses RSpec, Capybara, Poltergeist, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
-The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes). 
+The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
 ### TODOs
 
@@ -90,9 +90,9 @@ Feel free to peruse the TODO file and tackle any issues found in there. These ma
 
 ### In-flight Pull Requests
 
-Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it. 
+Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
 
-### Becoming a Repo Contributor 
+### Becoming a Repo Contributor
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
 
