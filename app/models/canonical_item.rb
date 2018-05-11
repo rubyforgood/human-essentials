@@ -15,4 +15,8 @@ class CanonicalItem < ApplicationRecord
 
   validates_uniqueness_of :name, :key
   validates_presence_of :name, :key
+
+  def to_key
+    name.tr(" ","_").gsub(/[^A-Za-z]/,'').downcase
+  end
 end

@@ -18,8 +18,6 @@
 #
 
 class Organization < ApplicationRecord
-  include Seedable
-
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI.regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
@@ -34,11 +32,7 @@ class Organization < ApplicationRecord
   has_many :diaper_drive_participants
   has_many :storage_locations
   has_many :inventory_items, through: :storage_locations
-  has_many :items do
-    def add_from_canonical canonical_item
-      find_or_create_by(name: canonical_item.name, category: canonical_item.category, organization: self)
-    end
-  end
+  has_many :items 
   has_many :partners
   has_many :transfers
   has_many :users
@@ -46,8 +40,6 @@ class Organization < ApplicationRecord
   has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>"}, default_url: "/DiaperBase-Logo.png"
   validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
 
-  after_create { |org| seed_it!(org) }
-  
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name
@@ -84,5 +76,13 @@ class Organization < ApplicationRecord
         k_size5:    items.find_by(name: "Kids (Size 5)").id,
         k_size6:    items.find_by(name: "Kids (Size 6)").id,
       }
+  end
+
+private
+  def self.seed_items(org)
+    CanonicalItem.all.each do |canonical_item|
+	Item.create(name: canonical_item.name, category: canonical_item.category, organization_id: org.id, canonical_item_id: canonical_item.id)
+    end
+    org.reload
   end
 end

@@ -55,13 +55,15 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata))
+    CanonicalItem.destroy_all
+    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata canonical_items))
     DatabaseCleaner.strategy = :transaction
     __start_db_cleaning_with_log
     __sweep_up_db_with_log
     #byebug
-    # __lint_with_log
+#     __lint_with_log
     __sweep_up_db_with_log
+    seed_canonical_items_for_tests
   end
 
   config.before(:each) do
@@ -112,4 +114,17 @@ def __lint_with_log
   Rails.logger.info "////////////////// LINTING ////////////////////"
   FactoryBot.lint
   Rails.logger.info "////////////////// END LINT ///////////////////"
+end
+
+def seed_canonical_items_for_tests
+  Rails.logger.info "Destroying all Canonical Items ... "
+  CanonicalItem.destroy_all
+  canonical_items = File.read(Rails.root.join("db", "canonical_items.json"))
+  items_by_category = JSON.parse(canonical_items)
+  Rails.logger.info "Creating Canonical Items: "
+  items_by_category.each do |category, entries|
+    entries.each do |entry|
+      CanonicalItem.create!(name: entry["name"], category: category, key: entry["key"])
+    end
+  end
 end

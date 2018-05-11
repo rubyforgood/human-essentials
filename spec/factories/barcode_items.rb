@@ -11,17 +11,16 @@
 #  organization_id :integer
 #  global          :boolean          default(FALSE)
 #
-
 FactoryBot.define do
 
   factory :barcode_item do
-    organization nil
+    organization { Organization.try(:first) || create(:organization) }
     sequence(:value) { |n| "#{n}" * 12 } # 037000863427
-    item
+    item nil
     quantity 50
 
-    trait :for_organization do
-      organization { Organization.try(:first) || create(:organization) }
+    after(:build) do |instance, evaluator|
+	    instance.item = evaluator.item || create(:item, organization: instance.organization, canonical_item: CanonicalItem.first)
     end
   end
 end
