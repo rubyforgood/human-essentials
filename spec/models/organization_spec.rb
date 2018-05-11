@@ -30,6 +30,14 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe "seed_items" do
+    it "loads the canonical items into Item records" do
+      canonical_items_count = CanonicalItem.count
+      Organization.seed_items(organization)
+      expect(organization.items.count).to eq(canonical_items_count)
+    end
+  end
+
   describe "#short_name" do
     it "can only contain valid characters" do
       expect(build(:organization, short_name: 'asdf')).to be_valid
@@ -40,12 +48,12 @@ RSpec.describe Organization, type: :model do
   describe "total_inventory" do
     it "returns a sum total of all inventory at all storage locations" do
       item = create(:item)
-      create(:storage_location, :with_items, item: item, item_quantity: 100)
-      create(:storage_location, :with_items, item: item, item_quantity: 150)
-      expect(@organization.total_inventory).to eq(250)
+      create(:storage_location, :with_items, item: item, item_quantity: 100, organization: organization)
+      create(:storage_location, :with_items, item: item, item_quantity: 150, organization: organization)
+      expect(organization.total_inventory).to eq(250)
     end
     it "returns 0 if there is nothing" do
-      expect(@organization.total_inventory).to eq(0)
+      expect(organization.total_inventory).to eq(0)
     end
   end
 end

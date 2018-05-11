@@ -13,15 +13,17 @@
 #
 
 RSpec.describe BarcodeItem, type: :model do
+  #let!(:organization) { Organization.first || create(:organization) }
+
   it "updates a counter in Item whenever it tracks a new barcode" do
     item = create(:item)
     expect {
       create(:barcode_item, item: item)
-      item.reload
-    }.to change{item.barcode_items.size}.by(1)
+    }.to change{item.barcode_count}.to(1)
   end
 
   context "Filters >" do
+    # TODO Make this example better
     it "can filter" do
       expect(subject.class).to respond_to :filter
     end
@@ -70,6 +72,8 @@ RSpec.describe BarcodeItem, type: :model do
       end
     end
   end
+
+  # TODO - Determine how barcode items should act re: global barcodes / local barcodes and items vs. canonical items
 
   describe "to_h >" do
     it "emits a hash for a line_item" do

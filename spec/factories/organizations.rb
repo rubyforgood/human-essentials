@@ -25,6 +25,10 @@ FactoryBot.define do
     sequence(:email) { |n| "email#{n}@example.com" } # 037000863427
     sequence(:url) { |n| "https://organization#{n}.org" } # 037000863427
     logo { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.jpg'), 'image/jpeg') }
+
+    after(:create) do |instance, evaluator|
+      Organization.seed_items(instance)
+    end
   end
 
 end

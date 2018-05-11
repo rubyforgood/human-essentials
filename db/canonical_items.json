@@ -1,0 +1,53 @@
+{
+  "Diapers - Adult Briefs": [
+    { "name": "Adult Briefs (Large/X-Large)", "key": "ab_lxl", "qty": [0,0,3741] },
+    { "name": "Adult Briefs (Medium/Large)", "key": "ab_ml", "qty": [0,0,108] },
+    { "name": "Adult Briefs (Small/Medium)", "key": "ab_sm", "qty": [0,0,2742] },
+    { "name": "Adult Briefs (XXL)", "key": "ab_xxl", "qty": [0,0,24] }
+  ],
+  "Diapers - Childrens": [
+    { "name": "Cloth Diapers (Plastic Cover Pants)", "key": "cd_pcp", "qty": [0,0,75] },
+    { "name": "Disposable Inserts", "key": "disp_ins", "qty": [0,0,143] },
+    { "name": "Kids (Newborn)", "key": "kids_new", "qty": [0,0,4217] },
+    { "name": "Kids (Preemie)", "key": "kids_pre", "qty": [0,240,360] },
+    { "name": "Kids (Size 1)", "key": "kids_1", "qty": [6051, 1870, 6742] },
+    { "name": "Kids (Size 2)", "key": "kids_2", "qty": [4480, 1380, 11082] },
+    { "name": "Kids (Size 3)", "key": "kids_3", "qty": [15080, 1776, 2596] },
+    { "name": "Kids (Size 4)", "key": "kids_4", "qty": [25472, 0, 3616] },
+    { "name": "Kids (Size 5)", "key": "kids_5", "qty": [13634, 0, 3616] },
+    { "name": "Kids (Size 6)", "key": "kids_6", "qty": [3216, 1, 211] },
+    { "name": "Kids L/XL (60-125 lbs)", "key": "kids_lxl", "qty": [0,49,0] },
+    { "name": "Kids Pull-Ups (2T-3T)", "key": "kids_pu_2t3t", "qty": [0,0,1532] },
+    { "name": "Kids Pull-Ups (3T-4T)", "key": "kids_pu_3t4t", "qty": [0,0,787] },
+    { "name": "Kids Pull-Ups (4T-5T)", "key": "kids_pu_4t5t", "qty": [0,408,124] },
+    { "name": "Kids S/M (38-65 lbs)", "key": "kids_sm", "qty": [0,1495,264] },
+    { "name": "Swimmers", "key": "kids_swim", "qty": [0,20,459] }
+  ],
+  "Diapers - Cloth (Adult)": [
+    { "name": "Adult Cloth Diapers (Large/XL/XXL)", "key": "acd_lxlxxl", "qty": [0,0,89] },
+    { "name": "Adult Cloth Diapers (Small/Medium)", "key": "acd_sm", "qty": [0,0,2742] }
+  ],
+  "Diapers - Cloth (Kids)": [
+    { "name": "Cloth Diapers (AIO's/Pocket)", "key": "cd_aiop", "qty": [0,0,219] },
+    { "name": "Cloth Diapers (Covers)", "key": "cd_cov", "qty": [0,0,428] },
+    { "name": "Cloth Diapers (Prefolds & Fitted)", "key": "cd_prefit", "qty": [0,0,431] },
+    { "name": "Cloth Inserts (For Cloth Diapers)", "key": "cins_cd", "qty": [0,0,0] },
+    { "name": "Cloth Swimmers (Kids)", "key": "cswim_kids", "qty": [0,0,0] }
+  ],
+  "Incontinence Pads - Adult": [
+    { "name": "Adult Incontinence Pads", "key": "adult_pads", "qty": [0,0,2304] },
+    { "name": "Underpads (Pack)", "key": "adult_underpads", "qty": [0,1,2] }
+  ],
+  "Misc Supplies": [
+    { "name": "Bed Pads (Cloth)", "key": "bed_pads_cloth", "qty": [0,0,44] },
+    { "name": "Bed Pads (Disposable)", "key": "bed_pads_disp", "qty": [0,0,0] },
+    { "name": "Bibs (Adult & Child)", "key": "bibs", "qty": [0,0,35] },
+    { "name": "Diaper Rash Cream/Powder", "key": "rash_cream_pwdr", "qty": [0,0,0] }
+  ],
+  "Training Pants": [
+    { "name": "Cloth Potty Training Pants/Underwear", "key": "cptu", "qty": [0,0,246] }
+  ],
+  "Wipes - Childrens": [
+    { "name": "Wipes (Baby)", "key": "wipes_baby", "qty": [0,0,162] }
+  ]
+}
