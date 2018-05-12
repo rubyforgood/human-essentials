@@ -15,10 +15,11 @@
 /public/system
 /public/.htaccess
 
-# Ignore the default SQLite database.
+# Ignore database files.
 /db/*.sqlite3
 /db/*.sqlite3-journal
 pdx_db_test
+/db/data
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
@@ -35,3 +36,4 @@ pdx_db_test
 .rails_routes*
 .rake_tasks~
 .DS_Store
+.ruby-gemset
