@@ -45,13 +45,13 @@ RSpec.describe Distribution, type: :model do
   context "Scopes >" do
     describe "during >" do
       it "returns all distrbutions created between two dates" do
+        Distribution.destroy_all
         # The models should default to assigning the created_at time to the issued_at
         create(:distribution, created_at: Date.today)
         # but just for fun we'll force one in the past within the range
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
         create(:distribution, issued_at: 1.year.ago)
-
         expect(Distribution.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end

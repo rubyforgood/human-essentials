@@ -65,13 +65,13 @@ RSpec.describe Donation, type: :model do
   context "Scopes >" do
     describe "during >" do
       it "returns all donations created between two dates" do
+        Donation.destroy_all
         # The models should default to assigning the created_at time to the issued_at
         create(:donation, created_at: Date.today)
         # but just for fun we'll force one in the past within the range
         create(:donation, issued_at: Date.yesterday)
         # and one outside the range
         create(:donation, issued_at: 1.year.ago)
-
         expect(Donation.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end
@@ -179,7 +179,7 @@ RSpec.describe Donation, type: :model do
         expect {
           donation.destroy
         }.to change{donation.storage_location.size}.by(-donation.total_quantity)
-      end      
+      end  
     end
   end
 

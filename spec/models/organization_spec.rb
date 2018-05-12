@@ -22,9 +22,11 @@ RSpec.describe Organization, type: :model do
   context "Associations >" do
     describe "barcode_items" do
       it "returns both this organizations barcodes as well as global ones" do
-        create(:barcode_item, :for_organization, organization: organization)
+        BarcodeItem.destroy_all
+        create(:barcode_item, organization: organization)
         expect(organization.barcode_items.count).to eq(1)
-        create(:barcode_item, global: true) # global
+        create(:global_barcode_item) # global
+        
         expect(organization.barcode_items.count).to eq(2)
       end
     end
