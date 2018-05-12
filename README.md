@@ -15,7 +15,33 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 ## Development with Docker
 
-`docker-compose run web rails db:setup`, then `docker-compose up web`.
+### Requirements
+
+- [Docker CE](https://store.docker.com/search?type=edition&offering=community)
+
+### Caveats
+
+Docker for Mac has some pretty poor disk sharing (volume) performance. At the time of writing, the test run is 50% slower when using Docker vs using native. Overall this shouldn't impact your development experience too badly but you should be aware.
+
+### Postgres data
+
+To keep data between development sessions, we create a volume to store data in ./db/data/postgres. You will need to create this directory first (./db/data is git-ignored).
+
+`mkdir -p db/data/postgres`
+
+Then you can set up the database with the following command.
+
+`docker-compose run web rails db:setup`
+
+Note: currently the seeds fail about halfway through due to the Partner integration. You can resolve this by temporarily commenting out the `DIAPER_PARTNER_URL` environment variable in ./docker-compose.yml (See [diaperpartner](https://github.com/rubyforgood/diaperpartner) for more)
+
+### Running the app
+
+Start the application with `docker-compose up web` and then visit [http://localhost:3000](http://localhost:3000)
+
+### Running tests
+
+Simply run `docker-compose run test rails spec`.
 
 ## Development without Docker
 
