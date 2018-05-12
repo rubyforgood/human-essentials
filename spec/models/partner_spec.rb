@@ -53,9 +53,10 @@ RSpec.describe Partner, type: :model do
   describe "import_csv" do
     it "imports storage locations from a csv file" do
       organization = create(:organization)
+      before_import = Partner.count
       import_file_path = Rails.root.join("spec", "fixtures", "partners.csv").read
       Partner.import_csv(import_file_path, organization.id)
-      expect(Partner.count).to eq 3
+      expect(Partner.count).to eq before_import + 3
     end
   end
 end
