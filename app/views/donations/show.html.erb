@@ -49,10 +49,14 @@
         -->
         </section>
 
-
-       <h2> <%= link_to "Make a correction", edit_donation_path(@donation), class: "btn btn-primary" %> </h2>
+        <div class="btn-group">
+          <%= link_to "Make a correction", edit_donation_path(@donation), class: "btn btn-primary" %>
+          <%= link_to "Create distribution",
+                      new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id),
+                      class: "btn btn-primary" %>
+        </div>
       </fieldset>
-      
+
     </div>
   </div>
 </section>  
