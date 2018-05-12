@@ -2,13 +2,14 @@
 #
 # Table name: items
 #
-#  id              :integer          not null, primary key
-#  name            :string
-#  category        :string
-#  created_at      :datetime
-#  updated_at      :datetime
-#  barcode_count   :integer
-#  organization_id :integer
+#  id                :integer          not null, primary key
+#  name              :string
+#  category          :string
+#  created_at        :datetime
+#  updated_at        :datetime
+#  barcode_count     :integer
+#  organization_id   :integer
+#  canonical_item_id :integer
 #
 
 FactoryBot.define do
