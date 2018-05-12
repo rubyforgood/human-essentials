@@ -79,6 +79,13 @@ RSpec.describe Distribution, type: :model do
       expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime('%B %-d %Y'))
     end
 
+    it "copy_line_items" do
+      @donation = create(:donation)
+      @donation.line_items << create(:line_item, item: @first, quantity: 5)
+      @donation.line_items << create(:line_item, item: @first, quantity: 10)
+      expect(@distribution.copy_line_items(@donation.id).count).to eq 2
+    end
+
     # TODO: Can this be replaced with the `combine!` method from `Itemizable`?
     it "combine_duplicates" do
       @distribution.line_items << create(:line_item, item: @first, quantity: 5)
