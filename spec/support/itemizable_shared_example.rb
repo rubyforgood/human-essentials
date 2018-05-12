@@ -54,7 +54,7 @@ shared_examples_for "itemizable" do
         expect(subject.line_items.quantities_by_category).to eq(categories)
       end
     end
-
+    
     describe "quantities_by_name" do
       let(:item1) { create(:item, name: "item1") }
       let(:item2) { create(:item, name: "item2") }
@@ -87,7 +87,7 @@ shared_examples_for "itemizable" do
 
         expect(subject.line_items.quantities_by_name.values).to match_array(quantities)
       end
-    end
+    end    
 
     describe "sorted" do
       subject { create(model_f) }

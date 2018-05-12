@@ -13,7 +13,7 @@
 #  barcodeable_type :string           default("Item")
 #
 
-RSpec.describe BarcodeItem, :focus, type: :model do
+RSpec.describe BarcodeItem, type: :model do
   #let!(:organization) { Organization.first || create(:organization) }
 
   context "global barcodes" do

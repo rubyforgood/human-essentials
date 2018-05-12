@@ -61,7 +61,7 @@ RSpec.configure do |config|
     __start_db_cleaning_with_log
     __sweep_up_db_with_log
     #byebug
-     __lint_with_log
+    __lint_with_log
     __sweep_up_db_with_log
     seed_canonical_items_for_tests
   end
