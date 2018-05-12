@@ -44,4 +44,16 @@ class Distribution < ApplicationRecord
     Rails.logger.info "Combining!"
     self.line_items.combine!
   end
+
+  def copy_line_items(donation_id)
+    line_items = LineItem.where(itemizable_id: donation_id, itemizable_type: "Donation")
+    line_items.each do |line_item|
+      self.line_items.new(line_item.attributes)
+    end
+  end
+
+  def copy_from_donation(donation_id, storage_location_id)
+    copy_line_items(donation_id) if donation_id
+    self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
+  end
 end
