@@ -21,6 +21,19 @@ RSpec.feature "Distributions", type: :feature do
     expect(page.find('.alert-info')).to have_content "reated"
   end
 
+  scenario "User can create a distribution from donation" do
+    @donation = create :donation, :with_items
+
+    visit @url_prefix + "/donations/#{@donation.id}"
+    click_on "Create distribution"
+    select @partner.name, from: "Partner"
+    click_button "Preview Distribution"
+    expect(page).to have_content "Distribution Manifest for"
+    click_button "Confirm Distribution"
+    expect(page.find('.alert-info')).to have_content "reated"
+    expect(Distribution.first.line_items.count).to eq 1
+  end
+
   context "via barcode entry" do
     before(:each) do
       initialize_barcodes

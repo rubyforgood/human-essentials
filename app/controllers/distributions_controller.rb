@@ -58,6 +58,7 @@ class DistributionsController < ApplicationController
   def new
     @distribution = Distribution.new
     @distribution.line_items.build
+    @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     @items = current_organization.items.alphabetized
     @storage_locations = current_organization.storage_locations
   end
