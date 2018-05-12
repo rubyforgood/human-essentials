@@ -2,19 +2,20 @@
 #
 # Table name: barcode_items
 #
-#  id              :integer          not null, primary key
-#  value           :string
-#  item_id         :integer
-#  quantity        :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :integer
-#  global          :boolean          default(FALSE)
+#  id               :integer          not null, primary key
+#  value            :string
+#  barcodeable_id   :integer
+#  quantity         :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  organization_id  :integer
+#  global           :boolean          default(FALSE)
+#  barcodeable_type :string           default("Item")
 #
 
 class BarcodeItem < ApplicationRecord
   belongs_to :organization, optional: true
-  belongs_to :item, dependent: :destroy, counter_cache: :barcode_count
+  belongs_to :barcodeable, polymorphic: true, dependent: :destroy, counter_cache: :barcode_count
 
   validates :value, presence: true, uniqueness: true
   validates :quantity, :item, presence: true

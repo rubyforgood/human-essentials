@@ -5,6 +5,7 @@
 #  id            :integer          not null, primary key
 #  key           :string
 #  name          :string
+#  category      :string
 #  barcode_count :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null

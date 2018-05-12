@@ -2,13 +2,14 @@
 #
 # Table name: items
 #
-#  id              :integer          not null, primary key
-#  name            :string
-#  category        :string
-#  created_at      :datetime
-#  updated_at      :datetime
-#  barcode_count   :integer
-#  organization_id :integer
+#  id                :integer          not null, primary key
+#  name              :string
+#  category          :string
+#  created_at        :datetime
+#  updated_at        :datetime
+#  barcode_count     :integer
+#  organization_id   :integer
+#  canonical_item_id :integer
 #
 
 class Item < ApplicationRecord
@@ -20,7 +21,7 @@ class Item < ApplicationRecord
 
   has_many :line_items
   has_many :inventory_items
-  has_many :barcode_items
+  has_many :barcode_items, as: :barcodeable
   has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: Donation
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
