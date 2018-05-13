@@ -14,9 +14,14 @@
 FactoryBot.define do
   factory :transfer do
     organization { Organization.try(:first) || create(:organization) }
-    from_id { create(:storage_location).id }
-    to_id { create(:storage_location).id }
+    from nil 
+    to nil
     comment "A comment"
+
+    after(:build) do |instance, evaluator|
+      instance.from = evaluator.from || create(:storage_location, organization: evaluator.organization)
+      instance.to = evaluator.to || create(:storage_location, organization: evaluator.organization)
+    end
 
     trait :with_items do
       transient do
@@ -24,11 +29,10 @@ FactoryBot.define do
         item nil
       end
 
-      storage_location { create :storage_location, :with_items, item: item }
-
       after(:build) do |instance, evaluator|
+        instance.from = create(:storage_location, :with_items, item: evaluator.item, organization: evaluator.organization)
         item = if evaluator.item.nil?
-                 instance.storage_location.inventory_items.first.item
+                 instance.from.inventory_items.first.item
                else
                  evaluator.item
                end

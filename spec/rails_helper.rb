@@ -55,7 +55,25 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
-    CanonicalItem.destroy_all
+    Rails.logger.info <<~ASCIIART
+
+
+-~~==]}>        ######## ###########  ####      ########    ###########
+-~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
+-~~==]}>     +#+           +#+    +#+   +#+   +#+      +#+    +#+
+-~~==]}>    +:++#++:++    +:+    +:++#++:++  +:++#++:++      +:+
+-~~==]}>          +:+    +:+    +:+    +:+  +:+     +:+     +:+
+-~~==]}>  :+:    :+:    :+:    :+:    :+:  :+:      :+:    :+: 
+-~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
+
+
+
+ASCIIART
+
+    Rails.logger.info "-~=> [PRE-LINT] Destroying all Canonical Items ... "
+    CanonicalItem.delete_all
+    # Canonical Items are independent of all other data, though other models depend on
+    # their existence, so we'll persist them
     DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata canonical_items))
     DatabaseCleaner.strategy = :transaction
     __start_db_cleaning_with_log
@@ -70,9 +88,13 @@ RSpec.configure do |config|
     __start_db_cleaning_with_log
 
     # prepare a default @organization and @user to always be available for testing
-    @organization = create(:organization)
-    @organization_admin = create(:organization_admin)
-    @user = create(:user)
+    Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
+    @organization = create(:organization, name: "DEFAULT")
+    Rails.logger.info "\n\n-~=> Creating DEFAULT admin & user"
+    @organization_admin = create(:organization_admin, name: "DEFAULT ADMIN")
+    @user = create(:user, organization: @organization, name: "DEFAULT USER")
+
+    Rails.logger.info "\n\n-~=> #{self.class.description} ::::::::::::::::::::::"
   end
 
   config.after(:each) do
@@ -99,32 +121,71 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end
+def __lint_with_log
+  Rails.logger.info "///////////////////////////////////////////////"
+  Rails.logger.info "////////////////// LINTING ////////////////////"
+  Rails.logger.info "///////////////////////////////////////////////"
+  FactoryBot.lint
+  Rails.logger.info "///////////////////////////////////////////////"
+  Rails.logger.info "////////////////// END LINT ///////////////////"
+  Rails.logger.info "///////////////////////////////////////////////"
+end
+
+def seed_canonical_items_for_tests
+  Rails.logger.info "-~=> Destroying all Canonical Items ... "
+  CanonicalItem.delete_all
+  canonical_items = File.read(Rails.root.join("db", "canonical_items.json"))
+  items_by_category = JSON.parse(canonical_items)
+  Rails.logger.info "Creating Canonical Items: "
+  batch_insert = []
+  items_by_category.each do |category, entries|
+    entries.each do |entry|
+      batch_insert << { name: entry["name"], category: category, key: entry["key"] }
+    end
+  end
+  CanonicalItem.create(batch_insert)
+  Rails.logger.info "~-=> Done creating Canonical Items!"
+end
 
 def __start_db_cleaning_with_log
+  Rails.logger.info <<~ASCIIART
+     ,-'"""`-.
+   ,'         `.
+  /        `    \\
+ (    /          \)
+ |             " |
+ (               \)
+`.\\\\          \\ /
+  `:.      , \\ ,\\ _
+ hh  `:-.___,-`-.{\\\)
+      `.         |/ \\
+        `.         \\ \\
+          `-.      _\\,|
+             `.   |,-||
+               `..|| ||
+ASCIIART
+
   Rails.logger.info "======> SISYPHUS, PUSH THAT BOULDER BACK UP THE HILL <========"
   DatabaseCleaner.start
 end
 
 def __sweep_up_db_with_log
-  DatabaseCleaner.clean
+  Rails.logger.info <<~ASCIIART
+              /             _
+    ,-'"""`-.    /         _ |
+  ,'         `.      ;    {\\\)|
+ /        `    \\   :. :   /\\ \\
+(    /          | .     _/  \\ \\
+|             " |;  .-``.   _\\,|
+(               |.-`     `-|,-||
+ \\\\            /.`         ||.||
+  :.     ,   ,`               |.
+amh  :-.___,-``
+        .`
+      .`
+   .-`
+ASCIIART
   Rails.logger.info "========= ONE MUST IMAGINE SISYPHUS HAPPY ===================="
-end
-
-def __lint_with_log
-  Rails.logger.info "////////////////// LINTING ////////////////////"
-  FactoryBot.lint
-  Rails.logger.info "////////////////// END LINT ///////////////////"
-end
-
-def seed_canonical_items_for_tests
-  Rails.logger.info "Destroying all Canonical Items ... "
-  CanonicalItem.destroy_all
-  canonical_items = File.read(Rails.root.join("db", "canonical_items.json"))
-  items_by_category = JSON.parse(canonical_items)
-  Rails.logger.info "Creating Canonical Items: "
-  items_by_category.each do |category, entries|
-    entries.each do |entry|
-      CanonicalItem.create!(name: entry["name"], category: category, key: entry["key"])
-    end
-  end
+  DatabaseCleaner.clean
+  
 end

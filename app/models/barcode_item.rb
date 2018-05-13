@@ -26,6 +26,8 @@ class BarcodeItem < ApplicationRecord
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }
   scope :only_global, ->(global) { where(global: true) if global }
 
+  alias_attribute :item, :barcodeable
+
   # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
   def to_h
     {

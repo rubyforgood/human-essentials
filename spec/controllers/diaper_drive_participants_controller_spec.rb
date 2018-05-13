@@ -23,14 +23,14 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
     end
   
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge({ id: create(:diaper_drive_participant) }) }
+      subject { get :edit, params: default_params.merge({ id: create(:diaper_drive_participant, organization: @user.organization) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "GET #show" do
-      subject { get :show, params: default_params.merge({ id: create(:diaper_drive_participant) }) }
+      subject { get :show, params: default_params.merge({ id: create(:diaper_drive_participant, organization: @organization) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end

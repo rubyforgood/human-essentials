@@ -40,7 +40,7 @@ RSpec.describe AdjustmentsController, type: :controller do
 
     describe "GET #show" do
       it "is successful" do
-        adjustment = create(:adjustment)
+        adjustment = create(:adjustment, organization: @organization)
         get :show, params: default_params.merge(id: adjustment.to_param), session: valid_session
         expect(response).to be_successful
       end
