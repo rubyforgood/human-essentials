@@ -23,21 +23,21 @@ RSpec.describe ItemsController, type: :controller do
     end
   
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge({ id: create(:item) }) }
+      subject { get :edit, params: default_params.merge({ id: create(:item, organization: @organization) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "GET #show" do
-      subject { get :show, params: default_params.merge({ id: create(:item) }) }
+      subject { get :show, params: default_params.merge({ id: create(:item, organization: @organization) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge({ id: create(:item) }) }
+      subject { delete :destroy, params: default_params.merge({ id: create(:item, organization: @organization) }) }
       it "redirects to #index" do
         expect(subject).to redirect_to(items_path)
       end

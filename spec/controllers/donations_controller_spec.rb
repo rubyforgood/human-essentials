@@ -62,14 +62,14 @@ RSpec.describe DonationsController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:donation)) }
+      subject { get :show, params: default_params.merge(id: create(:donation, organization: @organization)) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:donation)) }
+      subject { delete :destroy, params: default_params.merge(id: create(:donation, organization: @organization)) }
       it "redirects to the index" do
         expect(subject).to redirect_to(donations_path)
       end

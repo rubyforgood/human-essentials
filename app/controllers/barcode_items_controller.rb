@@ -3,9 +3,9 @@ class BarcodeItemsController < ApplicationController
     @items = current_organization.items.barcoded_items
     @global = filter_params[:only_global]
     if @global
-      @barcode_items = BarcodeItem.includes(:item).filter(filter_params)
+      @barcode_items = BarcodeItem.includes(:barcodeable).filter(filter_params)
     else
-      @barcode_items = BarcodeItem.includes(:item).where(organization_id: current_organization.id).filter(filter_params)
+      @barcode_items = BarcodeItem.includes(:barcodeable).where(organization_id: current_organization.id).filter(filter_params)
     end
   end
 
@@ -30,16 +30,16 @@ class BarcodeItemsController < ApplicationController
   end
 
   def edit
-    @barcode_item = current_organization.barcode_items.includes(:item).find(params[:id])
+    @barcode_item = current_organization.barcode_items.includes(:barcodeable).find(params[:id])
     @items = current_organization.items
   end
 
   def show
-    @barcode_item = current_organization.barcode_items.includes(:item).find(params[:id])
+    @barcode_item = current_organization.barcode_items.includes(:barcodeable).find(params[:id])
   end
 
   def find
-    @barcode_item = current_organization.barcode_items.includes(:item).find_by!(value: barcode_item_params[:value])
+    @barcode_item = current_organization.barcode_items.includes(:barcodeable).find_by!(value: barcode_item_params[:value])
     respond_to do |format|
       format.json { render json: @barcode_item.to_json }
     end
@@ -74,11 +74,11 @@ class BarcodeItemsController < ApplicationController
 
 private
   def barcode_item_params
-    params.require(:barcode_item).permit(:value, :item_id, :quantity, :global).merge(organization_id: current_organization.id)
+    params.require(:barcode_item).permit(:value, :barcodeable_id, :quantity, :global).merge(organization_id: current_organization.id)
   end
 
   def filter_params
     return {} unless params.has_key?(:filters)
-    params.require(:filters).slice(:item_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :only_global)
+    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :only_global)
   end
 end

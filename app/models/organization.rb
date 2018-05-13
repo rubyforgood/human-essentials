@@ -80,8 +80,11 @@ class Organization < ApplicationRecord
 
 private
   def self.seed_items(org)
-    CanonicalItem.all.each do |canonical_item|
-	Item.create(name: canonical_item.name, category: canonical_item.category, organization_id: org.id, canonical_item_id: canonical_item.id)
+    Rails.logger.info "Seeding #{org.name}'s items..."
+    canonical_items = CanonicalItem.pluck(:id, :name, :category).collect { |c| { canonical_item_id: c[0], name: c[1], category: c[2] } }
+    org_id = org.id
+  	Item.create(canonical_items) do |i| 
+      i.organization_id = org_id
     end
     org.reload
   end
