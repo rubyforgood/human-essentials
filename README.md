@@ -15,7 +15,33 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 ## Development with Docker
 
-`docker-compose run web rails db:setup`, then `docker-compose up web`.
+### Requirements
+
+- [Docker CE](https://store.docker.com/search?type=edition&offering=community)
+
+### Caveats
+
+Docker for Mac has some pretty poor disk sharing (volume) performance. At the time of writing, the test run is 50% slower when using Docker vs using native. Overall this shouldn't impact your development experience too badly but you should be aware.
+
+### Postgres data
+
+To keep data between development sessions, we create a volume to store data in ./db/data/postgres. You will need to create this directory first (./db/data is git-ignored).
+
+`mkdir -p db/data/postgres`
+
+Then you can set up the database with the following command.
+
+`docker-compose run web rails db:setup`
+
+Note: currently the seeds fail about halfway through due to the Partner integration. You can resolve this by temporarily commenting out the `DIAPER_PARTNER_URL` environment variable in ./docker-compose.yml (See [diaperpartner](https://github.com/rubyforgood/diaperpartner) for more)
+
+### Running the app
+
+Start the application with `docker-compose up web` and then visit [http://localhost:3000](http://localhost:3000)
+
+### Running tests
+
+Simply run `docker-compose run test rails spec`.
 
 ## Development without Docker
 
@@ -34,7 +60,7 @@ PG_PASSWORD=password
 If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplied`, it's because you have probably not done this.
 
 ## Seed the database
-From the root of the app, run `bundle exec rake db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user. 
+From the root of the app, run `bundle exec rake db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
 ## Login
 To login, use these default credentials:
@@ -65,7 +91,7 @@ To contribute, do these things:
  * **Final commit** if any tests had to be fixed
  * **Push** up the branch
  * **Create a Pull Request** - Please indicate which issue it addresses in your pull-request title.
- 
+
 ### Squashing Commits
 Squashing your own commits before pushing is totally fine. Please don't squash other people's commits. (Everyone who contributes here deserves credit for their work! :) ). Also, consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several (or many) smaller commits that all serve one purpose, and these can be squashed into a single commit whose message describes the thing, you're encouraged to squash.
 
@@ -83,9 +109,9 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 If you are using Docker you may run the tests with `docker-compose run test`, otherwise run `bundle exec rake spec`.
 
-This app uses RSpec, Capybara, Poltergeist, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :) 
+This app uses RSpec, Capybara, Poltergeist, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
-The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes). 
+The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
 ### TODOs
 
@@ -95,9 +121,9 @@ Feel free to peruse the TODO file and tackle any issues found in there. These ma
 
 ### In-flight Pull Requests
 
-Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it. 
+Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
 
-### Becoming a Repo Contributor 
+### Becoming a Repo Contributor
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
 
