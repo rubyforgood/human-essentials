@@ -35,3 +35,5 @@ services:
     image: postgres:9.5
     ports:
       - "5432"
+    volumes:
+      - ./db/data/postgres:/var/lib/postgresql/data
