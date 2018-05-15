@@ -65,8 +65,8 @@ group :test do
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'launchy'
-  gem 'phantomjs', require: "phantomjs/poltergeist"
-  gem 'poltergeist'
+  gem 'chromedriver-helper'
+  gem 'selenium-webdriver'
   gem 'rails-controller-testing'
   gem 'webmock', '~> 2.1'
 end
