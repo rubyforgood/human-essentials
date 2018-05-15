@@ -40,7 +40,7 @@ class Organization < ApplicationRecord
   has_many :users
 
   has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>"}, default_url: "/DiaperBase-Logo.png"
-  validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
+  validates_attachment_content_type :logo, content_type: /^image\/(jpg|jpeg|pjpeg|png|x-png)$/, :message => 'file type is not allowed (only jpeg/png images)'
 
   after_create { |org| seed_it!(org) }
   
