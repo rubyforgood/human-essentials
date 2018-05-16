@@ -18,7 +18,7 @@ on an [open issue]–if the relevant issue doesn't exist, open it!
 
 2. Fork the repo.
 
-3. `cd` into the repo. Install the correct version of ruby if prompted: `rvm install ruby-2.4.2`. Install ImageMagick if you don't have it installed already: `brew install imagemagick`
+3. `cd` into the repo. Install the correct version of ruby if prompted. Install ImageMagick if you don't have it installed already: `brew install imagemagick`
 
 4. Run `./bin/setup`.
 
