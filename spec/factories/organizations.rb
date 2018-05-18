@@ -15,6 +15,10 @@
 #  logo_file_size    :integer
 #  logo_updated_at   :datetime
 #  intake_location   :integer
+#  street            :string
+#  city              :string
+#  state             :string
+#  zipcode           :string
 #
 
 FactoryBot.define do

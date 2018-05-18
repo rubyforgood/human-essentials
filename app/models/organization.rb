@@ -15,6 +15,10 @@
 #  logo_file_size    :integer
 #  logo_updated_at   :datetime
 #  intake_location   :integer
+#  street            :string
+#  city              :string
+#  state             :string
+#  zipcode           :string
 #
 
 class Organization < ApplicationRecord
@@ -43,7 +47,7 @@ class Organization < ApplicationRecord
   validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
 
   after_create { |org| seed_it!(org) }
-  
+
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name
