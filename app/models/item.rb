@@ -29,6 +29,9 @@ class Item < ApplicationRecord
   scope :in_category, ->(category) { where(category: category) }
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
 
+  include DiaperPartnerClient
+  after_create :update_diaper_partner
+
   def self.categories
     select(:category).group(:category).order(:category)
   end
@@ -49,5 +52,11 @@ class Item < ApplicationRecord
   # expect an id or an Item object
   def to_i
     id
+  end
+
+  private
+
+  def update_diaper_partner
+    DiaperPartnerClient.post "/items", attributes
   end
 end
