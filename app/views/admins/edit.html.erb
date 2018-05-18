@@ -32,7 +32,7 @@ Editing
   <%= f.input :email %>
   <%= f.input :street %>
   <%= f.input :city %>
-  <%= f.input :state %>
+  <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
   <%= f.input :zipcode %>
   <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true %>
   <%= f.input :logo %>
