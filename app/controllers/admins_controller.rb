@@ -7,7 +7,6 @@ class AdminsController < ApplicationController
 
   def update
     @organization = Organization.find(params[:id])
-
     if @organization.update_attributes(organization_params)
       redirect_to admins_path, notice: 'Updated organization!'
     else
@@ -59,6 +58,6 @@ class AdminsController < ApplicationController
   end
 
   def organization_params
-    params.require(:organization).permit(:name, :short_name, :address, :email, :url, :logo)
+    params.require(:organization).permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo)
   end
 end

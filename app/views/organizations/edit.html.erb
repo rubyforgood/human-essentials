@@ -43,12 +43,17 @@
       <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
       <%= f.input_field :email, class: "form-control" %>
     <% end %>
+
     <%= f.input :address, wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-address-book"></i></span>
-      <%= f.input_field :address, class: "form-control" %>
+      <%= f.input_field :street, class: "form-control", placeholder: "street" %>
+      <%= f.input_field :city, class: "form-control", placeholder: "city" %>
+      <%= f.input_field :state, class: "form-control", placeholder: "state" %>
+      <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
     <% end %>
+
     <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
-    
+
     <%= f.input :logo, wrapper: :vertical_input_group do %>
 
       <% if current_organization.logo.present? %>
@@ -70,12 +75,12 @@
         </div>
         <label class="control-label">Update Logo</label>
       <% end %>
-              
+
       <%= f.input_field :logo, as: :file %>
       <p class="help-block">
         Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)
       </p>
-      
+
     <% end %>
     <%= f.button :submit, "Update", class: "btn btn-lg btn-primary pull-left" %>
     <%= link_to "Cancel", dashboard_path, class: "btn btn-lg btn-secondary" %>

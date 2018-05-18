@@ -62,6 +62,10 @@ class Organization < ApplicationRecord
       .map {|i| [i[0], i[1].map{|i|i.quantity}.sum]}.sort_by { |_, v| -v }
   end
 
+  def address
+    "#{street} #{city}, #{state} #{zipcode}"
+  end
+
   def address_inline
     address.split("\n").map(&:strip).join(", ")
   end
