@@ -48,7 +48,7 @@
       <span class="input-group-addon"><i class="fa fa-address-book"></i></span>
       <%= f.input_field :street, class: "form-control", placeholder: "street" %>
       <%= f.input_field :city, class: "form-control", placeholder: "city" %>
-      <%= f.input_field :state, class: "form-control", placeholder: "state" %>
+      <%= f.input_field :state, collection: us_states, class: "form-control", placeholder: "state" %>
       <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
     <% end %>
 
