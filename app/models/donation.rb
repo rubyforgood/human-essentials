@@ -137,7 +137,6 @@ class Donation < ApplicationRecord
   private
 
   def combine_duplicates
-    Rails.logger.info "Combining!"
     line_items.combine!
   end
 end

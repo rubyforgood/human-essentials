@@ -44,7 +44,7 @@ class Item < ApplicationRecord
   end
 
   def self.barcodes_for(item)
-    BarcodeItem.where('item_id = ?', item.id)
+    BarcodeItem.where('barcodeable_id = ?', item.id)
   end
 
   # Convenience method so that other methods can be simplified to

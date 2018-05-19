@@ -97,6 +97,9 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (>= 2.0, < 4.0)
+    capybara-screenshot (1.0.21)
+      capybara (>= 1.0, < 4)
+      launchy
     chartkick (2.2.4)
     climate_control (0.2.0)
     cliver (0.3.2)
@@ -380,6 +383,7 @@ DEPENDENCIES
   capistrano-rbenv (~> 2.1)
   capistrano3-puma (~> 3.1)
   capybara (~> 2.18)
+  capybara-screenshot
   chartkick (~> 2.2)
   cocoon (~> 1.2)
   coffee-rails (~> 4.2)
