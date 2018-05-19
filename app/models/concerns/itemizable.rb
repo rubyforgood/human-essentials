@@ -4,7 +4,15 @@ module Itemizable
   extend ActiveSupport::Concern
 
   included do
-    has_many :line_items, as: :itemizable, inverse_of: :itemizable, dependent: :destroy do
+    # So we previously had `dependent:destroy` but that was deleting the `line_items`
+    # before they could be also destroyed in the `storage_location`. This does the same
+    # thing, but defers the deletion until after other stuff has been done.
+    after_destroy do
+      line_items.each(&:destroy)
+    end
+
+    has_many :line_items, as: :itemizable, inverse_of: :itemizable do
+
       def combine!
         # Bail if there's nothing
         return if size.zero?

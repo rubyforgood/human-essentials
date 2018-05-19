@@ -80,7 +80,7 @@ RSpec.describe Item, type: :model do
     describe "barcodes_for" do
       it "retrieves all BarcodeItems associated with an item" do
         item = create(:item)
-        barcode_item = create(:barcode_item, item: item)
+        barcode_item = create(:barcode_item, barcodeable: item)
         create(:barcode_item)
         expect(Item.barcodes_for(item).first).to eq(barcode_item)
       end

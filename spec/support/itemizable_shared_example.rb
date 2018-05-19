@@ -26,7 +26,6 @@ shared_examples_for "itemizable" do
       it "incrementally combines line_items on donations that have already been created" do
         # Start with some items of one kind
         obj = build(model_f, :with_items, item: item, item_quantity: 10, organization: @organization)
-
         obj.save
         # Add some additional of that item
         obj.line_items.build(item_id: item.id, quantity: 5)
@@ -34,7 +33,7 @@ shared_examples_for "itemizable" do
         obj.line_items.combine!
         obj.save
         # Still only one kind?
-        expect(obj.line_items.count).to eq(1)
+        expect(obj.line_items.size).to eq(1)
         # But with the new total?
         expect(obj.line_items.first.quantity).to eq(15)
       end

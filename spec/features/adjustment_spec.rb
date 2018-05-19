@@ -4,7 +4,7 @@ before do
 end
 let!(:url_prefix) { "/#{@organization.to_param}" }
 
-scenario "User can add an inventory adjustment at a storage location" do
+scenario "User can add an inventory adjustment at a storage location", js: true do
   add_quantity = 10
   storage_location = create(:storage_location, :with_items, organization: @organization)
   visit url_prefix + "/adjustments"
@@ -20,7 +20,7 @@ scenario "User can add an inventory adjustment at a storage location" do
   expect(page).to have_content("Adjustment was successfully created")
 end
 
-scenario "User can subtract an inventory adjustment at a storage location" do
+scenario "User can subtract an inventory adjustment at a storage location", js: true do
   sub_quantity = -10
   storage_location = create(:storage_location, :with_items, organization: @organization)
   visit url_prefix + "/adjustments"

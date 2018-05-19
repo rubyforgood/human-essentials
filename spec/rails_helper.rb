@@ -6,6 +6,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'spec_helper'
 require 'rspec/rails'
 require 'capybara/rails'
+require 'capybara/rspec'
 require 'capybara/poltergeist'
 require 'pry'
 
@@ -33,6 +34,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 # Enable JS for Capybara tests
 Capybara.javascript_driver = :poltergeist
+
 # If an element is hidden, Capybara should ignore it
 Capybara.ignore_hidden_elements = true
 
@@ -70,16 +72,13 @@ RSpec.configure do |config|
 
 ASCIIART
 
-    Rails.logger.info "-~=> [PRE-LINT] Destroying all Canonical Items ... "
+    Rails.logger.info "-~=> Destroying all Canonical Items ... "
     CanonicalItem.delete_all
     # Canonical Items are independent of all other data, though other models depend on
     # their existence, so we'll persist them
     DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata canonical_items))
     DatabaseCleaner.strategy = :transaction
     __start_db_cleaning_with_log
-    __sweep_up_db_with_log
-    #byebug
-    __lint_with_log
     __sweep_up_db_with_log
     seed_canonical_items_for_tests
   end
@@ -121,15 +120,6 @@ ASCIIART
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end
-def __lint_with_log
-  Rails.logger.info "///////////////////////////////////////////////"
-  Rails.logger.info "////////////////// LINTING ////////////////////"
-  Rails.logger.info "///////////////////////////////////////////////"
-  FactoryBot.lint
-  Rails.logger.info "///////////////////////////////////////////////"
-  Rails.logger.info "////////////////// END LINT ///////////////////"
-  Rails.logger.info "///////////////////////////////////////////////"
-end
 
 def seed_canonical_items_for_tests
   Rails.logger.info "-~=> Destroying all Canonical Items ... "
@@ -148,6 +138,7 @@ def seed_canonical_items_for_tests
 end
 
 def __start_db_cleaning_with_log
+  Rails.logger.info "======> SISYPHUS, PUSH THAT BOULDER BACK UP THE HILL <========"
   Rails.logger.info <<~ASCIIART
      ,-'"""`-.
    ,'         `.
@@ -165,11 +156,12 @@ def __start_db_cleaning_with_log
                `..|| ||
 ASCIIART
 
-  Rails.logger.info "======> SISYPHUS, PUSH THAT BOULDER BACK UP THE HILL <========"
   DatabaseCleaner.start
 end
 
 def __sweep_up_db_with_log
+  DatabaseCleaner.clean
+  Rails.logger.info "========= ONE MUST IMAGINE SISYPHUS HAPPY ===================="
   Rails.logger.info <<~ASCIIART
               /             _
     ,-'"""`-.    /         _ |
@@ -185,7 +177,4 @@ amh  :-.___,-``
       .`
    .-`
 ASCIIART
-  Rails.logger.info "========= ONE MUST IMAGINE SISYPHUS HAPPY ===================="
-  DatabaseCleaner.clean
-  
 end

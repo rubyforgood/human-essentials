@@ -2,15 +2,14 @@
 #
 # Table name: barcode_items
 #
-#  id               :integer          not null, primary key
-#  value            :string
-#  barcodeable_id   :integer
-#  quantity         :integer
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  organization_id  :integer
-#  global           :boolean          default(FALSE)
-#  barcodeable_type :string           default("Item")
+#  id              :integer          not null, primary key
+#  value           :string
+#  item_id         :integer
+#  quantity        :integer
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  organization_id :integer
+#  global          :boolean          default(FALSE)
 #
 
 RSpec.describe BarcodeItem, type: :model do

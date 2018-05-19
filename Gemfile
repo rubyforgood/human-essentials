@@ -61,6 +61,7 @@ end
 
 group :test do
   gem 'capybara', '~> 2.18'
+  gem 'capybara-screenshot'
   gem 'database_cleaner', '~> 1.5'
   gem 'factory_bot_rails', '~> 4.8'
   gem 'launchy', '~> 2.4'
