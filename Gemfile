@@ -43,6 +43,7 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.5'
   gem 'terminal-notifier-guard'
   gem 'terminal-notifier'
+  gem 'rubocop'
 end
 
 group :development do
