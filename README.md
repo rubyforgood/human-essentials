@@ -1,6 +1,6 @@
 # README
 
-[![Build Status](https://travis-ci.org/rubyforgood/pdx_diaper.svg?branch=master)](https://travis-ci.org/rubyforgood/pdx_diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
+[![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=master)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 
 ## About
 
