@@ -3,6 +3,9 @@
 We ♥ contributors! By participating in this project, you agree to abide by the
 Ruby for Good [code of conduct].
 
+**First:** if you're unsure or afraid of *anything*, just ask or submit the issue or pull request anyways. You won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely asked to change something. We appreciate any sort of contributions, and don't want a wall of rules to get in the way of that.
+
+
 [code of conduct]: https://github.com/rubyforgood/code-of-conduct
 
 Here are the basic steps to submit a pull request. Make sure that you're working
@@ -15,7 +18,7 @@ on an [open issue]–if the relevant issue doesn't exist, open it!
 
 2. Fork the repo.
 
-3. `cd` into the repo. Install the correct version of ruby if prompted: `rvm install ruby-2.4.2`. Install ImageMagick if you don't have it installed already: `brew install imagemagick`
+3. `cd` into the repo. Install the correct version of ruby if prompted. Install ImageMagick if you don't have it installed already: `brew install imagemagick`
 
 4. Run `./bin/setup`.
 
