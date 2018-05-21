@@ -31,9 +31,11 @@ RSpec.describe Organization, type: :model do
   end
 
   describe "paperclip validations" do
-    it { should validate_attachment_content_type(:logo).
-        allowing('image/png', 'image/jpg').
-        rejecting('text/plain', 'text/xml') }
+    it "validates that attachments are png or jpgs" do
+      should validate_attachment_content_type(:logo)
+        .allowing('image/png', 'image/jpg')
+        .rejecting('text/plain', 'text/xml')
+    end
   end
 
   describe "#short_name" do
