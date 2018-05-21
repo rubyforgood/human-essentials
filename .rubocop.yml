@@ -1,5 +1,11 @@
+inherit_from: .rubocop_todo.yml
+
+# Exclude legacy violations. The todo list should only get SMALLER
+# Once it is empty this can be removed!
+# inherit_from: .rubocop_todo.yml
+
 AllCops:
-  TargetRubyVersion: 2.4.2
+  TargetRubyVersion: 2.5.1
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
@@ -190,7 +196,9 @@ Metrics/PerceivedComplexity:
   Enabled: false
   Max: 7
 Metrics/LineLength:
-  Max: 100
+  # This one metric can't be ratcheted via .rubocop_todo.yml :(
+  # So instead, make a single PR that changes back to 100 and fix all violations
+  Max: 1000
   # To make it possible to copy or click on URIs in the code, we allow lines
   # contaning a URI to be longer than Max.
   IgnoredPatterns: ['\A\s*#']
