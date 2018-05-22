@@ -27,7 +27,7 @@ FactoryBot.define do
       end
 
       after(:build) do |instance, evaluator|
-        instance.storage_location ||= (create(:storage_location, :with_items, item: evaluator.item, organization: instance.organization))
+        instance.storage_location ||= create(:storage_location, :with_items, item: evaluator.item, organization: instance.organization)
         item = if evaluator.item.nil?
                  instance.storage_location.inventory_items.first.item
                else

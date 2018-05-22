@@ -1,7 +1,7 @@
 prawn_document do |pdf|
-  pdf.image logo_file_path(current_organization), width: 250
+  pdf.image logo_file_path(current_organization), height: 110
 
-  pdf.bounding_box [pdf.bounds.right - 200, pdf.bounds.top - 20], width: 200 do
+  pdf.bounding_box [pdf.bounds.right - 225, pdf.bounds.top - 20], width: 225 do
     pdf.text current_organization.name, align: :right
     pdf.text current_organization.address, align: :right
     pdf.text current_organization.email, align: :right
@@ -104,16 +104,16 @@ prawn_document do |pdf|
       pdf.font "Helvetica"
       pdf.stroke_horizontal_rule
       pdf.move_down(5)
-      pdf.table([
-        [current_organization.name, current_organization.address_inline, ""],
-      ]) do
-        self.width = pdf.bounds.width
-        cells.borders = []
-        column(0).width = 125
-        column(2).width = 125
-        column(1).style align: :center
-        column(2).style align: :right
-      end
+      # pdf.table([
+      #   [current_organization.name, current_organization.address_inline, ""],
+      # ]) do
+      #   self.width = pdf.bounds.width
+      #   cells.borders = []
+      #   column(0).width = 125
+      #   column(2).width = 125
+      #   column(1).style align: :center
+      #   column(2).style align: :right
+      # end
       logo_offset = (pdf.bounds.width - 190) / 2
       pdf.bounding_box([logo_offset, 0], width: 190, height: 33) do
         pdf.text "Lovingly created with", valign: :center

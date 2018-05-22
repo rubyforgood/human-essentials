@@ -128,7 +128,7 @@ RSpec.describe StorageLocation, type: :model do
 
         it "updates the quantity of items" do
           donation.line_items.first.update(quantity: 5)
-           expect {
+          expect {
             storage_location.adjust_from_past!(donation)
             storage_location.reload
           }.to change{storage_location.size}.by(-5)

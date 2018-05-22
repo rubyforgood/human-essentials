@@ -38,7 +38,7 @@ class Organization < ApplicationRecord
   has_many :users
 
   has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>"}, default_url: "/DiaperBase-Logo.png"
-  validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
+  validates_attachment_content_type :logo, content_type: /^image\/(jpg|jpeg|pjpeg|png|x-png)$/, message: 'file type is not allowed (only jpeg/png images)'
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
@@ -78,12 +78,13 @@ class Organization < ApplicationRecord
       }
   end
 
-private
+  private_class_method
+
   def self.seed_items(org)
     Rails.logger.info "Seeding #{org.name}'s items..."
     canonical_items = CanonicalItem.pluck(:id, :name, :category).collect { |c| { canonical_item_id: c[0], name: c[1], category: c[2] } }
     org_id = org.id
-  	Item.create(canonical_items) do |i| 
+    Item.create(canonical_items) do |i| 
       i.organization_id = org_id
     end
     org.reload

@@ -16,7 +16,7 @@ class BarcodeItem < ApplicationRecord
   belongs_to :organization, optional: true
   belongs_to :barcodeable, polymorphic: true, dependent: :destroy, counter_cache: :barcode_count
 
-  validates :organization, presence: true, if: Proc.new { |b| b.barcodeable_type == "Item" }
+  validates :organization, presence: true, if: proc { |b| b.barcodeable_type == "Item" }
   validates :value, presence: true, uniqueness: true
   validates :quantity, :barcodeable, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}

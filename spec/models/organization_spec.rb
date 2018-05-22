@@ -26,7 +26,7 @@ RSpec.describe Organization, type: :model do
         create(:barcode_item, organization: organization)
         expect(organization.barcode_items.count).to eq(1)
         create(:global_barcode_item) # global
-        
+
         expect(organization.barcode_items.count).to eq(2)
       end
     end
@@ -37,6 +37,14 @@ RSpec.describe Organization, type: :model do
       canonical_items_count = CanonicalItem.count
       Organization.seed_items(organization)
       expect(organization.items.count).to eq(canonical_items_count)
+    end
+  end
+
+  describe "paperclip validations" do
+    it "validates that attachments are png or jpgs" do
+      should validate_attachment_content_type(:logo)
+        .allowing('image/png', 'image/jpg')
+        .rejecting('text/plain', 'text/xml')
     end
   end
 

@@ -12,13 +12,13 @@
 #
 
 class CanonicalItem < ApplicationRecord
-  has_many :items
-  has_many :barcode_items, as: :barcodeable
+  has_many :items, dependent: :destroy
+  has_many :barcode_items, as: :barcodeable, dependent: :destroy, inverse_of: :canonical_items
 
-  validates_uniqueness_of :name, :key
-  validates_presence_of :name, :key
+  validates :name, :key, uniqueness: true
+  validates :name, :key, presence: true
 
   def to_key
-    name.tr(" ","_").gsub(/[^A-Za-z]/,'').downcase
+    name.tr(" ", "_").gsub(/[^A-Za-z]/, "").downcase
   end
 end
