@@ -13,7 +13,7 @@
 #
 
 RSpec.describe BarcodeItem, type: :model do
-  #let!(:organization) { Organization.first || create(:organization) }
+  # let!(:organization) { Organization.first || create(:organization) }
 
   context "global barcodes" do
     it "updates a counter in CanonicalItem whenever it tracks a new barcode" do
@@ -126,7 +126,7 @@ RSpec.describe BarcodeItem, type: :model do
       end
     end
 
-    # TODO - Determine how barcode items should act re: global barcodes / local barcodes and items vs. canonical items
+    # TODO: Determine how barcode items should act re: global barcodes / local barcodes and items vs. canonical items
 
     describe "to_h >" do
       it "emits a hash for a line_item" do

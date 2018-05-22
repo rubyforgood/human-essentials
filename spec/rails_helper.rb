@@ -9,6 +9,7 @@ require 'capybara/rails'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
 require 'pry'
+require "paperclip/matchers"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -43,6 +44,7 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
   config.include Devise::Test::IntegrationHelpers, type: :feature
+  config.include Paperclip::Shoulda::Matchers
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -60,13 +62,13 @@ RSpec.configure do |config|
     Rails.logger.info <<~ASCIIART
 
 
--~~==]}>        ######## ###########  ####      ########    ###########
--~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
--~~==]}>     +#+           +#+    +#+   +#+   +#+      +#+    +#+
--~~==]}>    +:++#++:++    +:+    +:++#++:++  +:++#++:++      +:+
--~~==]}>          +:+    +:+    +:+    +:+  +:+     +:+     +:+
--~~==]}>  :+:    :+:    :+:    :+:    :+:  :+:      :+:    :+: 
--~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
+      -~~==]}>        ######## ###########  ####      ########    ###########
+      -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
+      -~~==]}>     +#+           +#+    +#+   +#+   +#+      +#+    +#+
+      -~~==]}>    +:++#++:++    +:+    +:++#++:++  +:++#++:++      +:+
+      -~~==]}>          +:+    +:+    +:+    +:+  +:+     +:+     +:+
+      -~~==]}>  :+:    :+:    :+:    :+:    :+:  :+:      :+:    :+:
+      -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
 
 
 
@@ -140,20 +142,20 @@ end
 def __start_db_cleaning_with_log
   Rails.logger.info "======> SISYPHUS, PUSH THAT BOULDER BACK UP THE HILL <========"
   Rails.logger.info <<~ASCIIART
-     ,-'"""`-.
-   ,'         `.
-  /        `    \\
- (    /          \)
- |             " |
- (               \)
-`.\\\\          \\ /
-  `:.      , \\ ,\\ _
- hh  `:-.___,-`-.{\\\)
-      `.         |/ \\
-        `.         \\ \\
-          `-.      _\\,|
-             `.   |,-||
-               `..|| ||
+        ,-'"""`-.
+      ,'         `.
+      /        `    \\
+    (    /          \)
+    |             " |
+    (               \)
+    `.\\\\          \\ /
+      `:.      , \\ ,\\ _
+    hh  `:-.___,-`-.{\\\)
+          `.         |/ \\
+            `.         \\ \\
+              `-.      _\\,|
+                `.   |,-||
+                  `..|| ||
 ASCIIART
 
   DatabaseCleaner.start
@@ -163,18 +165,18 @@ def __sweep_up_db_with_log
   DatabaseCleaner.clean
   Rails.logger.info "========= ONE MUST IMAGINE SISYPHUS HAPPY ===================="
   Rails.logger.info <<~ASCIIART
-              /             _
-    ,-'"""`-.    /         _ |
-  ,'         `.      ;    {\\\)|
- /        `    \\   :. :   /\\ \\
-(    /          | .     _/  \\ \\
-|             " |;  .-``.   _\\,|
-(               |.-`     `-|,-||
- \\\\            /.`         ||.||
-  :.     ,   ,`               |.
-amh  :-.___,-``
-        .`
-      .`
-   .-`
+                  /             _
+        ,-'"""`-.    /         _ |
+      ,'         `.      ;    {\\\)|
+    /        `    \\   :. :   /\\ \\
+    (    /          | .     _/  \\ \\
+    |             " |;  .-``.   _\\,|
+    (               |.-`     `-|,-||
+    \\\\            /.`         ||.||
+      :.     ,   ,`               |.
+    amh  :-.___,-``
+            .`
+          .`
+      .-`
 ASCIIART
 end

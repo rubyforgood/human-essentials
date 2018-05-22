@@ -19,7 +19,6 @@ items_by_category.each do |category, entries|
   end
 end
 
-
 pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organization|
   organization.name = "PDX Diaper Bank"
   organization.address = "P.O. Box 22613, Portland OR 97269"
@@ -123,7 +122,7 @@ def seed_quantity(item_name, organization_id, storage_location_id, quantity)
 end
 
 # qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
-items_by_category.each do |category, entries|
+items_by_category.each do |_category, entries|
   entries.each do |entry|
     seed_quantity(entry[:name], pdx_org, inv_arbor.id, entry[:qty][0])
     seed_quantity(entry[:name], pdx_org, inv_dsu.id, entry[:qty][1])
@@ -207,14 +206,14 @@ end
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
-  case source
-  when Donation::SOURCES[:diaper_drive]
-    donation = Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
-  when Donation::SOURCES[:donation_site]
-    donation = Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org
-  else
-    donation = Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
-  end
+  donation = case source
+             when Donation::SOURCES[:diaper_drive]
+               Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
+             when Donation::SOURCES[:donation_site]
+               Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org
+             else
+               Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
+             end
 
   rand(1..5).times.each do
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: donation
