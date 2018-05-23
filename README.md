@@ -109,7 +109,7 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 If you are using Docker you may run the tests with `docker-compose run test`, otherwise run `bundle exec rake spec`.
 
-This app uses RSpec, Capybara, Poltergeist, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
+This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
 The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
