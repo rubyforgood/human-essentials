@@ -6,7 +6,6 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'spec_helper'
 require 'rspec/rails'
 require 'capybara/rails'
-require 'capybara/poltergeist'
 require 'pry'
 require "paperclip/matchers"
 
@@ -32,10 +31,18 @@ Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].each {|f| require 
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
-# Enable JS for Capybara tests
-Capybara.javascript_driver = :poltergeist
 # If an element is hidden, Capybara should ignore it
 Capybara.ignore_hidden_elements = true
+
+# https://docs.travis-ci.com/user/chrome
+Capybara.register_driver :chrome do |app|
+  options = Selenium::WebDriver::Chrome::Options.new(args: %w[no-sandbox headless disable-gpu])
+
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+end
+
+# Enable JS for Capybara tests
+Capybara.javascript_driver = :chrome
 
 RSpec.configure do |config|
 
