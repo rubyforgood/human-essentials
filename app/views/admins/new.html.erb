@@ -24,13 +24,16 @@ New Organization
 </div>
 <div class="box-body">
 <%= simple_form_for @organization, url: admins_path do |f| %>
-  
+
 <div class="form-inputs">
   <%= f.input :name, required: true, autofocus: true %>
   <%= f.input :short_name, required: true, autofocus: true %>
   <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
   <%= f.input :email %>
-  <%= f.input :address %>
+  <%= f.input :street %>
+  <%= f.input :city %>
+  <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
+  <%= f.input :zipcode %>
   <%= f.input :logo %>
   <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)</p>
 
@@ -39,7 +42,7 @@ New Organization
 
 </div>
 
-<% end %>  
+<% end %>
 </div>
 </div>
 <!-- /.box -->
