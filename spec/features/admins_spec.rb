@@ -13,13 +13,22 @@ RSpec.feature "Site Administration", type: :feature do
     fill_in "Email", with: org_params["email"]
     fill_in "Street", with: org_params["street"]
     fill_in "City", with: org_params["city"]
-    fill_in "State", with: org_params["state"]
+    select(org_params["state"], :from => 'State')
     fill_in "Zipcode", with: org_params["zipcode"]
 
     click_button "Create"
 
     expect(page).to have_content(org_params["name"])
     expect(page).to have_current_path(admins_path)
+
+    click_button "View"
+
+    expect(page).to have_content(org_params["name"])
+    expect(page).to have_content(org_params["street"])
+    expect(page).to have_content(org_params["city"])
+    expect(page).to have_content(org_params["state"])
+    expect(page).to have_content(org_params["zipcode"])
+
   end
 
   scenario "Admin can bail back to their own site" do
