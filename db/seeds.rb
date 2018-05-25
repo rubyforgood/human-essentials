@@ -256,14 +256,14 @@ end
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
-  case source
-  when Donation::SOURCES[:diaper_drive]
-    donation = Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
-  when Donation::SOURCES[:donation_site]
-    donation = Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org
-  else
-    donation = Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
-  end
+  donation = case source
+             when Donation::SOURCES[:diaper_drive]
+               Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
+             when Donation::SOURCES[:donation_site]
+               Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org
+             else
+               Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
+             end
 
   rand(1..5).times.each do
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: donation

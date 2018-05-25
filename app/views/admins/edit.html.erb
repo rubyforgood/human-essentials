@@ -36,7 +36,8 @@ Editing
   <%= f.input :zipcode %>
   <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true %>
   <%= f.input :logo %>
-  <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)</p>
+  <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
+    Only jpeg/png format is supported.</p>
 
 <% if @organization.logo.present? %>
     <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">Preview Current Logo</a>
