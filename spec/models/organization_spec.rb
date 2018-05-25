@@ -34,6 +34,14 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe "paperclip validations" do
+    it "validates that attachments are png or jpgs" do
+      should validate_attachment_content_type(:logo)
+        .allowing('image/png', 'image/jpg')
+        .rejecting('text/plain', 'text/xml')
+    end
+  end
+
   describe "#short_name" do
     it "can only contain valid characters" do
       expect(build(:organization, short_name: 'asdf')).to be_valid
