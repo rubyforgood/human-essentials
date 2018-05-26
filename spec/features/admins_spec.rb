@@ -13,7 +13,7 @@ RSpec.feature "Site Administration", type: :feature do
     fill_in "Email", with: org_params[:email]
     fill_in "Street", with: "1234 Banana Drive"
     fill_in "City", with: "Boston"
-    select("MA", :from => 'State')
+    select("MA", from: "State")
     fill_in "Zipcode", with: "12345"
 
     click_button "Create"
@@ -23,7 +23,7 @@ RSpec.feature "Site Administration", type: :feature do
     within('tr', text: org_params[:name]) do
       first(:link, 'View').click
     end
-  
+
     expect(page).to have_content(org_params[:name])
     expect(page).to have_content("Banana")
     expect(page).to have_content("Boston")
