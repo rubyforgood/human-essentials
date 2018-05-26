@@ -15,6 +15,10 @@
 #  logo_file_size    :integer
 #  logo_updated_at   :datetime
 #  intake_location   :integer
+#  street            :string
+#  city              :string
+#  state             :string
+#  zipcode           :string
 #
 
 class Organization < ApplicationRecord
@@ -43,7 +47,7 @@ class Organization < ApplicationRecord
   validates_attachment_content_type :logo, content_type: /^image\/(jpg|jpeg|pjpeg|png|x-png)$/, message: 'file type is not allowed (only jpeg/png images)'
 
   after_create { |org| seed_it!(org) }
-  
+
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name
@@ -56,6 +60,10 @@ class Organization < ApplicationRecord
   def quantity_categories
     storage_locations.map {|i| i.inventory_items}.flatten.reject{|i| i.item.nil? }.group_by{|i| i.item.category }
       .map {|i| [i[0], i[1].map{|i|i.quantity}.sum]}.sort_by { |_, v| -v }
+  end
+
+  def address
+    "#{street} #{city}, #{state} #{zipcode}"
   end
 
   def address_inline

@@ -2,7 +2,7 @@
 #
 # Table name: purchases
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint(8)        not null, primary key
 #  purchased_from      :string
 #  comment             :text
 #  organization_id     :integer
