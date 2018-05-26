@@ -1,17 +1,6 @@
-app/controllers/admins_controller.rb:
-  * [ 28] [TODO] who should be able to arrive here and how?
-  * [ 33] [TODO] who should be able to arrive here and how?
-
-app/controllers/application_controller.rb:
-  * [ 13] [FIXME] should be short_name so that we get "/pdx/blah" rather than "/123/blah"
-
-app/controllers/organizations_controller.rb:
-  * [ 17] [TODO] who should be able to arrive here and how?
-  * [ 21] [TODO] who should be able to arrive here and how?
-
 app/controllers/storage_locations_controller.rb:
-  * [ 58] [TODO] - the intake! method needs to be worked into this controller somehow.
-  * [ 59] [TODO] - the distribute! method needs to be worked into this controller somehow
+  * [ 97] [TODO] - the intake! method needs to be worked into this controller somehow.
+  * [ 98] [TODO] - the distribute! method needs to be worked into this controller somehow
 
 app/helpers/items_helper.rb:
   * [  3] [TODO] Migrate the controller helpers over to here
@@ -19,33 +8,27 @@ app/helpers/items_helper.rb:
 app/models/barcode_item.rb:
   * [ 27] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
 
+app/models/concerns/itemizable.rb:
+  * [ 32] [TODO] omit_zero is not used. Remove or incorporate it.
+
 app/models/diaper_drive_participant.rb:
-  * [ 26] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
+  * [ 28] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
 
 app/models/errors.rb:
   * [  3] [TODO] This should be removed once other models no longer depend on it; it should be encapsulated and accessed through an interface
 
 app/models/inventory_item.rb:
-  * [ 30] [TODO] - is there a reason for doing this instead of setting a DB default?
+  * [ 30] [TODO] is there a reason for doing this instead of setting a DB default?
 
 app/models/storage_location.rb:
-  * [127] [TODO] - this action is happening in the Transfer model/controller - does this method belong here?
-  * [151] [TODO] - this is called from the AdjustmentsController, should probably be in a service, not this model
-  * [174] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
+  * [ 68] [TODO] Can remove! and adjust_from_past! be refactored into one method?
+  * [146] [TODO] - this action is happening in the Transfer model/controller - does this method belong here?
+  * [170] [TODO] - this is called from the AdjustmentsController, should probably be in a service, not this model
+  * [193] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
 
 app/models/transfer.rb:
   * [ 25] [TODO] This query could probably be made more...better
   * [ 32] [TODO] This query could probably be made more...better
-
-app/views/admins/show.html.erb:
-  * [ 52] [TODO] Make this use simple_form
-
-app/views/layouts/application.html.erb:
-  * [ 59] [TODO] is using .html_safe ok here? Are there potential security considerations?
-
-spec/controllers/shared_examples/authorization_specs.rb:
-  * [ 17] [FIXME] Not all controllers have `edit` actions (or other), and this should be able to adapt to that
-  * [ 42] [FIXME] Not all controllers have `edit` actions, and this should be able to adapt to that
 
 spec/features/dashboard_spec.rb:
   * [ 30] [TODO] - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
@@ -54,4 +37,15 @@ spec/features/dashboard_spec.rb:
 spec/features/item_spec.rb:
   * [ 66] [FIXME] why isn't this handled by DatabaseCleaner?
   * [ 92] [FIXME] -- this should be 2. It's 3 because an unnecessary TR is being created.
+
+spec/models/distribution_spec.rb:
+  * [ 89] [TODO] Can this be replaced with the `combine!` method from `Itemizable`?
+
+spec/models/storage_location_spec.rb:
+  * [157] [TODO] This should probably be DRYed out with a shared_example
+
+spec/support/authorization_specs.rb:
+  * [  1] [TODO] Why are there two groups that are doing the same thing?
+  * [ 18] [FIXME] Not all controllers have `edit` actions (or other), and this should be able to adapt to that
+  * [ 43] [FIXME] Not all controllers have `edit` actions, and this should be able to adapt to that
 

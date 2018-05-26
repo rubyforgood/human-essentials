@@ -15,6 +15,10 @@
 #  logo_file_size    :integer
 #  logo_updated_at   :datetime
 #  intake_location   :integer
+#  street            :string
+#  city              :string
+#  state             :string
+#  zipcode           :string
 #
 
 FactoryBot.define do
@@ -24,6 +28,7 @@ FactoryBot.define do
     sequence(:short_name) { |n| "db_#{n}" } # 037000863427
     sequence(:email) { |n| "email#{n}@example.com" } # 037000863427
     sequence(:url) { |n| "https://organization#{n}.org" } # 037000863427
+
     logo { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.jpg'), 'image/jpeg') }
   end
 
