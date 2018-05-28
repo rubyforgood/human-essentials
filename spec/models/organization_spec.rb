@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id                :integer          not null, primary key
+#  id                :bigint(8)        not null, primary key
 #  name              :string
 #  short_name        :string
 #  address           :text
@@ -21,13 +21,18 @@ RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
   context "Associations >" do
     describe "barcode_items" do
-      it "returns both this organizations barcodes as well as global ones" do
-        BarcodeItem.destroy_all
+      before do
+        BarcodeItem.delete_all
         create(:barcode_item, organization: organization)
-        expect(organization.barcode_items.count).to eq(1)
         create(:global_barcode_item) # global
-
-        expect(organization.barcode_items.count).to eq(2)
+      end
+      it "returns only this organization's barcodes, no globals" do
+        expect(organization.barcode_items.count).to eq(1)
+      end
+      describe ".all" do
+        it "includes global barcode items also" do
+          expect(organization.barcode_items.all.count).to eq(2)
+        end
       end
     end
   end

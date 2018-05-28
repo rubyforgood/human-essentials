@@ -2,7 +2,7 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
+#  id                          :bigint(8)        not null, primary key
 #  source                      :string
 #  donation_site_id            :integer
 #  created_at                  :datetime

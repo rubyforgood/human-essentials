@@ -1,12 +1,15 @@
 class BarcodeItemsController < ApplicationController
   def index
-    @items = current_organization.items.barcoded_items
-    @global = filter_params[:only_global]
+    @items = Item.where(id: current_organization.barcode_items.includes(:barcdoeable))
+    Rails.logger.info(@items.inspect)
+    @global = filter_params[:include_global] || false
     @barcode_items = if @global
-                       BarcodeItem.includes(:item).filter(filter_params)
+                       current_organization.barcode_items.all.includes(:barcodeable).filter(filter_params)
                      else
-                       BarcodeItem.includes(:item).where(organization_id: current_organization.id).filter(filter_params)
+                       current_organization.barcode_items.includes(:barcodeable).filter(filter_params)
+                       #BarcodeItem.includes(:barcodeable).where(organization_id: current_organization.id).filter(filter_params)
                      end
+    Rails.logger.info(@barcode_items.inspect)
   end
 
   def create
@@ -79,6 +82,6 @@ private
 
   def filter_params
     return {} unless params.has_key?(:filters)
-    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :only_global)
+    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :include_global, :canonical_item_id)
   end
 end

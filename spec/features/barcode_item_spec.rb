@@ -2,24 +2,36 @@ RSpec.feature "Barcode management", type: :feature do
   before do
     sign_in(@user)
   end
+  let(:url_prefix) { "/#{@organization.to_param}" }
 
-  scenario "The barcode index only shows the barcodes created within the organization" do
-    item = create(:item, name: "1T Diapers")
-    item2 = create(:item, name: "2T Diapers")
-    create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.first)
-    create(:barcode_item, item: Item.last)
-    visit "/#{@organization.short_name}/barcode_items"
-    expect(page).to have_css("table tr", count: 2)
+  context "While viewing the barcode items index page" do
+    before do
+      Item.delete_all
+      create(:barcode_item, organization_id: @organization.id)
+      create(:global_barcode_item)
+      visit url_prefix + "/barcode_items"
+    end
+
+    scenario "only shows the barcodes created within the organization by default" do
+      expect(page).to have_css("table#tbl_barcode_items tbody tr", count: 1)
+    end
+
+    scenario "shows all the barcodes that are viewable when 'show global' is checked" do
+        check("filters[include_global]")
+        click_button "Filter"
+      
+      expect(page).to have_css("table#tbl_barcode_items tbody tr", count: 2)
+    end
   end
 
   context "With organization-specific barcodes" do
-    let(:barcode_traits) { attributes_for(:barcode_item, :for_organization, organization_id: @organization.id) }
-    let(:barcode) { create(:barcode_item, :for_organization, organization_id: @organization.id) }
+    let(:barcode_traits) { attributes_for(:barcode_item, organization_id: @organization.id) }
+    let(:barcode) { create(:barcode_item, organization_id: @organization.id) }
 
     scenario "User adds a new barcode" do
       Item.delete_all
       item = create(:item, name: "1T Diapers")
-      visit "/#{@organization.short_name}/barcode_items/new"
+      visit url_prefix + "/barcode_items/new"
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
@@ -38,7 +50,7 @@ RSpec.feature "Barcode management", type: :feature do
     scenario "User updates an existing barcode" do
       item = create(:item)
       barcode
-      visit "/#{@organization.short_name}/barcode_items/#{barcode.id}/edit"
+      visit url_prefix + "/barcode_items/#{barcode.id}/edit"
       fill_in "Quantity", id: "barcode_item_quantity", with: (barcode.quantity.to_i + 10).to_s
       click_button "Update Barcode item"
 
@@ -47,7 +59,7 @@ RSpec.feature "Barcode management", type: :feature do
 
     scenario "User updates an existing barcode with empty attributes" do
       barcode
-      visit "/#{@organization.short_name}/barcode_items/#{barcode.id}/edit"
+      visit url_prefix + "/barcode_items/#{barcode.id}/edit"
       fill_in "Quantity", id: "barcode_item_quantity", with: ""
       click_button "Update Barcode item"
 
@@ -56,13 +68,13 @@ RSpec.feature "Barcode management", type: :feature do
   end
 
   context "With global barcodes" do
-    let(:barcode_traits) { attributes_for(:barcode_item, organization_id: nil) }
-    let(:barcode) { create(:barcode_item, organization_id: nil) }
+    let(:barcode_traits) { attributes_for(:global_barcode_item) }
+    let(:barcode) { create(:global_barcode_item) }
 
     scenario "User adds a new barcode to the global pool" do
       Item.delete_all
       item = create(:item, name: "1T Diapers")
-      visit "/#{@organization.short_name}/barcode_items/new"
+      visit url_prefix + "/barcode_items/new"
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
@@ -82,16 +94,16 @@ RSpec.feature "Barcode management", type: :feature do
   end
 
 
-  scenario "User can filter the #index by item type" do
+  fscenario "User can filter the #index by item type" do
     item = create(:item, name: "1T Diapers")
     item2 = create(:item, name: "2T Diapers")
-    create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.first)
-    create(:barcode_item, :for_organization, organization_id: @organization.id, item: Item.last)
-    visit "/#{@organization.short_name}/barcode_items"
-    select Item.first.name, from: "filters_item_id"
+    create(:barcode_item, organization: @organization, barcodeable: item)
+    create(:barcode_item, organization: @organization, barcodeable: item2)
+    visit url_prefix + "/barcode_items"
+    select item.name, from: "filters_item_id"
     click_button "Filter"
 
-    expect(page).to have_css("table tr", count: 2)
+    expect(page).to have_css("table tbody tr", count: 1)
   end
 
   scenario "Filter presented to user lists items in alphabetical order" do
@@ -100,10 +112,10 @@ RSpec.feature "Barcode management", type: :feature do
     item3 = create(:item, name: "ABC Diapers")
     expected_order = ['', item1.name, item3.name, item2.name]
 
-    create(:barcode_item, item: item3)
-    create(:barcode_item, item: item2)
-    create(:barcode_item, item: item1)
-    visit "/#{@organization.short_name}/barcode_items"
+    create(:barcode_item, barcodeable: item3)
+    create(:barcode_item, barcodeable: item2)
+    create(:barcode_item, barcodeable: item1)
+    visit url_prefix + "/barcode_items"
 
     expect(page.all('select#filters_item_id option').map(&:text)).to eq(expected_order)
     expect(page.all('select#filters_item_id option').map(&:text)).not_to eq(expected_order.reverse)
@@ -111,7 +123,7 @@ RSpec.feature "Barcode management", type: :feature do
 
 
   scenario "User add a new barcode with empty attributes" do
-    visit "/#{@organization.short_name}/barcode_items/new"
+    visit url_prefix + "/barcode_items/new"
     click_button "Create Barcode item"
 
     expect(page.find('.alert')).to have_content "didn't work"

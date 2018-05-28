@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id                :integer          not null, primary key
+#  id                :bigint(8)        not null, primary key
 #  name              :string
 #  short_name        :string
 #  address           :text
@@ -24,7 +24,12 @@ class Organization < ApplicationRecord
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
 
   has_many :adjustments
-  has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', organization.id, true) }
+  #has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', organization.id, true) }
+  has_many :barcode_items do
+    def all
+      unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', proxy_association.owner.id, true)  
+    end
+  end
   has_many :distributions
   has_many :donations
   has_many :purchases

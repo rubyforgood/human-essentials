@@ -2,7 +2,7 @@
 #
 # Table name: canonical_items
 #
-#  id            :integer          not null, primary key
+#  id            :bigint(8)        not null, primary key
 #  key           :string
 #  name          :string
 #  category      :string
