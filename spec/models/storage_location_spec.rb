@@ -261,7 +261,7 @@ RSpec.describe StorageLocation, type: :model do
         storage_location = create :storage_location, :with_items, item: item, item_quantity: 300
         storage_location2 = create :storage_location, :with_items, item: item, item_quantity: 100
         transfer = build :transfer, :with_items, item: item, item_quantity: 100,
-                                                 from_id: storage_location.id, to_id: storage_location2.id
+                                                 from: storage_location, to: storage_location2
         storage_location.move_inventory!(transfer)
         expect(storage_location.inventory_items.first.quantity).to eq 200
         expect(storage_location2.inventory_items.first.quantity).to eq 200

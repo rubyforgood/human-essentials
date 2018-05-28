@@ -10,6 +10,7 @@ shared_examples_for "itemizable" do
       it "combines multiple line_items with the same item_id into a single record" do
         storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
         obj = build(model_f, storage_location: storage_location, organization: @organization)
+
         2.times { obj.line_items.build(item_id: item.id, quantity: 5) }
 
         obj.line_items.combine!
