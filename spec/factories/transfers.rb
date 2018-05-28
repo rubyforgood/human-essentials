@@ -13,13 +13,17 @@
 
 FactoryBot.define do
   factory :transfer do
+    transient do
+      storage_location nil
+    end
     organization { Organization.try(:first) || create(:organization) }
     from nil 
     to nil
     comment "A comment"
 
     after(:build) do |instance, evaluator|
-      instance.from = evaluator.from || create(:storage_location, organization: evaluator.organization)
+      # the Itemizable shared_example needs `storage_location` to be an option
+      instance.from = evaluator.storage_location || evaluator.from || create(:storage_location, organization: evaluator.organization)
       instance.to = evaluator.to || create(:storage_location, organization: evaluator.organization)
     end
 
