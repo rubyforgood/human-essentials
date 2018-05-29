@@ -7,15 +7,29 @@ RSpec.feature "Site Administration", type: :feature do
   scenario "Admin can create a new organization" do
     click_link "Add New Organization"
     org_params = attributes_for(:organization)
-    fill_in "Name", with: org_params["name"]
-    fill_in "Short name", with: org_params["short_name"]
-    fill_in "Url", with: org_params["url"]
-    fill_in "Email", with: org_params["email"]
-    fill_in "Address", with: org_params["address"]
+    fill_in "Name", with: org_params[:name]
+    fill_in "Short name", with: org_params[:short_name]
+    fill_in "Url", with: org_params[:url]
+    fill_in "Email", with: org_params[:email]
+    fill_in "Street", with: "1234 Banana Drive"
+    fill_in "City", with: "Boston"
+    select("MA", from: "State")
+    fill_in "Zipcode", with: "12345"
+
     click_button "Create"
 
-    expect(page).to have_content(org_params["name"])
-    expect(page).to have_current_path(admins_path)
+    expect(page).to have_content("All Diaperbase Organizations")
+
+    within('tr', text: org_params[:name]) do
+      first(:link, 'View').click
+    end
+
+    expect(page).to have_content(org_params[:name])
+    expect(page).to have_content("Banana")
+    expect(page).to have_content("Boston")
+    expect(page).to have_content("MA")
+    expect(page).to have_content("12345")
+
   end
 
   scenario "Admin can bail back to their own site" do
