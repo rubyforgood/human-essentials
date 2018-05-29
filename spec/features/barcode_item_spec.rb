@@ -41,7 +41,7 @@ RSpec.feature "Barcode management", type: :feature do
 
       expect(page.find('table')).to have_content "1T Diapers"
 
-      check "filters_only_global"
+      check "filters_include_global"
       click_button "Filter"
 
       expect(page.find('table')).not_to have_content "1T Diapers"
@@ -86,7 +86,7 @@ RSpec.feature "Barcode management", type: :feature do
 
       expect(page.find('table')).to have_content "1T Diapers"
 
-      check "filters_only_global"
+      check "filters_include_global"
       click_button "Filter"
 
       expect(page.find('table')).to have_content "1T Diapers"
@@ -94,13 +94,15 @@ RSpec.feature "Barcode management", type: :feature do
   end
 
 
-  fscenario "User can filter the #index by item type" do
+  scenario "User can filter the #index by item type" do
+    Item.delete_all
     item = create(:item, name: "1T Diapers")
     item2 = create(:item, name: "2T Diapers")
     create(:barcode_item, organization: @organization, barcodeable: item)
     create(:barcode_item, organization: @organization, barcodeable: item2)
     visit url_prefix + "/barcode_items"
-    select item.name, from: "filters_item_id"
+    binding.pry
+    select item.name, from: "filters_barcodeable_id"
     click_button "Filter"
 
     expect(page).to have_css("table tbody tr", count: 1)
@@ -117,8 +119,8 @@ RSpec.feature "Barcode management", type: :feature do
     create(:barcode_item, barcodeable: item1)
     visit url_prefix + "/barcode_items"
 
-    expect(page.all('select#filters_item_id option').map(&:text)).to eq(expected_order)
-    expect(page.all('select#filters_item_id option').map(&:text)).not_to eq(expected_order.reverse)
+    expect(page.all('select#filters_include_global option').map(&:text)).to eq(expected_order)
+    expect(page.all('select#filters_include_global option').map(&:text)).not_to eq(expected_order.reverse)
   end
 
 

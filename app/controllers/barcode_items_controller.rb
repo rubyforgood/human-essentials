@@ -1,6 +1,6 @@
 class BarcodeItemsController < ApplicationController
   def index
-    @items = Item.where(id: current_organization.barcode_items.includes(:barcdoeable))
+    @items = Item.where(id: current_organization.barcode_items.includes(:barcodeable))
     Rails.logger.info(@items.inspect)
     @global = filter_params[:include_global] || false
     @barcode_items = if @global
