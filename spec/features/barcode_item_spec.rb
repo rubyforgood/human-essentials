@@ -94,14 +94,13 @@ RSpec.feature "Barcode management", type: :feature do
   end
 
 
-  scenario "User can filter the #index by item type" do
+  fscenario "User can filter the #index by item type" do
     Item.delete_all
     item = create(:item, name: "1T Diapers")
     item2 = create(:item, name: "2T Diapers")
     create(:barcode_item, organization: @organization, barcodeable: item)
     create(:barcode_item, organization: @organization, barcodeable: item2)
     visit url_prefix + "/barcode_items"
-    binding.pry
     select item.name, from: "filters_barcodeable_id"
     click_button "Filter"
 
