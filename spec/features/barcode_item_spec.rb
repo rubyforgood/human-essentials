@@ -8,7 +8,7 @@ RSpec.feature "Barcode management", type: :feature do
     before do
       Item.delete_all
       create(:barcode_item, organization_id: @organization.id)
-      create(:global_barcode_item)
+      create(:barcode_item, global: true) 
       visit url_prefix + "/barcode_items"
     end
 
@@ -17,9 +17,8 @@ RSpec.feature "Barcode management", type: :feature do
     end
 
     scenario "shows all the barcodes that are viewable when 'show global' is checked" do
-        check("filters[include_global]")
-        click_button "Filter"
-      
+      check "filters_include_global"
+      click_button "Filter"
       expect(page).to have_css("table#tbl_barcode_items tbody tr", count: 2)
     end
   end
@@ -44,7 +43,7 @@ RSpec.feature "Barcode management", type: :feature do
       check "filters_include_global"
       click_button "Filter"
 
-      expect(page.find('table')).not_to have_content "1T Diapers"
+      expect(page.find('table')).to have_content "1T Diapers"
     end
 
     scenario "User updates an existing barcode" do
@@ -84,7 +83,7 @@ RSpec.feature "Barcode management", type: :feature do
 
       expect(page.find('.alert')).to have_content "added globally"
 
-      expect(page.find('table')).to have_content "1T Diapers"
+      expect(page.find('table')).to_not have_content "1T Diapers"
 
       check "filters_include_global"
       click_button "Filter"
@@ -94,7 +93,7 @@ RSpec.feature "Barcode management", type: :feature do
   end
 
 
-  fscenario "User can filter the #index by item type" do
+  scenario "User can filter the #index by item type" do
     Item.delete_all
     item = create(:item, name: "1T Diapers")
     item2 = create(:item, name: "2T Diapers")
@@ -118,8 +117,8 @@ RSpec.feature "Barcode management", type: :feature do
     create(:barcode_item, barcodeable: item1)
     visit url_prefix + "/barcode_items"
 
-    expect(page.all('select#filters_include_global option').map(&:text)).to eq(expected_order)
-    expect(page.all('select#filters_include_global option').map(&:text)).not_to eq(expected_order.reverse)
+    expect(page.all('select#filters_barcodeable_id option').map(&:text)).to eq(expected_order)
+    expect(page.all('select#filters_barcodeable_id option').map(&:text)).not_to eq(expected_order.reverse)
   end
 
 

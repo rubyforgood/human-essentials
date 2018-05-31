@@ -24,7 +24,7 @@ class BarcodeItem < ApplicationRecord
 
   include Filterable
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }
-  scope :include_global, ->(global) { where(global: [false,true]) if global }
+  scope :include_global, ->(global) { where(global: [false,global]) }
 
   alias_attribute :item, :barcodeable
 
