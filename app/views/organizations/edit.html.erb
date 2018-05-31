@@ -56,10 +56,10 @@
 
     <%= f.input :logo, wrapper: :vertical_input_group do %>
 
-      <% if current_organization.logo.present? %>
+      <% if current_organization.logo.attached? %>
         <div>
           <p>
-            <%= image_tag current_organization.logo.url(:small) %>
+            <%= image_tag current_organization.logo %>
           </p>
           <p>
             <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
@@ -68,7 +68,7 @@
           </p>
           <div id="showTheLogo" class="modal fade">
             <div class="modal-dialog">
-              <%= image_tag current_organization.logo.url, class: "thumbnail" %>
+              <%= image_tag current_organization.logo, class: "thumbnail" %>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
           </div>

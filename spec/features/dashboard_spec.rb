@@ -17,7 +17,7 @@ RSpec.feature "Dashboard", type: :feature do
       organization_logo = extract_image(:xpath, "//div/img")
       expect(organization_logo).to eq("logo.jpg")
 
-      @organization.logo = nil
+      @organization.logo.purge
       @organization.save
       visit @url_prefix + "/dashboard"
 

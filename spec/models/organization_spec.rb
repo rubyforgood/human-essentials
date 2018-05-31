@@ -34,11 +34,16 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe "paperclip validations" do
+  describe "ActiveStorage validation" do
     it "validates that attachments are png or jpgs" do
-      should validate_attachment_content_type(:logo)
-        .allowing('image/png', 'image/jpg')
-        .rejecting('text/plain', 'text/xml')
+      expect(build(:organization,
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.jpg'),
+                                                      'image/jpeg')))
+        .to be_valid
+      expect(build(:organization,
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.gif'),
+                                                      'image/gif')))
+        .to_not be_valid
     end
   end
 
