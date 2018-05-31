@@ -39,7 +39,7 @@ Editing
   <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
     Only jpeg/png format is supported.</p>
 
-<% if @organization.logo.present? %>
+<% if @organization.logo.attached? %>
     <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">Preview Current Logo</a>
 
     <!-- Button HTML (to Trigger Modal) -->
@@ -47,7 +47,7 @@ Editing
     <div id="showTheLogo" class="modal fade">
         <div class="modal-dialog">
 
-                  <%= image_tag current_organization.logo.url %>
+                  <%= image_tag @organization.logo %>
         </div>
     </div>
 

@@ -28,6 +28,7 @@ class Organization < ApplicationRecord
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI.regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
+  validate :correct_logo_mime_type
 
   has_many :adjustments
   has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', organization.id, true) }
@@ -43,9 +44,7 @@ class Organization < ApplicationRecord
   has_many :transfers
   has_many :users
 
-  has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>"}, default_url: "/DiaperBase-Logo.png"
-  validates_attachment_content_type :logo, content_type: /^image\/(jpg|jpeg|pjpeg|png|x-png)$/, message: 'file type is not allowed (only jpeg/png images)'
- #has_one_attached :logo
+  has_one_attached :logo
   after_create { |org| seed_it!(org) }
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
@@ -88,5 +87,15 @@ class Organization < ApplicationRecord
         k_size5:    items.find_by(name: "Kids (Size 5)").id,
         k_size6:    items.find_by(name: "Kids (Size 6)").id,
       }
+  end
+
+  private
+
+  def correct_logo_mime_type
+    if logo.attached? && !logo.content_type
+                              .in?(%w(image/jpeg image/jpg image/pjpeg image/png image/x-png))
+      logo.purge
+      errors.add(:logo, 'Must be a JPG or a PNG file')
+    end
   end
 end
