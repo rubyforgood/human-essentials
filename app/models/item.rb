@@ -50,6 +50,14 @@ class Item < ApplicationRecord
     BarcodeItem.where('barcodeable_id = ?', item.id)
   end
 
+  def self.gather_items(current_organization, global)
+    if global
+      where(id: current_organization.barcode_items.include_global(false).pluck(:barcodeable_id))
+        .merge(where(id: BarcodeItem.where(global: true)))
+    else
+      where(id: current_organization.barcode_items.include_global(false).pluck(:barcodeable_id))
+    end
+  end
   # Convenience method so that other methods can be simplified to
   # expect an id or an Item object
   def to_i

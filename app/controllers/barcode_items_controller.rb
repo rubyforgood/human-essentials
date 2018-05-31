@@ -1,10 +1,10 @@
 class BarcodeItemsController < ApplicationController
   def index
     @global = filter_params[:include_global] || false    
-    @items =  Item.where(id: current_organization.barcode_items.include_global(@global).pluck(:barcodeable_id))
+    @items = Item.gather_items(current_organization,@global)
     Rails.logger.info(@items.inspect)
     @barcode_items = if @global
-                       current_organization.barcode_items.include_global(true).filter(filter_params)
+                       current_organization.barcode_items.include_global(false) + BarcodeItem.where(global: true)
                      else
                        current_organization.barcode_items.include_global(false).filter(filter_params)
                        #BarcodeItem.includes(:barcodeable).where(organization_id: current_organization.id).filter(filter_params)
