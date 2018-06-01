@@ -46,6 +46,15 @@ RSpec.describe Item, type: :model do
       expect(result.length).to eq(1)
       expect(result.first).to eq(other)
     end
+
+    it "->by_size returns all items with the same size, per their CanonicalItem parent" do
+      size4 = create(:canonical_item, size: "4")
+      sizeZ = create(:canonical_item, size: "Z")
+      create(:item, canonical_item: size4)
+      create(:item, canonical_item: size4)
+      create(:item, canonical_item: sizeZ)
+      expect(Item.by_size("4").length).to eq(2)
+    end
   end
 
   context "Methods >" do
