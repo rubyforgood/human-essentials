@@ -30,6 +30,7 @@ class Item < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
   scope :in_category, ->(category) { where(category: category) }
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
+  scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size })}
 
   include DiaperPartnerClient
   after_create :update_diaper_partner

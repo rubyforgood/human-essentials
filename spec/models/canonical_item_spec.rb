@@ -26,4 +26,10 @@ RSpec.describe CanonicalItem, type: :model do
 
   describe "Associations >" do
   end
+
+  describe "Methods >" do
+    describe "to_key" do
+      
+    end
+  end
 end
