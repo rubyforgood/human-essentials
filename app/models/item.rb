@@ -27,10 +27,13 @@ class Item < ApplicationRecord
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
   include Filterable
+  scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
   scope :in_category, ->(category) { where(category: category) }
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
   scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size })}
+
+  default_scope { active }
 
   include DiaperPartnerClient
   after_create :update_diaper_partner
@@ -49,6 +52,21 @@ class Item < ApplicationRecord
 
   def self.barcodes_for(item)
     BarcodeItem.where('barcodeable_id = ?', item.id)
+  end
+
+  # Override `destroy` to ensure Item isn't accidentally destroyed
+  # without first being disassociated with its historical presence
+  def destroy
+    if has_history?
+      update_attributes(active: false)
+    else
+      super
+    end
+  end
+
+
+  def has_history?
+    !(line_items.empty? && inventory_items.empty? && barcode_items.empty?)
   end
 
   def self.gather_items(current_organization, global)
