@@ -8,7 +8,7 @@ RSpec.feature "Barcode management", type: :feature do
     before do
       Item.delete_all
       create(:barcode_item, organization_id: @organization.id)
-      create(:barcode_item, global: true) 
+      create(:barcode_item, global: true)
       visit url_prefix + "/barcode_items"
     end
 

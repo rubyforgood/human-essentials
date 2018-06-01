@@ -10,7 +10,7 @@
     fill_in "Name", with: item_traits[:name]
     fill_in "Category", with: item_traits[:category]
     click_button "Create Item"
-    
+
     expect(page.find('.alert')).to have_content "added"
   end
 
@@ -18,7 +18,7 @@
     visit url_prefix + '/items/new'
     item_traits = attributes_for(:item)
     click_button "Create Item"
-    
+
     expect(page.find('.alert')).to have_content "didn't work"
   end
 
