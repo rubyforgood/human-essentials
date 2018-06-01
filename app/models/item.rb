@@ -60,6 +60,7 @@ class Item < ApplicationRecord
   end
   # Convenience method so that other methods can be simplified to
   # expect an id or an Item object
+
   def to_i
     id
   end

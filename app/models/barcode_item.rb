@@ -24,14 +24,14 @@ class BarcodeItem < ApplicationRecord
 
   include Filterable
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }
-  scope :include_global, ->(global) { where(global: [false,global]) }
+  scope :include_global, ->(global) { where(global: [false, global]) }
 
   alias_attribute :item, :barcodeable
 
 =begin
   # TODO - BarcodeItems should be able to filter on CanonicalItemId
   def self.canonical_item_id(canonical_item_id)
-    items = BarcodeItem.find(:all, 
+    items = BarcodeItem.find(:all,
     joins: "INNER JOIN items ON items.canonical_item_id = #{canonical_item_id}",
     )
     canonical_barcode_items = self.where(barcodeable_type: "CanonicalItem", barcodeable_id: canonical_item_id)
