@@ -1,7 +1,6 @@
 <div class="box-body">
   <%= simple_form_for @adjustment, html: { class: 'form-horizontal'} do |f| %>
 
-    <%= f.association :organization %>
     <%= f.association :storage_location, collection: current_organization.storage_locations  %>
 
     <%= f.input :comment, label: "Comments", wrapper: :vertical_input_group do %>
