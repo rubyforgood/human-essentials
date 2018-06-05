@@ -49,10 +49,10 @@ RSpec.describe Item, type: :model do
 
     it "->by_size returns all items with the same size, per their CanonicalItem parent" do
       size4 = create(:canonical_item, size: "4")
-      sizeZ = create(:canonical_item, size: "Z")
+      size_z = create(:canonical_item, size: "Z")
       create(:item, canonical_item: size4)
       create(:item, canonical_item: size4)
-      create(:item, canonical_item: sizeZ)
+      create(:item, canonical_item: size_z)
       expect(Item.by_size("4").length).to eq(2)
     end
 
@@ -138,16 +138,12 @@ RSpec.describe Item, type: :model do
     describe "destroy" do
       it "actually destroys an item that doesn't have history" do
         item = create(:item)
-        expect { 
-          item.destroy
-        }.to change{Item.count}.by(-1)
+        expect { item.destroy }.to change { Item.count }.by(-1)
       end
 
       it "only hides an item that has history" do
         item = create(:line_item).item
-        expect {
-          item.destroy
-        }.to change{Item.count}.by(0)
+        expect { item.destroy }.to change { Item.count }.by(0)
         expect(item).not_to be_active
       end
     end
