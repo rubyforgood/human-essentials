@@ -31,7 +31,7 @@ class Item < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
   scope :in_category, ->(category) { where(category: category) }
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
-  scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size })}
+  scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size }) }
 
   default_scope { active }
 
@@ -58,12 +58,11 @@ class Item < ApplicationRecord
   # without first being disassociated with its historical presence
   def destroy
     if has_history?
-      update_attributes(active: false)
+      update(active: false)
     else
       super
     end
   end
-
 
   def has_history?
     !(line_items.empty? && inventory_items.empty? && barcode_items.empty?)
