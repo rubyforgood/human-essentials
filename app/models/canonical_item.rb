@@ -9,16 +9,13 @@
 #  barcode_count :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  size          :string
 #
 
 class CanonicalItem < ApplicationRecord
   has_many :items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy, inverse_of: :canonical_items
 
-  validates :name, :key, uniqueness: true
-  validates :name, :key, presence: true
-
-  def to_key
-    name.tr(" ", "_").gsub(/[^A-Za-z]/, "").downcase
-  end
+  validates_presence_of :name, :category
+  validates_uniqueness_of :name
 end
