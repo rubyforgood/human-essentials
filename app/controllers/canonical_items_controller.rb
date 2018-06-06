@@ -34,13 +34,13 @@ class CanonicalItemsController < ApplicationController
   end
 
   def show
-    @canonical_item = CanonicalItem.include(:items).find(params[:id])
+    @canonical_item = CanonicalItem.includes(items: [:organization]).find(params[:id])
     @items = @canonical_item.items
   end
 
   # TODO - If there are associated Items, they should be migrated prior to deletion
   def destroy
-    @canonical_item = CanonicalItem.include(:items).find(params[:id])
+    @canonical_item = CanonicalItem.includes(:items).find(params[:id])
     if @canonical_item.items.size > 0 && @canonical_item.destroy
       redirect_to canonical_items_path, notice: "Canonical Item deleted!"
     else
@@ -55,7 +55,7 @@ class CanonicalItemsController < ApplicationController
     verboten! unless current_user.organization_admin
   end
 
-  def canonical_items_params
+  def canonical_item_params
     params.require(:canonical_item).permit(:name, :key, :category)
   end
 end

@@ -10,11 +10,12 @@
 #  barcode_count     :integer
 #  organization_id   :integer
 #  canonical_item_id :integer
+#  active            :boolean          default(TRUE)
 #
 
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
-  belongs_to :canonical_item
+  belongs_to :canonical_item, counter_cache: :item_count
   validates_uniqueness_of :name, :scope => :organization
   validates_presence_of :name
   validates :organization, presence: true

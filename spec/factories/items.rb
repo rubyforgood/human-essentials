@@ -10,6 +10,7 @@
 #  barcode_count     :integer
 #  organization_id   :integer
 #  canonical_item_id :integer
+#  active            :boolean          default(TRUE)
 #
 
 FactoryBot.define do

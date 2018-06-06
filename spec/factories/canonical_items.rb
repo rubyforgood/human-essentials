@@ -9,11 +9,13 @@
 #  barcode_count :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  size          :string
 #
 
 FactoryBot.define do
   factory :canonical_item do
     sequence(:name) { |size| "#{size}T Diapers" }
-    sequence(:key) { |k| "#{k}foo" }
+    category "Infant Diapers"
+    size nil
   end
 end
