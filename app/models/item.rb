@@ -31,7 +31,9 @@ class Item < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
   scope :in_category, ->(category) { where(category: category) }
+  scope :by_canonical_item, ->(canonical_item) { where(canonical_item: canonical_item) }
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
+
   scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size }) }
 
   default_scope { active }
