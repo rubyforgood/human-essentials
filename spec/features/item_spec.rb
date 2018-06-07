@@ -4,11 +4,11 @@
   end
   let!(:url_prefix) { "/#{@organization.to_param}" }
   scenario "User creates a new item" do
-    pending "Need to update this to account for canonical items"
     visit url_prefix + '/items/new'
     item_traits = attributes_for(:item)
     fill_in "Name", with: item_traits[:name]
     fill_in "Category", with: item_traits[:category]
+    select CanonicalItem.last.name, from: "Base Item"
     click_button "Create Item"
 
     expect(page.find('.alert')).to have_content "added"
@@ -50,6 +50,18 @@
 
     expect(page).to have_css("table tbody tr", count: 3)
   end
+
+  scenario "User can filter the #index by canonical item" do
+    Item.delete_all
+    item = create(:item, canonical_item: CanonicalItem.first)
+    item2 = create(:item, canonical_item: CanonicalItem.last)
+    visit url_prefix + "/items"
+    select CanonicalItem.first.name, from: "filters_by_canonical_item"
+    click_button "Filter"
+
+    expect(page).to have_css("table tbody tr", count: 3)
+  end
+
 
   scenario "Filters presented to user are alphabetized by category" do
     Item.delete_all

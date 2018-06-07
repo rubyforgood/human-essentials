@@ -74,6 +74,22 @@ RSpec.describe Item, type: :model do
       inactive_item.destroy
       expect(Item.active.to_a).to match_array([item])
     end
+
+    describe "->by_canonical_item" do
+      before(:each) do
+        Item.delete_all
+        @c1 = create(:canonical_item)
+        create(:item, canonical_item: @c1, organization: @organization)
+        create(:item, canonical_item: create(:canonical_item), organization: @organization)
+      end
+      it "shows the items for a particular canonical_item" do
+        expect(Item.by_canonical_item(@c1).size).to eq(1)
+      end
+      it "can be chained to organization to constrain it to just 1 org's items" do
+        create(:item, canonical_item: @c1, organization: create(:organization))
+        expect(@organization.items.by_canonical_item(@c1).size).to eq(1)
+      end
+    end
   end
 
   context "Methods >" do
