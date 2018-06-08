@@ -9,6 +9,7 @@ AllCops:
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
+    - "db/seeds.rb"
     - "db/migrate/*"
     - "bin/*"
     - "lib/files/cucumber.rake"

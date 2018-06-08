@@ -2,7 +2,7 @@
 #
 # Table name: transfers
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  from_id         :integer
 #  to_id           :integer
 #  comment         :string
@@ -13,6 +13,7 @@
 
 RSpec.describe Transfer, type: :model do
   it_behaves_like "itemizable"
+  # 2 Specs are failing here because 
   
   context "Validations >" do
     it "must belong to an organization" do
@@ -22,13 +23,13 @@ RSpec.describe Transfer, type: :model do
 
   context "Scopes >" do
     it "`from_location` can filter out transfers from a specific location" do
-      xfer1 = create(:transfer)
-      create(:transfer)
+      xfer1 = create(:transfer, organization: @organization)
+      create(:transfer, organization: @organization)
       expect(Transfer.from_location(xfer1.from_id).size).to eq(1)
     end
     it "`to_location` can filter out transfers to a specific location" do
-      xfer1 = create(:transfer)
-      create(:transfer)
+      xfer1 = create(:transfer, organization: @organization)
+      create(:transfer, organization: @organization)
       expect(Transfer.to_location(xfer1.to_id).size).to eq(1)
     end
   end

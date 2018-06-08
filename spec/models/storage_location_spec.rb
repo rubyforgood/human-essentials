@@ -2,7 +2,7 @@
 #
 # Table name: storage_locations
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  address         :string
 #  created_at      :datetime
@@ -23,10 +23,6 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Filtering >" do
-    it "can filter" do
-      expect(subject.class).to respond_to :filter
-    end
-
     it "->containing yields only inventories that have that item" do
       item = create(:item)
       item2 = create(:item)
@@ -104,6 +100,10 @@ RSpec.describe StorageLocation, type: :model do
 
       before(:each) do
         storage_location.intake!(donation)
+        storage_location.items.reload
+
+        expect(storage_location.size).to eq(10)
+        expect(storage_location.items.count).to eq(1)
       end
 
       it "removes items from a storage location" do
@@ -115,35 +115,35 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "adjust_from_past!" do
 
+    describe "adjust_from_past!" do
       let(:storage_location) { create(:storage_location) }
       let(:purchase)         { create(:purchase, :with_items, item_quantity: 10) }
       let(:donation)         { create(:donation, :with_items, item_quantity: 10) }
 
-      context "with donations" do
+      context "with_donations" do
         before(:each) do
           storage_location.intake!(donation)
         end
+
         it "updates the quantity of items" do
           donation.line_items.first.update(quantity: 5)
-
           expect {
             storage_location.adjust_from_past!(donation)
             storage_location.reload
           }.to change{storage_location.size}.by(-5)
         end
 
+
         it "adds an inventory item if it doesn't already exist" do
           donation.line_items << create(:line_item, quantity: 5)
-
           expect {
             storage_location.adjust_from_past!(donation)
             storage_location.reload
           }.to change{storage_location.size}.by(5)
           .and change{InventoryItem.count}.by(1)
         end
-  
+      
         it "removes the inventory item from the DB if the item's removal results in a 0 count" do
           donation.line_items.first.update(quantity: 0)
 
@@ -154,30 +154,18 @@ RSpec.describe StorageLocation, type: :model do
           .and change{InventoryItem.count}.by(-1)
         end
       end
-      # TODO: This should probably be DRYed out with a shared_example
+       # TODO: This should probably be DRYed out with a shared_example
       context "With purchases" do
         before(:each) do
           storage_location.intake!(purchase)
           storage_location.items.reload  
         end
-      it "add additional line item" do
-        item = create(:item)
-        purchase.line_items.create(item_id: item.id, quantity: 6)
-        storage_location.adjust_from_past!(purchase)
-        storage_location.items.reload
-      end
-
-      # it "removes the inventory item from the DB if the item's removal results in a 0 count" do
-      #   purchase.line_items.first.quantity = 0
-      #   storage_location.adjust_from_past!(purchase)
-      #   storage_location.items.reload
-
-      #     expect {
-      #       storage_location.adjust_from_past!(purchase)
-      #       storage_location.reload
-      #     }.to change{storage_location.size}.by(-5)
-      #   end
-
+        it "add additional line item" do
+          item = create(:item)
+          purchase.line_items.create(item_id: item.id, quantity: 6)
+          storage_location.adjust_from_past!(purchase)
+          storage_location.items.reload
+        end
         it "adds an inventory item if it doesn't already exist" do
           purchase.line_items << create(:line_item, quantity: 5)
 
@@ -229,9 +217,10 @@ RSpec.describe StorageLocation, type: :model do
     describe "import_csv" do
       it "imports storage locations from a csv file" do
         organization
+        before_import = StorageLocation.count
         import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv").read
         StorageLocation.import_csv(import_file_path, organization.id)
-        expect(StorageLocation.count).to eq 3
+        expect(StorageLocation.count).to eq before_import + 3
       end
     end
 
@@ -272,7 +261,7 @@ RSpec.describe StorageLocation, type: :model do
         storage_location = create :storage_location, :with_items, item: item, item_quantity: 300
         storage_location2 = create :storage_location, :with_items, item: item, item_quantity: 100
         transfer = build :transfer, :with_items, item: item, item_quantity: 100,
-                                                 from_id: storage_location.id, to_id: storage_location2.id
+                                                 from: storage_location, to: storage_location2
         storage_location.move_inventory!(transfer)
         expect(storage_location.inventory_items.first.quantity).to eq 200
         expect(storage_location2.inventory_items.first.quantity).to eq 200

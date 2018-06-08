@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       post :invite_user
     end
   end
+  resources :canonical_items
 
   scope path: ':organization_id' do
 

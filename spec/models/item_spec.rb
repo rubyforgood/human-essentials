@@ -2,19 +2,24 @@
 #
 # Table name: items
 #
-#  id              :integer          not null, primary key
-#  name            :string
-#  category        :string
-#  created_at      :datetime
-#  updated_at      :datetime
-#  barcode_count   :integer
-#  organization_id :integer
+#  id                :bigint(8)        not null, primary key
+#  name              :string
+#  category          :string
+#  created_at        :datetime
+#  updated_at        :datetime
+#  barcode_count     :integer
+#  organization_id   :integer
+#  canonical_item_id :integer
+#  active            :boolean          default(TRUE)
 #
 
 RSpec.describe Item, type: :model do
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:item, organization_id: nil)).not_to be_valid
+    end
+    it "requires a Canonical Item base" do
+      expect(build(:item, canonical_item_id: nil)).not_to be_valid
     end
     it "requires a unique name" do
       item = create(:item)
@@ -41,6 +46,49 @@ RSpec.describe Item, type: :model do
       result = Item.in_same_category_as(item)
       expect(result.length).to eq(1)
       expect(result.first).to eq(other)
+    end
+
+    it "->by_size returns all items with the same size, per their CanonicalItem parent" do
+      size4 = create(:canonical_item, size: "4")
+      size_z = create(:canonical_item, size: "Z")
+      create(:item, canonical_item: size4)
+      create(:item, canonical_item: size4)
+      create(:item, canonical_item: size_z)
+      expect(Item.by_size("4").length).to eq(2)
+    end
+
+    it "->alphabetized retrieves items in alphabetical order" do
+      Item.delete_all
+      item_c = create(:item, name: "C")
+      item_b = create(:item, name: "B")
+      item_a = create(:item, name: "A")
+      alphabetized_list = [item_a.name, item_b.name, item_c.name]
+      expect(Item.alphabetized.count).to eq(3)
+      expect(Item.alphabetized.map(&:name)).to eq(alphabetized_list)
+    end
+
+    it "->active shows items that are still active" do
+      Item.delete_all
+      inactive_item = create(:line_item).item
+      item = create(:item)
+      inactive_item.destroy
+      expect(Item.active.to_a).to match_array([item])
+    end
+
+    describe "->by_canonical_item" do
+      before(:each) do
+        Item.delete_all
+        @c1 = create(:canonical_item)
+        create(:item, canonical_item: @c1, organization: @organization)
+        create(:item, canonical_item: create(:canonical_item), organization: @organization)
+      end
+      it "shows the items for a particular canonical_item" do
+        expect(Item.by_canonical_item(@c1).size).to eq(1)
+      end
+      it "can be chained to organization to constrain it to just 1 org's items" do
+        create(:item, canonical_item: @c1, organization: create(:organization))
+        expect(@organization.items.by_canonical_item(@c1).size).to eq(1)
+      end
     end
   end
 
@@ -76,7 +124,7 @@ RSpec.describe Item, type: :model do
     describe "barcodes_for" do
       it "retrieves all BarcodeItems associated with an item" do
         item = create(:item)
-        barcode_item = create(:barcode_item, item: item)
+        barcode_item = create(:barcode_item, barcodeable: item)
         create(:barcode_item)
         expect(Item.barcodes_for(item).first).to eq(barcode_item)
       end
@@ -89,17 +137,32 @@ RSpec.describe Item, type: :model do
         expect(Item.barcoded_items.length).to eq(2)
       end
     end
-  end
 
-  context "Alphabetized Scope >" do
-    it "retrieves items in alphabetical order" do
-      Item.delete_all
-      item_c = create(:item, name: "C")
-      item_b = create(:item, name: "B")
-      item_a = create(:item, name: "A")
-      alphabetized_list = [item_a.name, item_b.name, item_c.name]
-      expect(Item.alphabetized.count).to eq(3)
-      expect(Item.alphabetized.map(&:name)).to eq(alphabetized_list)
+    describe "has_history?" do
+      it "identifies items that have been used previously" do
+        no_history_item = create(:item)
+        item_in_line_item = create(:line_item).item
+        item_in_inventory_item = create(:inventory_item).item
+        item_in_barcodes = create(:barcode_item).barcodeable
+
+        expect(no_history_item).not_to have_history
+        expect(item_in_line_item).to have_history
+        expect(item_in_inventory_item).to have_history
+        expect(item_in_barcodes).to have_history
+      end
+    end
+
+    describe "destroy" do
+      it "actually destroys an item that doesn't have history" do
+        item = create(:item)
+        expect { item.destroy }.to change { Item.count }.by(-1)
+      end
+
+      it "only hides an item that has history" do
+        item = create(:line_item).item
+        expect { item.destroy }.to change { Item.unscoped.count }.by(0)
+        expect(item).not_to be_active
+      end
     end
   end
 

@@ -22,12 +22,12 @@
           <div class="row">
             <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
               <%= label_tag "Filter By Item Category" %>
-              <%= collection_select(:filters, :item_id, @items, :id, :name, { include_blank: true }, class: "form-control") %>
+              <%= collection_select(:filters, :barcodeable_id, @items.order('name'), :id, :name, { include_blank: true }, class: "form-control") %>
             </div>
             <div class="form-group col-lg-8 col-md-8 col-sm-6 col-xs-12" style="padding-top:30px;">
               <%= label_tag do  %>
-                <%= check_box_tag "filters[only_global]", "true", @global %>
-                Only show barcodes that are globally available
+                <%= check_box_tag "filters[include_global]", "true", @global %>
+                Include barcodes that are globally available
               <% end %>
             </div>
           </div><!-- /.row -->
@@ -52,9 +52,10 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="box-body table-responsive no-padding">
-            <table class="table table-hover">
+            <table id="tbl_barcode_items" class="table table-hover">
               <thead>
                 <tr>
+                  <th>Global</th>
                   <th>Item Type</th>
                   <th>Quantity in the Box</th>
                   <th>Barcode</th>

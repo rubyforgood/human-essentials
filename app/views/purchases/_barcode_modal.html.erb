@@ -15,7 +15,7 @@
             <% end %>
         </div><!-- /.row -->
         <div class="row">
-          <%= f.association :item, collection: @items, label: "Item" %>
+          <%= f.association :barcodeable, collection: @items, label: "Item" %>
         </div>
         <div class="row">
           <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
