@@ -43,6 +43,7 @@ RSpec.feature "Dashboard", type: :feature do
     visit @url_prefix + "/dashboard"
     expect(page).to have_content("210 items received year to date")
     expect(page).to have_content("105 items distributed year to date")
+    expect(page).to have_content("0 Diaper Drives")
 
     # Scope it down to just today, should omit the first donation
     #select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
@@ -75,10 +76,19 @@ RSpec.feature "Dashboard", type: :feature do
     fill_in "donation_line_items_attributes_0_quantity", with: "100"
     click_button "Create Donation"
 
+    # Make a diaper drive donation
+    visit @url_prefix + "/donations/new"
+    select "Diaper Drive", from: "donation_source"
+    select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
+    select StorageLocation.first.name, from: "donation_storage_location_id"
+    select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+    fill_in "donation_line_items_attributes_0_quantity", with: "100"
+    click_button "Create Donation"
+
     # Check the dashboard now
     visit @url_prefix + "/dashboard"
-    expect(page).to have_content("100 items received")
-    expect(page).to have_content("100 items on-hand")
+    expect(page).to have_content("200 items received")
+    expect(page).to have_content("200 items on-hand")
 
     # Check distributions
     visit @url_prefix + "/distributions/new"
@@ -93,8 +103,9 @@ RSpec.feature "Dashboard", type: :feature do
 
     # Check the dashboard now
     visit @url_prefix + "/dashboard"
-    expect(page).to have_content("100 items received")
+    expect(page).to have_content("200 items received")
     expect(page).to have_content("50 items distributed")
-    expect(page).to have_content("50 items on-hand")
+    expect(page).to have_content("150 items on-hand")
+    expect(page).to have_content("1 Diaper Drives")
   end
 end
