@@ -102,8 +102,7 @@ RSpec.feature "Purchases", type: :feature, js: true do
       end
 
       scenario "A user can view another organizations puchanse" do
-        pending "TODO: add the test"
-        raise
+        expect(page).to have_content("Still haven't found what you're looking for")
       end
     end
 
