@@ -74,6 +74,13 @@ class Purchase < ApplicationRecord
     line_item.save
   end
 
+  def line_items_quantities
+    line_items.inject(Hash.new) do |hash, item|
+      hash[item.id] = item.quantity
+      hash
+    end
+  end
+
   private
 
   def combine_duplicates

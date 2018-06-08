@@ -134,6 +134,13 @@ class Donation < ApplicationRecord
     storage_location.remove!(self)
   end
 
+  def line_items_quantities
+    line_items.inject(Hash.new) do |hash, item|
+      hash[item.id] = item.quantity
+      hash
+    end
+  end
+
   private
 
   def combine_duplicates
