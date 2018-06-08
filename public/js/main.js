@@ -10,7 +10,8 @@ $(document).ready(function(){
 	 	responsive : true,
 	 	scroll :{
 	 		fx : 'fade',
-      duration: 700
+      duration: 1250,
+      pauseOnHover: true
 	 	},
 	 	items :{
 	 		visible : 1,
