@@ -92,13 +92,12 @@ RSpec.feature "Purchases", type: :feature, js: true do
        end
     end
 
+    # Bug fix -- Issue #378
+    # A user can view another organizations purchase
     context "Editing purchase" do
-      # Bug fix -- Issue #378
-      # A user can view another organizations purchase
-
       before(:each) do
         purchase = create(:purchase, organization: create(:organization))
-        visit edit_purchase_path(@user.organization.name, purchase)
+        visit edit_purchase_path(@user.organization.short_name, purchase)
       end
 
       scenario "A user can view another organizations puchanse" do
