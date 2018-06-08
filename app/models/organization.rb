@@ -27,7 +27,6 @@ class Organization < ApplicationRecord
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
 
   has_many :adjustments
-  # has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', organization.id, true) }
   has_many :barcode_items do
     def all
       unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', proxy_association.owner.id, true)  
@@ -40,7 +39,7 @@ class Organization < ApplicationRecord
   has_many :diaper_drive_participants
   has_many :storage_locations
   has_many :inventory_items, through: :storage_locations
-  has_many :items 
+  has_many :items
   has_many :partners
   has_many :transfers
   has_many :users

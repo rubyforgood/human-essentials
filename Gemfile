@@ -56,6 +56,7 @@ group :development do
   gem 'capistrano3-puma'
   gem 'capistrano-rails-console', require: false
   gem 'listen', '~> 3.0.5'
+  gem 'rails-erd'
   gem 'spring'
   gem 'spring-watcher-listen'
   gem 'web-console'
