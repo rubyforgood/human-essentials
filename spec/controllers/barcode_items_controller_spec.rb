@@ -38,8 +38,8 @@ RSpec.describe BarcodeItemsController, type: :controller do
 
     describe "GET #find" do
       let!(:global_barcode) { create(:barcode_item, global: true) }
-      let!(:organization_barcode) { create(:barcode_item, :for_organization, organization: @organization) }
-      let!(:other_barcode) { create(:barcode_item, :for_organization, organization: create(:organization)) }
+      let!(:organization_barcode) { create(:barcode_item, organization: @organization) }
+      let!(:other_barcode) { create(:barcode_item, organization: create(:organization)) }
       context "via ajax" do
         subject { get :find, params: default_params.merge({ barcode_item: { value: organization_barcode.value }, format: :json}) }
         it "can find a barcode that is scoped to just this organization" do
@@ -63,7 +63,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
     describe "DELETE #destroy" do
       it "disallows a user to delete someone else's barcode" do
         other_org = create(:organization)
-        other_barcode = create(:barcode_item, :for_organization, organization_id: other_org.id, global: false)
+        other_barcode = create(:barcode_item, organization_id: other_org.id, global: false)
         delete :destroy, params: default_params.merge({ id: other_barcode.to_param })
         expect(response).not_to be_successful
         expect(flash[:error]).to match(/permission/)
@@ -71,7 +71,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
 
       it "disallows a non-superadmin to delete a global barcode" do
         allow_any_instance_of(User).to receive(:is_superadmin?).and_return(false)
-        global_barcode = create(:barcode_item, :for_organization, organization_id: @organization.id, global: true)
+        global_barcode = create(:global_barcode_item)
         delete :destroy, params: default_params.merge({ id: global_barcode.to_param })
         expect(response).not_to be_successful
         expect(flash[:error]).to match(/permission/)
@@ -80,7 +80,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
       it "allows a superadmin to delete anyone's barcode" do
         allow_any_instance_of(User).to receive(:is_superadmin?).and_return(true)
         other_org = create(:organization)
-        other_barcode = create(:barcode_item, :for_organization, organization_id: other_org.id, global: false)
+        other_barcode = create(:barcode_item, organization_id: other_org.id, global: false)
         expect {
           delete :destroy, params: default_params.merge({ id: other_barcode.to_param })
         }.to change{BarcodeItem.count}.by(-1)
@@ -88,7 +88,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
       end
 
       it "redirects to the index" do
-        delete :destroy, params: default_params.merge({ id: create(:barcode_item, :for_organization, global: false, organization_id: @organization.id) })
+        delete :destroy, params: default_params.merge({ id: create(:barcode_item, global: false, organization_id: @organization.id) })
         expect(subject).to redirect_to(barcode_items_path)
       end
     end

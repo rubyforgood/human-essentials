@@ -2,7 +2,7 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
+#  id                          :bigint(8)        not null, primary key
 #  source                      :string
 #  donation_site_id            :integer
 #  created_at                  :datetime
@@ -24,13 +24,8 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     issued_at nil
 
-    transient do
-      item_quantity 10
-      item_id nil
-    end
-
     trait :with_items do
-      storage_location { create :storage_location, :with_items }
+      storage_location { create :storage_location, :with_items, item: item || create(:item), organization: organization }
 
       transient do
         item_quantity 100
@@ -38,11 +33,7 @@ FactoryBot.define do
       end
 
       after(:build) do |instance, evaluator|
-        item = if evaluator.item.nil?
-                 instance.storage_location.inventory_items.first.item
-               else
-                 evaluator.item
-               end
+        item = evaluator.item || instance.storage_location.inventory_items.first.item
         instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end

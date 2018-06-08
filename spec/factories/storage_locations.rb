@@ -2,7 +2,7 @@
 #
 # Table name: storage_locations
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  address         :string
 #  created_at      :datetime
@@ -23,11 +23,12 @@ FactoryBot.define do
       end
 
       after(:create) do |storage_location, evaluator|
-        item = (evaluator.item.nil?) ? create(:item) : evaluator.item
+        item = evaluator.item.nil? ? create(:item) : evaluator.item
         item.save if item.new_record?
-        create_list(:inventory_item, 1, storage_location: storage_location,
-                                        quantity: evaluator.item_quantity,
-                                        item: item)
+        create_list(:inventory_item, 1,
+                    storage_location: storage_location,
+                    quantity: evaluator.item_quantity,
+                    item: item)
       end
     end
   end

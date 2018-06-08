@@ -27,7 +27,7 @@ RSpec.describe PurchasesController, type: :controller do
     end
 
     describe "POST#create" do
-      let!(:storage_location) { create(:storage_location) }
+      let!(:storage_location) { create(:storage_location, organization: @organization) }
       let(:line_items) { [create(:line_item)] }
 
       it "redirects to GET#edit on success" do
@@ -56,21 +56,21 @@ RSpec.describe PurchasesController, type: :controller do
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:purchase)) }
+      subject { get :edit, params: default_params.merge(id: create(:purchase, organization: @organization)) }
       it "returns http success" do
         expect(subject).to have_http_status(:success)
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:purchase)) }
+      subject { get :show, params: default_params.merge(id: create(:purchase, organization: @organization)) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:purchase)) }
+      subject { delete :destroy, params: default_params.merge(id: create(:purchase, organization: @organization)) }
       it "redirects to the index" do
         expect(subject).to redirect_to(purchases_path)
       end

@@ -2,7 +2,7 @@
 #
 # Table name: adjustments
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint(8)        not null, primary key
 #  organization_id     :integer
 #  storage_location_id :integer
 #  comment             :text
@@ -23,18 +23,16 @@ class Adjustment < ApplicationRecord
   validate :storage_locations_belong_to_organization
 
   def self.storage_locations_adjusted_for(organization)
-    self.includes(:storage_location).where(organization_id: organization.id).collect do |adj|
-      adj.storage_location
-    end
+    includes(:storage_location).where(organization_id: organization.id).collect(&:storage_location)
   end
 
   private
 
   def storage_locations_belong_to_organization
-    return if self.organization.nil?
+    return if organization.nil?
 
-    unless self.organization.storage_locations.include?(self.storage_location)
-      errors.add :storage_location, 'storage location must belong to organization'
+    unless organization.storage_locations.include?(storage_location)
+      errors.add :storage_location, "storage location must belong to organization"
     end
   end
 end
