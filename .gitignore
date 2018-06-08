@@ -37,3 +37,4 @@ pdx_db_test
 .rake_tasks~
 .DS_Store
 .ruby-gemset
+*.pdf

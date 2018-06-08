@@ -26,21 +26,21 @@ RSpec.describe DonationSitesController, type: :controller do
     end
   
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge({ id: create(:donation_site) }) }
+      subject { get :edit, params: default_params.merge({ id: create(:donation_site, organization: @organization) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "GET #show" do
-      subject { get :show, params: default_params.merge({ id: create(:donation_site) }) }
+      subject { get :show, params: default_params.merge({ id: create(:donation_site, organization: @organization) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge({ id: create(:donation_site) }) }
+      subject { delete :destroy, params: default_params.merge({ id: create(:donation_site, organization: @organization) }) }
       it "returns http success" do
         expect(subject).to redirect_to(donation_sites_path)
       end

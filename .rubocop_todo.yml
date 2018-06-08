@@ -33,13 +33,14 @@ Layout/AlignHash:
     - 'app/controllers/storage_locations_controller.rb'
     - 'config/deploy/production.rb'
 
-# Offense count: 1
+# Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, IndentationWidth.
 # SupportedStyles: with_first_parameter, with_fixed_indentation
 Layout/AlignParameters:
   Exclude:
     - 'app/models/concerns/itemizable.rb'
+    - 'spec/factories/barcode_items.rb'
 
 # Offense count: 8
 # Cop supports --auto-correct.

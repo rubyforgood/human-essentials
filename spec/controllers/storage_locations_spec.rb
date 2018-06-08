@@ -23,21 +23,21 @@ RSpec.describe StorageLocationsController, type: :controller do
     end
   
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge({ id: create(:storage_location) }) }
+      subject { get :edit, params: default_params.merge({ id: create(:storage_location, organization: @organization) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "GET #show" do
-      subject { get :show, params: default_params.merge({ id: create(:storage_location) }) }
+      subject { get :show, params: default_params.merge({ id: create(:storage_location, organization: @organization) }) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
   
     describe "GET #destroy" do
-      subject { delete :destroy, params: default_params.merge({ id: create(:storage_location) }) }
+      subject { delete :destroy, params: default_params.merge({ id: create(:storage_location, organization: @organization) }) }
       it "redirects to #index" do
         expect(subject).to redirect_to(storage_locations_path)
       end
