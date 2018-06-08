@@ -36,4 +36,8 @@ services:
     ports:
       - "5432"
     volumes:
-      - ./db/data/postgres:/var/lib/postgresql/data
+      - dev-db-volume:/var/lib/postgresql/data
+
+volumes:
+  dev-db-volume: # Creates a named persistent volume (yes, with no value set)
+
