@@ -138,7 +138,7 @@ def seed_canonical_items_for_tests
   batch_insert = []
   items_by_category.each do |category, entries|
     entries.each do |entry|
-      batch_insert << { name: entry["name"], category: category, key: entry["key"] }
+      batch_insert << { name: entry["name"], category: category }
     end
   end
   CanonicalItem.create(batch_insert)
