@@ -70,6 +70,31 @@ class DistributionsController < ApplicationController
     @storage_locations = current_organization.storage_locations
   end
 
+  def update
+    @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
+
+    if @distribution.valid?
+      @distribution.storage_location.distribute!(@distribution)
+      if @distribution.save
+        flash[:notice] = "Distribution created!"
+        redirect_to distributions_path
+      else
+        flash[:error] = "There was an error, try again?"
+        render :edit
+      end
+    else
+      @storage_locations = current_organization.storage_locations
+      flash[:error] = "An error occurred, try again?"
+      logger.error "failed to save distribution: #{ @distribution.errors.full_messages }"
+      render :edit
+    end
+  rescue Errors::InsufficientAllotment => ex
+    @storage_locations = current_organization.storage_locations
+    @items = current_organization.items.alphabetized
+    flash[:error] = ex.message
+    render :edit
+  end
+
   def show
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @line_items = @distribution.line_items
