@@ -4,40 +4,38 @@ RSpec.feature "Canonical Item management", type: :feature do
       sign_in(@organization_admin)
     end
 
-    let!(:url_prefix) { }
+    let!(:url_prefix) {}
     scenario "Admin can create a new canonical item" do
-      visit '/canonical_items/new'
+      visit "/canonical_items/new"
       canonical_item_traits = attributes_for(:canonical_item)
       fill_in "Name", with: canonical_item_traits[:name]
       fill_in "Category", with: canonical_item_traits[:category]
       click_button "Create Canonical Item"
-  
-      expect(page.find('.alert')).to have_content "added"
+
+      expect(page.find(".alert")).to have_content "added"
     end
-  
+
     scenario "Admin creates a new canonical item with empty attributes" do
-      visit '/canonical_items/new'
+      visit "/canonical_items/new"
       click_button "Create Canonical Item"
-  
-      expect(page.find('.alert')).to have_content "ailed"
+
+      expect(page.find(".alert")).to have_content "ailed"
     end
-  
+
     scenario "Admin updates an existing canonical item" do
       canonical_item = CanonicalItem.first
       visit "/canonical_items/#{canonical_item.to_param}/edit"
       fill_in "Name", with: canonical_item.name + " new"
       click_button "Update Canonical Item"
-  
-      expect(page.find('.alert')).to have_content "pdated"
+      expect(page.find(".alert")).to have_content "pdated"
     end
-  
+
     scenario "Admin updates an existing item with empty attributes" do
       canonical_item = CanonicalItem.first
       visit "/canonical_items/#{canonical_item.to_param}/edit"
       fill_in "Name", with: ""
       click_button "Update Canonical Item"
-  
-      expect(page.find('.alert')).to have_content "ailed"
+      expect(page.find(".alert")).to have_content "ailed"
     end
 
     scenario "Admin can see a listing of all Canonical Items that shows a summary of its sub-items" do
@@ -65,7 +63,7 @@ RSpec.feature "Canonical Item management", type: :feature do
     scenario "A normal user can't see anything" do
       visit "/canonical_items/new"
       expect(page).to have_content("Access Denied")
-      visit "/canonical_items/index" 
+      visit "/canonical_items/index"
       expect(page).to have_content("Access Denied")
       canonical_item = create(:canonical_item)
       visit "/canonical_items/#{canonical_item.id}"
