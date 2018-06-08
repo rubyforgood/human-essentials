@@ -1,3 +1,4 @@
+raise "This needs to be re-written to work correctly with Canonical items"
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -7,25 +8,36 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 # Creates Seed Data for the organization
 
+# qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
+canonical_items = File.read(Rails.root.join("db", "canonical_items.json"))
+items_by_category = JSON.parse(canonical_items)
+
+# Creates the Canonical Items
+items_by_category.each do |category, entries|
+  entries.each do |entry|
+    CanonicalItem.find_or_create_by!(name: entry["name"], category: category)
+  end
+end
+
 pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organization|
   organization.name = "PDX Diaper Bank"
-  organization.address = "P.O. Box 22613, Portland OR 97269"
   organization.street = "P.O. Box 22613"
   organization.city = "Portland"
   organization.state ="OR"
   organization.zipcode = "97269"
   organization.email = "info@pdxdiaperbank.org"
 end
+Organization.seed_items(pdx_org)
 
 sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
   organization.name = "SF Diaper Bank"
-  organization.address = "P.O. Box 12345, San Francisco CA 90210"
   organization.street = "P.O. Box 12345"
   organization.city = "San Francisco"
   organization.state ="CA"
   organization.zipcode = "90210"
   organization.email = "info@sfdiaperbank.org"
 end
+Organization.seed_items(sf_org)
 
 user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: true
 user2 = User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org
@@ -107,76 +119,20 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "PDX Diaper Bank (Office)")
   inventory.organization = pdx_org
 end
 
-# qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
-items_by_category = {
-  "Diapers - Adult Briefs" => [
-    { name: "Adult Briefs (Large/X-Large)", qty: [0,0,3741] },
-    { name: "Adult Briefs (Medium/Large)", qty: [0,0,108] },
-    { name: "Adult Briefs (Small/Medium)", qty: [0,0,2742] },
-    { name: "Adult Briefs (XXL)", qty: [0,0,24] }
-  ],
-  "Diapers - Childrens" => [
-    { name: "Cloth Diapers (Plastic Cover Pants)", qty: [0,0,75] },
-    { name: "Disposable Inserts", qty: [0,0,143] },
-    { name: "Kids (Newborn)", qty: [0,0,4217] },
-    { name: "Kids (Preemie)", qty: [0,240,360] },
-    { name: "Kids (Size 1)", qty: [6051, 1870, 6742] },
-    { name: "Kids (Size 2)", qty: [4480, 1380, 11082] },
-    { name: "Kids (Size 3)", qty: [15080, 1776, 2596] },
-    { name: "Kids (Size 4)", qty: [25472, 0, 3616] },
-    { name: "Kids (Size 5)", qty: [13634, 0, 3616] },
-    { name: "Kids (Size 6)", qty: [3216, 1, 211] },
-    { name: "Kids L/XL (60-125 lbs)", qty: [0,49,0] },
-    { name: "Kids Pull-Ups (2T-3T)", qty: [0,0,1532] },
-    { name: "Kids Pull-Ups (3T-4T)", qty: [0,0,787] },
-    { name: "Kids Pull-Ups (4T-5T)", qty: [0,408,124] },
-    { name: "Kids S/M (38-65 lbs)", qty: [0,1495,264] },
-    { name: "Swimmers", qty: [0,20,459] }
-  ],
-  "Diapers - Cloth (Adult)" => [
-    { name: "Adult Cloth Diapers (Large/XL/XXL)", qty: [0,0,89] },
-    { name: "Adult Cloth Diapers (Small/Medium)", qty: [0,0,2742] }
-  ],
-  "Diapers - Cloth (Kids)" => [
-    { name: "Cloth Diapers (AIO's/Pocket)", qty: [0,0,219] },
-    { name: "Cloth Diapers (Covers)", qty: [0,0,428] },
-    { name: "Cloth Diapers (Prefolds & Fitted)", qty: [0,0,431] },
-    { name: "Cloth Inserts (For Cloth Diapers)", qty: [0,0,0] },
-    { name: "Cloth Swimmers (Kids)", qty: [0,0,0] }
-  ],
-  "Incontinence Pads - Adult" => [
-    { name: "Adult Incontinence Pads", qty: [0,0,2304] },
-    { name: "Underpads (Pack)", qty: [0,1,2] }
-  ],
-  "Misc Supplies" => [
-    { name: "Bed Pads (Cloth)", qty: [0,0,44] },
-    { name: "Bed Pads (Disposable)", qty: [0,0,0] },
-    { name: "Bibs (Adult & Child)", qty: [0,0,35] },
-    { name: "Diaper Rash Cream/Powder", qty: [0,0,0] },
-  ],
-  "Training Pants" => [
-    { name: "Cloth Potty Training Pants/Underwear", qty: [0,0,246] },
-  ],
-  "Wipes - Childrens" => [
-    { name: "Wipes (Baby)", qty: [0,0,162] },
-  ]
-}
-
-def seed_quantity(item_id, storage_location_id, quantity)
+def seed_quantity(item_name, organization_id, storage_location_id, quantity)
   return if (quantity == 0)
+  item_id = Item.find_by(name: item_name, organization_id: organization_id).id
   InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) { |h|
     h.quantity = quantity
   }
 end
 
-items_by_category.each do |category, entries|
+# qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
+items_by_category.each do |_category, entries|
   entries.each do |entry|
-    item = Item.find_or_create_by!(name: entry[:name], organization: pdx_org)
-    item.update_attributes(entry.except(:name).except(:qty).merge(category: category))
-
-    seed_quantity(item.id, inv_arbor.id, entry[:qty][0])
-    seed_quantity(item.id, inv_dsu.id, entry[:qty][1])
-    seed_quantity(item.id, inv_pdxdb.id, entry[:qty][2])
+    seed_quantity(entry[:name], pdx_org, inv_arbor.id, entry[:qty][0])
+    seed_quantity(entry[:name], pdx_org, inv_dsu.id, entry[:qty][1])
+    seed_quantity(entry[:name], pdx_org, inv_pdxdb.id, entry[:qty][2])
   end
 end
 

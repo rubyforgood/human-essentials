@@ -2,23 +2,18 @@
 #
 # Table name: organizations
 #
-#  id                :integer          not null, primary key
-#  name              :string
-#  short_name        :string
-#  address           :text
-#  email             :string
-#  url               :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  logo_file_name    :string
-#  logo_content_type :string
-#  logo_file_size    :integer
-#  logo_updated_at   :datetime
-#  intake_location   :integer
-#  street            :string
-#  city              :string
-#  state             :string
-#  zipcode           :string
+#  id              :bigint(8)        not null, primary key
+#  name            :string
+#  short_name      :string
+#  email           :string
+#  url             :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  intake_location :integer
+#  street          :string
+#  city            :string
+#  state           :string
+#  zipcode         :string
 #
 
 FactoryBot.define do
@@ -30,6 +25,10 @@ FactoryBot.define do
     sequence(:url) { |n| "https://organization#{n}.org" } # 037000863427
 
     logo { Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.jpg'), 'image/jpeg') }
+
+    after(:create) do |instance, _evaluator|
+      Organization.seed_items(instance)
+    end
   end
 
 end

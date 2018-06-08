@@ -1,5 +1,6 @@
 <div class="box-body">
   <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
+    <%= render partial: "canonical_items/dropdown", object: f %>
     <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-tag"></i></span>
       <%= f.input_field :name, class: "form-control" %>

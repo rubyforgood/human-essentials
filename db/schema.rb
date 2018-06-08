@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_31_100515) do
+ActiveRecord::Schema.define(version: 2018_06_07_144046) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "adjustments", id: :serial, force: :cascade do |t|
+  create_table "adjustments", force: :cascade do |t|
     t.integer "organization_id"
     t.integer "storage_location_id"
     t.text "comment"
@@ -46,18 +46,30 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["storage_location_id"], name: "index_adjustments_on_storage_location_id"
   end
 
-  create_table "barcode_items", id: :serial, force: :cascade do |t|
+  create_table "barcode_items", force: :cascade do |t|
     t.string "value"
-    t.integer "item_id"
+    t.integer "barcodeable_id"
     t.integer "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
     t.boolean "global", default: false
+    t.string "barcodeable_type", default: "Item"
+    t.index ["barcodeable_type", "barcodeable_id"], name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
   end
 
-  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
+  create_table "canonical_items", force: :cascade do |t|
+    t.string "name"
+    t.string "category"
+    t.integer "barcode_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "size"
+    t.integer "item_count"
+  end
+
+  create_table "diaper_drive_participants", force: :cascade do |t|
     t.string "name"
     t.string "contact_name"
     t.string "email"
@@ -70,7 +82,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.string "business_name"
   end
 
-  create_table "distributions", id: :serial, force: :cascade do |t|
+  create_table "distributions", force: :cascade do |t|
     t.text "comment"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -84,7 +96,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
   end
 
-  create_table "donation_sites", id: :serial, force: :cascade do |t|
+  create_table "donation_sites", force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.datetime "created_at"
@@ -93,7 +105,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
 
-  create_table "donations", id: :serial, force: :cascade do |t|
+  create_table "donations", force: :cascade do |t|
     t.string "source"
     t.integer "donation_site_id"
     t.datetime "created_at"
@@ -108,7 +120,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
 
-  create_table "inventory_items", id: :serial, force: :cascade do |t|
+  create_table "inventory_items", force: :cascade do |t|
     t.integer "storage_location_id"
     t.integer "item_id"
     t.integer "quantity"
@@ -116,17 +128,19 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.datetime "updated_at"
   end
 
-  create_table "items", id: :serial, force: :cascade do |t|
+  create_table "items", force: :cascade do |t|
     t.string "name"
     t.string "category"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "barcode_count"
     t.integer "organization_id"
+    t.integer "canonical_item_id"
+    t.boolean "active", default: true
     t.index ["organization_id"], name: "index_items_on_organization_id"
   end
 
-  create_table "line_items", id: :serial, force: :cascade do |t|
+  create_table "line_items", force: :cascade do |t|
     t.integer "quantity"
     t.integer "item_id"
     t.integer "itemizable_id"
@@ -136,7 +150,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
   end
 
-  create_table "organizations", id: :serial, force: :cascade do |t|
+  create_table "organizations", force: :cascade do |t|
     t.string "name"
     t.string "short_name"
     t.string "email"
@@ -151,7 +165,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
-  create_table "partners", id: :serial, force: :cascade do |t|
+  create_table "partners", force: :cascade do |t|
     t.string "name"
     t.string "email"
     t.datetime "created_at"
@@ -173,7 +187,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end
 
-  create_table "storage_locations", id: :serial, force: :cascade do |t|
+  create_table "storage_locations", force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.datetime "created_at"
@@ -182,7 +196,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end
 
-  create_table "transfers", id: :serial, force: :cascade do |t|
+  create_table "transfers", force: :cascade do |t|
     t.integer "from_id"
     t.integer "to_id"
     t.string "comment"
@@ -192,7 +206,7 @@ ActiveRecord::Schema.define(version: 2018_05_31_100515) do
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"

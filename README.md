@@ -25,13 +25,14 @@ Docker for Mac has some pretty poor disk sharing (volume) performance. At the ti
 
 ### Postgres data
 
-To keep data between development sessions, we create a volume to store data in ./db/data/postgres. You will need to create this directory first (./db/data is git-ignored).
+You can set up the database with the following command:
 
-`mkdir -p db/data/postgres`
-
-Then you can set up the database with the following command.
-
+`docker-compose build` (if you haven't already)
 `docker-compose run web rails db:setup`
+
+If migrations fail, run:
+
+`docker-compose run web bin/rake db:schema:load`
 
 Note: currently the seeds fail about halfway through due to the Partner integration. You can resolve this by temporarily commenting out the `DIAPER_PARTNER_URL` environment variable in ./docker-compose.yml (See [diaperpartner](https://github.com/rubyforgood/diaperpartner) for more)
 

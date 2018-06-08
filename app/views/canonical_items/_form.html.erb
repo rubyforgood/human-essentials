@@ -1,0 +1,19 @@
+<% submit_text ||= form.submit_text %>
+
+<div class="box-body">
+  <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
+    <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-tag"></i></span>
+      <%= f.input_field :name, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :category, label: "Category", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-cubes"></i></span>
+      <%= f.input_field :category, class: "form-control" %>
+    <% end %>
+
+
+    <%= f.button :submit, submit_text, class:"btn btn-info"%>
+
+  <% end %>
+</div>

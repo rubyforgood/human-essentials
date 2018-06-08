@@ -2,7 +2,7 @@
 #
 # Table name: transfers
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  from_id         :integer
 #  to_id           :integer
 #  comment         :string
@@ -13,28 +13,35 @@
 
 FactoryBot.define do
   factory :transfer do
-  	organization { Organization.try(:first) || create(:organization) }
-    from_id { create(:storage_location).id }
-    to_id { create(:storage_location).id }
-  	comment "A comment"
+    transient do
+      storage_location nil
+    end
+    organization { Organization.try(:first) || create(:organization) }
+    from nil 
+    to nil
+    comment "A comment"
+
+    after(:build) do |instance, evaluator|
+      # the Itemizable shared_example needs `storage_location` to be an option
+      instance.from = evaluator.storage_location || evaluator.from || create(:storage_location, organization: evaluator.organization)
+      instance.to = evaluator.to || create(:storage_location, organization: evaluator.organization)
+    end
 
     trait :with_items do
       transient do
         item_quantity 100
         item nil
       end
-      
-      storage_location { create :storage_location, :with_items, item: item }      
 
       after(:build) do |instance, evaluator|
+        instance.from = create(:storage_location, :with_items, item: evaluator.item, organization: evaluator.organization)
         item = if evaluator.item.nil?
-                 instance.storage_location.inventory_items.first.item
+                 instance.from.inventory_items.first.item
                else
                  evaluator.item
                end
         instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
-
   end
 end
