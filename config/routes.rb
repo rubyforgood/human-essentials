@@ -29,7 +29,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :distributions, only: [:index, :create, :new, :show] do
+    resources :distributions, only: [:index, :create, :new, :show, :edit, :update] do
       get :print, on: :member
       post :reclaim, on: :member
     end
