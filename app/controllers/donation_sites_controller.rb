@@ -1,15 +1,25 @@
 class DonationSitesController < ApplicationController
   def index
     @donation_sites = current_organization.donation_sites.all.order(:name)
+    @donation_site = current_organization.donation_sites.new
   end
 
   def create
     @donation_site = current_organization.donation_sites.new(donation_site_params)
-    if @donation_site.save
-      redirect_to donation_sites_path, notice: "New donation site added!"
-    else
-      flash[:error] = "Something didn't work quite right -- try again?"
-      render action: :new
+    respond_to do |format|
+      if @donation_site.save
+        format.html do
+          redirect_to donation_sites_path,
+                      notice: "Donation site #{@donation_site.name} added!"
+        end
+        format.js { render partial: "shared/table_row_prepend", object: @donation_site }
+      else
+        format.html do
+          flash[:error] = "Something didn't work quite right -- try again?"
+          render action: :new
+        end
+        format.js { render partial: "shared/table_row_prepend", object: @partner }
+      end
     end
   end
 
