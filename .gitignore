@@ -15,6 +15,9 @@
 /public/system
 /public/.htaccess
 
+# Ignore ActiveStorage
+/storage/**/*
+
 # Ignore database files.
 /db/*.sqlite3
 /db/*.sqlite3-journal
