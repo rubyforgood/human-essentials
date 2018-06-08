@@ -33,6 +33,10 @@ Then you can set up the database with the following command.
 
 `docker-compose run web rails db:setup`
 
+If migrations fail, run:
+
+`docker-compose run web bin/rake db:schema:load`
+
 Note: currently the seeds fail about halfway through due to the Partner integration. You can resolve this by temporarily commenting out the `DIAPER_PARTNER_URL` environment variable in ./docker-compose.yml (See [diaperpartner](https://github.com/rubyforgood/diaperpartner) for more)
 
 ### Running the app
