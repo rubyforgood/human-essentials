@@ -2,22 +2,18 @@
 #
 # Table name: organizations
 #
-#  id                :bigint(8)        not null, primary key
-#  name              :string
-#  short_name        :string
-#  email             :string
-#  url               :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  logo_file_name    :string
-#  logo_content_type :string
-#  logo_file_size    :integer
-#  logo_updated_at   :datetime
-#  intake_location   :integer
-#  street            :string
-#  city              :string
-#  state             :string
-#  zipcode           :string
+#  id              :bigint(8)        not null, primary key
+#  name            :string
+#  short_name      :string
+#  email           :string
+#  url             :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  intake_location :integer
+#  street          :string
+#  city            :string
+#  state           :string
+#  zipcode         :string
 #
 
 class Organization < ApplicationRecord
@@ -25,6 +21,7 @@ class Organization < ApplicationRecord
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI.regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
+  validate :correct_logo_mime_type
 
   has_many :adjustments
   has_many :barcode_items do
@@ -44,8 +41,7 @@ class Organization < ApplicationRecord
   has_many :transfers
   has_many :users
 
-  has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>"}, default_url: "/DiaperBase-Logo.png"
-  validates_attachment_content_type :logo, content_type: /^image\/(jpg|jpeg|pjpeg|png|x-png)$/, message: 'file type is not allowed (only jpeg/png images)'
+  has_one_attached :logo
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
@@ -89,8 +85,6 @@ class Organization < ApplicationRecord
       }
   end
 
-  private_class_method
-
   def self.seed_items(org)
     Rails.logger.info "Seeding #{org.name}'s items..."
     canonical_items = CanonicalItem.pluck(:id, :name, :category).collect { |c| { canonical_item_id: c[0], name: c[1], category: c[2] } }
@@ -99,5 +93,15 @@ class Organization < ApplicationRecord
       i.organization_id = org_id
     end
     org.reload
+  end
+
+  private
+
+  def correct_logo_mime_type
+    if logo.attached? && !logo.content_type
+                              .in?(%w(image/jpeg image/jpg image/pjpeg image/png image/x-png))
+      logo.purge
+      errors.add(:logo, 'Must be a JPG or a PNG file')
+    end
   end
 end

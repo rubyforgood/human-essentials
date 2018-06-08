@@ -46,6 +46,9 @@ Rails.application.configure do
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
+  # Store files locally.
+  config.active_storage.service = :local
+
 
   config.react.variant = :development
   # Raises error for missing translations
