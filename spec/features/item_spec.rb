@@ -58,8 +58,9 @@
     visit url_prefix + "/items"
     select CanonicalItem.first.name, from: "filters_by_canonical_item"
     click_button "Filter"
-
-    expect(page).to have_css("table tbody tr", count: 3)
+    within "#tbl_items" do
+      expect(page).to have_css("tbody tr", count: 1)
+    end
   end
 
   scenario "Filters presented to user are alphabetized by category" do

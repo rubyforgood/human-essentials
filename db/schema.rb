@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(version: 2018_06_07_144046) do
   end
 
   create_table "canonical_items", force: :cascade do |t|
-    t.string "key"
     t.string "name"
     t.string "category"
     t.integer "barcode_count"

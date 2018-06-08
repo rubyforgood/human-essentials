@@ -31,6 +31,7 @@ class AdminsController < ApplicationController
   def create
     @organization = Organization.create(organization_params)
     if @organization.save
+      Organization.seed_items(@organization)
       redirect_to admins_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
