@@ -18,6 +18,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 ### Requirements
 
 - [Docker CE](https://store.docker.com/search?type=edition&offering=community)
+- Postgres
 
 ### Caveats
 
@@ -42,7 +43,12 @@ Start the application with `docker-compose up web` and then visit [http://localh
 
 ### Running tests
 
-Simply run `docker-compose run test rails spec`.
+Run `docker-compose run test rails spec`
+
+### Install githooks
+If running Git version 2.9 or later: `git config core.hooksPath .githooks`
+
+Otherwise run: `find .git/hooks -type l -exec rm {} \; && find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;`
 
 ## Development without Docker
 
