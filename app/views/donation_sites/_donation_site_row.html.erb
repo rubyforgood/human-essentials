@@ -1,12 +1,13 @@
 <tr>
-  <td><%= donation_site_row.name %></td>
+  <% site_name = donation_site_row.name %>
+  <td><%= site_name %></td>
   <td><%= donation_site_row.address %></td>
   <td class="text-right">
       <%= link_to "View", donation_site_row, class: "btn btn-primary btn-xs" %>
       <%= link_to edit_donation_site_path(donation_site_row), class: "btn btn-info btn-xs" do %>
         <i class="fa fa-edit"></i> Edit
       <% end %>
-      <%= link_to donation_site_row, method: :delete, class: "btn btn-danger btn-xs", data: { confirm: "Are you sure?" } do %>
+      <%= link_to donation_site_row, method: :delete, class: "btn btn-danger btn-xs", data: { confirm: confirm_delete_msg(site_name) } do %>
         <i class="fa fa-trash"></i> Trash
       <% end %>
   </td>
