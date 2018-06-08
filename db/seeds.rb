@@ -9,7 +9,6 @@
 
 pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organization|
   organization.name = "PDX Diaper Bank"
-  # organization.address = "P.O. Box 22613, Portland OR 97269"
   organization.street = "P.O. Box 22613"
   organization.city = "Portland"
   organization.state ="OR"
@@ -19,7 +18,6 @@ end
 
 sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
   organization.name = "SF Diaper Bank"
-  # organization.address = "P.O. Box 12345, San Francisco CA 90210"
   organization.street = "P.O. Box 12345"
   organization.city = "San Francisco"
   organization.state ="CA"
