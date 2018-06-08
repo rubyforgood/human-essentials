@@ -92,6 +92,20 @@ RSpec.feature "Purchases", type: :feature, js: true do
        end
     end
 
+    context "Editing purchase" do
+      # Bug fix -- Issue #378
+      # A user can view another organizations purchase
+
+      before(:each) do
+        purchase = create(:purchase, organization: create(:organization))
+        visit edit_purchase_path(@user.organization.name, purchase)
+      end
+
+      scenario "A user can view another organizations puchanse" do
+        pending "TODO: add the test"
+        raise
+      end
+    end
 
     context "via barcode entry" do
       before(:each) do
