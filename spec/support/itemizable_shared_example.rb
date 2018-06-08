@@ -8,9 +8,11 @@ shared_examples_for "itemizable" do
   context ".line_items" do
     describe "combine!" do
       it "combines multiple line_items with the same item_id into a single record" do
-        storage_location = create(:storage_location, :with_items, item: item)
-        obj = build(model_f, storage_location: storage_location)
+        storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+        obj = build(model_f, storage_location: storage_location, organization: @organization)
+
         2.times { obj.line_items.build(item_id: item.id, quantity: 5) }
+
         obj.line_items.combine!
         # It's valid, right?
         expect(obj.save).to eq(true)
@@ -24,14 +26,15 @@ shared_examples_for "itemizable" do
 
       it "incrementally combines line_items on donations that have already been created" do
         # Start with some items of one kind
-        obj = create(model_f, :with_items, item: item, item_quantity: 10)
+        obj = build(model_f, :with_items, item: item, item_quantity: 10, organization: @organization)
+        obj.save
         # Add some additional of that item
         obj.line_items.build(item_id: item.id, quantity: 5)
         # Combine it!
         obj.line_items.combine!
         obj.save
         # Still only one kind?
-        expect(obj.line_items.count).to eq(1)
+        expect(obj.line_items.size).to eq(1)
         # But with the new total?
         expect(obj.line_items.first.quantity).to eq(15)
       end
@@ -42,9 +45,9 @@ shared_examples_for "itemizable" do
 
       it "groups the quantities by category" do
         categories = { "cat1" => 20, "cat2" => 10 }
-        item1_cat1 = create(:item, name: "item1", category: categories.keys[0])
-        item2_cat1 = create(:item, name: "item2", category: categories.keys[0])
-        item3_cat2 = create(:item, name: "item3", category: categories.keys[1])
+        item1_cat1 = create(:item, name: "item1", category: categories.keys[0], organization: @organization)
+        item2_cat1 = create(:item, name: "item2", category: categories.keys[0], organization: @organization)
+        item3_cat2 = create(:item, name: "item3", category: categories.keys[1], organization: @organization)
 
         subject.line_items << create(:line_item, item: item1_cat1, quantity: 10)
         subject.line_items << create(:line_item, item: item2_cat1, quantity: 10)
@@ -54,10 +57,10 @@ shared_examples_for "itemizable" do
         expect(subject.line_items.quantities_by_category).to eq(categories)
       end
     end
-
+    
     describe "quantities_by_name" do
-      let(:item1) { create(:item, name: "item1") }
-      let(:item2) { create(:item, name: "item2") }
+      let(:item1) { create(:item, name: "item1", organization: @organization) }
+      let(:item2) { create(:item, name: "item2", organization: @organization) }
 
       subject do
         s = create(model_f)
@@ -87,10 +90,10 @@ shared_examples_for "itemizable" do
 
         expect(subject.line_items.quantities_by_name.values).to match_array(quantities)
       end
-    end
+    end    
 
     describe "sorted" do
-      subject { create(model_f) }
+      subject { create(model_f, organization: @organization) }
 
       it "displays the items, sorted by name" do
         names = ["abc", "def", "ghi"]
@@ -104,7 +107,7 @@ shared_examples_for "itemizable" do
       end
     end
     describe "total" do
-      subject { create(model_f) } # the class that includes the concern
+      subject { create(model_f, organization: @organization) } # the class that includes the concern
 
       it "has an item total" do
         expect {

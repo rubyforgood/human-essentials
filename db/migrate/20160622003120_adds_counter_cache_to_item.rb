@@ -1,8 +1,8 @@
 class AddsCounterCacheToItem < ActiveRecord::Migration[5.0]
   def up
     add_column :items, :barcode_count, :integer
-    Item.all.each { |item|
-      Item.reset_counters(item.id, :barcode_items)
+    Item.unscoped.all.each { |item|
+      Item.unscoped.reset_counters(item.id, :barcode_items)
     }
   end
   def down

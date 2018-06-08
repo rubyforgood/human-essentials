@@ -2,7 +2,7 @@
 #
 # Table name: diaper_drive_participants
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  contact_name    :string
 #  email           :string
@@ -45,10 +45,11 @@ RSpec.describe DiaperDriveParticipant, type: :model do
   end
   describe "import_csv" do
     it "imports storage locations from a csv file" do
+      before_import = DiaperDriveParticipant.count
       organization = create(:organization)
       import_file_path = Rails.root.join("spec", "fixtures", "diaper_drive_participants.csv").read
       DiaperDriveParticipant.import_csv(import_file_path, organization.id)
-      expect(DiaperDriveParticipant.count).to eq 3
+      expect(DiaperDriveParticipant.count).to eq before_import + 3
     end
   end     
 end

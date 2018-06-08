@@ -52,6 +52,7 @@ RSpec.describe Purchase, type: :model do
   context "Scopes >" do
     describe "during >" do
       it "returns all purchases created between two dates" do
+        Purchase.destroy_all
         # The models should default to assigning the created_at time to the issued_at
         create(:purchase, created_at: Date.today)
         # but just for fun we'll force one in the past within the range

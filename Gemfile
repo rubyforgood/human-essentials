@@ -56,6 +56,7 @@ group :development do
   gem 'capistrano3-puma'
   gem 'capistrano-rails-console', require: false
   gem 'listen', '~> 3.0.5'
+  gem 'rails-erd'
   gem 'spring'
   gem 'spring-watcher-listen'
   gem 'web-console'
@@ -63,6 +64,7 @@ end
 
 group :test do
   gem 'capybara', '~> 2.18'
+  gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'launchy'

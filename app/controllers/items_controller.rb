@@ -1,8 +1,9 @@
 class ItemsController < ApplicationController
   def index
+    @canonical_items = CanonicalItem.all
     @show_quantity = filter_params(:show_quantity)[:show_quantity]
 
-    @items = current_organization.items.alphabetized.filter(filter_params)
+    @items = current_organization.items.includes(:canonical_item).alphabetized.filter(filter_params)
     @items2 = current_organization.
         items.
         joins(' LEFT OUTER JOIN "inventory_items" ON "inventory_items"."item_id" = "items"."id"').
@@ -34,10 +35,12 @@ class ItemsController < ApplicationController
   end
 
   def new
+    @canonical_items = CanonicalItem.all
     @item = current_organization.items.new
   end
 
   def edit
+    @canonical_items = CanonicalItem.all
     @item = current_organization.items.find(params[:id])
   end
 
@@ -83,11 +86,12 @@ class ItemsController < ApplicationController
   helper_method :update_storage_collection
 private
   def item_params
-    params.require(:item).permit(:name, :category)
+    params.require(:item).permit(:name, :category, :canonical_item_id)
   end
 
-  def filter_params(parameter = :in_category)
+  def filter_params(parameters = nil)
+    parameters = ([:in_category, :by_canonical_item] + [parameters]).flatten.uniq
     return {} unless params.has_key?(:filters)
-    params.require(:filters).slice(parameter)
+    params.require(:filters).slice(*parameters)
   end
 end

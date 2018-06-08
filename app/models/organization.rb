@@ -2,10 +2,9 @@
 #
 # Table name: organizations
 #
-#  id                :integer          not null, primary key
+#  id                :bigint(8)        not null, primary key
 #  name              :string
 #  short_name        :string
-#  address           :text
 #  email             :string
 #  url               :string
 #  created_at        :datetime         not null
@@ -22,15 +21,17 @@
 #
 
 class Organization < ApplicationRecord
-  include Seedable
-
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI.regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
 
   has_many :adjustments
-  has_many :barcode_items, ->(organization) { unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', organization.id, true) }
+  has_many :barcode_items do
+    def all
+      unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', proxy_association.owner.id, true)  
+    end
+  end
   has_many :distributions
   has_many :donations
   has_many :purchases
@@ -45,8 +46,6 @@ class Organization < ApplicationRecord
 
   has_attached_file :logo, styles: { medium: "763x188>", small: "188x188>", thumb: "50x50>"}, default_url: "/DiaperBase-Logo.png"
   validates_attachment_content_type :logo, content_type: /^image\/(jpg|jpeg|pjpeg|png|x-png)$/, message: 'file type is not allowed (only jpeg/png images)'
-
-  after_create { |org| seed_it!(org) }
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
@@ -88,5 +87,17 @@ class Organization < ApplicationRecord
         k_size5:    items.find_by(name: "Kids (Size 5)").id,
         k_size6:    items.find_by(name: "Kids (Size 6)").id,
       }
+  end
+
+  private_class_method
+
+  def self.seed_items(org)
+    Rails.logger.info "Seeding #{org.name}'s items..."
+    canonical_items = CanonicalItem.pluck(:id, :name, :category).collect { |c| { canonical_item_id: c[0], name: c[1], category: c[2] } }
+    org_id = org.id
+    Item.create(canonical_items) do |i| 
+      i.organization_id = org_id
+    end
+    org.reload
   end
 end

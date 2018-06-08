@@ -2,7 +2,7 @@
 #
 # Table name: distributions
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint(8)        not null, primary key
 #  comment             :text
 #  created_at          :datetime
 #  updated_at          :datetime
@@ -14,7 +14,6 @@
 #
 
 class Distribution < ApplicationRecord
-
   # Distributions are issued from a single storage location, so we associate
   # them so that on-hand amounts can be verified
   belongs_to :storage_location
@@ -42,7 +41,7 @@ class Distribution < ApplicationRecord
 
   def combine_duplicates
     Rails.logger.info "Combining!"
-    self.line_items.combine!
+    line_items.combine!
   end
 
   def copy_line_items(donation_id)
