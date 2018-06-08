@@ -7,7 +7,7 @@
   <%= link_to edit_storage_location_path(storage_location), class: "btn btn-info btn-xs" do %>
     <i class="fa fa-edit"></i> Edit
   <% end %>
-  <%= link_to storage_location, method: :delete, class: "btn btn-danger btn-xs", data: { confirm: "Are you sure?" } do %>
+  <%= link_to storage_location, method: :delete, class: "btn btn-danger btn-xs", data: { confirm: confirm_delete_msg(storage_location.name) } do %>
     <i class="fa fa-trash"></i> Delete
   <% end %>
   </td>
