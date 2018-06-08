@@ -15,7 +15,7 @@ items_by_category = JSON.parse(canonical_items)
 # Creates the Canonical Items
 items_by_category.each do |category, entries|
   entries.each do |entry|
-    CanonicalItem.find_or_create_by!(name: entry["name"], category: category, key: entry["key"])
+    CanonicalItem.find_or_create_by!(name: entry["name"], category: category)
   end
 end
 
