@@ -59,7 +59,7 @@
               <tbody>
                 <% @adjustments.each do |adjustment| %>
                   <tr>
-                    <td><time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y (%l:%M%P %Z)") %></time></td>
+                    <td><time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y") %></time></td>
                     <td><%= adjustment.organization.name %></td>
                     <td><%= adjustment.storage_location.name %></td>
                     <td><%= adjustment.comment %></td>
