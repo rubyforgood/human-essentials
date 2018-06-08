@@ -1,5 +1,6 @@
 <tr>
-  <td><%= item_row.name %></td>
+  <% item_name = item_row.name %>
+  <td><%= item_name %></td>
   <td><%= item_row.category %></td>
   <td><%= item_row.barcode_count %></td>
   <td class="text-right">
@@ -7,8 +8,8 @@
       <%= link_to edit_item_path(item_row), class: "btn btn-info btn-xs" do %>
         <i class="fa fa-edit"></i> Edit
       <% end %>
-      <%= link_to item_path(item_row), method: :delete, class: "btn btn-danger btn-xs" do %>
-        <i class="fa fa-trash"></i> Delete
+      <%= link_to item_path(item_row), method: :delete,  data: { confirm: confirm_delete_msg(item_name) },  class: "btn btn-danger btn-xs" do %>
+        <%= fa_icon "trash" %> Delete
       <% end %>
     </td>
 </tr>

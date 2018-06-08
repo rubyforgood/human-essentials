@@ -1,5 +1,6 @@
 <tr>
-  <td><%= partner_row.name %></td>
+  <% partner_name = partner_row.name %>
+  <td><%= partner_name %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
   <!-- <td><%== (rand < 0.7) ? '<span class="label label-success">Approved</span>' :
   '<span class="label label-warning">In Progress</span>' %></td> -->
@@ -7,7 +8,7 @@
       <%= link_to edit_partner_path(partner_row), class: "btn btn-info btn-xs" do %> 
         <i class="fa fa-edit"></i> Edit
       <% end %>
-      <%= link_to partner_path(partner_row), method: :delete, class: "btn btn-danger btn-xs", data: { confirm: "Are you sure?" } do %>
+      <%= link_to partner_path(partner_row), method: :delete, class: "btn btn-danger btn-xs", data: { confirm: confirm_delete_msg(partner_name) } do %>
         <i class="fa fa-trash"></i> Delete
       <% end %>
   </td>

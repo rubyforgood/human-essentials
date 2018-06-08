@@ -44,4 +44,8 @@ module ApplicationHelper
 
   # def after_sign_out_path_for(resource)
   # end
+  
+  def confirm_delete_msg(resource)
+    "Are you sure you want to delete #{resource}?"
+  end
 end
