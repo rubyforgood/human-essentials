@@ -3,7 +3,7 @@ class PurchasesController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:scale_intake, :scale]
   skip_before_action :authenticate_user!, only: [:scale_intake, :scale]
   skip_before_action :authorize_user, only: [:scale_intake, :scale]
-  
+
   def index
     @purchases = current_organization.purchases
                      .includes(:line_items, :storage_location)
@@ -49,8 +49,11 @@ class PurchasesController < ApplicationController
   def update
     @purchase = current_organization.purchases.find(params[:id])
     @purchase.changed?
+    # Warning: previous_quantities needs to be assigned before purchase gets
+    # updated.
+    previous_quantities = @purchase.line_items_quantities
    if @purchase.update_attributes(purchase_params)
-     @purchase.storage_location.adjust_from_past! @purchase
+     @purchase.storage_location.adjust_from_past!(@purchase, previous_quantities)
     redirect_to purchases_path
    else
      render 'edit'
