@@ -7,10 +7,10 @@ class CanonicalItemsController < ApplicationController
 
   def update
     @canonical_item = CanonicalItem.find(params[:id])
-    if @canonical_item.update_attributes(canonical_item_params)
-      redirect_to canonical_items_path, notice: 'Updated canonical item!'
+    if @canonical_item.update(canonical_item_params)
+      redirect_to canonical_items_path, notice: "Updated canonical item!"
     else
-      flash[:error] = 'Failed to update this canonical item.'
+      flash[:error] = "Failed to update this canonical item."
       render :edit
     end
   end
@@ -38,10 +38,10 @@ class CanonicalItemsController < ApplicationController
     @items = @canonical_item.items
   end
 
-  # TODO - If there are associated Items, they should be migrated prior to deletion
+  # TODO: If there are associated Items, they should be migrated prior to deletion
   def destroy
     @canonical_item = CanonicalItem.includes(:items).find(params[:id])
-    if @canonical_item.items.size > 0 && @canonical_item.destroy
+    if !@canonical_item.items.empty? && @canonical_item.destroy
       redirect_to canonical_items_path, notice: "Canonical Item deleted!"
     else
       redirect_to admins_path, alert: "Failed to delete Canonical Item. Are there still items attached?"
@@ -50,7 +50,6 @@ class CanonicalItemsController < ApplicationController
 
   private
 
-  # TODO 
   def authorize_user
     verboten! unless current_user.organization_admin
   end

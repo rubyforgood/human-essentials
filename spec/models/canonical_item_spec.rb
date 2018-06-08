@@ -33,9 +33,7 @@ RSpec.describe CanonicalItem, type: :model do
   describe "Associations >" do
     it "keeps count of its associated items" do
       c = CanonicalItem.first
-      expect {
-        create_list(:item, 2, canonical_item: c)
-      }.to change{c.item_count}.by(2)
+      expect { create_list(:item, 2, canonical_item: c) }.to change { c.item_count }.by(2)
     end
   end
 

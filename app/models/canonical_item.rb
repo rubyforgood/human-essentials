@@ -16,6 +16,6 @@ class CanonicalItem < ApplicationRecord
   has_many :items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy, inverse_of: :canonical_items
 
-  validates_presence_of :name, :category
-  validates_uniqueness_of :name
+  validates :name, presence: true, uniqueness: true
+  validates :category, presence: true
 end

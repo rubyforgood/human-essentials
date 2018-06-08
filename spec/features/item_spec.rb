@@ -62,7 +62,6 @@
     expect(page).to have_css("table tbody tr", count: 3)
   end
 
-
   scenario "Filters presented to user are alphabetized by category" do
     Item.delete_all
     item = create(:item, category: "same")
