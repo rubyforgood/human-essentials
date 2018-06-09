@@ -36,8 +36,7 @@ module Itemizable
         includes(:item).group("items.category").sum(:quantity)
       end
 
-      # TODO: omit_zero is not used. Remove or incorporate it.
-      def quantities_by_name(omit_zero = false)
+      def quantities_by_name
         results = {}
         each do |li|
           next if li.quantity.zero?
@@ -76,4 +75,3 @@ module Itemizable
     end
   end
 end
-
