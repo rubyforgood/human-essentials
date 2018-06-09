@@ -8,7 +8,7 @@
 
 <% if current_step.present? %>
   <div class="col-md-12">
-    <div class="box box-primary">
+    <div class="box box-primary" id="getting-started-guide">
       <div class="box-header with-border">
         <h2 class="box-title">
           Just Starting?
@@ -37,7 +37,7 @@
                 To start building your community in DiaperBase, import a list of your current partner agencies or add them individually.
               </p>
 
-              <div class="org-stats-call-to-action">
+              <div id="org-stats-call-to-action-partners">
                 <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
                 <%= link_to partner_link_text, partners_path, class: "btn btn-primary btn-md" %>
               </div>
@@ -61,7 +61,7 @@
                 Add details for all Storage Locations you use for your inventory.
               </p>
 
-              <div class="org-stats-call-to-action">
+              <div id="org-stats-call-to-action-storage-locations">
                 <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
                 <%= link_to location_link_text, storage_locations_path, class: "btn btn-primary btn-md" %>
               </div>
@@ -85,7 +85,7 @@
                 Add any community sites (including your primary storage facility) that accept donations on your behalf.
               </p>
 
-              <div class="org-stats-call-to-action">
+              <div id="org-stats-call-to-action-donation-sites">
                 <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
                 <%= link_to donation_link_text, donation_sites_path, class: "btn btn-primary btn-md" %>
               </div>
@@ -111,7 +111,7 @@
                 </p>
               </div >
 
-              <div class="org-stats-call-to-action">
+              <div id="org-stats-call-to-action-inventory">
                 <%= link_to "Add past donation", new_donation_path, class: "btn btn-primary btn-md" %>
                 <%= link_to "Add past purchase", new_purchase_path, class: "btn btn-primary btn-md" %>
               </div>
