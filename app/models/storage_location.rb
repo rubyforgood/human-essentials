@@ -142,6 +142,43 @@ class StorageLocation < ApplicationRecord
     update_inventory_inventory_items(updated_quantities)
   end
 
+  def update_from_diff(diff_hash)
+    diff_hash.each do |item_id, diff|
+      inv_item = inventory_items.find_by(item_id: item_id)
+      inv_item.quantity += diff
+      inv_item.save
+    end
+  end
+
+  def adjust_distribution!(modified_distribution)
+    return change_distribution_storage_location(modified_distribution) if modified_distribution.storage_location_id_changed?
+
+    updated_quantities = {}
+    item_validator = Errors::InsufficientAllotment.new("Adjustment exceeds the available inventory")
+
+    modified_distribution.line_items.each do |line_item|
+      next unless line_item.quantity_changed?
+      inventory_item = inventory_items.find_by(item: line_item.item)
+      next if inventory_item.nil?
+
+      new, old = line_item.quantity_change
+      item_difference = new - old
+
+      if (inventory_item.quantity + item_difference) >= 0
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
+                                                 inventory_item.quantity) + item_difference
+      else
+        item_validator.add_insufficiency(line_item.item,
+                                         inventory_item.quantity,
+                                         line_item.quantity)
+      end
+    end
+
+    raise item_validator unless item_validator.satisfied?
+
+    update_inventory_inventory_items(updated_quantities)
+  end
+
   def self.import_csv(filename, organization)
     CSV.parse(filename, headers: true) do |row|
       loc = StorageLocation.new(row.to_hash)
@@ -221,10 +258,16 @@ class StorageLocation < ApplicationRecord
         inventory_item.update(quantity: inventory_item.quantity + line_item.quantity)
       end
     end
-    distribution.destroy
   end
 
   private
+
+  def change_distribution_storage_location(modified_distribution)
+    initial_distribution = Distribution.includes(:line_items)
+                                       .includes(:storage_location)
+                                       .find(modified_distribution.id)
+    add_items_back_to_inventory(initial_distribution)
+  end
 
   def update_inventory_inventory_items(records)
     ActiveRecord::Base.transaction do

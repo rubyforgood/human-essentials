@@ -94,5 +94,16 @@ RSpec.describe Distribution, type: :model do
       expect(@distribution.line_items.size).to eq 1
       expect(@distribution.line_items.first.quantity).to eq 15
     end
+
+    it "calculate_difference" do
+      item_one = create(:item)
+      item_two = create(:item)
+      old_line_items = [create(:line_item, item: item_one, quantity: 10),
+                        create(:line_item, item: item_two, quantity: 20)]
+      new_line_items = [create(:line_item, quantity: 5, item: item_one),
+                        create(:line_item, quantity: 35, item: item_two)]
+      diff_hash = @distribution.calculate_difference(old_line_items, new_line_items)
+      expect(diff_hash).to eq({ old_line_items[0].item_id => -5, old_line_items[1].item_id => 15 })
+    end
   end
 end

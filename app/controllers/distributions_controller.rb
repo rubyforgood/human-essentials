@@ -10,6 +10,7 @@ class DistributionsController < ApplicationController
   def reclaim
     @distribution = Distribution.find(params[:id])
     @distribution.storage_location.reclaim!(@distribution)
+    @distribution.destroy
 
     flash[:notice] = "Distribution #{@distribution.id} has been reclaimed!"
     redirect_to distributions_path
@@ -71,12 +72,33 @@ class DistributionsController < ApplicationController
   end
 
   def update
-    @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
+    # FIXME: Fix this
+
+    # find distribution from db
+    # determine if storage location changed
+    # check if new distribution will be valid
+    # if not valid, go back to edit page with errors
+    # if valid AND storage location is changed, restore old distribution
+    # make the distribution changes
+      # subtract from inventory
+      # saving distribution object
+    # redirect to index page
+
+
+
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    old_storage_location_id = @distribution.storage_location_id
+    if old_storage_location_id != distribution_params[:storage_location_id]
+
+    end
+
+    @distribution.assign_attributes(distribution_params)
 
     if @distribution.valid?
-      @distribution.storage_location.distribute!(@distribution)
+      @distribution.storage_location.adjust_distribution!(@distribution)
+
       if @distribution.save
-        flash[:notice] = "Distribution created!"
+        flash[:notice] = "Distribution updated!"
         redirect_to distributions_path
       else
         flash[:error] = "There was an error, try again?"
@@ -110,6 +132,6 @@ class DistributionsController < ApplicationController
   private
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: [:id, :item_id, :quantity, :_destroy])
   end
 end
