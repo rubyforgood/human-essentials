@@ -143,7 +143,7 @@ RSpec.describe StorageLocation, type: :model do
           }.to change{storage_location.size}.by(5)
           .and change{InventoryItem.count}.by(1)
         end
-      
+
         it "removes the inventory item from the DB if the item's removal results in a 0 count" do
           donation.line_items.first.update(quantity: 0)
 
@@ -154,11 +154,10 @@ RSpec.describe StorageLocation, type: :model do
           .and change{InventoryItem.count}.by(-1)
         end
       end
-       # TODO: This should probably be DRYed out with a shared_example
       context "With purchases" do
         before(:each) do
           storage_location.intake!(purchase)
-          storage_location.items.reload  
+          storage_location.items.reload
         end
         it "add additional line item" do
           item = create(:item)
@@ -175,7 +174,7 @@ RSpec.describe StorageLocation, type: :model do
           }.to change{storage_location.size}.by(5)
           .and change{InventoryItem.count}.by(1)
         end
-  
+
         it "removes the inventory item from the DB if the item's removal results in a 0 count" do
           purchase.line_items.first.update(quantity: 0)
 
