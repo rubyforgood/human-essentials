@@ -41,9 +41,6 @@ spec/features/item_spec.rb:
 spec/models/distribution_spec.rb:
   * [ 89] [TODO] Can this be replaced with the `combine!` method from `Itemizable`?
 
-spec/models/storage_location_spec.rb:
-  * [157] [TODO] This should probably be DRYed out with a shared_example
-
 spec/support/authorization_specs.rb:
   * [  1] [TODO] Why are there two groups that are doing the same thing?
   * [ 18] [FIXME] Not all controllers have `edit` actions (or other), and this should be able to adapt to that
