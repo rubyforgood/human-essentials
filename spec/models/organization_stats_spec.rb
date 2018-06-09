@@ -6,7 +6,7 @@ RSpec.describe OrganizationStats, type: :model do
   let(:storage_locations) { [] }
   let(:donation_sites) { [] }
   let(:current_org) do
-    double('org', partners: partners, storage_locations: storage_locations, donation_sites: donation_sites)
+    double("org", partners: partners, storage_locations: storage_locations, donation_sites: donation_sites)
   end
 
   subject { described_class.new(current_org) }
@@ -21,7 +21,7 @@ RSpec.describe OrganizationStats, type: :model do
     end
 
     context "current org is not nil >" do
-      let(:partners) { [ 'element1', 'element2' ] }
+      let(:partners) { ["element1", "element2"] }
 
       it "should return actual count of partners" do
         expect(subject.partners_added).to eq(2)
@@ -39,7 +39,7 @@ RSpec.describe OrganizationStats, type: :model do
     end
 
     context "current org is not nil >" do
-      let(:storage_locations) { [ 'loc1', 'loc2', 'loc3' ] }
+      let(:storage_locations) { ["loc1", "loc2", "loc3"] }
 
       it "should return actual count of locations" do
         expect(subject.storage_locations_added).to eq(3)
@@ -57,10 +57,10 @@ RSpec.describe OrganizationStats, type: :model do
     end
 
     context "current org is not nil >" do
-      let(:donation_sites) { [ 'site1', 'site2', 'site3', 'site4' ] }
+      let(:donation_sites) { ["site1", "site2", "site3"] }
 
       it "should return actual count of donation sites" do
-        expect(subject.donation_sites_added).to eq(4)
+        expect(subject.donation_sites_added).to eq(3)
       end
     end
   end
@@ -76,7 +76,7 @@ RSpec.describe OrganizationStats, type: :model do
 
     context "current org is not nil + locations have items >" do
       let(:storage_location_1) { create :storage_location, :with_items }
-      let(:storage_locations) { [ storage_location_1 ] }
+      let(:storage_locations) { [storage_location_1] }
 
       it "should return storage location" do
         expect(subject.locations_with_inventory).to include(storage_location_1)
@@ -85,7 +85,7 @@ RSpec.describe OrganizationStats, type: :model do
 
     context "current org is not nil + no locations have items >" do
       let(:storage_location_1) { create :storage_location }
-      let(:storage_locations) { [ storage_location_1 ] }
+      let(:storage_locations) { [storage_location_1] }
 
       it "should return an empty array" do
         expect(subject.locations_with_inventory).to eq([])
