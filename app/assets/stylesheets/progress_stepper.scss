@@ -1,3 +1,7 @@
+$highlight-color: #3c8dbc;
+$neutral-color: #ecf0f5;
+$white: #fff;
+
 .step-progression-container {
   display: flex;
 
@@ -11,9 +15,9 @@
       }
 
       .step-number {
-        background: #3c8dbc;
-        border: 1px solid #3c8dbc;
-        color: #fff;
+        background: $highlight-color;
+        border: 1px solid $highlight-color;
+        color: $white;
         opacity: 1;
       }
     }
@@ -24,7 +28,8 @@
       }
 
       .step-number {
-        border: 1px solid #3c8dbc;
+        border: 1px solid $highlight-color;
+        background: $white;
         opacity: 1;
       }
     }
@@ -48,8 +53,8 @@
       justify-content: center;
       align-items: center;
       margin: 10px auto;
-      background: #fff;
-      border: 1px solid #fff;
+      background: $neutral-color;
+      border: 1px solid $neutral-color;
       opacity: 0.5;
 
       &.line-right::after, &.line-left::before {
@@ -59,7 +64,7 @@
         content: '';
         margin-top: 1px;
         top: 25px;
-        border-top: 1px solid #fff;
+        border-top: 1px solid $neutral-color;
       }
 
       &.line-left::before {

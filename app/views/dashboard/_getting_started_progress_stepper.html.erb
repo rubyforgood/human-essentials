@@ -1,0 +1,53 @@
+<div class="step-progression-container hidden-xs">
+  <div class="step-container<%= step_container_helper(0, current_step) %>">
+    <div class="step-inner-container">
+      <div class="step-number line-right">
+        <% if criteria[0] && current_step > 0 %>
+          <i class="fa fa-check" aria-hidden="true"></i>
+        <% else %>
+          1
+        <% end %>
+      </div>
+      <div class="step-desc">Partner Agencies</div>
+    </div>
+  </div>
+
+  <div class="step-container<%= step_container_helper(1, current_step) %>">
+    <div class="step-inner-container">
+      <div class="step-number line-right line-left">
+        <% if criteria[1] && current_step > 1 %>
+          <i class="fa fa-check" aria-hidden="true"></i>
+        <% else %>
+          2
+        <% end %>
+      </div>
+      <div class="step-desc">Donation Sites</div>
+    </div>
+  </div>
+
+  <div class="step-container<%= step_container_helper(2, current_step) %>">
+    <div class="step-inner-container">
+      <div class="step-number line-right line-left">
+        <% if criteria[2] && current_step > 2 %>
+          <i class="fa fa-check" aria-hidden="true"></i>
+        <% else %>
+          3
+        <% end %>
+      </div>
+      <div class="step-desc">Storage Location</div>
+    </div>
+  </div>
+
+  <div class="step-container<%= step_container_helper(3, current_step) %>">
+    <div class="step-inner-container">
+      <div class="step-number line-left">
+        <% if criteria[3] && current_step > 3 %>
+          <i class="fa fa-check" aria-hidden="true"></i>
+        <% else %>
+          4
+        <% end %>
+      </div>
+      <div class="step-desc">Inventory</div>
+    </div>
+  </div>
+</div>

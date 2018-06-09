@@ -6,168 +6,102 @@
 <% criteria = [ partner_criteria_met, donation_criteria_met, location_criteria_met, inventory_criteria_met ] %>
 <% current_step = criteria.find_index(false) %>
 
-<% if true %>
-  <div class="col-md-12">
-    <h2 class="panel-title">
-      Just Starting?
-      <span>Here are some things you may need to set up:</span>
-    </h2>
-    <br/>
-    <div class="step-progression-container hidden-xs">
-      <div class="step-container<%= step_container_helper(0, current_step) %>">
-        <div class="step-inner-container">
-          <div class="step-number line-right">
-            <% if partner_criteria_met && current_step > 0 %>
-              <i class="fa fa-check" aria-hidden="true"></i>
-            <% else %>
-              1
-            <% end %>
+<div class="col-md-12">
+  <div class="box box-primary">
+    <div class="box-header with-border">
+      <h2 class="box-title">
+        Just Starting?
+        <small>Here are some things you may need to set up:</small>
+      </h2>
+    </div>
+
+    <div class="box-body org-stats">
+      <div class="col-md-12">
+        <%= render partial: "getting_started_progress_stepper", locals: { current_step: current_step, criteria: criteria } %>
+      </div>
+
+      <div class="col-md-12 org-stats-box-container<%= current_step == 0 ? '' : ' hidden visible-xs' %>">
+        <div class="org-stats-box">
+          <div class="box-body text-center position-relative">
+            <div class="org-stats-icon">
+              <% if partner_criteria_met %>
+                <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+              <% else %>
+                <i class="fa fa-users fa-2x" aria-hidden="true"></i>
+              <% end %>
+            </div>
+            <br/>
+            <%= pluralize(org_stats.partners_added, 'Partner Agency') %> Added
+            <div class="org-stats-call-to-action">
+              <br/>
+              <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
+              <%= link_to partner_link_text, partners_path, class: "btn btn-primary btn-md" %>
+            </div>
           </div>
-          <div class="step-desc">Community Partners</div>
         </div>
       </div>
 
-      <div class="step-container<%= step_container_helper(1, current_step) %>">
-        <div class="step-inner-container">
-          <div class="step-number line-right line-left">
-            <% if donation_criteria_met && current_step > 1 %>
-              <i class="fa fa-check" aria-hidden="true"></i>
-            <% else %>
-              2
-            <% end %>
+      <div class="col-md-12 org-stats-box-container<%= current_step == 1 ? '' : ' hidden visible-xs' %>">
+        <div class="org-stats-box">
+          <div class="box-body text-center position-relative">
+            <div class="org-stats-icon">
+              <% if donation_criteria_met %>
+                <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+              <% else %>
+                <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+              <% end %>
+            </div>
+            <br/>
+            <%= pluralize(org_stats.donation_sites_added, 'Donation Site') %> Added
+            <div class="org-stats-call-to-action">
+              <br/>
+              <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
+              <%= link_to donation_link_text, donation_sites_path, class: "btn btn-primary btn-md" %>
+            </div>
           </div>
-          <div class="step-desc">Donation Sites</div>
         </div>
       </div>
 
-      <div class="step-container<%= step_container_helper(2, current_step) %>">
-        <div class="step-inner-container">
-          <div class="step-number line-right line-left">
-            <% if location_criteria_met && current_step > 2 %>
-              <i class="fa fa-check" aria-hidden="true"></i>
-            <% else %>
-              3
-            <% end %>
+      <div class="col-md-12 org-stats-box-container<%= current_step == 2 ? '' : ' hidden visible-xs' %>">
+        <div class="org-stats-box">
+          <div class="box-body text-center position-relative">
+            <div class="org-stats-icon">
+              <% if location_criteria_met %>
+                <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+              <% else %>
+                <i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>
+              <% end %>
+            </div>
+            <br/>
+            <%= pluralize(org_stats.storage_locations_added, 'Storage Location') %> Added
+            <div class="org-stats-call-to-action">
+              <br/>
+              <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
+              <%= link_to location_link_text, storage_locations_path, class: "btn btn-primary btn-md" %>
+            </div>
           </div>
-          <div class="step-desc">Storage Location</div>
         </div>
       </div>
 
-      <div class="step-container<%= step_container_helper(3, current_step) %>">
-        <div class="step-inner-container">
-          <div class="step-number line-left">
-            <% if inventory_criteria_met && current_step > 3 %>
-              <i class="fa fa-check" aria-hidden="true"></i>
-            <% else %>
-              4
-            <% end %>
+      <div class="col-md-12 org-stats-box-container<%= current_step == 3 ? '' : ' hidden visible-xs' %>">
+        <div class="org-stats-box">
+          <div class="box-body text-center position-relative">
+            <div class="org-stats-icon">
+              <% if inventory_criteria_met %>
+                <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+              <% else %>
+                <i class="fa fa-pie-chart fa-2x" aria-hidden="true"></i>
+              <% end %>
+            </div>
+            <br/>
+            <%= pluralize(org_stats.locations_with_inventory.length, 'Storage Location') %> with Inventory
+            <div class="org-stats-call-to-action">
+              <br/>
+              <%= render partial: "getting_started_modal", locals: { locations_with_inventory: org_stats.locations_with_inventory } %>
+            </div>
           </div>
-          <div class="step-desc">Inventory</div>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="col-md-12<%= current_step == 0 ? '' : ' hidden visible-xs' %>">
-    <div class="org-stats-box box">
-      <div class="box-body text-center position-relative">
-        <div class="org-stats-icon">
-          <% if partner_criteria_met %>
-            <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-          <% else %>
-            <i class="fa fa-users fa-2x" aria-hidden="true"></i>
-          <% end %>
-        </div>
-        <br/>
-        <%= pluralize(org_stats.partners_added, 'Community Partner') %> Added
-        <div class="org-stats-call-to-action">
-          <br/>
-          <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
-          <%= link_to partner_link_text, partners_path, class: "btn btn-primary btn-md" %>
-        </div>
-
-        <div class="org-stats-counter hidden visible-xs">
-          1/4
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-12<%= current_step == 1 ? '' : ' hidden visible-xs' %>">
-    <div class="org-stats-box box">
-      <div class="box-body text-center position-relative">
-        <div class="org-stats-icon">
-          <% if donation_criteria_met %>
-            <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-          <% else %>
-            <i class="fa fa-home fa-2x" aria-hidden="true"></i>
-          <% end %>
-        </div>
-        <br/>
-        <%= pluralize(org_stats.donation_sites_added, 'Donation Site') %> Added
-        <div class="org-stats-call-to-action">
-          <br/>
-          <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
-          <%= link_to donation_link_text, donation_sites_path, class: "btn btn-primary btn-md" %>
-        </div>
-
-        <div class="org-stats-counter hidden visible-xs">
-          2/4
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-12<%= current_step == 2 ? '' : ' hidden visible-xs' %>">
-    <div class="org-stats-box box">
-      <div class="box-body text-center position-relative">
-        <div class="org-stats-icon">
-          <% if location_criteria_met %>
-            <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-          <% else %>
-            <i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>
-          <% end %>
-        </div>
-        <br/>
-        <%= pluralize(org_stats.storage_locations_added, 'Storage Location') %> Added
-        <div class="org-stats-call-to-action">
-          <br/>
-          <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
-          <%= link_to location_link_text, storage_locations_path, class: "btn btn-primary btn-md" %>
-        </div>
-
-        <div class="org-stats-counter hidden visible-xs">
-          3/4
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-12<%= current_step == 3 ? '' : ' hidden visible-xs' %>">
-    <div class="org-stats-box box">
-      <div class="box-body text-center position-relative">
-        <div class="org-stats-icon">
-          <% if inventory_criteria_met %>
-            <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-          <% else %>
-            <i class="fa fa-pie-chart fa-2x" aria-hidden="true"></i>
-          <% end %>
-        </div>
-        <br/>
-        <%= pluralize(org_stats.locations_with_inventory.length, 'Storage Location') %> with Inventory
-        <div class="org-stats-call-to-action">
-          <br/>
-          <%= render partial: "getting_started_modal", locals: { locations_with_inventory: org_stats.locations_with_inventory } %>
-        </div>
-
-        <div class="org-stats-counter hidden visible-xs">
-          4/4
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-12">
-    <hr/>
-  </div>
-<% end %>
+</div>

@@ -1,0 +1,38 @@
+<div class="import-partners">
+  <!-- Button HTML (to Trigger Modal) -->
+  <a href="#importDonationSiteModal" class="btn btn-primary btn-md" data-toggle="modal">
+    <i class="fa fa-upload"></i> Import Donation Sites
+  </a>
+  <!-- Modal HTML -->
+  <div id="importDonationSiteModal" class="modal fade">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title">Import Donation Sites Instructions:</h4>
+          </div>
+          <div class="modal-body">
+            <ol>
+              <li><%= link_to "/donation_sites.csv", :format => :csv, :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example csv<% end %></li>
+              <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+              <li>Delete the sample data and enter your donation site names and addresses in the appropriate columns.</li>
+              <li>Save the file as a csv file.</li>
+              <li>Click the choose file button and navigate to the saved file and select it.</li>
+              <li>Then click the Import CSV button to import your storage locations.</li>
+            </ol>
+          <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
+          </div><!-- /.modal-body -->
+          <div class="modal-footer">
+            <%= form_tag import_csv_donation_sites_path, multipart: true do %>
+              <div class="form-group">
+                <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
+              </div>
+              <%= button_tag :class => "btn btn-lg btn-primary" do %>
+                <i class="fa fa-upload"></i> Import CSV
+              <% end %>
+            <% end %>
+          </div><!-- /.modal-footer -->
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /#importDonationSiteModal -->
+</div>
