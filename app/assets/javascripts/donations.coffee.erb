@@ -13,16 +13,13 @@ $ ->
   $(donation_site_container_id).hide()
   create_new_diaper_drive_text = "---Create new diaper drive---"
   $(diaper_drive_participant_id).
-  append('<option value="">---Create new diaper drive---</option>').
-  change()
-
+  append('<option value="">---Create new diaper drive---</option>')
 
   $(document).on "change", diaper_drive_participant_id, (evt) ->
     selection = $(diaper_drive_participant_id + " option").
     filter(':selected').text()
     if (selection is create_new_diaper_drive_text)
       $("#new_diaper_drive").click()
-
 
   $(document).on "change", control_id, (evt) ->
     selection = $(control_id + " option").filter(':selected').text()
@@ -36,3 +33,5 @@ $ ->
     else
       $(diaper_drive_participant_container_id).hide()
       $(donation_site_container_id).hide()
+
+  $(control_id).change()
