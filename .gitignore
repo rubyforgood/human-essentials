@@ -41,3 +41,9 @@ pdx_db_test
 .DS_Store
 .ruby-gemset
 *.pdf
+
+# No more TODO
+# No need to run "rake notes > TODO" anymore!
+# If you have a note you want to leave, leave it.
+# If you have a task you want to complete, please create a new GitHub Issue for it.
+TODO
