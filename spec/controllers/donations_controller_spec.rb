@@ -69,6 +69,24 @@ RSpec.describe DonationsController, type: :controller do
           put :update, params: default_params.merge(id: donation.id, donation: donation_params)
         }.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
       end
+
+      describe "when removing a line item" do
+        it "updates storage quantity correctly" do
+          donation = create(:donation, :with_items, item_quantity: 10)
+          line_item = donation.line_items.first
+          line_item_params = {
+            "0" => {
+              "_destroy" => "true",
+              item_id: line_item.item_id,
+              id: line_item.id
+            }
+          }
+          donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+          expect {
+            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          }.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
+        end
+      end
     end
 
     describe "GET #edit" do
