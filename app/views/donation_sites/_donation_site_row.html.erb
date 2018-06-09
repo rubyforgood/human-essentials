@@ -6,7 +6,7 @@
       <%= link_to edit_donation_site_path(donation_site_row), class: "btn btn-info btn-xs" do %>
         <i class="fa fa-edit"></i> Edit
       <% end %>
-      <%= link_to donation_site_row, method: :delete, class: "btn btn-danger btn-xs", data: { confirm: "Are you sure?" } do %>
+      <%= link_to donation_site_row, method: :delete, class: "btn btn-danger btn-xs", data: { confirm: confirm_delete_msg(donation_site_row.name) } do %>
         <i class="fa fa-trash"></i> Trash
       <% end %>
   </td>

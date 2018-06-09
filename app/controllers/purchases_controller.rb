@@ -3,7 +3,7 @@ class PurchasesController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:scale_intake, :scale]
   skip_before_action :authenticate_user!, only: [:scale_intake, :scale]
   skip_before_action :authorize_user, only: [:scale_intake, :scale]
-  
+
   def index
     @purchases = current_organization.purchases
                      .includes(:line_items, :storage_location)
@@ -16,7 +16,7 @@ class PurchasesController < ApplicationController
   end
 
   def create
-    @purchase = Purchase.new(purchase_params)
+    @purchase = current_organization.purchases.new(purchase_params)
     if (@purchase.save)
       @purchase.storage_location.intake! @purchase
       redirect_to purchases_path
@@ -30,27 +30,28 @@ class PurchasesController < ApplicationController
   end
 
   def new
-    @purchase = Purchase.new(issued_at: Date.today)
+    @purchase = current_organization.purchases.new(issued_at: Date.today)
     @purchase.line_items.build
     load_form_collections
   end
 
   def edit
-    @purchase = Purchase.find(params[:id])
+    @purchase = current_organization.purchases.find(params[:id])
     @purchase.line_items.build
     load_form_collections
   end
 
   def show
-    @purchase = Purchase.includes(:line_items).find(params[:id])
+    @purchase = current_organization.purchases.includes(:line_items).find(params[:id])
     @line_items = @purchase.line_items
   end
 
   def update
-    @purchase = Purchase.find(params[:id])
+    @purchase = current_organization.purchases.find(params[:id])
     @purchase.changed?
+    previous_quantities = @purchase.line_items_quantities
    if @purchase.update_attributes(purchase_params)
-     @purchase.storage_location.adjust_from_past! @purchase
+     @purchase.storage_location.adjust_from_past!(@purchase, previous_quantities)
     redirect_to purchases_path
    else
      render 'edit'

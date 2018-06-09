@@ -2,22 +2,18 @@
 #
 # Table name: organizations
 #
-#  id                :bigint(8)        not null, primary key
-#  name              :string
-#  short_name        :string
-#  email             :string
-#  url               :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  logo_file_name    :string
-#  logo_content_type :string
-#  logo_file_size    :integer
-#  logo_updated_at   :datetime
-#  intake_location   :integer
-#  street            :string
-#  city              :string
-#  state             :string
-#  zipcode           :string
+#  id              :bigint(8)        not null, primary key
+#  name            :string
+#  short_name      :string
+#  email           :string
+#  url             :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  intake_location :integer
+#  street          :string
+#  city            :string
+#  state           :string
+#  zipcode         :string
 #
 
 RSpec.describe Organization, type: :model do
@@ -48,11 +44,16 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe "paperclip validations" do
+  describe "ActiveStorage validation" do
     it "validates that attachments are png or jpgs" do
-      should validate_attachment_content_type(:logo)
-        .allowing('image/png', 'image/jpg')
-        .rejecting('text/plain', 'text/xml')
+      expect(build(:organization,
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.jpg'),
+                                                      'image/jpeg')))
+        .to be_valid
+      expect(build(:organization,
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.gif'),
+                                                      'image/gif')))
+        .to_not be_valid
     end
   end
 

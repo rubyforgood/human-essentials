@@ -87,7 +87,6 @@ class StorageLocation < ApplicationRecord
     log
   end
 
-  # TODO: Can remove! and adjust_from_past! be refactored into one method?
   def remove!(donation_or_purchase)
     log = {}
     donation_or_purchase.line_items.each do |line_item|
@@ -102,24 +101,16 @@ class StorageLocation < ApplicationRecord
     log
   end
 
-  def adjust_from_past!(donation_or_purchase)
-    log = {}
+  def adjust_from_past!(donation_or_purchase, previous_quantities)
     donation_or_purchase.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id,
-                                                       item_id: line_item.item_id)
-      before_last_save = line_item.quantity.nil? ? 0 : line_item.quantity
-      updated_quantity = inventory_item.quantity.nil? ? 0 : inventory_item.quantity
-      delta = before_last_save - updated_quantity
-      inventory_item.quantity += delta rescue 0
-      if inventory_item.quantity <= 0
-        inventory_item.destroy
-      else
-        # Otherwise update it        
-        inventory_item.save
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: line_item.item_id)
+      if previous_quantity = previous_quantities[line_item.id]
+        inventory_item.quantity += line_item.quantity
+        inventory_item.quantity -= previous_quantity
+        inventory_item.save!
       end
-      log[line_item.item_id] = "+#{line_item.quantity}"
+      inventory_item.destroy! if inventory_item.quantity == 0
     end
-    log
   end
 
   def distribute!(distribution)
