@@ -4347,6 +4347,15 @@ table.text-center th {
  * General: Miscellaneous
  * ----------------------
  */
+ .org-stats-counter {
+  position: absolute;
+  color: #d2d6de;
+  top: 10px;
+  left: 15px;
+ }
+.org-stats-icon .success {
+  color: #00a65a;
+}
 .pad {
   padding: 10px;
 }

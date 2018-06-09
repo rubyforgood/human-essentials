@@ -6,5 +6,7 @@ class DashboardController < ApplicationController
     @recent_purchases = current_organization.purchases.includes(:line_items).during(helpers.selected_range).recent
     @recent_distributions = current_organization.distributions.includes(:line_items).during(helpers.selected_range).recent
     @total_inventory = current_organization.total_inventory
+
+    @org_stats = OrganizationStats.new(current_organization)
   end
 end
