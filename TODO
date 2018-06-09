@@ -8,9 +8,6 @@ app/helpers/items_helper.rb:
 app/models/barcode_item.rb:
   * [ 27] [TODO] - this should be renamed to something more specific -- it produces a hash, not a line_item object
 
-app/models/concerns/itemizable.rb:
-  * [ 32] [TODO] omit_zero is not used. Remove or incorporate it.
-
 app/models/diaper_drive_participant.rb:
   * [ 28] [TODO] - This should be set up with a callback to cache the total so we're not hitting the DB
 
@@ -21,7 +18,6 @@ app/models/inventory_item.rb:
   * [ 30] [TODO] is there a reason for doing this instead of setting a DB default?
 
 app/models/storage_location.rb:
-  * [ 68] [TODO] Can remove! and adjust_from_past! be refactored into one method?
   * [146] [TODO] - this action is happening in the Transfer model/controller - does this method belong here?
   * [170] [TODO] - this is called from the AdjustmentsController, should probably be in a service, not this model
   * [193] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
@@ -40,9 +36,6 @@ spec/features/item_spec.rb:
 
 spec/models/distribution_spec.rb:
   * [ 89] [TODO] Can this be replaced with the `combine!` method from `Itemizable`?
-
-spec/models/storage_location_spec.rb:
-  * [157] [TODO] This should probably be DRYed out with a shared_example
 
 spec/support/authorization_specs.rb:
   * [  1] [TODO] Why are there two groups that are doing the same thing?

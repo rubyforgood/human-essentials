@@ -6,7 +6,7 @@
       <%= link_to edit_admin_path(organization_row.id), class: "btn btn-info btn-xs" do %>
         <%= fa_icon "edit" %> Edit
       <% end %>
-      <%= link_to admin_path(organization_row.id), method: :delete,  data: { confirm: 'Are you sure?' },  class: "btn btn-danger btn-xs" do %>
+      <%= link_to admin_path(organization_row.id), method: :delete,  data: { confirm: confirm_delete_msg(organization_row.name) },  class: "btn btn-danger btn-xs" do %>
         <%= fa_icon "trash" %> Delete
       <% end unless (Organization.count <= 1) %>
   </td>

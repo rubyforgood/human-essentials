@@ -115,5 +115,20 @@ shared_examples_for "itemizable" do
         }.to change{ subject.line_items.total }.by(10)
       end
     end
+
+    describe "updated line item quantity" do
+      subject { create(model_f, organization: @organization) }
+      let(:storage_location) { subject.storage_location }
+
+      it "updates storage location quantity by the correct amount" do
+        line_item = subject.line_items.create(item_id: item.id, quantity: 10)
+        inventory_item = create(:inventory_item, storage_location: storage_location, item_id: line_item.item_id)
+        previous_quantities = subject.line_items_quantities
+        line_item.update!(quantity: 5)
+        expect{
+          storage_location.adjust_from_past!(subject, previous_quantities)
+        }.to change{ inventory_item.reload.quantity }.by(-5)
+      end
+    end
   end
 end
