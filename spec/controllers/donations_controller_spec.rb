@@ -52,6 +52,23 @@ RSpec.describe DonationsController, type: :controller do
         put :update, params: default_params.merge(id: donation.id, donation: { source: "Donation Site" })
         expect(response).to redirect_to(donations_path)
       end
+
+      it "updates storage quantity correctly" do
+        donation = create(:donation, :with_items, item_quantity: 10)
+        line_item = donation.line_items.first
+        line_item_params = {
+          "0" => {
+            "_destroy" => "false",
+            item_id: line_item.item_id,
+            quantity: "15",
+            id: line_item.id
+          }
+        }
+        donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+        expect {
+          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+        }.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
+      end
     end
 
     describe "GET #edit" do
