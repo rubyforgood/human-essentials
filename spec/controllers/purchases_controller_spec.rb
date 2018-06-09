@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PurchasesController, type: :controller do
-  
+
   let(:default_params) {
     { organization_id: @organization.to_param }
   }
@@ -52,6 +52,24 @@ RSpec.describe PurchasesController, type: :controller do
         purchase = create(:purchase, purchased_from: "Google")
         put :update, params: default_params.merge(id: purchase.id, purchase: { purchased_from: "Google" })
         expect(response).to redirect_to(purchases_path)
+      end
+
+      it "updates storage quantity correctly" do
+        purchase = create(:purchase, :with_items, item_quantity: 10)
+        line_item = purchase.line_items.first
+        line_item_params = {
+          "0" => {
+            "_destroy"=>"false",
+            item_id: line_item.item_id,
+            quantity: "5",
+            id: line_item.id
+          }
+        }
+        expect {
+          put :update, params: default_params.merge(id: purchase.id, purchase: {
+            source: "Purchase Site", line_items_attributes: line_item_params
+          })
+        }.to change{ purchase.storage_location.inventory_items.first.quantity }.by(-5)
       end
     end
 
