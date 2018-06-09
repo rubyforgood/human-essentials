@@ -63,8 +63,8 @@ module Itemizable
   end
 
   def line_items_quantities
-    line_items.inject(Hash.new) do |hash, item|
-      hash[item.id] = item.quantity
+    line_items.inject(Hash.new) do |hash, line_item|
+      hash[line_item.id] = OpenStruct.new(quantity: line_item.quantity, item_id: line_item.item_id)
       hash
     end
   end
