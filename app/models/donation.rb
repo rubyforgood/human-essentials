@@ -22,7 +22,7 @@ class Donation < ApplicationRecord
   belongs_to :organization
 
   belongs_to :donation_site, optional: true # Validation is conditionally handled below.
-  belongs_to :diaper_drive_participant, optional: true # Validation is conditionally handled below.
+  belongs_to :diaper_drive_participant, optional: Proc.new { |d| d.from_diaper_drive? } # Validation is conditionally handled below.
   belongs_to :storage_location
   include Itemizable
 
