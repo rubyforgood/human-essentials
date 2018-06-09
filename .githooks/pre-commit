@@ -8,7 +8,7 @@ if [ -n "$changed_files" ]; then
 
   # Run rubocop
   echo "Running rubocop $changed_files (this may take a few seconds)"
-  if rubocop_results=$(rubocop $changed_files 2>&1); then
+  if rubocop_results=$(bundle exec rubocop $changed_files 2>&1); then
     if $(echo $rubocop_results | grep -q "Offenses:" 2>&1); then
       >&2 echo "\n** Rubocop found some code style it disagreed with, try autofixing by running **\n  rubocop --auto-correct $changed_files\n"
     else
@@ -23,7 +23,7 @@ if [ -n "$changed_files" ]; then
       if $(echo $rubocop_results | grep -q "Offenses:" 2>&1); then
         >&2 echo "\n** Rubocop found some code style it disagreed with, try autofixing by running **\n  sudo docker-compose run web rubocop --auto-correct $changed_files\n"
       else
-        echo "Could not run rubocop. Please try running it manually and report the issue."
+        >&2 echo "Could not run rubocop. Please try running it manually and report the issue."
       fi
       early_exit=$(($early_exit + 1))
     fi
@@ -31,19 +31,19 @@ if [ -n "$changed_files" ]; then
 
   # Run 'annotate' gem (populates app/models, spec/ with schema changes)
   echo "Running 'annotate' (almost done)"
-  if annotate_results=$(annotate); then
+  if annotate_results=$(bundle exec annotate); then
     echo "annotate ran successfully"
     if [ -n "$annotate_results" ]; then
       annotated_files=$(echo $annotate_results | awk -FAnnotated '{print $2}' | awk -F: '{print $2}' | sed s/,//g)
       if [ -z "$annotated_files" ]; then
-        >&1 echo 'No files annotated'
+        echo 'No files annotated'
       else
         >&2 echo "\n\n** Files updated with annotate! please git-add them and commit again **"
         >&2 echo "Run:\n  git add -p $annotated_files"
         early_exit=$(($early_exit + 1))
       fi
     else
-      >&1 echo 'No files annotated'
+      echo 'No files annotated'
     fi
 
   else
@@ -53,17 +53,17 @@ if [ -n "$changed_files" ]; then
       if [ -n "$annotate_results" ]; then
         annotated_files=$(echo $annotate_results | awk -FAnnotated '{print $2}' | awk -F: '{print $2}' | sed s/,//g)
         if [ -z "$annotated_files" ]; then
-          >&1 echo 'No files annotated'
+          echo 'No files annotated'
         else
           >&2 echo "\n\n** Files updated with annotate! please git-add them and commit again **"
           >&2 echo "Run:\n  git add -p $annotated_files"
           early_exit=$(($early_exit + 1))
         fi
       else
-        >&1 echo 'No files annotated'
+        echo 'No files annotated'
       fi
     else
-      echo "Could not run annotate. Please try running it manually and report the issue."
+      >&2 echo "Could not run annotate. Please try running it manually and report the issue."
       early_exit=$(($early_exit + 1))
     fi
   fi
@@ -73,6 +73,5 @@ if [ -n "$changed_files" ]; then
     exit 1
   else
     echo "\n\ngit pre-commit hooks successful - commiting staged changes now"
-    exit 1
   fi
 fi
