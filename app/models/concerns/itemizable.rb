@@ -62,6 +62,13 @@ module Itemizable
     validates_associated :line_items
   end
 
+  def line_items_quantities
+    line_items.inject(Hash.new) do |hash, item|
+      hash[item.id] = item.quantity
+      hash
+    end
+  end
+
   private
 
   def line_item_items_exist_in_inventory
