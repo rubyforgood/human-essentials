@@ -1,5 +1,5 @@
 class AdjustmentsController < ApplicationController
-  before_action :set_adjustment, only: [:show, :edit, :update, :destroy]
+  before_action :set_adjustment, only: [:show, :destroy]
 
   # GET /adjustments
   # GET /adjustments.json

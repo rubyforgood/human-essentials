@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :adjustments
+    resources :adjustments, except: [:edit, :update]
     resources :transfers, only: [:index, :create, :new, :show]
     resources :storage_locations do
       collection do
