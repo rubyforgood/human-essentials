@@ -48,4 +48,10 @@ module ApplicationHelper
   def confirm_delete_msg(resource)
     "Are you sure you want to delete #{resource}?"
   end
+
+  def step_container_helper(index, active_index)
+    return ' active' if active_index == index
+    return ' done' if active_index > index
+    ''
+  end
 end
