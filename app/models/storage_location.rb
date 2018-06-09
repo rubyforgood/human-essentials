@@ -104,6 +104,8 @@ class StorageLocation < ApplicationRecord
   def adjust_from_past!(donation_or_purchase, previous_line_item_values)
     donation_or_purchase.line_items.each do |line_item|
       inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: line_item.item_id)
+      # If the item wasn't deleted by the user, then it will be present to be deleted
+      # here, and delete returns the item as a return value.
       if previous_line_item_value = previous_line_item_values.delete(line_item.id)
         inventory_item.quantity += line_item.quantity
         inventory_item.quantity -= previous_line_item_value.quantity
