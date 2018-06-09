@@ -53,6 +53,9 @@ Otherwise run: `find .git/hooks -type l -exec rm {} \; && find .githooks -type f
 
 To one-off ignore githooks:  `git commit --no-verify`
 
+To uninstall githooks entirely, Git version 2.9 or later: `git config --unset core.hooksPath`
+
+To uninstall githooks otherwise:  `rm .git/hooks/pre-commit`
 
 ## Development without Docker
 
