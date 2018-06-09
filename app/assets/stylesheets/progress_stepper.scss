@@ -1,4 +1,5 @@
-$highlight-color: #3c8dbc;
+$active-color: #3c8dbc;
+$done-color: #00a65a;
 $neutral-color: #ecf0f5;
 $white: #fff;
 
@@ -15,8 +16,8 @@ $white: #fff;
       }
 
       .step-number {
-        background: $highlight-color;
-        border: 1px solid $highlight-color;
+        background: $done-color;
+        border: 1px solid $done-color;
         color: $white;
         opacity: 1;
       }
@@ -28,7 +29,7 @@ $white: #fff;
       }
 
       .step-number {
-        border: 1px solid $highlight-color;
+        border: 1px solid $active-color;
         background: $white;
         opacity: 1;
       }
