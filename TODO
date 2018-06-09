@@ -21,7 +21,6 @@ app/models/inventory_item.rb:
   * [ 30] [TODO] is there a reason for doing this instead of setting a DB default?
 
 app/models/storage_location.rb:
-  * [ 68] [TODO] Can remove! and adjust_from_past! be refactored into one method?
   * [146] [TODO] - this action is happening in the Transfer model/controller - does this method belong here?
   * [170] [TODO] - this is called from the AdjustmentsController, should probably be in a service, not this model
   * [193] [TODO] - this action is happening in the DistributionsController. Is this model the correct place for this method?
