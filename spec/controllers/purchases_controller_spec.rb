@@ -59,17 +59,16 @@ RSpec.describe PurchasesController, type: :controller do
         line_item = purchase.line_items.first
         line_item_params = {
           "0" => {
-            "_destroy"=>"false",
+            "_destroy" => "false",
             item_id: line_item.item_id,
             quantity: "5",
             id: line_item.id
           }
         }
+        purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
         expect {
-          put :update, params: default_params.merge(id: purchase.id, purchase: {
-            source: "Purchase Site", line_items_attributes: line_item_params
-          })
-        }.to change{ purchase.storage_location.inventory_items.first.quantity }.by(-5)
+          put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+        }.to change { purchase.storage_location.inventory_items.first.quantity }.by(-5)
       end
     end
 

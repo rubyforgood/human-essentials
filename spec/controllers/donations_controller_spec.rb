@@ -58,17 +58,16 @@ RSpec.describe DonationsController, type: :controller do
         line_item = donation.line_items.first
         line_item_params = {
           "0" => {
-            "_destroy"=>"false",
+            "_destroy" => "false",
             item_id: line_item.item_id,
             quantity: "15",
             id: line_item.id
           }
         }
+        donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
         expect {
-          put :update, params: default_params.merge(id: donation.id, donation: {
-            source: "Donation Site", line_items_attributes: line_item_params
-          })
-        }.to change{ donation.storage_location.inventory_items.first.quantity }.by(5)
+          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+        }.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
       end
     end
 

@@ -127,7 +127,7 @@ shared_examples_for "itemizable" do
         line_item.update!(quantity: 5)
         expect{
           storage_location.adjust_from_past!(subject, previous_quantities)
-        }.to change{inventory_item.reload.quantity}.by(-5)
+        }.to change{ inventory_item.reload.quantity }.by(-5)
       end
     end
   end
