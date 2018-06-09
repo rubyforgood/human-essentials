@@ -2,6 +2,16 @@
 
 early_exit=0
 
+# Default to using sudo on Linux unless user is in 'docker' group
+sudo=''
+if [ "$(uname)" = 'Linux' ]; then
+  user_in_docker_group_so_probably_no_need_for_sudo=$(groups|grep docker)
+  if [ -z "$user_in_docker_group_so_probably_no_need_for_sudo" ]; then
+    sudo='sudo'
+    echo "Looks like you're on a Linux machine. Running all docker-compose commands with sudo..."
+  fi
+fi
+
 # Only run if there are files staged for commit
 changed_files=$(git diff --cached --name-only --diff-filter=ACM | paste -s -d' ' -)
 if [ -n "$changed_files" ]; then
@@ -15,13 +25,13 @@ if [ -n "$changed_files" ]; then
       echo "rubocop ran successfully; moving on to the next pre-commit check"
     fi
   else
-    rubocop_docker_cmd="sudo docker-compose run web rubocop $changed_files"
+    rubocop_docker_cmd="$sudo docker-compose run web rubocop $changed_files"
     echo "\nCannot run rubocop locally -- attempting to run under Docker\n  $rubocop_docker_cmd\n"
     if rubocop_results=$($rubocop_docker_cmd 2>&1); then
       echo "rubocop ran successfully in Docker; moving on to the next pre-commit check"
     else
       if $(echo $rubocop_results | grep -q "Offenses:" 2>&1); then
-        >&2 echo "\n** Rubocop found some code style it disagreed with, try autofixing by running **\n  sudo docker-compose run web rubocop --auto-correct $changed_files\n"
+        >&2 echo "\n** Rubocop found some code style it disagreed with, try autofixing by running **\n  $sudo docker-compose run web rubocop --auto-correct $changed_files\n"
       else
         >&2 echo "Could not run rubocop. Please try running it manually and report the issue."
       fi
@@ -47,7 +57,7 @@ if [ -n "$changed_files" ]; then
     fi
 
   else
-    annotate_cmd="sudo docker-compose run web annotate"
+    annotate_cmd="$sudo docker-compose run web annotate"
     echo "Cannot run TODO rake task locally -- attempting to run under Docker\n  $annotate_cmd"
     if annotate_results=$($annotate_cmd); then
       if [ -n "$annotate_results" ]; then
