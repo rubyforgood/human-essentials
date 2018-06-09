@@ -18,7 +18,6 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 ### Requirements
 
 - [Docker CE](https://store.docker.com/search?type=edition&offering=community)
-- Postgres
 
 ### Caveats
 
@@ -46,9 +45,14 @@ Start the application with `docker-compose up web` and then visit [http://localh
 Run `docker-compose run test rails spec`
 
 ### Install githooks
+If you'd like to get instantaneous feedback on if your commit is passing rubocop checks and to not forget to run `annotate`, you can install githooks so that it happens automatically on each git commit.
+
 If running Git version 2.9 or later: `git config core.hooksPath .githooks`
 
 Otherwise run: `find .git/hooks -type l -exec rm {} \; && find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;`
+
+To one-off ignore githooks:  `git commit --no-verify`
+
 
 ## Development without Docker
 
