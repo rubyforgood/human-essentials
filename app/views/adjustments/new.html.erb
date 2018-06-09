@@ -20,11 +20,12 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <p class="box-title">Create an <strong>Adjustment</strong> to manually reduce the amount of inventory in a particular storage location.</p>
+    <p class="box-title">Create an <strong>Adjustment</strong> to manually increase (+) or decrease (-) the amount of inventory in a particular storage location.</p>
   </div>
 
   <div class="box-body">
-<p class="help">Enter a negative amount for <code>quantity</code> if you want to subtract that kind of item.</p>
+<p class="help">Enter a negative (-) amount for <code>quantity</code> if you want to subtract that kind of item.</p>
+<p class="help">Simply enter an amount for <code>quantity</code> if you want to add that kind of item.</p>
 <%= simple_form_for @adjustment do |f| %>
 
   <%= f.association :storage_location,
