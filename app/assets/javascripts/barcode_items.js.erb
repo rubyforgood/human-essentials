@@ -64,7 +64,7 @@ $(document).ready(function() {
           }
       })
       $(line_item).find('input[type=number]').val(line_item_quantity);
-    $(line_item).find('select option[value="' + data['item_id'] + '"]').attr("selected", true);
+    $(line_item).find('[value="' + data['barcodeable_id'] + '"]').attr("selected", true);
 
       if (data['src'] != $(line_item).closest('.__barcode_item_lookup').context) {
           $(data['src']).closest('.nested-fields').remove();
