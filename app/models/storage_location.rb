@@ -87,7 +87,6 @@ class StorageLocation < ApplicationRecord
     log
   end
 
-  # TODO: Can remove! and adjust_from_past! be refactored into one method?
   def remove!(donation_or_purchase)
     log = {}
     donation_or_purchase.line_items.each do |line_item|
