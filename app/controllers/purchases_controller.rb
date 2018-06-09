@@ -49,8 +49,6 @@ class PurchasesController < ApplicationController
   def update
     @purchase = current_organization.purchases.find(params[:id])
     @purchase.changed?
-    # Warning: previous_quantities needs to be assigned before purchase gets
-    # updated.
     previous_quantities = @purchase.line_items_quantities
    if @purchase.update_attributes(purchase_params)
      @purchase.storage_location.adjust_from_past!(@purchase, previous_quantities)
