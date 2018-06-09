@@ -19,11 +19,14 @@ require 'rails_helper'
 
 RSpec.describe DiaperDriveParticipant, type: :model do
   context "Validations" do
-  	it "is invalid without a name" do
-      expect(build(:diaper_drive_participant, name: nil)).not_to be_valid
-  	end
+  	it "is invalid unless it has either a contact name or a business name" do
+      expect(build(:diaper_drive_participant, name: nil, business_name: nil)).not_to be_valid
+      expect(build(:diaper_drive_participant, name: nil, business_name: "George Company").valid?).to eq(true)
+      expect(build(:diaper_drive_participant, name: "George Henry").valid?).to eq(true)
+    end
 
-  	it "is invalid unless it has either a name or an email" do
+
+  	it "is invalid unless it has either a phone number or an email" do
       expect(build(:diaper_drive_participant, phone: nil, email: nil)).not_to be_valid
       expect(build(:diaper_drive_participant, phone: nil)).to be_valid
       expect(build(:diaper_drive_participant, email: nil)).to be_valid
@@ -51,5 +54,5 @@ RSpec.describe DiaperDriveParticipant, type: :model do
       DiaperDriveParticipant.import_csv(import_file_path, organization.id)
       expect(DiaperDriveParticipant.count).to eq before_import + 3
     end
-  end     
+  end
 end
