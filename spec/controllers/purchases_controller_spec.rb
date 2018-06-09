@@ -73,7 +73,6 @@ RSpec.describe PurchasesController, type: :controller do
 
       describe "when removing a line item" do
         it "updates storage invetory item quantity correctly" do
-          inventory_item = purchase.storage_location.inventory_items.first
           purchase = create(:purchase, :with_items, item_quantity: 10)
           line_item = purchase.line_items.first
           line_item_params = {
@@ -86,7 +85,7 @@ RSpec.describe PurchasesController, type: :controller do
           purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
           expect {
             put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
-          }.to change { inventory.reload.quantity }.by(-10)
+          }.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
         end
 
         it "deletes inventory item if line item and inventory item quantities are equal" do
