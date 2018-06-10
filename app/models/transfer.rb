@@ -23,12 +23,10 @@ class Transfer < ApplicationRecord
   scope :from_location, ->(location_id) { where(from_id: location_id) }
   scope :to_location, ->(location_id) { where(to_id: location_id) }
 
-  # TODO: This query could probably be made more...better
   def self.storage_locations_transferred_to_in(organization)
     includes(:to).where(organization_id: organization.id).distinct(:to_id).collect(&:to).uniq
   end
 
-  # TODO: This query could probably be made more...better
   def self.storage_locations_transferred_from_in(organization)
     includes(:from).where(organization_id: organization.id).distinct(:from_id).collect(&:from).uniq
   end
