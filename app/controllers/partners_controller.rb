@@ -40,7 +40,7 @@ class PartnersController < ApplicationController
       redirect_back(fallback_location: partners_path(organization_id: current_organization))
       flash[:error] = "No file was attached!"
     else
-      filepath = params[:file].read
+      filepath = params[:file].path
       Partner.import_csv(filepath, current_organization.id)
       flash[:notice] = "Partners were imported successfully!"
       redirect_back(fallback_location: partners_path(organization_id: current_organization))
