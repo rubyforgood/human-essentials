@@ -68,6 +68,11 @@ Rails.application.routes.draw do
 
     get 'dashboard', to: 'dashboard#index'
 
+    resources :data_exports, only: [:index] do
+      collection do
+        get :csv
+      end
+    end
   end
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
