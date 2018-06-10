@@ -75,13 +75,11 @@
   end
 
   describe "Item Table Tabs >" do
+    let(:item_name_1) { 'the most wonderful magical pullups that truly potty train' }
+    let(:item_name_2) { 'blackbeard\'s rugged tampons' }
     before :each do
-      # FIXME why isn't this handled by DatabaseCleaner?
-      Item.delete_all
-      InventoryItem.delete_all
-      StorageLocation.delete_all
-      @item = create(:item, name: "an item", category: "same")
-      @item2 = create(:item, name: "another item", category: "different")
+      @item = create(:item, name: item_name_1, category: "same")
+      @item2 = create(:item, name: item_name_2, category: "different")
       @storage = create(:storage_location, :with_items, item: @item, item_quantity: 666, name: "Test storage")
       visit url_prefix + "/items"
     end
@@ -89,21 +87,22 @@
     scenario "Displays items in separate tabs", js: true do
       expect(page.find('table#tbl_items', visible: true)).not_to have_content "Quantity"
       expect(page.find(:css, 'table#tbl_items', visible: true)).to have_content(@item.name)
-      expect(page).to have_selector('table#tbl_items tbody tr', count: 2)
+      expect(page.body).to include(item_name_1)
+      expect(page.body).to include(item_name_2)
 
       click_link "Items and Quantity" # href="#sectionB"
       expect(page.find('table#tbl_items_quantity', visible: true)).to have_content "Quantity"
       expect(page.find('table#tbl_items_quantity', visible: true)).not_to have_content "Test storage"
       expect(page.find('table#tbl_items_quantity', visible: true)).to have_content "666"
-      expect(page).to have_selector('table#tbl_items_quantity tbody tr', count: 2)
+      expect(page.body).to include(item_name_1)
+      expect(page.body).to include(item_name_2)
 
       click_link "Items, Quantity, and Location" # href="#sectionC"
       expect(page.find('table#tbl_items_location', visible: true)).to have_content "Quantity"
       expect(page.find('table#tbl_items_location', visible: true)).to have_content "Test storage"
       expect(page.find('table#tbl_items_location', visible: true)).to have_content "666"
-
-      # FIXME -- this should be 2. It's 3 because an unnecessary TR is being created.
-      expect(page).to have_selector('table#tbl_items_location tbody tr', count: 3)
+      expect(page.body).to include(item_name_1)
+      expect(page.body).to include(item_name_2)
     end
   end
 end
