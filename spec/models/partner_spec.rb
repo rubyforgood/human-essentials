@@ -62,9 +62,9 @@ RSpec.describe Partner, type: :model do
 
     it "imports storage locations from a csv file with BOM encodings" do
       import_file_path = Rails.root.join("spec", "fixtures", "partners_with_bom_encoding.csv")
-      expect {
+      expect do
         Partner.import_csv(import_file_path, organization.id)
-      }.to change{ Partner.count }.by(20)
+      end.to change { Partner.count }.by(20)
     end
   end
 end
