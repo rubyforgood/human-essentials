@@ -18,9 +18,16 @@
   <div class="box">
     <div class="box-header with-border bg-gray">
       <section id="filters">
-        <%= link_to new_partner_path(organization_id: current_organization), class: "btn btn-success btn pull-right", style: "margin-right: 1rem;" do %>
-          <i class="fa fa-plus"></i> New Partner Agency
-        <% end %>
+        <div class="btn-group pull-right">
+          <%= link_to new_partner_path(organization_id: current_organization), class: "btn btn-success" do %>
+            <i class="fa fa-plus"></i> New Partner Agency
+          <% end %>
+          <% if @partners.length > 0 %>
+            <%= link_to csv_data_exports_path(format: :csv, type: "Partner"), class: "btn btn-secondary" do %>
+              <i class="fa fa-download" aria-hidden="true"></i> Export Partner Agencies
+            <% end %>
+          <% end %>
+        </div>
       </section><!-- /#filters -->
     </div><!-- /.box-header -->
     <div class="box-body">

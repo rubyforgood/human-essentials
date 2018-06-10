@@ -19,9 +19,16 @@
     <div class="box-header with-border bg-gray">
       <section id="filters">
         <!-- TBA; replicate HTML from other #index views -->
-        <%= link_to new_donation_site_path(organization_id: current_organization), class: "btn btn-success btn pull-right" do %>
-          <i class="fa fa-plus"></i> New Donation Site
-        <% end %>
+        <div class="btn-group pull-right">
+          <%= link_to new_donation_site_path(organization_id: current_organization), class: "btn btn-success" do %>
+            <i class="fa fa-plus"></i> New Donation Site
+          <% end %>
+          <% if @donation_sites.length > 0 %>
+            <%= link_to csv_data_exports_path(format: :csv, type: "DonationSite"), class: "btn btn-secondary" do %>
+              <i class="fa fa-download" aria-hidden="true"></i> Export Donation Sites
+            <% end %>
+          <% end %>
+        </div>
       </section><!-- /#filters -->
     </div><!-- /.box-header -->
     <div class="box-body">
