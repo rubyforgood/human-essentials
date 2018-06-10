@@ -86,6 +86,19 @@ class Item < ApplicationRecord
     id
   end
 
+  def self.csv_export_headers
+    ["Name", "Category", "Barcodes", "Base Item"]
+  end
+
+  def csv_export_attributes
+    [
+      self.name,
+      self.category,
+      self.barcode_count,
+      self.canonical_item.name
+    ]
+  end
+
   private
 
   def update_diaper_partner

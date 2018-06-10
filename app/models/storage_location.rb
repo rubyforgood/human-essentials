@@ -233,6 +233,14 @@ class StorageLocation < ApplicationRecord
     distribution.destroy
   end
 
+  def self.csv_export_headers
+    ["Name", "Address", "Total Inventory"]
+  end
+
+  def csv_export_attributes
+    [self.name, self.address, self.size]
+  end
+
   private
 
   def update_inventory_inventory_items(records)

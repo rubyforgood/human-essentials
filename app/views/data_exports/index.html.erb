@@ -21,33 +21,83 @@
     </div>
     <div class="box-body">
       <div class="row">
-        <div class="col-md-3 text-center">
-          <%= link_to csv_data_exports_path(format: :csv, type: 'donations'), class: "btn btn-primary btn-md" do %>
-            <i class="fa fa-download" aria-hidden="true"></i> Export My Donations
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "Donation"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Donations
           <% end %>
         </div>
 
-        <div class="col-md-3 text-center">
-          <%= link_to csv_data_exports_path(format: :csv, type: 'purchases'), class: "btn btn-primary btn-md" do %>
-            <i class="fa fa-download" aria-hidden="true"></i> Export My Purchases
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "Purchase"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Purchases
           <% end %>
         </div>
 
-        <div class="col-md-3 text-center">
-          <%= link_to csv_data_exports_path(format: :csv, type: 'donation_sites'), class: "btn btn-primary btn-md" do %>
-            <i class="fa fa-download" aria-hidden="true"></i> Export My Donation Sites
-          <% end %>
-        </div>
-
-        <div class="col-md-3 text-center">
-          <%= link_to csv_data_exports_path(format: :csv, type: 'partner_agencies'), class: "btn btn-primary btn-md" do %>
-            <i class="fa fa-download" aria-hidden="true"></i> Export My Partner Agencies
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "Distribution"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Distributions
           <% end %>
         </div>
       </div>
 
-      <div class="row">
+      <hr/>
 
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "DonationSite"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Donation Sites
+          <% end %>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "Partner"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Partner Agencies
+          <% end %>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "DiaperDriveParticipant"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Diaper Drive Participants
+          <% end %>
+        </div>
+      </div>
+
+      <hr/>
+      
+      <div class="row">
+        <div class="col-md-offset-2 col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "Item"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Items
+          <% end %>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "BarcodeItem"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Barcode Items
+          <% end %>
+        </div>
+      </div>
+
+      <hr/>
+
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "StorageLocation"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Storage Locations
+          <% end %>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "Adjustment"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Inventory Adjustments
+          <% end %>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <%= link_to csv_data_exports_path(format: :csv, type: "Transfer"), class: "btn btn-primary btn-md" do %>
+            <i class="fa fa-download" aria-hidden="true"></i> Transfers
+          <% end %>
+        </div>
       </div>
     </div><!-- /.box-body -->
   </div><!-- /.box -->

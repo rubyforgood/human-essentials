@@ -10,7 +10,7 @@ class DataExport
     return nil unless current_organization.present? && type.present?
     
     data_to_export = grab_data_to_export
-    headers = grab_headers_to_export
+    headers = type.constantize.csv_export_headers
     generate_csv(data_to_export, headers)
   end
 
@@ -20,31 +20,35 @@ class DataExport
 
   def grab_data_to_export
     case type
-    when "donations"
+    when "Donation"
       current_organization.donations
-                          .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant)
+                          .includes(:line_items, :storage_location, :donation_site)
                           .order(created_at: :desc)
-    when "donation_sites"
+    when "DonationSite"
       current_organization.donation_sites.all.order(:name)
-    when "partner_agencies"
+    when "Partner"
       current_organization.purchases
                           .includes(:line_items, :storage_location)
                           .order(created_at: :desc)
-    else
-      []
-    end
-  end
-
-  def grab_headers_to_export
-    case type
-    when "donations"
-      Donation.csv_export_headers
-    when "donation_sites"
-      DonationSite.csv_export_headers
-    when "partner_agencies"
-      Partner.csv_export_headers
-    when "purchases"
-      Purchase.csv_export_headers
+    when "Purchase"
+      current_organization.partners.order(:name)
+    when "Distribution"
+      current_organization.distributions
+                          .includes(:partner, :storage_location, :line_items)
+    when "DiaperDriveParticipant"
+      current_organization.diaper_drive_participants.order(:name)
+    when "StorageLocation"
+      current_organization.storage_locations
+    when "Adjustment"
+      current_organization.adjustments
+                          .includes(:storage_location, :line_items)
+    when "Transfer"
+      current_organization.transfers
+                          .includes(:line_items, :from, :to)
+    when "Item"
+      items.includes(:canonical_item).alphabetized
+    when "BarcodeItem"
+      current_organization.barcode_items.includes(:barcodeable)
     else
       []
     end
