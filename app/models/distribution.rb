@@ -55,4 +55,17 @@ class Distribution < ApplicationRecord
     copy_line_items(donation_id) if donation_id
     self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
   end
+
+  def self.csv_export_headers
+    ["Partner", "Date of Distribution", "Source Inventory", "Total items"]
+  end
+
+  def csv_export_attributes
+    [
+      self.partner.name,
+      self.issued_at.strftime("%F"),
+      self.storage_location.name,
+      self.line_items.total
+    ]
+  end
 end

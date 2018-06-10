@@ -35,6 +35,19 @@ class Transfer < ApplicationRecord
   validate :line_item_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
 
+  def self.csv_export_headers
+    ["From", "To", "Comment", "Total Moved"]
+  end
+
+  def csv_export_attributes
+    [
+      self.from.name,
+      self.to.name,
+      self.comment || "none",
+      self.line_items.total
+    ]
+  end
+
   private
 
   def storage_locations_belong_to_organization

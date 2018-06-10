@@ -26,6 +26,20 @@ class Adjustment < ApplicationRecord
     includes(:storage_location).where(organization_id: organization.id).collect(&:storage_location)
   end
 
+  def self.csv_export_headers
+    ["Created", "Organization", "Storage Location", "Comment", "Summary"]
+  end
+
+  def csv_export_attributes
+    [
+      self.created_at.strftime("%F"),
+      self.organization.name,
+      self.storage_location.name,
+      self.comment,
+      pluralize(self.line_items.count, 'change')
+    ]
+  end
+
   private
 
   def storage_locations_belong_to_organization

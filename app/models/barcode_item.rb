@@ -35,4 +35,17 @@ class BarcodeItem < ApplicationRecord
       quantity: quantity
     }
   end
+
+  def self.csv_export_headers
+    ["Global", "Item Type", "Quantity in the Box", "Barcode"]
+  end
+
+  def csv_export_attributes
+    [
+      self.global,
+      self.barcodeable.name,
+      self.quantity,
+      self.value
+    ]
+  end
 end

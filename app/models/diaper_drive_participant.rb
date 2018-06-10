@@ -36,4 +36,17 @@ class DiaperDriveParticipant < ApplicationRecord
       loc.save!
     end
   end
+
+  def self.csv_export_headers
+    ["Name", "Phone", "Email", "Total Diapers"]
+  end
+
+  def csv_export_attributes
+    [
+      self.name,
+      self.try(:phone) || "",
+      self.try(:email) || "",
+      self.volume
+    ]
+  end
 end
