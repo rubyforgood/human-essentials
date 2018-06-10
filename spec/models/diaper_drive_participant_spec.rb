@@ -25,7 +25,6 @@ RSpec.describe DiaperDriveParticipant, type: :model do
       expect(build(:diaper_drive_participant, name: "George Henry").valid?).to eq(true)
     end
 
-
   	it "is invalid unless it has either a phone number or an email" do
       expect(build(:diaper_drive_participant, phone: nil, email: nil)).not_to be_valid
       expect(build(:diaper_drive_participant, phone: nil)).to be_valid
