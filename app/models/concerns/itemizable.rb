@@ -36,8 +36,7 @@ module Itemizable
         includes(:item).group("items.category").sum(:quantity)
       end
 
-      # TODO: omit_zero is not used. Remove or incorporate it.
-      def quantities_by_name(omit_zero = false)
+      def quantities_by_name
         results = {}
         each do |li|
           next if li.quantity.zero?
@@ -63,6 +62,13 @@ module Itemizable
     validates_associated :line_items
   end
 
+  def line_items_quantities
+    line_items.inject(Hash.new) do |hash, line_item|
+      hash[line_item.id] = OpenStruct.new(quantity: line_item.quantity, item_id: line_item.item_id)
+      hash
+    end
+  end
+
   private
 
   def line_item_items_exist_in_inventory
@@ -76,4 +82,3 @@ module Itemizable
     end
   end
 end
-

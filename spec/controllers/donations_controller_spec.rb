@@ -52,6 +52,58 @@ RSpec.describe DonationsController, type: :controller do
         put :update, params: default_params.merge(id: donation.id, donation: { source: "Donation Site" })
         expect(response).to redirect_to(donations_path)
       end
+
+      it "updates storage quantity correctly" do
+        donation = create(:donation, :with_items, item_quantity: 10)
+        line_item = donation.line_items.first
+        line_item_params = {
+          "0" => {
+            "_destroy" => "false",
+            item_id: line_item.item_id,
+            quantity: "15",
+            id: line_item.id
+          }
+        }
+        donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+        expect {
+          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+        }.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
+      end
+
+      describe "when removing a line item" do
+        it "updates storage invetory item quantity correctly" do
+          donation = create(:donation, :with_items, item_quantity: 10)
+          line_item = donation.line_items.first
+          line_item_params = {
+            "0" => {
+              "_destroy" => "true",
+              item_id: line_item.item_id,
+              id: line_item.id
+            }
+          }
+          donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+          expect {
+            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          }.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
+        end
+
+        it "deletes inventory item if line item and inventory item quantities are equal" do
+          donation = create(:donation, :with_items, item_quantity: 1)
+          line_item = donation.line_items.first
+          inventory_item = donation.storage_location.inventory_items.first
+          inventory_item.update(quantity: line_item.quantity)
+          line_item_params = {
+            "0" => {
+              "_destroy" => "true",
+              item_id: line_item.item_id,
+              id: line_item.id
+            }
+          }
+          donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          expect { inventory_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
     end
 
     describe "GET #edit" do
