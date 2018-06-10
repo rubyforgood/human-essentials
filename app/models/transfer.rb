@@ -41,10 +41,10 @@ class Transfer < ApplicationRecord
 
   def csv_export_attributes
     [
-      self.from.name,
-      self.to.name,
-      self.comment || "none",
-      self.line_items.total
+      from.name,
+      to.name,
+      comment || "none",
+      line_items.total
     ]
   end
 

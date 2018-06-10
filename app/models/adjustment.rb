@@ -32,11 +32,11 @@ class Adjustment < ApplicationRecord
 
   def csv_export_attributes
     [
-      self.created_at.strftime("%F"),
-      self.organization.name,
-      self.storage_location.name,
-      self.comment,
-      pluralize(self.line_items.count, 'change')
+      created_at.strftime("%F"),
+      organization.name,
+      storage_location.name,
+      comment,
+      pluralize(line_items.count, 'change')
     ]
   end
 

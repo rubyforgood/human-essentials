@@ -43,10 +43,10 @@ class DiaperDriveParticipant < ApplicationRecord
 
   def csv_export_attributes
     [
-      self.name,
-      self.try(:phone) || "",
-      self.try(:email) || "",
-      self.volume
+      name,
+      try(:phone) || "",
+      try(:email) || "",
+      volume
     ]
   end
 end

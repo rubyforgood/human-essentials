@@ -92,10 +92,10 @@ class Item < ApplicationRecord
 
   def csv_export_attributes
     [
-      self.name,
-      self.category,
-      self.barcode_count,
-      self.canonical_item.name
+      name,
+      category,
+      barcode_count,
+      canonical_item.name
     ]
   end
 

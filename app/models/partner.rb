@@ -37,7 +37,7 @@ class Partner < ApplicationRecord
   end
 
   def csv_export_attributes
-    [ self.name, self.email ]
+    [name, email]
   end
 
   private

@@ -1,4 +1,4 @@
-require 'csv'
+require "csv"
 
 class DataExport
   def initialize(organization, type)
@@ -8,7 +8,7 @@ class DataExport
 
   def as_csv
     return nil unless current_organization.present? && type.present?
-    
+
     data_to_export = grab_data_to_export
     headers = type.constantize.csv_export_headers
     generate_csv(data_to_export, headers)
@@ -46,7 +46,7 @@ class DataExport
       current_organization.transfers
                           .includes(:line_items, :from, :to)
     when "Item"
-      items.includes(:canonical_item).alphabetized
+      current_organization.items.includes(:canonical_item).alphabetized
     when "BarcodeItem"
       current_organization.barcode_items.includes(:barcodeable)
     else

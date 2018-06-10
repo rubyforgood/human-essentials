@@ -62,10 +62,10 @@ class Distribution < ApplicationRecord
 
   def csv_export_attributes
     [
-      self.partner.name,
-      self.issued_at.strftime("%F"),
-      self.storage_location.name,
-      self.line_items.total
+      partner.name,
+      issued_at.strftime("%F"),
+      storage_location.name,
+      line_items.total
     ]
   end
 end
