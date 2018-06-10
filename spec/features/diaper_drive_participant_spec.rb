@@ -49,7 +49,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     click_button "Update Diaper drive participant"
 
     expect(page.find('.alert')).to have_content "updated"
-    expect(page).to have_content(diaper_drive_participant.name)
+    expect(page).to have_content(diaper_drive_participant.contact_name)
     expect(page).to have_content(new_email)
   end
 

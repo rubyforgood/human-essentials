@@ -1,16 +1,16 @@
 <section class="content-header">
-  <% content_for :title, "#{current_organization.name} - Agencies - Diaper Drive Participants - #{@diaper_drive_participant.name}" %>
+  <% content_for :title, "#{current_organization.name} - Agencies - Diaper Drive Participants - #{@diaper_drive_participant.contact_name}" %>
   <h1>
     Diaper Drive Participant Information
-    <small>for <%= @diaper_drive_participant.name %></small>
+    <small>for <%= @diaper_drive_participant.contact_name %></small>
   </h1>
   <ol class="breadcrumb">
   <li><%= link_to(dashboard_path) do %>
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "Diaper Drive Participants", (diaper_drive_participants_path) %></li>  
-    <li class="active"> <%= @diaper_drive_participant.name %></li>
+    <li><%= link_to "Diaper Drive Participants", (diaper_drive_participants_path) %></li>
+    <li class="active"> <%= @diaper_drive_participant.contact_name %></li>
   </ol>
 </section>
 
@@ -20,7 +20,7 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <h3 class="box-title"><%= @diaper_drive_participant.name %></h3>
+    <h3 class="box-title"><%= @diaper_drive_participant.contact_name %></h3>
   </div>
   <div class="box-body">
 
@@ -53,7 +53,7 @@
               <td><%= donation.line_items.total %></td>
               <td><%= link_to "View donation details", donation %></td>
           </tr>
-          <% end %>        
+          <% end %>
         </table>
       <!-- /.box-body -->
 
@@ -65,8 +65,3 @@
   </div>
 </div>
 </section>
-
-
-
-
-

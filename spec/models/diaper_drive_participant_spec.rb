@@ -3,7 +3,6 @@
 # Table name: diaper_drive_participants
 #
 #  id              :bigint(8)        not null, primary key
-#  name            :string
 #  contact_name    :string
 #  email           :string
 #  phone           :string
@@ -20,9 +19,9 @@ require 'rails_helper'
 RSpec.describe DiaperDriveParticipant, type: :model do
   context "Validations" do
   	it "is invalid unless it has either a contact name or a business name" do
-      expect(build(:diaper_drive_participant, name: nil, business_name: nil)).not_to be_valid
-      expect(build(:diaper_drive_participant, name: nil, business_name: "George Company").valid?).to eq(true)
-      expect(build(:diaper_drive_participant, name: "George Henry").valid?).to eq(true)
+      expect(build(:diaper_drive_participant, contact_name: nil, business_name: nil)).not_to be_valid
+      expect(build(:diaper_drive_participant, contact_name: nil, business_name: "George Company").valid?).to eq(true)
+      expect(build(:diaper_drive_participant, contact_name: "George Henry").valid?).to eq(true)
     end
 
   	it "is invalid unless it has either a phone number or an email" do
