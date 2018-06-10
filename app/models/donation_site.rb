@@ -32,6 +32,6 @@ class DonationSite < ApplicationRecord
   end
 
   def csv_export_attributes
-    [ self.name, self.address ]
+    [name, address]
   end
 end

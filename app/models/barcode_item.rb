@@ -42,10 +42,10 @@ class BarcodeItem < ApplicationRecord
 
   def csv_export_attributes
     [
-      self.global,
-      self.barcodeable.name,
-      self.quantity,
-      self.value
+      global,
+      barcodeable.name,
+      quantity,
+      value
     ]
   end
 end

@@ -80,11 +80,11 @@ class Purchase < ApplicationRecord
 
   def csv_export_attributes
     [
-      self.purchased_from,
-      self.storage_location.name,
-      self.line_items.total,
-      self.line_items.size,
-      self.amount_spent,
+      purchased_from,
+      storage_location.name,
+      line_items.total,
+      line_items.size,
+      amount_spent,
     ]
   end
 

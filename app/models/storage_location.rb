@@ -238,7 +238,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def csv_export_attributes
-    [self.name, self.address, self.size]
+    [name, address, size]
   end
 
   private

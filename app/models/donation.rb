@@ -140,12 +140,12 @@ class Donation < ApplicationRecord
 
   def csv_export_attributes
     [
-      self.source_view,
-      self.issued_at.strftime("%F"),
-      self.donation_site.try(:name),
-      self.storage_location.name,
-      self.line_items.total,
-      self.line_items.size
+      source_view,
+      issued_at.strftime("%F"),
+      donation_site.try(:name),
+      storage_location.name,
+      line_items.total,
+      line_items.size
     ]
   end
 
