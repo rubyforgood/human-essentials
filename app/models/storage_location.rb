@@ -87,7 +87,6 @@ class StorageLocation < ApplicationRecord
     log
   end
 
-  # TODO: Can remove! and adjust_from_past! be refactored into one method?
   def remove!(donation_or_purchase)
     log = {}
     donation_or_purchase.line_items.each do |line_item|
@@ -102,24 +101,25 @@ class StorageLocation < ApplicationRecord
     log
   end
 
-  def adjust_from_past!(donation_or_purchase)
-    log = {}
+  def adjust_from_past!(donation_or_purchase, previous_line_item_values)
     donation_or_purchase.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id,
-                                                       item_id: line_item.item_id)
-      before_last_save = line_item.quantity.nil? ? 0 : line_item.quantity
-      updated_quantity = inventory_item.quantity.nil? ? 0 : inventory_item.quantity
-      delta = before_last_save - updated_quantity
-      inventory_item.quantity += delta rescue 0
-      if inventory_item.quantity <= 0
-        inventory_item.destroy
-      else
-        # Otherwise update it        
-        inventory_item.save
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: line_item.item_id)
+      # If the item wasn't deleted by the user, then it will be present to be deleted
+      # here, and delete returns the item as a return value.
+      if previous_line_item_value = previous_line_item_values.delete(line_item.id)
+        inventory_item.quantity += line_item.quantity
+        inventory_item.quantity -= previous_line_item_value.quantity
+        inventory_item.save!
       end
-      log[line_item.item_id] = "+#{line_item.quantity}"
+      inventory_item.destroy! if inventory_item.quantity == 0
     end
-    log
+    # Update storage for line items that are no longer persisted because they
+    # were removed durring the updated/delete process.
+    previous_line_item_values.values.each do |value|
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: value.item_id)
+      inventory_item.decrement!(:quantity, value.quantity)
+      inventory_item.destroy! if inventory_item.quantity == 0
+    end
   end
 
   def distribute!(distribution)

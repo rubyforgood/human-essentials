@@ -1,7 +1,9 @@
 <div class="nested-fields">
-  <%= link_to_remove_association "X", f, class: "btn btn-sm btn-danger" %>
   <%= render partial: "barcode_items/barcode_item_lookup" %>
   <label>OR</label>
   <%= f.input_field :item_id, collection: @items, prompt: "Choose an item", class: 'form-control' %>
   <%= f.input_field :quantity, placeholder: "Quantity", class: 'form-control' %>
+  <%= link_to_remove_association f, class: "btn btn-sm btn-danger"  do %>
+    <%= fa_icon "trash" %> Delete
+  <% end %> 
 </div>

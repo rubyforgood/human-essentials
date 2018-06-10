@@ -124,7 +124,7 @@ RSpec.describe Donation, type: :model do
     describe "contains_item_id?" do
       it "returns true if the item_id already exists" do
         donation = create(:donation, :with_items)
-        expect(donation.contains_item_id?(donation.items.first.id)).to be_truthy
+        expect(donation.contains_item_id?(donation.items.last.id)).to be_truthy
       end
     end
 
@@ -179,7 +179,7 @@ RSpec.describe Donation, type: :model do
         expect {
           donation.destroy
         }.to change{donation.storage_location.size}.by(-donation.total_quantity)
-      end  
+      end
     end
   end
 

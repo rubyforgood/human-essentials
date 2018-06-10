@@ -23,10 +23,11 @@ class Partner < ApplicationRecord
   include DiaperPartnerClient
   after_create :update_diaper_partner
 
-  def self.import_csv(filename,organization)
-    CSV.parse(filename, :headers => true) do |row|
+  def self.import_csv(filepath, organization_id)
+    data = File.read(filepath, encoding: "BOM|UTF-8")
+    CSV.parse(data, headers: true) do |row|
       loc = Partner.new(row.to_hash)
-      loc.organization_id = organization
+      loc.organization_id = organization_id
       loc.save!
     end
   end

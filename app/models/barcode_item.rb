@@ -28,18 +28,6 @@ class BarcodeItem < ApplicationRecord
 
   alias_attribute :item, :barcodeable
 
-=begin
-  # TODO - BarcodeItems should be able to filter on CanonicalItemId
-  def self.canonical_item_id(canonical_item_id)
-    items = BarcodeItem.find(:all,
-    joins: "INNER JOIN items ON items.canonical_item_id = #{canonical_item_id}",
-    )
-    canonical_barcode_items = self.where(barcodeable_type: "CanonicalItem", barcodeable_id: canonical_item_id)
-    #items = self.joins(:items).where(barcodeable_type: "Item", items: { canonical_item_id: canonical_item_id } )
-    (canonical_barcode_items + items).uniq
-  end
-=end
-  # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
   def to_h
     {
       barcodeable_id: barcodeable_id,

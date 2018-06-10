@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PurchasesController, type: :controller do
-  
+
   let(:default_params) {
     { organization_id: @organization.to_param }
   }
@@ -52,6 +52,58 @@ RSpec.describe PurchasesController, type: :controller do
         purchase = create(:purchase, purchased_from: "Google")
         put :update, params: default_params.merge(id: purchase.id, purchase: { purchased_from: "Google" })
         expect(response).to redirect_to(purchases_path)
+      end
+
+      it "updates storage quantity correctly" do
+        purchase = create(:purchase, :with_items, item_quantity: 10)
+        line_item = purchase.line_items.first
+        line_item_params = {
+          "0" => {
+            "_destroy" => "false",
+            item_id: line_item.item_id,
+            quantity: "5",
+            id: line_item.id
+          }
+        }
+        purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
+        expect {
+          put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+        }.to change { purchase.storage_location.inventory_items.first.quantity }.by(-5)
+      end
+
+      describe "when removing a line item" do
+        it "updates storage invetory item quantity correctly" do
+          purchase = create(:purchase, :with_items, item_quantity: 10)
+          line_item = purchase.line_items.first
+          line_item_params = {
+            "0" => {
+              "_destroy" => "true",
+              item_id: line_item.item_id,
+              id: line_item.id
+            }
+          }
+          purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
+          expect {
+            put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+          }.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
+        end
+
+        it "deletes inventory item if line item and inventory item quantities are equal" do
+          purchase = create(:purchase, :with_items, item_quantity: 1)
+          line_item = purchase.line_items.first
+          inventory_item = purchase.storage_location.inventory_items.first
+          inventory_item.update(quantity: line_item.quantity)
+          line_item_params = {
+            "0" => {
+              "_destroy" => "true",
+              item_id: line_item.item_id,
+              id: line_item.id
+            }
+          }
+          purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
+          put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+          expect { inventory_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
       end
     end
 
