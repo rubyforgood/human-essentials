@@ -74,6 +74,20 @@ class Purchase < ApplicationRecord
     line_item.save
   end
 
+  def self.csv_export_headers
+    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent"]
+  end
+
+  def csv_export_attributes
+    [
+      self.purchased_from,
+      self.storage_location.name,
+      self.line_items.total,
+      self.line_items.size,
+      self.amount_spent,
+    ]
+  end
+
   private
 
   def combine_duplicates

@@ -32,6 +32,14 @@ class Partner < ApplicationRecord
     end
   end
 
+  def self.csv_export_headers
+    %w{Name Email}
+  end
+
+  def csv_export_attributes
+    [ self.name, self.email ]
+  end
+
   private
 
   def update_diaper_partner

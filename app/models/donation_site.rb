@@ -26,4 +26,12 @@ class DonationSite < ApplicationRecord
       loc.save!
     end
   end
+
+  def self.csv_export_headers
+    %w{Name Address}
+  end
+
+  def csv_export_attributes
+    [ self.name, self.address ]
+  end
 end

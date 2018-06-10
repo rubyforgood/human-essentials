@@ -134,6 +134,21 @@ class Donation < ApplicationRecord
     storage_location.remove!(self)
   end
 
+  def self.csv_export_headers
+    ["Source", "Date", "Donation Site", "Storage Location", "Quantity of Items", "Variety of Items"]
+  end
+
+  def csv_export_attributes
+    [
+      self.source_view,
+      self.issued_at.strftime("%F"),
+      self.donation_site.try(:name),
+      self.storage_location.name,
+      self.line_items.total,
+      self.line_items.size
+    ]
+  end
+
   private
 
   def combine_duplicates
