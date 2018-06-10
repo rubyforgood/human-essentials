@@ -51,12 +51,20 @@ RSpec.describe Partner, type: :model do
     end
   end
   describe "import_csv" do
+    let(:organization) { create(:organization) }
+
     it "imports storage locations from a csv file" do
-      organization = create(:organization)
       before_import = Partner.count
-      import_file_path = Rails.root.join("spec", "fixtures", "partners.csv").read
+      import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
       Partner.import_csv(import_file_path, organization.id)
       expect(Partner.count).to eq before_import + 3
+    end
+
+    it "imports storage locations from a csv file with BOM encodings" do
+      import_file_path = Rails.root.join("spec", "fixtures", "partners_with_bom_encoding.csv")
+      expect {
+        Partner.import_csv(import_file_path, organization.id)
+      }.to change{ Partner.count }.by(20)
     end
   end
 end
