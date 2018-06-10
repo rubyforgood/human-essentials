@@ -21,8 +21,8 @@ class DiaperDriveParticipant < ApplicationRecord
   belongs_to :organization  # Automatically validates presence as of Rails 5
   has_many :donations, inverse_of: :diaper_drive_participant
 
-  validates :name, presence: { message: "Must provide a name or a business name" }, if: Proc.new { |ddp| ddp.business_name.blank? }
-  validates :business_name, presence: { message: "Must provide a name or a business name" }, if: Proc.new { |ddp| ddp.name.blank? }
+  validates :contact_name, presence: { message: "Must provide a name or a business name" }, if: Proc.new { |ddp| ddp.business_name.blank? }
+  validates :business_name, presence: { message: "Must provide a name or a business name" }, if: Proc.new { |ddp| ddp.contact_name.blank? }
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: Proc.new { |ddp| ddp.email.blank? }
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: Proc.new { |ddp| ddp.phone.blank? }
 
