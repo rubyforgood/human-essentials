@@ -18,7 +18,11 @@
 
       <div class="box-body org-stats">
         <div class="col-md-12">
-          <%= render partial: "getting_started_progress_stepper", locals: { current_step: current_step, criteria: criteria } %>
+          <%= render partial: "getting_started_progress_stepper", locals: {
+            current_step: current_step,
+            criteria: criteria,
+            step_labels: ["Partner Agencies", "Storage Locations", "Donation Sites", "Inventory"]
+          } %>
         </div>
 
         <div class="col-md-12 org-stats-box-container<%= current_step == 0 ? '' : ' hidden visible-xs' %>">
