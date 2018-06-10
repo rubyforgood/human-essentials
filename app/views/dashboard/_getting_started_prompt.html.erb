@@ -3,8 +3,8 @@
 <% location_criteria_met = org_stats.storage_locations_added > 0 %>
 <% donation_criteria_met = org_stats.donation_sites_added > 0 %>
 <% inventory_criteria_met = org_stats.locations_with_inventory.length > 0 %>
-<% criteria = [ partner_criteria_met, location_criteria_met, donation_criteria_met, inventory_criteria_met ] %>
-<% current_step = criteria.find_index(false) %>
+<% criterias = [ partner_criteria_met, location_criteria_met, donation_criteria_met, inventory_criteria_met ] %>
+<% current_step = criterias.find_index(false) %>
 
 <% if current_step.present? %>
   <div class="col-md-12">
@@ -20,7 +20,8 @@
         <div class="col-md-12">
           <%= render partial: "getting_started_progress_stepper", locals: {
             current_step: current_step,
-            criteria: criteria,
+            criterias: criterias,
+            lines: ["line-right", "line-right line-left", "line-right line-left", "line-left"],
             step_labels: ["Partner Agencies", "Storage Locations", "Donation Sites", "Inventory"]
           } %>
         </div>
