@@ -105,4 +105,47 @@ RSpec.feature "Dashboard", type: :feature do
     expect(page).to have_content("150 items on-hand")
     expect(page).to have_content("1 Diaper Drives")
   end
+
+  scenario "getting started guide works as expected", js:true do
+    # When dashboard loads, ensure that we are on step 1 (Partner Agencies)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-partners", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+
+    # After we create a partner, ensure that we are on step 2 (Storage Locations)
+    create(:partner)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+
+    # After we create a storage location, ensure that we are on step 3 (Donation Site)
+    create(:storage_location, organization: @organization)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+
+    # After we create a donation site, ensure that we are on step 4 (Inventory)
+    create(:donation_site, organization: @organization)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 1)
+
+    # After we add inventory to a storage location, ensure that the getting starting guide is gone
+    item = create(:item, organization: @organization)
+    create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 0)
+  end
 end
