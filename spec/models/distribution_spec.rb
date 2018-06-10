@@ -67,32 +67,28 @@ RSpec.describe Distribution, type: :model do
   end
 
   context "Methods >" do
-    before(:each) do
-      @distribution = create(:distribution)
-      @first = create(:item, name: "AAA", category: "Foo")
-      @last = create(:item, name: "ZZZ", category: "Bar")
-    end
+    let(:distribution) { create(:distribution) }
+    let(:item) { create(:item, name: "AAA", category: "Foo") }
+    let(:donation) { create(:donation) }
 
-    it "distributed_at" do
+    it "#distributed_at" do
       two_days_ago = 2.day.ago
       expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime('%B %-d %Y'))
       expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime('%B %-d %Y'))
     end
 
-    it "copy_line_items" do
-      @donation = create(:donation)
-      @donation.line_items << create(:line_item, item: @first, quantity: 5)
-      @donation.line_items << create(:line_item, item: @first, quantity: 10)
-      expect(@distribution.copy_line_items(@donation.id).count).to eq 2
+    it "#copy_line_items" do
+      donation.line_items << create(:line_item, item: item, quantity: 5)
+      donation.line_items << create(:line_item, item: item, quantity: 10)
+      expect(distribution.copy_line_items(donation.id).count).to eq 2
     end
 
-    # TODO: Can this be replaced with the `combine!` method from `Itemizable`?
-    it "combine_duplicates" do
-      @distribution.line_items << create(:line_item, item: @first, quantity: 5)
-      @distribution.line_items << create(:line_item, item: @first, quantity: 10)
-      @distribution.combine_duplicates
-      expect(@distribution.line_items.size).to eq 1
-      expect(@distribution.line_items.first.quantity).to eq 15
+    it "#combine_duplicates" do
+      distribution.line_items << create(:line_item, item: item, quantity: 5)
+      distribution.line_items << create(:line_item, item: item, quantity: 10)
+      distribution.combine_duplicates
+      expect(distribution.line_items.size).to eq 1
+      expect(distribution.line_items.first.quantity).to eq 15
     end
   end
 end
