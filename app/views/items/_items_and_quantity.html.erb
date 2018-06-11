@@ -12,7 +12,7 @@
             </tr>
           </thead>
           <tbody>
-            <%= render partial: "item_row_quantity", collection: @items2 %>
+            <%= render partial: "item_row_quantity", collection: @items_with_counts, as: :item_row %>
           </tbody>
         </table>
       </div><!-- /.box-body -->

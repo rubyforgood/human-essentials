@@ -13,7 +13,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @items3.each do |item| %>
+            <% @items_with_counts.each do |item| %>
             <tr>
               <% if item.id != @row_collection[:item_id] && @row_collection[:item_id] != nil %>
                 <%= render partial: "item_row_quantity_and_storages" %>

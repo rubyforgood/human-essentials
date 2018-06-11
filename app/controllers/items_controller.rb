@@ -1,15 +1,7 @@
 class ItemsController < ApplicationController
   def index
-    @canonical_items = CanonicalItem.all
-    @show_quantity = filter_params(:show_quantity)[:show_quantity]
-
     @items = current_organization.items.includes(:canonical_item).alphabetized.filter(filter_params)
-    @items2 = current_organization.
-        items.
-        joins(' LEFT OUTER JOIN "inventory_items" ON "inventory_items"."item_id" = "items"."id"').
-        select('items.id, items.name, items.category, items.barcode_count, sum(inventory_items.quantity) as quantity').
-        group('items.id, items.name').order(name: :asc).filter(filter_params)
-    @items3 = current_organization.
+    @items_with_counts = current_organization.
         items.
         joins(' LEFT OUTER JOIN "inventory_items" ON "inventory_items"."item_id" = "items"."id"').
         joins(' LEFT OUTER JOIN "storage_locations" ON "storage_locations"."id" = "inventory_items"."storage_location_id"').
@@ -19,9 +11,6 @@ class ItemsController < ApplicationController
     @storages = current_organization.storage_locations.order(id: :asc)
     @row_collection = Hash.new
     new_storage_collection
-
-    @categories = Item.categories
-    @selected_category = filter_params[:in_category]
   end
 
   def create
