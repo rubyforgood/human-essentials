@@ -1,6 +1,20 @@
 require "csv"
 
 class DataExport
+  SUPPORTED_TYPES = %w(
+    Donation
+    DonationSite
+    Partner
+    Purchase
+    Distribution
+    DiaperDriveParticipant
+    StorageLocation
+    Adjustment
+    Transfer
+    Item
+    BarcodeItem
+  ).freeze
+
   def initialize(organization, type)
     @current_organization = organization
     @type = type
@@ -8,6 +22,7 @@ class DataExport
 
   def as_csv
     return nil unless current_organization.present? && type.present?
+    return nil unless SUPPORTED_TYPES.include? type
 
     data_to_export = grab_data_to_export
     headers = type.constantize.csv_export_headers
@@ -26,11 +41,11 @@ class DataExport
                           .order(created_at: :desc)
     when "DonationSite"
       current_organization.donation_sites.all.order(:name)
-    when "Partner"
+    when "Purchase"
       current_organization.purchases
                           .includes(:line_items, :storage_location)
                           .order(created_at: :desc)
-    when "Purchase"
+    when "Partner"
       current_organization.partners.order(:name)
     when "Distribution"
       current_organization.distributions
@@ -49,8 +64,6 @@ class DataExport
       current_organization.items.includes(:canonical_item).alphabetized
     when "BarcodeItem"
       current_organization.barcode_items.includes(:barcodeable)
-    else
-      []
     end
   end
 

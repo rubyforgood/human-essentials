@@ -27,7 +27,7 @@ class Adjustment < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Created", "Organization", "Storage Location", "Comment", "Summary"]
+    ["Created", "Organization", "Storage Location", "Comment", "Changes"]
   end
 
   def csv_export_attributes
@@ -36,7 +36,7 @@ class Adjustment < ApplicationRecord
       organization.name,
       storage_location.name,
       comment,
-      pluralize(line_items.count, 'change')
+      line_items.count
     ]
   end
 
