@@ -58,6 +58,8 @@
         <% end %>
         <%= f.submit "Confirm Distribution", class: "btn btn-lg btn-primary" %>
       <% end %>
+    <% else %>
+      <%= link_to "Make a correction", edit_distribution_path(@distribution), class: "btn btn-primary" %>
     <% end %>
   </div>
 </div>

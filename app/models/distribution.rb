@@ -55,4 +55,10 @@ class Distribution < ApplicationRecord
     copy_line_items(donation_id) if donation_id
     self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
   end
+
+  def calculate_difference(old_line_items, new_line_items)
+    old_line_items = old_line_items.collect { |x| [x.item_id, x.quantity] }.to_h
+    new_line_items = new_line_items.collect { |x| [x.item_id, x.quantity] }.to_h
+    old_line_items.merge!(new_line_items) { |k, v1, v2| v2 - v1 }
+  end
 end

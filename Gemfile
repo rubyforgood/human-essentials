@@ -39,7 +39,7 @@ group :development, :test do
   gem 'awesome_print'
   gem 'byebug', '~> 9.0', platform: :mri
   gem 'guard-rspec'
-  gem 'pry'
+  gem 'pry-byebug'
   gem 'rspec-rails', '~> 3.5'
   gem 'terminal-notifier-guard'
   gem 'terminal-notifier'

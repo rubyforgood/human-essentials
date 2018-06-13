@@ -10,6 +10,7 @@ class DistributionsController < ApplicationController
   def reclaim
     @distribution = Distribution.find(params[:id])
     @distribution.storage_location.reclaim!(@distribution)
+    @distribution.destroy
 
     flash[:notice] = "Distribution #{@distribution.id} has been reclaimed!"
     redirect_to distributions_path
@@ -63,6 +64,59 @@ class DistributionsController < ApplicationController
     @storage_locations = current_organization.storage_locations
   end
 
+  def edit
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution.line_items.build
+    @items = current_organization.items.alphabetized
+    @storage_locations = current_organization.storage_locations
+  end
+
+  def update
+    # FIXME: Fix this
+
+    # find distribution from db
+    # determine if storage location changed
+    # check if new distribution will be valid
+    # if not valid, go back to edit page with errors
+    # if valid AND storage location is changed, restore old distribution
+    # make the distribution changes
+      # subtract from inventory
+      # saving distribution object
+    # redirect to index page
+
+
+
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    old_storage_location_id = @distribution.storage_location_id
+    if old_storage_location_id != distribution_params[:storage_location_id]
+
+    end
+
+    @distribution.assign_attributes(distribution_params)
+
+    if @distribution.valid?
+      @distribution.storage_location.adjust_distribution!(@distribution)
+
+      if @distribution.save
+        flash[:notice] = "Distribution updated!"
+        redirect_to distributions_path
+      else
+        flash[:error] = "There was an error, try again?"
+        render :edit
+      end
+    else
+      @storage_locations = current_organization.storage_locations
+      flash[:error] = "An error occurred, try again?"
+      logger.error "failed to save distribution: #{ @distribution.errors.full_messages }"
+      render :edit
+    end
+  rescue Errors::InsufficientAllotment => ex
+    @storage_locations = current_organization.storage_locations
+    @items = current_organization.items.alphabetized
+    flash[:error] = ex.message
+    render :edit
+  end
+
   def show
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @line_items = @distribution.line_items
@@ -78,6 +132,6 @@ class DistributionsController < ApplicationController
   private
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: [:id, :item_id, :quantity, :_destroy])
   end
 end

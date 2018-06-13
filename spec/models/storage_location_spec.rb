@@ -191,6 +191,18 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
+    describe "update_from_diff" do
+      it "changes the inventory" do
+        item_one = create(:item)
+        item_two = create(:item)
+        storage_location = create(:storage_location, :with_items, item: item_one, item_quantity: 100)
+        create(:inventory_item, storage_location: storage_location, item: item_two, quantity: 50)
+        diff_hash = { item_one.id.to_s => -10, item_two.id.to_s => 25 }
+        storage_location.update_from_diff(diff_hash)
+        expect(storage_location.inventory_items.pluck(:quantity).to_a).to match_array([90, 75])
+      end
+    end
+
     describe "import_csv" do
       it "imports storage locations from a csv file" do
         organization

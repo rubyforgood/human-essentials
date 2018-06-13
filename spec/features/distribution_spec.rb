@@ -66,4 +66,84 @@ RSpec.feature "Distributions", type: :feature do
 
   end
 
+  context "When editing a distribution" do
+    fscenario "User removes an item" do
+      # user removes a line item
+      # response should be successful
+      # storage location should be bigger
+
+      distribution = create(:distribution)
+      visit @url_prefix + "/distributions/#{distribution.id}/edit"
+      page.first(:css, ".remove_fields").click
+      click_button "Update Distribution"
+      expect(page.find('.alert-info')).to have_content "pdated"
+    end
+
+    fscenario "User changes storage location" do
+      # user changes storage location
+      # response should be successful
+      # storage location A should be bigger
+      # storage location B should be smaller
+
+      item = create(:item)
+      storage_location_a = create(:storage_location, :with_items, item: item, item_quantity: 100, name: 'Location A')
+      storage_location_b = create(:storage_location, :with_items, item: item, item_quantity: 100, name: 'Location B')
+
+      distribution = create(:distribution, :with_items, item: item, item_quantity: 10, storage_location: storage_location_a)
+      visit @url_prefix + "/distributions/#{distribution.id}/edit"
+
+      # change storage location
+      # remove line item
+      # submit
+      # should be successful
+
+      select storage_location_b.name, from: "From storage location"
+      click_button "Update Distribution"
+      expect(page.find('.alert-info')).to have_content "pdated"
+      expect(storage_location_a.size).to be > storage_location_b.size
+    end
+
+    xscenario "User changes storage location but new storage location has insufficient inventory" do
+      # user changes storage location
+      # response should not be successful
+      # storage location A should be unchanged
+      # storage location B should be unchanged
+    end
+
+    scenario "User changes item and storage location" do
+      first_storage_location = StorageLocation.first
+      distribution = create(:distribution, storage_location: first_storage_location)
+      visit @url_prefix + "/distributions/#{distribution.id}/edit"
+
+      # change storage location
+      # remove line item
+      # submit
+      # should be successful
+
+      last_storage_location = StorageLocation.last
+      select last_storage_location.name, from: "From storage location"
+      page.first(:css, ".remove_fields").click
+      click_button "Update Distribution"
+      expect(page.find('.alert-info')).to have_content "pdated"
+      expect(last_storage_location)
+    end
+
+    scenario "User changes item and storage location and new storage location has insufficient inventory" do
+      first_storage_location = StorageLocation.first
+      distribution = create(:distribution, storage_location: first_storage_location)
+      visit @url_prefix + "/distributions/#{distribution.id}/edit"
+
+      # change storage location
+      # remove line item
+      # submit
+      # should be successful
+
+      last_storage_location = StorageLocation.last
+      select last_storage_location.name, from: "From storage location"
+      page.first(:css, ".remove_fields").click
+      click_button "Update Distribution"
+      expect(page.find('.alert-info')).to have_content "pdated"
+      expect(last_storage_location)
+    end
+  end
 end
