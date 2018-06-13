@@ -36,8 +36,6 @@ class StorageLocation < ApplicationRecord
   }
   scope :alphabetized, -> { order(:name) }
 
-  # TODO: Add a before_save callback that checks if the quantity for a line item is < 0, then destroy it
-
   def self.item_total(item_id)
     StorageLocation.select("quantity")
                    .joins(:inventory_items)
@@ -171,7 +169,8 @@ class StorageLocation < ApplicationRecord
     donation.storage_location.intake!(donation)
   end
 
-  # TODO: - this action is happening in the Transfer model/controller - does this method belong here?
+  # Used to move inventory between StorageLocations; reflects items being physically moved
+  # Ex: move 500 size "2" diapers from main warehouse to overflow warehouse because insufficient space in main warehouse
   def move_inventory!(transfer)
     updated_quantities = {}
     item_validator = Errors::InsufficientAllotment.new("Transfer items exceeds \
@@ -197,8 +196,8 @@ class StorageLocation < ApplicationRecord
     update_inventory_inventory_items(updated_quantities)
   end
 
-  # mimcs move_inventory!
-  # TODO - this is called from the AdjustmentsController, should probably be in a service, not this model
+  # Used to adjust inventory at a StorageLocation to reflect reality
+  # Ex: we thought we had 200 size "5" diapers, but we actually have 180 size "5" diapers
   def adjust!(adjustment)
     updated_quantities = {}
     item_validator = Errors::InsufficientAllotment.new("Adjustment exceeds the available inventory")
@@ -222,7 +221,6 @@ class StorageLocation < ApplicationRecord
     update_inventory_inventory_items(updated_quantities)
   end
 
-  # TODO: - this action is happening in the DistributionsController. Is this model the correct place for this method?
   def reclaim!(distribution)
     ActiveRecord::Base.transaction do
       distribution.line_items.each do |line_item|
