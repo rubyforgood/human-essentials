@@ -7,7 +7,7 @@ class AdminsController < ApplicationController
 
   def update
     @organization = Organization.find(params[:id])
-    if @organization.update_attributes(organization_params)
+    if @organization.update(organization_params)
       redirect_to admins_path, notice: "Updated organization!"
     else
       flash[:error] = "Failed to update this organization."

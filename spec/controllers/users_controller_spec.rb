@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe UsersController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   before do
     sign_in(@user)

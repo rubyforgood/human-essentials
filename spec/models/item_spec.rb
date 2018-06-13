@@ -106,7 +106,7 @@ RSpec.describe Item, type: :model do
         item1 = create(:item, category: "one")
         item2 = create(:item, category: "two")
         item3 = create(:item, category: "three")
-        alphabetized_list = [ item1, item3, item2 ]
+        alphabetized_list = [item1, item3, item2]
         result = Item.categories
         expect(result.map(&:category)).to eq(alphabetized_list.map(&:category))
       end
@@ -184,8 +184,8 @@ RSpec.describe Item, type: :model do
           "Content-Type" => "application/x-www-form-urlencoded"
         }
         body = URI.encode_www_form item.attributes
-        expect(WebMock).to have_requested(:post, callback_url).
-          with(headers: headers, body: body).once
+        expect(WebMock).to have_requested(:post, callback_url)
+          .with(headers: headers, body: body).once
       end
     end
   end

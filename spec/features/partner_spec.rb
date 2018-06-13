@@ -2,7 +2,7 @@ RSpec.feature "Partner management", type: :feature do
   before do
     sign_in(@user)
   end
-  let!(:url_prefix) { "/#{@organization.to_param}"}
+  let!(:url_prefix) { "/#{@organization.to_param}" }
 
   context "When a user views the index page" do
     before(:each) do
@@ -19,7 +19,7 @@ RSpec.feature "Partner management", type: :feature do
   end
 
   scenario "User can add a new partner" do
-  	visit url_prefix + "/partners/new"
+    visit url_prefix + "/partners/new"
     fill_in "Name", with: "Frank"
     fill_in "E-mail", with: "frank@frank.com"
     click_button "Create Partner"

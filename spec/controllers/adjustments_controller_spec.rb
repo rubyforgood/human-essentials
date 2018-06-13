@@ -1,23 +1,23 @@
 require "rails_helper"
 
 RSpec.describe AdjustmentsController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   # This should return the minimal set of attributes required to create a valid
   # Adjustment. As you add validations to Adjustment, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
+  let(:valid_attributes) do
     {
       organization_id: @organization.id,
       storage_location_id: create(:storage_location, organization: @organization).id
     }
-  }
+  end
 
-  let(:invalid_attributes) {
+  let(:invalid_attributes) do
     { organization_id: nil }
-  }
+  end
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -55,9 +55,9 @@ RSpec.describe AdjustmentsController, type: :controller do
     describe "POST #create" do
       context "with valid params" do
         it "creates a new Adjustment" do
-          expect {
+          expect do
             post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
-          }.to change(Adjustment, :count).by(1)
+          end.to change(Adjustment, :count).by(1)
         end
 
         it "assigns a newly created adjustment as @adjustment" do

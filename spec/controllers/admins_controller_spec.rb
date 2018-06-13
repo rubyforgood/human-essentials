@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe AdminsController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.id }
-  }
+  end
 
   context "When logged in as an organization admin" do
     before do

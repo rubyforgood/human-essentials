@@ -1,7 +1,7 @@
 RSpec.describe DonationsController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   context "While signed in >" do
     before do
@@ -32,7 +32,8 @@ RSpec.describe DonationsController, type: :controller do
           donation: { storage_location_id: storage_location.id,
                       donation_site_id: donation_site.id,
                       source: "Donation Site",
-                      line_items: line_items })
+                      line_items: line_items }
+        )
         d = Donation.last
         expect(response).to redirect_to(donations_path)
       end
@@ -63,9 +64,9 @@ RSpec.describe DonationsController, type: :controller do
           }
         }
         donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
-        expect {
+        expect do
           put :update, params: default_params.merge(id: donation.id, donation: donation_params)
-        }.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
+        end.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
       end
 
       describe "when removing a line item" do
@@ -80,9 +81,9 @@ RSpec.describe DonationsController, type: :controller do
             }
           }
           donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
-          expect {
+          expect do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
-          }.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
+          end.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
         end
 
         it "deletes inventory item if line item and inventory item quantities are equal" do

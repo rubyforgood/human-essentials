@@ -15,8 +15,8 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :adjustments, except: [:edit, :update]
-    resources :transfers, only: [:index, :create, :new, :show]
+    resources :adjustments, except: %i(edit update)
+    resources :transfers, only: %i(index create new show)
     resources :storage_locations do
       collection do
         post :import_csv
@@ -27,7 +27,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :distributions, only: [:index, :create, :new, :show] do
+    resources :distributions, only: %i(index create new show) do
       get :print, on: :member
       post :reclaim, on: :member
     end

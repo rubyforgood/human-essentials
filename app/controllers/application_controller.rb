@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_organization
 
-  def organization_url_options(options={})
+  def organization_url_options(options = {})
     options.merge(organization_id: current_organization.to_param)
   end
   helper_method :organization_url_options
@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   # override Rails' default_url_options to ensure organization_id is added to
   # each URL generated
   def default_url_options(options = {})
-    if current_organization.present? && !options.has_key?(:organization_id)
+    if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
     elsif current_user && !current_user.is_superadmin? && current_user.organization.present?
       options[:organization_id] = current_user.organization.to_param
@@ -31,27 +31,27 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_user
-    verboten! unless (params[:controller].include?("devise") || current_organization.id == current_user.organization_id)
+    verboten! unless params[:controller].include?("devise") || current_organization.id == current_user.organization_id
   end
 
   def not_found!
     respond_to do |format|
-      format.html { render template: "errors/404", layout: "layouts/application", status: 404 }
-      format.json { render body: nil, status: 404 }
+      format.html { render template: "errors/404", layout: "layouts/application", status: :not_found }
+      format.json { render body: nil, status: :not_found }
     end
   end
 
   def verboten!
     respond_to do |format|
       format.html { redirect_to dashboard_path, flash: { error: "Access Denied." } }
-      format.json { render body: nil, status: 403 }
+      format.json { render body: nil, status: :forbidden }
     end
   end
 
   def omgwtfbbq!
     respond_to do |format|
-      format.html { render template: "errors/500", layout: "layouts/error", status: 500 }
-      format.json { render nothing: true, status: 500 }
+      format.html { render template: "errors/500", layout: "layouts/error", status: :internal_server_error }
+      format.json { render nothing: true, status: :internal_server_error }
     end
   end
 

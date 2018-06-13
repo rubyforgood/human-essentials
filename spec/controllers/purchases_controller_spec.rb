@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe PurchasesController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   context "While signed in >" do
     before do
@@ -30,10 +30,11 @@ RSpec.describe PurchasesController, type: :controller do
 
       it "redirects to GET#edit on success" do
         post :create, params: default_params.merge(
-            purchase: { storage_location_id: storage_location.id,
-                        purchased_from: "Google",
-                        amount_spent: 10,
-                        line_items: line_items })
+          purchase: { storage_location_id: storage_location.id,
+                      purchased_from: "Google",
+                      amount_spent: 10,
+                      line_items: line_items }
+        )
         d = Purchase.last
         expect(response).to redirect_to(purchases_path)
       end
@@ -64,9 +65,9 @@ RSpec.describe PurchasesController, type: :controller do
           }
         }
         purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
-        expect {
+        expect do
           put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
-        }.to change { purchase.storage_location.inventory_items.first.quantity }.by(-5)
+        end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-5)
       end
 
       describe "when removing a line item" do
@@ -81,9 +82,9 @@ RSpec.describe PurchasesController, type: :controller do
             }
           }
           purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
-          expect {
+          expect do
             put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
-          }.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
+          end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
         end
 
         it "deletes inventory item if line item and inventory item quantities are equal" do

@@ -24,16 +24,16 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     fill_in "Name", with: diaper_drive_participant_traits[:name]
     fill_in "Phone", with: diaper_drive_participant_traits[:phone]
 
-    expect {
+    expect do
       click_button "Create Diaper drive participant"
-    }.to change{DiaperDriveParticipant.count}.by(1)
+    end.to change { DiaperDriveParticipant.count }.by(1)
 
     expect(page.find(".alert")).to have_content "added"
   end
 
   scenario "User add a new diaper drive instance with empty attributes" do
     visit url_prefix + "/diaper_drive_participants/new"
-      click_button "Create Diaper drive participant"
+    click_button "Create Diaper drive participant"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end

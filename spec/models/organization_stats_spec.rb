@@ -21,7 +21,7 @@ RSpec.describe OrganizationStats, type: :model do
     end
 
     context "current org is not nil >" do
-      let(:partners) { ["element1", "element2"] }
+      let(:partners) { %w(element1 element2) }
 
       it "should return actual count of partners" do
         expect(subject.partners_added).to eq(2)
@@ -39,7 +39,7 @@ RSpec.describe OrganizationStats, type: :model do
     end
 
     context "current org is not nil >" do
-      let(:storage_locations) { ["loc1", "loc2", "loc3"] }
+      let(:storage_locations) { %w(loc1 loc2 loc3) }
 
       it "should return actual count of locations" do
         expect(subject.storage_locations_added).to eq(3)
@@ -57,7 +57,7 @@ RSpec.describe OrganizationStats, type: :model do
     end
 
     context "current org is not nil >" do
-      let(:donation_sites) { ["site1", "site2", "site3"] }
+      let(:donation_sites) { %w(site1 site2 site3) }
 
       it "should return actual count of donation sites" do
         expect(subject.donation_sites_added).to eq(3)

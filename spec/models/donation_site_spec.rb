@@ -11,18 +11,18 @@
 #
 
 RSpec.describe DonationSite, type: :model do
-	context "Validations >" do
-		it "must belong to an organization" do
- 	      expect(build(:donation_site, organization_id: nil)).not_to be_valid
-		end
-		it "is invalid without a name" do
-		  expect(build(:donation_site, name: nil)).not_to be_valid
-		end
+  context "Validations >" do
+    it "must belong to an organization" do
+      expect(build(:donation_site, organization_id: nil)).not_to be_valid
+    end
+    it "is invalid without a name" do
+      expect(build(:donation_site, name: nil)).not_to be_valid
+    end
 
-		it "is invalid without an address" do
-		  expect(build(:donation_site, address: nil)).not_to be_valid
-		end
-	end
+    it "is invalid without an address" do
+      expect(build(:donation_site, address: nil)).not_to be_valid
+    end
+  end
   describe "import_csv" do
     it "imports storage locations from a csv file" do
       organization = create(:organization)

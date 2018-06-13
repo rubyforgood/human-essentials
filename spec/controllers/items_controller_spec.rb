@@ -1,7 +1,7 @@
 RSpec.describe ItemsController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   context "While signed in" do
     before do
@@ -23,21 +23,21 @@ RSpec.describe ItemsController, type: :controller do
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge({ id: create(:item, organization: @organization) }) }
+      subject { get :edit, params: default_params.merge(id: create(:item, organization: @organization)) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge({ id: create(:item, organization: @organization) }) }
+      subject { get :show, params: default_params.merge(id: create(:item, organization: @organization)) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge({ id: create(:item, organization: @organization) }) }
+      subject { delete :destroy, params: default_params.merge(id: create(:item, organization: @organization)) }
       it "redirects to #index" do
         expect(subject).to redirect_to(items_path)
       end

@@ -49,7 +49,7 @@ RSpec.feature "Distributions", type: :feature do
       page.fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
-      #save_and_open_page
+      # save_and_open_page
 
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end

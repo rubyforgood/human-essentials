@@ -22,15 +22,15 @@ class DiaperDriveParticipant < ApplicationRecord
   has_many :donations, inverse_of: :diaper_drive_participant
 
   validates :name, presence: true
-  validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: Proc.new { |ddp| ddp.email.blank? }
-  validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: Proc.new { |ddp| ddp.phone.blank? }
+  validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
+  validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
 
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)
   end
 
-  def self.import_csv(filename,organization)
-    CSV.parse(filename, :headers => true) do |row|
+  def self.import_csv(filename, organization)
+    CSV.parse(filename, headers: true) do |row|
       loc = DiaperDriveParticipant.new(row.to_hash)
       loc.organization_id = organization
       loc.save!

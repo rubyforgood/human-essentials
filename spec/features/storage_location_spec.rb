@@ -2,7 +2,7 @@ RSpec.feature "Barcode management", type: :feature do
   before do
     sign_in(@user)
   end
-  let!(:url_prefix) { "/#{@organization.to_param}"}
+  let!(:url_prefix) { "/#{@organization.to_param}" }
   scenario "User creates a new storage location" do
     visit url_prefix + "/storage_locations/new"
     storage_location_traits = attributes_for(:storage_location)

@@ -3,8 +3,7 @@ class UsersController < ApplicationController
     @users = current_organization.users
   end
 
-  def update
-  end
+  def update; end
 
   def new
     @user = User.new

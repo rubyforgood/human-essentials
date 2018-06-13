@@ -18,7 +18,7 @@ class Partner < ApplicationRecord
 
   validates :organization, presence: true
   validates :name, :email, presence: true, uniqueness: true
-  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create
+  validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, on: :create }
 
   include DiaperPartnerClient
   after_create :update_diaper_partner

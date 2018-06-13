@@ -13,7 +13,7 @@ RSpec.describe StaticController, type: :controller do
     end
 
     describe "GET #page/content" do
-      subject { get :page, params:{name:"contact"} }
+      subject { get :page, params: { name: "contact" } }
       it "renders the contact page" do
         expect(subject).to render_template :contact
       end
@@ -22,7 +22,7 @@ RSpec.describe StaticController, type: :controller do
 
   describe "Signed in" do
     before do
-    	sign_in(@user)
+      sign_in(@user)
     end
 
     describe "GET #index" do
