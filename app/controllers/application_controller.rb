@@ -50,27 +50,26 @@ class ApplicationController < ActionController::Base
 
   def omgwtfbbq!
     respond_to do |format|
-      format.html { render template: 'errors/500', layout: 'layouts/error', status: 500 }
+      format.html { render template: "errors/500", layout: "layouts/error", status: 500 }
       format.json { render nothing: true, status: 500 }
     end
   end
 
   # rescue_from CanCan::AccessDenied do |exception|
-    # respond_to do |format|
-      # format.json { head :forbidden, content_type: 'text/html' }
-      # format.html { redirect_to main_app.root_url, notice: exception.message }
-      # format.js   { head :forbidden, content_type: 'text/html' }
-    # end
+  # respond_to do |format|
+  # format.json { head :forbidden, content_type: 'text/html' }
+  # format.html { redirect_to main_app.root_url, notice: exception.message }
+  # format.js   { head :forbidden, content_type: 'text/html' }
+  # end
   # end
 
   def swaddled
-    response.headers['swaddled-by'] = 'rubyforgood'
+    response.headers["swaddled-by"] = "rubyforgood"
   end
 
-protected
+  protected
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:account_update, keys: [:name])
   end
-
 end

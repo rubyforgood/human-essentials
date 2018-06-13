@@ -162,7 +162,6 @@ RSpec.describe Donation, type: :model do
       end
 
       it "works with either an id or an object" do
-
       end
 
       it "fails gracefully if the item doesn't exist" do

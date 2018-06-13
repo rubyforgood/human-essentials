@@ -11,7 +11,7 @@
 #
 
 class Partner < ApplicationRecord
-  require 'csv'
+  require "csv"
 
   belongs_to :organization
   has_many :distributions

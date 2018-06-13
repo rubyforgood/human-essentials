@@ -50,11 +50,11 @@ class Item < ApplicationRecord
   end
 
   def self.storage_locations_containing(item)
-    StorageLocation.joins(:inventory_items).where('inventory_items.item_id = ?', item.id)
+    StorageLocation.joins(:inventory_items).where("inventory_items.item_id = ?", item.id)
   end
 
   def self.barcodes_for(item)
-    BarcodeItem.where('barcodeable_id = ?', item.id)
+    BarcodeItem.where("barcodeable_id = ?", item.id)
   end
 
   # Override `destroy` to ensure Item isn't accidentally destroyed

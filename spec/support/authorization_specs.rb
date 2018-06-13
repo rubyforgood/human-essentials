@@ -15,15 +15,15 @@ RSpec.shared_examples "requiring authentication" do
     get :show, params: single_params
     expect(response).to be_redirect
 
-#  FIXME: Not all controllers have `edit` actions (or other), and this should be able to adapt to that
-#    get :edit, params: single_params
-#    expect(response).to be_redirect
+    #  FIXME: Not all controllers have `edit` actions (or other), and this should be able to adapt to that
+    #    get :edit, params: single_params
+    #    expect(response).to be_redirect
 
-#    put :update, params: single_params
-#    expect(response).to be_redirect
+    #    put :update, params: single_params
+    #    expect(response).to be_redirect
 
-#    delete :destroy, params: single_params
-#    expect(response).to be_redirect
+    #    delete :destroy, params: single_params
+    #    expect(response).to be_redirect
   end
 end
 
@@ -40,17 +40,17 @@ RSpec.shared_examples "requiring authorization" do
       get :show, params: single_params
       expect(response).to be_redirect
 
-#  FIXME: Not all controllers have `edit` actions, and this should be able to adapt to that
-#      get :edit, params: single_params
-#      expect(response).to be_redirect
+      #  FIXME: Not all controllers have `edit` actions, and this should be able to adapt to that
+      #      get :edit, params: single_params
+      #      expect(response).to be_redirect
 
-#      put :update, params: single_params
-#      expect(response).to be_redirect
+      #      put :update, params: single_params
+      #      expect(response).to be_redirect
 
       post :create, params: { organization_id: object.organization.to_param }
       expect(response).to be_redirect
 
-#      delete :destroy, params: single_params
-#      expect(response).to be_redirect
+   #      delete :destroy, params: single_params
+   #      expect(response).to be_redirect
 	end
 end

@@ -1,7 +1,6 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe AdjustmentsController, type: :controller do
-
   let(:default_params) {
     { organization_id: @organization.to_param }
   }
@@ -25,7 +24,7 @@ RSpec.describe AdjustmentsController, type: :controller do
   # AdjustmentsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  describe 'while signed in' do
+  describe "while signed in" do
     before do
       sign_in(@user)
     end

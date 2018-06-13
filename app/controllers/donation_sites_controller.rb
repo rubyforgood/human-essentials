@@ -52,7 +52,8 @@ class DonationSitesController < ApplicationController
     redirect_to donation_sites_path
   end
 
-private
+  private
+
   def donation_site_params
     params.require(:donation_site).permit(:name, :address)
   end

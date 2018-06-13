@@ -52,7 +52,8 @@ class PartnersController < ApplicationController
     redirect_to partners_path
   end
 
-private
+  private
+
   def partner_params
     params.require(:partner).permit(:name, :email)
   end

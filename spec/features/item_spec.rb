@@ -4,22 +4,22 @@
   end
   let!(:url_prefix) { "/#{@organization.to_param}" }
   scenario "User creates a new item" do
-    visit url_prefix + '/items/new'
+    visit url_prefix + "/items/new"
     item_traits = attributes_for(:item)
     fill_in "Name", with: item_traits[:name]
     fill_in "Category", with: item_traits[:category]
     select CanonicalItem.last.name, from: "Base Item"
     click_button "Create Item"
 
-    expect(page.find('.alert')).to have_content "added"
+    expect(page.find(".alert")).to have_content "added"
   end
 
   scenario "User creates a new item with empty attributes" do
-    visit url_prefix + '/items/new'
+    visit url_prefix + "/items/new"
     item_traits = attributes_for(:item)
     click_button "Create Item"
 
-    expect(page.find('.alert')).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "didn't work"
   end
 
   scenario "User updates an existing item" do
@@ -28,7 +28,7 @@
     fill_in "Category", with: item.category + " new"
     click_button "Update Item"
 
-    expect(page.find('.alert')).to have_content "updated"
+    expect(page.find(".alert")).to have_content "updated"
   end
 
   scenario "User updates an existing item with empty attributes" do
@@ -37,7 +37,7 @@
     fill_in "Name", with: ""
     click_button "Update Item"
 
-    expect(page.find('.alert')).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "didn't work"
   end
 
   scenario "User can filter the #index by category type" do
@@ -70,13 +70,13 @@
     expected_order = [item2.category, item.category]
     visit url_prefix + "/items"
 
-    expect(page.all('select#filters_in_category option').map(&:text).select(&:present?)).to eq(expected_order)
-    expect(page.all('select#filters_in_category option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
+    expect(page.all("select#filters_in_category option").map(&:text).select(&:present?)).to eq(expected_order)
+    expect(page.all("select#filters_in_category option").map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
   end
 
   describe "Item Table Tabs >" do
-    let(:item_name_1) { 'the most wonderful magical pullups that truly potty train' }
-    let(:item_name_2) { 'blackbeard\'s rugged tampons' }
+    let(:item_name_1) { "the most wonderful magical pullups that truly potty train" }
+    let(:item_name_2) { "blackbeard's rugged tampons" }
     before :each do
       @item = create(:item, name: item_name_1, category: "same")
       @item2 = create(:item, name: item_name_2, category: "different")
@@ -85,22 +85,22 @@
     end
     # Consolidated these into one to reduce the setup/teardown
     scenario "Displays items in separate tabs", js: true do
-      expect(page.find('table#tbl_items', visible: true)).not_to have_content "Quantity"
-      expect(page.find(:css, 'table#tbl_items', visible: true)).to have_content(@item.name)
+      expect(page.find("table#tbl_items", visible: true)).not_to have_content "Quantity"
+      expect(page.find(:css, "table#tbl_items", visible: true)).to have_content(@item.name)
       expect(page.body).to include(item_name_1)
       expect(page.body).to include(item_name_2)
 
       click_link "Items and Quantity" # href="#sectionB"
-      expect(page.find('table#tbl_items_quantity', visible: true)).to have_content "Quantity"
-      expect(page.find('table#tbl_items_quantity', visible: true)).not_to have_content "Test storage"
-      expect(page.find('table#tbl_items_quantity', visible: true)).to have_content "666"
+      expect(page.find("table#tbl_items_quantity", visible: true)).to have_content "Quantity"
+      expect(page.find("table#tbl_items_quantity", visible: true)).not_to have_content "Test storage"
+      expect(page.find("table#tbl_items_quantity", visible: true)).to have_content "666"
       expect(page.body).to include(item_name_1)
       expect(page.body).to include(item_name_2)
 
       click_link "Items, Quantity, and Location" # href="#sectionC"
-      expect(page.find('table#tbl_items_location', visible: true)).to have_content "Quantity"
-      expect(page.find('table#tbl_items_location', visible: true)).to have_content "Test storage"
-      expect(page.find('table#tbl_items_location', visible: true)).to have_content "666"
+      expect(page.find("table#tbl_items_location", visible: true)).to have_content "Quantity"
+      expect(page.find("table#tbl_items_location", visible: true)).to have_content "Test storage"
+      expect(page.find("table#tbl_items_location", visible: true)).to have_content "666"
       expect(page.body).to include(item_name_1)
       expect(page.body).to include(item_name_2)
     end

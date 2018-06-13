@@ -7,6 +7,7 @@ module IssuedAt
   end
 
   private
+
   def initialize_issued_at
     self.issued_at ||= self.created_at
   end

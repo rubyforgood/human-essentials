@@ -57,7 +57,7 @@ shared_examples_for "itemizable" do
         expect(subject.line_items.quantities_by_category).to eq(categories)
       end
     end
-    
+
     describe "quantities_by_name" do
       let(:item1) { create(:item, name: "item1", organization: @organization) }
       let(:item2) { create(:item, name: "item2", organization: @organization) }
@@ -72,7 +72,7 @@ shared_examples_for "itemizable" do
       end
 
       it "returns a hash of items with id, name, and quantity" do
-        quantities = [ { item_id: item1.id, 
+        quantities = [ { item_id: item1.id,
                          name: item1.name,
                          quantity: 10 },
                        { item_id: item2.id,
@@ -90,7 +90,7 @@ shared_examples_for "itemizable" do
 
         expect(subject.line_items.quantities_by_name.values).to match_array(quantities)
       end
-    end    
+    end
 
     describe "sorted" do
       subject { create(model_f, organization: @organization) }

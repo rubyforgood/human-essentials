@@ -56,7 +56,7 @@ class DiaperDriveParticipantsController < ApplicationController
     end
   end
 
-private
+  private
 
   def diaper_drive_participant_params
     params.require(:diaper_drive_participant)

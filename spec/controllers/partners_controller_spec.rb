@@ -43,5 +43,4 @@ RSpec.describe PartnersController, type: :controller do
       expect(subject).to redirect_to(partners_path)
     end
   end
-
 end

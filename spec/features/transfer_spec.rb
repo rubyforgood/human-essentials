@@ -37,5 +37,4 @@ scenario "User can filter the #index by storage location both from and to" do
 
   expect(page).to have_css("table tr", count: 2)
 end
-
 end

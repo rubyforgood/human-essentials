@@ -6,22 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 9
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: outdent, indent
-Layout/AccessModifierIndentation:
-  Exclude:
-    - 'app/controllers/application_controller.rb'
-    - 'app/controllers/barcode_items_controller.rb'
-    - 'app/controllers/diaper_drive_participants_controller.rb'
-    - 'app/controllers/donation_sites_controller.rb'
-    - 'app/controllers/donations_controller.rb'
-    - 'app/controllers/items_controller.rb'
-    - 'app/controllers/partners_controller.rb'
-    - 'app/controllers/storage_locations_controller.rb'
-    - 'app/models/donation.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle.
@@ -33,13 +17,12 @@ Layout/AlignHash:
     - 'app/controllers/storage_locations_controller.rb'
     - 'config/deploy/production.rb'
 
-# Offense count: 2
+# Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, IndentationWidth.
 # SupportedStyles: with_first_parameter, with_fixed_indentation
 Layout/AlignParameters:
   Exclude:
-    - 'app/models/concerns/itemizable.rb'
     - 'spec/factories/barcode_items.rb'
 
 # Offense count: 8
@@ -68,23 +51,6 @@ Layout/ClosingParenthesisIndentation:
   Exclude:
     - 'app/controllers/donations_controller.rb'
 
-# Offense count: 18
-# Cop supports --auto-correct.
-Layout/CommentIndentation:
-  Exclude:
-    - 'app/controllers/application_controller.rb'
-    - 'app/controllers/donations_controller.rb'
-    - 'app/controllers/purchases_controller.rb'
-    - 'app/controllers/users/sessions_controller.rb'
-    - 'app/models/concerns/itemizable.rb'
-    - 'app/models/donation.rb'
-    - 'spec/features/distribution_spec.rb'
-    - 'spec/features/donation_spec.rb'
-    - 'spec/features/purchase_spec.rb'
-    - 'spec/models/storage_location_spec.rb'
-    - 'spec/spec_helper.rb'
-    - 'spec/support/authorization_specs.rb'
-
 # Offense count: 27
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -110,109 +76,6 @@ Layout/EmptyLineBetweenDefs:
     - 'app/helpers/application_helper.rb'
     - 'app/models/storage_location.rb'
 
-# Offense count: 28
-# Cop supports --auto-correct.
-Layout/EmptyLines:
-  Exclude:
-    - 'app/helpers/application_helper.rb'
-    - 'app/models/concerns/itemizable.rb'
-    - 'app/models/storage_location.rb'
-    - 'app/models/transfer.rb'
-    - 'config/deploy/production.rb'
-    - 'config/deploy/staging.rb'
-    - 'config/environments/development.rb'
-    - 'config/routes.rb'
-    - 'spec/features/admins_spec.rb'
-    - 'spec/features/barcode_item_spec.rb'
-    - 'spec/features/dashboard_spec.rb'
-    - 'spec/features/diaper_drive_participant_spec.rb'
-    - 'spec/features/donation_spec.rb'
-    - 'spec/features/purchase_spec.rb'
-    - 'spec/models/line_item_spec.rb'
-    - 'spec/models/storage_location_spec.rb'
-    - 'spec/models/transfer_spec.rb'
-
-# Offense count: 8
-# Cop supports --auto-correct.
-Layout/EmptyLinesAroundAccessModifier:
-  Exclude:
-    - 'app/controllers/barcode_items_controller.rb'
-    - 'app/controllers/donation_sites_controller.rb'
-    - 'app/controllers/items_controller.rb'
-    - 'app/controllers/partners_controller.rb'
-    - 'app/controllers/storage_locations_controller.rb'
-    - 'app/models/concerns/issued_at.rb'
-    - 'app/models/donation.rb'
-    - 'app/models/purchase.rb'
-
-# Offense count: 58
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: empty_lines, no_empty_lines
-Layout/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'app/models/storage_location.rb'
-    - 'config/routes.rb'
-    - 'spec/controllers/adjustments_controller_spec.rb'
-    - 'spec/controllers/admins_controller_spec.rb'
-    - 'spec/controllers/barcode_items_controller_spec.rb'
-    - 'spec/controllers/dashboard_controller_spec.rb'
-    - 'spec/controllers/diaper_drive_participants_controller_spec.rb'
-    - 'spec/controllers/distributions_controller_spec.rb'
-    - 'spec/controllers/donation_sites_controller_spec.rb'
-    - 'spec/controllers/donations_controller_spec.rb'
-    - 'spec/controllers/items_controller_spec.rb'
-    - 'spec/controllers/organizations_controller_spec.rb'
-    - 'spec/controllers/partners_controller_spec.rb'
-    - 'spec/controllers/purchases_controller_spec.rb'
-    - 'spec/controllers/static_controller_spec.rb'
-    - 'spec/controllers/users_controller_spec.rb'
-    - 'spec/factories/barcode_items.rb'
-    - 'spec/factories/organizations.rb'
-    - 'spec/factories/transfers.rb'
-    - 'spec/features/account_spec.rb'
-    - 'spec/features/adjustment_spec.rb'
-    - 'spec/features/admins_spec.rb'
-    - 'spec/features/authorization_spec.rb'
-    - 'spec/features/dashboard_spec.rb'
-    - 'spec/features/distribution_spec.rb'
-    - 'spec/features/donation_spec.rb'
-    - 'spec/features/log_in_spec.rb'
-    - 'spec/features/partner_spec.rb'
-    - 'spec/features/purchase_spec.rb'
-    - 'spec/features/storage_location_spec.rb'
-    - 'spec/features/transfer_spec.rb'
-    - 'spec/models/adjustment_spec.rb'
-    - 'spec/models/donation_spec.rb'
-    - 'spec/models/purchase_spec.rb'
-    - 'spec/models/storage_location_spec.rb'
-    - 'spec/models/transfer_spec.rb'
-    - 'spec/rails_helper.rb'
-
-# Offense count: 8
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: empty_lines, empty_lines_except_namespace, empty_lines_special, no_empty_lines, beginning_only, ending_only
-Layout/EmptyLinesAroundClassBody:
-  Exclude:
-    - 'app/controllers/application_controller.rb'
-    - 'app/controllers/distributions_controller.rb'
-    - 'app/controllers/purchases_controller.rb'
-    - 'app/controllers/static_controller.rb'
-    - 'app/controllers/users_controller.rb'
-    - 'app/models/distribution.rb'
-    - 'app/models/purchase.rb'
-    - 'app/models/storage_location.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Layout/EmptyLinesAroundMethodBody:
-  Exclude:
-    - 'app/controllers/distributions_controller.rb'
-    - 'app/controllers/donations_controller.rb'
-    - 'app/controllers/static_controller.rb'
-    - 'app/controllers/users_controller.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -220,23 +83,6 @@ Layout/EmptyLinesAroundMethodBody:
 Layout/EmptyLinesAroundModuleBody:
   Exclude:
     - 'app/helpers/distributions_helper.rb'
-
-# Offense count: 19
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment, ForceEqualSignAlignment.
-Layout/ExtraSpacing:
-  Exclude:
-    - 'Capfile'
-    - 'Gemfile'
-    - 'app/controllers/donations_controller.rb'
-    - 'app/controllers/storage_locations_controller.rb'
-    - 'app/models/diaper_drive_participant.rb'
-    - 'app/models/donation.rb'
-    - 'config/deploy.rb'
-    - 'db/seeds.rb'
-    - 'spec/controllers/purchases_controller_spec.rb'
-    - 'spec/features/donation_spec.rb'
-    - 'spec/features/purchase_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -484,24 +330,6 @@ Layout/SpaceInsideHashLiteralBraces:
     - 'spec/models/donation_spec.rb'
     - 'spec/models/purchase_spec.rb'
 
-# Offense count: 23
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: space, no_space
-Layout/SpaceInsideParens:
-  Exclude:
-    - 'app/controllers/donations_controller.rb'
-    - 'spec/controllers/barcode_items_controller_spec.rb'
-    - 'spec/controllers/diaper_drive_participants_controller_spec.rb'
-    - 'spec/controllers/distributions_controller_spec.rb'
-    - 'spec/controllers/donation_sites_controller_spec.rb'
-    - 'spec/controllers/donations_controller_spec.rb'
-    - 'spec/controllers/items_controller_spec.rb'
-    - 'spec/controllers/purchases_controller_spec.rb'
-    - 'spec/controllers/storage_locations_spec.rb'
-    - 'spec/controllers/transfers_controller_spec.rb'
-    - 'spec/features/dashboard_spec.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -531,34 +359,6 @@ Layout/Tab:
     - 'spec/models/line_item_spec.rb'
     - 'spec/support/authorization_specs.rb'
     - 'spec/support/inventory_assistant.rb'
-
-# Offense count: 50
-# Cop supports --auto-correct.
-# Configuration parameters: AllowInHeredoc.
-Layout/TrailingWhitespace:
-  Exclude:
-    - 'app/controllers/purchases_controller.rb'
-    - 'app/models/concerns/itemizable.rb'
-    - 'app/models/diaper_drive_participant.rb'
-    - 'app/models/donation_site.rb'
-    - 'app/models/organization.rb'
-    - 'app/models/storage_location.rb'
-    - 'spec/controllers/diaper_drive_participants_controller_spec.rb'
-    - 'spec/controllers/donation_sites_controller_spec.rb'
-    - 'spec/controllers/items_controller_spec.rb'
-    - 'spec/controllers/purchases_controller_spec.rb'
-    - 'spec/controllers/storage_locations_spec.rb'
-    - 'spec/factories/transfers.rb'
-    - 'spec/features/authorization_spec.rb'
-    - 'spec/models/diaper_drive_participant_spec.rb'
-    - 'spec/models/donation_site_spec.rb'
-    - 'spec/models/donation_spec.rb'
-    - 'spec/models/purchase_spec.rb'
-    - 'spec/models/storage_location_spec.rb'
-    - 'spec/models/transfer_spec.rb'
-    - 'spec/spec_helper.rb'
-    - 'spec/support/itemizable_shared_example.rb'
-    - 'spec/support/poltergeist_hack.rb'
 
 # Offense count: 4
 Lint/AmbiguousBlockAssociation:
@@ -1052,83 +852,6 @@ Style/Semicolon:
   Exclude:
     - 'app/controllers/donations_controller.rb'
     - 'app/models/donation.rb'
-
-# Offense count: 298
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, ConsistentQuotesInMultiline.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiterals:
-  Exclude:
-    - 'Capfile'
-    - 'Gemfile'
-    - 'app/controllers/adjustments_controller.rb'
-    - 'app/controllers/admins_controller.rb'
-    - 'app/controllers/application_controller.rb'
-    - 'app/controllers/donations_controller.rb'
-    - 'app/controllers/items_controller.rb'
-    - 'app/controllers/organizations_controller.rb'
-    - 'app/controllers/purchases_controller.rb'
-    - 'app/controllers/storage_locations_controller.rb'
-    - 'app/controllers/transfers_controller.rb'
-    - 'app/controllers/users_controller.rb'
-    - 'app/helpers/application_helper.rb'
-    - 'app/helpers/dashboard_helper.rb'
-    - 'app/helpers/date_helper.rb'
-    - 'app/helpers/distributions_helper.rb'
-    - 'app/mailers/application_mailer.rb'
-    - 'app/models/adjustment.rb'
-    - 'app/models/diaper_drive_participant.rb'
-    - 'app/models/donation_site.rb'
-    - 'app/models/item.rb'
-    - 'app/models/organization.rb'
-    - 'app/models/partner.rb'
-    - 'app/models/storage_location.rb'
-    - 'app/models/transfer.rb'
-    - 'config.ru'
-    - 'config/application.rb'
-    - 'config/boot.rb'
-    - 'config/deploy.rb'
-    - 'config/deploy/production.rb'
-    - 'config/environment.rb'
-    - 'config/environments/development.rb'
-    - 'config/environments/production.rb'
-    - 'config/environments/test.rb'
-    - 'config/routes.rb'
-    - 'db/seeds.rb'
-    - 'lib/capistrano/tasks/nginx.rake'
-    - 'spec/controllers/adjustments_controller_spec.rb'
-    - 'spec/controllers/admins_controller_spec.rb'
-    - 'spec/controllers/dashboard_controller_spec.rb'
-    - 'spec/controllers/organizations_controller_spec.rb'
-    - 'spec/controllers/purchases_controller_spec.rb'
-    - 'spec/controllers/static_controller_spec.rb'
-    - 'spec/controllers/users_controller_spec.rb'
-    - 'spec/factories/organizations.rb'
-    - 'spec/features/account_spec.rb'
-    - 'spec/features/admins_spec.rb'
-    - 'spec/features/authorization_spec.rb'
-    - 'spec/features/barcode_item_spec.rb'
-    - 'spec/features/diaper_drive_participant_spec.rb'
-    - 'spec/features/distribution_spec.rb'
-    - 'spec/features/donation_site_spec.rb'
-    - 'spec/features/donation_spec.rb'
-    - 'spec/features/item_spec.rb'
-    - 'spec/features/log_in_spec.rb'
-    - 'spec/features/organization_spec.rb'
-    - 'spec/features/partner_spec.rb'
-    - 'spec/features/purchase_spec.rb'
-    - 'spec/features/storage_location_spec.rb'
-    - 'spec/helpers/purchases_helper_spec.rb'
-    - 'spec/models/adjustment_spec.rb'
-    - 'spec/models/barcode_item_spec.rb'
-    - 'spec/models/diaper_drive_participant_spec.rb'
-    - 'spec/models/distribution_spec.rb'
-    - 'spec/models/inventory_item_spec.rb'
-    - 'spec/models/item_spec.rb'
-    - 'spec/models/line_item_spec.rb'
-    - 'spec/models/organization_spec.rb'
-    - 'spec/rails_helper.rb'
-    - 'spec/spec_helper.rb'
 
 # Offense count: 15
 # Cop supports --auto-correct.

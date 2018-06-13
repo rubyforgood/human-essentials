@@ -1,13 +1,11 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe PurchasesController, type: :controller do
-
   let(:default_params) {
     { organization_id: @organization.to_param }
   }
 
   context "While signed in >" do
-
     before do
       sign_in(@user)
     end
@@ -35,13 +33,13 @@ RSpec.describe PurchasesController, type: :controller do
             purchase: { storage_location_id: storage_location.id,
                         purchased_from: "Google",
                         amount_spent: 10,
-                        line_items: line_items } )
+                        line_items: line_items })
         d = Purchase.last
         expect(response).to redirect_to(purchases_path)
       end
 
       it "renders GET#new with error on failure" do
-        post :create, params: default_params.merge(purchase: { storage_location_id: nil, amount_spent: nil  } )
+        post :create, params: default_params.merge(purchase: { storage_location_id: nil, amount_spent: nil })
         expect(response).to be_successful # Will render :new
         expect(flash[:error]).to match(/error/i)
       end

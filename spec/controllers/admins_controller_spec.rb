@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe AdminsController, type: :controller do
   let(:default_params) {
@@ -100,5 +100,4 @@ RSpec.describe AdminsController, type: :controller do
       end
     end
   end
-
 end

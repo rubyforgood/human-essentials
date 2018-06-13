@@ -115,7 +115,6 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-
     describe "adjust_from_past!" do
       let(:storage_location) { create(:storage_location) }
       let(:purchase)         { create(:purchase, :with_items, item_quantity: 10) }
@@ -230,7 +229,6 @@ RSpec.describe StorageLocation, type: :model do
         }.to raise_error(Errors::InsufficientAllotment)
       end
     end
-
 
     describe "move_inventory!" do
       it "removes inventory from a storage location and adds them to another storage location" do

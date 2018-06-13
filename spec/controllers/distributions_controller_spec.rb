@@ -66,7 +66,7 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     context "Looking at a different organization" do
-      let(:object) { create(:distribution, organization: create(:organization) ) }
+      let(:object) { create(:distribution, organization: create(:organization)) }
       include_examples "requiring authorization"
     end
   end
@@ -76,5 +76,4 @@ RSpec.describe DistributionsController, type: :controller do
 
     include_examples "requiring authentication"
   end
-
 end

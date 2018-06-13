@@ -1,5 +1,4 @@
 class PurchasesController < ApplicationController
-
   skip_before_action :verify_authenticity_token, only: [:scale_intake, :scale]
   skip_before_action :authenticate_user!, only: [:scale_intake, :scale]
   skip_before_action :authorize_user, only: [:scale_intake, :scale]
@@ -54,7 +53,7 @@ class PurchasesController < ApplicationController
      @purchase.storage_location.adjust_from_past!(@purchase, previous_quantities)
     redirect_to purchases_path
    else
-     render 'edit'
+     render "edit"
    end
   end
 
@@ -81,7 +80,7 @@ class PurchasesController < ApplicationController
     params.require(:filters).slice(:at_storage_location, :by_source)
   end
 
-# If line_items have submitted with empty rows, clear those out first.
+  # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
     return params unless params[:purchase].has_key?(:line_item_attributes)
     params[:purchase][:line_items_attributes].delete_if { |row, data| data["quantity"].blank? && data["item_id"].blank? }

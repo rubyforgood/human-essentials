@@ -15,7 +15,7 @@
 #  business_name   :string
 #
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe DiaperDriveParticipant, type: :model do
   context "Validations" do
@@ -51,5 +51,5 @@ RSpec.describe DiaperDriveParticipant, type: :model do
       DiaperDriveParticipant.import_csv(import_file_path, organization.id)
       expect(DiaperDriveParticipant.count).to eq before_import + 3
     end
-  end     
+  end
 end

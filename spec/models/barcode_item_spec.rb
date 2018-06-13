@@ -62,7 +62,7 @@ RSpec.describe BarcodeItem, type: :model do
           expect(build(:global_barcode_item, quantity: nil)).not_to be_valid
         end
         it "is an integer" do
-          expect(build(:global_barcode_item, quantity: 'aaa')).not_to be_valid
+          expect(build(:global_barcode_item, quantity: "aaa")).not_to be_valid
         end
         it "is not a negative number" do
           expect(build(:global_barcode_item, quantity: -1)).not_to be_valid
@@ -119,7 +119,7 @@ RSpec.describe BarcodeItem, type: :model do
           expect(build(:barcode_item, quantity: nil)).not_to be_valid
         end
         it "is an integer" do
-          expect(build(:barcode_item, quantity: 'aaa')).not_to be_valid
+          expect(build(:barcode_item, quantity: "aaa")).not_to be_valid
         end
         it "is not a negative number" do
           expect(build(:barcode_item, quantity: -1)).not_to be_valid

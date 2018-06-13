@@ -75,11 +75,9 @@ RSpec.describe Purchase, type: :model do
         expect(purchase.items.count).to eq(1)
       end
     end
-
   end
 
   context "Methods >" do
-
     describe "track" do
       let!(:purchase) { create(:purchase) }
       let!(:item) { create(:item) }
@@ -135,7 +133,7 @@ RSpec.describe Purchase, type: :model do
           purchase.remove(item_id)
         }.to change{purchase.line_items.count}.by(-1)
       end
-      
+
       it "fails gracefully if the item doesn't exist" do
         item_id = create(:item).id
         expect {

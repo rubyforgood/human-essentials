@@ -1,7 +1,7 @@
 RSpec.feature "User account management", type: :feature do
   before do
     sign_in(@user)
-    visit '/users/edit'
+    visit "/users/edit"
   end
 
   scenario "User can change their name" do
@@ -12,5 +12,4 @@ RSpec.feature "User account management", type: :feature do
 
     expect(page).to have_content(name)
   end
-
 end

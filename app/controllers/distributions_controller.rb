@@ -1,5 +1,4 @@
 class DistributionsController < ApplicationController
-
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
@@ -13,7 +12,6 @@ class DistributionsController < ApplicationController
 
     flash[:notice] = "Distribution #{@distribution.id} has been reclaimed!"
     redirect_to distributions_path
-
   end
 
   def index

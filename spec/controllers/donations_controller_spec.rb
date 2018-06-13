@@ -1,11 +1,9 @@
 RSpec.describe DonationsController, type: :controller do
-
   let(:default_params) {
     { organization_id: @organization.to_param }
   }
 
   context "While signed in >" do
-
     before do
       sign_in(@user)
     end
@@ -34,13 +32,13 @@ RSpec.describe DonationsController, type: :controller do
           donation: { storage_location_id: storage_location.id,
                       donation_site_id: donation_site.id,
                       source: "Donation Site",
-                      line_items: line_items } )
+                      line_items: line_items })
         d = Donation.last
         expect(response).to redirect_to(donations_path)
       end
 
       it "renders GET#new with error on failure" do
-        post :create, params: default_params.merge(donation: { storage_location_id: nil, donation_site_id: nil, source: nil } )
+        post :create, params: default_params.merge(donation: { storage_location_id: nil, donation_site_id: nil, source: nil })
         expect(response).to be_successful # Will render :new
         expect(flash[:error]).to match(/error/i)
       end
@@ -128,7 +126,7 @@ RSpec.describe DonationsController, type: :controller do
     end
 
     context "Looking at a different organization" do
-      let(:object) { create(:donation, organization: create(:organization) ) }
+      let(:object) { create(:donation, organization: create(:organization)) }
 
       include_examples "requiring authorization"
 
@@ -142,7 +140,6 @@ RSpec.describe DonationsController, type: :controller do
         expect(response).to be_redirect
       end
     end
-
   end
 
   context "While not signed in" do
@@ -160,5 +157,4 @@ RSpec.describe DonationsController, type: :controller do
       expect(response).to be_redirect
     end
   end
-
 end

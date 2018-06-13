@@ -36,14 +36,14 @@ RSpec.feature "Barcode management", type: :feature do
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
       click_button "Create Barcode item"
 
-      expect(page.find('.alert')).to have_content "added to your"
+      expect(page.find(".alert")).to have_content "added to your"
 
-      expect(page.find('table')).to have_content "1T Diapers"
+      expect(page.find("table")).to have_content "1T Diapers"
 
       check "filters_include_global"
       click_button "Filter"
 
-      expect(page.find('table')).to have_content "1T Diapers"
+      expect(page.find("table")).to have_content "1T Diapers"
     end
 
     scenario "User updates an existing barcode" do
@@ -53,7 +53,7 @@ RSpec.feature "Barcode management", type: :feature do
       fill_in "Quantity", id: "barcode_item_quantity", with: (barcode.quantity.to_i + 10).to_s
       click_button "Update Barcode item"
 
-      expect(page.find('.alert')).to have_content "updated"
+      expect(page.find(".alert")).to have_content "updated"
     end
 
     scenario "User updates an existing barcode with empty attributes" do
@@ -62,7 +62,7 @@ RSpec.feature "Barcode management", type: :feature do
       fill_in "Quantity", id: "barcode_item_quantity", with: ""
       click_button "Update Barcode item"
 
-      expect(page.find('.alert')).to have_content "didn't work"
+      expect(page.find(".alert")).to have_content "didn't work"
     end
   end
 
@@ -81,17 +81,16 @@ RSpec.feature "Barcode management", type: :feature do
       choose "barcode_item_global_true"
       click_button "Create Barcode item"
 
-      expect(page.find('.alert')).to have_content "added globally"
+      expect(page.find(".alert")).to have_content "added globally"
 
-      expect(page.find('table')).to_not have_content "1T Diapers"
+      expect(page.find("table")).to_not have_content "1T Diapers"
 
       check "filters_include_global"
       click_button "Filter"
 
-      expect(page.find('table')).to have_content "1T Diapers"
+      expect(page.find("table")).to have_content "1T Diapers"
     end
   end
-
 
   scenario "User can filter the #index by item type" do
     Item.delete_all
@@ -110,22 +109,21 @@ RSpec.feature "Barcode management", type: :feature do
     item1 = create(:item, name: "AAA Diapers")
     item2 = create(:item, name: "Wonder Diapers")
     item3 = create(:item, name: "ABC Diapers")
-    expected_order = ['', item1.name, item3.name, item2.name]
+    expected_order = ["", item1.name, item3.name, item2.name]
 
     create(:barcode_item, barcodeable: item3)
     create(:barcode_item, barcodeable: item2)
     create(:barcode_item, barcodeable: item1)
     visit url_prefix + "/barcode_items"
 
-    expect(page.all('select#filters_barcodeable_id option').map(&:text)).to eq(expected_order)
-    expect(page.all('select#filters_barcodeable_id option').map(&:text)).not_to eq(expected_order.reverse)
+    expect(page.all("select#filters_barcodeable_id option").map(&:text)).to eq(expected_order)
+    expect(page.all("select#filters_barcodeable_id option").map(&:text)).not_to eq(expected_order.reverse)
   end
-
 
   scenario "User add a new barcode with empty attributes" do
     visit url_prefix + "/barcode_items/new"
     click_button "Create Barcode item"
 
-    expect(page.find('.alert')).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "didn't work"
   end
 end

@@ -72,7 +72,8 @@ class BarcodeItemsController < ApplicationController
     redirect_to barcode_items_path
   end
 
-private
+  private
+
   def barcode_item_params
     params.require(:barcode_item).permit(:value, :barcodeable_id, :quantity, :global).merge(organization_id: current_organization.id)
   end

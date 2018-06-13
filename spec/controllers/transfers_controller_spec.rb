@@ -52,7 +52,7 @@ RSpec.describe TransfersController, type: :controller do
         create(:transfer,
                to: create(:storage_location, organization: org),
                from: create(:storage_location, organization: org),
-               organization: org )
+               organization: org)
       }
       let!(:skip) { [:edit] }
       include_examples "requiring authorization"

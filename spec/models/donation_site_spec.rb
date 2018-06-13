@@ -11,7 +11,6 @@
 #
 
 RSpec.describe DonationSite, type: :model do
-	
 	context "Validations >" do
 		it "must belong to an organization" do
  	      expect(build(:donation_site, organization_id: nil)).not_to be_valid
@@ -31,6 +30,6 @@ RSpec.describe DonationSite, type: :model do
       DonationSite.import_csv(import_file_path, organization.id)
       expect(DonationSite.count).to eq 3
     end
-  end 	
+  end
 end
 

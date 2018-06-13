@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   devise_for :users
   resources :admins do
     collection do
@@ -8,8 +7,7 @@ Rails.application.routes.draw do
   end
   resources :canonical_items
 
-  scope path: ':organization_id' do
-
+  scope path: ":organization_id" do
     resources :users
     resource :organization do
       collection do
@@ -54,7 +52,6 @@ Rails.application.routes.draw do
       end
     end
 
-
     resources :donations do
       collection do
         get :scale
@@ -66,12 +63,11 @@ Rails.application.routes.draw do
 
     resources :purchases
 
-    get 'dashboard', to: 'dashboard#index'
-
+    get "dashboard", to: "dashboard#index"
   end
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  get 'pages/:name', to: 'static#page'
+  get "pages/:name", to: "static#page"
   root "static#index"
 end

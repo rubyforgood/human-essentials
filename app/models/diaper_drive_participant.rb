@@ -16,9 +16,9 @@
 #
 
 class DiaperDriveParticipant < ApplicationRecord
-  require 'csv'
+  require "csv"
 
-  belongs_to :organization  # Automatically validates presence as of Rails 5
+  belongs_to :organization # Automatically validates presence as of Rails 5
   has_many :donations, inverse_of: :diaper_drive_participant
 
   validates :name, presence: true

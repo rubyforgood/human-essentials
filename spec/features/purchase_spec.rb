@@ -75,15 +75,13 @@ RSpec.feature "Purchases", type: :feature, js: true do
         }.to change{Purchase.count}.by(1)
 
         expect(Purchase.last.line_items.first.quantity).to eq(15)
-
       end
 
-
-      # Bug fix -- Issue #71
-      # When a user creates a purchase without it passing validation, the items
-      # dropdown is not populated on the return trip.
+       # Bug fix -- Issue #71
+       # When a user creates a purchase without it passing validation, the items
+       # dropdown is not populated on the return trip.
        scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
-         item_count = @organization.items.count + 1  # Adds 1 for the "choose an item" option
+         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
          expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)
          click_button "Create Purchase"
 
@@ -133,7 +131,7 @@ RSpec.feature "Purchases", type: :feature, js: true do
           fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
         end
 
-        expect(page).to have_field 'purchase_line_items_attributes_0_quantity', with: @existing_barcode.quantity.to_s
+        expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
         page.find(:css, "#__add_line_item").click
 
@@ -142,7 +140,7 @@ RSpec.feature "Purchases", type: :feature, js: true do
           fill_in "_barcode-lookup-1", with: @existing_barcode.value + 13.chr
         end
 
-        expect(page).to have_field 'purchase_line_items_attributes_0_quantity', with: (@existing_barcode.quantity*2).to_s
+        expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: (@existing_barcode.quantity*2).to_s
       end
 
       scenario "a user can add items that do not yet have a barcode" do
@@ -154,7 +152,6 @@ RSpec.feature "Purchases", type: :feature, js: true do
         pending "TODO: adding items with a new barcode"
         raise
       end
-
     end
   end
 end

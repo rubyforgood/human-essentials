@@ -26,7 +26,7 @@ class Organization < ApplicationRecord
   has_many :adjustments
   has_many :barcode_items do
     def all
-      unscope(where: :organization_id).where('barcode_items.organization_id = ? OR barcode_items.global = ?', proxy_association.owner.id, true)  
+      unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.global = ?", proxy_association.owner.id, true)
     end
   end
   has_many :distributions
@@ -89,7 +89,7 @@ class Organization < ApplicationRecord
     Rails.logger.info "Seeding #{org.name}'s items..."
     canonical_items = CanonicalItem.pluck(:id, :name, :category).collect { |c| { canonical_item_id: c[0], name: c[1], category: c[2] } }
     org_id = org.id
-    Item.create(canonical_items) do |i| 
+    Item.create(canonical_items) do |i|
       i.organization_id = org_id
     end
     org.reload
@@ -101,7 +101,7 @@ class Organization < ApplicationRecord
     if logo.attached? && !logo.content_type
                               .in?(%w(image/jpeg image/jpg image/pjpeg image/png image/x-png))
       logo.purge
-      errors.add(:logo, 'Must be a JPG or a PNG file')
+      errors.add(:logo, "Must be a JPG or a PNG file")
     end
   end
 end

@@ -94,7 +94,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
     end
 
     context "Looking at a different organization" do
-      let(:object) { create(:barcode_item, organization: create(:organization) ) }
+      let(:object) { create(:barcode_item, organization: create(:organization)) }
       include_examples "requiring authorization"
     end
   end
@@ -105,5 +105,4 @@ RSpec.describe BarcodeItemsController, type: :controller do
   #  let(:object) { create(:barcode_item) }
   #  include_examples "requiring authentication"
   #end
-
 end

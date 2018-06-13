@@ -11,14 +11,14 @@
 #
 
 class DonationSite < ApplicationRecord
-  require 'csv'
+  require "csv"
 
 	belongs_to :organization
-	
+
 	validates :name, :address, :organization, presence: true
-   
+
 	has_many :donations
-	
+
   def self.import_csv(filename,organization)
     CSV.parse(filename, :headers => true) do |row|
       loc = DonationSite.new(row.to_hash)
