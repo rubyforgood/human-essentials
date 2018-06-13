@@ -71,24 +71,30 @@ RSpec.describe Distribution, type: :model do
     let(:item) { create(:item, name: "AAA", category: "Foo") }
     let(:donation) { create(:donation) }
 
-    it "#distributed_at" do
-      two_days_ago = 2.day.ago
-      expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime('%B %-d %Y'))
-      expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime('%B %-d %Y'))
+    describe "#distributed_at" do
+      it "displays either the explicit distributed_at date, or falls-through to issued_at" do
+        two_days_ago = 2.day.ago
+        expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime('%B %-d %Y'))
+        expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime('%B %-d %Y'))
+      end
     end
 
-    it "#copy_line_items" do
-      donation.line_items << create(:line_item, item: item, quantity: 5)
-      donation.line_items << create(:line_item, item: item, quantity: 10)
-      expect(distribution.copy_line_items(donation.id).count).to eq 2
+    describe "#copy_line_items" do
+      it "replicates line_items from a donation into a distribution" do
+        donation.line_items << create(:line_item, item: item, quantity: 5)
+        donation.line_items << create(:line_item, item: item, quantity: 10)
+        expect(distribution.copy_line_items(donation.id).count).to eq 2
+      end
     end
 
-    it "#combine_duplicates" do
-      distribution.line_items << create(:line_item, item: item, quantity: 5)
-      distribution.line_items << create(:line_item, item: item, quantity: 10)
-      distribution.combine_duplicates
-      expect(distribution.line_items.size).to eq 1
-      expect(distribution.line_items.first.quantity).to eq 15
+    describe "#combine_duplicates" do
+      it "condenses duplicate line_items if the item_ids match" do
+        distribution.line_items << create(:line_item, item: item, quantity: 5)
+        distribution.line_items << create(:line_item, item: item, quantity: 10)
+        distribution.combine_duplicates
+        expect(distribution.line_items.size).to eq 1
+        expect(distribution.line_items.first.quantity).to eq 15
+      end
     end
   end
 end
