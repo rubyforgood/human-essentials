@@ -1,0 +1,21 @@
+<div id="sectionB" class="tab-pane fade info">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box-body table-responsive no-padding">
+        <table id="tbl_items_quantity" class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Barcodes</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "item_row_quantity", collection: @items_with_counts, as: :item_row %>
+          </tbody>
+        </table>
+      </div><!-- /.box-body -->
+    </div><!-- /.col-xs-12 -->
+  </div><!-- /.row -->
+</div><!-- /#sectionB -->
