@@ -1,6 +1,5 @@
 module DiaperPartnerClient
   def self.post(path, attributes)
-    return true
     diaper_partner_url = ENV["DIAPER_PARTNER_URL"]
     return unless diaper_partner_url.present?
 
