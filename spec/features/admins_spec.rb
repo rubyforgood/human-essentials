@@ -1,7 +1,7 @@
 RSpec.feature "Site Administration", type: :feature do
   before do
     sign_in(@organization_admin)
-    visit '/admins'
+    visit "/admins"
   end
 
   scenario "Admin can create a new organization" do
@@ -20,8 +20,8 @@ RSpec.feature "Site Administration", type: :feature do
 
     expect(page).to have_content("All Diaperbase Organizations")
 
-    within('tr', text: org_params[:name]) do
-      first(:link, 'View').click
+    within("tr", text: org_params[:name]) do
+      first(:link, "View").click
     end
 
     expect(page).to have_content(org_params[:name])
@@ -29,7 +29,6 @@ RSpec.feature "Site Administration", type: :feature do
     expect(page).to have_content("Boston")
     expect(page).to have_content("MA")
     expect(page).to have_content("12345")
-
   end
 
   scenario "Admin can bail back to their own site" do
@@ -58,7 +57,7 @@ RSpec.feature "Site Administration", type: :feature do
     end
 
     scenario "An admin can add a new user to an organization" do
-      page.find('a', text: "Invite User to this Organization").click
+      page.find("a", text: "Invite User to this Organization").click
       allow(User).to receive(:invite!).and_return(true)
       within "#addUserModal" do
         fill_in "email", with: "some_new_user@website.com"
@@ -66,10 +65,5 @@ RSpec.feature "Site Administration", type: :feature do
       end
       expect(page).to have_content("invited to organization")
     end
-
-
   end
-
-
-
 end

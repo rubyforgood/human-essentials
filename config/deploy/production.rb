@@ -11,11 +11,11 @@ set :rails_env, :production
 
 role :app, "deploy@45.79.146.211"
 
-server '45.79.146.211', roles: %w{web app db}, primary: true,
-  ssh_options: {
-  	forward_agent: true,
-  	keys: ["~/.ssh/id_rsa"],
-  }
+server "45.79.146.211", roles: %w{web app db}, primary: true,
+                        ssh_options: {
+                          forward_agent: true,
+                          keys: ["~/.ssh/id_rsa"]
+                        }
 
 # role-based syntax
 # ==================
@@ -29,7 +29,6 @@ server '45.79.146.211', roles: %w{web app db}, primary: true,
 # role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
 # role :db,  %w{deploy@example.com}
 
-
 # Configuration
 # =============
 # You can set any configuration variable like in config/deploy.rb
@@ -39,7 +38,7 @@ server '45.79.146.211', roles: %w{web app db}, primary: true,
 # Feel free to add new variables to customise your setup.
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.4.1'
+set :rbenv_ruby, "2.5.1"
 
 # Custom SSH Options
 # ==================

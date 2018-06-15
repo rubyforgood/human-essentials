@@ -101,7 +101,7 @@ class StorageLocation < ApplicationRecord
 
   def adjust_from_past!(donation_or_purchase, previous_line_item_values)
     donation_or_purchase.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: line_item.item_id)
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id, item_id: line_item.item_id)
       # If the item wasn't deleted by the user, then it will be present to be deleted
       # here, and delete returns the item as a return value.
       if previous_line_item_value = previous_line_item_values.delete(line_item.id)
@@ -114,7 +114,7 @@ class StorageLocation < ApplicationRecord
     # Update storage for line items that are no longer persisted because they
     # were removed durring the updated/delete process.
     previous_line_item_values.values.each do |value|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: value.item_id)
+      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id, item_id: value.item_id)
       inventory_item.decrement!(:quantity, value.quantity)
       inventory_item.destroy! if inventory_item.quantity == 0
     end

@@ -20,7 +20,7 @@ class BarcodeItem < ApplicationRecord
   validates :organization, presence: true, if: proc { |b| b.barcodeable_type == "Item" }
   validates :value, presence: true, uniqueness: true
   validates :quantity, :barcodeable, presence: true
-  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
+  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   include Filterable
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }

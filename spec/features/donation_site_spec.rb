@@ -9,7 +9,7 @@ RSpec.feature "Donation Site", type: :feature do
       @second = create(:donation_site, name: "Bcd")
       @first = create(:donation_site, name: "Abc")
       @third = create(:donation_site, name: "Cde")
-      visit url_prefix + '/donation_sites'
+      visit url_prefix + "/donation_sites"
     end
     scenario "the donation sites are in alphabetical order" do
       expect(page).to have_xpath("//table/tbody/tr", count: 3)
@@ -19,20 +19,20 @@ RSpec.feature "Donation Site", type: :feature do
   end
 
   scenario "User creates a new donation site" do
-    visit url_prefix + '/donation_sites/new'
+    visit url_prefix + "/donation_sites/new"
     donation_site_traits = attributes_for(:donation_site)
     fill_in "Name", with: donation_site_traits[:name]
     fill_in "Address", with: donation_site_traits[:address]
     click_button "Create Donation site"
 
-    expect(page.find('.alert')).to have_content "added"
+    expect(page.find(".alert")).to have_content "added"
   end
 
   scenario "User creates a new donation site with empty attributes" do
-    visit url_prefix + '/donation_sites/new'
+    visit url_prefix + "/donation_sites/new"
     click_button "Create Donation site"
 
-    expect(page.find('.alert')).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "didn't work"
   end
 
   scenario "User updates an existing donation site" do
@@ -41,7 +41,7 @@ RSpec.feature "Donation Site", type: :feature do
     fill_in "Address", with: donation_site.name + " new"
     click_button "Update Donation site"
 
-    expect(page.find('.alert')).to have_content "updated"
+    expect(page.find(".alert")).to have_content "updated"
   end
 
   scenario "User updates an existing donation site with empty attributes" do
@@ -50,6 +50,6 @@ RSpec.feature "Donation Site", type: :feature do
     fill_in "Name", with: ""
     click_button "Update Donation site"
 
-    expect(page.find('.alert')).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "didn't work"
   end
 end

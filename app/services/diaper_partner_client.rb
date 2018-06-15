@@ -1,7 +1,7 @@
 module DiaperPartnerClient
   def self.post(path, attributes)
     diaper_partner_url = ENV["DIAPER_PARTNER_URL"]
-    return unless diaper_partner_url.present?
+    return if diaper_partner_url.blank?
 
     uri = URI(diaper_partner_url + path)
     request = Net::HTTP::Post.new uri
