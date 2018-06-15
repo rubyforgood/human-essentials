@@ -6,13 +6,13 @@ class DiaperDriveParticipantsController < ApplicationController
   def create
     @diaper_drive_participant = current_organization.diaper_drive_participants.new(diaper_drive_participant_params.merge(organization: current_organization))
     respond_to do |format|
-      if (@diaper_drive_participant.save)
-        format.html {redirect_to diaper_drive_participants_path, notice: "New diaper drive participant added!"}
+      if @diaper_drive_participant.save
+        format.html { redirect_to diaper_drive_participants_path, notice: "New diaper drive participant added!" }
         format.js
       else
         flash[:error] = "Something didn't work quite right -- try again?"
-        format.html {render action: :new}
-        format.js {render template: "diaper_drive_participants/new_modal.js.erb"}
+        format.html { render action: :new }
+        format.js { render template: "diaper_drive_participants/new_modal.js.erb" }
       end
     end
   end
@@ -36,8 +36,8 @@ class DiaperDriveParticipantsController < ApplicationController
 
   def update
     @diaper_drive_participant = current_organization.diaper_drive_participants.find(params[:id])
-    if @diaper_drive_participant.update_attributes(diaper_drive_participant_params)
-    redirect_to diaper_drive_participants_path, notice: "#{@diaper_drive_participant.name} updated!"
+    if @diaper_drive_participant.update(diaper_drive_participant_params)
+      redirect_to diaper_drive_participants_path, notice: "#{@diaper_drive_participant.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -56,10 +56,10 @@ class DiaperDriveParticipantsController < ApplicationController
     end
   end
 
-private
+  private
 
   def diaper_drive_participant_params
     params.require(:diaper_drive_participant)
-      .permit(:name, :phone, :email, :business_name, :address)
+          .permit(:name, :phone, :email, :business_name, :address)
   end
 end

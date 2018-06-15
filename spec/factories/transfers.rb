@@ -17,7 +17,7 @@ FactoryBot.define do
       storage_location nil
     end
     organization { Organization.try(:first) || create(:organization) }
-    from nil 
+    from nil
     to nil
     comment "A comment"
 

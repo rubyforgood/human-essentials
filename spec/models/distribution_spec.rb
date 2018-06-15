@@ -32,7 +32,7 @@ RSpec.describe Distribution, type: :model do
       d = build(:distribution)
       d.line_items << build(:line_item, quantity: nil)
       expect(d).not_to be_valid
-  	end
+    end
 
     it "ensures that any included items are found in the associated storage location" do
       d = build(:distribution)
@@ -73,9 +73,9 @@ RSpec.describe Distribution, type: :model do
 
     describe "#distributed_at" do
       it "displays either the explicit distributed_at date, or falls-through to issued_at" do
-        two_days_ago = 2.day.ago
-        expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime('%B %-d %Y'))
-        expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime('%B %-d %Y'))
+        two_days_ago = 2.days.ago
+        expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime("%B %-d %Y"))
+        expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime("%B %-d %Y"))
       end
     end
 

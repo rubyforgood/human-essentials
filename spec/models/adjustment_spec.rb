@@ -40,8 +40,8 @@ RSpec.describe Adjustment, type: :model do
     end
   end
 
-  describe 'nested line item attributes' do
-    it 'accepts them' do
+  describe "nested line item attributes" do
+    it "accepts them" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
 
@@ -53,6 +53,5 @@ RSpec.describe Adjustment, type: :model do
 
       expect(new_adjustment.save).to be_truthy
     end
-
   end
 end

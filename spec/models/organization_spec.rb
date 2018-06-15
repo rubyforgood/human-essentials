@@ -47,20 +47,20 @@ RSpec.describe Organization, type: :model do
   describe "ActiveStorage validation" do
     it "validates that attachments are png or jpgs" do
       expect(build(:organization,
-                   logo: Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.jpg'),
-                                                      'image/jpeg')))
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"),
+                                                      "image/jpeg")))
         .to be_valid
       expect(build(:organization,
-                   logo: Rack::Test::UploadedFile.new(Rails.root.join('spec/fixtures/logo.gif'),
-                                                      'image/gif')))
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.gif"),
+                                                      "image/gif")))
         .to_not be_valid
     end
   end
 
   describe "#short_name" do
     it "can only contain valid characters" do
-      expect(build(:organization, short_name: 'asdf')).to be_valid
-      expect(build(:organization, short_name: 'Not Legal!')).to_not be_valid
+      expect(build(:organization, short_name: "asdf")).to be_valid
+      expect(build(:organization, short_name: "Not Legal!")).to_not be_valid
     end
   end
 
