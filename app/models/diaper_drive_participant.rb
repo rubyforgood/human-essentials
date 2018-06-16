@@ -16,9 +16,9 @@
 #
 
 class DiaperDriveParticipant < ApplicationRecord
-  require 'csv'
+  require "csv"
 
-  belongs_to :organization  # Automatically validates presence as of Rails 5
+  belongs_to :organization # Automatically validates presence as of Rails 5
   has_many :donations, inverse_of: :diaper_drive_participant
 
   validates :contact_name, presence: { message: "Must provide a name or a business name" }, if: Proc.new { |ddp| ddp.business_name.blank? }
@@ -26,7 +26,7 @@ class DiaperDriveParticipant < ApplicationRecord
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: Proc.new { |ddp| ddp.email.blank? }
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: Proc.new { |ddp| ddp.phone.blank? }
 
-  # TODO - This should be set up with a callback to cache the total so we're not hitting the DB
+
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)
   end

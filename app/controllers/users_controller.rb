@@ -3,8 +3,7 @@ class UsersController < ApplicationController
     @users = current_organization.users
   end
 
-  def update
-  end
+  def update; end
 
   def new
     @user = User.new
@@ -15,9 +14,9 @@ class UsersController < ApplicationController
 
     if @user.save
       @user.invite!(@user)
-      redirect_to users_path, notice: 'Created a new user!'
+      redirect_to users_path, notice: "Created a new user!"
     else
-      flash[:error] = 'Failed to create user'
+      flash[:error] = "Failed to create user"
       render :new
     end
   end
@@ -30,7 +29,6 @@ class UsersController < ApplicationController
     else
       redirect_to users_path, flash: { error: "Couldn't find that user, sorry" }
     end
-
   end
 
   private
@@ -38,5 +36,4 @@ class UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
   end
-
 end

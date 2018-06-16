@@ -17,7 +17,6 @@
 FactoryBot.define do
   factory :diaper_drive_participant do
     organization { Organization.try(:first) || create(:organization) }
-    sequence(:name) { |n| "DD Participant ##{n}" }
     contact_name "Don Draper"
     sequence(:email) { |n| "don#{n}@scdp.com" }
     phone "212-555-1111"

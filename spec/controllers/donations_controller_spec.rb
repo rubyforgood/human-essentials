@@ -1,11 +1,9 @@
 RSpec.describe DonationsController, type: :controller do
-
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   context "While signed in >" do
-
     before do
       sign_in(@user)
     end
@@ -34,13 +32,14 @@ RSpec.describe DonationsController, type: :controller do
           donation: { storage_location_id: storage_location.id,
                       donation_site_id: donation_site.id,
                       source: "Donation Site",
-                      line_items: line_items } )
+                      line_items: line_items }
+        )
         d = Donation.last
         expect(response).to redirect_to(donations_path)
       end
 
       it "renders GET#new with error on failure" do
-        post :create, params: default_params.merge(donation: { storage_location_id: nil, donation_site_id: nil, source: nil } )
+        post :create, params: default_params.merge(donation: { storage_location_id: nil, donation_site_id: nil, source: nil })
         expect(response).to be_successful # Will render :new
         expect(flash[:error]).to match(/error/i)
       end
@@ -51,6 +50,58 @@ RSpec.describe DonationsController, type: :controller do
         donation = create(:donation, source: "Donation Site")
         put :update, params: default_params.merge(id: donation.id, donation: { source: "Donation Site" })
         expect(response).to redirect_to(donations_path)
+      end
+
+      it "updates storage quantity correctly" do
+        donation = create(:donation, :with_items, item_quantity: 10)
+        line_item = donation.line_items.first
+        line_item_params = {
+          "0" => {
+            "_destroy" => "false",
+            item_id: line_item.item_id,
+            quantity: "15",
+            id: line_item.id
+          }
+        }
+        donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+        expect do
+          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+        end.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
+      end
+
+      describe "when removing a line item" do
+        it "updates storage invetory item quantity correctly" do
+          donation = create(:donation, :with_items, item_quantity: 10)
+          line_item = donation.line_items.first
+          line_item_params = {
+            "0" => {
+              "_destroy" => "true",
+              item_id: line_item.item_id,
+              id: line_item.id
+            }
+          }
+          donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+          expect do
+            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          end.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
+        end
+
+        it "deletes inventory item if line item and inventory item quantities are equal" do
+          donation = create(:donation, :with_items, item_quantity: 1)
+          line_item = donation.line_items.first
+          inventory_item = donation.storage_location.inventory_items.first
+          inventory_item.update(quantity: line_item.quantity)
+          line_item_params = {
+            "0" => {
+              "_destroy" => "true",
+              item_id: line_item.item_id,
+              id: line_item.id
+            }
+          }
+          donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          expect { inventory_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
       end
     end
 
@@ -76,7 +127,7 @@ RSpec.describe DonationsController, type: :controller do
     end
 
     context "Looking at a different organization" do
-      let(:object) { create(:donation, organization: create(:organization) ) }
+      let(:object) { create(:donation, organization: create(:organization)) }
 
       include_examples "requiring authorization"
 
@@ -90,7 +141,6 @@ RSpec.describe DonationsController, type: :controller do
         expect(response).to be_redirect
       end
     end
-
   end
 
   context "While not signed in" do
@@ -108,5 +158,4 @@ RSpec.describe DonationsController, type: :controller do
       expect(response).to be_redirect
     end
   end
-
 end

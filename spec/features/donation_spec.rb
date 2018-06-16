@@ -118,9 +118,9 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
         fill_in "donation_issued_at", with: "01/01/2001"
 
-        expect {
+        expect do
           click_button "Create Donation"
-        }.to change{Donation.count}.by(1)
+        end.to change { Donation.count }.by(1)
 
         expect(Donation.last.issued_at).to eq(Date.parse("01/01/2001"))
       end
@@ -133,15 +133,14 @@ RSpec.feature "Donations", type: :feature, js: true do
         page.find(:css, "#__add_line_item").click
         select_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/select')[:id]
         select Item.alphabetized.first.name, from: select_id
-        text_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/input[3]')[:id]
+        text_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/input[2]')[:id]
         fill_in text_id, with: "10"
 
-        expect {
+        expect do
           click_button "Create Donation"
-        }.to change{Donation.count}.by(1)
+        end.to change { Donation.count }.by(1)
 
         expect(Donation.last.line_items.first.quantity).to eq(15)
-
       end
 
       scenario "User can create a donation for a Diaper Drive source" do
@@ -153,9 +152,9 @@ RSpec.feature "Donations", type: :feature, js: true do
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
-        expect {
+        expect do
           click_button "Create Donation"
-        }.to change{Donation.count}.by(1)
+        end.to change { Donation.count }.by(1)
       end
 
       scenario "User can create a Diaper Drive from donation" do
@@ -177,9 +176,9 @@ RSpec.feature "Donations", type: :feature, js: true do
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
-        expect {
+        expect do
           click_button "Create Donation"
-        }.to change{Donation.count}.by(1)
+        end.to change { Donation.count }.by(1)
       end
 
       scenario "User can create a donation for Purchased Supplies" do
@@ -190,9 +189,9 @@ RSpec.feature "Donations", type: :feature, js: true do
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
-        expect {
+        expect do
           click_button "Create Donation"
-        }.to change{Donation.count}.by(1)
+        end.to change { Donation.count }.by(1)
       end
 
       scenario "User can create a donation with a Miscellaneous source" do
@@ -203,9 +202,9 @@ RSpec.feature "Donations", type: :feature, js: true do
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
-        expect {
+        expect do
           click_button "Create Donation"
-        }.to change{Donation.count}.by(1)
+        end.to change { Donation.count }.by(1)
       end
 
       # Since the form only shows/hides the irrelevant field, if the user already selected something it would still
@@ -227,16 +226,15 @@ RSpec.feature "Donations", type: :feature, js: true do
       # Bug fix -- Issue #71
       # When a user creates a donation without it passing validation, the items
       # dropdown is not populated on the return trip.
-       scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
-         item_count = @organization.items.count + 1  # Adds 1 for the "choose an item" option
-         expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
-         click_button "Create Donation"
+      scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
+        item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        click_button "Create Donation"
 
-         expect(page).to have_content("error")
-         expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
-       end
+        expect(page).to have_content("error")
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+      end
     end
-
 
     context "via barcode entry" do
       before(:each) do
@@ -245,37 +243,35 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       scenario "a user can add items via scanning them in by barcode", :js do
-        pending "The JS doesn't appear to be executing in this correctly"
         # enter the barcode into the barcode field
+
         within "#donation_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
+          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
         end
         # the form should update
-        #save_and_open_page
+        # save_and_open_page
         expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
+        expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @existing_barcode.item.name)).to eq(true)
         qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
 
         expect(qty).to eq(@existing_barcode.quantity.to_s)
       end
 
       scenario "User scan same barcode 2 times", :js do
-        pending "The JS doesn't appear to be executing in this correctly"
         within "#donation_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
+          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
         end
 
-        expect(page).to have_field 'donation_line_items_attributes_0_quantity', with: @existing_barcode.quantity.to_s
-
-        page.find(:css, "#__add_line_item").click
+        expect(page).to have_field "donation_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
         within "#donation_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-          fill_in "_barcode-lookup-1", with: @existing_barcode.value + 13.chr
+          fill_in "_barcode-lookup-1", with: @existing_barcode.value + 10.chr
         end
 
-        expect(page).to have_field 'donation_line_items_attributes_0_quantity', with: (@existing_barcode.quantity*2).to_s
+        expect(page).to have_field "donation_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
       end
 
       scenario "a user can add items that do not yet have a barcode" do
@@ -287,7 +283,6 @@ RSpec.feature "Donations", type: :feature, js: true do
         pending "TODO: adding items with a new barcode"
         raise
       end
-
     end
   end
 end

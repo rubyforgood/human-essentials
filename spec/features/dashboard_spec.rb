@@ -17,42 +17,38 @@ RSpec.feature "Dashboard", type: :feature do
       organization_logo = extract_image(:xpath, "//div/img")
       expect(organization_logo).to eq("logo.jpg")
 
-      @organization.logo = nil
+      @organization.logo.purge
       @organization.save
       visit @url_prefix + "/dashboard"
 
       expect(page).not_to have_xpath("//div/img")
       expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@organization.name)
     end
-
   end
 
-  # TODO - For right now, I'm eschewing the JS interaction because XHRs are annoying to do with capybara
-  # if someone else wants to make this use an XHR instead, have at it!
   scenario "The user can scope down what they see in the dashboard using the date-range drop down" do
-    # TODO - This spec fails in January because Year-to-date... need to use TimeCop or something"
     item = create(:item, organization: @organization)
     sl = create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
     create(:donation, :with_items, item: item, item_quantity: 10, storage_location: sl, issued_at: 1.month.ago)
     create(:donation, :with_items, item: item, item_quantity: 200, storage_location: sl, issued_at: Date.today)
-    create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago, )
-    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Date.today, )
+    create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago,)
+    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Date.today,)
     @organization.reload
 
     # Verify the initial totals are correct
     visit @url_prefix + "/dashboard"
     expect(page).to have_content("210 items received year to date")
     expect(page).to have_content("105 items distributed year to date")
+    expect(page).to have_content("0 Diaper Drives")
 
     # Scope it down to just today, should omit the first donation
-    #select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
+    # select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
     visit @url_prefix + "/dashboard?dashboard_filter[interval]=last_month"
     expect(page).to have_content("10 items received last month")
     expect(page).to have_content("5 items distributed last month")
   end
 
-
-  scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js:true do
+  scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js: true do
     create(:partner)
     create(:item, organization: @organization)
     create(:storage_location, organization: @organization)
@@ -75,10 +71,19 @@ RSpec.feature "Dashboard", type: :feature do
     fill_in "donation_line_items_attributes_0_quantity", with: "100"
     click_button "Create Donation"
 
+    # Make a diaper drive donation
+    visit @url_prefix + "/donations/new"
+    select "Diaper Drive", from: "donation_source"
+    select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
+    select StorageLocation.first.name, from: "donation_storage_location_id"
+    select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+    fill_in "donation_line_items_attributes_0_quantity", with: "100"
+    click_button "Create Donation"
+
     # Check the dashboard now
     visit @url_prefix + "/dashboard"
-    expect(page).to have_content("100 items received")
-    expect(page).to have_content("100 items on-hand")
+    expect(page).to have_content("200 items received")
+    expect(page).to have_content("200 items on-hand")
 
     # Check distributions
     visit @url_prefix + "/distributions/new"
@@ -93,8 +98,52 @@ RSpec.feature "Dashboard", type: :feature do
 
     # Check the dashboard now
     visit @url_prefix + "/dashboard"
-    expect(page).to have_content("100 items received")
+    expect(page).to have_content("200 items received")
     expect(page).to have_content("50 items distributed")
-    expect(page).to have_content("50 items on-hand")
+    expect(page).to have_content("150 items on-hand")
+    expect(page).to have_content("1 Diaper Drives")
+  end
+
+  scenario "getting started guide works as expected", js: true do
+    # When dashboard loads, ensure that we are on step 1 (Partner Agencies)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-partners", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+
+    # After we create a partner, ensure that we are on step 2 (Storage Locations)
+    create(:partner)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+
+    # After we create a storage location, ensure that we are on step 3 (Donation Site)
+    create(:storage_location, organization: @organization)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+
+    # After we create a donation site, ensure that we are on step 4 (Inventory)
+    create(:donation_site, organization: @organization)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 1)
+    expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
+    expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 1)
+
+    # After we add inventory to a storage location, ensure that the getting starting guide is gone
+    item = create(:item, organization: @organization)
+    create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
+    visit @url_prefix + "/dashboard"
+    expect(page).to have_selector("#getting-started-guide", count: 0)
   end
 end

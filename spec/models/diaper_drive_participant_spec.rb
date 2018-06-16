@@ -14,7 +14,7 @@
 #  business_name   :string
 #
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe DiaperDriveParticipant, type: :model do
   context "Validations" do

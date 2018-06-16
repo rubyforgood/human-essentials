@@ -1,14 +1,13 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV['RAILS_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
+ENV["RAILS_ENV"] ||= "test"
+require File.expand_path("../config/environment", __dir__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
-require 'spec_helper'
-require 'rspec/rails'
-require 'capybara/rails'
-require 'capybara/rspec'
-require 'pry'
-require "paperclip/matchers"
+require "spec_helper"
+require "rspec/rails"
+require "capybara/rails"
+require "capybara/rspec"
+require "pry"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -25,8 +24,8 @@ require "paperclip/matchers"
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
-Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].each {|f| require f}
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].each { |f| require f }
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
@@ -46,11 +45,9 @@ end
 Capybara.javascript_driver = :chrome
 
 RSpec.configure do |config|
-
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
   config.include Devise::Test::IntegrationHelpers, type: :feature
-  config.include Paperclip::Shoulda::Matchers
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -106,6 +103,7 @@ ASCIIART
 
   config.after(:each) do
     __sweep_up_db_with_log
+    FileUtils.rm_rf(Dir["#{Rails.root}/tmp/storage"])
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

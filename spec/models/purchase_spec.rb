@@ -41,8 +41,8 @@ RSpec.describe Purchase, type: :model do
     it "automatically combines duplicate line_item records when they're created" do
       purchase = build(:purchase)
       item = create(:item)
-      purchase.line_items.build({item_id: item.id, quantity: 5})
-      purchase.line_items.build({item_id: item.id, quantity: 10})
+      purchase.line_items.build(item_id: item.id, quantity: 5)
+      purchase.line_items.build(item_id: item.id, quantity: 10)
       purchase.save
       expect(purchase.line_items.size).to eq(1)
       expect(purchase.line_items.first.quantity).to eq(15)
@@ -75,11 +75,9 @@ RSpec.describe Purchase, type: :model do
         expect(purchase.items.count).to eq(1)
       end
     end
-
   end
 
   context "Methods >" do
-
     describe "track" do
       let!(:purchase) { create(:purchase) }
       let!(:item) { create(:item) }
@@ -87,10 +85,10 @@ RSpec.describe Purchase, type: :model do
       it "does not add a new line_item unnecessarily, updating existing line_item instead" do
         item = create :item
         purchase.track(item, 5)
-        expect {
+        expect do
           purchase.track(item, 10)
           purchase.reload
-        }.not_to change{purchase.line_items.count}
+        end.not_to change { purchase.line_items.count }
 
         expect(purchase.line_items.first.quantity).to eq(15)
       end
@@ -106,23 +104,23 @@ RSpec.describe Purchase, type: :model do
     describe "update_quantity" do
       let!(:purchase) { create(:purchase, :with_items) }
       it "adds an additional quantity to the existing line_item" do
-        expect {
+        expect do
           purchase.update_quantity(1, purchase.items.first)
           purchase.reload
-        }.to change{purchase.line_items.first.quantity}.by(1)
+        end.to change { purchase.line_items.first.quantity }.by(1)
       end
 
       it "can receive a negative quantity to subtract inventory" do
-        expect {
+        expect do
           purchase.update_quantity(-1, purchase.items.first)
-        }.to change{purchase.total_quantity}.by(-1)
+        end.to change { purchase.total_quantity }.by(-1)
       end
 
       it "works whether you give it an item or an id" do
-        expect {
+        expect do
           purchase.update_quantity(1, purchase.items.first.id)
           purchase.reload
-        }.to change{purchase.line_items.first.quantity}.by(1)
+        end.to change { purchase.line_items.first.quantity }.by(1)
       end
     end
 
@@ -131,25 +129,25 @@ RSpec.describe Purchase, type: :model do
 
       it "removes the item from the purchase" do
         item_id = purchase.line_items.last.item_id
-        expect {
+        expect do
           purchase.remove(item_id)
-        }.to change{purchase.line_items.count}.by(-1)
+        end.to change { purchase.line_items.count }.by(-1)
       end
-      
+
       it "fails gracefully if the item doesn't exist" do
         item_id = create(:item).id
-        expect {
+        expect do
           purchase.remove(item_id)
-        }.not_to change{purchase.line_items.count}
+        end.not_to change { purchase.line_items.count }
       end
     end
 
-     describe "remove_inventory" do
+    describe "remove_inventory" do
       it "removes inventory from the right storage location when purchase deleted" do
         purchase = create(:purchase, :with_items)
-        expect {
+        expect do
           purchase.remove_inventory
-        }.to change{purchase.storage_location.size}.by(-purchase.total_quantity)
+        end.to change { purchase.storage_location.size }.by(-purchase.total_quantity)
       end
     end
   end

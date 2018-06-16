@@ -1,4 +1,4 @@
-require 'active_support/core_ext/module/aliasing'
+require "active_support/core_ext/module/aliasing"
 
 module ApplicationHelper
   def default_title_content
@@ -9,24 +9,23 @@ module ApplicationHelper
     end
   end
 
-   def active_class(name)
-     name.include?(controller_name) ? 'active' : controller_name
-   end
-
+  def active_class(name)
+    name.include?(controller_name) ? "active" : controller_name
+  end
 
   # wraps link_to_unless_current to provide Foundation6 friendly <a> tags
   def navigation_link_to(*args)
     link_to_unless_current(*args) do
-      content_tag(:a, args.first, class: 'active', disabled: true)
+      content_tag(:a, args.first, class: "active", disabled: true)
     end
   end
 
   def flash_class(level)
     case level
-      when 'notice' then "alert alert-info"
-      when 'success' then "alert alert-success"
-      when 'error' then "alert alert-danger"
-      when 'alert' then "alert alert-warning"
+    when "notice" then "alert alert-info"
+    when "success" then "alert alert-success"
+    when "error" then "alert alert-danger"
+    when "alert" then "alert alert-warning"
     end
   end
   ## Devise overrides
@@ -44,4 +43,14 @@ module ApplicationHelper
 
   # def after_sign_out_path_for(resource)
   # end
+
+  def confirm_delete_msg(resource)
+    "Are you sure you want to delete #{resource}?"
+  end
+
+  def step_container_helper(index, active_index)
+    return " active" if active_index == index
+    return " done" if active_index > index
+    ""
+  end
 end
