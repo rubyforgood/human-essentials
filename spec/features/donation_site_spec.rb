@@ -29,12 +29,12 @@ RSpec.feature "Donation Site", type: :feature do
   end
 
   scenario "User creates a new donation site on index" do
-    visit url_prefix + '/donation_sites'
+    visit url_prefix + "/donation_sites"
     donation_site_traits = attributes_for(:donation_site)
     fill_in "donation_site_name", with: donation_site_traits[:name]
     fill_in "donation_site_address", with: donation_site_traits[:address]
     click_button "Create"
-    expect(page.find('tbody tr')).to have_content(donation_site_traits[:name])
+    expect(page.find("tbody tr")).to have_content(donation_site_traits[:name])
   end
 
   scenario "User creates a new donation site with empty attributes" do
