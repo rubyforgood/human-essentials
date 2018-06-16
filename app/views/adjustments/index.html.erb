@@ -59,16 +59,13 @@
               <tbody>
                 <% @adjustments.each do |adjustment| %>
                   <tr>
-                    <td><time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y (%l:%M%P %Z)") %></time></td>
+                    <td><time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y") %></time></td>
                     <td><%= adjustment.organization.name %></td>
                     <td><%= adjustment.storage_location.name %></td>
                     <td><%= adjustment.comment %></td>
                     <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
                     <td class="text-right">
                       <%= link_to 'View', adjustment, class: "btn btn-primary btn-xs" %>
-                      <%= link_to edit_adjustment_path(adjustment), class: "btn btn-info btn-xs" do %>
-                          <i class="fa fa-edit"></i> Edit
-                        <% end %>
                     </td>
                   </tr>
                 <% end %>

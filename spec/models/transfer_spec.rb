@@ -13,8 +13,8 @@
 
 RSpec.describe Transfer, type: :model do
   it_behaves_like "itemizable"
-  # 2 Specs are failing here because 
-  
+  # 2 Specs are failing here because
+
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:transfer, organization_id: nil)).not_to be_valid
@@ -34,7 +34,6 @@ RSpec.describe Transfer, type: :model do
     end
   end
 
-
   context "Methods >" do
     it "`self.storage_locations_transferred_to` and `..._from` constrains appropriately" do
       storage_location1 = create(:storage_location, name: "loc1", organization: @organization)
@@ -49,5 +48,4 @@ RSpec.describe Transfer, type: :model do
       expect(Transfer.storage_locations_transferred_from_in(@organization).to_a).to match_array([storage_location3])
     end
   end
-
 end

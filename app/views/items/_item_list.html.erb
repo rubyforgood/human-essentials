@@ -1,0 +1,24 @@
+<div id="sectionA" class="tab-pane fade in active">
+
+  <div class="row">
+    <div class="col-xs-12">
+
+      <div class="box-body table-responsive no-padding">
+        <table id="tbl_items" class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Barcodes</th>
+              <th>Base Item</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "item_row", collection: @items, as: :item_row %>
+          </tbody>
+        </table>
+      </div><!-- /.box-body.table-responsive -->
+    </div><!-- /.col-xs-12 -->
+  </div><!-- /.row -->
+</div><!-- /#sectionA -->

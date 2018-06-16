@@ -14,6 +14,8 @@
     <!-- Main content -->
 <section class="content">
   <div class="row">
+    <%= render partial: "getting_started_prompt", locals: { org_stats: @org_stats } %>
+
     <div class="col-md-12">
       <div class="box box-primary">
         <div class="box-header with-border">
@@ -46,7 +48,7 @@
                   <%= link_to "Make an adjustment", new_adjustment_path, class: "btn btn-primary btn-xs" %>
                 </div>
               </div>
-            </div>          
+            </div>
           </div>
         </div>
       </div>
@@ -119,6 +121,26 @@
               </div>
             </div>
           </div>
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Diaper Drives</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body text-center float-center">
+              <h3 class="text-center"><%= @recent_donations.by_source(:diaper_drive).count %> Diaper Drives <%= display_interval %> for a total of <%= number_with_delimiter(@recent_donations.by_source(:diaper_drive).sum { |d| d.line_items.total }) %> items collected</h3>
+            </div>
+            <div class="box-body">
+              <div class="box-body text-center float-center">
+              <h4>Recent Donations from Diaper Drives</h4>
+              <%= render partial: "diaper_drive", collection: @recent_donations.by_source(:diaper_drive), as: :donation %>
+              <%= link_to "See more...", donations_path %>
+              </div>
+            </div>
+          </div>
           <div class="box box-info">
             <div class="box-header with-border">
               <h3 class="box-title">Purchases</h3>
@@ -161,12 +183,12 @@
             <div class="box-body">
               <div class="chart">
                 <h5 class="text-center">Item categories on hand <%= display_interval %></h5>
-                <%= pie_chart pie_chart_data, legend: "right" %> 
+                <%= pie_chart pie_chart_data, legend: "right" %>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>  
+  </div>
 </section>

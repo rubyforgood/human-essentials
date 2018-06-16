@@ -17,6 +17,7 @@
  *= require bootstrap.min
  *= require _all-skins
  *= require scale
+ *= require progress_stepper
  *= require_self
  */
 
@@ -52,4 +53,38 @@ tr.negative {
 }
 tr.positive {
   background-color: #DFD;
+}
+
+
+/* ONBOARDING MODAL BOX */
+
+.modal-dialog h4.modal-title {
+	font-family: 'Source Sans Pro',sans-serif;
+}
+
+.modal-dialog.onboarding_steps .modal-body,
+.modal-dialog.onboarding_steps .modal-footer {
+	font-family: 'Source Sans Pro',sans-serif;
+	text-align: center;
+}
+
+.modal-dialog.onboarding_steps .modal-body h3 {
+	margin-top: 30px;
+}
+
+.modal-dialog.onboarding_steps .modal-body ul {
+	list-style: none; 
+	padding: 0;
+}
+
+.modal-dialog.onboarding_steps .modal-body li {
+	line-height: 1.25em;
+	margin-bottom: 15px;
+	color: #555;
+}
+
+@media (min-width: 768px) {
+	.modal-dialog.onboarding_steps {
+	  width: 700px;
+	}
 }

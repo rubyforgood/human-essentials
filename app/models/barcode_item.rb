@@ -20,7 +20,7 @@ class BarcodeItem < ApplicationRecord
   validates :organization, presence: true, if: proc { |b| b.barcodeable_type == "Item" }
   validates :value, presence: true, uniqueness: true
   validates :quantity, :barcodeable, presence: true
-  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
+  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   include Filterable
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }
@@ -28,18 +28,6 @@ class BarcodeItem < ApplicationRecord
 
   alias_attribute :item, :barcodeable
 
-=begin
-  # TODO - BarcodeItems should be able to filter on CanonicalItemId
-  def self.canonical_item_id(canonical_item_id)
-    items = BarcodeItem.find(:all,
-    joins: "INNER JOIN items ON items.canonical_item_id = #{canonical_item_id}",
-    )
-    canonical_barcode_items = self.where(barcodeable_type: "CanonicalItem", barcodeable_id: canonical_item_id)
-    #items = self.joins(:items).where(barcodeable_type: "Item", items: { canonical_item_id: canonical_item_id } )
-    (canonical_barcode_items + items).uniq
-  end
-=end
-  # TODO - this should be renamed to something more specific -- it produces a hash, not a line_item object
   def to_h
     {
       barcodeable_id: barcodeable_id,

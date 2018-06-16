@@ -1,9 +1,9 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe UsersController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   before do
     sign_in(@user)
@@ -15,5 +15,4 @@ RSpec.describe UsersController, type: :controller do
       expect(response).to have_http_status(:success)
     end
   end
-
 end

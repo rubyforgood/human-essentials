@@ -1,7 +1,7 @@
 RSpec.describe DistributionsController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   context "While signed in" do
     before do
@@ -9,14 +9,14 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     describe "GET #print" do
-      subject { get :print, params: default_params.merge({ id: create(:distribution).id }) }
+      subject { get :print, params: default_params.merge(id: create(:distribution).id) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #reclaim" do
-      subject { get :index, params: default_params.merge({ organization_id: @organization, id: create(:distribution).id }) }
+      subject { get :index, params: default_params.merge(organization_id: @organization, id: create(:distribution).id) }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -45,7 +45,7 @@ RSpec.describe DistributionsController, type: :controller do
       end
 
       it "renders #new again on failure, with notice" do
-        post :create, params:default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil })
+        post :create, params: default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil })
         expect(response).to be_successful
         expect(flash[:error]).to match(/error/i)
       end
@@ -66,7 +66,7 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     context "Looking at a different organization" do
-      let(:object) { create(:distribution, organization: create(:organization) ) }
+      let(:object) { create(:distribution, organization: create(:organization)) }
       include_examples "requiring authorization"
     end
   end
@@ -76,5 +76,4 @@ RSpec.describe DistributionsController, type: :controller do
 
     include_examples "requiring authentication"
   end
-
 end

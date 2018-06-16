@@ -36,7 +36,7 @@ RSpec.describe Item, type: :model do
     it "->in_category returns all items in the provided category" do
       create(:item, category: "same")
       create(:item, category: "not same")
-      expect(Item.in_category('same').length).to eq(1)
+      expect(Item.in_category("same").length).to eq(1)
     end
 
     it "->in_same_category_as returns all items in the same category other than the provided item" do
@@ -106,7 +106,7 @@ RSpec.describe Item, type: :model do
         item1 = create(:item, category: "one")
         item2 = create(:item, category: "two")
         item3 = create(:item, category: "three")
-        alphabetized_list = [ item1, item3, item2 ]
+        alphabetized_list = [item1, item3, item2]
         result = Item.categories
         expect(result.map(&:category)).to eq(alphabetized_list.map(&:category))
       end
@@ -184,8 +184,8 @@ RSpec.describe Item, type: :model do
           "Content-Type" => "application/x-www-form-urlencoded"
         }
         body = URI.encode_www_form item.attributes
-        expect(WebMock).to have_requested(:post, callback_url).
-          with(headers: headers, body: body).once
+        expect(WebMock).to have_requested(:post, callback_url)
+          .with(headers: headers, body: body).once
       end
     end
   end

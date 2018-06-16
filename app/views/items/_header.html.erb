@@ -1,0 +1,27 @@
+<div class="box-header with-border bg-gray">
+    <section id="filters">
+    <%= form_tag(items_path, method: :get) do |f| %>
+      <div class="row">
+        <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+          <%= label_tag "Filter by Item Category" %>
+          <%= collection_select(:filters, :in_category, Item.categories || {}, :category, :category, { include_blank: true }, class: "form-control") %>
+          <%= label_tag "Filter by Base Item" %>
+          <%= collection_select(:filters, :by_canonical_item, CanonicalItem.all, :id, :name, { include_blank: true }, class: "form-control") %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+        <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+          <i class="fa fa-filter"></i> Filter
+        <% end %>
+        <%= link_to items_path, class: "btn btn-outline-primary btn-md" do %>
+          <i class="fa fa-ban"></i> Clear Filters
+        <% end %>
+          <%= link_to new_item_path(organization_id: current_organization), class: "btn btn-success btn pull-right" do %>
+        <i class="fa fa-plus"></i> Create New Item
+      <% end %>
+      </div>
+    </div><!-- /.row -->
+    <% end #form %>
+    </section>
+</div><!-- /.box-header -->

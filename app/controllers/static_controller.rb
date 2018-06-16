@@ -6,7 +6,6 @@ class StaticController < ApplicationController
 
   def index
     redirect_to dashboard_url(current_user.organization) if current_user
-
   end
 
   def page
@@ -16,5 +15,4 @@ class StaticController < ApplicationController
     # Example2: /pages/index renders /app/views/static/index.html.erb, even when logged in
     render template: "static/#{params[:name]}"
   end
-
 end
