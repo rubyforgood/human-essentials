@@ -27,8 +27,13 @@ Docker for Mac has some pretty poor disk sharing (volume) performance. At the ti
 
 You can set up the app and database with the following commands:
 
-    docker-compose build
-    docker-compose run web bin/setup
+    docker-compose build             # Builds docker image, especially gems
+    docker-compose run web bin/setup # Sets up the database
+
+When you switch or update branches, you can do:
+
+    docker-compose build              # for installing new/updated gems
+    docker-compose run web bin/update # for migrations and such
 
 ### Running the app
 
@@ -42,9 +47,7 @@ Run:
 
 ### Tips
 
-Outside of docker you often prefix commands with `bundle exec`. Using the
-docker setup, switch this prefix to `docker-compose run web`. You could even
-set up an alias like this:
+Outside of docker you often prefix commands with `bundle exec`. Using the docker setup, switch this prefix to `docker-compose run web`. You could even set up an alias like this:
 
     alias dcrw="docker-compose run web" # Put this in your ~/.profile
     dcrw rails c                        # get a rails console
