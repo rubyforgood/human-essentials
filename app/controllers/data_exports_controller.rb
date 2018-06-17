@@ -1,11 +1,10 @@
 class DataExportsController < ApplicationController
-  respond_to :html, :csv
+  respond_to :csv
 
   def csv
     type = params[:type]
 
     respond_to do |format|
-      format.html
       format.csv { send_data data(type), filename: "#{type}-#{Time.zone.today}.csv" }
     end
   end
