@@ -1,0 +1,31 @@
+<div id="sectionC" class="tab-pane fade">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box-body table-responsive no-padding">
+        <table id="tbl_items_location" class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <%= render partial: "storage_column", collection: @storages %>
+              <th>Total Quantity</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @items_with_counts.each do |item| %>
+            <tr>
+              <% if item.id != @row_collection[:item_id] && @row_collection[:item_id] != nil %>
+                <%= render partial: "item_row_quantity_and_storages" %>
+                <% new_storage_collection %>
+              <% end %>
+              <% update_storage_collection(item) %>
+            </tr>
+            <% end %>
+            <%= render partial: "item_row_quantity_and_storages" %>
+          </tbody>
+        </table>
+      </div><!-- /.box-body.table-responsive -->
+    </div><!-- /.col-xs-12 -->
+  </div><!-- /.row -->
+</div><!-- /#sectionC -->

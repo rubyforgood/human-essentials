@@ -38,7 +38,7 @@
                   <i class="fa fa-plus"></i> New Storage Location
                 <% end %>
                 <% if @storage_locations.length > 0 %>
-                  <%= link_to csv_data_exports_path(format: :csv, type: "StorageLocation"), class: "btn btn-secondary" do %>
+                  <%= link_to csv_path(format: :csv, type: "StorageLocation"), class: "btn btn-secondary" do %>
                     <i class="fa fa-download" aria-hidden="true"></i> Export Locations
                   <% end %>
                 <% end %>

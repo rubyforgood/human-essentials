@@ -2,7 +2,7 @@ RSpec.feature "Barcode management", type: :feature do
   before do
     sign_in(@user)
   end
-  let!(:url_prefix) { "/#{@organization.to_param}"}
+  let!(:url_prefix) { "/#{@organization.to_param}" }
   scenario "User creates a new storage location" do
     visit url_prefix + "/storage_locations/new"
     storage_location_traits = attributes_for(:storage_location)
@@ -10,14 +10,14 @@ RSpec.feature "Barcode management", type: :feature do
     fill_in "Address", with: storage_location_traits[:address]
     click_button "Create Storage location"
 
-    expect(page.find('.alert')).to have_content "added"
+    expect(page.find(".alert")).to have_content "added"
   end
 
   scenario "User creates a new storage location with empty attributes" do
     visit url_prefix + "/storage_locations/new"
     click_button "Create Storage location"
 
-    expect(page.find('.alert')).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "didn't work"
   end
 
   scenario "User updates an existing storage location" do
@@ -26,7 +26,7 @@ RSpec.feature "Barcode management", type: :feature do
     fill_in "Address", with: storage_location.name + " new"
     click_button "Update Storage location"
 
-    expect(page.find('.alert')).to have_content "updated"
+    expect(page.find(".alert")).to have_content "updated"
   end
 
   scenario "User updates an existing storage location with empty name" do
@@ -35,7 +35,7 @@ RSpec.feature "Barcode management", type: :feature do
     fill_in "Name", with: ""
     click_button "Update Storage location"
 
-    expect(page.find('.alert')).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "didn't work"
   end
 
   scenario "User can filter the #index by those that contain certain items" do
@@ -63,8 +63,8 @@ RSpec.feature "Barcode management", type: :feature do
     storage_location3 = create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
     visit url_prefix + "/storage_locations"
 
-    expect(page.all('select#filters_containing option').map(&:text).select(&:present?)).to eq(expected_order)
-    expect(page.all('select#filters_containing option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
+    expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).to eq(expected_order)
+    expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
   end
 
   scenario "Items in (adjustments)" do
@@ -74,7 +74,7 @@ RSpec.feature "Barcode management", type: :feature do
     visit url_prefix + "/storage_locations/" + storage_location.id.to_s
     click_link "Inventory coming in"
 
-    expect(page.find('table#sectionB.table.table-hover', visible: true)).to have_content "100"
+    expect(page.find("table#sectionB.table.table-hover", visible: true)).to have_content "100"
   end
 
   scenario "Items out (distributions)" do
@@ -85,7 +85,6 @@ RSpec.feature "Barcode management", type: :feature do
     visit url_prefix + "/storage_locations/" + storage_location.id.to_s
     click_link "Inventory coming out"
 
-    expect(page.find('table#sectionC.table.table-hover', visible: true)).to have_content "100"
+    expect(page.find("table#sectionC.table.table-hover", visible: true)).to have_content "100"
   end
-
 end

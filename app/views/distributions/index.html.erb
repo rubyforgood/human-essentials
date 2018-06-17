@@ -25,7 +25,7 @@
           <i class="fa fa-plus"></i> New Distribution
         <% end %>
         <% if @distributions.length > 0 %>
-          <%= link_to csv_data_exports_path(format: :csv, type: "Distribution"), class: "btn btn-secondary" do %>
+          <%= link_to csv_path(format: :csv, type: "Distribution"), class: "btn btn-secondary" do %>
             <i class="fa fa-download" aria-hidden="true"></i> Export Distributions
           <% end %>
         <% end %>

@@ -57,7 +57,7 @@ shared_examples_for "itemizable" do
         expect(subject.line_items.quantities_by_category).to eq(categories)
       end
     end
-    
+
     describe "quantities_by_name" do
       let(:item1) { create(:item, name: "item1", organization: @organization) }
       let(:item2) { create(:item, name: "item2", organization: @organization) }
@@ -72,31 +72,31 @@ shared_examples_for "itemizable" do
       end
 
       it "returns a hash of items with id, name, and quantity" do
-        quantities = [ { item_id: item1.id, 
-                         name: item1.name,
-                         quantity: 10 },
-                       { item_id: item2.id,
-                         name: item2.name,
-                         quantity: 20 } ]
+        quantities = [{ item_id: item1.id,
+                        name: item1.name,
+                        quantity: 10 },
+                      { item_id: item2.id,
+                        name: item2.name,
+                        quantity: 20 }]
 
         expect(subject.line_items.quantities_by_name.values).to match_array(quantities)
       end
 
       it "leaves out zero-quantitied items if requested" do
         subject.line_items.last.update(quantity: 0)
-        quantities = [ { item_id: item1.id,
-                         name: item1.name,
-                         quantity: 10 } ]
+        quantities = [{ item_id: item1.id,
+                        name: item1.name,
+                        quantity: 10 }]
 
         expect(subject.line_items.quantities_by_name.values).to match_array(quantities)
       end
-    end    
+    end
 
     describe "sorted" do
       subject { create(model_f, organization: @organization) }
 
       it "displays the items, sorted by name" do
-        names = ["abc", "def", "ghi"]
+        names = %w(abc def ghi)
         subject.line_items << create(:line_item, item: create(:item, name: names[1]))
         subject.line_items << create(:line_item, item: create(:item, name: names[0]))
         subject.line_items << create(:line_item, item: create(:item, name: names[2]))
@@ -110,9 +110,9 @@ shared_examples_for "itemizable" do
       subject { create(model_f, organization: @organization) } # the class that includes the concern
 
       it "has an item total" do
-        expect {
+        expect do
           2.times { subject.line_items << create(:line_item, quantity: 5) }
-        }.to change{ subject.line_items.total }.by(10)
+        end.to change { subject.line_items.total }.by(10)
       end
     end
 
@@ -125,9 +125,9 @@ shared_examples_for "itemizable" do
         inventory_item = create(:inventory_item, storage_location: storage_location, item_id: line_item.item_id)
         previous_quantities = subject.line_items_quantities
         line_item.update!(quantity: 5)
-        expect{
+        expect do
           storage_location.adjust_from_past!(subject, previous_quantities)
-        }.to change{ inventory_item.reload.quantity }.by(-5)
+        end.to change { inventory_item.reload.quantity }.by(-5)
       end
     end
   end
