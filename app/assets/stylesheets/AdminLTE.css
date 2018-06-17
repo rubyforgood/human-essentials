@@ -4347,6 +4347,14 @@ table.text-center th {
  * General: Miscellaneous
  * ----------------------
  */
+.org-stats-icon .success {
+  color: #00a65a;
+}
+@media (max-width: 767px) {
+  .org-stats .org-stats-box-container:not(:last-child) .org-stats-box {
+    border-bottom: 1px solid #ecf0f5;
+  }
+}
 .pad {
   padding: 10px;
 }

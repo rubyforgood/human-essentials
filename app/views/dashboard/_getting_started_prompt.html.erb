@@ -1,0 +1,129 @@
+<% total_criteria = 4 %>
+<% partner_criteria_met = org_stats.partners_added > 0 %>
+<% location_criteria_met = org_stats.storage_locations_added > 0 %>
+<% donation_criteria_met = org_stats.donation_sites_added > 0 %>
+<% inventory_criteria_met = org_stats.locations_with_inventory.length > 0 %>
+<% criterias = [ partner_criteria_met, location_criteria_met, donation_criteria_met, inventory_criteria_met ] %>
+<% current_step = criterias.find_index(false) %>
+
+<% if current_step.present? %>
+  <div class="col-md-12">
+    <div class="box box-primary" id="getting-started-guide">
+      <div class="box-header with-border">
+        <h2 class="box-title">
+          Just Starting?
+          <small>Here are some things you may need to set up:</small>
+        </h2>
+      </div>
+
+      <div class="box-body org-stats">
+        <div class="col-md-12">
+          <%= render partial: "getting_started_progress_stepper", locals: {
+            current_step: current_step,
+            criterias: criterias,
+            lines: ["line-right", "line-right line-left", "line-right line-left", "line-left"],
+            step_labels: ["Partner Agencies", "Storage Locations", "Donation Sites", "Inventory"]
+          } %>
+        </div>
+
+        <div class="col-md-12 org-stats-box-container<%= current_step == 0 ? '' : ' hidden visible-xs' %>">
+          <div class="org-stats-box">
+            <div class="box-body text-center position-relative">
+              <div class="org-stats-icon">
+                <% if partner_criteria_met %>
+                  <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+                <% else %>
+                  <i class="fa fa-users fa-2x" aria-hidden="true"></i>
+                <% end %>
+                <h4><%= pluralize(org_stats.partners_added, 'Partner Agency') %> Added</h4>
+              </div>
+
+              <p class="org-stats-desc">
+                To start building your community in DiaperBase, import a list of your current partner agencies or add them individually.
+              </p>
+
+              <div id="org-stats-call-to-action-partners">
+                <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
+                <%= link_to partner_link_text, partners_path, class: "btn btn-primary btn-md" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 org-stats-box-container<%= current_step == 1 ? '' : ' hidden visible-xs' %>">
+          <div class="org-stats-box">
+            <div class="box-body text-center position-relative">
+              <div class="org-stats-icon">
+                <% if location_criteria_met %>
+                  <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+                <% else %>
+                  <i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>
+                <% end %>
+                <h4><%= pluralize(org_stats.storage_locations_added, 'Storage Location') %> Added</h4>
+              </div>
+
+              <p class="org-stats-desc">
+                Add details for all Storage Locations you use for your inventory.
+              </p>
+
+              <div id="org-stats-call-to-action-storage-locations">
+                <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
+                <%= link_to location_link_text, storage_locations_path, class: "btn btn-primary btn-md" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 org-stats-box-container<%= current_step == 2 ? '' : ' hidden visible-xs' %>">
+          <div class="org-stats-box">
+            <div class="box-body text-center position-relative">
+              <div class="org-stats-icon">
+                <% if donation_criteria_met %>
+                  <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+                <% else %>
+                  <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+                <% end %>
+                <h4><%= pluralize(org_stats.donation_sites_added, 'Donation Site') %> Added</h4>
+              </div>
+
+              <p class="org-stats-desc">
+                Add any community sites (including your primary storage facility) that accept donations on your behalf.
+              </p>
+
+              <div id="org-stats-call-to-action-donation-sites">
+                <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
+                <%= link_to donation_link_text, donation_sites_path, class: "btn btn-primary btn-md" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 org-stats-box-container<%= current_step == 3 ? '' : ' hidden visible-xs' %>">
+          <div class="org-stats-box">
+            <div class="box-body text-center position-relative">
+              <div class="org-stats-icon">
+                <% if inventory_criteria_met %>
+                  <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+                <% else %>
+                  <i class="fa fa-pie-chart fa-2x" aria-hidden="true"></i>
+                <% end %>
+                <h4><%= pluralize(org_stats.locations_with_inventory.length, 'Storage Location') %> with Inventory</h4>
+              </div>
+
+              <div class="org-stats-desc">
+                <p>
+                  As a diaper bank, you might already have inventory on hand. These items might have come from previous donations/purchases. If you have multiple sources or want to add inventory to multiple storage locations, you can create multiple donations or purchases while specifying the correct date, source, and location.
+                </p>
+              </div >
+
+              <div id="org-stats-call-to-action-inventory">
+                <%= link_to "Add past donation", new_donation_path, class: "btn btn-primary btn-md" %>
+                <%= link_to "Add past purchase", new_purchase_path, class: "btn btn-primary btn-md" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

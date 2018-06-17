@@ -18,7 +18,7 @@ RSpec.describe InventoryItem, type: :model do
       end
 
       it "is numerical" do
-        expect(build(:inventory_item, quantity: 'a')).not_to be_valid
+        expect(build(:inventory_item, quantity: "a")).not_to be_valid
       end
 
       it "is gte 0" do

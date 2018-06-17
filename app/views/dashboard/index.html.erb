@@ -14,6 +14,8 @@
     <!-- Main content -->
 <section class="content">
   <div class="row">
+    <%= render partial: "getting_started_prompt", locals: { org_stats: @org_stats } %>
+
     <div class="col-md-12">
       <div class="box box-primary">
         <div class="box-header with-border">

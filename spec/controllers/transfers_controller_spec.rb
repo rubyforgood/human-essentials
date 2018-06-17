@@ -47,13 +47,13 @@ RSpec.describe TransfersController, type: :controller do
       end
     end
     context "Looking at a different organization" do
-      let(:object) {
+      let(:object) do
         org = create(:organization)
         create(:transfer,
                to: create(:storage_location, organization: org),
                from: create(:storage_location, organization: org),
-               organization: org )
-      }
+               organization: org)
+      end
       let!(:skip) { [:edit] }
       include_examples "requiring authorization"
     end

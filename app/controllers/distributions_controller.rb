@@ -1,10 +1,9 @@
 class DistributionsController < ApplicationController
-
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
     @distribution = Distribution.find(params[:id])
-    @filename = "%s %s.pdf" % [@distribution.partner.name, sortable_date(@distribution.created_at)]
+    @filename = format("%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at))
   end
 
   def reclaim
@@ -13,14 +12,13 @@ class DistributionsController < ApplicationController
 
     flash[:notice] = "Distribution #{@distribution.id} has been reclaimed!"
     redirect_to distributions_path
-
   end
 
   def index
     @distributions = current_organization
-                      .distributions
-                      .includes(:partner, :storage_location, :line_items, :items)
-                      .order(created_at: :desc)
+                     .distributions
+                     .includes(:partner, :storage_location, :line_items, :items)
+                     .order(created_at: :desc)
   end
 
   def create
@@ -45,7 +43,7 @@ class DistributionsController < ApplicationController
     else
       @storage_locations = current_organization.storage_locations
       flash[:error] = "An error occurred, try again?"
-      logger.error "failed to save distribution: #{ @distribution.errors.full_messages }"
+      logger.error "failed to save distribution: #{@distribution.errors.full_messages}"
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
@@ -70,14 +68,14 @@ class DistributionsController < ApplicationController
 
   def insufficient_amount!
     respond_to do |format|
-      format.html { render template: "errors/insufficient", layout: "layouts/application", status: 200 }
-      format.json { render nothing: true, status: 200 }
+      format.html { render template: "errors/insufficient", layout: "layouts/application", status: :ok }
+      format.json { render nothing: true, status: :ok }
     end
   end
 
   private
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))
   end
 end

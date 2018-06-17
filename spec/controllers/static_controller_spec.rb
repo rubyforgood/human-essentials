@@ -1,9 +1,7 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe StaticController, type: :controller do
-
   describe "Not signed in" do
-
     describe "GET #index" do
       subject { get :index }
       it "returns http success" do
@@ -15,18 +13,16 @@ RSpec.describe StaticController, type: :controller do
     end
 
     describe "GET #page/content" do
-      subject { get :page, params:{name:"contact"} }
+      subject { get :page, params: { name: "contact" } }
       it "renders the contact page" do
         expect(subject).to render_template :contact
       end
     end
-
   end
 
   describe "Signed in" do
-
     before do
-    	sign_in(@user)
+      sign_in(@user)
     end
 
     describe "GET #index" do
@@ -35,7 +31,5 @@ RSpec.describe StaticController, type: :controller do
         expect(subject).to redirect_to(dashboard_url(@organization))
       end
     end
-
   end
-
 end

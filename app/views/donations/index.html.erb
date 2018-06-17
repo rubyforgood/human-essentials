@@ -62,7 +62,7 @@
                 <i class="fa fa-plus"></i> New Donation
               <% end %>
               <% if @donations.length > 0 %>
-                <%= link_to csv_data_exports_path(format: :csv, type: "Donation"), class: "btn btn-secondary" do %>
+                <%= link_to csv_path(format: :csv, type: "Donation"), class: "btn btn-secondary" do %>
                   <i class="fa fa-download" aria-hidden="true"></i> Export Donations
                 <% end %>
               <% end %>

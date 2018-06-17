@@ -16,8 +16,8 @@
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :canonical_item, counter_cache: :item_count
-  validates_uniqueness_of :name, :scope => :organization
-  validates_presence_of :name
+  validates :name, uniqueness: { scope: :organization }
+  validates :name, presence: true
   validates :organization, presence: true
 
   has_many :line_items
@@ -50,11 +50,11 @@ class Item < ApplicationRecord
   end
 
   def self.storage_locations_containing(item)
-    StorageLocation.joins(:inventory_items).where('inventory_items.item_id = ?', item.id)
+    StorageLocation.joins(:inventory_items).where("inventory_items.item_id = ?", item.id)
   end
 
   def self.barcodes_for(item)
-    BarcodeItem.where('barcodeable_id = ?', item.id)
+    BarcodeItem.where("barcodeable_id = ?", item.id)
   end
 
   # Override `destroy` to ensure Item isn't accidentally destroyed

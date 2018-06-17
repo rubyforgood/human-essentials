@@ -1,7 +1,7 @@
 RSpec.describe DashboardController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.to_param }
-  }
+  end
 
   context "While signed in" do
     before do
@@ -14,7 +14,7 @@ RSpec.describe DashboardController, type: :controller do
         expect(response).to have_http_status(:success)
       end
 
-      context 'for another org' do
+      context "for another org" do
         it "requires authorization" do
           # nother org
           get :index, params: { organization_id: create(:organization).to_param }
@@ -30,5 +30,4 @@ RSpec.describe DashboardController, type: :controller do
       expect(response).to be_redirect
     end
   end
-
 end
