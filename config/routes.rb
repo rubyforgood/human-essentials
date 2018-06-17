@@ -67,6 +67,7 @@ Rails.application.routes.draw do
     resources :purchases
 
     get 'dashboard', to: 'dashboard#index'
+    get 'csv', to: 'data_exports#csv'
 
     resources :data_exports, only: [:index] do
       collection do
