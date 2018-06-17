@@ -6,6 +6,7 @@ class AddsIssuedAtToDonation < ActiveRecord::Migration[5.0]
   		d.issued_at = d.created_at
   		d.save
   	end
+    Donation.reset_column_information
   end
 
   def down
