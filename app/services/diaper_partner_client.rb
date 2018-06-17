@@ -1,5 +1,7 @@
 module DiaperPartnerClient
   def self.post(path, attributes)
+    return if Rails.env.test? # FIXME: Work out how to do integration testing
+
     diaper_partner_url = ENV["DIAPER_PARTNER_URL"]
     return if diaper_partner_url.blank?
 

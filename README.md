@@ -23,26 +23,34 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 Docker for Mac has some pretty poor disk sharing (volume) performance. At the time of writing, the test run is 50% slower when using Docker vs using native. Overall this shouldn't impact your development experience too badly but you should be aware.
 
-### Postgres data
+### Setup
 
-You can set up the database with the following command:
+You can set up the app and database with the following commands:
 
-`docker-compose build` (if you haven't already)
-`docker-compose run web rails db:setup`
-
-If migrations fail, run:
-
-`docker-compose run web bin/rake db:schema:load`
-
-Note: currently the seeds fail about halfway through due to the Partner integration. You can resolve this by temporarily commenting out the `DIAPER_PARTNER_URL` environment variable in ./docker-compose.yml (See [diaperpartner](https://github.com/rubyforgood/diaperpartner) for more)
+    docker-compose build
+    docker-compose run web bin/setup
 
 ### Running the app
 
-Start the application with `docker-compose up web` and then visit [http://localhost:3000](http://localhost:3000)
+Start the application with `docker-compose up web` and then visit [http://localhost:3000](http://localhost:3000). Press ^C to stop the application.
 
 ### Running tests
 
-Simply run `docker-compose run test rails spec`.
+Run:
+
+    docker-compose run web rake spec
+
+### Tips
+
+Outside of docker you often prefix commands with `bundle exec`. Using the
+docker setup, switch this prefix to `docker-compose run web`. You could even
+set up an alias like this:
+
+    alias dcrw="docker-compose run web" # Put this in your ~/.profile
+    dcrw rails c                        # get a rails console
+    dcrw rake spec                      # run the tests
+    dcrw rubocop                        # check out what rubocop says
+    dcrw rspec spec/models/user_spec.rb # Run a single spec
 
 ## Development without Docker
 
@@ -108,7 +116,10 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 ### Testing
 
-If you are using Docker you may run the tests with `docker-compose run test`, otherwise run `bundle exec rake spec`.
+Run all the tests with:
+
+  docker-compose run web rake spec # if you are using docker
+  bundle exec rake spec            # if you are NOT using docker
 
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
