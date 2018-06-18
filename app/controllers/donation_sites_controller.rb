@@ -12,14 +12,13 @@ class DonationSitesController < ApplicationController
           redirect_to donation_sites_path,
                       notice: "Donation site #{@donation_site.name} added!"
         end
-        format.js { render partial: "shared/table_row_prepend", object: @donation_site }
       else
         format.html do
           flash[:error] = "Something didn't work quite right -- try again?"
           render action: :new
         end
-        format.js { render partial: "shared/table_row_prepend", object: @donation_site }
       end
+      format.js { render partial: "shared/table_row_prepend", object: @donation_site }
     end
   end
 
