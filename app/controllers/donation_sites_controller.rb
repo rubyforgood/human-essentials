@@ -18,7 +18,7 @@ class DonationSitesController < ApplicationController
           flash[:error] = "Something didn't work quite right -- try again?"
           render action: :new
         end
-        format.js { render partial: "shared/table_row_prepend", object: @partner }
+        format.js { render partial: "shared/table_row_prepend", object: @donation_site }
       end
     end
   end
