@@ -158,6 +158,7 @@ GEM
     font-ionicons-rails (2.0.1.5)
       railties (>= 3.2, < 6.0)
     formatador (0.2.5)
+    geocoder (1.4.9)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     groupdate (3.2.1)
@@ -438,6 +439,7 @@ DEPENDENCIES
   factory_bot_rails
   font-awesome-rails
   font-ionicons-rails
+  geocoder
   groupdate (~> 3.2)
   guard-rspec
   jbuilder
