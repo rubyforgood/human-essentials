@@ -14,7 +14,8 @@
 #  city            :string
 #  state           :string
 #  zipcode         :string
-#
+#  latitude        :float
+#  longitude       :float
 
 class Organization < ApplicationRecord
   validates :name, presence: true
@@ -22,6 +23,9 @@ class Organization < ApplicationRecord
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
   validate :correct_logo_mime_type
+
+  geocoded_by :address
+  after_validation :geocode, :if => :address_changed?
 
   has_many :adjustments
   has_many :barcode_items do
@@ -104,4 +108,9 @@ class Organization < ApplicationRecord
       errors.add(:logo, "Must be a JPG or a PNG file")
     end
   end
+
+  def address_changed?
+    street_changed? || city_changed? || state_changed? || zipcode_changed?
+  end
+
 end
