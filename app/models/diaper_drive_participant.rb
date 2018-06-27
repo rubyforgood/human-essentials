@@ -23,7 +23,7 @@ class DiaperDriveParticipant < ApplicationRecord
   has_many :donations, inverse_of: :diaper_drive_participant
 
   geocoded_by :address
-  after_validation :geocode, :if => :address_changed?
+  after_validation :geocode, if: :address_changed?
 
   validates :name, presence: true
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }

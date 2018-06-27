@@ -25,7 +25,7 @@ class Organization < ApplicationRecord
   validate :correct_logo_mime_type
 
   geocoded_by :address
-  after_validation :geocode, :if => :address_changed?
+  after_validation :geocode, if: :address_changed?
 
   has_many :adjustments
   has_many :barcode_items do
@@ -112,5 +112,4 @@ class Organization < ApplicationRecord
   def address_changed?
     street_changed? || city_changed? || state_changed? || zipcode_changed?
   end
-
 end
