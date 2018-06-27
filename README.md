@@ -42,7 +42,20 @@ Start the application with `docker-compose up web` and then visit [http://localh
 
 ### Running tests
 
-Simply run `docker-compose run test rails spec`.
+Run `docker-compose run test rails spec`
+
+### Install githooks
+If you'd like to get instantaneous feedback on if your commit is passing rubocop checks and to not forget to run `annotate`, you can install githooks so that it happens automatically on each git commit.
+
+If running Git version 2.9 or later: `git config core.hooksPath .githooks`
+
+Otherwise run: `find .git/hooks -type l -exec rm {} \; && find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;`
+
+To one-off ignore githooks:  `git commit --no-verify`
+
+To uninstall githooks entirely, Git version 2.9 or later: `git config --unset core.hooksPath`
+
+To uninstall githooks otherwise:  `rm .git/hooks/pre-commit`
 
 ## Development without Docker
 
