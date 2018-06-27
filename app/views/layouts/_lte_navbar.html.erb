@@ -1,5 +1,4 @@
-<% if controller.controller_name != "admins" %>
-      <div class="navbar-custom-menu">
+ <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -20,12 +19,24 @@
               <li class="footer"><%= link_to "View Calendar", pick_ups_distributions_path %></li>
             </ul>
           </li>
-          <% if current_user.organization_admin? %>
+          <% if current_user.is_superadmin? %>
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-lock"></i> Administration
+            </a>
+            <ul class="dropdown-menu">
               <li>
-              <%= link_to(admins_path) do %>
-                <i class="fa fa-lock"></i> Administration
-              <% end %>
-            </li>
+                <%= navigation_link_to "Organizations", admin_organizations_path %>
+              </li>
+              <li>
+                <%= navigation_link_to "Canonical items", admin_canonical_items_path %>
+              </li>
+              <li>
+                <%= navigation_link_to "Users", admin_users_path %>
+              </li>
+            </ul>
+          </li>
+            <% end %>
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
@@ -66,11 +77,11 @@
                   </div>
                   <% with_options organization_id: current_user.organization.to_param do |with_org| %>
                   <div class="col-xs-4 text-center">
-                    <%= navigation_link_to "Manage users", with_org.users_path %>
+                    <%= navigation_link_to "Show users", with_org.users_path %>
                   </div>
-                  <div class="col-xs-4 text-center">
-                    <%= navigation_link_to "Modify organization", with_org.edit_organization_path %>
-                  </div>
+                    <div class="col-xs-4 text-center">
+                      <%= navigation_link_to "Show organization", with_org.organization_path %>
+                    </div>
                   <% end %>
                 </div>
                 <!-- /.row -->
@@ -88,4 +99,3 @@
           </li>
         </ul>
       </div>
-<% end %>

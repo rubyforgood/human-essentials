@@ -1,0 +1,69 @@
+<section class="content-header">
+  <% content_for :title, "Users" %>
+  <h1>
+    Users
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
+    </li>
+    <li><a href="#">All users</a></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-body">
+      <div class="text-right">
+        <%= link_to new_admin_user_path, class: "btn btn-success" do %>
+          <%= fa_icon "plus" %> Add a user
+        <% end %>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>Organization</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @users.each do |user| %>
+                <tr>
+                <td><%= user.organization.name %></td>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td class="text-right">
+                  <% if user != current_user %>
+                    <%= link_to admin_user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?", class: "btn btn-danger btn-xs" do %>
+                      <%= fa_icon "trash" %> Delete
+                    <% end %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_user_registration_path(user), class: "btn btn-info btn-xs" do %>
+                    <%= fa_icon "edit" %> Edit
+                  <% end %>
+              <% end %>
+              </td>
+              </tr>
+              </tbody>
+            </table>
+            <!-- /.box-body -->
+          </div>
+        </div>
+        <!-- /.box -->
+      </div>
+    </div>
+  </div>
+</section>

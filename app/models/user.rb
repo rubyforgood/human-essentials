@@ -40,6 +40,6 @@ class User < ApplicationRecord
   validates :name, :email, presence: true
 
   def is_superadmin?
-    false
+    superadmin
   end
 end

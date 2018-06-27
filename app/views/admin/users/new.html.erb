@@ -1,0 +1,43 @@
+<div class="box">
+  <div class="box-body">
+
+
+  <% content_for :title, "Users - New" %>
+
+  <h1>Add a user</h1>
+
+  <%= simple_form_for @user, url: admin_users_path do |f| %>
+    <%= f.error_notification %>
+    <div class="form-inputs">
+      <%= f.input :organization_id, label: "Organization", wrapper: :vertical_input_group, required: true, autofocus: true do %>
+        <span class="input-group-addon"><%= fa_icon "building" %></span>
+        <%= f.input_field :organization_id, collection: @organizations, class: "form-control" %>
+      <% end %>
+      <%= f.input :name, label: "Name", wrapper: :vertical_input_group, required: true, autofocus: true do %>
+        <span class="input-group-addon"><%= fa_icon "user" %></span>
+        <%= f.input_field :name, class: "form-control" %>
+      <% end %>
+      <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group, required: true do %>
+        <span class="input-group-addon"><%= fa_icon "envelope" %></span>
+        <%= f.input_field :email, class: "form-control" %>
+      <% end %>
+      <%= f.input :password, label: "Password", wrapper: :vertical_input_group, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) do %>
+        <span class="input-group-addon"><%= fa_icon "lock" %></span>
+        <%= f.input_field :password, class: "form-control" %>
+      <% end %>
+      <%= f.input :password_confirmation, label: "Confirm Password", wrapper: :vertical_input_group, required: true do %>
+        <span class="input-group-addon"><%= fa_icon "check" %></span>
+        <%= f.input_field :password_confirmation, class: "form-control" %>
+      <% end %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.button :submit, "Create User", class: "btn-primary" %>
+      <%= link_to "Cancel", :back, class: "btn btn-secondary" %>
+    </div>
+
+  <% end %>
+
+
+</div>
+</div>
