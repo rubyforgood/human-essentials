@@ -9,7 +9,7 @@ New Organization
     <i class="fa fa-dashboard"></i> Home
   <% end %>
   </li>
-  <li><%= link_to "Administration", (admins_path(organization_id: current_user.organization)) %></li>
+  <li><%= link_to "Administration", new_admin_organization_path %></li>
   <li><a href="#">New Organization</a></li>
 </ol>
 </section>
@@ -23,7 +23,7 @@ New Organization
   <h3 class="box-title">Add New Diaperbase Organization</h3>
 </div>
 <div class="box-body">
-<%= simple_form_for @organization, url: admins_path do |f| %>
+<%= simple_form_for @organization, url: admin_organizations_path do |f| %>
 
 <div class="form-inputs">
   <%= f.input :name, required: true, autofocus: true %>

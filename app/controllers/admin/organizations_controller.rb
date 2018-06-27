@@ -1,16 +1,14 @@
-class AdminsController < ApplicationController
-  before_action :authorize_user
-
+class Admin::OrganizationsController < AdminController
   def edit
     @organization = Organization.find(params[:id])
   end
 
   def update
     @organization = Organization.find(params[:id])
-    if @organization.update(organization_params)
-      redirect_to admins_path, notice: "Updated organization!"
+    if @organization.update_attributes(organization_params)
+      redirect_to admin_organizations_path, notice: 'Updated organization!'
     else
-      flash[:error] = "Failed to update this organization."
+      flash[:error] = 'Failed to update this organization.'
       render :edit
     end
   end
@@ -21,7 +19,7 @@ class AdminsController < ApplicationController
 
   def invite_user
     User.invite!(email: params[:email], name: params[:name], organization_id: params[:org])
-    redirect_to admins_path, notice: "User invited to organization!"
+    redirect_to admin_organizations_path, notice: 'User invited to organization!'
   end
 
   def new
@@ -32,7 +30,7 @@ class AdminsController < ApplicationController
     @organization = Organization.create(organization_params)
     if @organization.save
       Organization.seed_items(@organization)
-      redirect_to admins_path, notice: "Organization added!"
+      redirect_to admin_organizations_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
       render :new
@@ -46,19 +44,15 @@ class AdminsController < ApplicationController
   def destroy
     @organization = Organization.find(params[:id])
     if @organization.destroy
-      redirect_to admins_path, notice: "Organization deleted!"
+      redirect_to admin_organizations_path, notice: "Organization deleted!"
     else
-      redirect_to admins_path, alert: "Failed to delete Organization."
+      redirect_to admin_organizations_path, alert: "Failed to delete Organization."
     end
   end
 
   private
 
-  def authorize_user
-    verboten! unless current_user.organization_admin
-  end
-
   def organization_params
-    params.require(:organization).permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo)
+    params.require(:organization).permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location)
   end
 end

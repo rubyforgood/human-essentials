@@ -1,5 +1,3 @@
-<% if controller.controller_name != "admins" %>
-
 <!-- Left side column. contains the sidebar -->
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
@@ -8,7 +6,7 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
         <li class="<%= active_class(['dashboard']) %>">
-          <%= link_to(dashboard_path) do %>
+          <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
           <% end %>
         </li>
@@ -21,18 +19,18 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="<%= 'active' if current_page?(donations_path) %>">
-              <%= link_to(donations_path) do %>
+            <li class="<%= 'active' if current_page?(donations_path(organization_id: current_user.organization)) %>">
+              <%= link_to(donations_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> All Donations
               <% end %>
             </li>
-            <li class="<%= 'active' if current_page?(new_donation_path) %>">
-              <%= link_to(new_donation_path) do %>
+            <li class="<%= 'active' if current_page?(new_donation_path(organization_id: current_user.organization)) %>">
+              <%= link_to(new_donation_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> New Donation
               <% end %>
             </li>
-            <li class="<%= 'active' if current_page?(scale_donations_path) %>">
-              <%= link_to(scale_donations_path) do %>
+            <li class="<%= 'active' if current_page?(scale_donations_path(organization_id: current_user.organization)) %>">
+              <%= link_to(scale_donations_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Repackaged Donation
               <% end %>
             </li>
@@ -47,21 +45,21 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="<%= 'active' if current_page?(purchases_path) %>">
-              <%= link_to(purchases_path) do %>
+            <li class="<%= 'active' if current_page?(purchases_path(organization_id: current_user.organization)) %>">
+              <%= link_to(purchases_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> All Purchases
               <% end %>
             </li>
-            <li class="<%= 'active' if current_page?(new_purchase_path) %>">
-              <%= link_to(new_purchase_path) do %>
+            <li class="<%= 'active' if current_page?(new_purchase_path(organization_id: current_user.organization)) %>">
+              <%= link_to(new_purchase_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> New Purchase
               <% end %>
             </li>
           </ul>
         </li>
         <li>
-        <li class="<%= 'active' if current_page?(distributions_path) %>">
-          <%= link_to(distributions_path) do %>
+        <li class="<%= active_class(['distributions']) %>">
+          <%= link_to(distributions_path(organization_id: current_user.organization)) do %>
             <i class="fa fa-circle-o"></i> <span>Distributions</span>
           <% end %>
         </li>
@@ -81,27 +79,27 @@
           </a>
           <ul class="treeview-menu">
             <li class="<%= active_class(['items']) %>">
-              <%= link_to(items_path) do %>
+              <%= link_to(items_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Items &amp; Inventory
               <% end %>
             </li>
             <li class="<%= active_class(['barcode_items']) %>">
-              <%= link_to(barcode_items_path) do %>
+              <%= link_to(barcode_items_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Barcode Items
               <% end %>
             </li>
             <li class="<%= active_class(['storage_locations']) %>">
-              <%= link_to(storage_locations_path) do %>
+              <%= link_to(storage_locations_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Storage Locations
               <% end %>
             </li>
             <li class="<%= active_class(['adjustments']) %>">
-              <%= link_to(adjustments_path) do %>
+              <%= link_to(adjustments_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Inventory Adjustments
               <% end %>
             </li>
             <li class="<%= active_class(['transfers']) %>">
-              <%= link_to(transfers_path) do %>
+              <%= link_to(transfers_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Transfers
               <% end %>
             </li>
@@ -119,17 +117,17 @@
           </a>
           <ul class="treeview-menu">
             <li class="<%= active_class(['donation_sites']) %>">
-              <%= link_to(donation_sites_path) do %>
+              <%= link_to(donation_sites_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Donation Sites
               <% end %>
             </li>
             <li class="<%= active_class(['partners']) %>">
-              <%= link_to(partners_path) do %>
+              <%= link_to(partners_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Partner Agencies
               <% end %>
             </li>
             <li class="<%= active_class(['diaper_drive_participants']) %>">
-              <%= link_to(diaper_drive_participants_path) do %>
+              <%= link_to(diaper_drive_participants_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Diaper Drive Participants
               <% end %>
             </li>
@@ -139,20 +137,3 @@
     </section>
     <!-- /.sidebar -->
   </aside>
-<% else %>
-<!-- Left side column. contains the sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">Admin Functions</li>
-        <li class="<%= active_class(['dashboard']) %>">
-          <%= link_to(canonical_items_path) do %>
-            <i class="fa"></i> <span>Canonical Items</span>
-          <% end %>
-        </li>
-      </ul>
-    </section>
-  </aside>
-<% end %>

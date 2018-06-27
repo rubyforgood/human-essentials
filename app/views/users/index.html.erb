@@ -33,7 +33,6 @@
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -41,17 +40,6 @@
         <tr>
           <td><%= user.name %></td>
           <td><%= user.email %></td>
-          <td class="text-right">
-            <% if user != current_user %>
-              <%= link_to user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?", class: "btn btn-danger btn-xs" do %>
-                <%= fa_icon "trash" %> Delete
-              <% end %>
-            <% else %>
-              <%= link_to edit_user_registration_path(organization_id: nil), class: "btn btn-info btn-xs" do %>
-                <%= fa_icon "edit" %> Edit
-              <% end %>
-            <% end %>
-          </td>
         </tr>
         <% end %>
         </tbody>
@@ -62,4 +50,5 @@
     <!-- /.box -->
   </div>
 </div>
+  </div>
 </section>

@@ -9,7 +9,6 @@
     <i class="fa fa-dashboard"></i> Home
   <% end %>
   </li>
-  <li><%= link_to "Administration", (admins_path(organization_id: current_user.organization)) %></li>
   <li class="active"><%= @organization.name %></li>
 </ol>
 </section>
@@ -49,7 +48,7 @@
 				</div>
 				<div class="modal-body">
 					<div class="box-body">
-						<%= form_tag invite_user_admins_path do %>
+						<%= form_tag invite_user_admin_organizations_path do %>
 							<div class="input-group">
 							  <span class="input-group-addon" id="spn_usr_fa_icon"><%= fa_icon "user" %></span>
 							  <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="spn_usr_fa_icon">
@@ -76,3 +75,4 @@
 
 	</div>
 </div>
+</section>

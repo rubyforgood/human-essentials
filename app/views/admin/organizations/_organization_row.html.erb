@@ -1,0 +1,12 @@
+<tr>
+  <td><%= organization_row.name %></td>
+  <td><%= link_to organization_row.email, "mailto:#{organization_row.email}" %></td>
+  <td class="text-right">
+      <%= link_to edit_admin_organization_path(organization_row.id), class: "btn btn-info btn-xs" do %>
+        <%= fa_icon "edit" %> Edit
+      <% end %>
+      <%= link_to admin_organization_path(organization_row.id), method: :delete,  data: { confirm: confirm_delete_msg(organization_row.name) },  class: "btn btn-danger btn-xs" do %>
+        <%= fa_icon "trash" %> Delete
+      <% end unless (Organization.count <= 1) %>
+  </td>
+</tr>
