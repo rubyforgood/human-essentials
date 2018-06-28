@@ -20,7 +20,7 @@ class DataExport
     @type = type
   end
 
-  def as_csv  
+  def as_csv
     return nil unless current_organization.present? && type.present?
     return nil unless SUPPORTED_TYPES.include? type
 
