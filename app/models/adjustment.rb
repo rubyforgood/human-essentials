@@ -17,6 +17,10 @@ class Adjustment < ApplicationRecord
   include Itemizable
   include Filterable
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .includes(:storage_location, :line_items)
+  }
 
   validates :storage_location, :organization, presence: true
   validate :line_item_items_exist_in_inventory

@@ -19,6 +19,11 @@ class DonationSite < ApplicationRecord
 
   has_many :donations
 
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .order(:name)
+  }
+
   def self.import_csv(filename, organization)
     CSV.parse(filename, headers: true) do |row|
       loc = DonationSite.new(row.to_hash)
