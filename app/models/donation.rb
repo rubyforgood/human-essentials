@@ -35,6 +35,11 @@ class Donation < ApplicationRecord
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
     where(diaper_drive_participant_id: diaper_drive_participant_id)
   }
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .includes(:line_items, :storage_location, :donation_site)
+      .order(created_at: :desc)
+  }
 
   before_create :combine_duplicates
   before_destroy :remove_inventory

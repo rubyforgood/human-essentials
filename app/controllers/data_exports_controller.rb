@@ -4,8 +4,10 @@ class DataExportsController < ApplicationController
   def csv
     type = params[:type]
 
-    respond_to do |format|
-      format.csv { send_data data(type), filename: "#{type}-#{Time.zone.today}.csv" }
+    if DataExport.supported_types.include? type
+      respond_to do |format|
+        format.csv { send_data data(type), filename: "#{type}-#{Time.zone.today}.csv" }
+      end
     end
   end
 

@@ -32,6 +32,10 @@ class Distribution < ApplicationRecord
 
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .includes(:partner, :storage_location, :line_items)
+  }
 
   delegate :name, to: :partner, prefix: true
 
