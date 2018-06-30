@@ -6,6 +6,7 @@ class AddIssuedAtToDistribution < ActiveRecord::Migration[5.1]
       d.issued_at = d.created_at
       d.save
     end
+    Distribution.reset_column_information
   end
 
   def down
