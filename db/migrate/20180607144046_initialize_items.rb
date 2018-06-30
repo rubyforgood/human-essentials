@@ -4,6 +4,8 @@ class InitializeItems < ActiveRecord::Migration[5.2]
       ci.category = "Miscellaneous"
     end
     Item.where(canonical_item_id: nil).update_all(canonical_item_id: ci.id)
+    CanonicalItem.reset_column_information
+    Item.reset_column_information
   end
   
   def down

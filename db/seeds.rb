@@ -1,4 +1,3 @@
-raise "This needs to be re-written to work correctly with Canonical items"
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -130,9 +129,9 @@ end
 # qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
 items_by_category.each do |_category, entries|
   entries.each do |entry|
-    seed_quantity(entry[:name], pdx_org, inv_arbor.id, entry[:qty][0])
-    seed_quantity(entry[:name], pdx_org, inv_dsu.id, entry[:qty][1])
-    seed_quantity(entry[:name], pdx_org, inv_pdxdb.id, entry[:qty][2])
+    seed_quantity(entry['name'], pdx_org, inv_arbor.id, entry['qty'][0])
+    seed_quantity(entry['name'], pdx_org, inv_dsu.id, entry['qty'][1])
+    seed_quantity(entry['name'], pdx_org, inv_pdxdb.id, entry['qty'][2])
   end
 end
 
