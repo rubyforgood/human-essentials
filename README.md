@@ -122,8 +122,8 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 Run all the tests with:
 
-  docker-compose run web rake spec # if you are using docker
-  bundle exec rake spec            # if you are NOT using docker
+  docker-compose run web rails spec # if you are using docker
+  bundle exec rails spec            # if you are NOT using docker
 
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
