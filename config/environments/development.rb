@@ -60,8 +60,8 @@ Rails.application.configure do
   # Web-console wants us to only connect from localhost for safety, but in
   # mac-docker we get separate ip addresses. So this grabs ALL our local ips
   # and adds them to the OK list
-  require 'socket'
-  require 'ipaddr'
+  require "socket"
+  require "ipaddr"
   config.web_console.whitelisted_ips = Socket.ip_address_list.reduce([]) do |res, addrinfo|
     addrinfo.ipv4? ? res << IPAddr.new(addrinfo.ip_address).mask(24) : res
   end
