@@ -14,8 +14,8 @@ services:
     environment:
       - PG_USERNAME=postgres
       - PG_HOST=postgres
-      - DIAPER_PARTNER_URL=http://diaperpartner:3000
-      - DIAPER_PARTNER_SECRET_KEY=secretkey123
+      # - DIAPER_PARTNER_URL=http://diaperpartner:3000
+      # - DIAPER_PARTNER_SECRET_KEY=secretkey123
 
   postgres:
     image: postgres:9.5

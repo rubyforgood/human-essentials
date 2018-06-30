@@ -11,6 +11,7 @@ This application is an inventory management system that is built to address the 
 There are currently 5 Diaper Banks, across America, that are working with our organization to use and provide critical feedback about the functionality of the application. We are grateful for their involvement, and value their input as key stakeholders.
 
 ### Origins
+
 This project took what we built for the [Portland Diaper Bank in 2016](https://github.com/rubyforgood/pdx_diaper) and turned it into a multitenant application, something that all diaper banks can use. We re-used models, code and other documentation where applicable as well as implemented new features and functionality requested by the prime stakeholder (PDXDB). We're super excited to have had Rachel Alston, the director of the Portland Diaper Bank, attending our event in 2017, providing guidance and giving us the best chance of success!
 
 ## Development
@@ -52,8 +53,8 @@ You can set up the app and database with the following commands:
 
 When you switch or update branches, you can do:
 
-    docker-compose build              # for installing new/updated gems
-    docker-compose run web bin/update # for migrations and such
+    docker-compose build              # If installing new/updated gems
+    docker-compose run web bin/update # For migrations and such
 
 ### Running the app
 
@@ -63,17 +64,17 @@ Start the application with `docker-compose up web` and then visit [http://localh
 
 Run:
 
-    docker-compose run web rake spec
+    docker-compose run web rails spec
 
 ### Tips
 
 Outside of docker you often prefix commands with `bundle exec`. Using the docker setup, switch this prefix to `docker-compose run web`. You could even set up an alias like this:
 
-    alias dcrw="docker-compose run web" # Put this in your ~/.profile
-    dcrw rails c                        # get a rails console
-    dcrw rake spec                      # run the tests
-    dcrw rubocop                        # check out what rubocop says
-    dcrw rspec spec/models/user_spec.rb # Run a single spec
+    alias dr="docker-compose run web" # Put this in your ~/.profile
+    dr rails c                        # get a rails console
+    dr rails spec                     # run the tests (via rake spec)
+    dr rubocop                        # check out what rubocop says
+    dr rspec spec/models/user_spec.rb # Run a single spec
 
 ## Login
 To login, use these default credentials:
