@@ -146,6 +146,7 @@ GEM
       dotenv (= 2.4.0)
       railties (>= 3.2, < 6.0)
     erubi (1.7.1)
+    erubis (2.7.0)
     execjs (2.7.0)
     factory_bot (4.10.0)
       activesupport (>= 3.0.0)
@@ -153,6 +154,15 @@ GEM
       factory_bot (~> 4.10.0)
       railties (>= 3.0.0)
     ffi (1.9.23)
+    flipper (0.15.0)
+    flipper-active_record (0.15.0)
+      activerecord (>= 3.2, < 6)
+      flipper (~> 0.15.0)
+    flipper-ui (0.15.0)
+      erubis (~> 2.7.0)
+      flipper (~> 0.15.0)
+      rack (>= 1.4, < 3)
+      rack-protection (>= 1.5.3, < 2.1.0)
     font-awesome-rails (4.7.0.4)
       railties (>= 3.2, < 6.0)
     font-ionicons-rails (2.0.1.5)
@@ -251,6 +261,8 @@ GEM
     public_suffix (3.0.2)
     puma (3.11.4)
     rack (2.0.5)
+    rack-protection (2.0.3)
+      rack
     rack-test (1.0.0)
       rack (>= 1.0, < 3)
     rails (5.2.0)
@@ -436,6 +448,9 @@ DEPENDENCIES
   devise_invitable
   dotenv-rails
   factory_bot_rails
+  flipper
+  flipper-active_record
+  flipper-ui
   font-awesome-rails
   font-ionicons-rails
   groupdate (~> 3.2)

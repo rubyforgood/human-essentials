@@ -232,3 +232,5 @@ end
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: distribution
   end
 end
+
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
