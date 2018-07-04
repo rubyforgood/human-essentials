@@ -3,10 +3,10 @@ Rails.application.routes.draw do
 
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
-      username == ENV['FLIPPER_USERNAME'] && password == ENV['FLIPPER_PASSWORD']
+      username == ENV["FLIPPER_USERNAME"] && password == ENV["FLIPPER_PASSWORD"]
     end
   end
-  mount flipper_app, at: '/flipper'
+  mount flipper_app, at: "/flipper"
 
   resources :admins do
     collection do
