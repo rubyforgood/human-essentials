@@ -94,8 +94,6 @@ LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_it
     end
   end
 
-  # TODO: - the intake! method needs to be worked into this controller somehow.
-  # TODO - the distribute! method needs to be worked into this controller somehow
   def update
     @storage_location = current_organization.storage_locations.find(params[:id])
     if @storage_location.update(storage_location_params)

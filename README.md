@@ -104,7 +104,7 @@ At that point, someone will work with you on doing a code review (typically pret
 
 ### Stay Scoped
 
-Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, put a TODO, FIXME, or NOTE comment above it
+Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/diaper/issues/new)
 
 ### Testing
 
@@ -113,12 +113,6 @@ If you are using Docker you may run the tests with `docker-compose run test`, ot
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
 The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
-
-### TODOs
-
-Before committing, please run `rake notes > TODO` in the root of the app.
-
-Feel free to peruse the TODO file and tackle any issues found in there. These may or may not have actual issues associated with them. If they do not have actual issues, use `TODO-Brief-Description` as the the branch naming scheme, instead; similar changes for commit message.
 
 ### In-flight Pull Requests
 
