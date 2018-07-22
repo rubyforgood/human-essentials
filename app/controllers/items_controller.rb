@@ -1,16 +1,10 @@
 class ItemsController < ApplicationController
   def index
     @items = current_organization.items.includes(:canonical_item).alphabetized.filter(filter_params)
-    @items_with_counts = current_organization.
-        items.
-        joins(' LEFT OUTER JOIN "inventory_items" ON "inventory_items"."item_id" = "items"."id"').
-        joins(' LEFT OUTER JOIN "storage_locations" ON "storage_locations"."id" = "inventory_items"."storage_location_id"').
-        select('items.id, items.name, items.category, items.barcode_count, storage_locations.name as storage_name, storage_locations.id as storage_id, sum(inventory_items.quantity) as quantity').
-        group('storage_locations.name, storage_locations.id, items.id, items.name').order(name: :asc).filter(filter_params)
-
     @storages = current_organization.storage_locations.order(id: :asc)
-    @row_collection = Hash.new
-    new_storage_collection
+    hack_for_autoload_query_object_classes_to_work
+    @items_with_counts = Query::ItemsByStorageCollection.new(organization: current_organization, filter_params: filter_params).call
+    @items_by_storage_collection_and_quantity = Query::ItemsByStorageCollectionAndQuantity.new(organization: current_organization, filter_params: filter_params).call
   end
 
   def create
@@ -55,26 +49,19 @@ class ItemsController < ApplicationController
     redirect_to items_path
   end
 
-  def new_storage_collection
-    @storages.each do |storage|
-      @row_collection[storage.id] = ""
-    end
-    @row_collection[:item_quantity] = 0
-    @row_collection[:item_id] = nil
-  end
-  helper_method :new_storage_collection
-
-  def update_storage_collection(item)
-    @row_collection[item.storage_id] = item.quantity
-    @row_collection[:item_id] = item.id
-    @row_collection[:item_name] = item.name
-    @row_collection[:item_category] = item.category
-    @row_collection[:item_barcode_count] = item.barcode_count
-    @row_collection[:item_quantity] += item.quantity.nil? ? 0 : item.quantity
-  end
-  helper_method :update_storage_collection
-
   private
+
+  # Need to trick autoload to find Query::ItemsByStorageCollection(AndQuantity)
+  def hack_for_autoload_query_object_classes_to_work
+    begin
+      ::ItemsByStorageCollection
+    rescue LoadError
+    end
+    begin
+      ::ItemsByStorageCollectionAndQuantity
+    rescue LoadError
+    end
+  end
 
   def item_params
     params.require(:item).permit(:name, :category, :canonical_item_id)
