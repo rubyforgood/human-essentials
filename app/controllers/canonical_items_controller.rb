@@ -38,7 +38,6 @@ class CanonicalItemsController < ApplicationController
     @items = @canonical_item.items
   end
 
-  # TODO: If there are associated Items, they should be migrated prior to deletion
   def destroy
     @canonical_item = CanonicalItem.includes(:items).find(params[:id])
     if !@canonical_item.items.empty? && @canonical_item.destroy
