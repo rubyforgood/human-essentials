@@ -13,16 +13,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @items_with_counts.each do |item| %>
-            <tr>
-              <% if item.id != @row_collection[:item_id] && @row_collection[:item_id] != nil %>
-                <%= render partial: "item_row_quantity_and_storages" %>
-                <% new_storage_collection %>
-              <% end %>
-              <% update_storage_collection(item) %>
-            </tr>
-            <% end %>
-            <%= render partial: "item_row_quantity_and_storages" %>
+            <%= render partial: "item_row_quantity_and_storages", collection: @items_by_storage_collection_and_quantity, as: :row %>
           </tbody>
         </table>
       </div><!-- /.box-body.table-responsive -->
