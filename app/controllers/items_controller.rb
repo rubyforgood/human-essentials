@@ -2,9 +2,8 @@ class ItemsController < ApplicationController
   def index
     @items = current_organization.items.includes(:canonical_item).alphabetized.filter(filter_params)
     @storages = current_organization.storage_locations.order(id: :asc)
-    hack_for_autoload_query_object_classes_to_work
-    @items_with_counts = Query::ItemsByStorageCollection.new(organization: current_organization, filter_params: filter_params).call
-    @items_by_storage_collection_and_quantity = Query::ItemsByStorageCollectionAndQuantity.new(organization: current_organization, filter_params: filter_params).call
+    @items_with_counts = ItemsByStorageCollectionQuery.new(organization: current_organization, filter_params: filter_params).call
+    @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.new(organization: current_organization, filter_params: filter_params).call
   end
 
   def create
@@ -50,18 +49,6 @@ class ItemsController < ApplicationController
   end
 
   private
-
-  # Need to trick autoload to find Query::ItemsByStorageCollection(AndQuantity)
-  def hack_for_autoload_query_object_classes_to_work
-    begin
-      ::ItemsByStorageCollection
-    rescue LoadError
-    end
-    begin
-      ::ItemsByStorageCollectionAndQuantity
-    rescue LoadError
-    end
-  end
 
   def item_params
     params.require(:item).permit(:name, :category, :canonical_item_id)
