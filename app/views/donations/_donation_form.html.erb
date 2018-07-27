@@ -55,14 +55,15 @@
      label: "Issued on",
      as: :date,
      html5: true,
-     wrapper: :vertical_input_group %>
+     wrapper: :vertical_input_group,
+     disabled: !@donation.new_record? %>
 </div>
 </div>
 
 <fieldset style="margin-bottom: 2rem;" class="form-inline">
   <legend>Items in this donation</legend>
   <div id="donation_line_items" data-capture-barcode="true">
-    
+
     <%= f.simple_fields_for :line_items do |item| %>
       <%= render 'line_items/line_item_fields', f: item %>
     <% end %>
