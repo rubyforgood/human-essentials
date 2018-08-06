@@ -25,6 +25,11 @@ class DiaperDriveParticipant < ApplicationRecord
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
 
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .order(:name)
+  }
+
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)
   end
@@ -35,5 +40,18 @@ class DiaperDriveParticipant < ApplicationRecord
       loc.organization_id = organization
       loc.save!
     end
+  end
+
+  def self.csv_export_headers
+    ["Name", "Phone", "Email", "Total Diapers"]
+  end
+
+  def csv_export_attributes
+    [
+      name,
+      try(:phone) || "",
+      try(:email) || "",
+      volume
+    ]
   end
 end

@@ -33,9 +33,16 @@
               <%= link_to storage_locations_path, class: "btn btn-outline-primary btn-md" do %>
                 <i class="fa fa-ban"></i> Clear Filters
               <% end %>
-              <%= link_to new_storage_location_path(organization_id: current_organization), class: "btn btn-success btn pull-right", style: "margin-right: 1rem;" do %>
-                <i class="fa fa-plus"></i> New Storage Location 
-              <% end %>
+              <div class="btn-group pull-right">
+                <%= link_to new_storage_location_path(organization_id: current_organization), class: "btn btn-success" do %>
+                  <i class="fa fa-plus"></i> New Storage Location
+                <% end %>
+                <% if @storage_locations.length > 0 %>
+                  <%= link_to csv_path(format: :csv, type: "StorageLocation"), class: "btn btn-secondary" do %>
+                    <i class="fa fa-download" aria-hidden="true"></i> Export Locations
+                  <% end %>
+                <% end %>
+              </div>
             </div>
           </div><!-- /.row -->
         <% end %>
