@@ -7,6 +7,7 @@ class AddNameToUser < ActiveRecord::Migration[5.1]
       u.update_attributes(name: new_name)
       puts "Updated #{u.email} with #{u.name}"
     end
+    User.reset_column_information
   end
 
   def down
