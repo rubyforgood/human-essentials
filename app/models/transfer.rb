@@ -22,6 +22,10 @@ class Transfer < ApplicationRecord
   include Filterable
   scope :from_location, ->(location_id) { where(from_id: location_id) }
   scope :to_location, ->(location_id) { where(to_id: location_id) }
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .includes(:line_items, :from, :to)
+  }
 
   def self.storage_locations_transferred_to_in(organization)
     includes(:to).where(organization_id: organization.id).distinct(:to_id).collect(&:to).uniq
@@ -34,6 +38,19 @@ class Transfer < ApplicationRecord
   validates :from, :to, :organization, presence: true
   validate :line_item_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
+
+  def self.csv_export_headers
+    ["From", "To", "Comment", "Total Moved"]
+  end
+
+  def csv_export_attributes
+    [
+      from.name,
+      to.name,
+      comment || "none",
+      line_items.total
+    ]
+  end
 
   private
 

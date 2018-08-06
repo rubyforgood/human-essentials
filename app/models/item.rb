@@ -35,6 +35,11 @@ class Item < ApplicationRecord
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
 
   scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size }) }
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .includes(:canonical_item)
+      .alphabetized
+  }
 
   default_scope { active }
 
@@ -84,6 +89,19 @@ class Item < ApplicationRecord
 
   def to_i
     id
+  end
+
+  def self.csv_export_headers
+    ["Name", "Category", "Barcodes", "Base Item"]
+  end
+
+  def csv_export_attributes
+    [
+      name,
+      category,
+      barcode_count,
+      canonical_item.name
+    ]
   end
 
   private
