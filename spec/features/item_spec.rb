@@ -42,8 +42,8 @@ RSpec.feature "Item management", type: :feature do
 
   scenario "User can filter the #index by category type" do
     Item.delete_all
-    item = create(:item, category: "same")
-    item2 = create(:item, category: "different")
+    item = create(:item, category: "Diapers")
+    item2 = create(:item, category: "Menstrual Products")
     visit url_prefix + "/items"
     select Item.first.category, from: "filters_in_category"
     click_button "Filter"
@@ -75,34 +75,52 @@ RSpec.feature "Item management", type: :feature do
   end
 
   describe "Item Table Tabs >" do
-    let(:item_name_1) { "the most wonderful magical pullups that truly potty train" }
-    let(:item_name_2) { "blackbeard's rugged tampons" }
-    before :each do
-      @item = create(:item, name: item_name_1, category: "same")
-      @item2 = create(:item, name: item_name_2, category: "different")
-      @storage = create(:storage_location, :with_items, item: @item, item_quantity: 666, name: "Test storage")
+    let(:item_pullups) { create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers") }
+    let(:item_tampons) { create(:item, name: "blackbeard's rugged tampons", category: "Menstrual Products") }
+    let(:storage_name) { "the poop catcher warehouse" }
+    let(:storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_in_donation, name: storage_name) }
+    let!(:aux_storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_second_donation, name: "a secret secondary location") }
+    let(:num_pullups_in_donation) { 666 }
+    let(:num_pullups_second_donation) { 1 }
+    let(:num_tampons_in_donation) { 42 }
+    let(:num_tampons_second_donation) { 17 }
+    let(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
+    let(:donation_aux_tampons) { create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons) }
+    before do
+      storage.intake!(donation_tampons)
+      aux_storage.intake!(donation_aux_tampons)
       visit url_prefix + "/items"
     end
     # Consolidated these into one to reduce the setup/teardown
     scenario "Displays items in separate tabs", js: true do
-      expect(page.find("table#tbl_items", visible: true)).not_to have_content "Quantity"
-      expect(page.find(:css, "table#tbl_items", visible: true)).to have_content(@item.name)
-      expect(page.body).to include(item_name_1)
-      expect(page.body).to include(item_name_2)
+      tab_items_only_text = page.find("table#tbl_items", visible: true).text
+      expect(tab_items_only_text).not_to have_content "Quantity"
+      expect(tab_items_only_text).to have_content item_pullups.name
+      expect(tab_items_only_text).to have_content item_tampons.name
 
       click_link "Items and Quantity" # href="#sectionB"
-      expect(page.find("table#tbl_items_quantity", visible: true)).to have_content "Quantity"
-      expect(page.find("table#tbl_items_quantity", visible: true)).not_to have_content "Test storage"
-      expect(page.find("table#tbl_items_quantity", visible: true)).to have_content "666"
-      expect(page.body).to include(item_name_1)
-      expect(page.body).to include(item_name_2)
+      tab_items_and_quantity_text = page.find("table#tbl_items_quantity", visible: true).text
+      expect(tab_items_and_quantity_text).to have_content "Quantity"
+      expect(tab_items_and_quantity_text).not_to have_content storage_name
+      expect(tab_items_and_quantity_text).to have_content num_pullups_in_donation
+      expect(tab_items_and_quantity_text).to have_content num_pullups_second_donation
+      expect(tab_items_and_quantity_text).to have_content num_tampons_in_donation
+      expect(tab_items_and_quantity_text).to have_content num_tampons_second_donation
+      expect(tab_items_and_quantity_text).to have_content item_pullups.name
+      expect(tab_items_and_quantity_text).to have_content item_tampons.name
 
       click_link "Items, Quantity, and Location" # href="#sectionC"
-      expect(page.find("table#tbl_items_location", visible: true)).to have_content "Quantity"
-      expect(page.find("table#tbl_items_location", visible: true)).to have_content "Test storage"
-      expect(page.find("table#tbl_items_location", visible: true)).to have_content "666"
-      expect(page.body).to include(item_name_1)
-      expect(page.body).to include(item_name_2)
+      tab_items_quantity_location_text = page.find("table#tbl_items_location", visible: true).text
+      expect(tab_items_quantity_location_text).to have_content "Quantity"
+      expect(tab_items_quantity_location_text).to have_content storage_name
+      expect(tab_items_quantity_location_text).to have_content num_pullups_in_donation
+      expect(tab_items_quantity_location_text).to have_content num_pullups_second_donation
+      expect(tab_items_quantity_location_text).to have_content num_pullups_in_donation + num_pullups_second_donation
+      expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation
+      expect(tab_items_quantity_location_text).to have_content num_tampons_second_donation
+      expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation + num_tampons_second_donation
+      expect(tab_items_quantity_location_text).to have_content item_pullups.name
+      expect(tab_items_quantity_location_text).to have_content item_tampons.name
     end
   end
 end

@@ -127,8 +127,6 @@ RSpec.describe BarcodeItem, type: :model do
       end
     end
 
-    # TODO: Determine how barcode items should act re: global barcodes / local barcodes and items vs. canonical items
-
     describe "to_h >" do
       it "emits a hash for a line_item" do
         barcode_item = create :barcode_item
