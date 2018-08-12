@@ -17,6 +17,8 @@
 #
 
 class Organization < ApplicationRecord
+  DIAPER_APP_LOGO = Rails.root.join("app", "assets", "images", "DiaperBase-Logo.png")
+
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
@@ -93,6 +95,14 @@ class Organization < ApplicationRecord
       i.organization_id = org_id
     end
     org.reload
+  end
+
+  def logo_path
+    if logo.attached?
+      ActiveStorage::Blob.service.send(:path_for, logo.key).to_s
+    else
+      Organization::DIAPER_APP_LOGO.to_s
+    end
   end
 
   private
