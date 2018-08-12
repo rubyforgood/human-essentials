@@ -1,5 +1,5 @@
 prawn_document do |pdf|
-  pdf.image logo_file_path(current_organization), height: 110
+  pdf.image current_organization.logo_path, fit: [325, 110]
 
   pdf.bounding_box [pdf.bounds.right - 225, pdf.bounds.top - 20], width: 225 do
     pdf.text current_organization.name, align: :right
@@ -117,7 +117,7 @@ prawn_document do |pdf|
       logo_offset = (pdf.bounds.width - 190) / 2
       pdf.bounding_box([logo_offset, 0], width: 190, height: 33) do
         pdf.text "Lovingly created with", valign: :center
-        pdf.image logo_file_path, width: 75, vposition: :center, position: :right
+        pdf.image Organization::DIAPER_APP_LOGO, width: 75, vposition: :center, position: :right
       end
     end
 
