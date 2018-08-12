@@ -1,13 +1,13 @@
 <div class="box-body">
   <%= simple_form_for form, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
-    <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-user"></i></span>
-      <%= f.input_field :name, class: "form-control" %>
-    <% end %>
-
     <%= f.input :business_name, label: "Business name", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-suitcase"></i></span>
       <%= f.input_field :business_name, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :name, label: "Contact name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :contact_name, class: "form-control" %>
     <% end %>
 
     <%= f.input :phone, label: "Phone", wrapper: :vertical_input_group do %>
