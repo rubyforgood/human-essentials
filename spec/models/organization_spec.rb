@@ -82,7 +82,7 @@ RSpec.describe Organization, type: :model do
       expect(org.logo_path).to include("app/assets/images/DiaperBase-Logo.png")
     end
 
-    it "returns the logo path attached for the organization" do
+    xit "returns the logo path attached for the organization" do
       org = build(:organization,
                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"),
                                                      "image/jpeg"))
