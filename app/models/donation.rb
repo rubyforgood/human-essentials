@@ -35,11 +35,6 @@ class Donation < ApplicationRecord
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
     where(diaper_drive_participant_id: diaper_drive_participant_id)
   }
-  scope :for_csv_export, ->(organization) {
-    where(organization: organization)
-      .includes(:line_items, :storage_location, :donation_site)
-      .order(created_at: :desc)
-  }
 
   before_create :combine_duplicates
   before_destroy :remove_inventory
@@ -55,6 +50,7 @@ class Donation < ApplicationRecord
 
   include IssuedAt
 
+  validates :issued_at, presence: true
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   scope :by_source, ->(source) {
     source = SOURCES[source] if source.is_a?(Symbol)
@@ -137,21 +133,6 @@ class Donation < ApplicationRecord
 
   def remove_inventory
     storage_location.remove!(self)
-  end
-
-  def self.csv_export_headers
-    ["Source", "Date", "Donation Site", "Storage Location", "Quantity of Items", "Variety of Items"]
-  end
-
-  def csv_export_attributes
-    [
-      source_view,
-      issued_at.strftime("%F"),
-      donation_site.try(:name),
-      storage_location.name,
-      line_items.total,
-      line_items.size
-    ]
   end
 
   private

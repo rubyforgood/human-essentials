@@ -25,17 +25,13 @@ class Distribution < ApplicationRecord
   # Distributions contain many different items
   include Itemizable
 
-  validates :storage_location, :partner, :organization, presence: true
+  validates :issued_at, :storage_location, :partner, :organization, presence: true
   validate :line_item_items_exist_in_inventory
 
   include IssuedAt
 
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
-  scope :for_csv_export, ->(organization) {
-    where(organization: organization)
-      .includes(:partner, :storage_location, :line_items)
-  }
 
   delegate :name, to: :partner, prefix: true
 
@@ -58,18 +54,5 @@ class Distribution < ApplicationRecord
   def copy_from_donation(donation_id, storage_location_id)
     copy_line_items(donation_id) if donation_id
     self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
-  end
-
-  def self.csv_export_headers
-    ["Partner", "Date of Distribution", "Source Inventory", "Total items"]
-  end
-
-  def csv_export_attributes
-    [
-      partner.name,
-      issued_at.strftime("%F"),
-      storage_location.name,
-      line_items.total
-    ]
   end
 end
