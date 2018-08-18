@@ -25,7 +25,7 @@ class Distribution < ApplicationRecord
   # Distributions contain many different items
   include Itemizable
 
-  validates :storage_location, :partner, :organization, presence: true
+  validates :issued_at, :storage_location, :partner, :organization, presence: true
   validate :line_item_items_exist_in_inventory
 
   include IssuedAt

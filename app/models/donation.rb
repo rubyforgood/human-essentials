@@ -44,6 +44,7 @@ class Donation < ApplicationRecord
   before_create :combine_duplicates
   before_destroy :remove_inventory
 
+  validates :issued_at, presence: true
   validates :donation_site, presence:
     { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
                             if: :from_donation_site?
