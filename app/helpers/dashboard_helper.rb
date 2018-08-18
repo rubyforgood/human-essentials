@@ -58,6 +58,10 @@ module DashboardHelper
     number_with_delimiter (total || "-1")
   end
 
+  def total_received_money_donations(range = selected_range)
+    number_with_delimiter current_organization.donations.during(range).collect(&:money_raised).compact.reduce(0, :+)
+  end
+
   def total_received_donations(range = selected_range)
     number_with_delimiter current_organization.donations.during(range).collect { |d| d.line_items.total }.reduce(0, :+)
   end
