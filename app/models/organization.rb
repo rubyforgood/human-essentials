@@ -98,11 +98,7 @@ class Organization < ApplicationRecord
   end
 
   def logo_path
-    #if logo.attached?
-    #  ActiveStorage::Blob.service.send(:path_for, logo.key).to_s
-    #else
-      Organization::DIAPER_APP_LOGO.to_s
-    #end
+    Organization::DIAPER_APP_LOGO.to_s
   end
 
   private
