@@ -8,7 +8,8 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
-#
+#  latitude        :float
+#  longitude       :float
 
 class DonationSite < ApplicationRecord
   require "csv"
@@ -16,6 +17,9 @@ class DonationSite < ApplicationRecord
   belongs_to :organization
 
   validates :name, :address, :organization, presence: true
+
+  geocoded_by :address
+  after_validation :geocode, if: :address_changed?
 
   has_many :donations
 

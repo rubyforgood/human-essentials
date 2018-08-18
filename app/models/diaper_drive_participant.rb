@@ -13,13 +13,17 @@
 #  updated_at      :datetime         not null
 #  address         :string
 #  business_name   :string
-#
+#  latitude        :float
+#  longitude       :float
 
 class DiaperDriveParticipant < ApplicationRecord
   require "csv"
 
   belongs_to :organization # Automatically validates presence as of Rails 5
   has_many :donations, inverse_of: :diaper_drive_participant
+
+  geocoded_by :address
+  after_validation :geocode, if: :address_changed?
 
   validates :name, presence: true
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
