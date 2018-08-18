@@ -1,17 +1,44 @@
-RSpec.shared_examples "requiring authentication" do
+RSpec.shared_examples "requiring authorization" do |constraints|
   it "redirects the user to the sign-in page for CRUD actions" do
-    single_params = { organization_id: object.organization.to_param, id: object.id }
+    member_params = { organization_id: object.organization.to_param, id: object.id }
+    collection_params = { organization_id: object.organization.to_param }
 
-    get :index, params: { organization_id: object.organization.to_param }
-    expect(response).to be_redirect
+    (constraints ||= {}).merge!({ except: [], only: [] })
+    skip_these = constraints[:except] + ([:index, :new, :create, :show, :edit, :update, :destroy] - constraints[:only])
 
-    get :new, params: { organization_id: object.organization.to_param }
-    expect(response).to be_redirect
+    unless skip_these.include?(:index)
+        get :index, params: collection_params
+        expect(response).to be_redirect
+    end
 
-    post :create, params: { organization_id: object.organization.to_param }
-    expect(response).to be_redirect
+    unless skip_these.include?(:new)
+        get :new, params: collection_params
+        expect(response).to be_redirect
+    end
 
-    get :show, params: single_params
-    expect(response).to be_redirect
+    unless skip_these.include?(:create)
+        post :create, params: collection_params
+        expect(response).to be_redirect
+    end
+
+    unless skip_these.include?(:show)
+        get :show, params: member_params
+        expect(response).to be_redirect
+    end
+
+    unless skip_these.include?(:edit)
+        get :edit, params: member_params
+        expect(response).to be_redirect
+    end
+
+    unless skip_these.include?(:update)
+        get :update, params: member_params
+        expect(response).to be_redirect
+    end
+
+    unless skip_these.include?(:destroy)
+        delete :destroy, params: member_params
+        expect(response).to be_redirect
+    end
   end
 end

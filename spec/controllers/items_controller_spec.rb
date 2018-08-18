@@ -51,6 +51,6 @@ RSpec.describe ItemsController, type: :controller do
   context "While not signed in" do
     let(:object) { create(:item) }
 
-    include_examples "requiring authentication"
+    include_examples "requiring authorization"
   end
 end

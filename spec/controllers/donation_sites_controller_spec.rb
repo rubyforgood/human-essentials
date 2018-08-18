@@ -54,6 +54,6 @@ RSpec.describe DonationSitesController, type: :controller do
   context "While not signed in" do
     let(:object) { create(:donation_site) }
 
-    include_examples "requiring authentication"
+    include_examples "requiring authorization"
   end
 end
