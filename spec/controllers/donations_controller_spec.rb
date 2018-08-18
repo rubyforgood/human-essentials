@@ -108,7 +108,7 @@ RSpec.describe DonationsController, type: :controller do
     describe "GET #edit" do
       subject { get :edit, params: default_params.merge(id: create(:donation)) }
       it "returns http success" do
-        expect(subject).to have_http_status(:success)
+        expect(subject).to be_successful
       end
     end
 
