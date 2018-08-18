@@ -42,10 +42,9 @@ RSpec.shared_examples "common barcode tests" do |barcode_item_factory|
       expect(build(barcode_item_factory, value: barcode.value)).not_to be_valid
     end
   end
-
 end
 
-RSpec.describe BarcodeItem, :focus, type: :model do
+RSpec.describe BarcodeItem, type: :model do
   context "Global barcodes" do
     let(:canonical_item) { create(:canonical_item) }
     let(:global_barcode_item) { create(:global_barcode_item, barcodeable: canonical_item) }
