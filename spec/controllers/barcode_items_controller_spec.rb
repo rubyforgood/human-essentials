@@ -11,7 +11,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
     describe "GET #index" do
       subject { get :index, params: default_params }
       it "returns http success" do
-        expect(subject).to have_http_status(:success)
+        expect(subject).to be_successful
       end
     end
 
@@ -25,7 +25,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
     describe "GET #edit" do
       subject { get :edit, params: default_params.merge(id: create(:barcode_item, global: true)) }
       it "returns http success" do
-        expect(subject).to have_http_status(:success)
+        expect(subject).to be_successful
       end
     end
 
