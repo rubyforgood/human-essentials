@@ -33,6 +33,7 @@ gem "react-rails", "~> 2.3.0"
 gem "sass-rails"
 gem "simple_form"
 gem "skylight"
+gem "sprockets", "~> 3.7.2"
 gem "uglifier", ">= 1.3.0"
 gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
