@@ -180,6 +180,13 @@ RSpec.describe Donation, type: :model do
         end.to change { donation.storage_location.size }.by(-donation.total_quantity)
       end
     end
+
+    describe "money_raised" do
+      it "tracks the money raised in a donation" do
+        donation = create(:donation, :with_items, money_raised: 100)
+        expect(donation.money_raised).to eq(100)
+      end
+    end
   end
 
   describe "SOURCES" do
