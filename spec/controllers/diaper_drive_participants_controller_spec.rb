@@ -79,6 +79,6 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
   context "While not signed in" do
     let(:object) { create(:diaper_drive_participant) }
 
-    include_examples "requiring authentication"
+    include_examples "requiring authorization"
   end
 end

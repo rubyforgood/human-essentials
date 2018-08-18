@@ -146,8 +146,7 @@ RSpec.describe DonationsController, type: :controller do
   context "While not signed in" do
     let(:object) { create(:donation) }
 
-    include_examples "requiring authentication"
-
+    include_examples "requiring authorization"
     it "redirects the user to the sign-in page for Donation specific actions" do
       single_params = { organization_id: object.organization.to_param, id: object.id }
 
