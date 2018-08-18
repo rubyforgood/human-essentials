@@ -54,13 +54,13 @@ RSpec.describe TransfersController, type: :controller do
                from: create(:storage_location, organization: org),
                organization: org)
       end
-      include_examples "requiring authorization", except: [:edit, :update, :destroy]
+      include_examples "requiring authorization", except: %i(edit update destroy)
     end
   end
 
   context "While not signed in" do
     let(:object) { create(:transfer) }
 
-    include_examples "requiring authorization", except: [:edit, :update, :destroy]
+    include_examples "requiring authorization", except: %i(edit update destroy)
   end
 end
