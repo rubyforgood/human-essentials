@@ -68,18 +68,6 @@ Naming/MemoizedInstanceVariableName:
   Exclude:
     - 'app/controllers/application_controller.rb'
 
-# Offense count: 12
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: strict, flexible
-Rails/Date:
-  Exclude:
-    - 'app/controllers/donations_controller.rb'
-    - 'app/controllers/purchases_controller.rb'
-    - 'spec/features/dashboard_spec.rb'
-    - 'spec/models/distribution_spec.rb'
-    - 'spec/models/donation_spec.rb'
-    - 'spec/models/purchase_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: Include.
 # Include: app/**/*.rb, config/**/*.rb, lib/**/*.rb
@@ -143,17 +131,6 @@ Style/DateTime:
 Style/MultilineBlockChain:
   Exclude:
     - 'spec/models/storage_location_spec.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: AutoCorrect, EnforcedStyle.
-# SupportedStyles: predicate, comparison
-Style/NumericPredicate:
-  Exclude:
-    - 'spec/**/*'
-    - 'app/controllers/donations_controller.rb'
-    - 'app/controllers/purchases_controller.rb'
-    - 'app/models/storage_location.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

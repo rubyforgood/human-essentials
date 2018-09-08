@@ -110,14 +110,14 @@ class StorageLocation < ApplicationRecord
         inventory_item.quantity -= previous_line_item_value.quantity
         inventory_item.save!
       end
-      inventory_item.destroy! if inventory_item.quantity == 0
+      inventory_item.destroy! if inventory_item.quantity.zero?
     end
     # Update storage for line items that are no longer persisted because they
     # were removed durring the updated/delete process.
     previous_line_item_values.values.each do |value|
       inventory_item = InventoryItem.find_or_create_by(storage_location_id: id, item_id: value.item_id)
       inventory_item.decrement!(:quantity, value.quantity)
-      inventory_item.destroy! if inventory_item.quantity == 0
+      inventory_item.destroy! if inventory_item.quantity.zero?
     end
   end
 
