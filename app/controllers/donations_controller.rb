@@ -46,7 +46,7 @@ class DonationsController < ApplicationController
   end
 
   def scale
-    @donation = Donation.new(issued_at: Date.today)
+    @donation = Donation.new(issued_at: Time.zone.today)
     @donation.line_items.build
     load_form_collections
   end
@@ -55,7 +55,7 @@ class DonationsController < ApplicationController
     @donation = Donation.create(organization: current_organization,
                                 source: "Misc. Donation",
                                 storage_location_id: current_organization.intake_location,
-                                issued_at: Date.today,
+                                issued_at: Time.zone.today,
                                 line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
                                                                   "quantity" => params["number_of_diapers"],
                                                                   "_destroy" => "false" } })
@@ -70,7 +70,7 @@ class DonationsController < ApplicationController
       redirect_to donations_path
     else
       load_form_collections
-      @donation.line_items.build if @donation.line_items.count == 0
+      @donation.line_items.build if @donation.line_items.count.zero?
       flash[:error] = "There was an error starting this donation, try again?"
       Rails.logger.error "ERROR: #{@donation.errors}"
       render action: :new
@@ -78,7 +78,7 @@ class DonationsController < ApplicationController
   end
 
   def new
-    @donation = Donation.new(issued_at: Date.today)
+    @donation = Donation.new(issued_at: Time.zone.today)
     @donation.line_items.build
     load_form_collections
   end
