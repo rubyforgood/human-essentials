@@ -27,6 +27,11 @@ class Purchase < ApplicationRecord
   scope :purchased_from, ->(purchased_from) { where(purchased_from: purchased_from) }
   scope :during, ->(range) { where(purchases: { issued_at: range }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .includes(:line_items, :storage_location)
+      .order(created_at: :desc)
+  }
 
   before_create :combine_duplicates
   before_destroy :remove_inventory
@@ -72,6 +77,20 @@ class Purchase < ApplicationRecord
     # Inventory can never be negative
     line_item.quantity = 0 if line_item.quantity.negative?
     line_item.save
+  end
+
+  def self.csv_export_headers
+    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent"]
+  end
+
+  def csv_export_attributes
+    [
+      purchased_from,
+      storage_location.name,
+      line_items.total,
+      line_items.size,
+      amount_spent,
+    ]
   end
 
   private

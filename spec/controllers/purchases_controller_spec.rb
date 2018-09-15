@@ -109,7 +109,7 @@ RSpec.describe PurchasesController, type: :controller do
     describe "GET #edit" do
       subject { get :edit, params: default_params.merge(id: create(:purchase, organization: @organization)) }
       it "returns http success" do
-        expect(subject).to have_http_status(:success)
+        expect(subject).to be_successful
       end
     end
 

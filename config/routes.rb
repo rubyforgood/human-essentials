@@ -1,5 +1,13 @@
 Rails.application.routes.draw do
   devise_for :users
+
+  flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
+    builder.use Rack::Auth::Basic do |username, password|
+      username == ENV["FLIPPER_USERNAME"] && password == ENV["FLIPPER_PASSWORD"]
+    end
+  end
+  mount flipper_app, at: "/flipper"
+
   resources :admins do
     collection do
       post :invite_user
@@ -64,6 +72,7 @@ Rails.application.routes.draw do
     resources :purchases
 
     get "dashboard", to: "dashboard#index"
+    get "csv", to: "data_exports#csv"
   end
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

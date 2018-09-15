@@ -35,9 +35,16 @@
             <%= link_to purchases_path, class: "btn btn-outline-primary btn-md" do %>
               <i class="fa fa-ban"></i> Clear Filters
             <% end %>
-            <%= link_to new_purchase_path(organization_id: current_organization), class: "btn btn-success btn pull-right"  do %>
-              <i class="fa fa-plus"></i> New Purchase
-            <% end %>
+            <div class="btn-group pull-right">
+              <%= link_to new_purchase_path(organization_id: current_organization), class: "btn btn-success"  do %>
+                <i class="fa fa-plus"></i> New Purchase
+              <% end %>
+              <% if @purchases.length > 0 %>
+                <%= link_to csv_path(format: :csv, type: "Purchase"), class: "btn btn-secondary" do %>
+                  <i class="fa fa-download" aria-hidden="true"></i> Export Purchases
+                <% end %>
+              <% end %>
+            </div>
         
           </div>
         </div><!-- /.row -->

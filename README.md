@@ -11,40 +11,10 @@ This application is an inventory management system that is built to address the 
 There are currently 5 Diaper Banks, across America, that are working with our organization to use and provide critical feedback about the functionality of the application. We are grateful for their involvement, and value their input as key stakeholders.
 
 ### Origins
+
 This project took what we built for the [Portland Diaper Bank in 2016](https://github.com/rubyforgood/pdx_diaper) and turned it into a multitenant application, something that all diaper banks can use. We re-used models, code and other documentation where applicable as well as implemented new features and functionality requested by the prime stakeholder (PDXDB). We're super excited to have had Rachel Alston, the director of the Portland Diaper Bank, attending our event in 2017, providing guidance and giving us the best chance of success!
 
-## Development with Docker
-
-### Requirements
-
-- [Docker CE](https://store.docker.com/search?type=edition&offering=community)
-
-### Caveats
-
-Docker for Mac has some pretty poor disk sharing (volume) performance. At the time of writing, the test run is 50% slower when using Docker vs using native. Overall this shouldn't impact your development experience too badly but you should be aware.
-
-### Postgres data
-
-You can set up the database with the following command:
-
-`docker-compose build` (if you haven't already)
-`docker-compose run web rails db:setup`
-
-If migrations fail, run:
-
-`docker-compose run web bin/rake db:schema:load`
-
-Note: currently the seeds fail about halfway through due to the Partner integration. You can resolve this by temporarily commenting out the `DIAPER_PARTNER_URL` environment variable in ./docker-compose.yml (See [diaperpartner](https://github.com/rubyforgood/diaperpartner) for more)
-
-### Running the app
-
-Start the application with `docker-compose up web` and then visit [http://localhost:3000](http://localhost:3000)
-
-### Running tests
-
-Simply run `docker-compose run test rails spec`.
-
-## Development without Docker
+## Development
 
 ### Ruby Version
 This app uses Ruby version 2.5.1, indicated in `/.ruby-version`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
@@ -62,6 +32,49 @@ If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplie
 
 ## Seed the database
 From the root of the app, run `bundle exec rake db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
+
+## Development with Docker
+(not preferred but we do our best to maintain our docker files)
+
+### Requirements
+
+- [Docker CE](https://store.docker.com/search?type=edition&offering=community)
+
+### Caveats
+
+Docker for Mac has some pretty poor disk sharing (volume) performance. At the time of writing, the test run is 50% slower when using Docker vs using native. Overall this shouldn't impact your development experience too badly but you should be aware.
+
+### Setup
+
+You can set up the app and database with the following commands:
+
+    docker-compose build             # Builds docker image, especially gems
+    docker-compose run web bin/setup # Sets up the database
+
+When you switch or update branches, you can do:
+
+    docker-compose build              # If installing new/updated gems
+    docker-compose run web bin/update # For migrations and such
+
+### Running the app
+
+Start the application with `docker-compose up web` and then visit [http://localhost:3000](http://localhost:3000). Press ^C to stop the application.
+
+### Running tests
+
+Run:
+
+    docker-compose run web rails spec
+
+### Tips
+
+Outside of docker you often prefix commands with `bundle exec`. Using the docker setup, switch this prefix to `docker-compose run web`. You could even set up an alias like this:
+
+    alias dr="docker-compose run web" # Put this in your ~/.profile
+    dr rails c                        # get a rails console
+    dr rails spec                     # run the tests (via rake spec)
+    dr rubocop                        # check out what rubocop says
+    dr rspec spec/models/user_spec.rb # Run a single spec
 
 ## Login
 To login, use these default credentials:
@@ -104,21 +117,18 @@ At that point, someone will work with you on doing a code review (typically pret
 
 ### Stay Scoped
 
-Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, put a TODO, FIXME, or NOTE comment above it
+Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/diaper/issues/new)
 
 ### Testing
 
-If you are using Docker you may run the tests with `docker-compose run test`, otherwise run `bundle exec rake spec`.
+Run all the tests with:
+
+  docker-compose run web rails spec # if you are using docker
+  bundle exec rails spec            # if you are NOT using docker
 
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
 The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
-
-### TODOs
-
-Before committing, please run `rake notes > TODO` in the root of the app.
-
-Feel free to peruse the TODO file and tackle any issues found in there. These may or may not have actual issues associated with them. If they do not have actual issues, use `TODO-Brief-Description` as the the branch naming scheme, instead; similar changes for commit message.
 
 ### In-flight Pull Requests
 

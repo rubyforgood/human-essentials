@@ -8,6 +8,11 @@
   <%= csrf_meta_tags %>
   <%= javascript_include_tag 'application' %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -20,10 +25,17 @@
       <a href="<%= root_path %>" class="logo">
     <% end %>
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><img src="/apple-icon-180x180.png">
+    <% if Flipper.enabled?(:new_logo) %>
+    <span class="logo-mini"><img src="/Just-Diaper.svg">
+    </span>
+      <!-- logo for regular state and mobile devices -->
+    <span class="logo-lg"><%= image_tag "Just-Diaper.svg", alt: "DiaperBase Logo", id: "logo" %></span>
+    <% else %>
+    <span class="logo-mini"><img src="/apple-icon-180x180.png">
     </span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg"><%= image_tag "DiaperBase-Logo.png", alt: "DiaperBase Logo", id: "logo" %></span>
+    <% end %>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -53,12 +65,14 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <% flash.each do |key, value| %>
-      <div class="<%= flash_class(key) %> alert-dismissible">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-            <%= value %>
-      </div>
-    <% end %>
+    <div id="flash-message-container">
+      <% flash.each do |key, value| %>
+        <div class="<%= flash_class(key) %> alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+              <%= value %>
+        </div>
+      <% end %>
+    </div>
     <%= yield %>
     <!-- /.content -->
   </div>

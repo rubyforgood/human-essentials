@@ -12,7 +12,7 @@ RSpec.describe UsersController, type: :controller do
   describe "GET #new" do
     it "returns http success" do
       get :new, params: default_params
-      expect(response).to have_http_status(:success)
+      expect(response).to be_successful
     end
   end
 end

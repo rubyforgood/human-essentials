@@ -21,7 +21,7 @@ class PurchasesController < ApplicationController
       redirect_to purchases_path
     else
       load_form_collections
-      @purchase.line_items.build if @purchase.line_items.count == 0
+      @purchase.line_items.build if @purchase.line_items.count.zero?
       flash[:error] = "There was an error starting this purchase, try again?"
       Rails.logger.error "ERROR: #{@purchase.errors}"
       render action: :new
@@ -29,7 +29,7 @@ class PurchasesController < ApplicationController
   end
 
   def new
-    @purchase = current_organization.purchases.new(issued_at: Date.today)
+    @purchase = current_organization.purchases.new(issued_at: Time.zone.today)
     @purchase.line_items.build
     load_form_collections
   end

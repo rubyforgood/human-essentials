@@ -25,6 +25,10 @@ class BarcodeItem < ApplicationRecord
   include Filterable
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }
   scope :include_global, ->(global) { where(global: [false, global]) }
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .includes(:barcodeable)
+  }
 
   alias_attribute :item, :barcodeable
 
@@ -34,5 +38,18 @@ class BarcodeItem < ApplicationRecord
       barcodeable_type: barcodeable_type,
       quantity: quantity
     }
+  end
+
+  def self.csv_export_headers
+    ["Global", "Item Type", "Quantity in the Box", "Barcode"]
+  end
+
+  def csv_export_attributes
+    [
+      global,
+      barcodeable.name,
+      quantity,
+      value
+    ]
   end
 end
