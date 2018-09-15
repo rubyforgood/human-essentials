@@ -35,7 +35,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :distributions, only: %i(index create new show) do
+    resources :distributions, except: %i(destroy) do
       get :print, on: :member
       post :reclaim, on: :member
     end

@@ -69,6 +69,23 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @line_items = @distribution.line_items
   end
+  
+  def edit
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution.line_items.build
+    @items = current_organization.items.alphabetized
+    @storage_locations = current_organization.storage_locations
+  end
+
+  def update
+    distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    distribution.combine_duplicates
+    new_distribution_params = distribution_params.merge(organization: current_organization)
+    distribution.storage_location.update_distribution!(distribution, new_distribution_params)
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @line_items = @distribution.line_items
+    render :show
+  end
 
   def insufficient_amount!
     respond_to do |format|

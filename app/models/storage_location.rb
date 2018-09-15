@@ -231,6 +231,15 @@ class StorageLocation < ApplicationRecord
     end
   end
 
+  def update_distribution!(distribution, new_distribution_params)
+    ActiveRecord::Base.transaction do
+      self.reclaim! distribution
+      distribution.line_items.destroy_all
+      distribution.update! new_distribution_params
+      distribute! distribution
+    end
+  end
+
   def self.csv_export_headers
     ["Name", "Address", "Total Inventory"]
   end
