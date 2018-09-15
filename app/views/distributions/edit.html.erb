@@ -1,0 +1,85 @@
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Distributions - Edit" %>
+  <h1>
+    Edit Distribution
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Distributions", (distributions_path) %></li>
+    <li class="active"> Edit Distribution</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-body">
+
+  <%= simple_form_for @distribution do |f| %>
+
+    <%= f.association :partner,
+      collection: current_organization.partners,    
+      label: "Partner",
+      error: "Which partner is this distribution going to?" %>
+
+      <%= f.input :issued_at, as: :date, label: "Distribution date" %>
+      <%= f.input :agency_rep, label: "Agency representative" %>
+
+    <%= f.association :storage_location,
+      collection: @storage_locations,
+      label: "From storage location",
+      error: "Which location are you moving inventory from?",
+      input_html: {
+        data: {
+          storage_location_inventory_path: inventory_storage_location_path(
+            organization_id: current_organization,
+            id: ":id",
+            format: :json
+          )
+        }
+      }
+    %>
+
+    <%= f.input :comment, label: "Comment" %>
+
+
+    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+      <legend>Items in this distribution</legend>
+      <%= f.simple_fields_for :line_items do |item| %>
+        <div id="distribution_line_items" data-capture-barcode="true">
+          <%= render 'line_items/line_item_fields', f: item %>
+        </div>
+      <% end %>
+      <div class="row links">
+        <div class="col-xs-12">
+          <%= link_to_add_association f, :line_items,
+          data: {
+            association_insertion_node: "#distribution_line_items",
+            association_insertion_method: "append"
+          }, id: "__add_line_item", class: "btn btn-md btn-success", style: "margin-top: 1rem;", partial: "line_items/line_item_fields"  do
+          %>
+            <i class="fa fa-plus"></i> Add another item
+          <% end %>
+        </div>
+      </div>
+
+    </fieldset>
+      <div class="row">
+        <div class="col-xs-12">
+          <%= f.submit "Update Distribution", class: "btn btn-lg btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+  </div>
+</div>
+<!-- /.box -->
+
+<%= render partial: "donations/barcode_modal" %>
+
+</section>
