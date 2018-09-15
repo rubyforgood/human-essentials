@@ -1,6 +1,6 @@
 class DiaperDriveParticipantsController < ApplicationController
   def index
-    @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all.order(:name)
+    @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all.order(:business_name)
   end
 
   def create
@@ -37,7 +37,8 @@ class DiaperDriveParticipantsController < ApplicationController
   def update
     @diaper_drive_participant = current_organization.diaper_drive_participants.find(params[:id])
     if @diaper_drive_participant.update(diaper_drive_participant_params)
-      redirect_to diaper_drive_participants_path, notice: "#{@diaper_drive_participant.name} updated!"
+      redirect_to diaper_drive_participants_path, notice: "#{@diaper_drive_participant.contact_name} updated!"
+
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -60,6 +61,6 @@ class DiaperDriveParticipantsController < ApplicationController
 
   def diaper_drive_participant_params
     params.require(:diaper_drive_participant)
-          .permit(:name, :phone, :email, :business_name, :address)
+          .permit(:contact_name, :phone, :email, :business_name, :address)
   end
 end

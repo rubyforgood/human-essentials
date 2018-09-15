@@ -58,7 +58,8 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
 
     describe "POST #create" do
       it "successful create" do
-        post :create, params: default_params.merge(diaper_drive_participant: { name: "test", email: "123@mail.ru" })
+        post :create, params: default_params.merge(diaper_drive_participant: { business_name: "businesstest",
+                                                                               contact_name: "test", email: "123@mail.ru" })
         expect(response).to redirect_to(diaper_drive_participants_path)
         expect(flash[:notice]).to match(/added!/i)
       end
