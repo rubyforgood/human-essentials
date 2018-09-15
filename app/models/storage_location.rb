@@ -229,7 +229,6 @@ class StorageLocation < ApplicationRecord
         inventory_item.update(quantity: inventory_item.quantity + line_item.quantity)
       end
     end
-    distribution.destroy
   end
 
   def self.csv_export_headers
