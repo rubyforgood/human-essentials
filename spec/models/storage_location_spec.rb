@@ -261,6 +261,13 @@ RSpec.describe StorageLocation, type: :model do
         storage_location.reclaim!(distribution)
         expect(storage_location.inventory_items.first.quantity).to eq 350
       end
+
+      it "does not destroy the distribution" do
+        storage_location = create :storage_location, :with_items, item_quantity: 300
+        distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
+        storage_location.reclaim!(distribution)
+        expect(Distribution.find(distribution.id)).to eql distribution
+      end
     end
   end
 end

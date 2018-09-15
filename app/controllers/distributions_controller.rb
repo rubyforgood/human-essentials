@@ -7,10 +7,14 @@ class DistributionsController < ApplicationController
   end
 
   def reclaim
-    @distribution = Distribution.find(params[:id])
-    @distribution.storage_location.reclaim!(@distribution)
+    ActiveRecord::Base.transaction do
+      @distribution_id = params[:id]
+      distribution = Distribution.find(params[:id])
+      distribution.storage_location.reclaim!(distribution)
+      distribution.destroy!
+    end
 
-    flash[:notice] = "Distribution #{@distribution.id} has been reclaimed!"
+    flash[:notice] = "Distribution #{@distribution_id} has been reclaimed!"
     redirect_to distributions_path
   end
 
