@@ -74,6 +74,6 @@ RSpec.describe DistributionsController, type: :controller do
   context "While not signed in" do
     let(:object) { create(:distribution) }
 
-    include_examples "requiring authentication"
+    include_examples "requiring authorization"
   end
 end

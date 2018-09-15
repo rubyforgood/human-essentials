@@ -33,7 +33,7 @@ RSpec.describe Purchase, type: :model do
   context "Callbacks >" do
     it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
-      today = Date.today
+      today = Time.zone.today
       expect(create(:purchase, created_at: yesterday, issued_at: today).issued_at).to eq(today)
       expect(create(:purchase, created_at: yesterday).issued_at).to eq(yesterday)
     end
@@ -54,7 +54,7 @@ RSpec.describe Purchase, type: :model do
       it "returns all purchases created between two dates" do
         Purchase.destroy_all
         # The models should default to assigning the created_at time to the issued_at
-        create(:purchase, created_at: Date.today)
+        create(:purchase, created_at: Time.zone.today)
         # but just for fun we'll force one in the past within the range
         create(:purchase, issued_at: Date.yesterday)
         # and one outside the range

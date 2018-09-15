@@ -30,9 +30,9 @@ RSpec.feature "Dashboard", type: :feature do
     item = create(:item, organization: @organization)
     sl = create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
     create(:donation, :with_items, item: item, item_quantity: 10, storage_location: sl, issued_at: 1.month.ago)
-    create(:donation, :with_items, item: item, item_quantity: 200, storage_location: sl, issued_at: Date.today)
+    create(:donation, :with_items, item: item, item_quantity: 200, storage_location: sl, issued_at: Time.zone.today)
     create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago,)
-    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Date.today,)
+    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Time.zone.today,)
     @organization.reload
 
     # Verify the initial totals are correct

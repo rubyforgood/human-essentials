@@ -19,9 +19,16 @@
     <div class="box-header with-border bg-gray">
       <section id="filters">
         <!-- TBA; replicate HTML from other #index views -->
-        <%= link_to new_donation_site_path(organization_id: current_organization), class: "btn btn-success btn pull-right" do %>
-          <i class="fa fa-plus"></i> New Donation Site
-        <% end %>
+        <div class="btn-group pull-right">
+          <%= link_to new_donation_site_path(organization_id: current_organization), class: "btn btn-success" do %>
+            <i class="fa fa-plus"></i> New Donation Site
+          <% end %>
+          <% if @donation_sites.length > 0 %>
+            <%= link_to csv_path(format: :csv, type: "DonationSite"), class: "btn btn-secondary" do %>
+              <i class="fa fa-download" aria-hidden="true"></i> Export Donation Sites
+            <% end %>
+          <% end %>
+        </div>
       </section><!-- /#filters -->
     </div><!-- /.box-header -->
     <div class="box-body">
@@ -31,13 +38,17 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="box-body table-responsive no-padding">
-            <table class="table table-hover">
+            <table class="table table-hover index">
               <thead>
                 <tr>
                   <th>Donation Site</th>
                   <th>Address</th>
                   <th>&nbsp;</th>
                 </tr>
+                <%= render partial: 'shared/table_row_form',
+                           object:  @donation_site,
+                           locals: {columns: [{name: :text_field}, {address: :text_field}]}
+                %>
               </thead>
               <tbody>
                 <%= render partial: "donation_site_row", collection: @donation_sites %>

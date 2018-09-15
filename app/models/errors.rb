@@ -1,6 +1,5 @@
 module Errors
   class InsufficientAllotment < StandardError
-    # TODO: This should be removed once other models no longer depend on it; it should be encapsulated and accessed through an interface
     attr_accessor :insufficient_items
 
     def initialize(message, insufficient_items = [])

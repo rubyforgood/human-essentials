@@ -46,7 +46,7 @@ RSpec.describe Donation, type: :model do
   context "Callbacks >" do
     it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
-      today = Date.today
+      today = Time.zone.today
       expect(create(:donation, created_at: yesterday, issued_at: today).issued_at).to eq(today)
       expect(create(:donation, created_at: yesterday).issued_at).to eq(yesterday)
     end
@@ -67,7 +67,7 @@ RSpec.describe Donation, type: :model do
       it "returns all donations created between two dates" do
         Donation.destroy_all
         # The models should default to assigning the created_at time to the issued_at
-        create(:donation, created_at: Date.today)
+        create(:donation, created_at: Time.zone.today)
         # but just for fun we'll force one in the past within the range
         create(:donation, issued_at: Date.yesterday)
         # and one outside the range
@@ -178,6 +178,13 @@ RSpec.describe Donation, type: :model do
         expect do
           donation.destroy
         end.to change { donation.storage_location.size }.by(-donation.total_quantity)
+      end
+    end
+
+    describe "money_raised" do
+      it "tracks the money raised in a donation" do
+        donation = create(:donation, :with_items, money_raised: 100)
+        expect(donation.money_raised).to eq(100)
       end
     end
   end

@@ -35,7 +35,7 @@
           <% if @diaper_drives.present? %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
               <%= label_tag "by Diaper Drive" %>
-              <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :contact_name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
+              <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
             </div>
           <% end %>
           <% if @donation_sites.present? %>
@@ -57,10 +57,16 @@
             <%= link_to donations_path, class: "btn btn-outline-primary btn-md" do %>
               <i class="fa fa-ban"></i> Clear Filters
             <% end %>
-            <%= link_to new_donation_path(organization_id: current_organization), class: "btn btn-success btn pull-right"  do %>
-              <i class="fa fa-plus"></i> New Donation
-            <% end %>
-
+            <div class="btn-group pull-right">
+              <%= link_to new_donation_path(organization_id: current_organization), class: "btn btn-success btn"  do %>
+                <i class="fa fa-plus"></i> New Donation
+              <% end %>
+              <% if @donations.length > 0 %>
+                <%= link_to csv_path(format: :csv, type: "Donation"), class: "btn btn-secondary" do %>
+                  <i class="fa fa-download" aria-hidden="true"></i> Export Donations
+                <% end %>
+              <% end %>
+            </div>
           </div>
         </div><!-- /.row -->
         <% end # form %>

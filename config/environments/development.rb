@@ -56,4 +56,13 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  # Web-console wants us to only connect from localhost for safety, but in
+  # mac-docker we get separate ip addresses. So this grabs ALL our local ips
+  # and adds them to the OK list
+  require "socket"
+  require "ipaddr"
+  config.web_console.whitelisted_ips = Socket.ip_address_list.reduce([]) do |res, addrinfo|
+    addrinfo.ipv4? ? res << IPAddr.new(addrinfo.ip_address).mask(24) : res
+  end
 end
