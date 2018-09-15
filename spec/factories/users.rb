@@ -2,7 +2,7 @@
 #
 # Table name: users
 #
-#  id                     :bigint(8)        not null, primary key
+#  id                     :integer          not null, primary key
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  reset_password_token   :string
@@ -26,6 +26,7 @@
 #  invitations_count      :integer          default(0)
 #  organization_admin     :boolean
 #  name                   :string           default("CHANGEME"), not null
+#  superadmin             :boolean          default(FALSE)
 #
 
 FactoryBot.define do
@@ -37,7 +38,13 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
 
     factory :organization_admin do
+      name "Very Organized Admin"
       organization_admin true
+    end
+
+    factory :superadmin do
+      name "Administrative User"
+      superadmin true
     end
   end
 end

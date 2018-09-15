@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   def default_url_options(options = {})
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
-    elsif current_user && !current_user.is_superadmin? && current_user.organization.present?
+    elsif current_user && !current_user.superadmin? && current_user.organization.present?
       options[:organization_id] = current_user.organization.to_param
     end
     options

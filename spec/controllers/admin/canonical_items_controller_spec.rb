@@ -1,11 +1,8 @@
-=begin
-require "rails_helper"
-
-RSpec.describe AdminsController, type: :controller do
+RSpec.describe Admin::CanonicalItemsController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.id }
   end
-
+=begin
   context "When logged in as an organization admin" do
     before do
       sign_in(@organization_admin)
@@ -101,5 +98,5 @@ RSpec.describe AdminsController, type: :controller do
       end
     end
   end
-end
 =end
+end

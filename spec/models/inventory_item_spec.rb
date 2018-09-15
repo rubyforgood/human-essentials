@@ -2,10 +2,10 @@
 #
 # Table name: inventory_items
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  storage_location_id :integer
 #  item_id             :integer
-#  quantity            :integer
+#  quantity            :integer          default(0)
 #  created_at          :datetime
 #  updated_at          :datetime
 #
