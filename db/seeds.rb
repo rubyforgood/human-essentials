@@ -201,8 +201,14 @@ BarcodeItem.find_or_create_by!(value: "311917152226") do |barcode|
   barcode.organization = pdx_org
 end
 
-DiaperDriveParticipant.create! name: "A Good Place to Collect Diapers", email: "good@place.is", organization: pdx_org
-DiaperDriveParticipant.create! name: "A Mediocre Place to Collect Diapers", email: "ok@place.is", organization: pdx_org
+DiaperDriveParticipant.create! business_name: "A Good Place to Collect Diapers",
+                               contact_name: "fred",
+                               email: "good@place.is",
+                               organization: pdx_org
+DiaperDriveParticipant.create! business_name: "A Mediocre Place to Collect Diapers",
+                               contact_name: "wilma",
+                               email: "ok@place.is",
+                               organization: pdx_org
 
 def random_record(klass)
   klass.limit(1).order("random()").first
