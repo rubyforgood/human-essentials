@@ -2,7 +2,8 @@
 #
 # Table name: diaper_drive_participants
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
+#  name            :string
 #  contact_name    :string
 #  email           :string
 #  phone           :string

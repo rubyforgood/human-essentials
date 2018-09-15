@@ -13,6 +13,13 @@ Rails.application.routes.draw do
       post :invite_user
     end
   end
+
+  namespace :admin do
+    resources :canonical_items
+    resources :organizations
+    resources :users
+    resources :barcode_items
+  end
   resources :canonical_items
 
   namespace :api, defaults: { format: "json" } do

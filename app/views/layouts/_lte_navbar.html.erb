@@ -19,24 +19,24 @@
               <li class="footer"><%= link_to "View Calendar", pick_ups_distributions_path %></li>
             </ul>
           </li>
-          <% if current_user.is_superadmin? %>
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-lock"></i> Administration
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <%= navigation_link_to "Organizations", admin_organizations_path %>
-              </li>
-              <li>
-                <%= navigation_link_to "Canonical items", admin_canonical_items_path %>
-              </li>
-              <li>
-                <%= navigation_link_to "Users", admin_users_path %>
-              </li>
-            </ul>
-          </li>
-            <% end %>
+            <% if current_user.superadmin? %>
+            <li class="dropdown user user-menu">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-lock"></i> Administration
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <%= navigation_link_to "Organizations", admin_organizations_path %>
+                </li>
+                <li>
+                  <%= navigation_link_to "Canonical items", admin_canonical_items_path %>
+                </li>
+                <li>
+                  <%= navigation_link_to "Users", admin_users_path %>
+                </li>
+              </ul>
+            </li>
+              <% end %>
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>

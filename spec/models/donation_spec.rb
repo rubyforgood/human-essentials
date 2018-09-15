@@ -2,7 +2,7 @@
 #
 # Table name: donations
 #
-#  id                          :bigint(8)        not null, primary key
+#  id                          :integer          not null, primary key
 #  source                      :string
 #  donation_site_id            :integer
 #  created_at                  :datetime
@@ -12,6 +12,7 @@
 #  organization_id             :integer
 #  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
+#  money_raised                :integer
 #
 
 RSpec.describe Donation, type: :model do

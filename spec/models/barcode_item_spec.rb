@@ -2,7 +2,7 @@
 #
 # Table name: barcode_items
 #
-#  id               :bigint(8)        not null, primary key
+#  id               :integer          not null, primary key
 #  value            :string
 #  barcodeable_id   :integer
 #  quantity         :integer
@@ -12,6 +12,7 @@
 #  global           :boolean          default(FALSE)
 #  barcodeable_type :string           default("Item")
 #
+
 RSpec.shared_examples "common barcode tests" do |barcode_item_factory|
   describe "item >" do
     it "is invalid without an item associated with it" do

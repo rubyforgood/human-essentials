@@ -2,7 +2,7 @@
 #
 # Table name: users
 #
-#  id                     :bigint(8)        not null, primary key
+#  id                     :integer          not null, primary key
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  reset_password_token   :string
@@ -26,6 +26,7 @@
 #  invitations_count      :integer          default(0)
 #  organization_admin     :boolean
 #  name                   :string           default("CHANGEME"), not null
+#  superadmin             :boolean          default(FALSE)
 #
 
 class User < ApplicationRecord
@@ -38,8 +39,4 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   validates :name, :email, presence: true
-
-  def is_superadmin?
-    superadmin
-  end
 end
