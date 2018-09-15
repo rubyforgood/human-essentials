@@ -6,22 +6,23 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
 
   context "When a user views the index page" do
     before(:each) do
-      @second = create(:diaper_drive_participant, name: "Bcd")
-      @first = create(:diaper_drive_participant, name: "Abc")
-      @third = create(:diaper_drive_participant, name: "Cde")
+      @second = create(:diaper_drive_participant, business_name: "Bcd")
+      @first = create(:diaper_drive_participant, business_name: "Abc")
+      @third = create(:diaper_drive_participant, business_name: "Cde")
       visit url_prefix + "/diaper_drive_participants"
     end
     scenario "the diaper drive participant names are in alphabetical order" do
       expect(page).to have_xpath("//table//tr", count: 4)
-      expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
-      expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
+      expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.business_name)
+      expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.business_name)
     end
   end
 
   scenario "User can create a new diaper drive instance" do
     visit url_prefix + "/diaper_drive_participants/new"
     diaper_drive_participant_traits = attributes_for(:diaper_drive_participant)
-    fill_in "Name", with: diaper_drive_participant_traits[:name]
+    fill_in "Contact Name", with: diaper_drive_participant_traits[:contact_name]
+    fill_in "Business Name", with: diaper_drive_participant_traits[:business_name]
     fill_in "Phone", with: diaper_drive_participant_traits[:phone]
 
     expect do
@@ -54,7 +55,8 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
   scenario "User updates a diaper drive participant with empty attributes" do
     diaper_drive_participant = create(:diaper_drive_participant)
     visit url_prefix + "/diaper_drive_participants/#{diaper_drive_participant.id}/edit"
-    fill_in "Name", with: ""
+    fill_in "Business Name", with: ""
+    fill_in "Contact Name", with: ""
     click_button "Update Diaper drive participant"
 
     expect(page.find(".alert")).to have_content "didn't work"
@@ -69,7 +71,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
 
     scenario "Existing Diaper Drive Participants show in the #index with some summary stats" do
       visit url_prefix + "/diaper_drive_participants"
-      expect(page).to have_xpath("//table/tbody/tr/td", text: @ddp.name)
+      expect(page).to have_xpath("//table/tbody/tr/td", text: @ddp.business_name)
       expect(page).to have_xpath("//table/tbody/tr/td", text: "25")
     end
 

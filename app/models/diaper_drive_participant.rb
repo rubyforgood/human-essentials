@@ -28,7 +28,7 @@ class DiaperDriveParticipant < ApplicationRecord
 
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
-      .order(:name)
+      .order(:business_name)
   }
 
   def volume
@@ -44,12 +44,13 @@ class DiaperDriveParticipant < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Phone", "Email", "Total Diapers"]
+    ["Business Name", "Contact Name", "Phone", "Email", "Total Diapers"]
   end
 
   def csv_export_attributes
     [
-      name,
+      business_name,
+      contact_name,
       try(:phone) || "",
       try(:email) || "",
       volume
