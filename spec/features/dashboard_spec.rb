@@ -74,7 +74,7 @@ RSpec.feature "Dashboard", type: :feature do
     # Make a diaper drive donation
     visit @url_prefix + "/donations/new"
     select "Diaper Drive", from: "donation_source"
-    select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
+    select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
     select StorageLocation.first.name, from: "donation_storage_location_id"
     select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
     fill_in "donation_line_items_attributes_0_quantity", with: "100"

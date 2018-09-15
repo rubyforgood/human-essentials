@@ -1,6 +1,6 @@
 class DiaperDriveParticipantsController < ApplicationController
   def index
-    @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all.order(:contact_name)
+    @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all.order(:business_name)
   end
 
   def create
