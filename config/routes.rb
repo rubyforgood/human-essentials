@@ -38,6 +38,9 @@ Rails.application.routes.draw do
     resources :distributions, only: %i(index create new show) do
       get :print, on: :member
       post :reclaim, on: :member
+      collection do
+        get :pick_ups
+      end
     end
 
     resources :barcode_items do
