@@ -84,6 +84,7 @@ class DistributionsController < ApplicationController
     distribution.storage_location.update_distribution!(distribution, new_distribution_params)
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @line_items = @distribution.line_items
+    flash[:notice] = "Distribution updated!"
     render :show
   end
 
