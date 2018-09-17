@@ -233,7 +233,7 @@ class StorageLocation < ApplicationRecord
 
   def update_distribution!(distribution, new_distribution_params)
     ActiveRecord::Base.transaction do
-      self.reclaim! distribution
+      reclaim! distribution
       distribution.line_items.destroy_all
       distribution.update! new_distribution_params
       distribute! distribution
