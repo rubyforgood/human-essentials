@@ -22,7 +22,7 @@ pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organizati
   organization.name = "PDX Diaper Bank"
   organization.street = "P.O. Box 22613"
   organization.city = "Portland"
-  organization.state ="OR"
+  organization.state = "OR"
   organization.zipcode = "97269"
   organization.email = "info@pdxdiaperbank.org"
 end
@@ -32,7 +32,7 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
   organization.name = "SF Diaper Bank"
   organization.street = "P.O. Box 12345"
   organization.city = "San Francisco"
-  organization.state ="CA"
+  organization.state = "CA"
   organization.zipcode = "90210"
   organization.email = "info@sfdiaperbank.org"
 end
@@ -121,7 +121,7 @@ end
 def seed_quantity(item_name, organization_id, storage_location_id, quantity)
   return if (quantity == 0)
   item_id = Item.find_by(name: item_name, organization_id: organization_id).id
-  InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) { |h|
+  InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) {|h|
     h.quantity = quantity
   }
 end
@@ -136,7 +136,7 @@ items_by_category.each do |_category, entries|
 end
 
 BarcodeItem.find_or_create_by!(value: "10037867880046") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 5)")
+  barcode.item = Item.find_by(name: "Kids (Size 5)")
   barcode.quantity = 108
   barcode.organization = pdx_org
 end
@@ -181,22 +181,22 @@ BarcodeItem.find_or_create_by!(value: "036000451306") do |barcode|
   barcode.organization = pdx_org
 end
 BarcodeItem.find_or_create_by!(value: "037000862246") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 4)")
+  barcode.item = Item.find_by(name: "Kids (Size 4)")
   barcode.quantity = 92
   barcode.organization = pdx_org
 end
 BarcodeItem.find_or_create_by!(value: "041260370236") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 4)")
+  barcode.item = Item.find_by(name: "Kids (Size 4)")
   barcode.quantity = 68
   barcode.organization = pdx_org
 end
 BarcodeItem.find_or_create_by!(value: "036000407679") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 4)")
+  barcode.item = Item.find_by(name: "Kids (Size 4)")
   barcode.quantity = 24
   barcode.organization = pdx_org
 end
 BarcodeItem.find_or_create_by!(value: "311917152226") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 4)")
+  barcode.item = Item.find_by(name: "Kids (Size 4)")
   barcode.quantity = 82
   barcode.organization = pdx_org
 end
@@ -232,7 +232,11 @@ end
 end
 
 20.times.each do
-  distribution = Distribution.create! storage_location: random_record(StorageLocation), partner: random_record(Partner), organization: pdx_org
+  distribution = Distribution.create!(storage_location: random_record(StorageLocation),
+                                      partner: random_record(Partner),
+                                      organization: pdx_org,
+                                      issued_at: (Date.today + rand(15).days)
+                                      )
 
   rand(1..5).times.each do
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: distribution
