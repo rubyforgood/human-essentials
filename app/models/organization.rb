@@ -59,6 +59,10 @@ class Organization < ApplicationRecord
                      .map { |i| [i[0], i[1].map(&:quantity).sum] }.sort_by { |_, v| -v }
   end
 
+  def upcoming_distributions
+    distributions&.this_week&.count || 0
+  end
+
   def address
     "#{street} #{city}, #{state} #{zipcode}"
   end
