@@ -60,9 +60,14 @@
           </ul>
         </li>
         <li>
-        <li class="<%= active_class(['distributions']) %>">
+        <li class="<%= 'active' if current_page?(distributions_path) %>">
           <%= link_to(distributions_path) do %>
             <i class="fa fa-circle-o"></i> <span>Distributions</span>
+          <% end %>
+        </li>
+        <li class="<%= 'active' if current_page?(pick_ups_distributions_path) %>">
+          <%= link_to(pick_ups_distributions_path) do %>
+            <i class="fa fa-calendar-o"></i> <span>Pick Ups</span>
           <% end %>
         </li>
         </li>

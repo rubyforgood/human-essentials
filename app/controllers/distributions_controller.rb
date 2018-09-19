@@ -87,6 +87,10 @@ class DistributionsController < ApplicationController
     flash[:notice] = "Distribution updated!"
     render :show
   end
+  
+  def pick_ups
+    @pick_ups = current_organization.distributions
+  end
 
   def insufficient_amount!
     respond_to do |format|

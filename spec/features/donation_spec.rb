@@ -35,13 +35,13 @@ RSpec.feature "Donations", type: :feature, js: true do
       expect(page).to have_css("table tbody tr", count: 2)
     end
     scenario "User can filter by diaper drive" do
-      a = create(:diaper_drive_participant, name: "A")
-      b = create(:diaper_drive_participant, name: "B")
+      a = create(:diaper_drive_participant, business_name: "A")
+      b = create(:diaper_drive_participant, business_name: "B")
       create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: a)
       create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: b)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
-      select a.name, from: "filters_by_diaper_drive_participant"
+      select a.business_name, from: "filters_by_diaper_drive_participant"
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
@@ -147,7 +147,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
-        select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
+        select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -161,10 +161,11 @@ RSpec.feature "Donations", type: :feature, js: true do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         select "---Create new diaper drive---", from: "donation_diaper_drive_participant_id"
         expect(page).to have_content("New Diaper Drive Participant")
-        fill_in "diaper_drive_participant_name", with: "test"
+        fill_in "diaper_drive_participant_business_name", with: "businesstest"
+        fill_in "diaper_drive_participant_contact_name", with: "test"
         fill_in "diaper_drive_participant_email", with: "123@mail.ru"
         click_button "Create Diaper drive participant"
-        select "test", from: "donation_diaper_drive_participant_id"
+        select "businesstest", from: "donation_diaper_drive_participant_id"
       end
 
       scenario "User can create a donation for a Donation Site source" do
@@ -213,7 +214,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         select Donation::SOURCES[:donation_site], from: "donation_source"
         select DonationSite.first.name, from: "donation_donation_site_id"
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
-        select DiaperDriveParticipant.first.name, from: "donation_diaper_drive_participant_id"
+        select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"

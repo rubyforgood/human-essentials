@@ -21,13 +21,14 @@ class DiaperDriveParticipant < ApplicationRecord
   belongs_to :organization # Automatically validates presence as of Rails 5
   has_many :donations, inverse_of: :diaper_drive_participant
 
-  validates :name, presence: true
+  validates :contact_name, presence: { message: "Must provide a name or a business name" }, if: proc { |ddp| ddp.business_name.blank? }
+  validates :business_name, presence: { message: "Must provide a name or a business name" }, if: proc { |ddp| ddp.contact_name.blank? }
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
 
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
-      .order(:name)
+      .order(:business_name)
   }
 
   def volume
@@ -43,12 +44,13 @@ class DiaperDriveParticipant < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Phone", "Email", "Total Diapers"]
+    ["Business Name", "Contact Name", "Phone", "Email", "Total Diapers"]
   end
 
   def csv_export_attributes
     [
-      name,
+      business_name,
+      contact_name,
       try(:phone) || "",
       try(:email) || "",
       volume
