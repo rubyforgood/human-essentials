@@ -1,11 +1,10 @@
 <% if controller.controller_name != "admins" %>
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-          <% if current_user.organization_admin? %>        
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-calendar"></i>
-              <span class="label label-danger">6</span>
+              <span class="label label-danger"><%= current_organization&.upcoming_distributions || 0 %></span>
             </a>
             <ul class="dropdown-menu">
               <li>
@@ -13,15 +12,16 @@
                 <ul class="menu">
                   <li>
                     <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 6 Pick-ups this week
+                      <i class="fa fa-users text-aqua"></i> <%= current_organization&.upcoming_distributions || 0 %> Pick-ups remaining this week
                     </a>
                   </li>
                 </ul>
               </li>
-              <li class="footer"><a href="#">View Calendar</a></li>
+              <li class="footer"><%= link_to "View Calendar", pick_ups_distributions_path %></li>
             </ul>
           </li>
-              <li>          
+          <% if current_user.organization_admin? %>
+              <li>
               <%= link_to(admins_path) do %>
                 <i class="fa fa-lock"></i> Administration
               <% end %>

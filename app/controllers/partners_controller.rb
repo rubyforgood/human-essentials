@@ -1,4 +1,6 @@
 class PartnersController < ApplicationController
+  skip_before_action :verify_authenticity_token, :authenticate_user!, :authorize_user, :only => [:review]
+
   def index
     @partners = current_organization.partners.order(:name)
   end
@@ -11,6 +13,24 @@ class PartnersController < ApplicationController
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
+  end
+
+  def review
+    test = params["status"]
+    @partner = Partner.find(params["partner_id"])
+    @partner.update_attributes(status: "Awaiting Review") if test
+    render status: 200, json: "Status changed to: #{@partner.status}".to_json
+  end
+
+  def approve_partner
+    @partner = current_organization.partners.find(params[:partner_id])
+  end
+
+  def approve_application
+    @partner = current_organization.partners.find(params[:partner_id])
+    @partner.update_attributes(status: "Approved")
+    DiaperPartnerClient.approve(@partner.attributes)
+    redirect_to partners_path
   end
 
   def show

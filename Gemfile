@@ -5,6 +5,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+ruby "2.5.1"
+
 gem "api-auth", "~> 1.5"
 gem "bootstrap-sass"
 gem "bugsnag"
@@ -19,10 +21,12 @@ gem "flipper-active_record"
 gem "flipper-ui"
 gem "font-awesome-rails"
 gem "font-ionicons-rails"
+gem "fullcalendar-rails"
 gem "groupdate", "~> 3.2"
 gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
+gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "paperclip"
 gem "pg", "~> 0.2"
