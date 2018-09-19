@@ -1,5 +1,5 @@
 <section class="content-header">
-<% content_for :title, "#{current_organization.name} - Diaper Drive Participants - #{@diaper_drive_participant.name} - Edit" %>
+<% content_for :title, "#{current_organization.name} - Diaper Drive Participants - #{@diaper_drive_participant.contact_name} - Edit" %>
 <h1>
   Editing Diaper Drive Participant
   <small>for <%= current_organization.name %></small>
@@ -9,8 +9,8 @@
     <i class="fa fa-dashboard"></i> Home
   <% end %>
   </li>
-  <li><%= link_to "Diaper Drive Participants", (diaper_drive_participants_path) %></li>  
-  <li class="active">Editing <%= @diaper_drive_participant.name %></li>
+  <li><%= link_to "Diaper Drive Participants", (diaper_drive_participants_path) %></li>
+  <li class="active">Editing <%= @diaper_drive_participant.contact_name %></li>
 </ol>
 </section>
 
@@ -20,15 +20,12 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <h3 class="box-title">Update record for <%= @diaper_drive_participant.name %></h3>
+    <h3 class="box-title">Update record for <%= @diaper_drive_participant.contact_name %></h3>
   </div>
   <div class="box-body">
-  
 		<%= render partial: "form", object: @diaper_drive_participant %>
   </div>
 </div>
 <!-- /.box -->
 
 </section>
-
-

@@ -3,7 +3,6 @@
 # Table name: diaper_drive_participants
 #
 #  id              :bigint(8)        not null, primary key
-#  name            :string
 #  contact_name    :string
 #  email           :string
 #  phone           :string
@@ -18,8 +17,8 @@
 FactoryBot.define do
   factory :diaper_drive_participant do
     organization { Organization.try(:first) || create(:organization) }
-    sequence(:name) { |n| "DD Participant ##{n}" }
     contact_name "Don Draper"
+    business_name "Awesome Business"
     sequence(:email) { |n| "don#{n}@scdp.com" }
     phone "212-555-1111"
     comment "A bit of a lush and philanderer."

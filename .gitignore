@@ -36,6 +36,9 @@ pdx_db_test
 # Ignore compiled assets
 /public/assets
 
+# Ignore Rubymine
+.idea
+
 .rails_routes*
 .rake_tasks~
 .DS_Store

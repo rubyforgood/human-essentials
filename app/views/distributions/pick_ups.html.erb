@@ -1,0 +1,26 @@
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Distribution Pick-ups" %>
+  <h1>
+    Pick Up Schedule
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
+    </li>
+    <li><%= link_to "Distributions", (distributions_path) %></li>
+    <li class="active"> Pickups</li>
+      </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+  <!-- Default box -->
+
+  <div class="box box-primary">
+    <div class="box-body">
+
+      <div id="calendar" class="fc fc-unthemed fc-ltr"></div>
+    </div>
+</section>

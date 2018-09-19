@@ -75,8 +75,8 @@ class Donation < ApplicationRecord
   end
 
   def format_drive_name
-    if diaper_drive_participant.name.present?
-      "#{diaper_drive_participant.name} (diaper drive)"
+    if diaper_drive_participant.contact_name.present?
+      "#{diaper_drive_participant.contact_name} (diaper drive)"
     else
       source
     end

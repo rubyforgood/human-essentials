@@ -84,7 +84,7 @@ RSpec.describe DataExport, type: :model do
       let!(:participant) { create(:diaper_drive_participant, organization: org) }
 
       it "should return a CSV string with diaper drive participant data" do
-        expect(subject.as_csv).to include(participant.name)
+        expect(subject.as_csv).to include(participant.business_name)
       end
     end
 
