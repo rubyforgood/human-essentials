@@ -22,6 +22,8 @@
 //= require react
 //= require react_ujs
 //= require components
+//= require moment
+//= require fullcalendar
 //= require_tree .
 
 
@@ -38,7 +40,13 @@ toastr.options = {
   "timeOut": "1400"
 }
 
-
+$( document ).ready(function() {
+    $('#calendar').fullCalendar({
+        firstDay: 1,
+        displayEventTime : false,
+        events: 'pick_ups.json'
+    });
+});
 $(document).on("click", '#awesomebutton', function(e){
     $('#newBarcode').modal('hide');
     toastr.success("Barcode Added to Inventory");

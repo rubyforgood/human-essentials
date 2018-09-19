@@ -25,7 +25,7 @@ class Distribution < ApplicationRecord
   # Distributions contain many different items
   include Itemizable
 
-  validates :storage_location, :partner, :organization, presence: true
+  validates :issued_at, :storage_location, :partner, :organization, presence: true
   validate :line_item_items_exist_in_inventory
 
   include IssuedAt
@@ -36,6 +36,10 @@ class Distribution < ApplicationRecord
     where(organization: organization)
       .includes(:partner, :storage_location, :line_items)
   }
+  scope :this_week, -> do
+    where("issued_at >= :start_date AND issued_at <= :end_date",
+          start_date: Time.zone.today, end_date: Time.zone.today.sunday)
+  end
 
   delegate :name, to: :partner, prefix: true
 

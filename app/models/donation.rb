@@ -55,6 +55,7 @@ class Donation < ApplicationRecord
 
   include IssuedAt
 
+  validates :issued_at, presence: true
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   scope :by_source, ->(source) {
     source = SOURCES[source] if source.is_a?(Symbol)
