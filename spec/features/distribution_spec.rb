@@ -33,7 +33,7 @@ RSpec.feature "Distributions", type: :feature do
     expect(page.find(".alert-info")).to have_content "reated"
     expect(Distribution.first.line_items.count).to eq 1
   end
-  
+
   scenario "User creates a distribution from a donation then edits it" do
     @donation = create :donation, :with_items
 
@@ -45,16 +45,14 @@ RSpec.feature "Distributions", type: :feature do
     click_button "Confirm Distribution"
     expect(page.find(".alert-info")).to have_content "reated"
     expect(Distribution.first.line_items.count).to eq 1
-    
-    
-    first(".btn",text: "Edit").click
+
+    first(".btn", text: "Edit").click
     first(".numeric").set 13
     click_on "Update Distribution"
     expect(page).to have_content "Distribution updated!"
     expect(page).to have_content 13
-    
   end
-  
+
   context "via barcode entry" do
     before(:each) do
       initialize_barcodes
