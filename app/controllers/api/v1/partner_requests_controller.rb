@@ -30,6 +30,6 @@ class API::V1::PartnerRequestsController < ApplicationController
                                                       cloth_aio cloth_cover cloth_prefold cloth_insert
                                                       cloth_swimmer adult_incontinence underpads
                                                       bed_pad_cloth bed_pad_disposable bib
-                                                      diaper_rash_cream cloth_trainging_pants wipes])
+                                                      diaper_rash_cream cloth_training_pants wipes])
   end
 end
