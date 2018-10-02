@@ -15,6 +15,7 @@
 #  state           :string
 #  zipcode         :string
 #
+require "geocoder_helper.rb"
 
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
@@ -90,4 +91,18 @@ RSpec.describe Organization, type: :model do
       expect(org.logo_path).to include(Rails.root.join("tmp/storage").to_s)
     end
   end
+
+  describe "geocode" do
+    it "adds coordinates to the database" do
+     organization = build(:organization,
+       'street' => '123 Street Rd.',
+       'city'  => 'New York',
+       'state' => 'NY',
+       'zipcode' =>'10001')
+     organization.save
+     expect(organization.latitude).not_to eq(nil)
+     expect(organization.latitude).not_to eq(nil)
+   end
+  end
+
 end

@@ -172,6 +172,8 @@ GEM
       jquery-rails (>= 4.0.5, < 5.0.0)
       jquery-ui-rails (>= 5.0.2)
       momentjs-rails (>= 2.9.0)
+
+    geocoder (1.5.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     groupdate (3.2.1)
@@ -264,6 +266,8 @@ GEM
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
+    pry-rails (0.3.6)
+      pry (>= 0.10.4)
     public_suffix (3.0.2)
     puma (3.11.4)
     rack (2.0.5)
@@ -460,6 +464,8 @@ DEPENDENCIES
   font-awesome-rails
   font-ionicons-rails
   fullcalendar-rails
+
+  geocoder
   groupdate (~> 3.2)
   guard-rspec
   jbuilder
@@ -472,7 +478,7 @@ DEPENDENCIES
   paperclip
   pg (~> 0.2)
   prawn-rails
-  pry
+  pry-rails
   puma
   rails (~> 5.2.0)
   rails-controller-testing
