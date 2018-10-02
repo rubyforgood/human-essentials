@@ -219,11 +219,11 @@ end
   # Depending on which source it uses, additional data may need to be provided.
   donation = case source
              when Donation::SOURCES[:diaper_drive]
-               Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
+               Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.now
              when Donation::SOURCES[:donation_site]
-               Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org
+               Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.now
              else
-               Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
+               Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.now
              end
 
   rand(1..5).times.each do
