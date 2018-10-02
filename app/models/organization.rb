@@ -14,7 +14,8 @@
 #  city            :string
 #  state           :string
 #  zipcode         :string
-#
+#  latitude        :float
+#  longitude       :float
 
 class Organization < ApplicationRecord
   DIAPER_APP_LOGO = Rails.root.join("app", "assets", "images", "DiaperBase-Logo.png")
@@ -45,6 +46,9 @@ class Organization < ApplicationRecord
 
   has_one_attached :logo
 
+  geocoded_by :address
+  after_validation :geocode, if: ->(obj){ obj.address.present? and obj.address_changed? }
+
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name
@@ -66,6 +70,10 @@ class Organization < ApplicationRecord
   def address
     "#{street} #{city}, #{state} #{zipcode}"
   end
+
+def address_changed?
+  street_changed? || city_changed? || state_changed? || zipcode_changed?
+end
 
   def address_inline
     address.split("\n").map(&:strip).join(", ")
