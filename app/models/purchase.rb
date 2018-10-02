@@ -35,7 +35,6 @@ class Purchase < ApplicationRecord
 
   before_create :combine_duplicates
   before_destroy :remove_inventory
-  validates :issued_at, presence: true
 
   validates :amount_spent, numericality: { greater_than: 0 }
 

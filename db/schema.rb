@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_18_211946) do
+ActiveRecord::Schema.define(version: 2018_09_21_001349) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -204,6 +204,18 @@ ActiveRecord::Schema.define(version: 2018_08_18_211946) do
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end
 
+  create_table "requests", force: :cascade do |t|
+    t.bigint "partner_id"
+    t.bigint "organization_id"
+    t.string "status"
+    t.jsonb "request_items", default: {}
+    t.text "comments"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_requests_on_organization_id"
+    t.index ["partner_id"], name: "index_requests_on_partner_id"
+  end
+
   create_table "storage_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
@@ -260,4 +272,6 @@ ActiveRecord::Schema.define(version: 2018_08_18_211946) do
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "requests", "organizations"
+  add_foreign_key "requests", "partners"
 end
