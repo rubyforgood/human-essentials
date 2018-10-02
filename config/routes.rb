@@ -67,6 +67,8 @@ Rails.application.routes.draw do
       collection do
         post :import_csv
       end
+      post :review
+      get :approve_application
     end
 
     resources :donations do

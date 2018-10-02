@@ -43,9 +43,6 @@ class Item < ApplicationRecord
 
   default_scope { active }
 
-  include DiaperPartnerClient
-  after_create :update_diaper_partner
-
   def self.categories
     select(:category).group(:category).order(:category)
   end
@@ -102,11 +99,5 @@ class Item < ApplicationRecord
       barcode_count,
       canonical_item.name
     ]
-  end
-
-  private
-
-  def update_diaper_partner
-    DiaperPartnerClient.post "/items", attributes
   end
 end

@@ -5,6 +5,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+ruby "2.5.1"
+
 gem "api-auth", "~> 1.5"
 gem "bootstrap-sass"
 gem "bugsnag"
