@@ -14,7 +14,9 @@
 #  city            :string
 #  state           :string
 #  zipcode         :string
-#
+#  latitude        :float
+#  longitude       :float
+
 require "geocoder_helper.rb"
 
 RSpec.describe Organization, type: :model do
@@ -99,9 +101,9 @@ RSpec.describe Organization, type: :model do
        'city'  => 'New York',
        'state' => 'NY',
        'zipcode' =>'10001')
-     organization.save
+       organization.save
      expect(organization.latitude).not_to eq(nil)
-     expect(organization.latitude).not_to eq(nil)
+     expect(organization.longitude).not_to eq(nil)
    end
   end
 

@@ -12,7 +12,8 @@
 #  updated_at      :datetime         not null
 #  address         :string
 #  business_name   :string
-#
+#  latitude        :float
+#  longitude       :float
 
 require "rails_helper"
 
@@ -52,5 +53,15 @@ RSpec.describe DiaperDriveParticipant, type: :model do
       DiaperDriveParticipant.import_csv(import_file_path, organization.id)
       expect(DiaperDriveParticipant.count).to eq before_import + 3
     end
+  end
+
+  describe "geocode" do
+    it "adds coordinates to the database" do
+     ddp = build(:diaper_drive_participant,
+       'address' => 'Des Moines, Iowa ')
+       ddp.save
+     expect(ddp.latitude).not_to eq(nil)
+     expect(ddp.longitude).not_to eq(nil)
+   end
   end
 end

@@ -8,7 +8,8 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
-#
+#  latitude        :float
+#  longitude       :float
 
 class StorageLocation < ApplicationRecord
   require "csv"
@@ -29,6 +30,9 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, :organization, presence: true
+
+  geocoded_by :address
+  after_validation :geocode, if: ->(obj){ obj.address.present? and obj.address_changed? }
 
   include Filterable
   scope :containing, ->(item_id) {

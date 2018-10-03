@@ -8,7 +8,8 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
-#
+#  latitude        :float
+#  longitude       :float
 
 class DonationSite < ApplicationRecord
   require "csv"
@@ -18,6 +19,9 @@ class DonationSite < ApplicationRecord
   validates :name, :address, :organization, presence: true
 
   has_many :donations
+
+  geocoded_by :address
+  after_validation :geocode, if: ->(obj){ obj.address.present? and obj.address_changed? }
 
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
