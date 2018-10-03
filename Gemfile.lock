@@ -393,6 +393,8 @@ GEM
       net-ssh (>= 2.8.0)
     sshkit-interactive (0.3.0)
       sshkit (~> 1.12)
+    sucker_punch (2.1.1)
+      concurrent-ruby (~> 1.0)
     terminal-notifier (2.0.0)
     terminal-notifier-guard (1.7.0)
     terrapin (0.6.0)
@@ -491,6 +493,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen
   sprockets (~> 3.7.2)
+  sucker_punch (~> 2.0)
   terminal-notifier
   terminal-notifier-guard
   therubyracer (~> 0.12)
@@ -505,4 +508,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.3
+   1.16.5

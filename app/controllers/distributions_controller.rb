@@ -3,7 +3,15 @@ class DistributionsController < ApplicationController
 
   def print
     @distribution = Distribution.find(params[:id])
-    @filename = format("%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at))
+    respond_to do |format|
+      format.any do
+        pdf = DistributionPdf.new(current_organization, @distribution)
+        send_data pdf.render,
+          filename: format("%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at)),
+          type: 'application/pdf',
+          disposition: 'inline'
+      end
+    end
   end
 
   def reclaim
@@ -37,6 +45,7 @@ class DistributionsController < ApplicationController
         @distribution.storage_location.distribute!(@distribution)
 
         if @distribution.save
+          PartnerMailerJob.perform_async(current_organization, @distribution)
           flash[:notice] = "Distribution created!"
           redirect_to distributions_path
         else
