@@ -43,6 +43,7 @@ gem "uglifier", ">= 1.3.0"
 gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
+gem 'sucker_punch', '~> 2.0'
 
 group :development, :test do
   gem "awesome_print"
