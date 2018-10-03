@@ -8,7 +8,8 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
-#
+#  latitude        :float
+#  longitude       :float
 
 RSpec.describe StorageLocation, type: :model do
   let(:organization) { create(:organization) }
@@ -268,6 +269,16 @@ RSpec.describe StorageLocation, type: :model do
         storage_location.reclaim!(distribution)
         expect(Distribution.find(distribution.id)).to eql distribution
       end
+    end
+
+    describe "geocode" do
+      it "adds coordinates to the database" do
+       storage_location = build(:storage_location,
+         'address' => 'Washington, DC ')
+         storage_location.save
+       expect(storage_location.latitude).not_to eq(nil)
+       expect(storage_location.longitude).not_to eq(nil)
+     end
     end
   end
 end
