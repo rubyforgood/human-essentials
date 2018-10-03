@@ -28,7 +28,7 @@ class DiaperDriveParticipant < ApplicationRecord
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
 
   geocoded_by :address
-  after_validation :geocode, if: ->(obj){ obj.address.present? and obj.address_changed? }
+  after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
 
   scope :for_csv_export, ->(organization) {
     where(organization: organization)

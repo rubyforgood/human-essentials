@@ -96,15 +96,14 @@ RSpec.describe Organization, type: :model do
 
   describe "geocode" do
     it "adds coordinates to the database" do
-     organization = build(:organization,
-       'street' => '123 Street Rd.',
-       'city'  => 'New York',
-       'state' => 'NY',
-       'zipcode' =>'10001')
-       organization.save
-     expect(organization.latitude).not_to eq(nil)
-     expect(organization.longitude).not_to eq(nil)
-   end
+      organization = build(:organization,
+                           "street" => "123 Street Rd.",
+                           "city"  => "New York",
+                           "state" => "NY",
+                           "zipcode" => "10001")
+      organization.save
+      expect(organization.latitude).not_to eq(nil)
+      expect(organization.longitude).not_to eq(nil)
+    end
   end
-
 end
