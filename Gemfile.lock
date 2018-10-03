@@ -172,7 +172,6 @@ GEM
       jquery-rails (>= 4.0.5, < 5.0.0)
       jquery-ui-rails (>= 5.0.2)
       momentjs-rails (>= 2.9.0)
-
     geocoder (1.5.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
@@ -464,7 +463,6 @@ DEPENDENCIES
   font-awesome-rails
   font-ionicons-rails
   fullcalendar-rails
-
   geocoder
   groupdate (~> 3.2)
   guard-rspec
@@ -502,6 +500,9 @@ DEPENDENCIES
   web-console
   webmock (~> 2.1)
   yajl-ruby
+
+RUBY VERSION
+   ruby 2.5.1p57
 
 BUNDLED WITH
    1.16.3

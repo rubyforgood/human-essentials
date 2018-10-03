@@ -32,7 +32,7 @@ class StorageLocation < ApplicationRecord
   validates :name, :address, :organization, presence: true
 
   geocoded_by :address
-  after_validation :geocode, if: ->(obj){ obj.address.present? and obj.address_changed? }
+  after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
 
   include Filterable
   scope :containing, ->(item_id) {

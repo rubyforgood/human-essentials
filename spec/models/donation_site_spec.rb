@@ -8,7 +8,7 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
- #  latitude        :float
+#  latitude        :float
 #  longitude       :float
 
 RSpec.describe DonationSite, type: :model do
@@ -35,11 +35,11 @@ RSpec.describe DonationSite, type: :model do
 
   describe "geocode" do
     it "adds coordinates to the database" do
-     donation_site = build(:donation_site,
-       'address' => 'Washington, DC ')
-       donation_site.save
-     expect(donation_site.latitude).not_to eq(nil)
-     expect(donation_site.longitude).not_to eq(nil)
-   end
+      donation_site = build(:donation_site,
+                            "address" => "Washington, DC ")
+      donation_site.save
+      expect(donation_site.latitude).not_to eq(nil)
+      expect(donation_site.longitude).not_to eq(nil)
+    end
   end
 end

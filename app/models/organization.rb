@@ -47,7 +47,7 @@ class Organization < ApplicationRecord
   has_one_attached :logo
 
   geocoded_by :address
-  after_validation :geocode, if: ->(obj){ obj.address.present? and obj.address_changed? }
+  after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
@@ -71,9 +71,9 @@ class Organization < ApplicationRecord
     "#{street} #{city}, #{state} #{zipcode}"
   end
 
-def address_changed?
-  street_changed? || city_changed? || state_changed? || zipcode_changed?
-end
+  def address_changed?
+    street_changed? || city_changed? || state_changed? || zipcode_changed?
+  end
 
   def address_inline
     address.split("\n").map(&:strip).join(", ")
