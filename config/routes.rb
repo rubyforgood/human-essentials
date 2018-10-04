@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: "json" } do
     namespace :v1 do
       resources :partner_requests, only: :create
+      resources :partner_approvals, only: :create
     end
   end
 
@@ -67,8 +68,10 @@ Rails.application.routes.draw do
       collection do
         post :import_csv
       end
-      post :review
-      get :approve_application
+      member do
+        get :approve_application
+        get :approve_partner
+      end
     end
 
     resources :donations do
