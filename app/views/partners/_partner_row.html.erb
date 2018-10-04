@@ -6,7 +6,7 @@
     when "Pending" %>
       <span class="btn btn-xs bg-maroon"><%= status %></span>
     <% when "Awaiting Review" %>
-      <%= link_to partner_approve_partner_path(partner_row), class: "btn btn-xs bg-orange" do %><%= status %><% end %>
+      <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-orange" do %><%= status %><% end %>
     <% when "Approved" %>
       <span class="btn btn-xs bg-olive"><%= status %></span>
   <% end %>
