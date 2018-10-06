@@ -12,10 +12,10 @@ set :rails_env, :production
 role :app, "deploy@104.45.147.100"
 
 server "104.45.147.100", roles: %w{web app db}, primary: true,
-                        ssh_options: {
-                          forward_agent: true,
-                          keys: ["~/.ssh/id_rsa"]
-                        }
+                         ssh_options: {
+                           forward_agent: true,
+                           keys: ["~/.ssh/id_rsa"]
+                         }
 
 # role-based syntax
 # ==================
@@ -38,7 +38,7 @@ server "104.45.147.100", roles: %w{web app db}, primary: true,
 # Feel free to add new variables to customise your setup.
 
 set :rvm_type, :user
-set :rvm_ruby_version, '2.5.1'
+set :rvm_ruby_version, "2.5.1"
 # Custom SSH Options
 # ==================
 # You may pass any option but keep in mind that net/ssh understands a
