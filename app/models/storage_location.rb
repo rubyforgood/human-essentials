@@ -238,6 +238,7 @@ class StorageLocation < ApplicationRecord
         inventory_item.update!(quantity: (inventory_item.quantity || 0) + line_item.quantity)
         line_item.destroy!
       end
+      distribution = distribution.reload
       distribution.update! new_distribution_params
     
       distribution.line_items.each do |line_item|
