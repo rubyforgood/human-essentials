@@ -80,8 +80,7 @@ class DistributionsController < ApplicationController
   def update
     distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     distribution.combine_duplicates
-    new_distribution_params = distribution_params.merge(organization: current_organization)
-    distribution.storage_location.update_distribution!(distribution, new_distribution_params)
+    distribution.storage_location.update_distribution!(distribution, distribution_params)
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @line_items = @distribution.line_items
     flash[:notice] = "Distribution updated!"

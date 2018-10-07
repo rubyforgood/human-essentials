@@ -233,12 +233,22 @@ class StorageLocation < ApplicationRecord
 
   def update_distribution!(distribution, new_distribution_params)
     ActiveRecord::Base.transaction do
-      reclaim! distribution
       distribution.line_items.each do |line_item|
+        inventory_item = inventory_items.find_or_create_by!(item: line_item.item)
+        inventory_item.update!(quantity: (inventory_item.quantity || 0) + line_item.quantity)
         line_item.destroy!
       end
       distribution.update! new_distribution_params
-      distribute! distribution #BUG the error distribute! raises is not triggering a transaction rollback
+    
+      distribution.line_items.each do |line_item|
+        inventory_item = inventory_items.find_by(item: line_item.item)
+        raise ActiveRecord::Rollback, "Failed to update distribution, please contact tech support if this problem persists" if inventory_item.nil?
+        if inventory_item.quantity == line_item.quantity #otherwise this would make the quantity 0 and an exception would be thrown
+          inventory_item.destroy!
+        else
+          inventory_item.update!(quantity: inventory_item.quantity + line_item.quantity)
+        end
+      end
     end
   end
 
