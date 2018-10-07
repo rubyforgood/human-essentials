@@ -1,0 +1,60 @@
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Requests - #{@request.id}" %>
+  <h1>
+    Request
+    <small>from <%= @request.partner.name %></small>
+  </h1>
+
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Requests", (requests_path) %></li>
+    <li class="active"> Request from <%= @request.partner.name %> at <%= @request.created_at.strftime("%B %-d %Y") %></li>
+  </ol>
+</section>
+
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border">
+      <fieldset>
+        <p>This request was sent on <%= @request.created_at.strftime("%B %-d %Y") %>:</p>
+        <ul class="list-group">
+          <li class="list-group-item">It was sent by: <%= @request.partner.name %></li>
+          <li class="list-group-item">It has a status of: <%= @request.status %></li>
+          <li class="list-group-item">Comments: <%= @request.comments || 'None' %></li>
+        </ul>
+
+        <section id="line_items">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+                  <thead>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                  </thead>
+
+                  <tbody>
+                    <% @request.request_items.each do |item,quantity| %>
+                      <tr><td><%= item %></td><td><%= quantity %></td></tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <br>
+        <div class="btn-group">
+          <%= link_to "Fullfill request",fullfill_request_path(@request),
+                      class: "btn btn-primary", method: :post %>
+          <%= link_to "View Associated Distribution", distribution_path(@request.distribution||-1), class: "btn btn-primary #{'disabled' unless @request.distribution}" %>
+        </div>
+      </fieldset>
+
+    </div>
+  </div>
+</section>

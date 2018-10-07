@@ -1,0 +1,11 @@
+<tr>
+  <td><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
+  <td><%= request_row.partner.name %> </td>
+  <td><%= request_row.status %></td>
+  <td class="text-right">
+
+    <%= link_to request_path(request_row), class: "btn btn-primary btn-xs" do %>
+      <i class="fa fa-search"></i> View
+    <% end %>
+  </td>
+</tr>
