@@ -17,9 +17,9 @@ RSpec.feature "Requests", type: :feature do
   end
 
   context "While viewing the request page" do
-    scenario "the request is shown" do
+    scenario "the request is shown", js: true do
       visit url_prefix + "/requests/#{@request.id}"
-      expect(response).to be_successful
+      expect(page).to have_content("Request from #{@request.partner.name}")
     end
 
     scenario "the request is fullfillable", js: true do
@@ -30,7 +30,7 @@ RSpec.feature "Requests", type: :feature do
       click_button "Preview Distribution"
       expect(page).to have_content "Distribution Manifest for"
       click_button "Confirm Distribution"
-      expect(flash[:notice]).to match(/Distribution created!/)
+      expect(page).to have_content "Distribution created"
     end
   end
 end

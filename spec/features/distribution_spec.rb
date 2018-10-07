@@ -14,9 +14,9 @@ RSpec.feature "Distributions", type: :feature do
     select @partner.name, from: "Partner"
     select @storage_location.name, from: "From storage location"
 
-    fill_in "Comment", with: "Comment"
+    fill_in "Comment", with: "Take my wipes... please"
     click_button "Preview Distribution"
-    expect(flash[:notice]).to match(/fullfilled/i)
+    expect(page).to have_content "Distribution Manifest for"
     click_button "Confirm Distribution"
     expect(page.find(".alert-info")).to have_content "reated"
   end
