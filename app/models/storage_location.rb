@@ -246,7 +246,7 @@ class StorageLocation < ApplicationRecord
         if inventory_item.quantity == line_item.quantity #otherwise this would make the quantity 0 and an exception would be thrown
           inventory_item.destroy!
         else
-          inventory_item.update!(quantity: inventory_item.quantity + line_item.quantity)
+          inventory_item.update!(quantity: inventory_item.quantity - line_item.quantity)
         end
       end
     end
