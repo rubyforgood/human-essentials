@@ -64,6 +64,21 @@ class Distribution < ApplicationRecord
     self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
   end
 
+  def copy_from_request(request_id)
+    request = Request.find(request_id)
+    self.organization_id = request.organization_id
+    self.partner_id = request.partner_id
+    self.issued_at = Time.zone.today + 1.day
+    request.request_items.each do |item, quantity|
+      line_items.new(
+        quantity: quantity,
+        item_id: request.organization.scale_values[item.to_sym],
+        itemizable_id: request.id,
+        itemizable_type: "Distribution"
+      )
+    end
+  end
+
   def self.csv_export_headers
     ["Partner", "Date of Distribution", "Source Inventory", "Total items"]
   end
