@@ -1,108 +1,111 @@
- <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-            <li class="dropdown notifications-menu">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-calendar"></i>
-                <span class="label label-danger"><%= current_organization&.upcoming_distributions || 0 %></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li>
-                  <!-- inner menu: contains the actual data -->
-                  <ul class="menu">
-                    <li>
-                      <a href="#">
-                        <i class="fa fa-users text-aqua"></i> <%= current_organization&.upcoming_distributions || 0 %> Pick-ups remaining this week
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="footer"><%= link_to_if current_organization.id.present?, "View Calendar", pick_ups_distributions_path(organization_id: current_organization.to_param) %></li>
-              </ul>
-            </li>
-
-          <% if current_user.super_admin? %>
-            <li class="dropdown user user-menu">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-lock"></i> Administration
-              </a>
-              <ul class="dropdown-menu">
-                <li>
-                  <%= navigation_link_to "Organizations", admin_organizations_path %>
-                </li>
-                <li>
-                  <%= navigation_link_to "Canonical items", admin_canonical_items_path %>
-                </li>
-                <li>
-                  <%= navigation_link_to "Users", admin_users_path %>
-                </li>
-              </ul>
-            </li>
-          <% end %>
-         
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-file-text text-aqua"></i> 10 Diaper Requests 
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="footer"><a href="#">View Requests</a></li>
-            </ul>
+<div class="navbar-custom-menu">
+  <ul class="nav navbar-nav">
+    <% if current_user.super_admin? %>
+      <li class="dropdown user user-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <i class="fa fa-lock"></i> Administration
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <%= navigation_link_to "Organizations", admin_organizations_path %>
           </li>
-          <!-- There was an "end" here before, and I had to remove it -- I'm not sure where the companion "if" was -->
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="hidden-xs"><%= current_user.name %></span>
-            </a>
-            <ul class="dropdown-menu">
-              <!-- User image -->
-              <li class="user-body">
-                <p class="text-center">
-                  <b><%= current_user.name %></b>
-                </p>
-              </li>
-              <!-- Menu Body -->
-              <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>
-                  </div>
-                  <% if current_organization.id.present? && 
-                      (current_user.super_admin? || 
-                      (current_user.organization_admin? && 
-                        current_organization.id == current_user.organization_id)) %>
-                    <% with_options organization_id: current_user.organization.to_param do |with_org| %>
-                      <div class="col-xs-4 text-center">
-                        <%= navigation_link_to "Show users", with_org.users_path %>
-                      </div>
-                      <div class="col-xs-4 text-center">
-                        <%= navigation_link_to "Show organization", with_org.organization_path %>
-                      </div>
-                    <% end %>
-                  <% end %>
-                </div>
-                <!-- /.row -->
-              </li>
-              <!-- Menu Footer-->
-              <li class="user-footer">
-                <div class="pull-left">
-                  <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
-                </div>
-                <div class="pull-right">
-                  <%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete', class: "btn btn-default btn-flat") %>
-                </div>
-              </li>
-            </ul>
+          <li>
+            <%= navigation_link_to "Canonical items", admin_canonical_items_path %>
+          </li>
+          <li>
+            <%= navigation_link_to "Users", admin_users_path %>
           </li>
         </ul>
-      </div>
+      </li>
+    <% end %>
+    <li class="dropdown notifications-menu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-calendar"></i>
+        <% if current_organization && current_organization&.upcoming_distributions > 0 %>
+          <span class="label label-danger"><%= current_organization&.upcoming_distributions %></span>
+        <% end %>
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          <!-- inner menu: contains the actual data -->
+          <ul class="menu">
+            <li>
+              <a href="#">
+                <i class="fa fa-users text-aqua"></i> <%= current_organization&.upcoming_distributions || 0 %> Pick-ups
+                remaining this week
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="footer"><%= link_to_if current_organization.id.present?, "View Calendar", pick_ups_distributions_path(organization_id: current_organization.to_param) %></li>
+      </ul>
+    </li>
+    <li class="dropdown notifications-menu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-bell-o"></i>
+        <% if current_organization && current_organization.requests.active.size > 0 %>
+          <span class="label label-warning"><%= current_organization.requests.active.size %></span>
+        <% end %>
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          <!-- inner menu: contains the actual data -->
+          <ul class="menu">
+            <li>
+              <%= link_to(requests_path) do %>
+                <i class="fa fa-file-text text-aqua"></i> <%= current_organization&.requests.active.size rescue "0" %>
+                Diaper Requests
+              <% end %>
+            </li>
+          </ul>
+        </li>
+        <li class="footer"><%= link_to "View Requests", requests_path %></li>
+      </ul>
+    </li>
+    <!-- User Account: style can be found in dropdown.less -->
+    <li class="dropdown user user-menu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <span class="hidden-xs"><%= current_user.name %></span>
+      </a>
+      <ul class="dropdown-menu">
+        <!-- User image -->
+        <li class="user-body">
+          <p class="text-center">
+            <b><%= current_user.name %></b>
+          </p>
+        </li>
+        <!-- Menu Body -->
+        <li class="user-body">
+          <div class="row">
+            <div class="col-xs-4 text-center">
+              <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>
+            </div>
+            <% if current_organization.id.present? &&
+                (current_user.super_admin? ||
+                    (current_user.organization_admin? &&
+                        current_organization.id == current_user.organization_id)) %>
+              <% with_options organization_id: current_user.organization.to_param do |with_org| %>
+                <div class="col-xs-4 text-center">
+                  <%= navigation_link_to "Show users", with_org.users_path %>
+                </div>
+                <div class="col-xs-4 text-center">
+                  <%= navigation_link_to "Show organization", with_org.organization_path %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+          <!-- /.row -->
+        </li>
+        <!-- Menu Footer-->
+        <li class="user-footer">
+          <div class="pull-left">
+            <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
+          </div>
+          <div class="pull-right">
+            <%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete', class: "btn btn-default btn-flat") %>
+          </div>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

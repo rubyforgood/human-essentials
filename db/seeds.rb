@@ -252,4 +252,16 @@ end
   end
 end
 
+20.times.each do
+  Request.create(
+    partner: random_record(Partner),
+    organization: random_record(Organization),
+    request_items: { k_size5: 3,
+                     k_size6: 2
+                   },
+    comments: "Urgent",
+    status: 'Active'
+  )
+end
+
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")

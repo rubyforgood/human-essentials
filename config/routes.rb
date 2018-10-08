@@ -92,6 +92,11 @@ Rails.application.routes.draw do
     end
 
     resources :purchases
+    resources :requests, only: %i(index new show) do
+      member do
+        post :fullfill
+      end
+    end
 
     get "dashboard", to: "dashboard#index"
     get "csv", to: "data_exports#csv"
