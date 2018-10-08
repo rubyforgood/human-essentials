@@ -72,7 +72,7 @@ class Distribution < ApplicationRecord
     request.request_items.each do |item, quantity|
       line_items.new(
         quantity: quantity,
-        item_id: request.organization.scale_values[item.to_sym],
+        item: Item.find_by(organization: request.organization, name: Request::DIAPERMAPPING[item]),
         itemizable_id: request.id,
         itemizable_type: "Distribution"
       )
