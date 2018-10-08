@@ -250,6 +250,7 @@ end
     request_items: { k_size5: 3,
                      k_size6: 2
                    },
+    comments: "Urgent",
     status: 'Active'
   )
 end

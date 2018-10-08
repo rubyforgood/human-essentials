@@ -68,6 +68,7 @@ class Distribution < ApplicationRecord
     request = Request.find(request_id)
     self.organization_id = request.organization_id
     self.partner_id = request.partner_id
+    self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
     request.request_items.each do |item, quantity|
       line_items.new(
