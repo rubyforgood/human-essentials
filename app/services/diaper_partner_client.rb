@@ -7,7 +7,7 @@ module DiaperPartnerClient
         diaper_partner_id: attributes["id"],
         email: attributes["email"] } }
 
-    uri = URI("https://diapertesting.herokuapp.com/api/v1/register")
+    uri = URI(ENV["PARTNER_REGISTER_URL"])
     req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
     req.body = partner.to_json
     req["Content-Type"] = "application/json"
@@ -26,7 +26,7 @@ module DiaperPartnerClient
                       diaper_partner_id: attributes["id"],
                       approved: "true" } }
 
-    uri = URI("https://diapertesting.herokuapp.com/api/v1/approve")
+    uri = URI(ENV["PARTNER_APPROVAL_URL"])
     req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
     req.body = partner.to_json
     req["Content-Type"] = "application/json"
