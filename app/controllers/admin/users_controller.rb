@@ -18,7 +18,7 @@ class Admin::UsersController < AdminController
       redirect_to admin_users_path, notice: "Created a new user!"
     else
       flash[:error] = "Failed to create user"
-      render 'admin/users/new'
+      render "admin/users/new"
     end
   end
 

@@ -3,7 +3,6 @@
 # Table name: diaper_drive_participants
 #
 #  id              :integer          not null, primary key
-#  name            :string
 #  contact_name    :string
 #  email           :string
 #  phone           :string
@@ -15,6 +14,7 @@
 #  business_name   :string
 #  latitude        :float
 #  longitude       :float
+#
 
 class DiaperDriveParticipant < ApplicationRecord
   require "csv"

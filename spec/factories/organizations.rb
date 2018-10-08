@@ -14,8 +14,9 @@
 #  city            :string
 #  state           :string
 #  zipcode         :string
-#  latitude        :flaot
+#  latitude        :float
 #  longitude       :float
+#
 
 FactoryBot.define do
   factory :organization do

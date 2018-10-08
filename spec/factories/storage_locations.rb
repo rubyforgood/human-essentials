@@ -8,6 +8,8 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
+#  latitude        :float
+#  longitude       :float
 #
 
 FactoryBot.define do

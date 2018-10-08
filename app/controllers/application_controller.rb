@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
   def current_organization
-    @organization ||= Organization.find_by(short_name: params[:organization_id])
+    @organization ||= Organization.find_by(short_name: params[:organization_id]) || current_user&.organization
   end
   helper_method :current_organization
 
@@ -24,14 +24,15 @@ class ApplicationController < ActionController::Base
   def default_url_options(options = {})
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
-    elsif current_user && !current_user.superadmin? && current_user.organization.present?
+    elsif current_user && !current_user.super_admin? && current_user.organization.present?
       options[:organization_id] = current_user.organization.to_param
     end
     options
   end
 
   def authorize_user
-    verboten! unless params[:controller].include?("devise") || params[:controller].include?("admin") || current_organization.id == current_user.organization_id
+    # params[:controller].include?("admin") ||
+    verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
   end
 
   def not_found!

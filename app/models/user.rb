@@ -26,7 +26,7 @@
 #  invitations_count      :integer          default(0)
 #  organization_admin     :boolean
 #  name                   :string           default("CHANGEME"), not null
-#  superadmin             :boolean          default(FALSE)
+#  super_admin            :boolean          default(FALSE)
 #
 
 class User < ApplicationRecord

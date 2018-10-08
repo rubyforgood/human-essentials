@@ -23,7 +23,7 @@
     <h3 class="box-title">Update record for <%= current_organization.name %></h3>
   </div>
   <div class="box-body">
-<%= simple_form_for current_organization, url: organization_path do |f| %>
+<%= simple_form_for current_organization, url: { controller: "organizations", action: "update" } do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">

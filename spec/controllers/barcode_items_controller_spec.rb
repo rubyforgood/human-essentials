@@ -70,21 +70,11 @@ RSpec.describe BarcodeItemsController, type: :controller do
       end
 
       it "disallows a non-superadmin to delete a global barcode" do
-        allow_any_instance_of(User).to receive(:superadmin?).and_return(false)
+        allow_any_instance_of(User).to receive(:super_admin?).and_return(false)
         global_barcode = create(:global_barcode_item)
         delete :destroy, params: default_params.merge(id: global_barcode.to_param)
         expect(response).not_to be_successful
         expect(flash[:error]).to match(/permission/)
-      end
-
-      it "allows a superadmin to delete anyone's barcode" do
-        allow_any_instance_of(User).to receive(:superadmin?).and_return(true)
-        other_org = create(:organization)
-        other_barcode = create(:barcode_item, organization_id: other_org.id, global: false)
-        expect do
-          delete :destroy, params: default_params.merge(id: other_barcode.to_param)
-        end.to change { BarcodeItem.count }.by(-1)
-        expect(flash.to_h).not_to have_key("error")
       end
 
       it "redirects to the index" do

@@ -26,7 +26,7 @@
 #  invitations_count      :integer          default(0)
 #  organization_admin     :boolean
 #  name                   :string           default("CHANGEME"), not null
-#  superadmin             :boolean          default(FALSE)
+#  super_admin            :boolean          default(FALSE)
 #
 
 FactoryBot.define do
@@ -42,9 +42,9 @@ FactoryBot.define do
       organization_admin true
     end
 
-    factory :superadmin do
+    factory :super_admin do
       name "Administrative User"
-      superadmin true
+      super_admin true
     end
   end
 end

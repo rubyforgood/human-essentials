@@ -1,6 +1,8 @@
 RSpec.describe Admin::CanonicalItemsController, type: :controller do
-  let(:default_params) do
-    { organization_id: @organization.id }
+  context "while signed in as a super admin" do
+    before do
+      sign_in(@super_admin)
+    end
   end
 =begin
   context "When logged in as an organization admin" do
