@@ -8,19 +8,17 @@ Rails.application.routes.draw do
   end
   mount flipper_app, at: "/flipper"
 
-  resources :admins do
-    collection do
-      post :invite_user
-    end
-  end
-
+  # This is where a superadmin CRUDs all the things
   namespace :admin do
+    get :dashboard
     resources :canonical_items
     resources :organizations
     resources :users
     resources :barcode_items
   end
-  resources :canonical_items
+
+  # These are globally accessible
+  resources :canonical_items, only: %i(index show)
 
   namespace :api, defaults: { format: "json" } do
     namespace :v1 do
@@ -31,9 +29,12 @@ Rails.application.routes.draw do
 
   scope path: ":organization_id" do
     resources :users
-    resource :organization do
+
+    # Users that are organization admins can manage the organization itself
+    resource :organization, only: [:show]
+    resource :organization, path: :manage, only: %i(edit update) do
       collection do
-        get :manage
+        post :invite_user
       end
     end
 

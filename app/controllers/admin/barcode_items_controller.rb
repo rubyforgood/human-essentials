@@ -37,11 +37,11 @@ class Admin::BarcodeItemsController < AdminController
   end
 
   def destroy
-    @barcode_item = BarcodeItem.includes(:items).find(params[:id])
-    if !@barcode_item.items.empty? && @barcode_item.destroy
+    @barcode_item = BarcodeItem.find(params[:id])
+    if @barcode_item.destroy
       redirect_to admin_barcode_items_path, notice: "Barcode Item deleted!"
     else
-      redirect_to admin_barcode_items_path, alert: "Failed to delete Barcode Item. Are there still items attached?"
+      redirect_to admin_barcode_items_path, alert: "Failed to delete Barcode Item."
     end
   end
 

@@ -48,15 +48,15 @@
       </a>
 
     <% if user_signed_in? %>
-      <%= render partial: "layouts/lte_navbar" %>
+      <%= render partial: "layouts/lte_admin_navbar" %>
     <% end %>
     </nav>
   </header>
 
   <!-- =============================================== -->
-  <% # If there's no organization set, most of these routes won't work. %>
-  <% if user_signed_in? && current_organization.id.present? %>
-    <%= render partial: "layouts/lte_sidebar" %>
+
+  <% if user_signed_in? %>
+    <%= render partial: "layouts/lte_admin_sidebar" %>
   <% end %>
 
 

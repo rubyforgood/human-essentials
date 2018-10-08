@@ -8,6 +8,7 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
+#  status          :string
 #
 
 FactoryBot.define do

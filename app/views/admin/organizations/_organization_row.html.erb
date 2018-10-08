@@ -1,7 +1,10 @@
-<tr>
+<tr class="<%= organization_row.short_name %>">
   <td><%= organization_row.name %></td>
   <td><%= link_to organization_row.email, "mailto:#{organization_row.email}" %></td>
   <td class="text-right">
+      <%= link_to admin_organization_path(organization_row.id), class: "btn btn-info btn-xs" do %>
+        <%= fa_icon "view" %> View
+      <% end %>
       <%= link_to edit_admin_organization_path(organization_row.id), class: "btn btn-info btn-xs" do %>
         <%= fa_icon "edit" %> Edit
       <% end %>

@@ -2,10 +2,10 @@ RSpec.describe Admin::OrganizationsController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.id }
   end
-=begin
-  context "When logged in as an organization admin" do
+
+  context "When logged in as a super admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(@super_admin)
     end
 
     describe "GET #new" do
@@ -28,6 +28,8 @@ RSpec.describe Admin::OrganizationsController, type: :controller do
         expect(response).to be_successful
       end
     end
+  end
+=begin
 
     describe "GET #show" do
       it "returns http success" do

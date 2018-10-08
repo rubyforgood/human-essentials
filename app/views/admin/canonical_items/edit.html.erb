@@ -22,8 +22,12 @@
     <h3 class="box-title">Update <%= @canonical_item.name %></h3>
   </div>
   <div class="box-body">
-  
-    <%= render partial: "form", object: @canonical_item, locals: { submit_text: "Update Canonical Item" } %>
+    <div class="box-body">
+      <%= simple_form_for [:admin, @canonical_item], html: { class: 'form-horizontal' },  url: admin_canonical_item_path(@canonical_item) do |f| %>
+        <%= render partial: "form", object: f %>
+        <%= f.button :submit, "Update Canonical Item", class:"btn btn-info"%>
+      <% end %>
+    </div>
   </div>
 </div>
 <!-- /.box -->

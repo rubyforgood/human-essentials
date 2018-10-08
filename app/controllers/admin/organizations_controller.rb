@@ -5,21 +5,16 @@ class Admin::OrganizationsController < AdminController
 
   def update
     @organization = Organization.find(params[:id])
-    if @organization.update_attributes(organization_params)
-      redirect_to admin_organizations_path, notice: 'Updated organization!'
+    if @organization.update(organization_params)
+      redirect_to admin_organizations_path, notice: "Updated organization!"
     else
-      flash[:error] = 'Failed to update this organization.'
+      flash[:error] = "Failed to update this organization."
       render :edit
     end
   end
 
   def index
     @organizations = Organization.all
-  end
-
-  def invite_user
-    User.invite!(email: params[:email], name: params[:name], organization_id: params[:org])
-    redirect_to admin_organizations_path, notice: 'User invited to organization!'
   end
 
   def new
