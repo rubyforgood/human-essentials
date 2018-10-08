@@ -24,18 +24,7 @@ RSpec.feature "Canonical Item management", type: :feature do
 
     scenario "Admin updates an existing canonical item" do
       canonical_item = CanonicalItem.first
-      visit "/canonical_items/#{canonical_item.to_param}/edit"
-      fill_in "Name", with: canonical_item.name + " new"
-      click_button "Update Canonical Item"
-      expect(page.find(".alert")).to have_content "pdated"
-    end
-
-    scenario "Admin updates an existing item with empty attributes" do
-      canonical_item = CanonicalItem.first
-      visit "/canonical_items/#{canonical_item.to_param}/edit"
-      fill_in "Name", with: ""
-      click_button "Update Canonical Item"
-      expect(page.find(".alert")).to have_content "ailed"
+      expect { visit "/canonical_items/#{canonical_item.to_param}/edit" }.to raise_error(AbstractController::ActionNotFound)
     end
 
     scenario "Admin can see a listing of all Canonical Items that shows a summary of its sub-items" do
@@ -68,8 +57,7 @@ RSpec.feature "Canonical Item management", type: :feature do
       canonical_item = create(:canonical_item)
       visit "/canonical_items/#{canonical_item.id}"
       expect(page).to have_content("Access Denied")
-      visit "/canonical_items/#{canonical_item.id}/edit"
-      expect(page).to have_content("Access Denied")
+      expect { visit "/canonical_items/#{canonical_item.to_param}/edit" }.to raise_error(AbstractController::ActionNotFound)
     end
   end
 end

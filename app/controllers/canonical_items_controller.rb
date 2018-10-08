@@ -1,20 +1,6 @@
 class CanonicalItemsController < ApplicationController
   before_action :authorize_user
 
-  def edit
-    @canonical_item = CanonicalItem.find(params[:id])
-  end
-
-  def update
-    @canonical_item = CanonicalItem.find(params[:id])
-    if @canonical_item.update(canonical_item_params)
-      redirect_to canonical_items_path, notice: "Updated canonical item!"
-    else
-      flash[:error] = "Failed to update this canonical item."
-      render :edit
-    end
-  end
-
   def index
     @canonical_items = CanonicalItem.all
   end
@@ -36,15 +22,6 @@ class CanonicalItemsController < ApplicationController
   def show
     @canonical_item = CanonicalItem.includes(items: [:organization]).find(params[:id])
     @items = @canonical_item.items
-  end
-
-  def destroy
-    @canonical_item = CanonicalItem.includes(:items).find(params[:id])
-    if !@canonical_item.items.empty? && @canonical_item.destroy
-      redirect_to canonical_items_path, notice: "Canonical Item deleted!"
-    else
-      redirect_to admins_path, alert: "Failed to delete Canonical Item. Are there still items attached?"
-    end
   end
 
   private
