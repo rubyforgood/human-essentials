@@ -1,6 +1,9 @@
 class Request < ApplicationRecord
   belongs_to :partner
   belongs_to :organization
+  belongs_to :distribution, optional: true
+
+  scope :active, -> { where(status: "Active") }
 
   STATUSES = %w[Active Fulfilled].freeze
 

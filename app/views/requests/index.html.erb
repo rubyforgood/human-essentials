@@ -1,0 +1,47 @@
+<section class="content-header">
+  <% content_for :title, "#{current_organization.name} - Requests" %>
+  <h1>
+    Requests
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><a href="#">Requests</a></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+      <section id="filters">
+        <!-- TBA -- style after other #index views -->
+      </section><!-- /#filters -->
+    </div><!-- /.box-header -->
+  <div class="box-body">
+    <div class="row">
+      <div class="col-xs-12">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Requester</th>
+                  <th>Status</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "request_row", collection: @requests %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body.table-responsive -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section><!-- /.content -->

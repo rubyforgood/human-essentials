@@ -43,6 +43,7 @@ class Organization < ApplicationRecord
   has_many :partners
   has_many :transfers
   has_many :users
+  has_many :requests
 
   has_one_attached :logo
 
