@@ -1,0 +1,103 @@
+<!-- Left side column. contains the sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header all-caps">Main Navigation</li>
+        <% if (current_user.organization.present?) %>
+          <li class="<%= active_class(['dashboard']) %>">
+            <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-dashboard"></i> <span>Back to Dashboard</span>
+            <% end %>
+          </li>
+        <% end %>
+        <li class="<%= active_class(['barcode_items']) %> treeview">
+          <a href="#">
+            <i class="fa fa-barcode"></i>
+            <span>Barcode Items</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="<%= 'active' if current_page?(admin_barcode_items_path) %>">
+              <%= link_to(admin_barcode_items_path) do %>
+                <i class="fa fa-circle-o"></i> All Barcodes
+              <% end %>
+            </li>
+            <li class="<%= 'active' if current_page?(new_admin_barcode_item_path) %>">
+              <%= link_to(new_admin_barcode_item_path) do %>
+                <i class="fa fa-plus-circle"></i> New Barcoded Item
+              <% end %>
+            </li>
+          </ul>
+        </li>
+        <li class="<%= active_class(['canonical_items']) %> treeview">
+          <a href="#">
+            <i class="fa fa-people-sitemap"></i>
+            <span>Canonical Items</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="<%= 'active' if current_page?(admin_canonical_items_path) %>">
+              <%= link_to(admin_canonical_items_path) do %>
+                <i class="fa fa-circle-o"></i> All Canonical Items
+              <% end %>
+            </li>
+            <li class="<%= 'active' if current_page?(new_admin_canonical_item_path) %>">
+              <%= link_to(new_admin_canonical_item_path) do %>
+                <i class="fa fa-plus-circle"></i> New Canonical Item
+              <% end %>
+            </li>
+          </ul>
+        </li>
+        <li>
+        <li class="<%= active_class(['organizations']) %> treeview">
+          <a href="#">
+            <i class="fa fa-people-carry"></i>
+            <span>Organizations</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="<%= 'active' if current_page?(admin_organizations_path) %>">
+              <%= link_to(admin_organizations_path) do %>
+                <i class="fa fa-circle-o"></i> <span>Organizations</span>
+              <% end %>
+            </li>
+            <li class="<%= 'active' if current_page?(new_admin_organization_path) %>">
+              <%= link_to(new_admin_organization_path) do %>
+                <i class="fa fa-plus-circle"></i> <span>Add New Organization</span>
+              <% end %>
+            </li>
+          </ul>
+        </li>
+        <li class="<%= active_class(['users']) %> treeview">
+          <a href="#">
+            <i class="fa fa-users"></i>
+            <span>Users</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="<%= 'active' if current_page?(admin_users_path) %>">
+              <%= link_to(admin_users_path) do %>
+                <i class="fa fa-circle-o"></i> All Users
+              <% end %>
+            </li>
+            <li class="<%= 'active' if current_page?(new_admin_user_path) %>">
+              <%= link_to(new_admin_user_path) do %>
+                <i class="fa fa-plus-circle"></i> New User
+              <% end %>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>

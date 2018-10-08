@@ -8,7 +8,7 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "All Canonical Items", (canonical_items_path) %></li>  
+    <li><%= link_to "All Canonical Items", (admin_canonical_items_path) %></li>
     <li class="active"> New Canonical Item</li>
   </ol>
 </section>
@@ -22,7 +22,12 @@
       <h3 class="box-title">New Canonical Item</h3>
     </div>
     <div class="box-body">
-      <%= render partial: "form", object: @canonical_item, locals: { submit_text: "Create Canonical Item" } %>
+      <div class="box-body">
+        <%= simple_form_for [:admin, @canonical_item], html: { class: 'form-horizontal' } do |f| %>
+          <%= render partial: "form", object: f %>
+          <%= f.button :submit, "Create Canonical Item", class:"btn btn-info"%>
+        <% end %>
+      </div>
     </div>
   </div>
   <!-- /.box -->

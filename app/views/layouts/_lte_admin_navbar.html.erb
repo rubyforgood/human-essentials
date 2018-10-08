@@ -1,0 +1,36 @@
+ <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <span class="hidden-xs"><%= current_user.name %></span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- User image -->
+              <li class="user-body">
+                <p class="text-center">
+                  <b><%= current_user.name %></b>
+                </p>
+              </li>
+              <!-- Menu Body -->
+              <li class="user-body">
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                    <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>
+                  </div>
+                </div>
+                <!-- /.row -->
+              </li>
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
+                </div>
+                <div class="pull-right">
+                  <%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete', class: "btn btn-default btn-flat") %>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>

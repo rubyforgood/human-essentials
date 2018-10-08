@@ -2,12 +2,13 @@
 #
 # Table name: partners
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  email           :string
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
+#  status          :string
 #
 
 class Partner < ApplicationRecord
