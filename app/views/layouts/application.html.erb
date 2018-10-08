@@ -54,8 +54,8 @@
   </header>
 
   <!-- =============================================== -->
-
-  <% if user_signed_in? %>
+  <% # If there's no organization set, most of these routes won't work. %>
+  <% if user_signed_in? && current_organization.id.present? %>
     <%= render partial: "layouts/lte_sidebar" %>
   <% end %>
 

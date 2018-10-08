@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  short_name      :string
 #  email           :string
@@ -14,8 +14,9 @@
 #  city            :string
 #  state           :string
 #  zipcode         :string
-#  latitude        :flaot
+#  latitude        :float
 #  longitude       :float
+#
 
 FactoryBot.define do
   factory :organization do

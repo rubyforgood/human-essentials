@@ -1,4 +1,88 @@
-<% content_for :title, "Organizations - #{@organization.name}" %>
+<% can_administrate = (current_user.organization_admin? && current_user.organization_id == @organization.id) %>
 
-<h1><%= @organization.name %></h1>
-<p><%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
+<section class="content-header">
+  <% content_for :title, "Organizations - #{@organization.name}" %>
+<h1>
+  Organization info
+  <small>for <%= @organization.name %></small>
+</h1>
+<ol class="breadcrumb">
+  <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li class="active"><%= @organization.name %></li>
+</ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title"><%= @organization.name %></h3>
+  </div>
+  <div class="box-body">
+    <div class="col-md-6">
+      <h4>Contact Info</h4>
+      <p><%= fa_icon "envelope" %> <%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
+      <address><%= fa_icon "map-marker" %> <%= @organization.address %></address>      
+    </div>
+    <div class="col-md-6">
+      <h4>Users</h4>
+        <ul class="list-group">
+          <li class="list-group-item">
+      <%= @organization.display_users.split(",").join("</li><li class=\"list-group-item\">").html_safe %>
+          </li>
+        </ul>
+
+<% if can_administrate %>
+        <a href="#addUserModal" class="btn btn-success" data-toggle="modal"><%= fa_icon "plus" %> Invite User to this Organization</a>
+      
+    </div>
+  <div id="addUserModal" class="modal fade">
+
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add User to <%= @organization.name %></h4>
+      </div><!-- modal-header -->
+      <div class="modal-body">
+        <div class="box-body">
+          <%= form_tag invite_user_organization_path do %>
+            <div class="input-group">
+              <span class="input-group-addon" id="spn_usr_fa_icon"><%= fa_icon "user" %></span>
+              <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="spn_usr_fa_icon">
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
+              <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
+            </div>
+            <%= hidden_field_tag :org , @organization.id %><br>
+            <%= button_tag :submit, class:"btn btn-primary btn-lg" do %>
+              Invite User
+            <% end %>
+          <% end # form %>
+        </div><!-- box-body -->
+      </div><!-- modal-body -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= fa_icon "close" %> Close</button>
+      </div><!-- modal-footer -->
+    </div><!-- modal-content -->
+  </div><!-- modal-dialog -->
+<% end # if can_administrate %>
+
+  </div>
+<hr />
+<% if can_administrate %>
+  <%= link_to edit_organization_path do %>
+    <i class="fa fa-pencil"></i> Edit
+  <% end %>
+<% end %>
+
+  </div>
+</div>
+</section>

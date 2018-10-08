@@ -2,7 +2,7 @@
 #
 # Table name: diaper_drive_participants
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  contact_name    :string
 #  email           :string
 #  phone           :string
@@ -12,6 +12,8 @@
 #  updated_at      :datetime         not null
 #  address         :string
 #  business_name   :string
+#  latitude        :float
+#  longitude       :float
 #
 
 FactoryBot.define do

@@ -38,8 +38,17 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
-user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: true
-user2 = User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org
+# super admin
+user = User.create email: 'superadmin@example.com', password: 'password', password_confirmation: 'password', organization_admin: false, super_admin: true
+
+# org admins
+user = User.create email: 'org_admin1@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: true
+user2 = User.create email: 'org_admin2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org, organization_admin: true
+
+# regular users
+User.create email: 'user_1@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: false
+User.create email: 'user_2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org, organization_admin: false
+
 
 DonationSite.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
   location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"

@@ -7,6 +7,7 @@ require "spec_helper"
 require "rspec/rails"
 require "capybara/rails"
 require "capybara/rspec"
+require "capybara-screenshot/rspec"
 require "pry"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -44,6 +45,18 @@ end
 # Enable JS for Capybara tests
 Capybara.javascript_driver = :chrome
 
+Capybara::Screenshot.autosave_on_failure = true
+# The driver name should match the Capybara driver config name.
+Capybara::Screenshot.register_driver(:chrome) do |driver, path|
+  driver.browser.save_screenshot(path)
+end
+
+# Set the asset host so that the screenshots look nice
+Capybara.asset_host = "http://localhost:3000"
+
+# Only keep the most recent run
+Capybara::Screenshot.prune_strategy = :keep_last_run
+
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
@@ -56,6 +69,9 @@ RSpec.configure do |config|
 
   # Location for fixtures (logo, etc)
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+  # Persistence for failures
+  config.example_status_persistence_file_path = "spec/example_failures.txt"
 
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
@@ -94,10 +110,12 @@ ASCIIART
     # prepare a default @organization and @user to always be available for testing
     Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
     @organization = create(:organization, name: "DEFAULT")
-    Rails.logger.info "\n\n-~=> Creating DEFAULT admin & user"
-    @organization_admin = create(:organization_admin, name: "DEFAULT ADMIN")
+    Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
+    @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
     @user = create(:user, organization: @organization, name: "DEFAULT USER")
+    @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
 
+    # Print the name of the example being run
     Rails.logger.info "\n\n-~=> #{self.class.description} ::::::::::::::::::::::"
   end
 
@@ -109,16 +127,6 @@ ASCIIART
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.
-  #
-  # You can disable this behaviour by removing the line below, and instead
-  # explicitly tag your specs with their type, e.g.:
-  #
-  #     RSpec.describe UsersController, :type => :controller do
-  #       # ...
-  #     end
-  #
-  # The different available types are documented in the features, such as in
-  # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
 
   # Filter lines from Rails gems in backtraces.

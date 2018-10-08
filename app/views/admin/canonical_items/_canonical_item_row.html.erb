@@ -3,8 +3,8 @@
   <td><%= canonical_item_row.category %></td>
   <td><%= canonical_item_row.item_count %></td>
   <td class="text-right">
-    <%= link_to "View", canonical_item_row, class: "btn btn-primary btn-xs"  %>
-    <%= link_to edit_canonical_item_path(canonical_item_row), class: "btn btn-info btn-xs" do %>
+    <%= link_to "View", admin_canonical_item_path(canonical_item_row), class: "btn btn-primary btn-xs"  %>
+    <%= link_to edit_admin_canonical_item_path(canonical_item_row), class: "btn btn-info btn-xs" do %>
       <i class="fa fa-edit"></i> Edit
     <% end %>
   </td>

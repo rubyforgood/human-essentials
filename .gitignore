@@ -44,3 +44,4 @@ pdx_db_test
 .DS_Store
 .ruby-gemset
 *.pdf
+/spec/example_failures.txt
