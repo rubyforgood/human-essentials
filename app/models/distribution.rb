@@ -43,6 +43,12 @@ class Distribution < ApplicationRecord
 
   delegate :name, to: :partner, prefix: true
 
+  after_create :send_email_to_partner
+
+  def send_email_to_partner
+    
+  end
+
   def distributed_at
     issued_at.strftime("%B %-d %Y")
   end
