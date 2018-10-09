@@ -1,5 +1,12 @@
  <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
+          <% if (current_user.organization.present?) %>
+          <li class="dropdown user user-menu">
+            <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-caret-left"></i> <span>Back to <%= current_user.organization.name %> Dashboard</span>
+            <% end %>
+          </li>
+          <% end %>
           <!-- User Account: style can be found in dropdown.less -->
           <% if (current_user.organization.present?) %>
             <li class="user user-menu">
