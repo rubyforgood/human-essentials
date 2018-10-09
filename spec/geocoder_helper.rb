@@ -46,3 +46,14 @@ Geocoder::Lookup::Test.add_stub(
 
   ]
 )
+
+Geocoder::Lookup::Test.add_stub(
+  "1500 Remount Road, Front Royal, VA", [
+    "coordinates" => [38.8876919, -78.1659477],
+    "address"         =>   "1500 Remount Road, Front Royal, VA, USA",
+    "city"            =>   "Front Royal",
+    "State/province"  =>   "VA",
+    "country"         => "United States",
+    "country_code"    => "US"
+  ]
+)

@@ -11,6 +11,7 @@
 #  latitude        :float
 #  longitude       :float
 #
+require "geocoder_helper.rb"
 
 FactoryBot.define do
   factory :storage_location do
