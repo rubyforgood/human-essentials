@@ -5,13 +5,11 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header all-caps">Main Navigation</li>
-        <% if (current_user.organization.present?) %>
-          <li class="<%= active_class(['dashboard']) %>">
-            <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-dashboard"></i> <span>Back to Dashboard</span>
+        <li class="<%= active_class(['dashboard']) %>">
+            <%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-lock"></i> <span>Admin Dashboard</span>
             <% end %>
           </li>
-        <% end %>
         <li class="<%= active_class(['barcode_items']) %> treeview">
           <a href="#">
             <i class="fa fa-barcode"></i>
@@ -97,6 +95,14 @@
             </li>
           </ul>
         </li>
+        <% if (current_user.organization.present?) %>
+          <li><hr /></li>
+          <li>
+            <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-dashboard"></i> <span><%= current_user.organization.name %> Dashboard</span>
+            <% end %>
+          </li>
+        <% end %>
       </ul>
     </section>
     <!-- /.sidebar -->

@@ -1,0 +1,69 @@
+<section class="content-header">
+  <% content_for :title, "Admin - Barcode Items" %>
+  <h1>
+    Barcode Items
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(admin_dashboard_path) do %>
+      <i class="fa fa-lock"></i> Admin
+    <% end %>
+    </li>
+    <li><a href="#">Barcode Items</a></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+      <section id="filters">
+        <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
+          <div class="row">
+            <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter By Canonical Item Category" %>
+              <%= collection_select(:filters, :barcodeable_id, @canonical_items.order('name'), :id, :name, { include_blank: true }, class: "form-control") %>
+            </div>
+          </div><!-- /.row -->
+          <div class="row">
+            <div class="col-xs-12">
+              <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+                <i class="fa fa-filter"></i> Filter
+              <% end %>
+              <%= link_to admin_barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
+                <i class="fa fa-ban"></i> Clear Filters
+              <% end %>
+              <div class="btn-group pull-right">
+                <%= link_to new_admin_barcode_item_path(organization_id: current_organization), class: "btn btn-success" do %>
+                  <i class="fa fa-plus"></i> Add New Barcode
+                <% end %>
+              </div>
+
+            </div>
+          </div><!-- /.row -->
+        <% end #form %>
+      </section><!-- /#filters -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table id="tbl_barcode_items" class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Global</th>
+                  <th>Item Type</th>
+                  <th>Quantity in the Box</th>
+                  <th>Barcode</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "barcode_item_row", collection: @barcode_items %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section>
