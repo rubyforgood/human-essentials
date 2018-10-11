@@ -79,11 +79,15 @@ class DistributionsController < ApplicationController
 
   def update
     distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-    distribution.storage_location.update_distribution!(distribution, distribution_params)
-    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-    @line_items = @distribution.line_items
-    flash[:notice] = "Distribution updated!"
-    render :show
+    if distribution.storage_location.update_distribution!(distribution, distribution_params)
+      @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+      @line_items = @distribution.line_items
+      flash[:notice] = "Distribution updated!"
+      render :show
+    else
+      flash[:error] = "Distribution could not be updated! Are you sure there are enough items in inventory to update this distribution?"
+      redirect_to action: :edit
+    end
   end
 
   def pick_ups
