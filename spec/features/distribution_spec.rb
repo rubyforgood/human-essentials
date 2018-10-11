@@ -53,6 +53,27 @@ RSpec.feature "Distributions", type: :feature do
     expect(page).to have_content 13
   end
 
+  scenario "User creates a distribution from a donation then tries to make the quantity too big" do
+    @donation = create :donation, :with_items
+
+    visit @url_prefix + "/donations/#{@donation.id}"
+    click_on "Create distribution"
+    select @partner.name, from: "Partner"
+    click_button "Preview Distribution"
+    expect(page).to have_content "Distribution Manifest for"
+    click_button "Confirm Distribution"
+    expect(page.find(".alert-info")).to have_content "reated"
+    expect(Distribution.first.line_items.count).to eq 1
+
+    first(".btn", text: "Edit").click
+    first(".numeric").set 999_999
+    click_on "Update Distribution"
+    expect(page).to have_no_content "Distribution updated!"
+    expect(page).to have_content "Distribution could not be updated!"
+    expect(page).to have_no_content 999_999
+    expect(Distribution.first.line_items.count).to eq 1
+  end
+
   context "via barcode entry" do
     before(:each) do
       initialize_barcodes
