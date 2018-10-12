@@ -1,3 +1,5 @@
+require "timecop"
+
 RSpec.feature "Dashboard", type: :feature do
   before :each do
     sign_in(@user)
@@ -27,25 +29,27 @@ RSpec.feature "Dashboard", type: :feature do
   end
 
   scenario "The user can scope down what they see in the dashboard using the date-range drop down" do
-    item = create(:item, organization: @organization)
-    sl = create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
-    create(:donation, :with_items, item: item, item_quantity: 10, storage_location: sl, issued_at: 1.month.ago)
-    create(:donation, :with_items, item: item, item_quantity: 200, storage_location: sl, issued_at: Time.zone.today)
-    create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago,)
-    create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Time.zone.today,)
-    @organization.reload
+    Timecop.freeze(Time.utc(2018, 6, 15, 12, 0, 0)) do
+      item = create(:item, organization: @organization)
+      sl = create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
+      create(:donation, :with_items, item: item, item_quantity: 10, storage_location: sl, issued_at: 1.month.ago)
+      create(:donation, :with_items, item: item, item_quantity: 200, storage_location: sl, issued_at: Time.zone.today)
+      create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago,)
+      create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Time.zone.today,)
+      @organization.reload
 
-    # Verify the initial totals are correct
-    visit @url_prefix + "/dashboard"
-    expect(page).to have_content("210 items received year to date")
-    expect(page).to have_content("105 items distributed year to date")
-    expect(page).to have_content("0 Diaper Drives")
+      # Verify the initial totals are correct
+      visit @url_prefix + "/dashboard"
+      expect(page).to have_content("210 items received year to date")
+      expect(page).to have_content("105 items distributed year to date")
+      expect(page).to have_content("0 Diaper Drives")
 
-    # Scope it down to just today, should omit the first donation
-    # select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
-    visit @url_prefix + "/dashboard?dashboard_filter[interval]=last_month"
-    expect(page).to have_content("10 items received last month")
-    expect(page).to have_content("5 items distributed last month")
+      # Scope it down to just today, should omit the first donation
+      # select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
+      visit @url_prefix + "/dashboard?dashboard_filter[interval]=last_month"
+      expect(page).to have_content("10 items received last month")
+      expect(page).to have_content("5 items distributed last month")
+    end
   end
 
   scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js: true do
