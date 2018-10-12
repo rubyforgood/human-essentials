@@ -25,7 +25,8 @@ class OrganizationStats
 
   def locations_with_inventory
     return [] unless storage_locations
-    storage_locations.select { |location| location.inventory_items.present? }
+    inventoried_storage_location_ids = InventoryItem.where(storage_location: storage_locations).pluck(:storage_location_id)
+    storage_locations.select { |location| inventoried_storage_location_ids.include? location.id }
   end
 
   private
