@@ -80,11 +80,11 @@ Outside of docker you often prefix commands with `bundle exec`. Using the docker
 To login, use these default credentials:
 
     Organization Admin
-      Email: test@example.com
+      Email: org_admin1@example.com
       Password: password
 
     User
-      Email: test2@example.com
+      Email: user_1@example.com
       Password: password
 
 ## Contributing
