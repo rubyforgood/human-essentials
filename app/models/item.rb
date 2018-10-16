@@ -41,7 +41,7 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
-  default_scope { active }
+  default_scope { includes(:canonical_item).active }
 
   def self.categories
     select(:category).group(:category).order(:category)
