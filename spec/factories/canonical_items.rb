@@ -10,6 +10,7 @@
 #  updated_at    :datetime         not null
 #  size          :string
 #  item_count    :integer
+#  partner_key   :string
 #
 
 FactoryBot.define do
@@ -17,5 +18,6 @@ FactoryBot.define do
     sequence(:name) { |size| "#{size}T Diapers" }
     category "Infant Diapers"
     size nil
+    sequence(:partner_key) { |n| "#{n}t_diapers" }
   end
 end
