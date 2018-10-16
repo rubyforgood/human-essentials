@@ -29,7 +29,6 @@ class DistributionPdf
     text "Comments:", style: :bold
     text @distribution.comment
 
-
     move_down 20
 
     # Line item table
@@ -38,7 +37,7 @@ class DistributionPdf
       self.cell_style = {
         padding: [5, 20, 5, 20]
       }
-      self.row_colors = ["dddddd", "ffffff"]
+      self.row_colors = %w(dddddd ffffff)
 
       cells.borders = []
 
@@ -46,12 +45,12 @@ class DistributionPdf
       row(0).borders = [:bottom]
       row(0).border_width = 2
       row(0).font_style = :bold
-      row(0).column(-1).borders = [:bottom, :left]
+      row(0).column(-1).borders = %i(bottom left)
 
       # Total Items footer row
       row(-1).borders = [:top]
       row(-1).font_style = :bold
-      row(-1).column(-1).borders = [:top, :left]
+      row(-1).column(-1).borders = %i(top left)
 
       # Footer spacing row
       row(-2).borders = [:top]
@@ -75,7 +74,7 @@ class DistributionPdf
       self.cell_style = {
         padding: [5, 20, 5, 20]
       }
-      self.row_colors = ["dddddd", "ffffff"]
+      self.row_colors = %w(dddddd ffffff)
 
       cells.borders = []
 
@@ -83,7 +82,7 @@ class DistributionPdf
       row(0).borders = [:bottom]
       row(0).border_width = 2
       row(0).font_style = :bold
-      row(0).column(-1).borders = [:bottom, :left]
+      row(0).column(-1).borders = %i(bottom left)
 
       column(0).width = 400
 
@@ -93,11 +92,10 @@ class DistributionPdf
       column(1).style align: :right
     end
 
-    number_pages "Page <page> of <total>", {
-      start_count_at: 1,
-      at: [bounds.right - 130, 22],
-      align: :right
-    }
+    number_pages "Page <page> of <total>",
+                 start_count_at: 1,
+                 at: [bounds.right - 130, 22],
+                 align: :right
 
     repeat :all do
       # Page footer
@@ -122,7 +120,6 @@ class DistributionPdf
           image Organization::DIAPER_APP_LOGO, width: 75, vposition: :center, position: :right
         end
       end
-
     end
   end
 end
