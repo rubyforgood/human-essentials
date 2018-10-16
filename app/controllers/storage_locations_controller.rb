@@ -24,6 +24,7 @@ class StorageLocationsController < ApplicationController
 
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
+    # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
     @items_out = LineItem
                  .joins("
 LEFT OUTER JOIN distributions ON distributions.id = line_items.itemizable_id AND line_items.itemizable_type = 'Distribution'

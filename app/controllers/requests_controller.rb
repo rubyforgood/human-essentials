@@ -10,6 +10,7 @@ class RequestsController < ApplicationController
 
   def show
     @request = Request.find(params[:id])
+    @items = @request.items_hash
   end
 
   # Clicking the "Fullfill" button will set the the request to fulfilled

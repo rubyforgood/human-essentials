@@ -6,9 +6,10 @@ class AddPartnerKeyToCanonicalItem < ActiveRecord::Migration[5.2]
     # Creates the Canonical Items
     items_by_category.each do |category, entries|
       entries.each do |entry|
-        CanonicalItem.find_or_create_by(name: entry["name"], category: category) do |c|
-          c.partner_key ||= entry["key"]
-        end
+        c = CanonicalItem.find_or_initialize_by(name: entry["name"])
+        c.category ||= category
+        c.partner_key = entry["key"]
+        c.save
       end
     end
   end

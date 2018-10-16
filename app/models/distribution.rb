@@ -70,10 +70,10 @@ class Distribution < ApplicationRecord
     self.partner_id = request.partner_id
     self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
-    request.request_items.each do |item, quantity|
+    request.request_items.each do |key, quantity|
       line_items.new(
         quantity: quantity,
-        item: Item.find_by(organization: request.organization, name: Request::DIAPERMAPPING[item]),
+        item: Item.eager_load(:canonical_item).find_by(organization: request.organization, canonical_items: { partner_key: key }),
         itemizable_id: request.id,
         itemizable_type: "Distribution"
       )

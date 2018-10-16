@@ -18,6 +18,7 @@ class ItemsByStorageCollectionQuery
                         items.name,
                         items.category,
                         items.barcode_count,
+                        items.canonical_item_id,
                         storage_locations.name as storage_name,
                         storage_locations.id as storage_id,
                         sum(inventory_items.quantity) as quantity

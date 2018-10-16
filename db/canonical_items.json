@@ -38,11 +38,12 @@
     { "name": "Adult Incontinence Pads", "qty": [0,0,2304], "key": "adult_incontinence" },
     { "name": "Underpads (Pack)", "qty": [0,1,2], "key": "underpads" }
   ],
-  "Misc Supplies": [
+  "Miscellaneous": [
     { "name": "Bed Pads (Cloth)", "qty": [0,0,44], "key": "bed_pad_cloth" },
     { "name": "Bed Pads (Disposable)", "qty": [0,0,0], "key": "bed_pad_disposable" },
     { "name": "Bibs (Adult & Child)", "qty": [0,0,35], "key": "bib" },
-    { "name": "Diaper Rash Cream/Powder", "qty": [0,0,0], "key": "diaper_rash_cream" }
+    { "name": "Diaper Rash Cream/Powder", "qty": [0,0,0], "key": "diaper_rash_cream" },
+    { "name": "Other", "qty": [0,0,0], "key": "other" }
   ],
   "Training Pants": [
     { "name": "Cloth Potty Training Pants/Underwear", "qty": [0,0,246], "key": "cloth_training_pants" }
