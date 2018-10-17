@@ -49,6 +49,10 @@ user2 = User.create email: 'org_admin2@example.com', password: 'password', passw
 User.create email: 'user_1@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: false
 User.create email: 'user_2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org, organization_admin: false
 
+# test users
+User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: false, super_admin: true
+User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org, organization_admin: true
+
 
 DonationSite.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
   location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"

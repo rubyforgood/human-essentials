@@ -7,6 +7,7 @@
     <%= link_to distribution_path(distribution_row), class: "btn btn-primary btn-xs" do %>
       <i class="fa fa-search"></i> View
     <% end %>
+    <%= link_to "Edit", edit_distribution_path(distribution_row), class: "btn btn-default btn-xs" %>
     <%= link_to print_distribution_path(distribution_row, format: :pdf), class: "btn btn-default btn-xs" do %>
       <i class="fa fa-print"></i> Print
     <% end %>
