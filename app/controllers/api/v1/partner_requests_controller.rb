@@ -22,14 +22,6 @@ class API::V1::PartnerRequestsController < ApplicationController
 
   def request_params
     params.require(:request).permit(:organization_id, :partner_id, :comments,
-                                    request_items: %i[adult_xxl adult_lxl adult_ml
-                                                      adult_sm cloth disposable_inserts k_newborn
-                                                      k_preemie k_size1 k_size2 k_size3 k_size4 k_size5
-                                                      k_size6 k_sm k_lxl pullup_23t pullup_34t
-                                                      pullup_45t swimmers adult_cloth_lxl adult_cloth_sm
-                                                      cloth_aio cloth_cover cloth_prefold cloth_insert
-                                                      cloth_swimmer adult_incontinence underpads
-                                                      bed_pad_cloth bed_pad_disposable bib
-                                                      diaper_rash_cream cloth_training_pants wipes])
+                                    request_items: CanonicalItem.pluck(:partner_key).map(&:to_sym))
   end
 end

@@ -10,6 +10,7 @@
 #  updated_at    :datetime         not null
 #  size          :string
 #  item_count    :integer
+#  partner_key   :string
 #
 
 require "rails_helper"
@@ -27,6 +28,15 @@ RSpec.describe CanonicalItem, type: :model do
     it "is invalid without a unique name" do
       f = create(:canonical_item)
       expect(build(:canonical_item, name: f.name)).not_to be_valid
+    end
+
+    it "is invalid without a partner key" do
+      expect(build(:canonical_item, partner_key: nil)).not_to be_valid
+    end
+
+    it "is invalid without a uniqueness key" do
+      f = create(:canonical_item)
+      expect(build(:canonical_item, partner_key: f.partner_key)).not_to be_valid
     end
   end
 
