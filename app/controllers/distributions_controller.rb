@@ -45,7 +45,7 @@ class DistributionsController < ApplicationController
         @distribution.storage_location.distribute!(@distribution)
 
         if @distribution.save
-          PartnerMailerJob.perform_async(current_organization, @distribution)
+          send_notification(current_organization, @distribution)
           flash[:notice] = "Distribution created!"
           redirect_to distributions_path
         else
@@ -95,6 +95,10 @@ class DistributionsController < ApplicationController
   end
 
   private
+
+  def send_notification(org, dist)
+    PartnerMailerJob.perform_async(org, dist) if Flipper.enabled?(:email_active)
+  end
 
   def distribution_params
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))
