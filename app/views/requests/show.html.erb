@@ -37,8 +37,8 @@
                   </thead>
 
                   <tbody>
-                    <% @request.request_items.each do |item,quantity| %>
-                      <tr><td><%= Request::DIAPERMAPPING[item] %></td><td><%= quantity %></td></tr>
+                    <% @request.request_items.each do |key,quantity| %>
+                      <tr><td><%= @request.items_hash[key].name %></td><td><%= quantity %></td></tr>
                     <% end %>
                   </tbody>
                 </table>

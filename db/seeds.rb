@@ -14,7 +14,7 @@ items_by_category = JSON.parse(canonical_items)
 # Creates the Canonical Items
 items_by_category.each do |category, entries|
   entries.each do |entry|
-    CanonicalItem.find_or_create_by!(name: entry["name"], category: category)
+    CanonicalItem.find_or_create_by!(name: entry["name"], category: category, partner_key: entry["key"])
   end
 end
 
@@ -224,6 +224,7 @@ DiaperDriveParticipant.create! business_name: "A Mediocre Place to Collect Diape
                                organization: pdx_org
 
 def random_record(klass)
+  # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
   klass.limit(1).order("random()").first
 end
 

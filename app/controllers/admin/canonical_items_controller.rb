@@ -48,6 +48,6 @@ class Admin::CanonicalItemsController < AdminController
   private
 
   def canonical_item_params
-    params.require(:canonical_item).permit(:name, :key, :category)
+    params.require(:canonical_item).permit(:name, :partner_key, :category)
   end
 end

@@ -15,6 +15,7 @@ RSpec.feature "Canonical Item Admin" do
       scenario "it succeeds when creating a new canonical item with good data" do
         fill_in "Name", with: canonical_item_traits[:name]
         fill_in "Category", with: canonical_item_traits[:category]
+        fill_in "canonical_item_partner_key", with: canonical_item_traits[:partner_key]
         click_button "Create Canonical Item"
 
         expect(page.find(".alert")).to have_content "added"

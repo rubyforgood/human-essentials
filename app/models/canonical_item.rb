@@ -10,6 +10,7 @@
 #  updated_at    :datetime         not null
 #  size          :string
 #  item_count    :integer
+#  partner_key   :string
 #
 
 class CanonicalItem < ApplicationRecord
@@ -18,4 +19,5 @@ class CanonicalItem < ApplicationRecord
 
   validates :name, presence: true, uniqueness: true
   validates :category, presence: true
+  validates :partner_key, presence: true, uniqueness: true
 end
