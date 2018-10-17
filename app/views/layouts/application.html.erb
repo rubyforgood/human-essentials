@@ -25,17 +25,10 @@
       <a href="<%= root_path %>" class="logo">
     <% end %>
       <!-- mini logo for sidebar mini 50x50 pixels -->
-    <% if Flipper.enabled?(:new_logo) %>
     <span class="logo-mini"><img src="/Just-Diaper.svg">
     </span>
       <!-- logo for regular state and mobile devices -->
     <span class="logo-lg"><%= image_tag "Just-Diaper.svg", alt: "DiaperBase Logo", id: "logo" %></span>
-    <% else %>
-    <span class="logo-mini"><img src="/apple-icon-180x180.png">
-    </span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><%= image_tag "DiaperBase-Logo.png", alt: "DiaperBase Logo", id: "logo" %></span>
-    <% end %>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">

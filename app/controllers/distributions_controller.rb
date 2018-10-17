@@ -3,7 +3,15 @@ class DistributionsController < ApplicationController
 
   def print
     @distribution = Distribution.find(params[:id])
-    @filename = format("%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at))
+    respond_to do |format|
+      format.any do
+        pdf = DistributionPdf.new(current_organization, @distribution)
+        send_data pdf.render,
+                  filename: format("%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at)),
+                  type: "application/pdf",
+                  disposition: "inline"
+      end
+    end
   end
 
   def reclaim
@@ -37,6 +45,7 @@ class DistributionsController < ApplicationController
         @distribution.storage_location.distribute!(@distribution)
 
         if @distribution.save
+          send_notification(current_organization, @distribution)
           flash[:notice] = "Distribution created!"
           redirect_to distributions_path
         else
@@ -106,6 +115,10 @@ class DistributionsController < ApplicationController
   end
 
   private
+
+  def send_notification(org, dist)
+    PartnerMailerJob.perform_async(org, dist) if Flipper.enabled?(:email_active)
+  end
 
   def distribution_params
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))

@@ -14,7 +14,7 @@ RSpec.feature "Dashboard", type: :feature do
     scenario "User should see their organization name unless they have a logo set" do
       # extract just the filename
       header_logo = extract_image(:xpath, "//img[@id='logo']")
-      expect(header_logo).to be_include("DiaperBase-Logo")
+      expect(header_logo).to be_include("Just-Diaper")
 
       organization_logo = extract_image(:xpath, "//div/img")
       expect(organization_logo).to eq("logo.jpg")
