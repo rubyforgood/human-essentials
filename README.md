@@ -33,49 +33,6 @@ If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplie
 ## Seed the database
 From the root of the app, run `bundle exec rake db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
-## Development with Docker
-(not preferred but we do our best to maintain our docker files)
-
-### Requirements
-
-- [Docker CE](https://store.docker.com/search?type=edition&offering=community)
-
-### Caveats
-
-Docker for Mac has some pretty poor disk sharing (volume) performance. At the time of writing, the test run is 50% slower when using Docker vs using native. Overall this shouldn't impact your development experience too badly but you should be aware.
-
-### Setup
-
-You can set up the app and database with the following commands:
-
-    docker-compose build             # Builds docker image, especially gems
-    docker-compose run web bin/setup # Sets up the database
-
-When you switch or update branches, you can do:
-
-    docker-compose build              # If installing new/updated gems
-    docker-compose run web bin/update # For migrations and such
-
-### Running the app
-
-Start the application with `docker-compose up web` and then visit [http://localhost:3000](http://localhost:3000). Press ^C to stop the application.
-
-### Running tests
-
-Run:
-
-    docker-compose run web rails spec
-
-### Tips
-
-Outside of docker you often prefix commands with `bundle exec`. Using the docker setup, switch this prefix to `docker-compose run web`. You could even set up an alias like this:
-
-    alias dr="docker-compose run web" # Put this in your ~/.profile
-    dr rails c                        # get a rails console
-    dr rails spec                     # run the tests (via rake spec)
-    dr rubocop                        # check out what rubocop says
-    dr rspec spec/models/user_spec.rb # Run a single spec
-
 ## Login
 To login, use these default credentials:
 
@@ -123,8 +80,7 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 Run all the tests with:
 
-  docker-compose run web rails spec # if you are using docker
-  bundle exec rails spec            # if you are NOT using docker
+  bundle exec rails spec            
 
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
