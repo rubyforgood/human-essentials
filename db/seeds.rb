@@ -18,7 +18,7 @@ items_by_category.each do |category, entries|
   end
 end
 
-pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organization|
+pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
   organization.name = "PDX Diaper Bank"
   organization.street = "P.O. Box 22613"
   organization.city = "Portland"
