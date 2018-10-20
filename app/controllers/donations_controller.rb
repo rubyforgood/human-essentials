@@ -40,7 +40,10 @@ class DonationsController < ApplicationController
     @selected_source = filter_params[:by_source]
     @donation_sites = @donations.collect(&:donation_site).compact.uniq
     @selected_donation_site = filter_params[:from_donation_site]
-    @diaper_drives = @donations.collect { |d| next unless d.source == Donation::SOURCES[:diaper_drive]; d.diaper_drive_participant }.compact.uniq
+    @diaper_drives = @donations.collect do |d|
+      d.source == Donation::SOURCES[:diaper_drive] ? d.diaper_drive_participant : nil
+    end.compact.uniq
+
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
     @selected_date = date_filter
   end
@@ -132,16 +135,19 @@ class DonationsController < ApplicationController
 
   def filter_params
     return {} unless params.key?(:filters)
+
     fp = params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant)
     fp.merge(by_issued_at: date_filter)
   end
 
   def date_filter
     return nil unless params.key?(:date_filters)
+
     date_params = params.require(:date_filters)
     if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
       return nil
     end
+
     Date.new(date_params["issued_at(1i)"].to_i, date_params["issued_at(2i)"].to_i, date_params["issued_at(3i)"].to_i)
   end
 
@@ -155,6 +161,7 @@ class DonationsController < ApplicationController
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
     return params unless params[:donation].key?(:line_item_attributes)
+
     params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
   end

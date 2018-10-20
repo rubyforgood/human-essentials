@@ -9,22 +9,20 @@ class OrganizationStats
   end
 
   def partners_added
-    return 0 unless partners
-    partners.length
+    partners&.length || 0
   end
 
   def storage_locations_added
-    return 0 unless storage_locations
-    storage_locations.length
+    storage_locations&.length || 0
   end
 
   def donation_sites_added
-    return 0 unless donation_sites
-    donation_sites.length
+    donation_sites&.length || 0
   end
 
   def locations_with_inventory
     return [] unless storage_locations
+
     inventoried_storage_location_ids = InventoryItem.where(storage_location: storage_locations).pluck(:storage_location_id)
     storage_locations.select { |location| inventoried_storage_location_ids.include? location.id }
   end
