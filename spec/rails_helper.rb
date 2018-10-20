@@ -168,7 +168,7 @@ def __start_db_cleaning_with_log
               `-.      _\\,|
                 `.   |,-||
                   `..|| ||
-ASCIIART
+  ASCIIART
 
   DatabaseCleaner.start
 end
@@ -190,5 +190,5 @@ def __sweep_up_db_with_log
             .`
           .`
       .-`
-ASCIIART
+  ASCIIART
 end

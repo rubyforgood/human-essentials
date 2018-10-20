@@ -56,6 +56,7 @@ class TransfersController < ApplicationController
 
   def filter_params
     return {} unless params.key?(:filters)
+
     params.require(:filters).slice(:from_location, :to_location)
   end
 end

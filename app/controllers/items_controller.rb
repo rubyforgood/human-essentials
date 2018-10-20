@@ -57,6 +57,7 @@ class ItemsController < ApplicationController
   def filter_params(parameters = nil)
     parameters = (%i(in_category by_canonical_item) + [parameters]).flatten.uniq
     return {} unless params.key?(:filters)
+
     params.require(:filters).slice(*parameters)
   end
 end

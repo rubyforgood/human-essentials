@@ -6,6 +6,7 @@ class API::V1::PartnerApprovalsController < ApplicationController
 
   def create
     return head :forbidden unless api_key_valid?
+
     @partner = Partner.find(params[:partner])
     @partner.update(status: "Awaiting Review")
     render json: { message: "Status changed to awaiting review." }, status: :ok
