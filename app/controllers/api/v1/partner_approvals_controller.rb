@@ -6,12 +6,16 @@ class API::V1::PartnerApprovalsController < ApplicationController
 
   def create
     return head :forbidden unless api_key_valid?
-    @partner = Partner.find(params[:partner])
+    @partner = Partner.find(approval_params[:diaper_partner_id])
     @partner.update(status: "Awaiting Review")
     render json: { message: "Status changed to awaiting review." }, status: :ok
   end
 
   private
+
+  def approval_params
+    params.require(:partner).permit(:diaper_partner_id)
+  end
 
   def api_key_valid?
     request.headers["X-Api-Key"] == ENV["PARTNER_KEY"]
