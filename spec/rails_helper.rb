@@ -91,7 +91,7 @@ RSpec.configure do |config|
 
 
 
-ASCIIART
+    ASCIIART
 
     Rails.logger.info "-~=> Destroying all Canonical Items ... "
     CanonicalItem.delete_all
