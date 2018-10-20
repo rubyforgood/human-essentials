@@ -93,7 +93,7 @@ Sometimes we want to get a PR up there and going so that other people can review
 ### Additional Notes
 
 * The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
-* If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries used by `rvm`. Assuming you are using `brew`, this will probably result in a command looking something like:
+* If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
  
  ```rvm install 2.5.3 --with-openssl-dir=`brew --prefix openssl` ```.
 
