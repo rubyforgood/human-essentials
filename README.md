@@ -17,7 +17,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 ## Development
 
 ### Ruby Version
-This app uses Ruby version 2.5.1, indicated in `/.ruby-version`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
+This app uses Ruby version 2.5.3, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
 
 ### Database Configuration
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_development` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.
@@ -80,7 +80,7 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 Run all the tests with:
 
-  bundle exec rails spec            
+  `bundle exec rails spec`            
 
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
@@ -90,6 +90,15 @@ The one situation where you probably don't need to write new tests is when simpl
 
 Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
 
+### Additional Notes
+
+* The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
+* If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries used by `rvm`. Assuming you are using `brew`, this will probably result in a command looking something like:
+ 
+ ```rvm install 2.5.3 --with-openssl-dir=`brew --prefix openssl` ```.
+
+
+
 ### Becoming a Repo Contributor
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
@@ -97,3 +106,4 @@ Users that are frequent contributors and are involved in discussion (join the sl
 # Acknowledgements
 
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
+
