@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Diaperbase | Log in</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+  <%= csrf_meta_tags %>
+  <%= javascript_include_tag 'application' %>
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <!-- iCheck -->
+  <link rel="stylesheet" href="/assets/blue.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <style>
+  .checkbox label{
+    padding-left: 0px;
+  }
+</style>
+</head>
+<body id="devise" class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+
+    <img src="/img/DiaperBase-Logo.png" style="width: 85%; height: 85%" alt="" title="" class="serv_icon">
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+    <div class="form-group has-feedback">
+      <%= yield %>
+    </div>
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+
+<script src="/assets/icheck.min.js"></script>
+<script>
+  $(function () {
+    $('input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' // optional
+    });
+  });
+</script>
+</body>
+</html>
