@@ -125,31 +125,31 @@ ASCIIART
   end
 
   # Stub out Geocoder or else...
-  config.before(:all) do 
-  Geocoder.configure(:lookup => :test)
+  config.before(:all) do
+    Geocoder.configure(lookup: :test)
 
-  ["1500 Remount Road, Front Royal, VA",
-   "1111 Panda ave. Front Royal, VA 12345",
-   "Smithsonian Institute new",
-   "Smithsonian Conservation Center new",
-   "3700 O St NW, Washington, DC 20057",
-   "1500 Remount Road Front Royal, VA",
-   "1234 Banana Drive Boston, MA 12345"].each do |address|
-  Geocoder::Lookup::Test.add_stub(
-  address, [
-    {
-      'latitude'     => 40.7143528,
-      'longitude'    => -74.0059731,
-      'address'      => '1500 Remount Road, Front Royal, VA',
-      'state'        => 'Virginia',
-      'state_code'   => 'VA',
-      'country'      => 'United States',
-      'country_code' => 'US'
-    }
-   ]
-  )
+    ["1500 Remount Road, Front Royal, VA",
+     "1111 Panda ave. Front Royal, VA 12345",
+     "Smithsonian Institute new",
+     "Smithsonian Conservation Center new",
+     "3700 O St NW, Washington, DC 20057",
+     "1500 Remount Road Front Royal, VA",
+     "1234 Banana Drive Boston, MA 12345"].each do |address|
+      Geocoder::Lookup::Test.add_stub(
+        address, [
+          {
+            "latitude"     => 40.7143528,
+            "longitude"    => -74.0059731,
+            "address"      => "1500 Remount Road, Front Royal, VA",
+            "state"        => "Virginia",
+            "state_code"   => "VA",
+            "country"      => "United States",
+            "country_code" => "US"
+          }
+        ]
+      )
+    end
   end
- end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and

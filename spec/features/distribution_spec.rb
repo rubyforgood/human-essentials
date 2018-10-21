@@ -4,7 +4,7 @@ RSpec.feature "Distributions", type: :feature do
     @url_prefix = "/#{@organization.to_param}"
 
     @partner = create(:partner, organization: @organization)
-    #allow_any_instance_of(StorageLocation).to receive(:geocode).and_return(true)
+    # allow_any_instance_of(StorageLocation).to receive(:geocode).and_return(true)
     @storage_location = create(:storage_location, organization: @organization)
     setup_storage_location(@storage_location)
   end
