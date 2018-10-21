@@ -30,13 +30,19 @@ request_storage_location_and_populate_item = (item_to_populate) ->
       populate_dropdowns item_to_populate, data
 
 $ ->
+  control = $("select#transfer_from_id, select#distribution_storage_location_id")
   default_item = $("#distribution_line_items select, #donation_line_items select")
 
   $(document).on "change", "select#transfer_from_id, select#distribution_storage_location_id", ->
+    $('#__add_line_item').addClass('disabled') if !control.val()
+    $('#__add_line_item').removeClass('disabled') if control.val()
+
     request_storage_location_and_populate_item(default_item)
 
   $(document).on "cocoon:after-insert", "form#new_transfer, form#new_distribution", (e, insertedItem) ->
     request_storage_location_and_populate_item($("select", insertedItem))
 
   $ ->
+    $('#__add_line_item').addClass('disabled') if !control.val()
+
     request_storage_location_and_populate_item(default_item)
