@@ -6,6 +6,6 @@
   <td><%= donation_row.line_items.total %></td>
   <td><%= donation_row.line_items.size %></td>
   <td class="text-right">
-   <%= link_to "View", donation_path(donation_row), class: "btn btn-primary btn-xs" %>
+    <%= view_button_to donation_path(donation_row) %>
   </td>
 </tr>
