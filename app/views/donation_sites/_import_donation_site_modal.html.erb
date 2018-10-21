@@ -3,36 +3,51 @@
   <a href="#importDonationSiteModal" class="btn btn-primary btn-md" data-toggle="modal">
     <i class="fa fa-upload"></i> Import Donation Sites
   </a>
+
   <!-- Modal HTML -->
   <div id="importDonationSiteModal" class="modal fade">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h2 class="modal-title">Import Donation Sites Instructions:</h4>
-          </div>
-          <div class="modal-body">
-            <ol>
-              <li><%= link_to "/donation_sites.csv", :format => :csv, :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example csv<% end %></li>
+  <div class="modal-dialog onboarding_steps">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Import Donation Sites Instructions:</h4>
+      </div><!-- /.modal-header -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6 col-sm-12" style="padding-top: 30px;">
+            <i class="fa fa-download fa-4x" aria-hidden="true"></i>
+            <h3 class="text-info">1. Download example CSV file</h3>
+            <ul>
               <li>Open the csv file with excel or your favourite spreadsheet program.</li>
               <li>Delete the sample data and enter your donation site names and addresses in the appropriate columns.</li>
               <li>Save the file as a csv file.</li>
-              <li>Click the choose file button and navigate to the saved file and select it.</li>
-              <li>Then click the Import CSV button to import your storage locations.</li>
-            </ol>
-          <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
-          </div><!-- /.modal-body -->
-          <div class="modal-footer">
+              <li><%= link_to "/donation_sites.csv", :format => :csv, :class => "btn btn-md btn-info" do %><i class="fa fa-download"></i> Download example csv<% end %></li>
+            </ul>
+          </div>
+          <div class="col-md-6 col-sm-12" style="padding-top: 30px;">
+            <i class="fa fa-file-text-o fa-4x" aria-hidden="true"></i>
+            <h3 class="text-info">2. Upload your CSV file</h3>
             <%= form_tag import_csv_donation_sites_path, multipart: true do %>
-              <div class="form-group">
-                <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
-              </div>
-              <%= button_tag :class => "btn btn-lg btn-primary" do %>
-                <i class="fa fa-upload"></i> Import CSV
-              <% end %>
-            <% end %>
-          </div><!-- /.modal-footer -->
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /#importDonationSiteModal -->
-</div>
+              <ul>
+                <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
+                <li>
+                  <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file", style: "margin: auto;" %>
+                </li>
+                <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
+                <li>
+                  <%= button_tag :class => "btn btn-md btn-info" do %>
+                    <i class="fa fa-upload"></i> Import CSV
+                  <% end #button %>
+                </li>
+              </ul>
+            <% end #form %>
+          </div>
+        </div><!-- / row -->
+      </div><!-- /.modal-body -->
+      <div class="modal-footer">
+        <small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small>
+      </div><!-- /.modal-footer -->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+</div><!-- /.import-storage-location -->
