@@ -14,6 +14,10 @@ class API::V1::PartnerApprovalsController < ApplicationController
 
   private
 
+  def approval_params
+    params.require(:partner).permit(:diaper_partner_id)
+  end
+
   def api_key_valid?
     request.headers["X-Api-Key"] == ENV["PARTNER_KEY"]
   end
