@@ -19,49 +19,15 @@
 
 <!-- Default box -->
 <div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= @storage_location.name %></h3>
+  <div class="box-header with-border bg-gray">
+    <div class="pull-right">
+      <%= modal_button_to("#importStorageLocationModal", { text: "Import Baseline Inventory", icon: "upload" }) if @storage_location.items.empty? %>
+    </div>
   </div>
   <div class="box-body">
 
-  <% if @storage_location.items.empty? %>
-    <a href="#importStorageLocationModal" class="btn btn-lg btn-primary" data-toggle="modal">Import Baseline Inventory</a>
-
-    <!-- Modal HTML -->
-    <div id="importStorageLocationModal" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h2 class="modal-title">Import Storage Locations Instructions:</h2>
-                </div>
-                <div class="modal-body">
-                  <ol>
-                    <li><%= link_to storage_location_path(@storage_location, :format => :csv), :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download Inventory Items<% end %></li>
-                    <li>Open file and enter quantities for each item.</li>
-                    <li>DO NOT CHANGE ANY ITEM NAME.</li>
-                    <li>Click the choose file button (below) and navigate to the saved file and select it.</li>
-                    <li>Then click the Import Inventory button (below) to import your storage locations.</li>
-                  </ol>
-                <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
-                </div>
-                <div class="modal-footer">
-                  <%= form_tag import_inventory_storage_locations_path(storage_location: @storage_location.id), multipart: true do %>
-                    <div class="form-group">
-                      <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
-                    </div>
-                    <div class="form-group">
-                      <%= button_tag :class => "btn btn-lg btn-primary" do %>
-                        <i class="fa fa-upload"></i> Import Inventory
-                      <% end %>
-                    </div>
-                  <% end %>
-                </div>
-            </div>
-        </div>
-    </div>
-  <% end %>
-
+    
+<h3 class="box-title"><%= @storage_location.name %></h3>
   <p><%= @storage_location.address %></p>
   
   <div class="row">
@@ -69,7 +35,7 @@
       <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a data-toggle="tab" href="#sectionA">Inventory</a></li>
         <li role="presentation"><a data-toggle="tab" href="#sectionB">Inventory coming in</a></li>
-        <li role="presentation"><a data-toggle="tab" href="#sectionC">Inventory coming out</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#sectionC">Inventory going out</a></li>
       </ul>
       <div class="tab-content">
         <div id="sectionA" class="tab-pane fade in active">
@@ -134,3 +100,36 @@
 </section>
 
 
+<!-- Modal HTML -->
+    <div id="importStorageLocationModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h2 class="modal-title">Import Storage Locations Instructions:</h2>
+                </div>
+                <div class="modal-body">
+                  <ol>
+                    <li><%= link_to storage_location_path(@storage_location, :format => :csv), :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download Inventory Items<% end %></li>
+                    <li>Open file and enter quantities for each item.</li>
+                    <li>DO NOT CHANGE ANY ITEM NAME.</li>
+                    <li>Click the choose file button (below) and navigate to the saved file and select it.</li>
+                    <li>Then click the Import Inventory button (below) to import your storage locations.</li>
+                  </ol>
+                <p class="text-warning"><small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small></p>
+                </div>
+                <div class="modal-footer">
+                  <%= form_tag import_inventory_storage_locations_path(storage_location: @storage_location.id), multipart: true do %>
+                    <div class="form-group">
+                      <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
+                    </div>
+                    <div class="form-group">
+                      <%= button_tag :class => "btn btn-lg btn-primary" do %>
+                        <i class="fa fa-upload"></i> Import Inventory
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+            </div>
+        </div>
+    </div>

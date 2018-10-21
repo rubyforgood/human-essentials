@@ -3,7 +3,5 @@
   <label>OR</label>
   <%= f.input_field :item_id, collection: @items, prompt: "Choose an item", class: 'form-control' %>
   <%= f.input_field :quantity, placeholder: "Quantity", class: 'form-control' %>
-  <%= link_to_remove_association f, class: "btn btn-sm btn-danger"  do %>
-    <%= fa_icon "trash" %> Delete
-  <% end %> 
+  <%= delete_line_item_button f %>
 </div>

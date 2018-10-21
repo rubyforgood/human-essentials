@@ -19,9 +19,7 @@
   <div class="box">
     <div class="box-body">
       <div class="text-right">
-        <%= link_to new_admin_organization_path, class: "btn btn-success" do %>
-          <%= fa_icon "plus" %> Add New Organization
-        <% end %>
+        <%= new_button_to new_admin_organization_path, { text: "Add New Organization" } %>
       </div>
       <div class="row">
         <div class="col-xs-12">

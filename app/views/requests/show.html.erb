@@ -48,13 +48,13 @@
         </section>
 
         <br>
-        <div class="btn-group">
-          <%= link_to "Fullfill request",fullfill_request_path(@request),
-                      class: "btn btn-primary", method: :post %>
-          <%= link_to "View Associated Distribution", distribution_path(@request.distribution||-1), class: "btn btn-primary #{'disabled' unless @request.distribution}" %>
-        </div>
       </fieldset>
 
+    </div>
+    <div class="box-footer">
+      <%= submit_button_to fullfill_request_path(@request), { text: "Fulfill request" } unless @request.distribution %>
+      <%= view_button_to(distribution_path(@request.distribution), { text: "View Associated Distribution", size: "lg" }) if @request.distribution %>
+      <% console %>
     </div>
   </div>
 </section>
