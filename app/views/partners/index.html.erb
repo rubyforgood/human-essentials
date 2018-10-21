@@ -59,23 +59,20 @@
                     <div class="col-md-6 col-sm-12" style="padding-top: 30px;">
                       <i class="fa fa-file-text-o fa-4x" aria-hidden="true"></i>
                       <h3 class="text-info">2. Upload your CSV file</h3>
-                      <ul>
-                        <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
-                        <li>
-                          <%= form_tag import_csv_partners_path, multipart: true do %>
-                          <div class="form-group" style="margin: 0 auto 15px; width: 202px;">
-                            <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
-                          </div>
-                          <% end #form %>
-                        </li>
-                        <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
-                        <li>
-                          <%= form_tag import_csv_partners_path, multipart: true do %>
-                            <%= button_tag :class => "btn btn-md btn-info" do %>
-                              <i class="fa fa-upload"></i> Import CSV
-                            <% end #button %>
-                          <% end #form %>
-                        </li>
+                        <%= form_with(url: import_csv_partners_path, local: :true) do |f| %>
+                          <ul>
+                            <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
+                            <li >
+                            <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto; margin-bottom: 16px;"  %>
+                            </li>
+                            <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
+                            <li>
+                              <%= button_tag :class => "btn btn-md btn-info" do %>
+                                <i class="fa fa-upload"></i> Import CSV
+                              <% end #button %>
+                            </li>
+                          </ul>
+                        <% end #form %>
                       </ul>
                     </div>
                   </div><!-- / row -->
