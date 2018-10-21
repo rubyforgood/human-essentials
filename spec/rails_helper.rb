@@ -128,8 +128,15 @@ ASCIIART
   config.before(:all) do 
   Geocoder.configure(:lookup => :test)
 
+  ["1500 Remount Road, Front Royal, VA",
+   "1111 Panda ave. Front Royal, VA 12345",
+   "Smithsonian Institute new",
+   "Smithsonian Conservation Center new",
+   "3700 O St NW, Washington, DC 20057",
+   "1500 Remount Road Front Royal, VA",
+   "1234 Banana Drive Boston, MA 12345"].each do |address|
   Geocoder::Lookup::Test.add_stub(
-  "1500 Remount Road, Front Royal, VA", [
+  address, [
     {
       'latitude'     => 40.7143528,
       'longitude'    => -74.0059731,
@@ -141,19 +148,7 @@ ASCIIART
     }
    ]
   )
-   Geocoder::Lookup::Test.add_stub(
-  "1111 Panda ave. Front Royal, VA 12345", [
-    {
-      'latitude'     => 40.7143528,
-      'longitude'    => -74.0059731,
-      'address'      => '1500 Remount Road, Front Royal, VA',
-      'state'        => 'Virginia',
-      'state_code'   => 'VA',
-      'country'      => 'United States',
-      'country_code' => 'US'
-    }
-   ]
-  )
+  end
  end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

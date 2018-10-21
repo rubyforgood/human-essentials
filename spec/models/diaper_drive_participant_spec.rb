@@ -59,7 +59,7 @@ RSpec.describe DiaperDriveParticipant, type: :model do
   describe "geocode" do
     it "adds coordinates to the database" do
       ddp = build(:diaper_drive_participant,
-                  "address" => "Des Moines, Iowa ")
+                  "address" => "1500 Remount Road, Front Royal, VA")
       ddp.save
       expect(ddp.latitude).not_to eq(nil)
       expect(ddp.longitude).not_to eq(nil)
