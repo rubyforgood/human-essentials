@@ -2,6 +2,78 @@ RSpec.describe Admin::UsersController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.id }
   end
+  context "When logged in as a super admin" do
+    before do
+      sign_in(@super_admin)
+      create(:organization)
+    end
+
+    describe "GET #new" do
+      it "renders new template" do
+        get :new
+        expect(response).to render_template(:new)
+      end
+
+      it "preloads organizations" do
+        get :new
+        expect(assigns(:organizations)).to eq(Organization.all)
+      end
+    end
+
+    describe "POST #create" do
+      it "returns http success" do
+        post :create, params: { user: { organization_id: 1 } }
+        expect(response).to be_successful
+      end
+
+      it "preloads organizations" do
+        post :create, params: { user: { organization_id: 1 } }
+        expect(assigns(:organizations)).to eq(Organization.all)
+      end
+    end
+  end
+
+  context "When logged in as an organization_admin" do
+    before do
+      sign_in @organization_admin
+      create(:organization)
+    end
+
+    describe "GET #new" do
+      it "redirects" do
+        get :new
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+
+    describe "POST #create" do
+      it "redirects" do
+        post :create, params: { user: { organization_id: 1 } }
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+  end
+
+  context "When logged in as a non-admin user" do
+    before do
+      sign_in @user
+      create(:organization)
+    end
+
+    describe "GET #new" do
+      it "redirects" do
+        get :new
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+
+    describe "POST #create" do
+      it "redirects" do
+        post :create, params: { user: { organization_id: 1 } }
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+  end
 =begin
   context "When logged in as an organization admin" do
     before do

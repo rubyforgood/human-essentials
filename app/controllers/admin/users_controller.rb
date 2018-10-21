@@ -1,4 +1,6 @@
 class Admin::UsersController < AdminController
+  before_action :load_organizations, only: %i[new create]
+
   def index
     @users = User.all
   end
@@ -7,7 +9,6 @@ class Admin::UsersController < AdminController
 
   def new
     @user = User.new
-    @organizations = Organization.all
   end
 
   def create
@@ -36,5 +37,9 @@ class Admin::UsersController < AdminController
 
   def user_params
     params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
+  end
+
+  def load_organizations
+    @organizations = Organization.all
   end
 end
