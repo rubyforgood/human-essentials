@@ -1,94 +1,95 @@
 module UiHelper
-  def add_line_item_button form, node, options = {}
+  def add_line_item_button(form, node, options = {})
     text = options[:text] || "Add another item"
     size = options[:size] || "md"
     type = options[:type] || "primary"
     partial = options[:partial] || "line_items/line_item_fields"
     link_to_add_association form, :line_items,
-      data: {
-        association_insertion_node: node,
-        association_insertion_method: "append"
-      }, id: "__add_line_item", class: "btn btn-#{size} btn-#{type}", style: "margin-top: 1rem;", partial: partial do
-        fa_icon "plus", text: text
+                            data: {
+                              association_insertion_node: node,
+                              association_insertion_method: "append"
+                            }, id: "__add_line_item", class: "btn btn-#{size} btn-#{type}", style: "margin-top: 1rem;", partial: partial do
+      fa_icon "plus", text: text
     end
   end
 
-  def delete_line_item_button form, options = {}
+  def delete_line_item_button(form, options = {})
     text = options[:text] || "Remove"
     size = options[:text] || "sm"
     type = options[:type] || "danger"
 
-    link_to_remove_association form, class: "btn btn-#{size} btn-#{type}"  do
+    link_to_remove_association form, class: "btn btn-#{size} btn-#{type}" do
       fa_icon "trash", text: text
     end
   end
 
-  def delete_button_to link, options = {}
+  def delete_button_to(link, options = {})
     # Delete has a few extra options we have to consider to ensure the button works right
     data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
     properties = { method: options[:method]&.to_sym || :delete, rel: "nofollow" }.merge(data)
     _link_to link, { icon: "trash", type: "danger", text: "Delete", size: "xs" }.merge(options), properties
   end
 
-  def dropdown_button id, options = {}
+  def dropdown_button(id, options = {})
     options[:type] = (options[:type] || "primary").prepend("btn-dropdown btn-")
-    additional_properties = { 
-      data: { 
+    options[:id] = id
+    additional_properties = {
+      data: {
         toggle: "dropdown"
       },
       'aria-haspopup': true,
       'aria-expanded': true
     }
 
-    _button_to({ submit_type: "button", text: "Set the 'text' property", size: "md", icon: "caret-down"}.merge(options), additional_properties)
+    _button_to({ submit_type: "button", text: "Set the 'text' property", size: "md", icon: "caret-down" }.merge(options), additional_properties)
   end
 
-  def cancel_button_to link, options = {}
+  def cancel_button_to(link, options = {})
     _link_to link, { icon: "ban", type: "outline-primary", text: "Cancel", size: "md" }.merge(options)
   end
 
-  def download_button_to link, options = {}
+  def download_button_to(link, options = {})
     _link_to link, { icon: "download", type: "default", text: "Download", size: "md" }.merge(options)
   end
 
-  def edit_button_to link, options = {}
+  def edit_button_to(link, options = {})
     _link_to link, { icon: "pencil-square-o", type: "primary", text: "Edit", size: "xs" }.merge(options)
   end
 
-  def filter_button options = {}
+  def filter_button(options = {})
     _button_to({ icon: "filter", type: "primary", text: "Filter", size: "md" }.merge(options))
   end
 
-  def modal_button_to target_id, options = {}
+  def modal_button_to(target_id, options = {})
     properties = { data: { toggle: "modal" } }
     _link_to target_id, { icon: "dot-circle-o", type: "default", text: "Set 'text' option", size: "md" }.merge(options), properties
   end
 
-  def new_button_to link, options = {}
+  def new_button_to(link, options = {})
     _link_to link, { icon: "plus", type: "success", text: "New", size: "lg" }.merge(options)
   end
 
-  def print_button_to link, options = {}
+  def print_button_to(link, options = {})
     _link_to link, { icon: "print", type: "default", text: "Print", size: "xs" }.merge(options)
   end
 
   # Generic Submit button for a form
-  def submit_button options = {}
+  def submit_button(options = {})
     disable_text = options[:disable_text] || "Saving"
-    _button_to({ text: "Save", icon: "floppy-o", size: "lg", type: "success", align: "pull-right" }.merge(options), { data: { disable_text: disable_text }})
+    _button_to({ text: "Save", icon: "floppy-o", size: "lg", type: "success", align: "pull-right" }.merge(options), data: { disable_text: disable_text })
   end
 
   # Like above, but POSTs to a URL instead of to a form
-  def submit_button_to link, options = {}
+  def submit_button_to(link, options = {})
     properties = { method: options[:method]&.to_sym || :post, rel: "nofollow" }
     _link_to link, { icon: "check-circle", type: "success", text: "Submit", size: "lg" }.merge(options), properties
   end
 
-  def view_button_to link, options = {}
+  def view_button_to(link, options = {})
     _link_to link, { icon: "search", type: "info", text: "View", size: "xs" }.merge(options)
   end
 
-  def _link_to link, options = {}, properties = {}
+  def _link_to(link, options = {}, properties = {})
     icon = options[:icon]
     text = options[:text]
     size = options[:size]
@@ -101,7 +102,7 @@ module UiHelper
     end
   end
 
-  def _button_to options = {}, other_properties = {}
+  def _button_to(options = {}, other_properties = {})
     submit_type = options[:submit_type] || "submit"
     id   = options[:id]
     type = options[:type]
@@ -109,9 +110,8 @@ module UiHelper
     icon = options[:icon]
     text = options[:text]
     align = options[:align]
-    disable_text = other_properties[:disable_text] || text
 
-    button_tag({ type: submit_type, id: id, class: "btn btn-#{type} btn-#{size} #{align}"}.merge(other_properties)) do
+    button_tag({ type: submit_type, id: id, class: "btn btn-#{type} btn-#{size} #{align}" }.merge(other_properties)) do
       fa_icon icon, text: text
     end
   end
