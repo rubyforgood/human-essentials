@@ -49,7 +49,7 @@ GEM
     annotate (2.7.4)
       activerecord (>= 3.2, < 6.0)
       rake (>= 10.4, < 13.0)
-    api-auth (1.5.0)
+    api-auth (2.2.1)
     archive-zip (0.11.0)
       io-like (~> 0.3.0)
     arel (9.0.0)
@@ -175,8 +175,8 @@ GEM
     geocoder (1.5.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
-    groupdate (3.2.1)
-      activesupport (>= 3)
+    groupdate (4.0.2)
+      activesupport (>= 4.2)
     guard (2.14.2)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -208,9 +208,10 @@ GEM
     launchy (2.4.3)
       addressable (~> 2.3)
     libv8 (3.16.14.19)
-    listen (3.0.8)
+    listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
+      ruby_dep (~> 1.2)
     loofah (2.2.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -252,7 +253,7 @@ GEM
     parser (2.5.1.2)
       ast (~> 2.4.0)
     pdf-core (0.7.0)
-    pg (0.21.0)
+    pg (1.1.3)
     powerpack (0.1.2)
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
@@ -313,7 +314,7 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
-    react-rails (2.3.1)
+    react-rails (2.4.7)
       babel-transpiler (>= 0.7.0)
       connection_pool
       execjs
@@ -354,6 +355,7 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-graphviz (1.2.3)
     ruby-progressbar (1.10.0)
+    ruby_dep (1.5.0)
     rubyzip (1.2.2)
     safe_yaml (1.0.4)
     sass (3.6.0)
@@ -423,7 +425,7 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webmock (2.3.2)
+    webmock (3.4.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
@@ -439,7 +441,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate
-  api-auth (~> 1.5)
+  api-auth (~> 2.2)
   awesome_print
   better_errors
   binding_of_caller
@@ -469,24 +471,24 @@ DEPENDENCIES
   font-ionicons-rails
   fullcalendar-rails
   geocoder
-  groupdate (~> 3.2)
+  groupdate (~> 4.0)
   guard-rspec
   jbuilder
   jquery-rails
   jquery-ui-rails
   launchy
-  listen (~> 3.0.5)
+  listen (~> 3.1.5)
   momentjs-rails
   newrelic_rpm
   paperclip
-  pg (~> 0.2)
+  pg (~> 1.1.3)
   prawn-rails
   pry-rails
   puma
   rails (~> 5.2.0)
   rails-controller-testing
   rails-erd
-  react-rails (~> 2.3.0)
+  react-rails (~> 2.4.7)
   rspec-rails (~> 3.5)
   rubocop
   sass-rails
@@ -505,7 +507,7 @@ DEPENDENCIES
   tzinfo-data (~> 1.2)
   uglifier (>= 1.3.0)
   web-console
-  webmock (~> 2.1)
+  webmock (~> 3.4)
   yajl-ruby
 
 RUBY VERSION
