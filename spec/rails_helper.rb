@@ -124,6 +124,38 @@ ASCIIART
     FileUtils.rm_rf(Dir["#{Rails.root}/tmp/storage"])
   end
 
+  # Stub out Geocoder or else...
+  config.before(:all) do 
+  Geocoder.configure(:lookup => :test)
+
+  Geocoder::Lookup::Test.add_stub(
+  "1500 Remount Road, Front Royal, VA", [
+    {
+      'latitude'     => 40.7143528,
+      'longitude'    => -74.0059731,
+      'address'      => '1500 Remount Road, Front Royal, VA',
+      'state'        => 'Virginia',
+      'state_code'   => 'VA',
+      'country'      => 'United States',
+      'country_code' => 'US'
+    }
+   ]
+  )
+   Geocoder::Lookup::Test.add_stub(
+  "1111 Panda ave. Front Royal, VA 12345", [
+    {
+      'latitude'     => 40.7143528,
+      'longitude'    => -74.0059731,
+      'address'      => '1500 Remount Road, Front Royal, VA',
+      'state'        => 'Virginia',
+      'state_code'   => 'VA',
+      'country'      => 'United States',
+      'country_code' => 'US'
+    }
+   ]
+  )
+ end
+
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.
