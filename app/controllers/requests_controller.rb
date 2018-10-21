@@ -18,8 +18,8 @@ class RequestsController < ApplicationController
   # pre-filled distribution containing all the requested items.
   def fullfill
     request = Request.find(params[:id])
-    request.update(status: "Fullfilled")
-    flash[:notice] = "Request marked as fullfilled"
+    request.update(status: "Fulfilled")
+    flash[:notice] = "Request marked as fulfilled"
     redirect_to new_distribution_path(request_id: request.id)
   end
 end
