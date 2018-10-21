@@ -25,7 +25,7 @@
   <div class="box-body">
 
   <% if @storage_location.items.empty? %>
-      <div class="import-storage-location">
+    <div class="import-storage-location">
       <!-- Button HTML (to Trigger Modal) -->
       <a href="#importStorageLocationModal" class="btn btn-lg btn-primary" data-toggle="modal">Import Baseline Inventory</a>
 
@@ -47,7 +47,7 @@
                     <li>Enter your quantities for each item.</li>
                     <li>Save the file as a csv file.</li>
                     <li>DO NOT CHANGE ANY ITEM NAME.</li>
-                    <li><%= link_to storage_location_path(@storage_location, :format => :csv), :class => "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example CSV <% end %></li>
+                    <li><%= link_to storage_location_path(@storage_location, :format => :csv), :class => "btn btn-md btn-info" do %><i class="fa fa-download"></i> Download example CSV <% end %></li>
                   </ul>
                 </div>
                 <div class="col-md-6 col-sm-12" style="padding-top: 30px;">
@@ -76,8 +76,8 @@
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
-      </div><!-- /.import-partners -->
-    <% end %>
+    </div><!-- /.import-storage-location -->
+  <% end %>
 
   <p><%= @storage_location.address %></p>
   
