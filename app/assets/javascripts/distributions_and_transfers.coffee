@@ -19,29 +19,24 @@ populate_dropdowns = (objects, inventory) ->
       options += new_option(inventory[index], selected == item_id)
     $(element).find("option").remove().end().append(options)
 
+request_storage_location_and_populate_item = (item_to_populate) ->
+  control = $("select#transfer_from_id, select#distribution_storage_location_id")
+  return if (control.length is 0 || !control.val())
+
+  $.ajax
+    url: control.data("storage-location-inventory-path").replace(":id", control.val())
+    dataType: "json"
+    success: (data) ->
+      populate_dropdowns item_to_populate, data
+
 $ ->
+  default_item = $("#distribution_line_items select, #donation_line_items select")
+
   $(document).on "change", "select#transfer_from_id, select#distribution_storage_location_id", ->
-    control = $("select#transfer_from_id, select#distribution_storage_location_id")
-    $.ajax
-      url: control.data("storage-location-inventory-path").replace(":id", control.val())
-      dataType: "json"
-      success: (data) ->
-        populate_dropdowns $("#distribution_line_items select, #donation_line_items select"), data
+    request_storage_location_and_populate_item(default_item)
 
   $(document).on "cocoon:after-insert", "form#new_transfer, form#new_distribution", (e, insertedItem) ->
-    control = $("select#transfer_from_id, select#distribution_storage_location_id")
-    $.ajax
-      url: control.data("storage-location-inventory-path").replace(":id", control.val())
-      dataType: "json"
-      success: (data) ->
-        populate_dropdowns $("select", insertedItem), data
+    request_storage_location_and_populate_item($("select", insertedItem))
 
   $ ->
-    control = $("select#transfer_from_id, select#distribution_storage_location_id")
-    if (control.length is 0)
-      return
-    $.ajax
-      url: control.data("storage-location-inventory-path").replace(":id", control.val())
-      dataType: "json"
-      success: (data) ->
-        populate_dropdowns $("#distribution_line_items select, #donation_line_items select"), data
+    request_storage_location_and_populate_item(default_item)
