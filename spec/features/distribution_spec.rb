@@ -19,7 +19,7 @@ RSpec.feature "Distributions", type: :feature do
     expect(page).to have_content "Distribution Manifest for"
     click_button "Confirm Distribution"
     expect(page.find(".alert-info")).to have_content "reated"
-    expect(page).to have_selector :css, 'tr.highlight'
+    expect(page).to have_selector :css, "tr.highlight"
   end
 
   scenario "User can create a distribution from donation" do
