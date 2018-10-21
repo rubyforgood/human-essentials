@@ -274,7 +274,7 @@ RSpec.describe StorageLocation, type: :model do
     describe "geocode" do
       it "adds coordinates to the database" do
         storage_location = build(:storage_location,
-                                 "address" => '1500 Remount Road, Front Royal, VA')
+                                 "address" => "1500 Remount Road, Front Royal, VA")
         storage_location.save
         expect(storage_location.latitude).not_to eq(nil)
         expect(storage_location.longitude).not_to eq(nil)
