@@ -27,7 +27,6 @@
       </section><!-- /#filters -->
     </div><!-- /.box-header -->
     <div class="box-body">
-
       <div class="row">
         <div class="col-xs-12">
           <div class="box-body table-responsive no-padding">
@@ -52,7 +51,6 @@
   </div><!-- /.box -->
 </section><!-- /.content -->
 
-
 <!-- Modal HTML -->
 <div id="importPartnerModal" class="modal fade">
 <div class="modal-dialog onboarding_steps">
@@ -70,30 +68,24 @@
               <li>Open the csv file with excel <br>or your favourite spreadsheet program.</li>
               <li>Delete the sample data and <br>enter your partner agency names and <br>addresses in the appropriate columns.</li>
               <li>Save the file as a csv file.</li>
-              <li><%= download_button_to("/partners.csv", { text: 
-                "Download example CSV" }) %></li>
+              <li><%= link_to "/partners.csv", :format => :csv, :class => "btn btn-md btn-info" do %><i class="fa fa-download"></i> Download example CSV <% end %></li>
             </ul>
           </div>
           <div class="col-md-6 col-sm-12" style="padding-top: 30px;">
             <i class="fa fa-file-text-o fa-4x" aria-hidden="true"></i>
             <h3 class="text-info">2. Upload your CSV file</h3>
-            <ul>
-              <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
-              <li>
-                <%= form_with(url: import_csv_partners_path, local: :true) do |f| %>
-                <ul>
-                  <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
-                  <li>
-                    <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto; margin-bottom: 16px;"  %>
-                  </li>
-                  <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
-                  <li>
-                    <%= submit_button({ text: "Import CSV", size: "md", icon: "upload" }) %>
-                  </li>
-                </ul>
-                <% end #form %>
-              </li>
-            </ul>
+            <%= form_with(url: import_csv_partners_path, local: :true) do |f| %>
+              <ul>
+                <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
+                <li>
+                  <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto;"  %>
+                </li>
+                <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
+                <li>
+                  <%= submit_button({ text: "Import CSV", size: "md", icon: "upload" }) %>
+                </li>
+              </ul>
+            <% end #form %>
           </div>
         </div><!-- / row -->
       </div><!-- /.modal-body -->
@@ -103,3 +95,4 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+</div><!-- /.import-partners -->
