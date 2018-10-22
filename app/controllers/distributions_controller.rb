@@ -27,6 +27,8 @@ class DistributionsController < ApplicationController
   end
 
   def index
+    @highlight_id = session.delete(:created_distribution_id)
+
     @distributions = current_organization
                      .distributions
                      .includes(:partner, :storage_location, :line_items, :items)
@@ -47,6 +49,7 @@ class DistributionsController < ApplicationController
         if @distribution.save
           send_notification(current_organization, @distribution)
           flash[:notice] = "Distribution created!"
+          session[:created_distribution_id] = @distribution.id
           redirect_to distributions_path
         else
           flash[:error] = "There was an error, try again?"
