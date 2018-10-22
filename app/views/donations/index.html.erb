@@ -51,21 +51,12 @@
         </div><!-- /.row -->
         <div class="row">
           <div class="col-xs-12">
-            <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
-              <i class="fa fa-filter"></i> Filter
-            <% end %>
-            <%= link_to donations_path, class: "btn btn-outline-primary btn-md" do %>
-              <i class="fa fa-ban"></i> Clear Filters
-            <% end %>
-            <div class="btn-group pull-right">
-              <%= link_to new_donation_path(organization_id: current_organization), class: "btn btn-success btn"  do %>
-                <i class="fa fa-plus"></i> New Donation
-              <% end %>
-              <% if @donations.length > 0 %>
-                <%= link_to csv_path(format: :csv, type: "Donation"), class: "btn btn-secondary" do %>
-                  <i class="fa fa-download" aria-hidden="true"></i> Export Donations
-                <% end %>
-              <% end %>
+            <%= filter_button %>
+            <%= cancel_button_to donations_path %>
+
+            <div class="pull-right">
+              <%= download_button_to(csv_path(format: :csv, type: "Donation"), { text: "Export Donations", size: "lg" }) if @donations.any? %>
+              <%= new_button_to new_donation_path(organization_id: current_organization), { text: "New Donation" } %>
             </div>
           </div>
         </div><!-- /.row -->

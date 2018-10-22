@@ -3,12 +3,8 @@
   <td><%= storage_location.address %></td>
   <td><%= storage_location.size %></td>
   <td class="text-right">
-  <%= link_to "View", storage_location, class: "btn btn-primary btn-xs" %>
-  <%= link_to edit_storage_location_path(storage_location), class: "btn btn-info btn-xs" do %>
-    <i class="fa fa-edit"></i> Edit
-  <% end %>
-  <%= link_to storage_location, method: :delete, class: "btn btn-danger btn-xs", data: { confirm: confirm_delete_msg(storage_location.name) } do %>
-    <i class="fa fa-trash"></i> Delete
-  <% end %>
+    <%= view_button_to storage_location %>
+    <%= edit_button_to edit_storage_location_path(storage_location) %>
+    <%= delete_button_to storage_location, { confirm: confirm_delete_msg(storage_location.name) } %>
   </td>
 </tr>

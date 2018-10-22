@@ -23,7 +23,7 @@ RSpec.feature "Donation Site", type: :feature do
     donation_site_traits = attributes_for(:donation_site)
     fill_in "Name", with: donation_site_traits[:name]
     fill_in "Address", with: donation_site_traits[:address]
-    click_button "Create Donation site"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "added"
   end
@@ -41,7 +41,7 @@ RSpec.feature "Donation Site", type: :feature do
 
   scenario "User creates a new donation site with empty attributes" do
     visit url_prefix + "/donation_sites/new"
-    click_button "Create Donation site"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
@@ -50,7 +50,7 @@ RSpec.feature "Donation Site", type: :feature do
     donation_site = create(:donation_site)
     visit url_prefix + "/donation_sites/#{donation_site.id}/edit"
     fill_in "Address", with: donation_site.name + " new"
-    click_button "Update Donation site"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "updated"
   end
@@ -59,7 +59,7 @@ RSpec.feature "Donation Site", type: :feature do
     donation_site = create(:donation_site)
     visit url_prefix + "/donation_sites/#{donation_site.id}/edit"
     fill_in "Name", with: ""
-    click_button "Update Donation site"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
