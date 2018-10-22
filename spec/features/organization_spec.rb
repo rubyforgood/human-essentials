@@ -21,10 +21,10 @@ RSpec.feature "Organization management", type: :feature do
       end
       scenario "the user is prompted with placeholder text and a more helpful error message to ensure correct URL format" do
         fill_in "Url", with: "www.diaperbase.com"
-        click_on "Update"
+        click_on "Save"
 
         fill_in "Url", with: "http://www.diaperbase.com"
-        click_on "Update"
+        click_on "Save"
         expect(page.find(".alert")).to have_content "pdated"
       end
     end
