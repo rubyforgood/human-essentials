@@ -15,24 +15,24 @@
 
 FactoryBot.define do
   factory :purchase do
-    comment "It's a fine day for diapers."
-    purchased_from "Google"
+    comment { "It's a fine day for diapers." }
+    purchased_from { "Google" }
     storage_location
     organization { Organization.try(:first) || create(:organization) }
-    issued_at nil
-    amount_spent 10
+    issued_at { nil }
+    amount_spent { 10 }
 
     transient do
-      item_quantity 10
-      item_id nil
+      item_quantity { 10 }
+      item_id { nil }
     end
 
     trait :with_items do
       storage_location { create :storage_location, :with_items }
 
       transient do
-        item_quantity 100
-        item nil
+        item_quantity { 100 }
+        item { nil }
       end
 
       after(:build) do |instance, evaluator|

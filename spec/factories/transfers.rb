@@ -14,12 +14,12 @@
 FactoryBot.define do
   factory :transfer do
     transient do
-      storage_location nil
+      storage_location { nil }
     end
     organization { Organization.try(:first) || create(:organization) }
-    from nil
-    to nil
-    comment "A comment"
+    from { nil }
+    to { nil }
+    comment { "A comment" }
 
     after(:build) do |instance, evaluator|
       # the Itemizable shared_example needs `storage_location` to be an option
@@ -29,8 +29,8 @@ FactoryBot.define do
 
     trait :with_items do
       transient do
-        item_quantity 100
-        item nil
+        item_quantity { 100 }
+        item { nil }
       end
 
       after(:build) do |instance, evaluator|

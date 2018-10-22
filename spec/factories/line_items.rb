@@ -13,9 +13,9 @@
 
 FactoryBot.define do
   factory :line_item do
-    quantity 1
+    quantity { 1 }
     item
-    itemizable_type "Donation"
+    itemizable_type { "Donation" }
     itemizable_id { create(:donation).id }
 
     trait :donation do
@@ -25,7 +25,7 @@ FactoryBot.define do
     end
 
     trait :distribution do
-      itemizable_type "Distribution"
+      itemizable_type { "Distribution" }
       itemizable_id { create(:distribution).id }
     end
   end
