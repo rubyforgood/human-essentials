@@ -235,6 +235,16 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(page).to have_content("error")
         expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
       end
+
+      # Bug fix -- Issue #526
+      scenario "Bar code fields have unique ids"
+        within "#donation_line_items" do
+          click_button "__add_line_item"
+          click_button "__add_line_item"
+          expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
+          expect(page).to have_xpath("//input[@id='_barcode-lookup-2']")
+        end
+      end
     end
 
     context "via barcode entry" do
