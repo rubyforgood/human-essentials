@@ -41,6 +41,13 @@ $ ->
 
   $(document).on "cocoon:after-insert", "form#new_transfer, form#new_distribution", (e, insertedItem) ->
     request_storage_location_and_populate_item($("select", insertedItem))
+    insertedItem.find('#_barcode-lookup-new_line_items').attr('id', '_barcode-lookup-' + ($('.nested-fields').size() - 1))
+    control = $("select#transfer_from_id, select#distribution_storage_location_id")
+    $.ajax
+      url: control.data("storage-location-inventory-path").replace(":id", control.val())
+      dataType: "json"
+      success: (data) ->
+        populate_dropdowns $("select", insertedItem), data
 
   $ ->
     $('#__add_line_item').addClass('disabled') if !control.val()

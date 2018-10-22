@@ -23,12 +23,15 @@
             <%= f.input_field :value, class: "form-control" %>
           <% end %>
         </div><!-- /.row -->
+<% # TODO: Revisit this. I *think* globals should only be done in admin area but... %>
+<% if current_user.super_admin? %>
         <div class="row">
           <%= f.input :global,
                 as: :radio_buttons,
                 label: "Make this barcode available to everyone?" %>
         </div><!-- /.row -->
-        <%= f.button :submit, id: "awesomebutton", class:"btn btn-primary btn-lg"%>
+<% end %>        
+        <%= submit_button({ id: "awesomebutton" }) %>
       </div><!-- /.box-body -->
       <% end #form %>
     </div>

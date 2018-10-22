@@ -19,9 +19,7 @@
   <div class="box">
     <div class="box-body">
       <div class="text-right">
-        <%= link_to new_admin_user_path, class: "btn btn-success" do %>
-          <%= fa_icon "plus" %> Add a user
-        <% end %>
+        <%= new_button_to new_admin_user_path, { text: "Invite a new user" } %>
       </div>
       <div class="row">
         <div class="col-xs-12">
@@ -34,7 +32,6 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th></th>
-                <th></th>
               </tr>
               </thead>
               <tbody>
@@ -44,16 +41,9 @@
                 <td><%= user.name %></td>
                 <td><%= user.email %></td>
                 <td class="text-right">
-                  <% if user != current_user %>
-                    <%= link_to admin_user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?", class: "btn btn-danger btn-xs" do %>
-                      <%= fa_icon "trash" %> Delete
-                    <% end %>
-                  <% end %>
+                  <%= edit_button_to edit_user_registration_path(user) %>
+                  <%= delete_button_to(admin_user_path(user), { confirm: "Are you sure you want to permanently remove this user?" }) unless user == current_user %>
                 </td>
-                <td>
-                  <%= link_to edit_user_registration_path(user), class: "btn btn-info btn-xs" do %>
-                    <%= fa_icon "edit" %> Edit
-                  <% end %>
               <% end %>
               </td>
               </tr>

@@ -19,21 +19,17 @@
     <div class="box-header with-border bg-gray">
       <section id="filters">
         <!-- TBA; replicate HTML from other #index views -->
-        <div class="btn-group pull-right">
-          <%= link_to new_donation_site_path(organization_id: current_organization), class: "btn btn-success" do %>
-            <i class="fa fa-plus"></i> New Donation Site
-          <% end %>
-          <% if @donation_sites.length > 0 %>
-            <%= link_to csv_path(format: :csv, type: "DonationSite"), class: "btn btn-secondary" do %>
-              <i class="fa fa-download" aria-hidden="true"></i> Export Donation Sites
-            <% end %>
-          <% end %>
+        <div class="pull-right">
+          <!-- Button HTML (to Trigger Modal) -->
+          <%= modal_button_to("#importDonationSiteModal", { icon: "upload", text: "Import Donation Sites", size: "lg" }) if @donation_sites.empty? %>
+          <%= download_button_to(csv_path(format: :csv, type: "DonationSite"), { text: "Export Donation Sites", size: "lg" }) if @donation_sites.any? %>
+          <%= new_button_to new_donation_site_path(organization_id: current_organization), { text: "New Donation Site" } %>
         </div>
       </section><!-- /#filters -->
     </div><!-- /.box-header -->
     <div class="box-body">
       <% if @donation_sites.empty? %>
-        <%= render partial: "import_donation_site_modal" %>
+        
       <% end %>
       <div class="row">
         <div class="col-xs-12">
@@ -59,4 +55,7 @@
       </div><!-- /.row -->
     </div><!-- /.box-body -->
   </div><!-- /.box -->
+
+  <%= render partial: "import_donation_site_modal" %>  
 </section><!-- /.content -->
+

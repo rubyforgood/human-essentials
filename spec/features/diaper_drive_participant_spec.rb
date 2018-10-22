@@ -26,7 +26,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     fill_in "Phone", with: diaper_drive_participant_traits[:phone]
 
     expect do
-      click_button "Create Diaper drive participant"
+      click_button "Save"
     end.to change { DiaperDriveParticipant.count }.by(1)
 
     expect(page.find(".alert")).to have_content "added"
@@ -34,7 +34,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
 
   scenario "User add a new diaper drive instance with empty attributes" do
     visit url_prefix + "/diaper_drive_participants/new"
-    click_button "Create Diaper drive participant"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
@@ -45,7 +45,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     visit url_prefix + "/diaper_drive_participants/#{diaper_drive_participant.id}/edit"
     fill_in "Phone", with: ""
     fill_in "E-mail", with: new_email
-    click_button "Update Diaper drive participant"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "updated"
     expect(page).to have_content(diaper_drive_participant.contact_name)
@@ -57,7 +57,7 @@ RSpec.feature "Diaper Drive Participant", type: :feature do
     visit url_prefix + "/diaper_drive_participants/#{diaper_drive_participant.id}/edit"
     fill_in "Business Name", with: ""
     fill_in "Contact Name", with: ""
-    click_button "Update Diaper drive participant"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
