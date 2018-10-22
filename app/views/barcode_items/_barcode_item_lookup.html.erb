@@ -1,4 +1,2 @@
 <% # Increment a counter on how many we've seen so that we can create a unique ID -- really only necessary for test hooks # %>
-<% barcode_lookup_id = "_barcode-lookup-" + (@barcode_item_lookup_count = (@barcode_item_lookup_count || -1) + 1).to_s %>
-<input type="text" id="<%= barcode_lookup_id %>" class="__barcode_item_lookup form-control" value="" placeholder="Barcode Entry" data-organization-id="<%= params[:organization_id] %>" />
-
+<input type="text" id=<%= "_barcode-lookup-#{index}" %> class="__barcode_item_lookup form-control" value="" placeholder="Barcode Entry" data-organization-id="<%= params[:organization_id] %>" />
