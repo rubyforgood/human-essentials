@@ -17,7 +17,7 @@ RSpec.feature "Organizations Admin" do
     select("MA", from: "State")
     fill_in "Zipcode", with: "12345"
 
-    click_on "Create"
+    click_on "Save"
 
     expect(page).to have_content("All Diaperbase Organizations")
 

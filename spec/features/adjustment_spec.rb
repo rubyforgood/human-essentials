@@ -15,7 +15,7 @@ RSpec.feature "Adjustment management", type: :feature do
     fill_in "adjustment_line_items_attributes_0_quantity", with: add_quantity.to_s
 
     expect do
-      click_button "Create Adjustment"
+      click_button "Save"
     end.to change { storage_location.size }.by(add_quantity)
     expect(page).to have_content("Adjustment was successfully created")
   end
@@ -31,7 +31,7 @@ RSpec.feature "Adjustment management", type: :feature do
     fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
 
     expect do
-      click_button "Create Adjustment"
+      click_button "Save"
     end.to change { storage_location.size }.by(sub_quantity)
     expect(page).to have_content("Adjustment was successfully created")
   end

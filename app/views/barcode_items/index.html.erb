@@ -33,21 +33,13 @@
           </div><!-- /.row -->
           <div class="row">
             <div class="col-xs-12">
-              <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
-                <i class="fa fa-filter"></i> Filter
-              <% end %>
-              <%= link_to barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
-                <i class="fa fa-ban"></i> Clear Filters
-              <% end %>
+              <%= filter_button %>
+              <%= cancel_button_to barcode_items_path, { text: "Clear Filters" } %>
               <div class="btn-group pull-right">
-                <%= link_to new_barcode_item_path(organization_id: current_organization), class: "btn btn-success" do %>
-                  <i class="fa fa-plus"></i> Add New Barcode
-                <% end %>
-                <% if @barcode_items.length > 0 %>
-                  <%= link_to csv_path(format: :csv, type: "BarcodeItem"), class: "btn btn-secondary" do %>
-                    <i class="fa fa-download" aria-hidden="true"></i> Export Barcode Items
-                  <% end %>
-                <% end %>
+                <p>
+                  <%= download_button_to(csv_path(format: :csv, type: "BarcodeItem"), { text: "Export Barcode Items", size: "lg" }) if @barcode_items.length > 0 %>
+                  <%= new_button_to new_barcode_item_path(organization_id: current_organization), { text: "Add another barcode" } %>
+                </p>
               </div>
 
             </div>

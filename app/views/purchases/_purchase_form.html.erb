@@ -55,21 +55,13 @@
 
       <div class="row links">
         <div class="col-xs-12">
-          <%= link_to_add_association f, :line_items,
-                                      data: {
-                                          association_insertion_node: "#purchase_line_items",
-                                          association_insertion_method: "append"
-                                      }, id: "__add_line_item", class: "btn btn-success", style: "margin-top: 1rem;", partial: "line_items/line_item_fields" do
-          %>
-            <i class="fa fa-plus"></i> Add another item
-          <% end %>
+          <%= add_line_item_button f, "#purchase_line_items" %>
         </div>
       </div>
     </fieldset>
-    <div class="row">
-      <div class="col-xs-12">
-        <%= f.button :submit, class: "btn btn-lg btn-primary" %>
-      </div>
+
+    <div class="box-footer">
+      <%= submit_button %>
     </div>
   </div><!-- /.box-body.container -->
 <% end %>

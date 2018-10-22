@@ -20,15 +20,12 @@
       <section id="filters">
         <!-- TBA -- style after other #index views -->
       </section><!-- /#filters -->
-      <div class="btn-group pull-right">
-        <%= link_to new_distribution_path(organization_id: current_organization), class: "btn btn-success" do %>
-          <i class="fa fa-plus"></i> New Distribution
-        <% end %>
-        <% if @distributions.length > 0 %>
-          <%= link_to csv_path(format: :csv, type: "Distribution"), class: "btn btn-secondary" do %>
-            <i class="fa fa-download" aria-hidden="true"></i> Export Distributions
-          <% end %>
-        <% end %>
+        <div class="btn-group pull-right">
+          <p>
+            <%= download_button_to(csv_path(format: :csv, type: "Distribution"), text: "Export Distributions", size: "lg") if @distributions.length > 0 %>
+
+            <%=  new_button_to new_distribution_path(organization_id: current_organization), { text: "New Distribution" } %>
+          <p>
       </div>
     </div><!-- /.box-header -->
   <div class="box-body">

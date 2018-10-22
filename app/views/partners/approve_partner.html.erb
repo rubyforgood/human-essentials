@@ -138,11 +138,13 @@
           <p>Sources of Diapers:</p>
           <p>Diaper Budget:</p>
           <p>Diaper Funding Source:</p>
-          <br>
-          <%= button_to 'Approve Partner', {controller: "partners", action: "approve_application"}, method: :get, class: "btn btn-success" %>
 
         </div>
         <!-- /.box -->
+      </div>
+      <div class="box-footer">
+        <%= print_button_to approve_partner_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "lg" } %>
+
       </div>
     </div>
   </div>
