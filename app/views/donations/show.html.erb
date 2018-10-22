@@ -48,15 +48,11 @@
         TODO: What's the best way to do this? Should we use a new workflow?
         -->
         </section>
-
-        <div class="btn-group">
-          <%= link_to "Make a correction", edit_donation_path(@donation), class: "btn btn-primary" %>
-          <%= link_to "Create distribution",
-                      new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id),
-                      class: "btn btn-primary" %>
-        </div>
       </fieldset>
-
+    </div>
+    <div class="box-footer">
+      <%= edit_button_to edit_donation_path(@donation), { text: "Make a correction", size: "lg" } %>
+      <%= new_button_to new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
     </div>
   </div>
 </section>  

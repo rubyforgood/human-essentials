@@ -1,13 +1,11 @@
 <tr>
-  <td><%= diaper_drive_participant_row.try(:business_name) rescue "" %></td>
-  <td><%= diaper_drive_participant_row.try(:contact_name) rescue "" %></td>
-  <td><%= diaper_drive_participant_row.try(:phone) rescue "" %></td>
-  <td><%= diaper_drive_participant_row.try(:email) rescue "" %></td>
-  <td><%= diaper_drive_participant_row.volume %></td>
+  <td><%= diaper_drive_participant_row&.business_name %></td>
+  <td><%= diaper_drive_participant_row&.contact_name %></td>
+  <td><%= diaper_drive_participant_row&.phone %></td>
+  <td><%= diaper_drive_participant_row&.email %></td>
+  <td><%= diaper_drive_participant_row&.volume %></td>
   <td class="text-right">
-    <%= link_to "View", diaper_drive_participant_row, class: "btn btn-primary btn-xs"  %>
-    <%= link_to edit_diaper_drive_participant_path(diaper_drive_participant_row), class: "btn btn-info btn-xs" do %>
-      <i class="fa fa-edit"></i> Edit
-    <% end %>
+    <%= view_button_to diaper_drive_participant_row %>
+    <%= edit_button_to edit_diaper_drive_participant_path(diaper_drive_participant_row) %>
   </td>
 </tr>

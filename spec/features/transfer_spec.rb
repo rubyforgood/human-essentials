@@ -9,13 +9,14 @@ RSpec.feature "Transfer management", type: :feature do
     to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
     visit url_prefix + "/transfers"
     click_link "New Transfer"
-    select from_storage_location.name, from: "From storage location"
-    select to_storage_location.name, from: "To storage location"
-    fill_in "Comment", with: "something"
-    select from_storage_location.items.first.name, from: "transfer_line_items_attributes_0_item_id"
-    fill_in "transfer_line_items_attributes_0_quantity", with: "10"
-    click_button "Create Transfer"
-
+    within "form#new_transfer" do
+      select from_storage_location.name, from: "From storage location"
+      select to_storage_location.name, from: "To storage location"
+      fill_in "Comment", with: "something"
+      select from_storage_location.items.first.name, from: "transfer_line_items_attributes_0_item_id"
+      fill_in "transfer_line_items_attributes_0_quantity", with: "10"
+      click_on "Save"
+    end
     expect(page).to have_content("Transfer was successfully created")
   end
 
