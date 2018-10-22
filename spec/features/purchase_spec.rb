@@ -53,7 +53,7 @@ RSpec.feature "Purchases", type: :feature, js: true do
         fill_in "purchase_amount_spent", with: "10"
 
         expect do
-          click_button "Create Purchase"
+          click_button "Save"
         end.to change { Purchase.count }.by(1)
 
         expect(Purchase.last.issued_at).to eq(Date.parse("01/01/2001"))
@@ -71,7 +71,7 @@ RSpec.feature "Purchases", type: :feature, js: true do
         fill_in "purchase_amount_spent", with: "10"
 
         expect do
-          click_button "Create Purchase"
+          click_button "Save"
         end.to change { Purchase.count }.by(1)
 
         expect(Purchase.last.line_items.first.quantity).to eq(15)
@@ -83,7 +83,7 @@ RSpec.feature "Purchases", type: :feature, js: true do
       scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
         expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)
-        click_button "Create Purchase"
+        click_button "Save"
 
         expect(page).to have_content("error")
         expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)

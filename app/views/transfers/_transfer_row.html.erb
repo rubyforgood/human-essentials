@@ -4,6 +4,6 @@
   <td><%= transfer_row.comment || "none" %></td>
   <td><%= transfer_row.line_items.total %></td>
   <td class="text-right">
-    <%= link_to "View", transfer_row, class: "btn btn-primary btn-xs" %>
+    <%= view_button_to transfer_row %>
   </td>
 </tr>

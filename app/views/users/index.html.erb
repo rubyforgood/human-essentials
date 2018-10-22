@@ -20,9 +20,7 @@
   <div class="box">
     <div class="box-body">
       <div class="text-right">
-        <%= link_to new_user_path(organization_id: current_organization), class: "btn btn-success" do %>
-          <%= fa_icon "plus" %> Add a user
-        <% end %>
+        <%= new_button_to new_user_path(organization_id: current_organization), { text: "Add a user" } %>
       </div>
 <div class="row">
   <div class="col-xs-12">

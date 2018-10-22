@@ -73,7 +73,7 @@ RSpec.feature "Dashboard", type: :feature do
     select StorageLocation.first.name, from: "donation_storage_location_id"
     select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
     fill_in "donation_line_items_attributes_0_quantity", with: "100"
-    click_button "Create Donation"
+    click_button "Save"
 
     # Make a diaper drive donation
     visit @url_prefix + "/donations/new"
@@ -82,7 +82,7 @@ RSpec.feature "Dashboard", type: :feature do
     select StorageLocation.first.name, from: "donation_storage_location_id"
     select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
     fill_in "donation_line_items_attributes_0_quantity", with: "100"
-    click_button "Create Donation"
+    click_button "Save"
 
     # Check the dashboard now
     visit @url_prefix + "/dashboard"
@@ -95,9 +95,9 @@ RSpec.feature "Dashboard", type: :feature do
     select @organization.storage_locations.first.name, from: "distribution_storage_location_id"
     select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
     fill_in "distribution_line_items_attributes_0_quantity", with: "50"
-    click_button "Preview Distribution"
+    click_button "Save"
+    click_on "View", match: :first
     expect(page).to have_content "Distribution Manifest for"
-    click_button "Confirm Distribution"
     expect(page).to have_xpath("//table/tbody/tr/td", text: "50")
 
     # Check the dashboard now

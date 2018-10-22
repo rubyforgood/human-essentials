@@ -76,24 +76,26 @@
         </li>
         <!-- Menu Body -->
         <li class="user-body">
-          <div class="row">
-            <div class="col-xs-4 text-center">
-              <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>
-            </div>
+          
+            <ul class="list-group">
+              <li class="list-group-item">
+                <%= fa_icon "cog" %> <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>
+              </li>
             <% if current_organization.id.present? &&
-                (current_user.super_admin? ||
-                    (current_user.organization_admin? &&
-                        current_organization.id == current_user.organization_id)) %>
+              (current_user.super_admin? ||
+                  (current_user.organization_admin? &&
+                   current_organization.id == current_user.organization_id)) %>
               <% with_options organization_id: current_user.organization.to_param do |with_org| %>
-                <div class="col-xs-4 text-center">
-                  <%= navigation_link_to "Show users", with_org.users_path %>
-                </div>
-                <div class="col-xs-4 text-center">
-                  <%= navigation_link_to "Show organization", with_org.organization_path %>
-                </div>
+                <li class="list-group-item">
+                  <%= fa_icon "users" %> <%= navigation_link_to "My co-workers", with_org.users_path %>
+                </li>
+                <li class="list-group-item">
+                  <%= fa_icon "sitemap" %> <%= navigation_link_to "My organization", with_org.organization_path %>
+                </li>
               <% end %>
             <% end %>
-          </div>
+            </ul>
+          
           <!-- /.row -->
         </li>
         <!-- Menu Footer-->
@@ -102,7 +104,7 @@
             <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
           </div>
           <div class="pull-right">
-            <%= link_to('Log out', destroy_user_session_path(organization_id: nil), method: 'delete', class: "btn btn-default btn-flat") %>
+            <%= delete_button_to destroy_user_session_path(organization_id: nil), { text: "Log out", icon: "sign-out", no_confirm: true, size: "md" } %>
           </div>
         </li>
       </ul>

@@ -9,7 +9,7 @@ RSpec.feature "Item management", type: :feature do
     fill_in "Name", with: item_traits[:name]
     fill_in "Category", with: item_traits[:category]
     select CanonicalItem.last.name, from: "Base Item"
-    click_button "Create Item"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "added"
   end
@@ -17,7 +17,7 @@ RSpec.feature "Item management", type: :feature do
   scenario "User creates a new item with empty attributes" do
     visit url_prefix + "/items/new"
     item_traits = attributes_for(:item)
-    click_button "Create Item"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
@@ -26,7 +26,7 @@ RSpec.feature "Item management", type: :feature do
     item = create(:item)
     visit url_prefix + "/items/#{item.id}/edit"
     fill_in "Category", with: item.category + " new"
-    click_button "Update Item"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "updated"
   end
@@ -35,7 +35,7 @@ RSpec.feature "Item management", type: :feature do
     item = create(:item)
     visit url_prefix + "/items/#{item.id}/edit"
     fill_in "Name", with: ""
-    click_button "Update Item"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
