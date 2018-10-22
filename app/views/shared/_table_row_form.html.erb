@@ -3,6 +3,8 @@
     <% local_assigns[:columns].map(&:flatten).each do |attr, helper_method| %>
       <td><%= f.send(helper_method, attr, class: "form-control clearable") %></td>
     <% end %>
-    <td class="text-right"><%= f.button 'Create', class:"btn btn-info"%></td>
+    <td class="text-right">
+      <%= submit_button({ text: "Create"} ) %>
+    </td>
   <% end %>
 </tr>
