@@ -29,6 +29,7 @@ $ ->
         populate_dropdowns $("#distribution_line_items select, #donation_line_items select"), data
 
   $(document).on "cocoon:after-insert", "form#new_transfer, form#new_distribution", (e, insertedItem) ->
+    insertedItem.find('#_barcode-lookup-new_line_items').attr('id', '_barcode-lookup-' + ($('.nested-fields').size() - 1))
     control = $("select#transfer_from_id, select#distribution_storage_location_id")
     $.ajax
       url: control.data("storage-location-inventory-path").replace(":id", control.val())

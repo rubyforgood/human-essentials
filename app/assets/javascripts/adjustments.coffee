@@ -22,6 +22,7 @@ $ ->
 
   $(document).on "cocoon:after-insert", "form#new_adjustment", (e, insertedItem) ->
     control = $(control_id)
+    insertedItem.find('#_barcode-lookup-new_line_items').attr('id', '_barcode-lookup-' + ($('.nested-fields').size() - 1))
     $.ajax
       url: control.data("storage-location-inventory-path").replace(":id", control.val())
       dataType: "json"

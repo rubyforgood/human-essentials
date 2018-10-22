@@ -35,3 +35,6 @@ $ ->
       $(donation_site_container_id).hide()
 
   $(control_id).change()
+
+  $(document).on "cocoon:after-insert", "form#new_donation", (e, insertedItem) ->
+    insertedItem.find('#_barcode-lookup-new_line_items').attr('id', '_barcode-lookup-' + ($('.nested-fields').size() - 1))
