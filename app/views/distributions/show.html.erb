@@ -20,47 +20,37 @@
 <!-- Main content -->
 <section class="content">
 
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title">Distribution Manifest for <%= @distribution.distributed_at %> to <%= @distribution.partner.name %></h3>
-  </div>
-  <div class="box-body">
-
-    <p>Source location: <%= @distribution.storage_location.name %></p>
-    <p>Agency representative: <%= @distribution.agency_rep %></p>
-  <h4>Total Items Distributed</h4>
-  <div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-        <tr>
-          <th><b>Quantity</b></th>
-          <th><b>Item</b></th>
-        </tr>
-          <%= render partial: "distribution_item_row", collection: @line_items %>
-        </table>
-      <!-- /.box-body -->
-
-      </div>
-    <!-- /.box -->
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+      <h3 class="box-title">Distribution Manifest for <%= @distribution.distributed_at %> to <%= @distribution.partner.name %></h3>
     </div>
+    <div class="box-body">
+
+      <p>Source location: <%= @distribution.storage_location.name %></p>
+      <p>Agency representative: <%= @distribution.agency_rep %></p>
+    <h4>Total Items Distributed</h4>
+    <div class="row">
+      <div class="col-xs-12">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+            <tr>
+              <th><b>Quantity</b></th>
+              <th><b>Item</b></th>
+            </tr>
+              <%= render partial: "distribution_item_row", collection: @line_items %>
+            </table>
+          <!-- /.box-body -->
+
+          </div>
+        <!-- /.box -->
+        </div>
+      </div>
+    </div>
+    <div class="box-footer with-border">
+    <%= edit_button_to edit_distribution_path(@distribution), { text: "Make a Correction", size: "lg" } %>
   </div>
-    <% if @distribution.new_record? %>
-      <%= simple_form_for @distribution do |f| %>
-        <% @distribution.attributes.each do |attribute| %>
-          <%= f.hidden_field attribute.first.to_sym %>
-        <% end %>
-        <%= f.simple_fields_for :line_items do |item| %>
-          <%= item.hidden_field :item_id %>
-          <%= item.hidden_field :quantity %>
-        <% end %>
-        <%= f.submit "Confirm Distribution", class: "btn btn-lg btn-primary" %>
-      <% end %>
-    <% else %>
-      <%= link_to "Make a correction", edit_distribution_path(@distribution), class: "btn btn-primary" %>
-    <% end %>
   </div>
-</div>
+  
 </section>

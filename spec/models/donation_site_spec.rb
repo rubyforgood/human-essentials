@@ -36,7 +36,7 @@ RSpec.describe DonationSite, type: :model do
   describe "geocode" do
     it "adds coordinates to the database" do
       donation_site = build(:donation_site,
-                            "address" => "Washington, DC ")
+                            "address" => "1500 Remount Road, Front Royal, VA")
       donation_site.save
       expect(donation_site.latitude).not_to eq(nil)
       expect(donation_site.longitude).not_to eq(nil)

@@ -11,21 +11,12 @@
       </div>
       <div class="row">
         <div class="col-xs-12">
-        <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
-          <i class="fa fa-filter"></i> Filter
-        <% end %>
-        <%= link_to items_path, class: "btn btn-outline-primary btn-md" do %>
-          <i class="fa fa-ban"></i> Clear Filters
-        <% end %>
-        <div class="btn-group pull-right">
-          <%= link_to new_item_path(organization_id: current_organization), class: "btn btn-success" do %>
-            <i class="fa fa-plus"></i> Create New Item
-          <% end %>
-          <% if @items.length > 0 %>
-            <%= link_to csv_path(format: :csv, type: "Item"), class: "btn btn-secondary" do %>
-              <i class="fa fa-download" aria-hidden="true"></i> Export Items
-            <% end %>
-          <% end %>
+          <%= filter_button %>
+          <%= cancel_button_to items_path, { text: "Clear Filters" } %>
+        
+        <div class="pull-right">
+          <%= download_button_to(csv_path(format: :csv, type: "Item"), { text: "Export Items", size: "lg" }) if @items.any? %>
+          <%= new_button_to new_item_path(organization_id: current_organization), { text: "Create New Item" } %>
         </div>
       </div>
     </div><!-- /.row -->

@@ -24,12 +24,12 @@ RSpec.feature "Requests", type: :feature do
 
     scenario "the request is fullfillable", js: true do
       visit url_prefix + "/requests/#{@request.id}"
-      click_link "Fullfill request"
+      click_on "Fulfill request"
+      expect(page).to have_content "fulfilled"
       select @storage_location.name, from: "From storage location"
       fill_in "Comment", with: "Take my wipes... please"
-      click_button "Preview Distribution"
-      expect(page).to have_content "Distribution Manifest for"
-      click_button "Confirm Distribution"
+      click_on "Save"
+      expect(page).to have_content "Distributions"
       expect(page).to have_content "Distribution created"
     end
   end
