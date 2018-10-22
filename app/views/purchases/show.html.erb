@@ -47,11 +47,11 @@
         TODO: What's the best way to do this? Should we use a new workflow?
         -->
         </section>
-
-
-       <h2> <%= link_to "Make a correction", edit_purchase_path(@purchase), class: "btn btn-primary" %> </h2>
       </fieldset>
       
+    </div>
+    <div class="box-footer">
+      <%= edit_button_to edit_purchase_path(@purchase), { text: "Make a correction", size: "lg" } %>
     </div>
   </div>
 </section>  
