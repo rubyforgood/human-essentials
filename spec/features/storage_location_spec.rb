@@ -8,14 +8,14 @@ RSpec.feature "Barcode management", type: :feature do
     storage_location_traits = attributes_for(:storage_location)
     fill_in "Name", with: storage_location_traits[:name]
     fill_in "Address", with: storage_location_traits[:address]
-    click_button "Create Storage location"
+    click_on "Save"
 
     expect(page.find(".alert")).to have_content "added"
   end
 
   scenario "User creates a new storage location with empty attributes" do
     visit url_prefix + "/storage_locations/new"
-    click_button "Create Storage location"
+    click_on "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
@@ -24,7 +24,7 @@ RSpec.feature "Barcode management", type: :feature do
     storage_location = create(:storage_location)
     visit url_prefix + "/storage_locations/#{storage_location.id}/edit"
     fill_in "Address", with: storage_location.name + " new"
-    click_button "Update Storage location"
+    click_on "Save"
 
     expect(page.find(".alert")).to have_content "updated"
   end
@@ -33,7 +33,7 @@ RSpec.feature "Barcode management", type: :feature do
     storage_location = create(:storage_location)
     visit url_prefix + "/storage_locations/#{storage_location.id}/edit"
     fill_in "Name", with: ""
-    click_button "Update Storage location"
+    click_on "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
@@ -83,7 +83,7 @@ RSpec.feature "Barcode management", type: :feature do
     adjustment = create(:adjustment, :with_items, storage_location: storage_location)
     distribution = create(:distribution, :with_items, storage_location: storage_location)
     visit url_prefix + "/storage_locations/" + storage_location.id.to_s
-    click_link "Inventory coming out"
+    click_on "Inventory going out"
 
     expect(page.find("table#sectionC.table.table-hover", visible: true)).to have_content "100"
   end

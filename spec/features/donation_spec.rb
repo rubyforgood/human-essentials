@@ -119,7 +119,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in "donation_issued_at", with: "01/01/2001"
 
         expect do
-          click_button "Create Donation"
+          click_button "Save"
         end.to change { Donation.count }.by(1)
 
         expect(Donation.last.issued_at).to eq(Date.parse("01/01/2001"))
@@ -137,7 +137,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in text_id, with: "10"
 
         expect do
-          click_button "Create Donation"
+          click_button "Save"
         end.to change { Donation.count }.by(1)
 
         expect(Donation.last.line_items.first.quantity).to eq(15)
@@ -153,7 +153,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect do
-          click_button "Create Donation"
+          click_button "Save"
         end.to change { Donation.count }.by(1)
       end
 
@@ -164,7 +164,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in "diaper_drive_participant_business_name", with: "businesstest"
         fill_in "diaper_drive_participant_contact_name", with: "test"
         fill_in "diaper_drive_participant_email", with: "123@mail.ru"
-        click_button "Create Diaper drive participant"
+        click_on "Save"
         select "businesstest", from: "donation_diaper_drive_participant_id"
       end
 
@@ -178,7 +178,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect do
-          click_button "Create Donation"
+          click_button "Save"
         end.to change { Donation.count }.by(1)
       end
 
@@ -191,7 +191,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect do
-          click_button "Create Donation"
+          click_button "Save"
         end.to change { Donation.count }.by(1)
       end
 
@@ -204,7 +204,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
 
         expect do
-          click_button "Create Donation"
+          click_button "Save"
         end.to change { Donation.count }.by(1)
       end
 
@@ -218,7 +218,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
-        click_button "Create Donation"
+        click_button "Save"
         donation = Donation.last
         expect(donation.diaper_drive_participant_id).to be_present
         expect(donation.donation_site_id).to be_nil
@@ -230,7 +230,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
         expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
-        click_button "Create Donation"
+        click_button "Save"
 
         expect(page).to have_content("error")
         expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)

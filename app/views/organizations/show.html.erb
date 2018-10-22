@@ -37,17 +37,23 @@
           </li>
         </ul>
 
-<% if can_administrate %>
-        <a href="#addUserModal" class="btn btn-success" data-toggle="modal"><%= fa_icon "plus" %> Invite User to this Organization</a>
-      
-    </div>
-  <div id="addUserModal" class="modal fade">
+      <%= modal_button_to("#addUserModal", { text: "Invite User to this Organization" }) if can_administrate %>
 
+  </div>
+  </div>
+  <div class="box-footer">
+    <%= edit_button_to(edit_organization_path, { size: "lg" }) if can_administrate %>
+  </div>
+</div>
+
+
+
+<div id="addUserModal" class="modal fade">
   <div class="modal-dialog">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Add User to <%= @organization.name %></h4>
+        <h4 class="modal-title">Invite a new user to <%= @organization.name %></h4>
       </div><!-- modal-header -->
       <div class="modal-body">
         <div class="box-body">
@@ -62,9 +68,7 @@
               <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
             </div>
             <%= hidden_field_tag :org , @organization.id %><br>
-            <%= button_tag :submit, class:"btn btn-primary btn-lg" do %>
-              Invite User
-            <% end %>
+            <%= submit_button({ text: "Invite User", icon: "envelope" }) %>
           <% end # form %>
         </div><!-- box-body -->
       </div><!-- modal-body -->
@@ -73,16 +77,6 @@
       </div><!-- modal-footer -->
     </div><!-- modal-content -->
   </div><!-- modal-dialog -->
-<% end # if can_administrate %>
+</div><!-- addUserModal -->
 
-  </div>
-<hr />
-<% if can_administrate %>
-  <%= link_to edit_organization_path do %>
-    <i class="fa fa-pencil"></i> Edit
-  <% end %>
-<% end %>
-
-  </div>
-</div>
 </section>
