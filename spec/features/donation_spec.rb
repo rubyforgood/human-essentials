@@ -238,8 +238,8 @@ RSpec.feature "Donations", type: :feature, js: true do
 
       # Bug fix -- Issue #526
       scenario "Bar code fields have unique ids" do
-        click_button "__add_line_item"
-        click_button "__add_line_item"
+        page.find(:css, "#__add_line_item").click
+        page.find(:css, "#__add_line_item").click
         expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
         expect(page).to have_xpath("//input[@id='_barcode-lookup-2']")
       end
