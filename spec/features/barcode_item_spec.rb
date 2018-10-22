@@ -34,7 +34,7 @@ RSpec.feature "Barcode management", type: :feature do
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
-      click_button "Create Barcode item"
+      click_button "Save"
 
       expect(page.find(".alert")).to have_content "added to your"
 
@@ -51,7 +51,7 @@ RSpec.feature "Barcode management", type: :feature do
       barcode
       visit url_prefix + "/barcode_items/#{barcode.id}/edit"
       fill_in "Quantity", id: "barcode_item_quantity", with: (barcode.quantity.to_i + 10).to_s
-      click_button "Update Barcode item"
+      click_button "Save"
 
       expect(page.find(".alert")).to have_content "updated"
     end
@@ -60,7 +60,7 @@ RSpec.feature "Barcode management", type: :feature do
       barcode
       visit url_prefix + "/barcode_items/#{barcode.id}/edit"
       fill_in "Quantity", id: "barcode_item_quantity", with: ""
-      click_button "Update Barcode item"
+      click_button "Save"
 
       expect(page.find(".alert")).to have_content "didn't work"
     end
@@ -79,7 +79,7 @@ RSpec.feature "Barcode management", type: :feature do
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
       expect(page).to have_xpath("//input[@id='barcode_item_global_true']")
       choose "barcode_item_global_true"
-      click_button "Create Barcode item"
+      click_button "Save"
 
       expect(page.find(".alert")).to have_content "added globally"
 
@@ -122,7 +122,7 @@ RSpec.feature "Barcode management", type: :feature do
 
   scenario "User add a new barcode with empty attributes" do
     visit url_prefix + "/barcode_items/new"
-    click_button "Create Barcode item"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end

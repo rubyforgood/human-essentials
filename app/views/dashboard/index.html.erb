@@ -26,12 +26,12 @@
           </div>
         </div>
         <div class="box-body">
-          <div class="col-md-9">
+          <div class="col-xlg 7 col-md-7 col-sm-12">
             <div class="logo">
               <%== display_logo_or_name %>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-xlg-3 col-xlg-offset-2 col-md-5 col-sm-12">
             <div class="filter">
               <h3 class="text-center">Select Time Frame</h3>
               <div class="text-center">
@@ -42,12 +42,12 @@
             </div>
             <div class="text-center">
               <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
+              
               <div class="inventory-actions">
-                <div class="text-center">
-                  <%= link_to "Make a transfer", new_transfer_path, class: "btn btn-primary btn-xs" %>
-                  <%= link_to "Make an adjustment", new_adjustment_path, class: "btn btn-primary btn-xs" %>
-                </div>
+                  <%= new_button_to new_transfer_path, { text: "Make a transfer", size: "xs" } %>
+                  <%= new_button_to new_adjustment_path, { text: "Make an adjustment", size: "xs" } %>
               </div>
+            
             </div>
           </div>
         </div>
@@ -65,13 +65,15 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-              <button class='btn btn-large btn-primary center-block' href='<%= new_distribution_path %>'>New Distribution</button>
+              <%= new_button_to new_distribution_path, { text: "New Distribution" } %>
               <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
               <div class="box-body">
                 <h4>Recent distributions</h4>
                 <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
-                <%= link_to "See more...", distributions_path %>
               </div>
+            </div>
+            <div class="box-footer text-center">
+              <%= link_to "See more...", distributions_path %>
             </div>
           </div>
           <div class="box box-danger">
@@ -101,26 +103,32 @@
             </div>
             <div class="box-body text-center float-center">
               <span class="float-center text-center">
-              <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  New Inventory
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu1">
-                 <li class="center-block"><a href="<%= donations_path %>">All Donations</a></li>
-                 <li class="center-block"><a href="<%= new_donation_path %>">New Donation</a></li>
-                 <li class="center-block"><a href="<%= scale_donations_path %>">Repackaged Donation</a></li>
-                </ul>
-              </div>
+                  <div class="dropdown">
+                    <%= dropdown_button "dropdownMenu1", { text: "New Inventory", size: "lg" } %>
+                    <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu1">
+                     <li class="center-block">
+                      <%= view_button_to donations_path, { text: "All Donations", type: '', size: "md" } %>
+                    </li>
+                     <li class="center-block">
+                      <%= new_button_to new_donation_path, { text: "New Donation", type: '', size: "md" } %>
+                    </li>
+                     <li class="center-block">
+                      <%= new_button_to scale_donations_path, { text: "Repackaged Donation", type: '', size: "md" } %>
+                    </li>
+                    </ul>
+                </div>
               </span>
               <h3 class="text-center"><%= total_received_donations %> items received <%= display_interval %></h3>
               <h3 class="text-center">$<%= total_received_money_donations %> raised  <%= display_interval %></h3>
               <div class="box-body">
-              <h4>Recent donations</h4>
-              <%= render partial: "donation", collection: @recent_donations, as: :donation %>
-              <%= link_to "See more...", donations_path %>
+                <h4>Recent donations</h4>
+                <%= render partial: "donation", collection: @recent_donations, as: :donation %>
+                
               </div>
             </div>
+            <div class="box-footer text-center">
+                <%= link_to "See more...", donations_path %>
+              </div>
           </div>
           <div class="box box-success">
             <div class="box-header with-border">
@@ -138,8 +146,13 @@
               <div class="box-body text-center float-center">
               <h4>Recent Donations from Diaper Drives</h4>
               <%= render partial: "diaper_drive", collection: @recent_donations.by_source(:diaper_drive), as: :donation %>
-              <%= link_to "See more...", donations_path %>
               </div>
+            </div>
+            <div class="box-footer text-center">
+              <%= link_to "See more...", donations_path( 
+                filters: { 
+                  by_source: "Diaper Drive"
+                }) %>
             </div>
           </div>
           <div class="box box-info">
@@ -153,23 +166,26 @@
             </div>
             <div class="box-body text-center float-center">
               <span class="float-center text-center">
-              <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  New Inventory
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu1">
-                 <li class="center-block"><a href="<%= donations_path %>">All Purchases</a></li>
-                 <li class="center-block"><a href="<%= new_donation_path %>">New Purchase</a></li>
-                </ul>
-              </div>
+                <div class="dropdown">
+                    <%= dropdown_button "dropdownMenu2", { text: "New Inventory", size: "lg" } %>
+                    <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu2">
+                     <li class="center-block">
+                      <%= view_button_to purchases_path, { text: "All Purchases", type: '', size: "md" } %>
+                    </li>
+                     <li class="center-block">
+                      <%= new_button_to new_purchase_path, { text: "New Purchase", type: '', size: "md" } %>
+                    </li>
+                    </ul>
+                </div>
               </span>
               <h3 class="text-center"><%= total_purchased %> items received <%= display_interval %></h3>
               <div class="box-body">
                 <h4>Recent purchases</h4>
                 <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>
-                <%= link_to "See more...", purchases_path %>
               </div>
+            </div>
+            <div class="box-footer text-center">
+              <%= link_to "See more...", purchases_path %>
             </div>
           </div>
           <div class="box box-success">

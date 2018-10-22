@@ -23,7 +23,7 @@ RSpec.feature "Organization Administration", type: :feature do
     scenario "An admin can edit the properties for an organization" do
       click_on "Edit"
       fill_in "Name", with: "Something else"
-      click_button "Update"
+      click_button "Save"
       expect(page).to have_content("pdated your organization")
       expect(page).to have_content("Something else")
     end

@@ -16,13 +16,13 @@ RSpec.feature "Canonical Item Admin" do
         fill_in "Name", with: canonical_item_traits[:name]
         fill_in "Category", with: canonical_item_traits[:category]
         fill_in "canonical_item_partner_key", with: canonical_item_traits[:partner_key]
-        click_button "Create Canonical Item"
+        click_button "Save"
 
         expect(page.find(".alert")).to have_content "added"
       end
 
       scenario "it fails when creating a new canonical item with empty attributes" do
-        click_button "Create Canonical Item"
+        click_button "Save"
         expect(page.find(".alert")).to have_content "ailed"
       end
     end
@@ -35,13 +35,13 @@ RSpec.feature "Canonical Item Admin" do
 
       scenario "succeeds when changing the name" do
         fill_in "Name", with: canonical_item.name + " new"
-        click_button "Update Canonical Item"
+        click_button "Save"
         expect(page.find(".alert")).to have_content "pdated"
       end
 
       scenario "fails when updating the name to empty" do
         fill_in "Name", with: ""
-        click_button "Update Canonical Item"
+        click_button "Save"
         expect(page.find(".alert")).to have_content "ailed"
       end
     end
