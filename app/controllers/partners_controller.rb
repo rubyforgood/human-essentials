@@ -47,14 +47,14 @@ class PartnersController < ApplicationController
   end
 
   def import_csv
-    if params[:file].nil?
-      redirect_back(fallback_location: partners_path(organization_id: current_organization))
-      flash[:error] = "No file was attached!"
-    else
+    if params[:file].present?
       filepath = params[:file].path
       Partner.import_csv(filepath, current_organization.id)
       flash[:notice] = "Partners were imported successfully!"
       redirect_back(fallback_location: partners_path(organization_id: current_organization))
+    else
+      redirect_back(fallback_location: partners_path(organization_id: current_organization))
+      flash[:error] = "No file was attached!"
     end
   end
 

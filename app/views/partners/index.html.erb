@@ -80,16 +80,17 @@
             <ul>
               <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
               <li>
-                <%= form_tag import_csv_partners_path, multipart: true do %>
-                <div class="form-group" style="margin: 0 auto 15px; width: 202px;">
-                  <%= file_field_tag :file, :accept => 'text/csv', class: "form-control-file" %>
-                </div>
-                <% end #form %>
-              </li>
-              <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
-              <li>
-                <%= form_tag import_csv_partners_path, multipart: true do %>
-                  <%= submit_button({ text: "Import CSV", align: "center", size: "md" }) %>
+                <%= form_with(url: import_csv_partners_path, local: :true) do |f| %>
+                <ul>
+                  <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
+                  <li>
+                    <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto; margin-bottom: 16px;"  %>
+                  </li>
+                  <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
+                  <li>
+                    <%= submit_button({ text: "Import CSV", size: "md", icon: "upload" }) %>
+                  </li>
+                </ul>
                 <% end #form %>
               </li>
             </ul>
