@@ -27,8 +27,7 @@ class DistributionsController < ApplicationController
   end
 
   def index
-    @highlight_id = session[:created_distribution_id]
-    session[:created_distribution_id] = nil
+    @highlight_id = session.delete(:created_distribution_id)
 
     @distributions = current_organization
                      .distributions
