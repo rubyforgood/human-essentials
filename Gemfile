@@ -47,7 +47,7 @@ gem "sucker_punch", "~> 2.0"
 
 group :development, :test do
   gem "awesome_print"
-  gem "byebug", "~> 9.0", platform: :mri
+  gem "byebug", "~> 10.0", platform: :mri
   gem "guard-rspec"
   gem "pry-rails"
   gem "rspec-rails", "~> 3.5"
