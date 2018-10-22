@@ -13,83 +13,18 @@
  *= require toastr
  *= require font-awesome
  *= require ionicons
- *= require AdminLTE
  *= require bootstrap.min
- *= require _all-skins
- *= require scale
- *= require progress_stepper
  *= require fullcalendar
- *= require_self
  */
 
-#logo img {
-max-height: 100%;
-max-width: 100%;
-}
+ //Use @import in order to process SCSS variables
+ // import reusable variables
+ @import 'base/_variables';
 
-.header-action {
-  float: right;
-  padding-top: 15px;
-}
-
-/** HAX **/
-.row div.primary {
-  margin-top: 16px;
-}
-
-img#logo {
-  max-height: 40px;
-}
-
-#toast-container{
-  top: 70px;
-}
-
-.nav li.active {
-  background-color: #ecf0f5;
-}
-
-tr.negative {
-  background-color: #FDD;
-}
-tr.positive {
-  background-color: #DFD;
-}
-
-tr.highlight {
-  background-color: #e6f7ff;
-}
-
-
-/* ONBOARDING MODAL BOX */
-
-.modal-dialog h4.modal-title {
-	font-family: 'Source Sans Pro',sans-serif;
-}
-
-.modal-dialog.onboarding_steps .modal-body,
-.modal-dialog.onboarding_steps .modal-footer {
-	font-family: 'Source Sans Pro',sans-serif;
-	text-align: center;
-}
-
-.modal-dialog.onboarding_steps .modal-body h3 {
-	margin-top: 30px;
-}
-
-.modal-dialog.onboarding_steps .modal-body ul {
-	list-style: none; 
-	padding: 0;
-}
-
-.modal-dialog.onboarding_steps .modal-body li {
-	line-height: 1.25em;
-	margin-bottom: 15px;
-	color: #555;
-}
-
-@media (min-width: 768px) {
-	.modal-dialog.onboarding_steps {
-	  width: 700px;
-	}
-}
+ // import other stylesheets after variables
+@import 'AdminLTE';
+@import '_all-skins';
+@import 'scale';
+@import 'progress_stepper';
+@import 'admin';
+@import 'modal-dialog';
