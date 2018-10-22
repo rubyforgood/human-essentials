@@ -4,12 +4,8 @@
   <td><%= item_row.barcode_count %></td>
   <td><%= item_row.canonical_item.name %></td>
   <td class="text-right">
-  		<%= link_to "View", item_path(item_row), class: "btn btn-primary btn-xs" %>
-      <%= link_to edit_item_path(item_row), class: "btn btn-info btn-xs" do %>
-        <i class="fa fa-edit"></i> Edit
-      <% end %>
-      <%= link_to item_path(item_row), method: :delete,  data: { confirm: confirm_delete_msg(item_row.name) },  class: "btn btn-danger btn-xs" do %>
-        <%= fa_icon "trash" %> Delete
-      <% end %>
-    </td>
+    <%= view_button_to item_path(item_row) %>
+    <%= edit_button_to edit_item_path(item_row) %>
+    <%= delete_button_to item_path(item_row), { confirm: confirm_delete_msg(item_row.name) } %>
+  </td>
 </tr>

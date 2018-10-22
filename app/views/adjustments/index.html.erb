@@ -27,21 +27,15 @@
           </div>
           <div class="row">
             <div class="col-xs-12">
-              <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
-                <i class="fa fa-filter"></i> Filter
-              <% end %>
-              <%= link_to adjustments_path, class: "btn btn-outline-primary btn-md" do %>
-                <i class="fa fa-ban"></i> Clear Filters
-              <% end %>
+              <%= filter_button %>
+              <%= cancel_button_to adjustments_path, size: "md", text: "Clear Filters" %>
+
               <div class="btn-group pull-right">
-                <%= link_to new_adjustment_path(organization_id: current_organization), class: "btn btn-success" do %>
-                  <i class="fa fa-plus"></i> New Adjustment
-                <% end %>
-                <% if @adjustments.length > 0 %>
-                  <%= link_to csv_path(format: :csv, type: "Adjustment"), class: "btn btn-secondary" do %>
-                    <i class="fa fa-download" aria-hidden="true"></i> Export Adjustments
-                  <% end %>
-                <% end %>
+                <p>
+                <%= download_button_to(csv_path(format: :csv, type: "Adjustment"), { size: "lg", text: "Export Adjustments" }) if @adjustments.length > 0 %>
+
+                <%= new_button_to new_adjustment_path(organization_id: current_organization), { text: "New Adjustment"} %>
+                </p>
               </div>
             </div>
           </div><!-- /.row -->
@@ -71,9 +65,7 @@
                     <td><%= adjustment.storage_location.name %></td>
                     <td><%= adjustment.comment %></td>
                     <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
-                    <td class="text-right">
-                      <%= link_to 'View', adjustment, class: "btn btn-primary btn-xs" %>
-                    </td>
+                    <td class="text-right"><%= view_button_to adjustment %></td>
                   </tr>
                 <% end %>
               </tbody>

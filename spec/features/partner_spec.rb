@@ -22,14 +22,14 @@ RSpec.feature "Partner management", type: :feature do
     visit url_prefix + "/partners/new"
     fill_in "Name", with: "Frank"
     fill_in "E-mail", with: "frank@frank.com"
-    click_button "Create Partner"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "added"
   end
 
   scenario "User creates a new partner with empty name" do
     visit url_prefix + "/partners/new"
-    click_button "Create Partner"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
@@ -38,7 +38,7 @@ RSpec.feature "Partner management", type: :feature do
     partner = create(:partner, name: "Frank")
     visit url_prefix + "/partners/#{partner.id}/edit"
     fill_in "Name", with: "Franklin"
-    click_button "Update Partner"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "updated"
     partner.reload
@@ -49,7 +49,7 @@ RSpec.feature "Partner management", type: :feature do
     partner = create(:partner, name: "Frank")
     visit url_prefix + "/partners/#{partner.id}/edit"
     fill_in "Name", with: ""
-    click_button "Update Partner"
+    click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
