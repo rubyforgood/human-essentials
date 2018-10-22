@@ -1,5 +1,3 @@
-
-
 RSpec.describe PartnersController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.to_param }
