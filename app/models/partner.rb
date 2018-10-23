@@ -29,8 +29,7 @@ class Partner < ApplicationRecord
   include DiaperPartnerClient
   after_create :update_diaper_partner
   # better to extract this outside of the model
-  def self.import_csv(filepath, organization_id)
-    data = File.read(filepath, encoding: "BOM|UTF-8")
+  def self.import_csv(data, organization_id)
     CSV.parse(data, headers: true) do |row|
       hash_rows = Hash[row.to_hash.map { |k, v| [k.downcase, v] }]
       loc = Partner.new(hash_rows)
