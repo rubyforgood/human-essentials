@@ -6,6 +6,7 @@ class API::V1::PartnerRequestsController < ApplicationController
 
   def create
     return head :forbidden unless api_key_valid?
+
     request = Request.new(request_params)
     if request.save
       render json: request, status: :created

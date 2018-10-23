@@ -77,12 +77,14 @@ class PurchasesController < ApplicationController
 
   def filter_params
     return {} unless params.key?(:filters)
+
     params.require(:filters).slice(:at_storage_location, :by_source)
   end
 
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
     return params unless params[:purchase].key?(:line_item_attributes)
+
     params[:purchase][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
   end

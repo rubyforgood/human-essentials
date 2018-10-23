@@ -133,6 +133,7 @@ end
 
 def seed_quantity(item_name, organization_id, storage_location_id, quantity)
   return if (quantity == 0)
+
   item_id = Item.find_by(name: item_name, organization_id: organization_id).id
   InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) {|h|
     h.quantity = quantity

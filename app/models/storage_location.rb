@@ -131,6 +131,7 @@ class StorageLocation < ApplicationRecord
     distribution.line_items.each do |line_item|
       inventory_item = inventory_items.find_by(item: line_item.item)
       next if inventory_item.nil?
+
       if inventory_item.quantity >= line_item.quantity
         updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
                                                  inventory_item.quantity) - line_item.quantity
@@ -184,6 +185,7 @@ class StorageLocation < ApplicationRecord
       inventory_item = inventory_items.find_by(item: line_item.item)
       new_inventory_item = transfer.to.inventory_items.find_or_create_by(item: line_item.item)
       next if inventory_item.nil? || inventory_item.quantity.zero?
+
       if inventory_item.quantity >= line_item.quantity
         updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
                                                  inventory_item.quantity) - line_item.quantity
@@ -248,6 +250,7 @@ class StorageLocation < ApplicationRecord
       distribution.line_items.each do |line_item|
         inventory_item = inventory_items.find_by(item: line_item.item)
         raise ActiveRecord::Rollback, "Failed to update distribution, please contact tech support if this problem persists" if inventory_item.nil?
+
         if inventory_item.quantity == line_item.quantity # otherwise this would make the quantity 0 and an exception would be thrown
           inventory_item.destroy!
         else

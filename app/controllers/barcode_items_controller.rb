@@ -80,6 +80,7 @@ class BarcodeItemsController < ApplicationController
 
   def filter_params
     return {} unless params.key?(:filters)
+
     params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :include_global, :canonical_item_id)
   end
 end
