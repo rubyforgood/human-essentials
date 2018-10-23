@@ -1,4 +1,4 @@
-RSpec.feature "Distributions", type: :feature, focus: true do
+RSpec.feature "Distributions", type: :feature do
   before do
     sign_in(@user)
     @url_prefix = "/#{@organization.to_param}"
@@ -27,20 +27,8 @@ RSpec.feature "Distributions", type: :feature, focus: true do
     select @partner.name, from: "Partner"
     select "", from: "From storage location"
 
-    click_button "Preview Distribution"
+    click_button "Save", match: :first
     expect(page).to have_content "An error occurred, try again?"
-  end
-
-  scenario "User can create a distribution from donation" do
-    @donation = create :donation, :with_items
-
-    visit @url_prefix + "/donations/#{@donation.id}"
-    click_on "Create distribution"
-    select @partner.name, from: "Partner"
-    click_button "Preview Distribution"
-    expect(page).to have_content "Distribution Manifest for"
-    click_button "Confirm Distribution"
-    expect(page.find(".alert-info")).to have_content "reated"
   end
 
   context "When creating a distribution from a donation" do
