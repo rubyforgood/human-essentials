@@ -1,5 +1,3 @@
-
-
 RSpec.describe DonationSitesController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.to_param }

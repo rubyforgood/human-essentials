@@ -51,6 +51,6 @@ class Partner < ApplicationRecord
 
   def update_diaper_partner
     update(status: "Pending")
-    DiaperPartnerClient.post(attributes)
+    DiaperPartnerClient.post(attributes) if Flipper.enabled?(:email_active)
   end
 end

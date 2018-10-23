@@ -51,6 +51,7 @@ module ApplicationHelper
   def step_container_helper(index, active_index)
     return " active" if active_index == index
     return " done" if active_index > index
+
     ""
   end
 end
