@@ -1,0 +1,21 @@
+<%
+  storage_locations ||= @storage_locations
+  label ||= "From storage location"
+  error ||= "Which location are you moving inventory from?"
+  association_field ||= :storage_location
+%>
+<%= source.association association_field,
+  collection: storage_locations,
+  label: label,
+  error: error,
+  input_html: {
+    data: {
+      storage_location_inventory_path: inventory_storage_location_path(
+        organization_id: current_organization,
+        id: ":id",
+        format: :json
+      )
+    },
+    class: "storage-location-source"
+  }
+%>

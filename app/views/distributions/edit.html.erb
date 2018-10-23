@@ -21,7 +21,7 @@
 <div class="box">
   <div class="box-body">
 
-  <%= simple_form_for @distribution do |f| %>
+  <%= simple_form_for @distribution, html: { class: "storage-location-required" } do |f| %>
 
     <%= f.association :partner,
       collection: current_organization.partners,    
@@ -31,28 +31,15 @@
       <%= f.input :issued_at, as: :date, label: "Distribution date" %>
       <%= f.input :agency_rep, label: "Agency representative" %>
 
-    <%= f.association :storage_location,
-      collection: @storage_locations,
-      label: "From storage location",
-      error: "Which location are you moving inventory from?",
-      input_html: {
-        data: {
-          storage_location_inventory_path: inventory_storage_location_path(
-            organization_id: current_organization,
-            id: ":id",
-            format: :json
-          )
-        }
-      }
-    %>
-
+    <%= render partial: "storage_locations/source", object: f %>
+    
     <%= f.input :comment, label: "Comment" %>
 
 
     <fieldset style="margin-bottom: 2rem;" class="form-inline">
       <legend>Items in this distribution</legend>
       <%= f.simple_fields_for :line_items do |item| %>
-        <div id="distribution_line_items" data-capture-barcode="true">
+        <div id="distribution_line_items" class="line-item-fields" data-capture-barcode="true">
           <%= render 'line_items/line_item_fields', f: item %>
         </div>
       <% end %>
