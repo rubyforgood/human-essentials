@@ -7,7 +7,7 @@ end
 
 ruby "2.5.3"
 
-gem "api-auth", "~> 1.5"
+gem "api-auth", "~> 2.2"
 gem "bootstrap-sass"
 gem "bugsnag"
 gem "chartkick"
@@ -23,18 +23,18 @@ gem "font-awesome-rails"
 gem "font-ionicons-rails"
 gem "fullcalendar-rails"
 gem "geocoder"
-gem "groupdate", "~> 3.2"
+gem "groupdate", "~> 4.0"
 gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "paperclip"
-gem "pg", "~> 0.2"
+gem "pg", "~> 1.1.3"
 gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 5.2.0"
-gem "react-rails", "~> 2.3.0"
+gem "react-rails", "~> 2.4.7"
 gem "sass-rails"
 gem "simple_form"
 gem "skylight"
@@ -47,7 +47,7 @@ gem "sucker_punch", "~> 2.0"
 
 group :development, :test do
   gem "awesome_print"
-  gem "byebug", "~> 9.0", platform: :mri
+  gem "byebug", "~> 10.0", platform: :mri
   gem "guard-rspec"
   gem "pry-rails"
   gem "rspec-rails", "~> 3.5"
@@ -66,7 +66,7 @@ group :development do
   gem "capistrano-bundler"
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
-  gem "listen", "~> 3.0.5"
+  gem "listen", "~> 3.1.5"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
@@ -82,7 +82,7 @@ group :test do
   gem "chromedriver-helper"
   gem "selenium-webdriver"
   gem "rails-controller-testing"
-  gem "webmock", "~> 2.1"
+  gem "webmock", "~> 3.4"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

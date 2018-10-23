@@ -123,6 +123,7 @@ LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_it
 
   def filter_params
     return {} unless params.key?(:filters)
+
     params.require(:filters).slice(:containing)
   end
 end
