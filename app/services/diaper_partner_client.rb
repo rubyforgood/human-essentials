@@ -18,16 +18,17 @@ module DiaperPartnerClient
     response.body
   end
 
-  def self.approve(attributes)
+  def self.put(attributes)
     return if Rails.env != "production"
 
     partner = { partner:
-                    { diaper_bank_id: attributes["organization_id"],
-                      diaper_partner_id: attributes["id"],
-                      approved: "true" } }
+                    {
+                      diaper_partner_id: attributes["id"]
+                    }
+              }
 
-    uri = URI(ENV["PARTNER_APPROVAL_URL"])
-    req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
+    uri = URI(ENV["PARTNER_REGISTER_URL"]+"/#{attributes["id"]}")
+    req = Net::HTTP::Put.new(uri, "Content-Type" => "application/json")
     req.body = partner.to_json
     req["Content-Type"] = "application/json"
     req["X-Api-Key"] = ENV["PARTNER_KEY"]
