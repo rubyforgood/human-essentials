@@ -1,4 +1,6 @@
 class StorageLocationsController < ApplicationController
+  include Importable
+
   def index
     @items = current_organization.storage_locations.items_inventoried
     @storage_locations = current_organization.storage_locations.includes(:inventory_items).filter(filter_params)
@@ -79,18 +81,6 @@ LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_it
       filepath = params[:file].read
       StorageLocation.import_inventory(filepath, current_organization.id, params[:storage_location])
       flash[:notice] = "Inventory imported successfully!"
-      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
-    end
-  end
-
-  def import_csv
-    if params[:file].nil?
-      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
-      flash[:error] = "No file was attached!"
-    else
-      filepath = params[:file].read
-      StorageLocation.import_csv(filepath, current_organization.id)
-      flash[:notice] = "Storage locations were imported successfully!"
       redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
     end
   end
