@@ -26,22 +26,8 @@
 
   <div class="box-body">
 
-  <%= simple_form_for @transfer do |f| %>
-
-    <%= f.association :from,
-      collection: @storage_locations,
-      label: "From storage location",
-      error: "Which location are you moving inventory from?",
-      input_html: {
-        data: {
-          storage_location_inventory_path: inventory_storage_location_path(
-            organization_id: current_organization,
-            id: ":id",
-            format: :json
-          )
-        }
-      }
-    %>
+  <%= simple_form_for @transfer, html: { class: "storage-location-required" } do |f| %>
+    <%= render partial: "storage_locations/source", object: f, locals: { label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from } %>
 
     <%= f.association :to,
       collection: @storage_locations,
@@ -53,7 +39,7 @@
     <fieldset style="margin-bottom: 2rem;" class="form-inline">
       <legend>Items in this donation</legend>
       <%= f.simple_fields_for :line_items do |item| %>
-        <div id="donation_line_items" data-capture-barcode="true">
+        <div id="donation_line_items" class="line-item-fields" data-capture-barcode="true">
           <%= render 'line_items/line_item_fields', f: item %>
         </div>
       <% end %>
