@@ -47,6 +47,10 @@ class DistributionsController < ApplicationController
         @distribution.storage_location.distribute!(@distribution)
 
         if @distribution.save
+          if params[:distribution][:request_attributes]
+            Request.find(params[:distribution][:request_attributes][:id]).update_attributes(distribution_id: @distribution.id)
+          end
+
           send_notification(current_organization, @distribution)
           flash[:notice] = "Distribution created!"
           session[:created_distribution_id] = @distribution.id

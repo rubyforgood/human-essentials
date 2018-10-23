@@ -25,6 +25,9 @@ class Distribution < ApplicationRecord
   # Distributions contain many different items
   include Itemizable
 
+  has_one :request
+  accepts_nested_attributes_for :request
+
   validates :storage_location, :partner, :organization, presence: true
   validate :line_item_items_exist_in_inventory
 
@@ -66,6 +69,7 @@ class Distribution < ApplicationRecord
 
   def copy_from_request(request_id)
     request = Request.find(request_id)
+    self.request = request
     self.organization_id = request.organization_id
     self.partner_id = request.partner_id
     self.comment = request.comments
