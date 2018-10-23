@@ -7,7 +7,7 @@ FactoryBot.define do
     partner { Partner.try(:first) || create(:partner) }
     organization { Organization.try(:first) || create(:organization) }
     request_items { random_keys(3).collect { |k| [k, rand(3..10)] }.to_h }
-    status "Active"
-    comments "Urgent"
+    status { "Active" }
+    comments { "Urgent" }
   end
 end

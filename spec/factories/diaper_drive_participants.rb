@@ -19,10 +19,10 @@
 FactoryBot.define do
   factory :diaper_drive_participant do
     organization { Organization.try(:first) || create(:organization) }
-    contact_name "Don Draper"
-    business_name "Awesome Business"
+    contact_name { "Don Draper" }
+    business_name { "Awesome Business" }
     sequence(:email) { |n| "don#{n}@scdp.com" }
-    phone "212-555-1111"
-    comment "A bit of a lush and philanderer."
+    phone { "212-555-1111" }
+    comment { "A bit of a lush and philanderer." }
   end
 end
