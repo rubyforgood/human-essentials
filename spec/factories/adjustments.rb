@@ -13,8 +13,8 @@
 FactoryBot.define do
   factory :adjustment do
     organization { Organization.try(:first) || create(:organization) }
-    storage_location nil
-    comment "A comment"
+    storage_location { nil }
+    comment { "A comment" }
 
     after(:build) do |instance, evaluator|
       instance.storage_location = evaluator.storage_location || create(:storage_location, organization: instance.organization)
@@ -22,8 +22,8 @@ FactoryBot.define do
 
     trait :with_items do
       transient do
-        item_quantity 100
-        item nil
+        item_quantity { 100 }
+        item { nil }
       end
 
       after(:build) do |instance, evaluator|
