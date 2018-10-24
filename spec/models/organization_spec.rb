@@ -107,4 +107,30 @@ RSpec.describe Organization, type: :model do
       expect(organization.longitude).not_to eq(nil)
     end
   end
+
+  describe 'address' do
+    it 'returns an empty string when the org has no address components' do
+      expect(Organization.new.address).to be_blank
+    end
+
+    it 'correctly formats an address string with commas and spaces' do
+      org = Organization.new(street: '123 Main St.', city: 'Anytown', state: 'KS', zipcode: '12345')
+      expect(org.address).to eq('123 Main St., Anytown, KS 12345')
+    end
+
+    it 'does not add a trailing space when the zip code is missing' do
+      org = Organization.new(street: '123 Main St.', city: 'Anytown', state: 'KS')
+      expect(org.address).to eq('123 Main St., Anytown, KS')
+    end
+
+    it 'does not add any separators before the city when street is missing' do
+      org = Organization.new(city: 'Anytown', state: 'KS', zipcode: '12345')
+      expect(org.address).to eq('Anytown, KS 12345')
+    end
+
+    it 'does not add any separators after street when city, state, and zip are missing' do
+      org = Organization.new(street: '123 Main St.')
+      expect(org.address).to eq('123 Main St.')
+    end
+  end
 end

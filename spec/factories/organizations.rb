@@ -27,6 +27,7 @@ FactoryBot.define do
     street { "1500 Remount Road" }
     city { 'Front Royal' }
     state { 'VA' }
+    zipcode { '22630' }
 
     logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"), "image/jpeg") }
 
