@@ -70,15 +70,8 @@ class Organization < ApplicationRecord
 
   # Computes full address string based on street, city, state, and zip, adding ', ' and ' ' separators
   def address
-    s = ''
-    s << street unless street.blank?
-    s << ', ' if (! street.blank?) && (! city.blank?)
-    s << city unless city.blank?
-    s << ', ' if s.length > 0 && ((! state.blank?) || (! zipcode.blank?))
-    s << state unless state.blank?
-    s << ' ' if (! state.blank?) && (! zipcode.blank?)
-    s << zipcode unless zipcode.blank?
-    s
+    state_and_zip = [state, zipcode].select(&:present?).join(' ')
+    [street, city, state_and_zip].select(&:present?).join(', ')
   end
 
   def address_changed?
