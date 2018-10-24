@@ -97,13 +97,14 @@ GEM
       capistrano (~> 3.7)
       capistrano-bundler
       puma (~> 3.4)
-    capybara (2.18.0)
+    capybara (3.10.0)
       addressable
       mini_mime (>= 0.1.3)
-      nokogiri (>= 1.3.3)
-      rack (>= 1.0.0)
-      rack-test (>= 0.5.4)
-      xpath (>= 2.0, < 4.0)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (~> 1.2)
+      xpath (~> 3.2)
     capybara-screenshot (1.0.22)
       capybara (>= 1.0, < 4)
       launchy
@@ -321,6 +322,7 @@ GEM
       railties (>= 3.2)
       tilt
     ref (2.0.0)
+    regexp_parser (1.2.0)
     responders (2.4.0)
       actionpack (>= 4.2.0, < 5.3)
       railties (>= 4.2.0, < 5.3)
@@ -453,7 +455,7 @@ DEPENDENCIES
   capistrano-rails-console
   capistrano-rvm
   capistrano3-puma
-  capybara (~> 2.18)
+  capybara (~> 3.10)
   capybara-screenshot
   chartkick
   chromedriver-helper
