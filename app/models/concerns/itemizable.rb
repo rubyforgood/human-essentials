@@ -75,6 +75,8 @@ module Itemizable
   private
 
   def line_item_items_exist_in_inventory
+    return if storage_location.nil?
+
     line_items.each do |line_item|
       next unless line_item.item
 

@@ -18,7 +18,7 @@
 #  longitude       :float
 
 class Organization < ApplicationRecord
-  DIAPER_APP_LOGO = Rails.root.join("app", "assets", "images", "DiaperBase-Logo.png")
+  DIAPER_APP_LOGO = Rails.root.join("public", "img", "diaperbase-logo-full.png")
 
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
