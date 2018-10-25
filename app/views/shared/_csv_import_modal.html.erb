@@ -1,0 +1,44 @@
+<!-- Modal HTML -->
+<div id="csvImportModal" class="modal fade">
+  <div class="modal-dialog onboarding_steps">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h2 class="modal-title"><%= title %></h4>
+      </div><!-- /.modal-header -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6 col-sm-12" style="padding-top: 30px;">
+            <i class="fa fa-download fa-4x" aria-hidden="true"></i>
+            <h3 class="text-info">1. Download example CSV file</h3>
+            <ul>
+              <%= yield %>
+              <li><%= link_to csv_template_url, format: :csv, class: "btn btn-xs btn-info" do %><i class="fa fa-download"></i> Download example csv<% end %></li>
+            </ul>
+          </div>
+          <div class="col-md-6 col-sm-12" style="padding-top: 30px;">
+            <i class="fa fa-file-text-o fa-4x" aria-hidden="true"></i>
+            <h3 class="text-info">2. Upload your CSV file</h3>
+            <%= form_with(url: csv_import_url, local: :true) do |f| %>
+              <ul>
+                <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
+                <li>
+                  <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto;"  %>
+                </li>
+                <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
+                <li>
+                  <%= button_tag :class => "btn btn-md btn-info" do %>
+                    <i class="fa fa-upload"></i> Import CSV
+                  <% end %>
+                </li>
+              </ul>
+            <% end #form %>
+          </div>
+        </div><!-- / row -->
+      </div><!-- /.modal-body -->
+      <div class="modal-footer">
+        <small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</small>
+      </div><!-- /.modal-footer -->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /#csvImportModal -->
