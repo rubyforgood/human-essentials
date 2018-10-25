@@ -8,6 +8,6 @@ class DistributionMailer < ApplicationMailer
     @partner = distribution.partner
     @distribution = distribution
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = DistributionPdf.new(current_organization, @distribution).render
-    mail to: @partner.email
+    mail(to: @partner.email, from: current_organization.email, subject: "Your Distribution")
   end
 end
