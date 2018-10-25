@@ -12,10 +12,10 @@ RSpec.describe StaticController, type: :controller do
       end
     end
 
-    describe "GET #page/content" do
-      subject { get :page, params: { name: "contact" } }
+    describe "GET #page/register" do
+      subject { get :register }
       it "renders the contact page" do
-        expect(subject).to render_template :contact
+        expect(subject).to render_template :register
       end
     end
   end

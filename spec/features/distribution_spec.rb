@@ -17,9 +17,18 @@ RSpec.feature "Distributions", type: :feature do
 
     fill_in "Comment", with: "Take my wipes... please"
     click_button "Save", match: :first
-
     expect(page).to have_content "Distributions"
     expect(page.find(".alert-info")).to have_content "reated"
+  end
+
+  scenario "User doesn't fill storage_location" do
+    visit @url_prefix + "/distributions/new"
+
+    select @partner.name, from: "Partner"
+    select "", from: "From storage location"
+
+    click_button "Save", match: :first
+    expect(page).to have_content "An error occurred, try again?"
   end
 
   context "When creating a distribution from a donation" do
