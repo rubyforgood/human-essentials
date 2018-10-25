@@ -29,6 +29,11 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
       end
     end
 
+    describe "POST #import_csv" do
+      let(:model_class) { DiaperDriveParticipant }
+      it_behaves_like "csv import"
+    end
+
     describe "GET #show" do
       subject { get :show, params: default_params.merge(id: create(:diaper_drive_participant, organization: @organization)) }
       it "returns http success" do
