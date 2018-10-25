@@ -25,7 +25,7 @@ class Distribution < ApplicationRecord
   # Distributions contain many different items
   include Itemizable
 
-  has_one :request
+  has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
 
   validates :storage_location, :partner, :organization, presence: true
