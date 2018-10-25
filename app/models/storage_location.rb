@@ -155,8 +155,8 @@ class StorageLocation < ApplicationRecord
     update_inventory_inventory_items(updated_quantities)
   end
 
-  def self.import_csv(filename, organization)
-    CSV.parse(filename, headers: true) do |row|
+  def self.import_csv(data, organization)
+    CSV.parse(data, headers: true) do |row|
       loc = StorageLocation.new(row.to_hash)
       loc.organization_id = organization
       loc.save!
