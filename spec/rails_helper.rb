@@ -129,6 +129,7 @@ RSpec.configure do |config|
     Geocoder.configure(lookup: :test)
 
     ["1500 Remount Road, Front Royal, VA",
+     "1500 Remount Road, Front Royal, VA 22630",
      "1111 Panda ave. Front Royal, VA 12345",
      "Smithsonian Institute new",
      "Smithsonian Conservation Center new",

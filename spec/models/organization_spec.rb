@@ -82,7 +82,7 @@ RSpec.describe Organization, type: :model do
   describe "logo_path" do
     it "returns the the default logo path when no logo attached" do
       org = build(:organization, logo: nil)
-      expect(org.logo_path).to include("app/assets/images/DiaperBase-Logo.png")
+      expect(org.logo_path).to include("/img/diaperbase-logo-full.png")
     end
 
     xit "returns the logo path attached for the organization" do
