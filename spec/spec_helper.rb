@@ -92,7 +92,6 @@ RSpec.configure do |config|
   # particularly slow.
   config.profile_examples = 10
 
-
   # Seed global randomization in this process using the `--seed` CLI option.
   # Setting this allows you to use `--seed` to deterministically reproduce
   # test failures related to randomization by passing the same `--seed` value

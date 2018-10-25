@@ -76,17 +76,17 @@ def stub_addresses
    "456 Location Way",
    "789 Location Way"].each do |address|
     Geocoder::Lookup::Test.add_stub(
-        address, [
+      address, [
         {
-            "latitude" => 40.7143528,
-            "longitude" => -74.0059731,
-            "address" => "1500 Remount Road, Front Royal, VA",
-            "state" => "Virginia",
-            "state_code" => "VA",
-            "country" => "United States",
-            "country_code" => "US"
+          "latitude" => 40.7143528,
+          "longitude" => -74.0059731,
+          "address" => "1500 Remount Road, Front Royal, VA",
+          "state" => "Virginia",
+          "state_code" => "VA",
+          "country" => "United States",
+          "country_code" => "US"
         }
-    ]
+      ]
     )
   end
 end
