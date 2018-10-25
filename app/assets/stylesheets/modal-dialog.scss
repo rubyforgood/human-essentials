@@ -1,0 +1,32 @@
+/* ONBOARDING MODAL BOX */
+
+.modal-dialog h4.modal-title {
+  font-family: $diaper-font-family-sans-serif-default;
+}
+
+.modal-dialog.onboarding_steps .modal-body,
+.modal-dialog.onboarding_steps .modal-footer {
+  font-family: $diaper-font-family-sans-serif-default;
+  text-align: center;
+}
+
+.modal-dialog.onboarding_steps .modal-body h3 {
+  margin-top: 30px;
+}
+
+.modal-dialog.onboarding_steps .modal-body ul {
+  list-style: none; 
+  padding: 0;
+}
+
+.modal-dialog.onboarding_steps .modal-body li {
+  line-height: 1.25em;
+  margin-bottom: 15px;
+  color: $diaper-color-neutral-33;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog.onboarding_steps {
+    width: 700px;
+  }
+}

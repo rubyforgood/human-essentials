@@ -35,6 +35,11 @@ RSpec.describe PartnersController, type: :controller do
     end
   end
 
+  describe "POST #import_csv" do
+    let(:model_class) { Partner }
+    it_behaves_like "csv import"
+  end
+
   describe "DELETE #destroy" do
     subject { delete :destroy, params: default_params.merge(id: create(:partner, organization: @organization)) }
     it "redirects to #index" do

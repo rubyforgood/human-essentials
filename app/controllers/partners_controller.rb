@@ -1,4 +1,6 @@
 class PartnersController < ApplicationController
+  include Importable
+
   def index
     @partners = current_organization.partners.order(:name)
   end
@@ -16,7 +18,7 @@ class PartnersController < ApplicationController
   def approve_application
     @partner = current_organization.partners.find(params[:id])
     @partner.update(status: "Approved")
-    DiaperPartnerClient.approve(@partner.attributes)
+    DiaperPartnerClient.put(@partner.attributes)
     redirect_to partners_path
   end
 
@@ -43,18 +45,6 @@ class PartnersController < ApplicationController
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
-    end
-  end
-
-  def import_csv
-    if params[:file].present?
-      filepath = params[:file].path
-      Partner.import_csv(filepath, current_organization.id)
-      flash[:notice] = "Partners were imported successfully!"
-      redirect_back(fallback_location: partners_path(organization_id: current_organization))
-    else
-      redirect_back(fallback_location: partners_path(organization_id: current_organization))
-      flash[:error] = "No file was attached!"
     end
   end
 
