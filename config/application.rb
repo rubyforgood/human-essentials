@@ -22,6 +22,7 @@ module Diaper
     config.to_prepare do
       Devise::SessionsController.layout "login"
       Devise::PasswordsController.layout "login"
+      Devise::RegistrationsController.layout "application"
     end
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
