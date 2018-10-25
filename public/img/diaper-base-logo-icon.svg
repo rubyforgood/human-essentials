@@ -6,7 +6,7 @@
       g#DropShadow {
         fill-opacity: 0;
         stroke: #7A7A7A;
-        stroke-width: 5;
+        stroke-width: 1;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
@@ -61,7 +61,7 @@
         </g>
       </g>
     </g>
-    <g id="DropShadow" fill-opacity="0" stroke="#7A7A7A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <g id="DropShadow">
       <path d="M220.099,84.319 C232.223,82.514 254.708,69.473 259.589,50.326"/>
       <path d="M259.642,50.198 C263.364,52.411 269.494,31.18 259.736,30.708"/>
       <path d="M259.17,29.622 C259.75,31.857 258.682,27.136 257.565,24.243"/>
