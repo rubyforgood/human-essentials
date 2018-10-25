@@ -264,6 +264,19 @@ RSpec.describe StorageLocation, type: :model do
         expect(storage_location.inventory_items.first.quantity).to eq 350
       end
 
+      it "re-activates items that were previously deleted" do
+        storage_location = create :storage_location, :with_items, item_quantity: 200
+        distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
+        item = distribution.line_items.first.item
+        expect {
+          item.destroy
+        }.to change{item.active}.from(true).to(false)
+        expect {
+          storage_location.reclaim!(distribution)
+          item.reload
+        }.to change{item.active}.from(false).to(true)
+      end
+
       it "does not destroy the distribution" do
         storage_location = create :storage_location, :with_items, item_quantity: 300
         distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
