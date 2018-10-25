@@ -8,6 +8,8 @@ class StaticController < ApplicationController
     redirect_to dashboard_url(current_user.organization) if current_user
   end
 
+  def register; end
+
   def page
     # This allows for a flexible addition of static content
     # Anything under the url /pages/:name will render the file /app/views/static/[name].html.erb
