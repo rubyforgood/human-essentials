@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="93" height="70" viewBox="170, 15, 93, 70">
+  <defs>
+    <style type="text/css"><![CDATA[
+      g#DropShadow {
+        fill-opacity: 0;
+        stroke: #7A7A7A;
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      path.lines {
+        fill-opacity: 0;
+        stroke: #7A7A7A; 
+        stroke-width: 2; 
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      g.blue-fill, path.blue-fill {
+        fill: #5E87FF;
+      }
+      g.white-fill, path.white-fill {
+        fill: #FFFBFB;
+      }
+    ]]></style>
+  </defs>
   <g id="DiaperBase_Icon">
     <g id="foreground">
       <g id="diaper">
