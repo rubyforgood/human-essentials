@@ -47,9 +47,7 @@ class DistributionsController < ApplicationController
         @distribution.storage_location.distribute!(@distribution)
 
         if @distribution.save
-          if params[:distribution][:request_attributes]
-            Request.find(params[:distribution][:request_attributes][:id]).update_attributes(distribution_id: @distribution.id)
-          end
+          update_request(params[:distribution][:request_attributes], @distribution.id)
 
           send_notification(current_organization, @distribution)
           flash[:notice] = "Distribution created!"
@@ -122,6 +120,13 @@ class DistributionsController < ApplicationController
   end
 
   private
+
+  # If a request id is provided, update the request with the newly created distribution's id
+  def update_request(request_atts, distribution_id)
+    if request_atts
+      Request.find(request_atts[:id]).update(distribution_id: distribution_id)
+    end
+  end
 
   def send_notification(org, dist)
     PartnerMailerJob.perform_async(org, dist) if Flipper.enabled?(:email_active)
