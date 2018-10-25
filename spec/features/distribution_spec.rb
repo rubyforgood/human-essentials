@@ -31,6 +31,42 @@ RSpec.feature "Distributions", type: :feature do
     expect(page).to have_content "An error occurred, try again?"
   end
 
+  context "With an existing distribution" do
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization) }
+
+    before do
+      visit @url_prefix + "/distributions"
+    end
+
+    scenario "the user can make changes to it" do
+      click_on "Edit", match: :first
+      expect {
+        fill_in "Agency representative", with: "SOMETHING DIFFERENT"
+        click_on "Save", match: :first
+        distribution.reload
+      }.to change{ distribution.agency_rep }.to("SOMETHING DIFFERENT")
+    end
+
+    scenario "the user can reclaim it" do
+      expect {
+        click_on "Reclaim"
+      }.to change{Distribution.count}.by(-1)
+      expect(page).to have_content "reclaimed"
+    end
+
+    context "when one of the items has been 'deleted'" do
+      scenario "the user can still reclaim it and it reactivates the item" do
+        item = distribution.line_items.first.item
+        item.destroy
+        expect {
+          click_on "Reclaim"
+          page.find ".alert"
+        }.to change{Distribution.count}.by(-1).and change{Item.count}.by(1)
+        expect(page).to have_content "reclaimed"
+      end
+    end
+  end
+
   context "When creating a distribution from a donation" do
     let(:donation) { create :donation, :with_items }
     before do
