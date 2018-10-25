@@ -20,17 +20,17 @@ FactoryBot.define do
     donation_site
     diaper_drive_participant
     source { Donation::SOURCES[:misc] }
-    comment "It's a fine day for diapers."
+    comment { "It's a fine day for diapers." }
     storage_location
     organization { Organization.try(:first) || create(:organization) }
-    issued_at nil
+    issued_at { nil }
 
     trait :with_items do
       storage_location { create :storage_location, :with_items, item: item || create(:item), organization: organization }
 
       transient do
-        item_quantity 100
-        item nil
+        item_quantity { 100 }
+        item { nil }
       end
 
       after(:build) do |instance, evaluator|

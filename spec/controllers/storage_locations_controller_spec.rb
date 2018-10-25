@@ -29,6 +29,11 @@ RSpec.describe StorageLocationsController, type: :controller do
       end
     end
 
+    describe "POST #import_csv" do
+      let(:model_class) { StorageLocation }
+      it_behaves_like "csv import"
+    end
+
     describe "GET #show" do
       subject { get :show, params: default_params.merge(id: create(:storage_location, organization: @organization)) }
       it "returns http success" do

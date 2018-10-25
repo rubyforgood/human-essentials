@@ -1,4 +1,6 @@
 class DonationSitesController < ApplicationController
+  include Importable
+
   def index
     @donation_sites = current_organization.donation_sites.all.order(:name)
     @donation_site = current_organization.donation_sites.new
@@ -41,18 +43,6 @@ class DonationSitesController < ApplicationController
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
-    end
-  end
-
-  def import_csv
-    if params[:file].nil?
-      redirect_back(fallback_location: donation_sites_path(organization_id: current_organization))
-      flash[:error] = "No file was attached!"
-    else
-      filepath = params[:file].read
-      DonationSite.import_csv(filepath, current_organization.id)
-      flash[:notice] = "Donation sites were imported successfully!"
-      redirect_back(fallback_location: donation_sites_path(organization_id: current_organization))
     end
   end
 

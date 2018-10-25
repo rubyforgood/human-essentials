@@ -68,8 +68,10 @@ class Organization < ApplicationRecord
     distributions&.this_week&.count || 0
   end
 
+  # Computes full address string based on street, city, state, and zip, adding ', ' and ' ' separators
   def address
-    "#{street} #{city}, #{state} #{zipcode}"
+    state_and_zip = [state, zipcode].select(&:present?).join(' ')
+    [street, city, state_and_zip].select(&:present?).join(', ')
   end
 
   def address_changed?

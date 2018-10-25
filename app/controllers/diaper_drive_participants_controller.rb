@@ -1,4 +1,6 @@
 class DiaperDriveParticipantsController < ApplicationController
+  include Importable
+
   def index
     @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all.order(:business_name)
   end
@@ -42,18 +44,6 @@ class DiaperDriveParticipantsController < ApplicationController
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
-    end
-  end
-
-  def import_csv
-    if params[:file].nil?
-      redirect_back(fallback_location: diaper_drive_participants_path(organization_id: current_organization))
-      flash[:error] = "No file was attached!"
-    else
-      filepath = params[:file].read
-      DiaperDriveParticipant.import_csv(filepath, current_organization.id)
-      flash[:notice] = "Diaper drive participants were imported successfully!"
-      redirect_back(fallback_location: diaper_drive_participants_path(organization_id: current_organization))
     end
   end
 

@@ -20,7 +20,7 @@ populate_dropdowns = (objects, inventory) ->
     $(element).find("option").remove().end().append(options)
 
 request_storage_location_and_populate_item = (item_to_populate) ->
-  control = $("select#transfer_from_id, select#distribution_storage_location_id")
+  control = $("select.storage-location-source")
   return if (control.length is 0 || !control.val())
 
   $.ajax
@@ -30,19 +30,20 @@ request_storage_location_and_populate_item = (item_to_populate) ->
       populate_dropdowns item_to_populate, data
 
 $ ->
-  control = $("select#transfer_from_id, select#distribution_storage_location_id")
-  default_item = $("#distribution_line_items select, #donation_line_items select")
+  control = $("select.storage-location-source")
+  storage_location_required = $("form.storage-location-required").length > 0
+  default_item = $(".line-item-fields select")
 
-  $(document).on "change", "select#transfer_from_id, select#distribution_storage_location_id", ->
-    $('#__add_line_item').addClass('disabled') if !control.val()
-    $('#__add_line_item').removeClass('disabled') if control.val()
+  $(document).on "change", "select.storage-location-source", ->
+    $('#__add_line_item').addClass('disabled') if storage_location_required && !control.val()
+    $('#__add_line_item').removeClass('disabled') if storage_location_required && control.val()
 
     request_storage_location_and_populate_item(default_item)
 
-  $(document).on "cocoon:after-insert", "form#new_transfer, form#new_distribution", (e, insertedItem) ->
+  $(document).on "cocoon:after-insert", "form.storage-location-required", (e, insertedItem) ->
     request_storage_location_and_populate_item($("select", insertedItem))
     insertedItem.find('#_barcode-lookup-new_line_items').attr('id', '_barcode-lookup-' + ($('.nested-fields').size() - 1))
-    control = $("select#transfer_from_id, select#distribution_storage_location_id")
+    control = $("select.storage-location-source")
     $.ajax
       url: control.data("storage-location-inventory-path").replace(":id", control.val())
       dataType: "json"
@@ -50,6 +51,6 @@ $ ->
         populate_dropdowns $("select", insertedItem), data
 
   $ ->
-    $('#__add_line_item').addClass('disabled') if !control.val()
+    $('#__add_line_item').addClass('disabled') if storage_location_required && !control.val()
 
     request_storage_location_and_populate_item(default_item)

@@ -29,6 +29,11 @@ RSpec.describe DonationSitesController, type: :controller do
       end
     end
 
+    describe "POST #import_csv" do
+      let(:model_class) { DonationSite }
+      it_behaves_like "csv import"
+    end
+
     describe "GET #show" do
       subject { get :show, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
       it "returns http success" do

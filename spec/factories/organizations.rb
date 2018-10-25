@@ -24,6 +24,10 @@ FactoryBot.define do
     sequence(:short_name) { |n| "db_#{n}" } # 037000863427
     sequence(:email) { |n| "email#{n}@example.com" } # 037000863427
     sequence(:url) { |n| "https://organization#{n}.org" } # 037000863427
+    street { "1500 Remount Road" }
+    city { 'Front Royal' }
+    state { 'VA' }
+    zipcode { '22630' }
 
     logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"), "image/jpeg") }
 

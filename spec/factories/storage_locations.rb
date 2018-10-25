@@ -14,14 +14,14 @@
 
 FactoryBot.define do
   factory :storage_location do
-    name "Smithsonian Institute"
-    address "1500 Remount Road, Front Royal, VA"
+    name { "Smithsonian Institute" }
+    address { "1500 Remount Road, Front Royal, VA" }
     organization { Organization.try(:first) || create(:organization) }
 
     trait :with_items do
       transient do
-        item_quantity 100
-        item nil
+        item_quantity { 100 }
+        item { nil }
       end
 
       after(:create) do |storage_location, evaluator|
