@@ -17,8 +17,6 @@
 #  latitude        :float
 #  longitude       :float
 
-require "geocoder_helper.rb"
-
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
   context "Associations >" do
