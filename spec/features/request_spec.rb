@@ -31,6 +31,7 @@ RSpec.feature "Requests", type: :feature do
       click_on "Save"
       expect(page).to have_content "Distributions"
       expect(page).to have_content "Distribution created"
+      expect(@request.reload.distribution_id).to eq Distribution.last.id
     end
   end
 end

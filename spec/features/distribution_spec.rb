@@ -76,6 +76,26 @@ RSpec.feature "Distributions", type: :feature do
     end
   end
 
+  context "When creating a distrubition from a request" do
+    before do
+      request_items = @storage_location.items.map(&:canonical_item).pluck(:partner_key).collect { |k| [k, rand(3..10)] }.to_h
+      @request = create :request, organization: @organization, request_items: request_items
+
+      visit @url_prefix + "/requests/#{@request.id}"
+      click_on "Fulfill request"
+      within "#new_distribution" do
+        select @storage_location.name, from: "From storage location"
+        click_on "Save"
+      end
+
+      @distribution = Distribution.last
+    end
+
+    scenario "it sets the distribution id on the request" do
+      expect(@request.reload.distribution_id).to eq @distribution.id
+    end
+  end
+
   context "via barcode entry" do
     before(:each) do
       initialize_barcodes
