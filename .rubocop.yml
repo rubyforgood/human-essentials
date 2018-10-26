@@ -271,6 +271,9 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 Style/FormatStringToken:
   Enabled: false
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - "spec/**/*"  
 Lint/EachWithObjectArgument:
   Description: Check for immutable argument given to each_with_object.
   Enabled: true

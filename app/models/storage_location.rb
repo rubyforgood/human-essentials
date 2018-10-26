@@ -231,6 +231,10 @@ class StorageLocation < ApplicationRecord
   def reclaim!(distribution)
     ActiveRecord::Base.transaction do
       distribution.line_items.each do |line_item|
+        if line_item.item.nil? || !line_item.item.active?
+          Item.unscoped.find(line_item.item_id).update(active: true)
+          line_item.reload
+        end
         inventory_item = inventory_items.find_by(item: line_item.item)
         inventory_item.update!(quantity: inventory_item.quantity + line_item.quantity)
       end
