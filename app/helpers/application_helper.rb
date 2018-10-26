@@ -13,6 +13,10 @@ module ApplicationHelper
     name.include?(controller_name) ? "active" : controller_name
   end
 
+  def can_administrate?
+    (current_user.organization_admin? && current_user.organization_id == @organization.id)
+  end
+
   # wraps link_to_unless_current to provide Foundation6 friendly <a> tags
   def navigation_link_to(*args)
     link_to_unless_current(*args) do

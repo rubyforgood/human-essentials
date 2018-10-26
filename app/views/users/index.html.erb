@@ -20,33 +20,34 @@
   <div class="box">
     <div class="box-body">
       <div class="text-right">
-        <%= new_button_to new_user_path(organization_id: current_organization), { text: "Add a user" } %>
+        <%= modal_button_to("#addUserModal", { text: "Invite User to this Organization" }) if can_administrate? %>
       </div>
-<div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-        <% @users.each do |user| %>
-        <tr>
-          <td><%= user.name %></td>
-          <td><%= user.email %></td>
-        </tr>
-        <% end %>
-        </tbody>
-      </table>
-      <!-- /.box-body -->
+      <div class="row">
+        <div class="col-xs-12">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                <th>Name</th>
+                <th>Email</th>
+              </tr>
+              </thead>
+              <tbody>
+                <% @users.each do |user| %>
+                <tr>
+                  <td><%= user.name %></td>
+                  <td><%= user.email %></td>
+                </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <!-- /.box-body -->
+          </div>
+        </div>
+          <!-- /.box -->
+      </div>
     </div>
   </div>
-    <!-- /.box -->
-  </div>
-</div>
-  </div>
+  <%= render "add_user_modal" %>
 </section>
