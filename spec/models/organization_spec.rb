@@ -65,6 +65,27 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe "#ordered_requests" do
+    let!(:new_active_request)  { create(:request, comments: "first active") }
+    let!(:old_active_request) { create(:request, comments: "second active") }
+    let!(:fulfilled_request) { create(:request, status: 'Fulfilled', comments: "first fulfilled") }
+    let!(:organization) { create(:organization, requests: [old_active_request, fulfilled_request, new_active_request]) }
+
+    it "puts active requests before fulfilled requests" do
+      expect(organization.ordered_requests.pluck(:comments)).to eq(["first active", "second active", "first fulfilled"])
+    end
+
+    context "ordering of requests with matching status" do
+      before do
+        old_active_request.update_attributes(updated_at: 5.minutes.after)
+      end
+
+      it "puts the most recently updated request before older requests" do
+        expect(organization.ordered_requests.pluck(:comments)).to eq(["second active", "first active", "first fulfilled"])
+      end
+    end
+  end
+
   describe "total_inventory" do
     it "returns a sum total of all inventory at all storage locations" do
       item = create(:item)
