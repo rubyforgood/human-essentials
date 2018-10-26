@@ -66,11 +66,11 @@ RSpec.feature "Item management", type: :feature do
   scenario "User can delete an item" do
     item = create(:item, organization: @user.organization)
     visit url_prefix + "/items"
-    expect {
+    expect do
       within "tr[data-item-id='#{item.id}']" do
-       click_on "Delete", match: :first
+        click_on "Delete", match: :first
       end
-    }.to change{Item.count}.by(-1)
+    end.to change { Item.count }.by(-1)
   end
 
   scenario "A user can 'delete' an item that has history, but it only soft-deletes it" do
@@ -78,11 +78,11 @@ RSpec.feature "Item management", type: :feature do
     create(:donation, :with_items, item: item)
     visit url_prefix + "/items"
     expect(page).to have_content("DELETEME")
-    expect {
+    expect do
       within "tr[data-item-id='#{item.id}']" do
-       click_on "Delete", match: :first
+        click_on "Delete", match: :first
       end
-    }.not_to change{Item.unscoped.count}
+    end.not_to change { Item.unscoped.count }
     item.reload
     expect(item).not_to be_active
     visit url_prefix + "/items"
