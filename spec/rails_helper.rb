@@ -37,7 +37,7 @@ Capybara.ignore_hidden_elements = true
 
 # https://docs.travis-ci.com/user/chrome
 Capybara.register_driver :chrome do |app|
-  options = Selenium::WebDriver::Chrome::Options.new(args: %w[no-sandbox headless disable-gpu])
+  options = Selenium::WebDriver::Chrome::Options.new(args: %w[no-sandbox headless disable-gpu window-size=1680,1050])
 
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end
