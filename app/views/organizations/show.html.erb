@@ -1,5 +1,3 @@
-<% can_administrate = (current_user.organization_admin? && current_user.organization_id == @organization.id) %>
-
 <section class="content-header">
   <% content_for :title, "Organizations - #{@organization.name}" %>
 <h1>
@@ -37,46 +35,13 @@
           </li>
         </ul>
 
-      <%= modal_button_to("#addUserModal", { text: "Invite User to this Organization" }) if can_administrate %>
+      <%= modal_button_to("#addUserModal", { text: "Invite User to this Organization" }) if can_administrate? %>
 
   </div>
   </div>
   <div class="box-footer">
-    <%= edit_button_to(edit_organization_path, { size: "lg" }) if can_administrate %>
+    <%= edit_button_to(edit_organization_path, { size: "lg" }) if can_administrate? %>
   </div>
 </div>
-
-
-
-<div id="addUserModal" class="modal fade">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Invite a new user to <%= @organization.name %></h4>
-      </div><!-- modal-header -->
-      <div class="modal-body">
-        <div class="box-body">
-          <%= form_tag invite_user_organization_path do %>
-            <div class="input-group">
-              <span class="input-group-addon" id="spn_usr_fa_icon"><%= fa_icon "user" %></span>
-              <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="spn_usr_fa_icon">
-            </div>
-            <br>
-            <div class="input-group">
-              <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
-              <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
-            </div>
-            <%= hidden_field_tag :org , @organization.id %><br>
-            <%= submit_button({ text: "Invite User", icon: "envelope" }) %>
-          <% end # form %>
-        </div><!-- box-body -->
-      </div><!-- modal-body -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= fa_icon "close" %> Close</button>
-      </div><!-- modal-footer -->
-    </div><!-- modal-content -->
-  </div><!-- modal-dialog -->
-</div><!-- addUserModal -->
-
+<%= render "/users/add_user_modal" %>
 </section>
