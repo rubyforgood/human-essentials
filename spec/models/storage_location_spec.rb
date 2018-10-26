@@ -268,13 +268,13 @@ RSpec.describe StorageLocation, type: :model do
         storage_location = create :storage_location, :with_items, item_quantity: 200
         distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
         item = distribution.line_items.first.item
-        expect {
+        expect do
           item.destroy
-        }.to change{item.active}.from(true).to(false)
-        expect {
+        end.to change { item.active }.from(true).to(false)
+        expect do
           storage_location.reclaim!(distribution)
           item.reload
-        }.to change{item.active}.from(false).to(true)
+        end.to change { item.active }.from(false).to(true)
       end
 
       it "does not destroy the distribution" do

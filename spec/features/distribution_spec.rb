@@ -40,17 +40,17 @@ RSpec.feature "Distributions", type: :feature do
 
     scenario "the user can make changes to it" do
       click_on "Edit", match: :first
-      expect {
+      expect do
         fill_in "Agency representative", with: "SOMETHING DIFFERENT"
         click_on "Save", match: :first
         distribution.reload
-      }.to change{ distribution.agency_rep }.to("SOMETHING DIFFERENT")
+      end.to change { distribution.agency_rep }.to("SOMETHING DIFFERENT")
     end
 
     scenario "the user can reclaim it" do
-      expect {
+      expect do
         click_on "Reclaim"
-      }.to change{Distribution.count}.by(-1)
+      end.to change { Distribution.count }.by(-1)
       expect(page).to have_content "reclaimed"
     end
 
@@ -58,10 +58,10 @@ RSpec.feature "Distributions", type: :feature do
       scenario "the user can still reclaim it and it reactivates the item" do
         item = distribution.line_items.first.item
         item.destroy
-        expect {
+        expect do
           click_on "Reclaim"
           page.find ".alert"
-        }.to change{Distribution.count}.by(-1).and change{Item.count}.by(1)
+        end.to change { Distribution.count }.by(-1).and change { Item.count }.by(1)
         expect(page).to have_content "reclaimed"
       end
     end
