@@ -77,7 +77,7 @@ RSpec.describe Organization, type: :model do
 
     context "ordering of requests with matching status" do
       before do
-        old_active_request.update_attributes(updated_at: 5.minutes.after)
+        old_active_request.update(updated_at: 5.minutes.after)
       end
 
       it "puts the most recently updated request before older requests" do
