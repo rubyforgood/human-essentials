@@ -28,7 +28,7 @@ on an [open issue]–if the relevant issue doesn't exist, open it!
 6. Add a test for your change. If you are adding functionality or fixing a
    bug, you should add a test!
 
-7. Make the test pass.
+7. Make the test pass by all of your effort.
 
 8. Push to your fork and submit a pull request. Include the issue number
    (ex. `Resolves #1`) in the PR description.
