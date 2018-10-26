@@ -164,7 +164,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         fill_in "diaper_drive_participant_business_name", with: "businesstest"
         fill_in "diaper_drive_participant_contact_name", with: "test"
         fill_in "diaper_drive_participant_email", with: "123@mail.ru"
-        click_on "Save"
+        click_on "diaper-drive-participant-submit"
         select "businesstest", from: "donation_diaper_drive_participant_id"
       end
 
@@ -283,14 +283,34 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(page).to have_field "donation_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
       end
 
-      scenario "a user can add items that do not yet have a barcode" do
+      scenario "a user can add items that do not yet have a barcode", :js do
+        new_barcode = @existing_barcode.value + "000"
         # enter a new barcode
+        within "#donation_line_items" do
+          expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+          fill_in "_barcode-lookup-0", with: new_barcode + 10.chr
+        end
+
         # form finds no barcode and responds by prompting user to choose an item and quantity
-        # fill that in
-        # saves new barcode
+        within "#newBarcode" do
+          # fill that in
+          fill_in "Quantity", with: 10
+          # saves new barcode
+          select Item.first.name, from: "Item"
+          expect(page).to have_field("barcode_item_quantity", with: '10')
+          expect(page).to have_field("barcode_item_value", with: new_barcode)
+          click_on "Save"
+        end
+
+        within "#donation_line_items" do
+          barcode_field = page.find(:xpath, "//input[@id='_barcode-lookup-0']").value
+          expect(barcode_field).to eq(new_barcode)
+          qty_field = page.find(:xpath, "//input[@id='donation_line_items_attributes_0_quantity']").value
+          expect(qty_field).to eq("10")
+          item_field = page.find(:xpath, "//select[@id='donation_line_items_attributes_0_item_id']").value
+          expect(item_field).to eq(Item.first.id.to_s)
+        end
         # form updates
-        pending "TODO: adding items with a new barcode"
-        raise
       end
     end
   end

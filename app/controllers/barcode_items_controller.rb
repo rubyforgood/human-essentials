@@ -16,6 +16,7 @@ class BarcodeItemsController < ApplicationController
       msg += barcode_item_params[:global] == "true" ? " globally!" : " to your private set!"
       respond_to do |format|
         format.json { render json: @barcode_item.to_json }
+        format.js
         format.html { redirect_to barcode_items_path, notice: msg }
       end
     else

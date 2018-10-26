@@ -28,11 +28,12 @@ $(document).ready(function() {
     $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, function(data) {
          // Preserve this for reference of where we came from.
          data['src'] = src;
+         data['value'] = value;
          // Pass it all along to the .done() method
          return data;
       })
       .done(fill_fields_with_barcode_results)
-      .fail(prompt_for_new_barcode_item)
+      .fail(function(data) { prompt_for_new_barcode_item(data, value, src); } )
       .always(function(data){
         // ...
     });
@@ -76,8 +77,11 @@ $(document).ready(function() {
     $(line_item).parent().find('.nested-fields:last-child input.__barcode_item_lookup').focus();
   }
 
-  function prompt_for_new_barcode_item(data) {
-    $(data['src']).val('');
+  function prompt_for_new_barcode_item(data, value, src) {
+    // Pre-fill the barcode field with the value
+    $("#barcode_item_value").val(value);
+    // Saving this to the modal so the modal knows which field to trigger when it's done.
+    $("#trigger-field-id").val($(src).attr('id'));
     $("#newBarcode").modal();
     // TODO: Prompt the user with a dialog to create a new barcode entry, then add that to the form
   }
