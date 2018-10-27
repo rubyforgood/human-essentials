@@ -32,6 +32,14 @@ class PartnersController < ApplicationController
 
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
+
+    # TODO: create a service that abstracts all of this from PartnersController, like PartnerDetailRetriever.call(id: params[:id])
+
+    # TODO: move this code to new service,
+    @diaper_partner = DiaperPartnerClient.get(id: params[:id])
+    @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true)
+
+    @agency = @diaper_partner[:agency]
   end
 
   def edit
