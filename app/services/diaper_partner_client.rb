@@ -18,6 +18,18 @@ module DiaperPartnerClient
     response.body
   end
 
+  def self.get(attributes)
+    id = attributes[:id]
+    uri = URI(ENV["PARTNER_REGISTER_URL"] + "/api/v1/partners/#{id}")
+    req = Net::HTTP::Get.new(uri, "Content-Type" => "application/json")
+
+    req["Content-Type"] = "application/json"
+    req["X-Api-Key"] = ENV["PARTNER_KEY"]
+
+    response = https(uri).request(req)
+    response.body
+  end
+
   def self.put(attributes)
     return if Rails.env != "production"
 
