@@ -3,15 +3,6 @@ RSpec.feature "Requests", type: :feature do
     sign_in(@user)
     @request = create(:request, organization: @organization)
     @storage_location = create(:storage_location, organization: @organization)
-    # creates an inventory item for the request's first item and gives it a quantity of 234
-    @storage_location.inventory_items.create!(
-      quantity: 234,
-      item: Item.find_by(
-        canonical_item: CanonicalItem.find_by(
-          partner_key: @request.request_items.keys.first
-        )
-      )
-    )
   end
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
@@ -30,7 +21,23 @@ RSpec.feature "Requests", type: :feature do
       visit url_prefix + "/requests/#{@request.id}"
       expect(page).to have_content("Request from #{@request.partner.name}")
       expect(page).to have_content("Estimated on-hand")
-      expect(page).to have_content("234")
+    end
+    
+    scenario "the number of items on-hand is shown", js: true do
+      ####
+      # Create a secondary storage location to test the sum view of estimated on-hand items
+      # Add inventory items to both storage locations
+      ####
+      @second_storage_location = create(:storage_location, organization: @organization)
+      @item = Item.find_by(
+        canonical_item: CanonicalItem.find_by(
+          partner_key: @request.request_items.keys.first
+        )
+      )
+      @storage_location.inventory_items.create!(quantity: 234, item: @item)
+      @second_storage_location.inventory_items.create!(quantity: 100, item: @item)
+      visit url_prefix + "/requests/#{@request.id}"
+      expect(page).to have_content("334")
     end
 
     scenario "the request is fullfillable", js: true do
