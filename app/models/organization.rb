@@ -59,6 +59,10 @@ class Organization < ApplicationRecord
     users.map(&:email).join(", ")
   end
 
+  def ordered_requests
+    requests.order(status: :asc, updated_at: :desc)
+  end
+
   def quantity_categories
     storage_locations.map(&:inventory_items).flatten.reject { |i| i.item.nil? }.group_by { |i| i.item.category }
                      .map { |i| [i[0], i[1].map(&:quantity).sum] }.sort_by { |_, v| -v }
