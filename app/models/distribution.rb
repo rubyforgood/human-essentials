@@ -77,7 +77,7 @@ class Distribution < ApplicationRecord
     request.request_items.each do |key, quantity|
       line_items.new(
         quantity: quantity,
-        item: Item.eager_load(:canonical_item).find_by(organization: request.organization, canonical_items: { partner_key: key }),
+        item: Item.joins(:inventory_items).eager_load(:canonical_item).find_by(organization: request.organization, canonical_items: { partner_key: key }),
         itemizable_id: request.id,
         itemizable_type: "Distribution"
       )
