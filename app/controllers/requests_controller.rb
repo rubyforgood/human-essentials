@@ -1,8 +1,6 @@
 class RequestsController < ApplicationController
   def index
-    @requests = current_organization
-                .requests
-                .order(created_at: :desc)
+    @requests = current_organization.ordered_requests
     respond_to do |format|
       format.html
     end
