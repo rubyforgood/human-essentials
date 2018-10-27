@@ -34,11 +34,16 @@
                   <thead>
                     <th>Item</th>
                     <th>Quantity</th>
+                    <th>Estimated on-hand</th>
                   </thead>
 
                   <tbody>
                     <% @request.request_items.each do |key,quantity| %>
-                      <tr><td><%= @request.items_hash[key].name %></td><td><%= quantity %></td></tr>
+                      <tr>
+                        <td><%= @request.items_hash[key].name %></td>
+                        <td><%= quantity %></td>
+                        <td><%= @inventory_items.where(item: Item.where(canonical_item: CanonicalItem.where(partner_key: key))).sum(:quantity) %></td>
+                      </tr>
                     <% end %>
                   </tbody>
                 </table>

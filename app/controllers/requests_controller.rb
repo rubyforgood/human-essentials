@@ -9,6 +9,7 @@ class RequestsController < ApplicationController
   def show
     @request = Request.find(params[:id])
     @items = @request.items_hash
+    @inventory_items = current_organization.inventory_items
   end
 
   # Clicking the "Fullfill" button will set the the request to fulfilled
@@ -20,4 +21,5 @@ class RequestsController < ApplicationController
     flash[:notice] = "Request marked as fulfilled"
     redirect_to new_distribution_path(request_id: request.id)
   end
+
 end
