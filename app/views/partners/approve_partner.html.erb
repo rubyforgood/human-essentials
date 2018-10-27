@@ -33,16 +33,16 @@
         <div class="col-xs-6">
           <!-- /.box-header -->
           <h2>Agency Information</h2>
-          <p>Name: </p>
-          <p>Distributor Type</p>
-          <p>Agency Type: </p>
-          <p>Proof of Agency Status (Link)</p>
-          <p>Agency Mission:</p>
-          <p>Address</p>
-          <p>Address</p>
-          <p>City:</p>
-          <p>State:</p>
-          <p>Zip Code:</p>
+          <p>Name: <%= @agency[:name] %></p>
+          <p>Distributor Type <%= @agency[:distributor_type] %></p>
+          <p>Agency Type: <% @agency[:agency_type] %></p>
+          <p>Proof of Agency Status (Link) <%= @agency[:proof_of_agency_status] %></p>
+          <p>Agency Mission: <%= @agency[:agency_mission] %></p>
+          <p>Address <%= @agency[:address1] %></p>
+          <p>Address <%= @agency[:address2] %></p>
+          <p>City: <%= @agency[:city] %></p>
+          <p>State: <%= @agency[:state] %></p>
+          <p>Zip Code: <%= @agency[:zip_code] %></p>
           <br>
           <h2>Media Information</h2>
           <p>Website:</p>
