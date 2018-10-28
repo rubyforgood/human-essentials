@@ -118,7 +118,7 @@ RSpec.describe Organization, type: :model do
     xit "adds coordinates to the database" do
       organization = build(:organization,
                            "street" => "1500 Remount Road",
-                           "city"  => "Front Royal",
+                           "city" => "Front Royal",
                            "state" => "VA",
                            "zipcode" => "12345")
       organization.save
