@@ -9,7 +9,7 @@ class RequestsController < ApplicationController
   def show
     @request = Request.find(params[:id])
     @items = @request.items_hash
-    @inventory_items = current_organization.inventory_items
+    @request_items = get_items(@request.request_items)
   end
 
   # Clicking the "Fullfill" button will set the the request to fulfilled
@@ -20,6 +20,22 @@ class RequestsController < ApplicationController
     request.update(status: "Fulfilled")
     flash[:notice] = "Request marked as fulfilled"
     redirect_to new_distribution_path(request_id: request.id)
+  end
+
+  def get_items(request_items)
+    array = []
+    request_items.each do |key, quantity|
+      array << {
+        name: @request.items_hash[key].name,
+        quantity: quantity,
+        on_hand: sum_inventory(key)
+      }
+    end
+    array
+  end
+
+  def sum_inventory(partner_key)
+    current_organization.inventory_items.by_partner_key(partner_key).sum(:quantity)
   end
 
 end

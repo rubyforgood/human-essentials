@@ -38,11 +38,11 @@
                   </thead>
 
                   <tbody>
-                    <% @request.request_items.each do |key,quantity| %>
+                    <% @request_items.each do |item| %>
                       <tr>
-                        <td><%= @request.items_hash[key].name %></td>
-                        <td><%= quantity %></td>
-                        <td><%= @inventory_items.where(item: Item.where(canonical_item: CanonicalItem.where(partner_key: key))).sum(:quantity) %></td>
+                        <td><%= item[:name] %></td>
+                        <td><%= item[:quantity] %></td>
+                        <td><%= item[:on_hand] %></td>
                       </tr>
                     <% end %>
                   </tbody>

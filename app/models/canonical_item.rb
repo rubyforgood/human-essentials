@@ -20,4 +20,6 @@ class CanonicalItem < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validates :category, presence: true
   validates :partner_key, presence: true, uniqueness: true
+
+  scope :by_partner_key, -> (partner_key) { where(partner_key: partner_key) }
 end
