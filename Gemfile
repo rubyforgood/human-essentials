@@ -7,7 +7,7 @@ end
 
 ruby "2.5.3"
 
-gem "api-auth", "~> 2.2"
+gem "api-auth", "~> 2.3"
 gem "bootstrap-sass"
 gem "bugsnag"
 gem "chartkick"
