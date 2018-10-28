@@ -21,8 +21,6 @@ populate_dropdowns = (objects, inventory) ->
 
 request_storage_location_and_populate_item = (item_to_populate) ->
   control = $("select.storage-location-source")
-  return if (control.length is 0 || !control.val())
-
   $.ajax
     url: control.data("storage-location-inventory-path").replace(":id", control.val())
     dataType: "json"
