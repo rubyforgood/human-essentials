@@ -40,9 +40,9 @@
                   <tbody>
                     <% @request_items.each do |item| %>
                       <tr>
-                        <td><%= item[:name] %></td>
-                        <td><%= item[:quantity] %></td>
-                        <td><%= item[:on_hand] %></td>
+                        <td><%= item.name %></td>
+                        <td><%= item.quantity %></td>
+                        <td><%= item.on_hand %></td>
                       </tr>
                     <% end %>
                   </tbody>

@@ -23,15 +23,11 @@ class RequestsController < ApplicationController
   end
 
   def get_items(request_items)
-    array = []
-    request_items.each do |key, quantity|
-      array << {
-        name: @request.items_hash[key].name,
-        quantity: quantity,
-        on_hand: sum_inventory(key)
-      }
+    # using Struct vs Hash so we can use dot notation in the view
+    Struct.new('Item', :name, :quantity, :on_hand)
+    request_items.map do |key, quantity|
+      Struct::Item.new(@request.items_hash[key].name, quantity, sum_inventory(key))
     end
-    array
   end
 
   def sum_inventory(partner_key)
