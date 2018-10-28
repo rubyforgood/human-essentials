@@ -39,4 +39,21 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   validates :name, :email, presence: true
+
+  def most_recent_sign_in
+    [current_sign_in_at.to_s, last_sign_in_at.to_s].max
+  end
+
+  def invitation_status
+    return "joined" if most_recent_sign_in.present?
+    return "accepted" if invitation_accepted_at.present?
+    return "invited" if invitation_sent_at.present?
+  end
+
+  def kind
+    return "super" if super_admin?
+    return "admin" if organization_admin?
+
+    "normal"
+  end
 end
