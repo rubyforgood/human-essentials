@@ -51,8 +51,8 @@ class User < ApplicationRecord
   end
 
   def kind
-    return "super" if super_admin == true
-    return "admin" if organization_admin == true
+    return "super" if super_admin?
+    return "admin" if organization_admin?
     return "normal"
   end
 end
