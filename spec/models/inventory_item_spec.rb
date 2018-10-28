@@ -37,4 +37,16 @@ RSpec.describe InventoryItem, type: :model do
   it "initializes the quantity to 0 if it was not specified" do
     expect(InventoryItem.new.quantity).to eq(0)
   end
+
+  context "Filtering >" do
+    describe "->by_partner_key" do
+      before(:each) do
+        InventoryItem.delete_all
+        @item1 = create(:inventory_item)
+      end
+      it "shows the Canonical Items by partner_key" do
+        expect(InventoryItem.by_partner_key(@item1.item.canonical_item.partner_key).size).to eq(1)
+      end
+    end
+  end
 end
