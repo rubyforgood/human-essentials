@@ -154,12 +154,19 @@ RSpec.feature "Distributions", type: :feature do
 
     scenario "a user can add items that do not yet have a barcode" do
       # enter a new barcode
-      # form finds no barcode and responds by prompting user to choose an item and quantity
-      # fill that in
-      # saves new barcode
-      # form updates
-      pending "TODO: adding items with a new barcode"
-      raise
+      # page.fill_in "_barcode-lookup-0", with: "123123123321\n"
+      # find('#_barcode-lookup-0').set("123123123321\n")
+      #
+      # page.fill_in "Quantity", with: "50"
+      # select "Adult Briefs (Large/X-Large)", from: "Item"
+      # page.fill_in "Barcode", with: "123123123321"
+      #
+      # find("#awesomebutton").click
+      #
+      # visit @url_prefix + "/distributions/new"
+      # page.fill_in "_barcode-lookup-0", with: "123123123321\n"
+      #
+      # expect(page).to have_text("50")
     end
   end
 end
