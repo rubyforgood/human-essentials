@@ -30,7 +30,7 @@
 #
 
 class User < ApplicationRecord
-  belongs_to :organization
+  belongs_to :organization , optional: Proc.new { |u| u.super_admin? }
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
