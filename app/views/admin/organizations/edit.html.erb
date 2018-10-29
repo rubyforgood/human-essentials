@@ -5,9 +5,10 @@ Editing
 <small><%= @organization.name %></small>
 </h1>
 <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
+  <li>
+    <%= link_to(admin_dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
   </li>
   <li><%= link_to "Administration", (admin_organizations_path) %></li>
   <li><a href="#">Editing <%= @organization.name %></a></li>

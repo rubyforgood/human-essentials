@@ -5,9 +5,10 @@
   <small>for <%= @organization.name %></small>
 </h1>
 <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
+  <li>
+    <%= link_to(admin_dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
   </li>
   <li class="active"><%= @organization.name %></li>
 </ol>
