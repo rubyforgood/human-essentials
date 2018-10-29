@@ -1,7 +1,6 @@
 require "active_support/core_ext/module/aliasing"
 
 module ApplicationHelper
-
   def dashboard_path_from_user
     if current_user.super_admin?
       admin_dashboard_path
