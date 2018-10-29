@@ -33,5 +33,4 @@ class RequestsController < ApplicationController
   def sum_inventory(partner_key)
     current_organization.inventory_items.by_partner_key(partner_key).sum(:quantity)
   end
-
 end

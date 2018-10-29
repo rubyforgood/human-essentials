@@ -22,7 +22,7 @@ RSpec.feature "Requests", type: :feature do
       expect(page).to have_content("Request from #{@request.partner.name}")
       expect(page).to have_content("Estimated on-hand")
     end
-    
+
     scenario "the number of items on-hand is shown", js: true do
       ####
       # Create a secondary storage location to test the sum view of estimated on-hand items
