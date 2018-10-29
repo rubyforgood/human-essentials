@@ -1,0 +1,18 @@
+version: "3"
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: diaper
+      POSTGRES_PASSWORD: 123456
+  dev:
+    build:
+      context: .
+    environment:
+      PG_HOST: postgres
+      PG_USERNAME: diaper
+      PG_PASSWORD: 123456
+    ports:
+      - 3000
+    depends_on:
+      - postgres
