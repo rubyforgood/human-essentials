@@ -15,7 +15,7 @@
 
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
-  belongs_to :canonical_item, counter_cache: :item_count
+  belongs_to :canonical_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true

@@ -11,6 +11,7 @@ class ItemsController < ApplicationController
     if @item.save
       redirect_to items_path, notice: "#{@item.name} added!"
     else
+      @canonical_items = CanonicalItem.all
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
@@ -38,6 +39,7 @@ class ItemsController < ApplicationController
     if @item.update(item_params)
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
+      @canonical_items = CanonicalItem.all
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
@@ -51,7 +53,7 @@ class ItemsController < ApplicationController
   private
 
   def item_params
-    params.require(:item).permit(:name, :category, :canonical_item_id)
+    params.require(:item).permit(:name, :category, :partner_key)
   end
 
   def filter_params(parameters = nil)
