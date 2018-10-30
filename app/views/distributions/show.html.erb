@@ -5,9 +5,9 @@
     <small>for <%= @distribution.storage_location.name %></small>
   </h1>
   <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
+    <li><%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
     </li>
     <li><%= link_to "Distributions", (distributions_path) %></li>
     <li class="active"> <%= @distribution.partner.name %>
@@ -23,34 +23,36 @@
   <!-- Default box -->
   <div class="box">
     <div class="box-header with-border">
-      <h3 class="box-title">Distribution Manifest for <%= @distribution.distributed_at %> to <%= @distribution.partner.name %></h3>
+      <h3 class="box-title">Distribution Manifest for <%= @distribution.distributed_at %>
+        to <%= @distribution.partner.name %></h3>
     </div>
     <div class="box-body">
 
       <p>Source location: <%= @distribution.storage_location.name %></p>
       <p>Agency representative: <%= @distribution.agency_rep %></p>
-    <h4>Total Items Distributed</h4>
-    <div class="row">
-      <div class="col-xs-12">
+      <h4>Total Items Distributed</h4>
+      <div class="row">
+        <div class="col-xs-12">
           <!-- /.box-header -->
           <div class="box-body table-responsive no-padding">
             <table class="table table-hover">
-            <tr>
-              <th><b>Quantity</b></th>
-              <th><b>Item</b></th>
-            </tr>
+              <tr>
+                <th><b>Quantity</b></th>
+                <th><b>Item</b></th>
+              </tr>
               <%= render partial: "distribution_item_row", collection: @line_items %>
             </table>
-          <!-- /.box-body -->
+            <!-- /.box-body -->
 
           </div>
-        <!-- /.box -->
+          <!-- /.box -->
         </div>
       </div>
     </div>
     <div class="box-footer with-border">
-    <%= edit_button_to edit_distribution_path(@distribution), { text: "Make a Correction", size: "lg" } %>
+      <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "lg"} %>
+      <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "lg"} %>
+    </div>
   </div>
-  </div>
-  
+
 </section>
