@@ -5,7 +5,8 @@
     <small></small>
   </h1>
   <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
+    <li>
+      <%= link_to(admin_dashboard_path) do %>
         <i class="fa fa-dashboard"></i> Home
       <% end %>
     </li>

@@ -69,6 +69,7 @@ def stub_addresses
    "1500 Remount Road, Front Royal, VA 22630",
    "1234 Banana Drive Boston, MA 12345",
    "1234 Banana Drive, Boston, MA 12345",
+   "1234 Potato Drive, New York, NY 54321",
    "123 Donation Site Way",
    "456 Donation Site Way",
    "789 Donation Site Way",
@@ -148,6 +149,7 @@ RSpec.configure do |config|
     @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
     @user = create(:user, organization: @organization, name: "DEFAULT USER")
     @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
+    @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
 
     # Print the name of the example being run
     Rails.logger.info "\n\n-~=> #{self.class.description} ::::::::::::::::::::::"

@@ -40,7 +40,7 @@
         <span class="icon-bar"></span>
       </a>
 
-    <% if user_signed_in? %>
+    <% if user_signed_in? && current_organization.present? %>
       <%= render partial: "layouts/lte_navbar" %>
     <% end %>
     </nav>
@@ -48,7 +48,7 @@
 
   <!-- =============================================== -->
   <% # If there's no organization set, most of these routes won't work. %>
-  <% if user_signed_in? && current_organization.id.present? %>
+  <% if user_signed_in? && current_organization.present? %>
     <%= render partial: "layouts/lte_sidebar" %>
   <% end %>
 
