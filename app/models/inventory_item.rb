@@ -19,6 +19,8 @@ class InventoryItem < ApplicationRecord
   validates :item_id, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
+  scope :by_partner_key, ->(partner_key) { joins(:item).merge(Item.by_canonical_item(CanonicalItem.by_partner_key(partner_key))) }
+
   delegate :name, to: :item, prefix: true
 
   def self.quantity_by_category

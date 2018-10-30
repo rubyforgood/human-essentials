@@ -49,4 +49,13 @@ RSpec.describe CanonicalItem, type: :model do
 
   describe "Methods >" do
   end
+
+  describe "Filtering >" do
+    describe "->by_partner_key" do
+      it "shows the Canonical Items by partner_key" do
+        expect(CanonicalItem.by_partner_key(CanonicalItem.first.partner_key).size).to eq(1)
+        expect(CanonicalItem.by_partner_key("random_string").size).to eq(0)
+      end
+    end
+  end
 end
