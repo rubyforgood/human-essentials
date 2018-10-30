@@ -5,9 +5,10 @@
   <small>your profile</small>
 </h1>
 <ol class="breadcrumb">
-<li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
+  <li>
+    <%= link_to(dashboard_path_from_user) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
   </li>
     <li><a href="#">Editing <%= current_user.name %></a></li>
 </ol>
@@ -72,7 +73,7 @@
   <br>
   <div class="form-actions medium-offset-3 medium-6">
     <%= submit_button %>
-    
+
   </div>
 <% end %>
 </div>

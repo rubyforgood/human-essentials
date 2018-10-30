@@ -5,9 +5,10 @@ New Organization
 <small></small>
 </h1>
 <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
+  <li>
+    <%= link_to(admin_dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
   </li>
   <li><%= link_to "Administration", new_admin_organization_path %></li>
   <li><a href="#">New Organization</a></li>
