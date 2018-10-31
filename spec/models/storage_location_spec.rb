@@ -2,7 +2,7 @@
 #
 # Table name: storage_locations
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  address         :string
 #  created_at      :datetime
@@ -10,6 +10,7 @@
 #  organization_id :integer
 #  latitude        :float
 #  longitude       :float
+#
 
 RSpec.describe StorageLocation, type: :model do
   let(:organization) { create(:organization) }

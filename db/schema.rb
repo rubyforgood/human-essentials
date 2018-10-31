@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_16_002337) do
+ActiveRecord::Schema.define(version: 2018_10_30_023326) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,9 +158,10 @@ ActiveRecord::Schema.define(version: 2018_10_16_002337) do
     t.datetime "updated_at"
     t.integer "barcode_count"
     t.integer "organization_id"
-    t.integer "canonical_item_id"
     t.boolean "active", default: true
+    t.string "partner_key"
     t.index ["organization_id"], name: "index_items_on_organization_id"
+    t.index ["partner_key"], name: "index_items_on_partner_key"
   end
 
   create_table "line_items", force: :cascade do |t|
