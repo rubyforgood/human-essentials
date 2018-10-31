@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  short_name      :string
 #  email           :string
@@ -16,6 +16,7 @@
 #  zipcode         :string
 #  latitude        :float
 #  longitude       :float
+#
 
 class Organization < ApplicationRecord
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "diaperbase-logo-full.png")
@@ -108,11 +109,9 @@ class Organization < ApplicationRecord
 
   def self.seed_items(org)
     Rails.logger.info "Seeding #{org.name}'s items..."
-    canonical_items = CanonicalItem.pluck(:id, :name, :category).collect { |c| { canonical_item_id: c[0], name: c[1], category: c[2] } }
     org_id = org.id
-    Item.create(canonical_items) do |i|
-      i.organization_id = org_id
-    end
+    canonical_items = CanonicalItem.pluck(:partner_key, :name, :category).collect { |c| { partner_key: c[0], name: c[1], category: c[2], organization_id: org_id } }
+    Item.create(canonical_items)
     org.reload
   end
 
