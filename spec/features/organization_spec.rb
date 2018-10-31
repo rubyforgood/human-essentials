@@ -29,7 +29,7 @@ RSpec.feature "Organization management", type: :feature do
       end
     end
 
-    scenario "Adding a new user to an organization" do
+    scenario "Can add a new user to an organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit url_prefix + "/organization"
       click_on "Invite User to this Organization"
@@ -38,6 +38,12 @@ RSpec.feature "Organization management", type: :feature do
         click_on "Invite User"
       end
       expect(page).to have_content("invited to organization")
+    end
+
+    scenario "Can re-invite a user to an organization after 7 days" do
+      create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
+      visit url_prefix + "/organization"
+      expect(page).to have_xpath("//i[@alt='Re-send invitation']")
     end
   end
 end
