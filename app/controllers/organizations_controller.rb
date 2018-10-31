@@ -25,6 +25,12 @@ class OrganizationsController < ApplicationController
     redirect_to organization_path, notice: "User invited to organization!"
   end
 
+  def resend_user_invitation
+    user = User.find(params[:user_id])
+    user.invite!
+    redirect_to organization_path, notice: "User re-invited to organization!"
+  end
+
   private
 
   def authorize_admin
