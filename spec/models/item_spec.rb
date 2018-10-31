@@ -2,15 +2,15 @@
 #
 # Table name: items
 #
-#  id                :integer          not null, primary key
-#  name              :string
-#  category          :string
-#  created_at        :datetime
-#  updated_at        :datetime
-#  barcode_count     :integer
-#  organization_id   :integer
-#  canonical_item_id :integer
-#  active            :boolean          default(TRUE)
+#  id              :bigint(8)        not null, primary key
+#  name            :string
+#  category        :string
+#  created_at      :datetime
+#  updated_at      :datetime
+#  barcode_count   :integer
+#  organization_id :integer
+#  active          :boolean          default(TRUE)
+#  partner_key     :string
 #
 
 RSpec.describe Item, type: :model do
@@ -88,6 +88,18 @@ RSpec.describe Item, type: :model do
       it "can be chained to organization to constrain it to just 1 org's items" do
         create(:item, canonical_item: @c1, organization: create(:organization))
         expect(@organization.items.by_canonical_item(@c1).size).to eq(1)
+      end
+    end
+
+    describe "->by_partner_key" do
+      it "filters by partner key" do
+        Item.delete_all
+        c1 = create(:canonical_item, partner_key: "foo")
+        c2 = create(:canonical_item, partner_key: "bar")
+        item1 = create(:item, canonical_item: c1, partner_key: "foo", organization: @organization)
+        item2 = create(:item, canonical_item: c2, partner_key: "bar", organization: @organization)
+        expect(Item.by_partner_key("foo").size).to eq(1)
+        expect(Item.all.size).to be > 1
       end
     end
   end
