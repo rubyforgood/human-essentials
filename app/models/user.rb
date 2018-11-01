@@ -56,4 +56,10 @@ class User < ApplicationRecord
 
     "normal"
   end
+
+  def reinvitable?
+    return true if invitation_status == "invited" && invitation_sent_at <= 7.days.ago
+
+    false
+  end
 end
