@@ -12,14 +12,8 @@ RSpec.feature "Barcode management", type: :feature do
       visit url_prefix + "/barcode_items"
     end
 
-    scenario "only shows the barcodes created within the organization by default" do
+    scenario "only shows the barcodes created within the organization" do
       expect(page).to have_css("table#tbl_barcode_items tbody tr", count: 1)
-    end
-
-    scenario "shows all the barcodes that are viewable when 'show global' is checked" do
-      check "filters_include_global"
-      click_button "Filter"
-      expect(page).to have_css("table#tbl_barcode_items tbody tr", count: 2)
     end
   end
 
@@ -40,7 +34,6 @@ RSpec.feature "Barcode management", type: :feature do
 
       expect(page.find("table")).to have_content "1T Diapers"
 
-      check "filters_include_global"
       click_button "Filter"
 
       expect(page.find("table")).to have_content "1T Diapers"
@@ -66,40 +59,36 @@ RSpec.feature "Barcode management", type: :feature do
     end
   end
 
-  context "With global barcodes" do
-    let(:barcode_traits) { attributes_for(:global_barcode_item) }
-    let(:barcode) { create(:global_barcode_item) }
-
-    scenario "User adds a new barcode to the global pool" do
-      Item.delete_all
-      item = create(:item, name: "1T Diapers")
-      visit url_prefix + "/barcode_items/new"
-      select item.name, from: "Item"
-      fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
-      fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
-      expect(page).to have_xpath("//input[@id='barcode_item_global_true']")
-      choose "barcode_item_global_true"
-      click_button "Save"
-
-      expect(page.find(".alert")).to have_content "added globally"
-
-      expect(page.find("table")).to_not have_content "1T Diapers"
-
-      check "filters_include_global"
-      click_button "Filter"
-
-      expect(page.find("table")).to have_content "1T Diapers"
-    end
-  end
-
   scenario "User can filter the #index by item type" do
     Item.delete_all
-    item = create(:item, name: "1T Diapers")
-    item2 = create(:item, name: "2T Diapers")
+    b = create(:barcode_item, organization: @organization)
+    create(:barcode_item, organization: @organization)
+    visit url_prefix + "/barcode_items"
+    select b.item.name, from: "filters_barcodeable_id"
+    click_button "Filter"
+
+    expect(page).to have_css("table tbody tr", count: 1)
+  end
+
+  scenario "User can filter the #index by canonical item type" do
+    Item.delete_all
+    item = create(:item, name: "Red 1T Diapers", canonical_item: CanonicalItem.first)
+    item2 = create(:item, name: "Blue 1T Diapers", canonical_item: CanonicalItem.first)
     create(:barcode_item, organization: @organization, barcodeable: item)
     create(:barcode_item, organization: @organization, barcodeable: item2)
     visit url_prefix + "/barcode_items"
-    select item.name, from: "filters_barcodeable_id"
+    select CanonicalItem.first.name, from: "filters_by_item_partner_key"
+    click_button "Filter"
+
+    expect(page).to have_css("table tbody tr", count: 2)
+  end
+
+  scenario "User can filter the #index by barcode value" do
+    Item.delete_all
+    b = create(:barcode_item, organization: @organization)
+    create(:barcode_item, organization: @organization)
+    visit url_prefix + "/barcode_items"
+    fill_in "filters_by_value", with: b.value
     click_button "Filter"
 
     expect(page).to have_css("table tbody tr", count: 1)
