@@ -100,44 +100,44 @@
           <p>Other: <%= @agency[:population_served][:enthnic_composition][:other] %></p>
           <br>
           <h3>Zip Codes Served</h3>
-          <p>Zips:</p>
+          <p>Zips: <%= @agency[:population_served][:zip_codes_served] %></p>
           <br>
           <h3>Poverty Information of Those Served</h3>
-          <p>At FPL or Below:</p>
-          <p>Above 1-2 times FPL:</p>
-          <p>Greater 2 times FPL:</p>
-          <p>Poverty Unknown:</p>
+          <p>At FPL or Below: <%= @agency[:population_served][:poverty_information][:at_fpl_or_below] %></p>
+          <p>Above 1-2 times FPL: <%= @agency[:population_served][:poverty_information][:above_1_2_times_fpl] %></p>
+          <p>Greater 2 times FPL: <%= @agency[:population_served][:poverty_information][:greater_2_times_fpl] %></p>
+          <p>Poverty Unknown: <%= @agency[:population_served][:poverty_information][:poverty_unknown] %></p>
           <br>
           <h3>Ages Served</h3>
-          <p>Ages:</p>
+          <p>Ages: <%= @agency[:population_served][:ages_served] %></p>
           <br>
           <h2>Executive Director</h2>
-          <p>Executive Director Name:</p>
-          <p>Executive Director Phone:</p>
-          <p>Executive Director Email:</p>
+          <p>Executive Director Name: <%= @agency[:executive_director][:name] %>/p>
+          <p>Executive Director Phone: <%= @agency[:executive_director][:phone] %>/p>
+          <p>Executive Director Email: <%= @agency[:executive_director][:email] %></p>
           <br>
           <h2>Program Contact Person</h2>
-          <p>Program Contact Name:</p>
-          <p>Program Contact Phone:</p>
-          <p>Program Contact Mobile:</p>
-          <p>Program Contact Email:</p>
+          <p>Program Contact Name: <%= @agency[:contact_person][:name] %>/p>
+          <p>Program Contact Phone: <%= @agency[:contact_person][:phone] %></p>
+          <p>Program Contact Mobile: <%= @agency[:contact_person][:mobile] %></p>
+          <p>Program Contact Email: <%= @agency[:contact_person][:email] %> </p>
           <br>
           <h2>Diaper Pick Up Person</h2>
-          <p>Pick Up Method:</p>
-          <p>Pick Up Name:</p>
-          <p>Pick Up Phone:</p>
-          <p>Pick Up Email:</p>
+          <p>Pick Up Method: <%= @agency[:pick_up_person][:method] %></p>
+          <p>Pick Up Name: <%= @agency[:pick_up_person][:name] %></p>
+          <p>Pick Up Phone: <%= @agency[:pick_up_person][:phone] %></p>
+          <p>Pick Up Email: <%= @agency[:pick_up_person][:email] %></p>
           <br>
           <h2>Agency Distribution Information</h2>
-          <p>Distribution Times:</p>
-          <p>New Client Times:</p>
-          <p>More Docs Required:</p>
+          <p>Distribution Times: <%= @agency[:distribution][:distribution_times] %> </p>
+          <p>New Client Times: <%= @agency[:distribution][:new_client_times] %></p>
+          <p>More Docs Required: <%= @agency[:distribution][:more_docs_required] %></p>
           <br>
           <h2>Sources of Funding</h2>
-          <p>Sources of Funding:</p>
-          <p>Sources of Diapers:</p>
-          <p>Diaper Budget:</p>
-          <p>Diaper Funding Source:</p>
+          <p>Sources of Funding: <%= @agency[:funding][:source] %></p>
+          <p>Sources of Diapers: <%= @agency[:funding][:diapers] %> </p>
+          <p>Diaper Budget:<%= @agency[:funding][:budget] %></p>
+          <p>Diaper Funding Source: <%= @agency[:funding][:diaper_funding_source] %></p>
 
         </div>
         <!-- /.box -->
