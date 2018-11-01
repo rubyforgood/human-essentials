@@ -51,10 +51,14 @@ $(document).ready(function() {
           if (data['src'] != this && data['value'] == this.value) {
               line_item = this.closest('.nested-fields');
               if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
-                  prompt_value = prompt('Enter total quantity of items', line_item_quantity);
-                  if (prompt_value != null) {
-                      line_item_quantity = parseInt(prompt_value);
+                  current_total = parseInt($(line_item).find('input[type=number]').val());
+                  current_boops = (current_total / line_item_quantity) + 1;
+                  total_boops = prompt('Enter total number of packages for this item', current_boops);
+                  if (total_boops != null) {
+                      total_boops = parseInt(total_boops);
+                      line_item_quantity = total_boops * line_item_quantity;
                   } else {
+                      total_boops = 0;
                       line_item_quantity = 0;
                   }
               }
