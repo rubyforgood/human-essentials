@@ -20,6 +20,10 @@
 
 FactoryBot.define do
   factory :organization do
+    transient do
+      skip_items { false }
+    end
+
     sequence(:name) { |n| "Diaper Bank #{n}" } # 037000863427
     sequence(:short_name) { |n| "db_#{n}" } # 037000863427
     sequence(:email) { |n| "email#{n}@example.com" } # 037000863427
@@ -31,8 +35,8 @@ FactoryBot.define do
 
     logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"), "image/jpeg") }
 
-    after(:create) do |instance, _evaluator|
-      Organization.seed_items(instance)
+    after(:create) do |instance, evaluator|
+      Organization.seed_items(instance) unless evaluator.skip_items
     end
   end
 end
