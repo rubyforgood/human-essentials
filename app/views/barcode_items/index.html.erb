@@ -18,19 +18,26 @@
   <div class="box">
     <div class="box-header with-border bg-gray">
       <section id="filters">
-        <%= form_tag(barcode_items_path, method: :get) do |f| %>
+        <%= form_with(url: barcode_items_path, method: :get) do |f| %>
           <div class="row">
             <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
               <%= label_tag "Filter By Item Category" %>
               <%= collection_select(:filters, :barcodeable_id, @items.order('name'), :id, :name, { include_blank: true }, class: "form-control") %>
             </div>
-            <div class="form-group col-lg-8 col-md-8 col-sm-6 col-xs-12" style="padding-top:30px;">
-              <%= label_tag do  %>
-                <%= check_box_tag "filters[include_global]", "true", @global %>
-                Include barcodes that are globally available
-              <% end %>
+          </div><!-- /.row -->
+          <div class="row">
+            <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter By Base Item" %>
+              <%= collection_select(:filters, :by_item_partner_key, @canonical_items.order('name'), :partner_key, :name, { include_blank: true }, class: "form-control") %>
             </div>
           </div><!-- /.row -->
+          <div class="row">
+            <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter By Barcode (Boop it!)" %>
+              <%= text_field(:filters, :by_value, class: "form-control") %>
+            </div>
+          </div><!-- /.row -->
+
           <div class="row">
             <div class="col-xs-12">
               <%= filter_button %>
@@ -54,7 +61,6 @@
             <table id="tbl_barcode_items" class="table table-hover">
               <thead>
                 <tr>
-                  <th>Global</th>
                   <th>Item Type</th>
                   <th>Quantity in the Box</th>
                   <th>Barcode</th>
