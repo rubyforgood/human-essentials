@@ -20,7 +20,7 @@ module DiaperPartnerClient
 
   def self.get(attributes)
     id = attributes[:id]
-    uri = URI(ENV["PARTNER_REGISTER_URL"] + "/api/v1/partners/#{id}")
+    uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{id}")
     req = Net::HTTP::Get.new(uri, "Content-Type" => "application/json")
 
     req["Content-Type"] = "application/json"
