@@ -2,7 +2,7 @@
 #
 # Table name: users
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint(8)        not null, primary key
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  reset_password_token   :string
@@ -30,7 +30,7 @@
 #
 
 class User < ApplicationRecord
-  belongs_to :organization
+  belongs_to :organization, optional: proc { |u| u.super_admin? }
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -39,4 +39,27 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   validates :name, :email, presence: true
+
+  def most_recent_sign_in
+    [current_sign_in_at.to_s, last_sign_in_at.to_s].max
+  end
+
+  def invitation_status
+    return "joined" if most_recent_sign_in.present?
+    return "accepted" if invitation_accepted_at.present?
+    return "invited" if invitation_sent_at.present?
+  end
+
+  def kind
+    return "super" if super_admin?
+    return "admin" if organization_admin?
+
+    "normal"
+  end
+
+  def reinvitable?
+    return true if invitation_status == "invited" && invitation_sent_at <= 7.days.ago
+
+    false
+  end
 end

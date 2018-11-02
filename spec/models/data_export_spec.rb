@@ -131,11 +131,12 @@ RSpec.describe DataExport, type: :model do
 
     context "type is BarcodeItem >" do
       let(:type) { "BarcodeItem" }
-      let!(:item) { create(:barcode_item, global: true, quantity: 10, organization: org) }
+      let!(:global_item) { create(:global_barcode_item, quantity: 10, organization: org) }
+      let!(:item) { create(:barcode_item, quantity: 11, organization: org) }
 
       it "should return a CSV string with barcode item data" do
-        expect(subject.as_csv).to include("true")
-        expect(subject.as_csv).to include("10")
+        expect(subject.as_csv).not_to include("true")
+        expect(subject.as_csv).to include("11")
       end
     end
   end

@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  short_name      :string
 #  email           :string
@@ -16,6 +16,7 @@
 #  zipcode         :string
 #  latitude        :float
 #  longitude       :float
+#
 
 class Organization < ApplicationRecord
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "diaperbase-logo-full.png")
@@ -92,27 +93,25 @@ class Organization < ApplicationRecord
 
   def scale_values
     {
-      pu_2t_3t:   items.find_by(name: "Kids Pull-Ups (2T-3T)").id,
-      pu_3t_4t:   items.find_by(name: "Kids Pull-Ups (3T-4T)").id,
-      pu_4t_5t:   items.find_by(name: "Kids Pull-Ups (4T-5T)").id,
-      k_preemie:  items.find_by(name: "Kids (Preemie)").id,
-      k_newborm:  items.find_by(name: "Kids (Newborn)").id,
-      k_size1:    items.find_by(name: "Kids (Size 1)").id,
-      k_size2:    items.find_by(name: "Kids (Size 2)").id,
-      k_size3:    items.find_by(name: "Kids (Size 3)").id,
-      k_size4:    items.find_by(name: "Kids (Size 4)").id,
-      k_size5:    items.find_by(name: "Kids (Size 5)").id,
-      k_size6:    items.find_by(name: "Kids (Size 6)").id
+      pu_2t_3t: items.find_by(name: "Kids Pull-Ups (2T-3T)").id,
+      pu_3t_4t: items.find_by(name: "Kids Pull-Ups (3T-4T)").id,
+      pu_4t_5t: items.find_by(name: "Kids Pull-Ups (4T-5T)").id,
+      k_preemie: items.find_by(name: "Kids (Preemie)").id,
+      k_newborm: items.find_by(name: "Kids (Newborn)").id,
+      k_size1: items.find_by(name: "Kids (Size 1)").id,
+      k_size2: items.find_by(name: "Kids (Size 2)").id,
+      k_size3: items.find_by(name: "Kids (Size 3)").id,
+      k_size4: items.find_by(name: "Kids (Size 4)").id,
+      k_size5: items.find_by(name: "Kids (Size 5)").id,
+      k_size6: items.find_by(name: "Kids (Size 6)").id
     }
   end
 
   def self.seed_items(org)
     Rails.logger.info "Seeding #{org.name}'s items..."
-    canonical_items = CanonicalItem.pluck(:id, :name, :category).collect { |c| { canonical_item_id: c[0], name: c[1], category: c[2] } }
     org_id = org.id
-    Item.create(canonical_items) do |i|
-      i.organization_id = org_id
-    end
+    canonical_items = CanonicalItem.pluck(:partner_key, :name, :category).collect { |c| { partner_key: c[0], name: c[1], category: c[2], organization_id: org_id } }
+    Item.create(canonical_items)
     org.reload
   end
 

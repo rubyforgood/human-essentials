@@ -4,7 +4,8 @@
     Users
   </h1>
   <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
+    <li>
+      <%= link_to(admin_dashboard_path) do %>
         <i class="fa fa-dashboard"></i> Home
       <% end %>
     </li>
@@ -37,7 +38,7 @@
               <tbody>
               <% @users.each do |user| %>
                 <tr>
-                <td><%= user.organization.name %></td>
+                <td><%= user.organization&.name %></td>
                 <td><%= user.name %></td>
                 <td><%= user.email %></td>
                 <td class="text-right">

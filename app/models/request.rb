@@ -10,6 +10,7 @@
 #  comments        :text
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  distribution_id :integer
 #
 
 class Request < ApplicationRecord
@@ -22,8 +23,8 @@ class Request < ApplicationRecord
   STATUSES = %w[Active Fulfilled].freeze
 
   def items_hash
-    @items_hash ||= request_items.collect do |key, _quantity|
-      [key, CanonicalItem.find_by(partner_key: key).items.first]
+    @items_hash ||= request_items.collect do |key, _|
+      [key, Item.order("created_at ASC").find_by(partner_key: key)]
     end.to_h
   end
 end
