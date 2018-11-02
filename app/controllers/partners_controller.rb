@@ -37,9 +37,12 @@ class PartnersController < ApplicationController
 
     # TODO: move this code to new service,
     @diaper_partner = DiaperPartnerClient.get(id: params[:id])
-    @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true)
-
-    @agency = @diaper_partner[:agency]
+    @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true) if @diaper_partner
+    @agency = if @diaper_partner
+                @diaper_partner[:agency]
+              else
+                autovivifying_hash
+              end
   end
 
   def edit
@@ -62,6 +65,10 @@ class PartnersController < ApplicationController
   end
 
   private
+
+  def autovivifying_hash
+    Hash.new { |ht, k| ht[k] = autovivifying_hash }
+  end
 
   def partner_params
     params.require(:partner).permit(:name, :email)
