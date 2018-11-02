@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     resource :organization, path: :manage, only: %i(edit update) do
       collection do
         post :invite_user
+        post :resend_user_invitation
       end
     end
 

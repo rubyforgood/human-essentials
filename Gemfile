@@ -7,7 +7,7 @@ end
 
 ruby "2.5.3"
 
-gem "api-auth", "~> 2.2"
+gem "api-auth", "~> 2.3"
 gem "bootstrap-sass"
 gem "bugsnag"
 gem "chartkick"
@@ -50,7 +50,7 @@ group :development, :test do
   gem "byebug", "~> 10.0", platform: :mri
   gem "guard-rspec"
   gem "pry-rails"
-  gem "rspec-rails", "~> 3.5"
+  gem "rspec-rails", "~> 3.8"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "timecop"
@@ -87,3 +87,4 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
+

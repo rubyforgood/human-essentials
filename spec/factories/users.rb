@@ -2,7 +2,7 @@
 #
 # Table name: users
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint(8)        not null, primary key
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  reset_password_token   :string
@@ -45,6 +45,12 @@ FactoryBot.define do
     factory :super_admin do
       name { "Administrative User" }
       super_admin { true }
+    end
+
+    factory :super_admin_no_org do
+      name { "Administrative User No Org" }
+      super_admin { true }
+      organization_id { nil }
     end
   end
 end

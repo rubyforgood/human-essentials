@@ -1,19 +1,14 @@
 class BarcodeItemsController < ApplicationController
   def index
-    @global = filter_params[:include_global] || false
     @items = Item.gather_items(current_organization, @global)
-    @barcode_items = if @global
-                       current_organization.barcode_items.include_global(false) + BarcodeItem.where(global: true)
-                     else
-                       current_organization.barcode_items.include_global(false).filter(filter_params)
-                     end
+    @canonical_items = CanonicalItem.all
+    @barcode_items = current_organization.barcode_items.include_global(false).filter(filter_params)
   end
 
   def create
     @barcode_item = current_organization.barcode_items.new(barcode_item_params)
     if @barcode_item.save
-      msg = "New barcode added"
-      msg += barcode_item_params[:global] == "true" ? " globally!" : " to your private set!"
+      msg = "New barcode added to your private set!"
       respond_to do |format|
         format.json { render json: @barcode_item.to_json }
         format.js
@@ -40,7 +35,7 @@ class BarcodeItemsController < ApplicationController
   end
 
   def find
-    @barcode_item = current_organization.barcode_items.includes(:barcodeable).find_by!(value: barcode_item_params[:value])
+    @barcode_item = current_organization.barcode_items.includes(:barcodeable).include_global(true).find_by!(value: barcode_item_params[:value])
     respond_to do |format|
       format.json { render json: @barcode_item.to_json }
     end
@@ -58,14 +53,9 @@ class BarcodeItemsController < ApplicationController
 
   def destroy
     begin
-      # If the user is a superadmin, they can delete any Barcode
-      if current_user.superadmin?
-        barcode = BarcodeItem.find(params[:id])
-      # Otherwise it has to be non-global in their organization
-      else
-        barcode = current_organization.barcode_items.find(params[:id])
-        raise if barcode.nil? || barcode.global?
-      end
+      barcode = current_organization.barcode_items.find(params[:id])
+      raise if barcode.nil? || barcode.global?
+
       barcode.destroy
     rescue Exception => e
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
@@ -76,12 +66,12 @@ class BarcodeItemsController < ApplicationController
   private
 
   def barcode_item_params
-    params.require(:barcode_item).permit(:value, :barcodeable_id, :quantity, :global).merge(organization_id: current_organization.id)
+    params.require(:barcode_item).permit(:value, :barcodeable_id, :quantity).merge(organization_id: current_organization.id)
   end
 
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :include_global, :canonical_item_id)
+    params.require(:filters).slice(:barcodeable_id, :by_item_partner_key, :by_value)
   end
 end
