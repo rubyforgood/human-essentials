@@ -38,8 +38,6 @@ class PartnersController < ApplicationController
     # TODO: move this code to new service,
     @diaper_partner = DiaperPartnerClient.get(id: params[:id])
     @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true)
-
-    @agency = @diaper_partner[:agency]
   end
 
   def edit
