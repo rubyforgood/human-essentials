@@ -1,4 +1,3 @@
-<% resource = User.new %>
 <h2><%= t 'devise.invitations.edit.header' %></h2>
 <p>Welcome to Diaperbase! Before we get started, please set a new password for yourself.</p>
 <p>We recommend a password that is:</p>
@@ -9,7 +8,7 @@
 </ul>
 <p>An easy one would be to pick a line from a poem or a favorite quote!</p>
 <%= simple_form_for resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put } do |f| %>
-
+  <%= devise_error_messages! %>
   <%= f.hidden_field :invitation_token %>
 
   <%= f.input :password %>
