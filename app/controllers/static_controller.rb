@@ -16,7 +16,7 @@ class StaticController < ApplicationController
 
   def register; end
 
-  def pages
+  def page
     # This allows for a flexible addition of static content
     # Anything under the url /pages/:name will render the file /app/views/static/[name].html.erb
     # Example: /pages/contact renders /app/views/static/contact.html.erb
