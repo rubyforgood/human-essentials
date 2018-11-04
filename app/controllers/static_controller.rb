@@ -5,12 +5,15 @@ class StaticController < ApplicationController
   layout false
 
   def index
-    redirect_to dashboard_url(current_user.organization) if current_user
+    if current_user
+      redirect_to admin_dashboard_url && return if current_user.super_admin?
+      redirect_to dashboard_url(current_user.organization)
+    end
   end
 
   def register; end
 
-  def page
+  def pages
     # This allows for a flexible addition of static content
     # Anything under the url /pages/:name will render the file /app/views/static/[name].html.erb
     # Example: /pages/contact renders /app/views/static/contact.html.erb
