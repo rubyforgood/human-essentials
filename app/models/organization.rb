@@ -48,6 +48,8 @@ class Organization < ApplicationRecord
 
   has_one_attached :logo
 
+  accepts_nested_attributes_for :users
+
   geocoded_by :address
   after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
 

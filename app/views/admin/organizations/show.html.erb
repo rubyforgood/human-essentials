@@ -23,20 +23,23 @@
     <h3 class="box-title"><%= @organization.name %></h3>
   </div>
   <div class="box-body">
-		<div class="col-md-6">
-		  <h4>Contact Info</h4>
-			<p><%= fa_icon "envelope" %> <%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
-			<address><%= fa_icon "map-marker" %> <%= @organization.address %></address>
+    <div class="col-md-4">
+      <h4>Contact Info</h4>
+      <p><%= fa_icon "envelope" %> <%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
+      <address><%= fa_icon "map-marker" %> <%= @organization.address %></address>
     </div>
-		<div class="col-md-6">
-			<h4>Users</h4>
-			  <ul class="list-group">
-					<li class="list-group-item">
-			<%= @organization.display_users.split(",").join("</li><li class=\"list-group-item\">").html_safe %>
-			    </li>
-				</ul>
+    <div class="col-md-8">
+      <h4>Users</h4>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Role</th><th>Last Sign in</th><th>Status</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "/users/organization_user", collection: @organization.users, as: :user %>
+        </tbody>
+      </table>
     </div>
-	</div>
-
 </div>
 </section>
