@@ -50,7 +50,7 @@ class Admin::BarcodeItemsController < AdminController
   private
 
   def preload_canonical_items
-    @canonical_items ||= CanonicalItem.all
+    @canonical_items ||= CanonicalItem.order(:name).all
   end
 
   def barcode_item_params
