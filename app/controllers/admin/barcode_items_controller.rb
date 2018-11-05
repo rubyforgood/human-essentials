@@ -1,5 +1,5 @@
 class Admin::BarcodeItemsController < AdminController
-  before_action :preload_canonical_items, only: %i(edit index new)
+  before_action :load_canonical_items, only: %i(edit index new)
   before_action :load_barcode_item, only: %i(edit update show destroy)
 
   def edit; end
@@ -26,7 +26,7 @@ class Admin::BarcodeItemsController < AdminController
     if @barcode_item.save
       redirect_to admin_barcode_items_path, notice: "Barcode Item added!"
     else
-      preload_canonical_items
+      load_canonical_items
       flash[:error] = "Failed to create Barcode Item."
       render :new
     end
@@ -44,8 +44,8 @@ class Admin::BarcodeItemsController < AdminController
 
   private
 
-  def preloadcanonical_items
-    CanonicalItem.order(:name).all
+  def load_canonical_items
+    @canonical_items = CanonicalItem.order(:name).all
   end
 
   def barcode_item_params
