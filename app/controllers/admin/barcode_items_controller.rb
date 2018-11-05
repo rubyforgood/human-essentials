@@ -1,12 +1,11 @@
 class Admin::BarcodeItemsController < AdminController
   before_action :preload_canonical_items, only: [:edit, :index, :new]
+  before_action :load_barcode_item, only: [:edit, :update, :show, :destroy]
 
   def edit
-    @barcode_item = BarcodeItem.find(params[:id])
   end
 
   def update
-    @barcode_item = BarcodeItem.find(params[:id])
     if @barcode_item.update(barcode_item_params)
       redirect_to admin_barcode_items_path, notice: "Updated Barcode Item!"
     else
@@ -16,7 +15,7 @@ class Admin::BarcodeItemsController < AdminController
   end
 
   def index
-    @barcode_items = BarcodeItem.where(global: true)
+    @barcode_items = BarcodeItem.global
   end
 
   def new
@@ -35,11 +34,9 @@ class Admin::BarcodeItemsController < AdminController
   end
 
   def show
-    @barcode_item = BarcodeItem.includes(:barcodeable).find(params[:id])
   end
 
   def destroy
-    @barcode_item = BarcodeItem.find(params[:id])
     if @barcode_item.destroy
       redirect_to admin_barcode_items_path, notice: "Barcode Item deleted!"
     else
@@ -60,5 +57,9 @@ class Admin::BarcodeItemsController < AdminController
   def filter_params
     return {} unless params.key?(:filters)
     params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :include_global, :canonical_item_id)
+  end
+
+  def load_barcode_item
+    @barcode_item = BarcodeItem.global.find(params[:id])
   end
 end
