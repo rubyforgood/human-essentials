@@ -39,7 +39,15 @@ New Organization
   <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
     Only jpeg/png format is supported.
   </p>
-    <%= submit_button %>
+  <h1>Add a user</h1>
+  <%= f.simple_fields_for :users do |user| %>
+    <%= render 'admin/users/user_form_fields', f: user %>
+    <%= user.input :organization_admin, label: "Organization Admin?", wrapper: :vertical_input_group do %>
+      <%= user.check_box :organization_admin %>
+    <% end %>
+  <% end %>
+
+  <%= submit_button %>
 </div>
 
 </div>

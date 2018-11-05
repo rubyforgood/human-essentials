@@ -33,6 +33,8 @@ class Distribution < ApplicationRecord
 
   include IssuedAt
 
+  before_save :combine_distribution
+
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
   scope :for_csv_export, ->(organization) {
@@ -86,6 +88,10 @@ class Distribution < ApplicationRecord
 
   def self.csv_export_headers
     ["Partner", "Date of Distribution", "Source Inventory", "Total items"]
+  end
+
+  def combine_distribution
+    line_items.combine!
   end
 
   def csv_export_attributes

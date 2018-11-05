@@ -41,8 +41,7 @@
         </table>
 
       <%= modal_button_to("#addUserModal", { text: "Invite User to this Organization" }) if can_administrate? %>
-
-  </div>
+    </div>
   </div>
   <div class="box-footer">
     <%= edit_button_to(edit_organization_path, { size: "lg" }) if can_administrate? %>
