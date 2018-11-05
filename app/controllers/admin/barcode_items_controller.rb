@@ -1,9 +1,8 @@
 class Admin::BarcodeItemsController < AdminController
-  before_action :preload_canonical_items, only: [:edit, :index, :new]
-  before_action :load_barcode_item, only: [:edit, :update, :show, :destroy]
+  before_action :preload_canonical_items, only: %i(edit index new)
+  before_action :load_barcode_item, only: %i(edit update show destroy)
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @barcode_item.update(barcode_item_params)
@@ -33,8 +32,7 @@ class Admin::BarcodeItemsController < AdminController
     end
   end
 
-  def show
-  end
+  def show; end
 
   def destroy
     if @barcode_item.destroy
@@ -46,8 +44,8 @@ class Admin::BarcodeItemsController < AdminController
 
   private
 
-  def preload_canonical_items
-    @canonical_items ||= CanonicalItem.order(:name).all
+  def preloadcanonical_items
+    CanonicalItem.order(:name).all
   end
 
   def barcode_item_params
@@ -56,6 +54,7 @@ class Admin::BarcodeItemsController < AdminController
 
   def filter_params
     return {} unless params.key?(:filters)
+
     params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :include_global, :canonical_item_id)
   end
 
