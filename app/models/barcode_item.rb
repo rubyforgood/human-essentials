@@ -53,7 +53,7 @@ class BarcodeItem < ApplicationRecord
     where(organization: organization)
       .includes(:barcodeable)
   }
-  scope :global, -> { where(global: true)}
+  scope :global, -> { where(global: true) }
 
   alias_attribute :item, :barcodeable
   alias_attribute :canonical_item, :barcodeable
