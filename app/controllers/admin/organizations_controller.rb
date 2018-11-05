@@ -19,12 +19,14 @@ class Admin::OrganizationsController < AdminController
 
   def new
     @organization = Organization.new
+    @organization.users.build(organization_admin: true)
   end
 
   def create
     @organization = Organization.create(organization_params)
     if @organization.save
       Organization.seed_items(@organization)
+      @organization.users.try(:last).try(:invite!)
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
@@ -48,6 +50,8 @@ class Admin::OrganizationsController < AdminController
   private
 
   def organization_params
-    params.require(:organization).permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location)
+    params.require(:organization)
+          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location,
+                  users_attributes: %i(name email password password_confirmation organization_admin))
   end
 end
