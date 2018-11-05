@@ -44,7 +44,7 @@ class Admin::BarcodeItemsController < AdminController
 
   private
 
-  def preloadcanonical_items
+  def preload_canonical_items
     CanonicalItem.order(:name).all
   end
 
