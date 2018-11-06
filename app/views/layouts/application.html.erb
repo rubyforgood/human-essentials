@@ -7,7 +7,7 @@
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <%= csrf_meta_tags %>
   <%= javascript_include_tag 'application' %>
-  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= stylesheet_link_tag 'application', media: 'all' %>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -27,7 +27,7 @@
     <!-- mini logo for sidebar mini 50x50 pixels -->
     <span class="logo-mini"><img src="/img/diaper-base-logo-icon.svg" alt="DiaperBase Logo (icon)" title="DiaperBase">
     </span>
-      <!-- logo for regular state and mobile devices -->
+    <!-- logo for regular state and mobile devices -->
     <span class="logo-lg"><%= image_tag "/img/diaper-base-logo-words-white.svg", alt: "DiaperBase Logo", id: "logo" %></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
@@ -40,24 +40,24 @@
         <span class="icon-bar"></span>
       </a>
 
-    <% if user_signed_in? && current_organization.present? %>
-      <% if admin_namespace? %>
-        <%= render partial: "layouts/lte_admin_navbar" %>
-      <% else %>
-        <%= render partial: "layouts/lte_navbar" %>
+      <% if user_signed_in? && current_organization.present? %>
+        <% if admin_namespace? %>
+          <%= render partial: "layouts/lte_admin_navbar" %>
+        <% else %>
+          <%= render partial: "layouts/lte_navbar" %>
+        <% end %>
       <% end %>
-    <% end %>
     </nav>
   </header>
 
   <!-- =============================================== -->
   <% # If there's no organization set, most of these routes won't work. %>
-  <% if user_signed_in? && current_organization.present? %>
-  <% if admin_namespace? %>
-    <%= render partial: "layouts/lte_admin_sidebar" %>
-  <% else %>
-    <%= render partial: "layouts/lte_sidebar" %>
-  <% end %>
+  <% if user_signed_in? %>
+    <% if admin_namespace? %>
+      <%= render partial: "layouts/lte_admin_sidebar" %>
+    <% else %>
+      <%= render partial: "layouts/lte_sidebar" %>
+    <% end %>
   <% end %>
 
 
@@ -69,8 +69,8 @@
     <div id="flash-message-container">
       <% flash.each do |key, value| %>
         <div class="<%= flash_class(key) %> alert-dismissible">
-              <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-              <%= value %>
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+          <%= value %>
         </div>
       <% end %>
     </div>
@@ -86,19 +86,19 @@
   </footer>
 
 
-      </div>
-    </div>
-  </aside>
-  <!-- /.control-sidebar -->
-  <!-- Add the sidebar's background. This div must be placed
-       immediately after the control sidebar -->
-  <div class="control-sidebar-bg"></div>
+</div>
+</div>
+</aside>
+<!-- /.control-sidebar -->
+<!-- Add the sidebar's background. This div must be placed
+     immediately after the control sidebar -->
+<div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
 <script>
-  $(document).ready(function () {
-    $('.sidebar-menu').tree()
-  })
+    $(document).ready(function () {
+        $('.sidebar-menu').tree()
+    })
 </script>
 </body>
 <div class="modal fade" id="modal_new_diaper_drive" role="dialog"></div>
