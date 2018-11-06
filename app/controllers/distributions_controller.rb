@@ -40,7 +40,7 @@ class DistributionsController < ApplicationController
 
     if @distribution.valid?
       if params[:commit] == "Preview Distribution"
-        @distribution.combine_duplicates
+        @distribution.line_items.combine!
         @line_items = @distribution.line_items
         render :show
       else

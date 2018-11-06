@@ -109,6 +109,23 @@ RSpec.feature "Distributions", type: :feature do
         expect(page).to have_no_content 999_999
         expect(Distribution.first.line_items.count).to eq 1
       end
+
+      scenario "User creates duplicate line items" do
+        diaper_type = find('#distribution_line_items_attributes_0_item_id').all('option')[3].text
+        first_item_name_field = 'distribution_line_items_attributes_0_item_id'
+        select(diaper_type, from: first_item_name_field)
+        find_all(".numeric")[0].set 1
+
+        click_on "Add another item"
+        second_item_name_field = 'distribution_line_items_attributes_1_item_id'
+        select(diaper_type, from: second_item_name_field)
+        find_all(".numeric")[1].set 3
+        first(".btn", text: "Save").click
+
+        expect(page).to have_css "td"
+        item_row = find("td", text: diaper_type).find(:xpath, '..')
+        expect(item_row).to have_content("4 " + diaper_type)
+      end
     end
   end
 
