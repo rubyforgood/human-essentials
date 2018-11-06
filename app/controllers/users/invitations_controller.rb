@@ -1,3 +1,3 @@
 class Users::InvitationsController < Devise::SessionsController
-  layout "login"
+  layout "devise"
 end
