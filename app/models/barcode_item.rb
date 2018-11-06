@@ -17,24 +17,6 @@ class BarcodeItem < ApplicationRecord
   belongs_to :organization, optional: true
   belongs_to :barcodeable, polymorphic: true, dependent: :destroy, counter_cache: :barcode_count
 
-  # These two methods are used by the scopes `by_item_partner_key` and `by_canonical_item_partner_key` #
-  # rubocop:disable Rails/InverseOf
-  belongs_to :item, -> { where(barcode_items: { barcodeable_type: 'Item' }) }, foreign_key: 'barcodeable_id'
-  belongs_to :canonical_item, -> { where(barcode_items: { barcodeable_type: 'CanonicalItem' }) }, foreign_key: 'barcodeable_id'
-  # rubocop:enable Rails/InverseOf
-  def item
-    return unless barcodeable_type == "Item"
-
-    super
-  end
-
-  def canonical_item
-    return unless barcodeable_type == "CanonicalItem"
-
-    super
-  end
-  #######################################################################################################
-
   validates :organization, presence: true, unless: proc { |b| b.global? }
   validates :value, presence: true
   validate  :unique_barcode_value
@@ -45,8 +27,9 @@ class BarcodeItem < ApplicationRecord
   default_scope { order("global ASC, created_at ASC") }
 
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }
-  scope :by_item_partner_key, ->(partner_key) { joins(:item).where(items: { partner_key: partner_key }) }
-  scope :by_canonical_item_partner_key, ->(partner_key) { joins(:canonical_item).where(canonical_items: { partner_key: partner_key }) }
+  # Because it's a polymorphic association, we have to do this join manually.
+  scope :by_item_partner_key, ->(partner_key) { joins("INNER JOIN items ON items.id = barcode_items.barcodeable_id").where(barcodeable_type: "Item", items: { partner_key: partner_key }) }
+  scope :by_canonical_item_partner_key, ->(partner_key) { joins("INNER JOIN canonical_items ON canonical_items.id = barcode_items.barcodeable_id").where(barcodeable_type: "CanonicalItem", canonical_items: { partner_key: partner_key }) }
   scope :by_value,       ->(value) { where(value: value) }
   scope :include_global, ->(global) { where(global: [false, global]) }
   scope :for_csv_export, ->(organization) {
