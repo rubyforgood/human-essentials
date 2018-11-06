@@ -27,7 +27,7 @@
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
 set :stage, :staging
-set :rails_env, :staging
+set :rails_env, :production
 
 role :app, "deploy@45.79.146.211"
 
