@@ -66,4 +66,9 @@ module ApplicationHelper
 
     ""
   end
+
+  # h/t devise source code for devise_controller?
+  def admin_namespace?
+    request.path_info.include?('admin')
+  end
 end
