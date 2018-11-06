@@ -97,7 +97,7 @@ GEM
       capistrano (~> 3.7)
       capistrano-bundler
       puma (~> 3.4)
-    capybara (3.10.0)
+    capybara (3.10.1)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
@@ -176,7 +176,7 @@ GEM
     geocoder (1.5.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
-    groupdate (4.0.2)
+    groupdate (4.1.0)
       activesupport (>= 4.2)
     guard (2.14.2)
       formatador (>= 0.2.4)
@@ -473,7 +473,7 @@ DEPENDENCIES
   font-ionicons-rails
   fullcalendar-rails
   geocoder
-  groupdate (~> 4.0)
+  groupdate (~> 4.1)
   guard-rspec
   jbuilder
   jquery-rails
