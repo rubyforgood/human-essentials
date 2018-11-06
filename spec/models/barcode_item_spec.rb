@@ -61,7 +61,7 @@ RSpec.describe BarcodeItem, type: :model do
         expect(results.length).to eq(1)
         expect(results.first).to eq(global_barcode_item)
       end
-      it "->by_partner_key returns barcodes that match the partner key" do
+      it "#by_canonical_item_partner_key returns barcodes that match the partner key" do
         c1 = create(:canonical_item, partner_key: "foo")
         c2 = create(:canonical_item, partner_key: "bar")
         b1 = create(:global_barcode_item, barcodeable: c1)
@@ -133,7 +133,7 @@ RSpec.describe BarcodeItem, type: :model do
         expect(results.length).to eq(1)
         expect(results.first).to eq(barcode_item)
       end
-      it "->by_partner_key returns barcodes that match the partner key" do
+      it "#by_item_partner_key returns barcodes that match the partner key" do
         i1 = create(:item, canonical_item: CanonicalItem.first)
         i2 = create(:item, canonical_item: CanonicalItem.last)
         b1 = create(:barcode_item, barcodeable: i1)
