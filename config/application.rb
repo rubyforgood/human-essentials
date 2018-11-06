@@ -20,8 +20,8 @@ Bundler.require(*Rails.groups)
 module Diaper
   class Application < Rails::Application
     config.to_prepare do
-      Devise::SessionsController.layout "login"
-      Devise::PasswordsController.layout "login"
+      Devise::SessionsController.layout "devise"
+      Devise::PasswordsController.layout "devise"
       Devise::RegistrationsController.layout "application"
     end
     # Settings in config/environments/* take precedence over those specified here.
