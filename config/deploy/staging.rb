@@ -26,7 +26,16 @@
 # For available Capistrano configuration variables see the documentation page.
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
+set :stage, :staging
+set :rails_env, :production
 
+role :app, "deploy@45.79.146.211"
+
+server "45.79.146.211", roles: %w{web app db}, primary: true,
+                        ssh_options: {
+                          forward_agent: true,
+                          keys: ["~/.ssh/id_rsa"]
+                        }
 # Custom SSH Options
 # ==================
 # You may pass any option but keep in mind that net/ssh understands a

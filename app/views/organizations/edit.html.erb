@@ -33,7 +33,7 @@
     <% end %>
     <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-desktop"></i></span>
-      <%= f.input_field :short_name, class: "form-control" %>
+      <%= f.input_field :short_name, disabled: true, class: "form-control" %>
     <% end %>
     <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-link"></i></span>
