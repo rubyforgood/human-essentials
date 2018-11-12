@@ -24,7 +24,10 @@ class Admin::BarcodeItemsController < AdminController
   def create
     @barcode_item = BarcodeItem.create(barcode_item_params.merge(global: true, barcodeable_type: "CanonicalItem"))
     if @barcode_item.save
-      redirect_to admin_barcode_items_path, notice: "Barcode Item added!"
+      respond_to do |format|
+        format.html { redirect_to admin_barcode_items_path, notice: "Barcode Item added!" }
+        format.js
+      end
     else
       load_canonical_items
       flash[:error] = "Failed to create Barcode Item."
@@ -59,6 +62,6 @@ class Admin::BarcodeItemsController < AdminController
   end
 
   def load_barcode_item
-    @barcode_item = BarcodeItem.global.find(params[:id])
+    @barcode_item = BarcodeItem.include_global(true).find(params[:id])
   end
 end
