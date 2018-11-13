@@ -334,7 +334,7 @@ RSpec.feature "Donations", type: :feature, js: true do
           expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @item.name)).to eq(true)
           qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
 
-          expect(qty).to eq(@global_barcode.quantity.to_s) 
+          expect(qty).to eq(@global_barcode.quantity.to_s)
         end
       end
     end
