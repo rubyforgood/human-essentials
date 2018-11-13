@@ -127,7 +127,7 @@
         <!-- /.box-footer -->
       </div>
       <!--/.box -->
-    </div>            
+    </div>
   </div>
   <div class="row">
     <div class="box box-info">
@@ -155,8 +155,8 @@
             <tbody>
             <% @top_10_other.each do |other| %>
             <tr>
-              <td><%= other.name %></td>
-              <td><%= other.count_name %></td>
+              <td><%= other[0] %></td>
+              <td><%= other[1] %></td>
               <td><span class="label label-success">Shipped</span></td>
               <td></td>
             </tr>
