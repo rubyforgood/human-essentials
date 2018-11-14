@@ -202,7 +202,7 @@
                 <td><%= user.name %></td>
                 <td><%= user.email %></td>
                 <td><%= user.organization&.name %></td>
-                <td><%= user.last_sign_in_at %></td>
+                <td><%= time_ago_in_words user.last_request_at %></td>
               </tr>
             <% end %>
             </tbody>
