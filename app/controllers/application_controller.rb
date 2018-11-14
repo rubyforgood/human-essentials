@@ -39,6 +39,7 @@ class ApplicationController < ActionController::Base
   def log_active_user
     if current_user && should_update_last_request_at?
       # rubocop:disable Rails/SkipsModelValidations
+      # we don't want the user record to validate or run callbacks when we're tracking activity
       current_user.update_columns(last_request_at: Time.now.utc)
       # rubocop:enable Rails/SkipsModelValidations
     end
