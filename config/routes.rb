@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   mount flipper_app, at: "/flipper"
 
   # This is where a superadmin CRUDs all the things
+  get :admin, to: "admin#dashboard"
   namespace :admin do
     get :dashboard
     resources :canonical_items

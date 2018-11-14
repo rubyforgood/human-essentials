@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user!
   before_action :authorize_user
+  before_action :log_active_user
   before_action :swaddled
   before_action :configure_permitted_parameters, if: :devise_controller?
 
@@ -33,6 +34,23 @@ class ApplicationController < ActionController::Base
   def authorize_user
     # params[:controller].include?("admin") ||
     verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
+  end
+
+  def log_active_user
+    if current_user && should_update_last_request_at?
+      # rubocop:disable Rails/SkipsModelValidations
+      # we don't want the user record to validate or run callbacks when we're tracking activity
+      current_user.update_columns(last_request_at: Time.now.utc)
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+  end
+
+  def should_update_last_request_at?
+    current_user.last_request_at.nil? || last_request_logged_more_than_10_minutes_ago?
+  end
+
+  def last_request_logged_more_than_10_minutes_ago?
+    current_user.last_request_at.utc < 10.minutes.ago.utc
   end
 
   def not_found!

@@ -35,9 +35,21 @@ class BarcodeItemsController < ApplicationController
   end
 
   def find
-    @barcode_item = current_organization.barcode_items.includes(:barcodeable).include_global(true).find_by!(value: barcode_item_params[:value])
+    # First, we do a naive lookup
+    @barcode_item = BarcodeItem.includes(:barcodeable).organization_barcodes_with_globals(@organization).find_by!(value: barcode_item_params[:value])
+    # Depending on whether or not the result is solely a global barcode, we may need additional queries
+    # Global barcodes don't explicitly map to organization items, so we can do a lookup to clarify that
+    if @barcode_item.global?
+      # So in this case, we need to do an item lookup. #593 clarifies that we should fall through to the
+      # *oldest* item that the organization has that matches this canonical item type.
+      canonical_item = @barcode_item.barcodeable
+      @item = current_organization.items.by_canonical_item(canonical_item).order("created_at ASC").first
+    else
+      # It was a local barcode_item, which maps directly to a known org item. We're set!
+      @item = @barcode_item.item
+    end
     respond_to do |format|
-      format.json { render json: @barcode_item.to_json }
+      format.json { render json: { barcode_item: @barcode_item, item: @item }.to_json }
     end
   end
 

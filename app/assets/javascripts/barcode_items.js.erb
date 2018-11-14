@@ -29,6 +29,11 @@ $(document).ready(function() {
          // Preserve this for reference of where we came from.
          data['src'] = src;
          data['value'] = value;
+         // We're setting this here because if it's looked up as a global, we need to find the first local
+         // item that matches. 
+         data['item_id'] = data['item']['id'];
+         data['quantity'] = data['barcode_item']['quantity'];
+         console.log(data);
          // Pass it all along to the .done() method
          return data;
       })
@@ -69,7 +74,7 @@ $(document).ready(function() {
           }
       })
       $(line_item).find('input[type=number]').val(line_item_quantity);
-    $(line_item).find('[value="' + data['barcodeable_id'] + '"]').attr("selected", true);
+      $(line_item).find('[value="' + data['item_id'] + '"]').attr("selected", true);
 
       if (data['src'] != $(line_item).closest('.__barcode_item_lookup').context) {
           $(data['src']).closest('.nested-fields').remove();
