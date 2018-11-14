@@ -30,12 +30,14 @@ class BarcodeItem < ApplicationRecord
   # Because it's a polymorphic association, we have to do this join manually.
   scope :by_item_partner_key, ->(partner_key) { joins("INNER JOIN items ON items.id = barcode_items.barcodeable_id").where(barcodeable_type: "Item", items: { partner_key: partner_key }) }
   scope :by_canonical_item_partner_key, ->(partner_key) { joins("INNER JOIN canonical_items ON canonical_items.id = barcode_items.barcodeable_id").where(barcodeable_type: "CanonicalItem", canonical_items: { partner_key: partner_key }) }
-  scope :by_value,       ->(value) { where(value: value) }
+  scope :by_value, ->(value) { where(value: value) }
+  scope :organization_barcodes_with_globals, ->(organization) { where(global: true).or(where(organization_id: organization, global: false)) }
   scope :include_global, ->(global) { where(global: [false, global]) }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
       .includes(:barcodeable)
   }
+  scope :global, -> { where(global: true) }
 
   alias_attribute :item, :barcodeable
   alias_attribute :canonical_item, :barcodeable

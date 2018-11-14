@@ -312,6 +312,31 @@ RSpec.feature "Donations", type: :feature, js: true do
         end
         # form updates
       end
+
+      context "when the barcode is a global barcode" do
+        before do
+          canonical_item = CanonicalItem.first
+          # Create a global barcode item first
+          @global_barcode = create(:global_barcode_item, barcodeable: canonical_item)
+          # make sure there are no other items associated with that canonical_item in this org
+          Item.where(partner_key: canonical_item.partner_key).delete_all
+          # Now create an item that's associated with that canonical item,
+          @item = create(:item, canonical_item: canonical_item, organization: @organization, created_at: 1.week.ago)
+        end
+
+        scenario "the barcode lookup for the global barcode will add the oldest item it can find for that" do
+          visit @url_prefix + "/donations/new"
+          within "#donation_line_items" do
+            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+            fill_in "_barcode-lookup-0", with: @global_barcode.value + 10.chr
+          end
+          expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
+          expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @item.name)).to eq(true)
+          qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
+
+          expect(qty).to eq(@global_barcode.quantity.to_s)
+        end
+      end
     end
   end
 end

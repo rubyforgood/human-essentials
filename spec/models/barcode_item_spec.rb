@@ -147,6 +147,15 @@ RSpec.describe BarcodeItem, type: :model do
       end
     end
 
+    describe "combining global and organization barcodes" do
+      it "shows both barcodes" do
+        BarcodeItem.delete_all
+        create(:global_barcode_item)
+        create(:barcode_item, organization: @organization)
+        expect(BarcodeItem.organization_barcodes_with_globals(@organization).count).to eq(2)
+      end
+    end
+
     context "when searching for a barcode where there is a global and local with the same value" do
       let!(:canonical_item) { create(:canonical_item, partner_key: "foo", name: "base item") }
       let!(:item) { create(:item, partner_key: "foo", name: "custom item", organization: @organization) }

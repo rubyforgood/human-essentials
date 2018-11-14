@@ -1,0 +1,31 @@
+<%= simple_form_for form, html: { role: "form" } do |f| %>
+  <div class="box-body ">
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
+          <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+          <%= f.input_field :quantity, class: "form-control" %>
+        <% end %>
+      </div><!-- ./col-xs-8 -->
+    </div><!-- /.row -->
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :barcodeable, collection: @canonical_items, label: "Item" %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
+          <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+          <%= f.input_field :value, class: "form-control" %>
+        <% end %>
+      </div><!-- ./col-xs-8 -->
+    </div><!-- /.row -->
+
+
+    <%= f.button :submit, class:"btn btn-primary btn-lg"%>
+  </div><!-- /.box-body -->
+<% end #form %>
