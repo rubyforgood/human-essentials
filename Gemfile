@@ -74,7 +74,7 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 3.10"
+  gem "capybara", "~> 3.11"
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "factory_bot_rails"
