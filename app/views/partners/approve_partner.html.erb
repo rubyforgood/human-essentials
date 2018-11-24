@@ -36,7 +36,7 @@
           <p>Name: <%= @agency[:name] %></p>
           <p>Distributor Type <%= @agency[:distributor_type] %></p>
           <p>Agency Type: <% @agency[:agency_type] %></p>
-          <p>Proof of Agency Status (Link): <%= link_to File.basename(@agency[:proof_of_agency_status]), documentation_url(@agency[:proof_of_agency_status]) %></p>
+          <p>Proof of Agency Status (Link): <%= link_to File.basename(@agency[:proof_of_agency_status]), documentation_url(@agency[:proof_of_agency_status]), rel: 'noreferrer' %></p>
           <p>Agency Mission: <%= @agency[:agency_mission] %></p>
           <p>Address <%= @agency[:address1] %></p>
           <p>Address <%= @agency[:address2] %></p>
@@ -52,7 +52,7 @@
           <h2>Agency Stability</h2>
           <p>Founded <%= @agency[:stability][:founded] %></p>
           <p>Form 990: <%= @agency[:stability][:form_990] ? 'Yes' : 'No' %></p>
-          <p>Form 990 Link: <%= link_to File.basename(@agency[:stability][:form_990_link]), documentation_url(@agency[:stability][:form_990_link]) %></p>
+          <p>Form 990 Link: <%= link_to File.basename(@agency[:stability][:form_990_link]), documentation_url(@agency[:stability][:form_990_link]), rel: 'noreferrer' %></p>
           <p>Program Name <%= @agency[:stability][:program_name] %></p>
           <p>Program Description <%= @agency[:stability][:program_description] %></p>
           <p>Program Age <%= @agency[:stability][:program_age] %></p>
@@ -141,7 +141,7 @@
           <h2>Other Documents</h2>
           <ul>
             <% @agency[:documents].each do |document| %>
-              <li><%= link_to File.basename(document[:document_link]), documentation_url(document[:document_link]) %></li>
+              <li><%= link_to File.basename(document[:document_link]), documentation_url(document[:document_link]), rel: 'noreferrer' %></li>
             <% end %>
           </ul>
         </div>
