@@ -26,8 +26,6 @@ class Partner < ApplicationRecord
       .order(:name)
   }
 
-  include DiaperPartnerClient
-  after_create :update_diaper_partner
   # better to extract this outside of the model
   def self.import_csv(data, organization_id)
     CSV.parse(data, headers: true) do |row|
@@ -44,12 +42,5 @@ class Partner < ApplicationRecord
 
   def csv_export_attributes
     [name, email]
-  end
-
-  private
-
-  def update_diaper_partner
-    update(status: "Pending")
-    DiaperPartnerClient.post(attributes) if Flipper.enabled?(:email_active)
   end
 end
