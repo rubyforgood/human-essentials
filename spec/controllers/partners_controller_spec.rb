@@ -40,6 +40,36 @@ RSpec.describe PartnersController, type: :controller do
     it_behaves_like "csv import"
   end
 
+  describe "POST #create" do
+    context "successful save" do
+      partner_params = { partner: { name: "A Partner", email: "partner@example.com" } }
+      subject { post :create, params: default_params.merge(partner_params) }
+
+      it "creates a new partner" do
+        expect{ subject }.to change(Partner, :count).by(1)
+      end
+
+      it "enqueues a UpdateDiaperPartnerJob job" do
+        expect(UpdateDiaperPartnerJob).to receive(:perform_async)
+        subject
+      end
+
+      it "redirects to #index" do
+        expect(subject).to redirect_to(partners_path)
+      end
+    end
+
+    context "unsuccessful save due to empty params" do
+      partner_params = { partner: { name: "", email: "" } }
+      subject { post :create, params: default_params.merge(partner_params) }
+
+      it "renders :new" do
+        expect(subject).to render_template(:new)
+      end
+    end
+  end
+
+
   describe "DELETE #destroy" do
     subject { delete :destroy, params: default_params.merge(id: create(:partner, organization: @organization)) }
     it "redirects to #index" do
