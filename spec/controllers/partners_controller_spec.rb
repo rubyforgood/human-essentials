@@ -46,7 +46,7 @@ RSpec.describe PartnersController, type: :controller do
       subject { post :create, params: default_params.merge(partner_params) }
 
       it "creates a new partner" do
-        expect{ subject }.to change(Partner, :count).by(1)
+        expect { subject }.to change(Partner, :count).by(1)
       end
 
       it "enqueues a UpdateDiaperPartnerJob job" do
@@ -68,7 +68,6 @@ RSpec.describe PartnersController, type: :controller do
       end
     end
   end
-
 
   describe "DELETE #destroy" do
     subject { delete :destroy, params: default_params.merge(id: create(:partner, organization: @organization)) }
