@@ -4,11 +4,11 @@
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
   <td>  <% case status
     when "Pending" %>
-      <span class="btn btn-xs bg-maroon"><%= status %></span>
+      <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-maroon" do %><%= status %><% end %>
     <% when "Awaiting Review" %>
       <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-orange" do %><%= status %><% end %>
     <% when "Approved" %>
-      <span class="btn btn-xs bg-olive"><%= status %></span>
+      <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" do %><%= status %><% end %>
   <% end %>
   </td>
   <!-- <td><%== (rand < 0.7) ? '<span class="label label-success">Approved</span>' :
