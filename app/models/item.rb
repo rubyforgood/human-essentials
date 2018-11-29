@@ -19,6 +19,7 @@ class Item < ApplicationRecord
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
+  validates :weight_in_grams, numericality: { greater_than: 0 }, allow_nil: true
 
   has_many :line_items
   has_many :inventory_items
@@ -34,7 +35,7 @@ class Item < ApplicationRecord
   scope :by_canonical_item, ->(canonical_item) { where(canonical_item: canonical_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
-
+  scope :with_weight, -> { where.not(weight_in_grams: nil) }
   scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size }) }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
