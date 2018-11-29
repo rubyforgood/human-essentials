@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_14_131213) do
+ActiveRecord::Schema.define(version: 2018_11_29_031622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_131213) do
     t.string "size"
     t.integer "item_count"
     t.string "partner_key"
+    t.integer "weight_in_grams"
   end
 
   create_table "diaper_drive_participants", force: :cascade do |t|
@@ -160,6 +161,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_131213) do
     t.integer "organization_id"
     t.boolean "active", default: true
     t.string "partner_key"
+    t.integer "weight_in_grams"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
