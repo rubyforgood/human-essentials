@@ -125,6 +125,10 @@ class Organization < ApplicationRecord
     end
   end
 
+  def valid_items
+    items.map {|item| item.partner_key }
+  end
+
   private
 
   def correct_logo_mime_type
