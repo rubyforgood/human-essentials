@@ -15,6 +15,17 @@ class API::V1::PartnerRequestsController < ApplicationController
     end
   end
 
+  def show
+    return head :forbidden unless api_key_valid?
+
+    organization = Organization.find(params[:id])
+    if organization
+      render json: organization.valid_items, status: :ok
+    else
+      render status: :bad_request
+    end
+  end
+
   private
 
   def api_key_valid?
