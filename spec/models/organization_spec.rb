@@ -153,4 +153,12 @@ RSpec.describe Organization, type: :model do
       expect(org.address).to eq('123 Main St.')
     end
   end
+
+  describe 'valid_items' do
+    it 'returns an array of item partner keys' do
+      org = create(:organization)
+      expect(org.valid_items).to be_an(Array)
+      expect(org.valid_items.first).to be_an(String)
+    end
+  end
 end
