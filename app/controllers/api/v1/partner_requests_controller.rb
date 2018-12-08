@@ -19,11 +19,9 @@ class API::V1::PartnerRequestsController < ApplicationController
     return head :forbidden unless api_key_valid?
 
     organization = Organization.find(params[:id])
-    if organization
-      render json: organization.valid_items, status: :ok
-    else
-      render status: :bad_request
-    end
+    render json: organization.valid_items, status: :ok
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: e.message }, status: :bad_request
   end
 
   private
