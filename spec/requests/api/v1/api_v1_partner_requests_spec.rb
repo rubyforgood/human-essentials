@@ -70,7 +70,6 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
         }
         before { get api_v1_partner_request_path(organization.id), headers: headers }
 
-
         it "returns HTTP success" do
           expect(response).to be_successful
         end
