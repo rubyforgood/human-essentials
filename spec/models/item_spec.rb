@@ -110,7 +110,7 @@ RSpec.describe Item, type: :model do
         item = create(:item, category: "same")
         create(:item, category: "different")
         result = Item.categories
-        expect(result.length).to eq(10)
+        expect(result.length).to eq(12)
       end
 
       it "returns the list of categories alphabetized" do
@@ -127,7 +127,7 @@ RSpec.describe Item, type: :model do
     describe "storage_locations_containing" do
       it "retrieves all storage locations that contain an item" do
         item = create(:item)
-        storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+        storage_location = create(:storage_location, :with_items, item: item, item_quantity: 12)
         create(:storage_location)
         expect(Item.storage_locations_containing(item).first).to eq(storage_location)
       end
