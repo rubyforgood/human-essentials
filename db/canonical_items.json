@@ -50,5 +50,13 @@
   ],
   "Wipes - Childrens": [
     { "name": "Wipes (Baby)", "qty": [0,0,162], "key": "wipes" }
+  ],
+  "Menstrual Supplies/Items": [
+    { "name": "Pads", "qty": [0,0,1232], "key": "pads" },
+    { "name": "Tampons", "qty": [0,0,5162], "key": "tampons" },
+    { "name": "Adult Liners", "qty": [0,0,5162], "key": "liners" }
+  ],
+  "Wipes - Adults": [
+    { "name": "Wipes (Adult)", "qty": [0,0,8362], "key": "adult_wipes" }
   ]
 }
