@@ -26,6 +26,8 @@ class Partner < ApplicationRecord
       .order(:name)
   }
 
+  after_create :register_on_partnerbase
+
   # better to extract this outside of the model
   def self.import_csv(data, organization_id)
     CSV.parse(data, headers: true) do |row|
@@ -42,5 +44,9 @@ class Partner < ApplicationRecord
 
   def csv_export_attributes
     [name, email]
+  end
+
+  def register_on_partnerbase
+    UpdateDiaperPartnerJob.perform_async(self.id)
   end
 end
