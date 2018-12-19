@@ -49,11 +49,6 @@ RSpec.describe PartnersController, type: :controller do
         expect { subject }.to change(Partner, :count).by(1)
       end
 
-      it "enqueues a UpdateDiaperPartnerJob job" do
-        expect(UpdateDiaperPartnerJob).to receive(:perform_async)
-        subject
-      end
-
       it "redirects to #index" do
         expect(subject).to redirect_to(partners_path)
       end
