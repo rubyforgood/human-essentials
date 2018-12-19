@@ -52,14 +52,13 @@ RSpec.describe Partner, type: :model do
   #   end
   # end
 
-
   it 'fires send_email method as after_create method callbacks' do
     expect(subject).to receive(:register_on_partnerbase)
     subject.run_callbacks(:create)
   end
 
   describe "import_csv" do
-    let(:organization) {create(:organization)}
+    let(:organization) { create(:organization) }
 
     it "imports storage locations from a csv file" do
       before_import = Partner.count
@@ -74,7 +73,7 @@ RSpec.describe Partner, type: :model do
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       expect do
         Partner.import_csv(data, organization.id)
-      end.to change {Partner.count}.by(20)
+      end.to change { Partner.count }.by(20)
     end
   end
 end
