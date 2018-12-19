@@ -51,6 +51,12 @@ RSpec.describe Partner, type: :model do
   #     end
   #   end
   # end
+
+  it 'fires send_email method as after_create method callbacks' do
+    expect(subject).to receive(:register_on_partnerbase)
+    subject.run_callbacks(:create)
+  end
+
   describe "import_csv" do
     let(:organization) { create(:organization) }
 
