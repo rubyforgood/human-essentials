@@ -5,7 +5,7 @@ inherit_from: .rubocop_todo.yml
 # inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.5.1
+  TargetRubyVersion: 2.5.3
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
