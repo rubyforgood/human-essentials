@@ -96,8 +96,8 @@ RSpec.describe Item, type: :model do
         Item.delete_all
         c1 = create(:canonical_item, partner_key: "foo")
         c2 = create(:canonical_item, partner_key: "bar")
-        item1 = create(:item, canonical_item: c1, partner_key: "foo", organization: @organization)
-        item2 = create(:item, canonical_item: c2, partner_key: "bar", organization: @organization)
+        create(:item, canonical_item: c1, partner_key: "foo", organization: @organization)
+        create(:item, canonical_item: c2, partner_key: "bar", organization: @organization)
         expect(Item.by_partner_key("foo").size).to eq(1)
         expect(Item.all.size).to be > 1
       end
@@ -107,7 +107,7 @@ RSpec.describe Item, type: :model do
   context "Methods >" do
     describe "categories" do
       it "returns a list of all categories, unique" do
-        item = create(:item, category: "same")
+        create(:item, category: "same")
         create(:item, category: "different")
         result = Item.categories
         expect(result.length).to eq(12)

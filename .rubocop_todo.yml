@@ -47,21 +47,7 @@ Lint/RescueException:
 # Offense count: 32
 Lint/UselessAssignment:
   Exclude:
-    - 'app/controllers/barcode_items_controller.rb'
-    - 'app/controllers/donations_controller.rb'
-    - 'spec/controllers/adjustments_controller_spec.rb'
-    - 'spec/controllers/distributions_controller_spec.rb'
-    - 'spec/controllers/donations_controller_spec.rb'
-    - 'spec/controllers/purchases_controller_spec.rb'
-    - 'spec/controllers/transfers_controller_spec.rb'
-    - 'spec/features/adjustment_spec.rb'
-    - 'spec/features/barcode_item_spec.rb'
-    - 'spec/features/item_spec.rb'
-    - 'spec/features/storage_location_spec.rb'
-    - 'spec/features/transfer_spec.rb'
-    - 'spec/models/adjustment_spec.rb'
-    - 'spec/models/item_spec.rb'
-    - 'spec/models/transfer_spec.rb'
+
 
 # Offense count: 1
 Naming/MemoizedInstanceVariableName:
