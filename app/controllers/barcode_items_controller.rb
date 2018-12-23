@@ -69,7 +69,7 @@ class BarcodeItemsController < ApplicationController
       raise if barcode.nil? || barcode.global?
 
       barcode.destroy
-    rescue Exception => e
+    rescue Exception
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
     redirect_to barcode_items_path
