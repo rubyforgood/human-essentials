@@ -44,11 +44,6 @@ Lint/RescueException:
   Exclude:
     - 'app/controllers/barcode_items_controller.rb'
 
-# Offense count: 32
-Lint/UselessAssignment:
-  Exclude:
-
-
 # Offense count: 1
 Naming/MemoizedInstanceVariableName:
   Exclude:
