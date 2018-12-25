@@ -6,7 +6,7 @@ namespace :nginx do
       config = ERB.new(File.read(config_file)).result(binding)
       upload! StringIO.new(config), "/tmp/nginx.conf"
       arguments = :sudo, :mv, "/tmp/nginx.conf", "/etc/nginx/sites-available/#{fetch(:application)}"
-      execute *arguments
+      execute(*arguments)
     end
   end
 end
