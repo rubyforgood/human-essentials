@@ -20,7 +20,7 @@ class DiaperDriveParticipant < ApplicationRecord
   require "csv"
 
   belongs_to :organization # Automatically validates presence as of Rails 5
-  has_many :donations, inverse_of: :diaper_drive_participant
+  has_many :donations, inverse_of: :diaper_drive_participant, dependent: :destroy
 
   validates :contact_name, presence: { message: "Must provide a name or a business name" }, if: proc { |ddp| ddp.business_name.blank? }
   validates :business_name, presence: { message: "Must provide a name or a business name" }, if: proc { |ddp| ddp.contact_name.blank? }

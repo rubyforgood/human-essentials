@@ -19,7 +19,7 @@ class DonationSite < ApplicationRecord
 
   validates :name, :address, :organization, presence: true
 
-  has_many :donations
+  has_many :donations, dependent: :destroy
 
   geocoded_by :address
   after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }

@@ -31,7 +31,7 @@ RSpec.describe AdjustmentsController, type: :controller do
 
     describe "GET #index" do
       it "is successful" do
-        adjustment = Adjustment.create! valid_attributes
+        Adjustment.create! valid_attributes
         get :index, params: default_params, session: valid_session
         expect(response).to be_successful
       end

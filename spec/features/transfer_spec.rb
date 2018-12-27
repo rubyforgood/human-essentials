@@ -23,8 +23,8 @@ RSpec.feature "Transfer management", type: :feature do
   scenario "User can filter the #index by storage location both from and to" do
     from_storage_location = create(:storage_location, name: "here", organization: @organization)
     to_storage_location = create(:storage_location, name: "there", organization: @organization)
-    transfer = create(:transfer, organization: @organization, from: from_storage_location, to: to_storage_location)
-    transfer2 = create(:transfer, organization: @organization, from: to_storage_location, to: from_storage_location)
+    create(:transfer, organization: @organization, from: from_storage_location, to: to_storage_location)
+    create(:transfer, organization: @organization, from: to_storage_location, to: from_storage_location)
 
     visit url_prefix + "/transfers"
     select to_storage_location.name, from: "filters_to_location"

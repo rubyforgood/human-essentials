@@ -39,8 +39,8 @@ RSpec.feature "Adjustment management", type: :feature do
   scenario "User can filter the #index by storage location" do
     storage_location = create(:storage_location, name: "here", organization: @organization)
     storage_location2 = create(:storage_location, name: "there", organization: @organization)
-    adjustment = create(:adjustment, organization: @organization, storage_location: storage_location)
-    adjustment2 = create(:adjustment, organization: @organization, storage_location: storage_location2)
+    create(:adjustment, organization: @organization, storage_location: storage_location)
+    create(:adjustment, organization: @organization, storage_location: storage_location2)
 
     visit url_prefix + "/adjustments"
     select storage_location.name, from: "filters_at_location"
