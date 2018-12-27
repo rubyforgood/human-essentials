@@ -35,7 +35,6 @@ RSpec.describe PurchasesController, type: :controller do
                       amount_spent: 10,
                       line_items: line_items }
         )
-        d = Purchase.last
         expect(response).to redirect_to(purchases_path)
       end
 

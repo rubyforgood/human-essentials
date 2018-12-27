@@ -55,7 +55,7 @@ module DashboardHelper
   end
 
   def total_on_hand(total = nil)
-    number_with_delimiter (total || "-1")
+    number_with_delimiter(total || "-1")
   end
 
   def total_received_money_donations(range = selected_range)

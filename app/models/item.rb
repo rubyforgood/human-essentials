@@ -20,9 +20,9 @@ class Item < ApplicationRecord
   validates :name, presence: true
   validates :organization, presence: true
 
-  has_many :line_items
-  has_many :inventory_items
-  has_many :barcode_items, as: :barcodeable
+  has_many :line_items, dependent: :destroy
+  has_many :inventory_items, dependent: :destroy
+  has_many :barcode_items, as: :barcodeable, dependent: :destroy
   has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: Donation
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution

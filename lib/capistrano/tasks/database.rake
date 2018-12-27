@@ -6,7 +6,7 @@ namespace :database do
       config = ERB.new(File.read(config_file)).result(binding)
       upload! StringIO.new(config), "/tmp/database.yml"
       arguments = :cp, "/tmp/database.yml", "#{shared_path}/config/database.yml"
-      execute *arguments
+      execute(*arguments)
     end
   end
 end

@@ -124,7 +124,7 @@ class DonationsController < ApplicationController
   end
 
   def donation_params
-    params = strip_unnecessary_params
+    strip_unnecessary_params
     params = compact_line_items
     params.require(:donation).permit(:source, :comment, :storage_location_id, :money_raised, :issued_at, :donation_site_id, :diaper_drive_participant_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end

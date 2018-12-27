@@ -40,7 +40,7 @@ RSpec.feature "Barcode management", type: :feature do
     end
 
     scenario "User updates an existing barcode" do
-      item = create(:item)
+      create(:item)
       barcode
       visit url_prefix + "/barcode_items/#{barcode.id}/edit"
       fill_in "Quantity", id: "barcode_item_quantity", with: (barcode.quantity.to_i + 10).to_s
