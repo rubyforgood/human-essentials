@@ -11,7 +11,7 @@ module Itemizable
       line_items.each(&:destroy)
     end
 
-    has_many :line_items, as: :itemizable, inverse_of: :itemizable, dependent: :destroy do
+    has_many :line_items, as: :itemizable, inverse_of: :itemizable do
       def combine!
         # Bail if there's nothing
         return if size.zero?
