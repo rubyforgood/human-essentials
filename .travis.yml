@@ -8,7 +8,7 @@ before_install:
 - gem install bundler
 script:
 - export RAILS_ENV=test
-- bundle exec rake db:create db:migrate
+- bundle exec rake db:setup
 - bundle exec rake spec
 - bundle exec rubocop
 after_success:
