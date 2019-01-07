@@ -13,6 +13,7 @@
 class Adjustment < ApplicationRecord
   belongs_to :organization
   belongs_to :storage_location
+  belongs_to :audit, optional: true
 
   include Itemizable
   include Filterable
