@@ -41,7 +41,9 @@ Rails.application.routes.draw do
     end
 
     resources :adjustments, except: %i(edit update)
-    resources :audits
+    resources :audits do
+      # post :save_progress
+    end
     resources :transfers, only: %i(index create new show)
     resources :storage_locations do
       collection do
