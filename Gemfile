@@ -71,6 +71,7 @@ group :development do
   gem "spring"
   gem "spring-watcher-listen"
   gem "web-console"
+  gem "meta_request"
 end
 
 group :test do

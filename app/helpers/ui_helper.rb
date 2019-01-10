@@ -74,9 +74,9 @@ module UiHelper
   end
 
   # Generic Submit button for a form
-  def submit_button(options = {})
+  def submit_button(options = {}, data = {})
     disable_text = options[:disable_text] || "Saving"
-    _button_to({ text: "Save", icon: "floppy-o", size: "lg", type: "success", align: "pull-right" }.merge(options), data: { disable_text: disable_text })
+    _button_to({ text: "Save", icon: "floppy-o", size: "lg", type: "success", align: "pull-right" }.merge(options), data: { disable_text: disable_text }.merge(data), name: options[:name] || 'button')
   end
 
   # Like above, but POSTs to a URL instead of to a form
