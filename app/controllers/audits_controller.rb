@@ -1,4 +1,5 @@
 class AuditsController < ApplicationController
+  before_action :check_if_organization_admin
   before_action :set_audit, only: %i(show edit update destroy finalize)
 
   def index
@@ -12,7 +13,7 @@ class AuditsController < ApplicationController
   end
 
   def edit
-    (redirect_to audits_path unless @audit&.in_progress?) && return
+    redirect_to audits_path unless @audit&.in_progress?
     @storage_locations = current_organization.storage_locations
     @items = current_organization.items.alphabetized
     @audit.line_items.build if @audit.line_items.empty?
@@ -82,7 +83,7 @@ class AuditsController < ApplicationController
   end
 
   def destroy
-    (redirect_to audits_path if @audit.finalized?) && return
+    redirect_to audits_path if @audit.finalized?
     @audit.destroy!
     redirect_to audits_path
   end
@@ -102,5 +103,11 @@ class AuditsController < ApplicationController
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:at_location)
+  end
+
+  def check_if_organization_admin
+    unless current_user.organization_admin
+      redirect_to root_path
+    end
   end
 end
