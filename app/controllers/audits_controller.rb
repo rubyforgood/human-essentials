@@ -7,7 +7,9 @@ class AuditsController < ApplicationController
     @storage_locations = Audit.storage_locations_audited_for(current_organization).uniq
   end
 
-  def show; end
+  def show
+    @inventory_items = @audit.storage_location.inventory_items
+  end
 
   def edit
     (redirect_to audits_path unless @audit&.in_progress?) && return
@@ -17,6 +19,19 @@ class AuditsController < ApplicationController
   end
 
   def finalize
+    adjustment = Adjustment.new(organization_id: @audit.organization_id, storage_location_id: @audit.storage_location_id, comment: 'Created Automatically through the Auditing Process')
+    adjustment.save
+    @audit.update(adjustment_id: adjustment.id)
+    inventory_items = @audit.storage_location.inventory_items
+    inventory_items.each do |inventory_item|
+      line_item = @audit.line_items.find_by(item: inventory_item.item)
+      if line_item.nil?
+        @audit.adjustment.line_items.create(item_id: inventory_item.item.id, quantity: -inventory_item.quantity)
+      elsif line_item.quantity != inventory_item.quantity
+        @audit.adjustment.line_items.create(item_id: inventory_item.item.id, quantity: line_item.quantity - inventory_item.quantity)
+      end
+    end
+    @audit.storage_location.adjust!(@audit.adjustment)
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized"
   end
@@ -67,6 +82,7 @@ class AuditsController < ApplicationController
   end
 
   def destroy
+    (redirect_to audits_path if @audit.finalized?) && return
     @audit.destroy!
     redirect_to audits_path
   end

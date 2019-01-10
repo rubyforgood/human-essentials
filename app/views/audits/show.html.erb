@@ -39,15 +39,16 @@
       <div class="box-body table-responsive no-padding">
         <table class="table table-hover">
           <tr>
-            <th>&nbsp;</th>
             <th>Item</th>
-            <th>Quantity</th>
+            <th>Audit Quantity</th>
+            <th>Quantity in Records</th>
           </tr>
-          <% @audit.line_items.each do |line_item|  %>
-            <tr class="<%= line_item.quantity > 0 ? "positive" : "negative" %>">
-              <td><%= (line_item.quantity > 0) ? "Valid " : "Invalid " %></td>
-              <td><%= line_item.item.name %></td>
-              <td><%= line_item.quantity.abs %></td>
+          <% @inventory_items.each do |inventory_item|  %>
+            <% line_item = @audit.line_items.find_by(item: inventory_item.item) %>
+            <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
+              <td><%= inventory_item.item.name %></td>
+              <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
+              <td><%= inventory_item.quantity %></td>
             </tr>
           <% end %>
         </table>
