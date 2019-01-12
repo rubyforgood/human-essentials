@@ -37,9 +37,9 @@ RSpec.describe Audit, type: :model do
       storage_location2 = create(:storage_location, organization: @organization)
       create(:storage_location, organization: @organization)
       storage_location4 = create(:storage_location, organization: create(:organization))
-      create(:adjustment, storage_location: storage_location1, organization: @organization)
-      create(:adjustment, storage_location: storage_location2, organization: @organization)
-      create(:adjustment, storage_location: storage_location4, organization: storage_location4.organization)
+      create(:audit, storage_location: storage_location1, organization: @organization, user: @organization_admin)
+      create(:audit, storage_location: storage_location2, organization: @organization, user: @organization_admin)
+      create(:audit, storage_location: storage_location4, organization: storage_location4.organization, user: @organization_admin)
       expect(Audit.storage_locations_audited_for(@organization).to_a).to match_array([storage_location1, storage_location2])
     end
   end
@@ -48,9 +48,9 @@ RSpec.describe Audit, type: :model do
     it "accepts them" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
-
       new_audit = build(:audit,
                         storage_location: storage_location,
+                        user: @organization_admin,
                         line_items_attributes: [
                           { item_id: storage_location.items.first.id, quantity: 10 }
                         ])
