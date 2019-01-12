@@ -58,7 +58,7 @@
       <div class="box-footer text-center">
         <%= edit_button_to :edit_audit, {text: 'Resume Audit', size: 'sm'} if @audit.in_progress? %>
         <%= delete_button_to :audit, {text: 'Delete Audit', size: 'sm'} if @audit.in_progress? || @audit.confirmed? %>
-        <%= submit_button_to audit_finalize_path(@audit.id), {text: 'Finalize Audit', size: 'sm'} if @audit.confirmed? %>
+        <%= submit_button_to audit_finalize_path(@audit.id), {text: 'Finalize Audit', size: 'sm'}, {data: {confirm: 'This will adjust the inventory permanently. Are you sure that you want to submit this?'}} if @audit.confirmed? %>
       </div>
       <!-- /.box-footer -->
 

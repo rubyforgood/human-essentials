@@ -51,16 +51,18 @@
                 <th>Organization</th>
                 <th>Storage location</th>
                 <th>Summary</th>
+                <th>Status</th>
                 <th>&nbsp;</th>
               </tr>
               </thead>
               <tbody>
               <% @audits.each do |audit| %>
-                <tr>
+                <tr class="<%= (audit.finalized?) ? 'positive' : (audit.in_progress?) ? 'negative' : 'highlight' %>">
                   <td><time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y") %></time></td>
                   <td><%= audit.organization.name %></td>
                   <td><%= audit.storage_location.name %></td>
                   <td><%= pluralize(audit.line_items.count, 'item') %></td>
+                  <td><%= audit.status.titleize %></td>
                   <td class="text-right"><%= view_button_to audit %></td>
                 </tr>
               <% end %>

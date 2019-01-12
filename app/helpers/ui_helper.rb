@@ -80,8 +80,8 @@ module UiHelper
   end
 
   # Like above, but POSTs to a URL instead of to a form
-  def submit_button_to(link, options = {})
-    properties = { method: options[:method]&.to_sym || :post, rel: "nofollow" }
+  def submit_button_to(link, options = {}, properties = {})
+    properties = { method: options[:method]&.to_sym || :post, rel: "nofollow" }.merge(properties)
     _link_to link, { icon: "check-circle", type: "success", text: "Submit", size: "lg" }.merge(options), properties
   end
 

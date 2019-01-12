@@ -24,36 +24,10 @@
     </div>
 
     <div class="box-body">
-      <p class="help">Enter <code>all</code> the items with their corresponding <code>quantity</code> that are present in the storage location</p>
-      <p class="help">Click on <code>Save Progress</code> button to save the current progress of audit.</p>
-      <p class="help">You can <code>resume</code> the saved audit at a later time again.</p>
-
-      <%= simple_form_for @audit, html: { class: "storage-location-required" } do |f| %>
-
-        <%= render partial: "storage_locations/source", object: f %>
-
-
-        <fieldset style="margin-bottom: 2rem;" class="form-inline">
-          <legend>Items in this audit</legend>
-          <%= f.simple_fields_for :line_items do |item| %>
-            <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">
-              <%= render 'line_items/line_item_fields', f: item %>
-            </div>
-          <% end %>
-          <div class="row links">
-            <div class="col-xs-12">
-              <%= add_line_item_button f, "#audit_line_items" %>
-            </div>
-          </div>
-
-        </fieldset>
-        <div class="row">
-          <div class="col-xs-12 pull-right">
-            <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'sm'}, {confirm: 'Are you sure?'}) %>
-            <%= submit_button({ text: 'Save Progress', name: 'save_progress', size: 'sm' }) %>
-          </div>
-        </div>
-      <% end %>
+      <p class="help">Enter <em>all</em> the items with their corresponding <em>quantity</em> that are present in the storage location</p>
+      <p class="help">Click on <em>Save Progress</em> button to save the current progress of audit.</p>
+      <p class="help">You can <em>resume</em> the saved audit at a later time again.</p>
+      <%= render partial: "audits/form", locals: {type: 'edit'} %>
     </div>
   </div>
   <!-- /.box -->

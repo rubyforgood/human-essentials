@@ -14,15 +14,15 @@ class AuditsController < ApplicationController
 
   def edit
     redirect_to audits_path unless @audit&.in_progress?
-    @storage_locations = current_organization.storage_locations
-    @items = current_organization.items.alphabetized
+    set_storage_locations
+    set_items
     @audit.line_items.build if @audit.line_items.empty?
   end
 
   def finalize
-    adjustment = Adjustment.new(organization_id: @audit.organization_id, storage_location_id: @audit.storage_location_id, comment: 'Created Automatically through the Auditing Process')
-    adjustment.save
-    @audit.update(adjustment_id: adjustment.id)
+    @audit.adjustment = Adjustment.new(organization_id: @audit.organization_id, storage_location_id: @audit.storage_location_id, comment: 'Created Automatically through the Auditing Process')
+    @audit.save
+
     inventory_items = @audit.storage_location.inventory_items
     inventory_items.each do |inventory_item|
       line_item = @audit.line_items.find_by(item: inventory_item.item)
@@ -32,7 +32,8 @@ class AuditsController < ApplicationController
         @audit.adjustment.line_items.create(item_id: inventory_item.item.id, quantity: line_item.quantity - inventory_item.quantity)
       end
     end
-    @audit.storage_location.adjust!(@audit.adjustment)
+
+    @audit.adjustment.storage_location.adjust!(@audit.adjustment)
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized"
   end
@@ -40,11 +41,11 @@ class AuditsController < ApplicationController
   def update
     @audit.line_items.destroy_all
     if @audit.update(audit_params)
-      notice = params.key?(:save_progress) ? "Audit's progress was successfully saved." : "Audit is confirmed."
-      params.key?(:save_progress) ? @audit.in_progress! : @audit.confirmed!
-      redirect_to audit_path(@audit), notice: notice
+      save_audit_status_and_redirect(params)
     else
       flash[:error] = "Something didn't work quite right -- try again?"
+      set_storage_locations
+      set_items
       @audit.line_items.build if @audit.line_items.empty?
       render action: :edit
     end
@@ -53,27 +54,19 @@ class AuditsController < ApplicationController
   def new
     @audit = current_organization.audits.new
     @audit.line_items.build
-    @storage_locations = current_organization.storage_locations
-    @items = current_organization.items.alphabetized
+    set_storage_locations
+    set_items
   end
 
   def create
     @audit = current_organization.audits.new(audit_params)
-    @audit.user_id = current_user.id
-    @storage_locations = current_organization.storage_locations
-    @items = current_organization.items.alphabetized
-    if @audit.valid?
-      if @audit.save
-        notice = params.key?(:save_progress) ? "Audit's progress was successfully saved." : "Audit is confirmed."
-        params.key?(:save_progress) ? @audit.in_progress! : @audit.confirmed!
-        redirect_to audit_path(@audit), notice: notice
-      else
-        flash[:error] = @audit.errors.collect { |model, message| "#{model}: " + message }
-        @audit.line_items.build if @audit.line_items.empty?
-        render :new
-      end
+    @audit.user = current_user
+    if @audit.save
+      save_audit_status_and_redirect(params)
     else
       flash[:error] = @audit.errors.collect { |model, message| "#{model}: " + message }
+      set_storage_locations
+      set_items
       @audit.line_items.build if @audit.line_items.empty?
       render :new
     end
@@ -92,6 +85,20 @@ class AuditsController < ApplicationController
 
   def set_audit
     @audit = current_organization.audits.find(params[:id] || params[:audit_id])
+  end
+
+  def set_storage_locations
+    @storage_locations = current_organization.storage_locations
+  end
+
+  def set_items
+    @items = current_organization.items.alphabetized
+  end
+
+  def save_audit_status_and_redirect(params)
+    notice = params.key?(:save_progress) ? "Audit's progress was successfully saved." : "Audit is confirmed."
+    params.key?(:save_progress) ? @audit.in_progress! : @audit.confirmed!
+    redirect_to audit_path(@audit), notice: notice
   end
 
   def audit_params
