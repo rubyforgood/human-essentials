@@ -27,6 +27,7 @@
 #  organization_admin     :boolean
 #  name                   :string           default("CHANGEME"), not null
 #  super_admin            :boolean          default(FALSE)
+#  last_request_at        :datetime
 #
 
 FactoryBot.define do
