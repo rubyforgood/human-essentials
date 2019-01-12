@@ -29,17 +29,8 @@ class Audit < ApplicationRecord
   validates :storage_location, :organization, presence: true
   validate :line_item_items_exist_in_inventory
   validate :line_item_items_quantity_is_positive
-  validate :storage_locations_belong_to_organization
 
   def self.storage_locations_audited_for(organization)
     includes(:storage_location).where(organization_id: organization.id).collect(&:storage_location)
-  end
-
-  def storage_locations_belong_to_organization
-    return if organization.nil?
-
-    unless organization.storage_locations.include?(storage_location)
-      errors.add :storage_location, "storage location must belong to organization"
-    end
   end
 end
