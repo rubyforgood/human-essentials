@@ -23,7 +23,7 @@ RSpec.feature "Feedback Message", type: :feature do
       expect(feedback_message.path).to_not be_nil
       expect(feedback_message.message).to eql "I have some feedback!"
       expect(feedback_message.user).to eql @user
-      expect(feedback_message.path.include? @visited_url).to be true
+      expect(feedback_message.path.include?(@visited_url)).to be true
     end
   end
 end

@@ -2,7 +2,7 @@
 #
 
 RSpec.describe FeedbackMessage, type: :model do
-  let(:user) {FactoryBot.build(:user)}
+  let(:user) { FactoryBot.build(:user) }
 
   describe "relations and attributes" do
     it "belongs to a user" do
