@@ -8,11 +8,11 @@
     <p> <%= @feedback_message.message %> </p>
     <h3>Additional Info</h3>
     <ul>
-      <li>Username: <%= @feedback_message.user_name %></li>
-      <li>Email: <%= @feedback_message.user_email %></li>
-      <li>ID:  <%= @feedback_message.user_id %></li>
+      <li>Username: <%= @feedback_message.user.name %></li>
+      <li>Email: <%= @feedback_message.user.email %></li>
+      <li>ID:  <%= @feedback_message.user.id %></li>
       <li>Path: <%= @feedback_message.path %></li>
-      <li>Timestamp: <%= @feedback_message.timestamp %></li>
+      <li>Timestamp: <%= @feedback_message.created_at %></li>
     </ul>
   </body>
 </html>
