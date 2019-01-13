@@ -45,7 +45,7 @@ RSpec.feature "Audit management", type: :feature do
       expect(page).to have_css("table tr", count: 2)
     end
 
-    scenario "User should be able to save progress of an audit" do
+    scenario "User can save progress of an audit" do
       quantity = 7
       storage_location = create(:storage_location, :with_items, organization: @organization)
       visit url_prefix + "/audits"
@@ -69,7 +69,7 @@ RSpec.feature "Audit management", type: :feature do
       expect(page).to have_content("Delete Audit")
     end
 
-    scenario "User should be able to resume the audit that is in progress" do
+    scenario "User can resume the audit that is in progress" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
@@ -87,7 +87,7 @@ RSpec.feature "Audit management", type: :feature do
       expect(page).to have_content("Save Progress")
     end
 
-    scenario "User should be able to delete the audit that is in progress", js: true do
+    scenario "User can delete the audit that is in progress", js: true do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
@@ -106,7 +106,7 @@ RSpec.feature "Audit management", type: :feature do
       end.to change { Audit.count }.by(-1)
     end
 
-    scenario "User should be able to confirm the audit from the #new page", js: true do
+    scenario "User can confirm the audit from the #new page", js: true do
       quantity = 7
       storage_location = create(:storage_location, :with_items, organization: @organization)
       visit url_prefix + "/audits"
@@ -126,7 +126,7 @@ RSpec.feature "Audit management", type: :feature do
       expect(page).to have_content("Finalize Audit")
     end
 
-    scenario "User should be able to confirm the audit from the #edit page", js: true do
+    scenario "User can confirm the audit from the #edit page", js: true do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
@@ -147,7 +147,7 @@ RSpec.feature "Audit management", type: :feature do
       expect(page).to have_content("Finalize Audit")
     end
 
-    scenario "User should not be able to edit the audit that is confirmed" do
+    scenario "User can edit the audit that is confirmed" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
@@ -160,7 +160,7 @@ RSpec.feature "Audit management", type: :feature do
       expect(page).not_to have_content("Resume Audit")
     end
 
-    scenario "User should be able to delete the audit that is confirmed", js: true do
+    scenario "User can delete the audit that is confirmed", js: true do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
@@ -180,10 +180,7 @@ RSpec.feature "Audit management", type: :feature do
       end.to change { Audit.count }.by(-1)
     end
 
-    scenario "User should be able to see the differential" do
-    end
-
-    scenario "User should be able to finalize the audit", js: true do
+    scenario "User can to finalize the audit", js: true do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
@@ -202,7 +199,7 @@ RSpec.feature "Audit management", type: :feature do
       end.to change { Audit.finalized.count }.by(1)
     end
 
-    scenario "Finalizing the audit should create an adjustment with the differential", js: true do
+    scenario "Finalizing the audit creates an adjustment with the differential", js: true do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
@@ -222,7 +219,7 @@ RSpec.feature "Audit management", type: :feature do
       expect(Adjustment.last.comment == "Created Automatically through the Auditing Process").to be_truthy
     end
 
-    scenario "Finalized audit should be immutable" do
+    scenario "Finalized audit is immutable" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
