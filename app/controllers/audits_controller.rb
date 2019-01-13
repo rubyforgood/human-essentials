@@ -35,7 +35,7 @@ class AuditsController < ApplicationController
 
     @audit.adjustment.storage_location.adjust!(@audit.adjustment)
     @audit.finalized!
-    redirect_to audit_path(@audit), notice: "Audit is Finalized"
+    redirect_to audit_path(@audit), notice: "Audit is Finalized."
   end
 
   def update
@@ -78,7 +78,7 @@ class AuditsController < ApplicationController
   def destroy
     redirect_to audits_path if @audit.finalized?
     @audit.destroy!
-    redirect_to audits_path
+    redirect_to audits_path, notice: "Audit is successfully deleted."
   end
 
   private
