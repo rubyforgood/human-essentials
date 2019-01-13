@@ -39,6 +39,40 @@ RSpec.describe Audit, type: :model do
     it "is valid with valid attributes" do
       expect(build(:audit)).to be_valid
     end
+
+    it "has only line items that has quantity as a positive integer" do
+      item = create(:item)
+      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+
+      audit1 = build(:audit,
+                     storage_location: storage_location,
+                     line_items_attributes: [
+                       { item_id: storage_location.items.first.id, quantity: -10 }
+                     ])
+
+      audit2 = build(:audit,
+                     storage_location: storage_location,
+                     line_items_attributes: [
+                       { item_id: storage_location.items.first.id, quantity: 0 }
+                     ])
+
+      audit3 = build(:audit,
+                     storage_location: storage_location,
+                     line_items_attributes: [
+                       { item_id: storage_location.items.first.id, quantity: "three" }
+                     ])
+
+      audit4 = build(:audit,
+                     storage_location: storage_location,
+                     line_items_attributes: [
+                       { item_id: storage_location.items.first.id, quantity: 9 }
+                     ])
+
+      expect(audit1.save).to be_falsey
+      expect(audit2.save).to be_falsey
+      expect(audit3.save).to be_falsey
+      expect(audit4.save).to be_truthy
+    end
   end
 
   context "Scopes >" do
