@@ -180,7 +180,7 @@ RSpec.feature "Audit management", type: :feature do
       end.to change { Audit.count }.by(-1)
     end
 
-    scenario "User can to finalize the audit", js: true do
+    scenario "User can finalize the audit", js: true do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = create(:audit,
