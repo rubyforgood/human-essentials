@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_14_131213) do
+ActiveRecord::Schema.define(version: 2019_01_13_213136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,15 @@ ActiveRecord::Schema.define(version: 2018_11_14_131213) do
     t.index ["donation_site_id"], name: "index_donations_on_donation_site_id"
     t.index ["organization_id"], name: "index_donations_on_organization_id"
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
+  end
+
+  create_table "feedback_messages", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "message"
+    t.string "path"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_feedback_messages_on_user_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
