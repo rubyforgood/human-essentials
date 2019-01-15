@@ -22,9 +22,6 @@ FactoryBot.define do
 
     after(:build) do |instance, evaluator|
       instance.storage_location = evaluator.storage_location || create(:storage_location, organization: instance.organization)
-    end
-
-    after(:build) do |instance, evaluator|
       instance.user = evaluator.user || create(:organization_admin, organization: instance.organization)
     end
 

@@ -18,17 +18,14 @@ RSpec.describe Audit, type: :model do
   it_behaves_like "itemizable"
 
   context "Validations >" do
+    before(:context) do
+      item = create(:item)
+      @storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+    end
+
     it "must belong to an organization" do
       expect(build(:audit, storage_location: create(:storage_location), organization_id: nil)).not_to be_valid
       expect(build(:audit, organization: @organization)).to be_valid
-    end
-
-    it "must belong to a storage location of its organization" do
-      new_organization = create(:organization)
-      storage_location1 = create(:storage_location, organization: @organization)
-      storage_location2 = create(:storage_location, organization: new_organization)
-      expect(build(:audit, storage_location: storage_location2, organization: @organization, user: @organization_admin)).not_to be_valid
-      expect(build(:audit, storage_location: storage_location1, organization: @organization, user: @organization_admin)).to be_valid
     end
 
     it "must belong to an organization admin of its organization" do
@@ -36,42 +33,44 @@ RSpec.describe Audit, type: :model do
       expect(build(:audit, storage_location: create(:storage_location, organization: @organization), user: @organization_admin,  organization: @organization)).to be_valid
     end
 
-    it "is valid with valid attributes" do
-      expect(build(:audit)).to be_valid
+    it "can not have line items that has quantity as a negative integer" do
+      audit = build(:audit,
+                    storage_location: @storage_location,
+                    line_items_attributes: [
+                      { item_id: @storage_location.items.first.id, quantity: -10 }
+                    ])
+
+      expect(audit.save).to be_falsey
     end
 
-    it "has only line items that has quantity as a positive integer" do
-      item = create(:item)
-      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+    it "can not have line items that has quantity as zero" do
+      audit = build(:audit,
+                    storage_location: @storage_location,
+                    line_items_attributes: [
+                      { item_id: @storage_location.items.first.id, quantity: 0 }
+                    ])
 
-      audit1 = build(:audit,
-                     storage_location: storage_location,
-                     line_items_attributes: [
-                       { item_id: storage_location.items.first.id, quantity: -10 }
-                     ])
+      expect(audit.save).to be_falsey
+    end
 
-      audit2 = build(:audit,
-                     storage_location: storage_location,
-                     line_items_attributes: [
-                       { item_id: storage_location.items.first.id, quantity: 0 }
-                     ])
+    it "can not have line items that has quantity as a string that cannot be reduced to an integer" do
+      audit = build(:audit,
+                    storage_location: @storage_location,
+                    line_items_attributes: [
+                      { item_id: @storage_location.items.first.id, quantity: "three" }
+                    ])
 
-      audit3 = build(:audit,
-                     storage_location: storage_location,
-                     line_items_attributes: [
-                       { item_id: storage_location.items.first.id, quantity: "three" }
-                     ])
+      expect(audit.save).to be_falsey
+    end
 
-      audit4 = build(:audit,
-                     storage_location: storage_location,
-                     line_items_attributes: [
-                       { item_id: storage_location.items.first.id, quantity: 9 }
-                     ])
+    it "can have line items that has quantity as a positive integer" do
+      audit = build(:audit,
+                    storage_location: @storage_location,
+                    line_items_attributes: [
+                      { item_id: @storage_location.items.first.id, quantity: 10 }
+                    ])
 
-      expect(audit1.save).to be_falsey
-      expect(audit2.save).to be_falsey
-      expect(audit3.save).to be_falsey
-      expect(audit4.save).to be_truthy
+      expect(audit.save).to be_truthy
     end
   end
 
@@ -93,21 +92,6 @@ RSpec.describe Audit, type: :model do
       create(:audit, storage_location: storage_location2, organization: @organization)
       create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
       expect(Audit.storage_locations_audited_for(@organization).to_a).to match_array([storage_location1, storage_location2])
-    end
-  end
-
-  describe "nested line item attributes" do
-    it "accepts them" do
-      item = create(:item)
-      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
-
-      new_audit = build(:audit,
-                        storage_location: storage_location,
-                        line_items_attributes: [
-                          { item_id: storage_location.items.first.id, quantity: 10 }
-                        ])
-
-      expect(new_audit.save).to be_truthy
     end
   end
 end

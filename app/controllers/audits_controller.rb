@@ -13,8 +13,8 @@ class AuditsController < ApplicationController
   end
 
   def edit
-    redirect_to audits_path unless @audit&.in_progress?
-    set_storage_locations
+    (redirect_to audits_path unless @audit&.in_progress?) && return
+    @storage_locations = [@audit.storage_location]
     set_items
     @audit.line_items.build if @audit.line_items.empty?
   end
@@ -44,7 +44,7 @@ class AuditsController < ApplicationController
       save_audit_status_and_redirect(params)
     else
       flash[:error] = "Something didn't work quite right -- try again?"
-      set_storage_locations
+      @storage_locations = [@audit.storage_location]
       set_items
       @audit.line_items.build if @audit.line_items.empty?
       render action: :edit
@@ -76,7 +76,7 @@ class AuditsController < ApplicationController
   end
 
   def destroy
-    redirect_to audits_path if @audit.finalized?
+    (redirect_to audits_path if @audit.finalized?) && return
     @audit.destroy!
     redirect_to audits_path, notice: "Audit is successfully deleted."
   end

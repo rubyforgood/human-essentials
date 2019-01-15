@@ -111,5 +111,30 @@ RSpec.describe AuditsController, type: :controller do
         end
       end
     end
+
+    describe "DELETE #destroy" do
+      context "with valid params" do
+        it "destroys the audit if the audit's status is `in_progress`" do
+          audit = create(:audit, organization: @organization)
+          expect do
+            delete :destroy, params: default_params.merge(id: audit.to_param), session: valid_session
+          end.to change(Audit, :count).by(-1)
+        end
+
+        it "destroys the audit if the audit's status is `confirms`" do
+          audit = create(:audit, organization: @organization, status: :confirmed)
+          expect do
+            delete :destroy, params: default_params.merge(id: audit.to_param), session: valid_session
+          end.to change(Audit, :count).by(-1)
+        end
+
+        it "can not destroy the audit if the audit's status is `finalized`" do
+          audit = create(:audit, organization: @organization, status: :finalized)
+          expect do
+            delete :destroy, params: default_params.merge(id: audit.to_param), session: valid_session
+          end.to change(Audit, :count).by(0)
+        end
+      end
+    end
   end
 end
