@@ -1,2 +1,0 @@
-module AuditsHelper
-end
