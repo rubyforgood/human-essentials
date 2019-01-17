@@ -18,11 +18,6 @@ RSpec.describe Audit, type: :model do
   it_behaves_like "itemizable"
 
   context "Validations >" do
-    before(:context) do
-      item = create(:item)
-      @storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
-    end
-
     it "must belong to an organization" do
       expect(build(:audit, storage_location: create(:storage_location), organization_id: nil)).not_to be_valid
       expect(build(:audit, organization: @organization)).to be_valid
@@ -34,40 +29,48 @@ RSpec.describe Audit, type: :model do
     end
 
     it "can not have line items that has quantity as a negative integer" do
+      item = create(:item)
+      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = build(:audit,
-                    storage_location: @storage_location,
+                    storage_location: storage_location,
                     line_items_attributes: [
-                      { item_id: @storage_location.items.first.id, quantity: -10 }
+                      { item_id: storage_location.items.first.id, quantity: -10 }
                     ])
 
       expect(audit.save).to be_falsey
     end
 
     it "can not have line items that has quantity as zero" do
+      item = create(:item)
+      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = build(:audit,
-                    storage_location: @storage_location,
+                    storage_location: storage_location,
                     line_items_attributes: [
-                      { item_id: @storage_location.items.first.id, quantity: 0 }
+                      { item_id: storage_location.items.first.id, quantity: 0 }
                     ])
 
       expect(audit.save).to be_falsey
     end
 
     it "can not have line items that has quantity as a string that cannot be reduced to an integer" do
+      item = create(:item)
+      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = build(:audit,
-                    storage_location: @storage_location,
+                    storage_location: storage_location,
                     line_items_attributes: [
-                      { item_id: @storage_location.items.first.id, quantity: "three" }
+                      { item_id: storage_location.items.first.id, quantity: "three" }
                     ])
 
       expect(audit.save).to be_falsey
     end
 
     it "can have line items that has quantity as a positive integer" do
+      item = create(:item)
+      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = build(:audit,
-                    storage_location: @storage_location,
+                    storage_location: storage_location,
                     line_items_attributes: [
-                      { item_id: @storage_location.items.first.id, quantity: 10 }
+                      { item_id: storage_location.items.first.id, quantity: 10 }
                     ])
 
       expect(audit.save).to be_truthy
