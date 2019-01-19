@@ -1,0 +1,76 @@
+<section class="content-header">
+  <% content_for :title, "Audits - Inventory - #{current_organization.name}" %>
+  <h1>
+    Inventory Audits
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
+    </li>
+    <li><a href="#">Audits</a></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+      <section id="filters">
+        <%= form_tag(audits_path, method: :get) do |f| %>
+          <div class="row">
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter by Storage Location" %>
+              <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }, class: "form-control") %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <%= filter_button %>
+              <%= cancel_button_to audits_path, size: "md", text: "Clear Filters" %>
+
+              <div class="btn-group pull-right">
+                <p>
+                  <%= new_button_to new_audit_path(organization_id: current_organization), { text: "New Audit"} %>
+                </p>
+              </div>
+            </div>
+          </div><!-- /.row -->
+        <% end %>
+      </section>
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>Created</th>
+                <th>Organization</th>
+                <th>Storage location</th>
+                <th>Summary</th>
+                <th>Status</th>
+                <th>&nbsp;</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @audits.each do |audit| %>
+                <tr class="<%= (audit.finalized?) ? 'positive' : (audit.in_progress?) ? 'negative' : 'highlight' %>">
+                  <td><time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y") %></time></td>
+                  <td><%= audit.organization.name %></td>
+                  <td><%= audit.storage_location.name %></td>
+                  <td><%= pluralize(audit.line_items.count, 'item') %></td>
+                  <td><%= audit.status.titleize %></td>
+                  <td class="text-right"><%= view_button_to audit %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body.table-responsive -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section><!-- /.content -->
