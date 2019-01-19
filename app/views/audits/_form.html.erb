@@ -1,0 +1,23 @@
+<%= simple_form_for @audit, html: { class: "storage-location-required" } do |f| %>
+  <%= render partial: "storage_locations/source", object: f%>
+  <fieldset style="margin-bottom: 2rem;" class="form-inline">
+    <legend>Items in this audit</legend>
+    <%= f.simple_fields_for :line_items do |item| %>
+      <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">
+        <%= render 'line_items/line_item_fields', f: item %>
+      </div>
+    <% end %>
+    <div class="row links">
+      <div class="col-xs-12">
+        <%= add_line_item_button f, "#audit_line_items" %>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="row">
+    <div class="col-xs-12 pull-right">
+      <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'sm'}, {confirm: 'Are you sure?'}) %>
+      <%= submit_button({ text: 'Save Progress', name: 'save_progress', size: 'md' }) %>
+    </div>
+  </div>
+<% end %>

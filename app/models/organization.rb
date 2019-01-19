@@ -45,6 +45,7 @@ class Organization < ApplicationRecord
   has_many :transfers, dependent: :destroy
   has_many :users, dependent: :destroy
   has_many :requests, dependent: :destroy
+  has_many :audits, dependent: :destroy
 
   has_one_attached :logo
 

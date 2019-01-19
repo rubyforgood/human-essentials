@@ -46,6 +46,20 @@ ActiveRecord::Schema.define(version: 2019_01_13_213136) do
     t.index ["storage_location_id"], name: "index_adjustments_on_storage_location_id"
   end
 
+  create_table "audits", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "organization_id"
+    t.bigint "adjustment_id"
+    t.bigint "storage_location_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["adjustment_id"], name: "index_audits_on_adjustment_id"
+    t.index ["organization_id"], name: "index_audits_on_organization_id"
+    t.index ["storage_location_id"], name: "index_audits_on_storage_location_id"
+    t.index ["user_id"], name: "index_audits_on_user_id"
+  end
+
   create_table "barcode_items", force: :cascade do |t|
     t.string "value"
     t.integer "barcodeable_id"

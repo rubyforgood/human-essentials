@@ -136,6 +136,24 @@
           </li>
         </ul>
       </li>
+      <% if current_user.organization_admin %>
+        <li class="<%= active_class(['audits']) %> treeview">
+          <a href="#">
+            <i class="fa fa-tasks"></i>
+            <span>Reporting & Auditing</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="<%= active_class(['audits']) %>">
+              <%= link_to(audits_path(organization_id: current_user.organization)) do %>
+                <i class="fa fa-circle-o"></i> Annual Audit
+              <% end %>
+            </li>
+          </ul>
+        </li>
+      <% end %>
     </ul>
   </section>
 </aside>
