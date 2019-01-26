@@ -6,6 +6,8 @@
 
 This application is an inventory management system that is built to address the needs of [Diaper Banks](http://nationaldiaperbanknetwork.org/what-is-diaper-need/diaper-facts/) as directly and explicitly as possible. Diaper Banks maintain inventory, receive donations and other means of intaking diapers (and related supplies), and issue Distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data, and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
 
+For a general overview of the application, please see the [Application Overview](/rubyforgood/diaper/wiki/Application-Overview) wiki article.
+
 ### Closed Beta
 
 There are currently 5 Diaper Banks, across America, that are working with our organization to use and provide critical feedback about the functionality of the application. We are grateful for their involvement, and value their input as key stakeholders.
