@@ -29,8 +29,8 @@ class Partner < ApplicationRecord
   after_create :register_on_partnerbase
 
   # better to extract this outside of the model
-  def self.import_csv(data, organization_id)
-    CSV.parse(data, headers: true) do |row|
+  def self.import_csv(csv, organization_id)
+    csv.each do |row|
       hash_rows = Hash[row.to_hash.map { |k, v| [k.downcase, v] }]
       loc = Partner.new(hash_rows)
       loc.organization_id = organization_id
