@@ -24,7 +24,7 @@ class ItemsByStorageCollectionQuery
                         sum(inventory_items.quantity) as quantity
                       ')
                 .group("storage_locations.name, storage_locations.id, items.id, items.name")
-                .order(name: :asc).filter(filter_params)
+                .order(name: :asc).class_filter(filter_params)
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 end
