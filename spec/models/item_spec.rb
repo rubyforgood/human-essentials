@@ -30,7 +30,7 @@ RSpec.describe Item, type: :model do
 
   context "Filtering >" do
     it "can filter" do
-      expect(subject.class).to respond_to :filter
+      expect(subject.class).to respond_to :class_filter
     end
 
     it "->in_category returns all items in the provided category" do
