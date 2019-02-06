@@ -53,7 +53,7 @@ class ItemsController < ApplicationController
   private
 
   def item_params
-    params.require(:item).permit(:name, :category, :partner_key)
+    params.require(:item).permit(:name, :category, :partner_key, :price)
   end
 
   def filter_params(parameters = nil)

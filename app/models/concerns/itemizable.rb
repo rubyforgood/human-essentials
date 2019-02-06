@@ -72,6 +72,14 @@ module Itemizable
     end
   end
 
+  def price_per_itemizable
+    tp = 0
+    line_items.each do |line_item|
+      tp += line_item.item.price * line_item.quantity
+    end
+    tp
+  end
+
   private
 
   def line_item_items_quantity_is_positive

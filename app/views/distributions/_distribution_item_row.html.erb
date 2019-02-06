@@ -1,4 +1,6 @@
 <tr>
   <td><%= distribution_item_row.quantity %></td>
+  <td><%= item_price(distribution_item_row.item.price) %></td>
+  <td><%= item_price(distribution_item_row.price_per_line_item) %></td>
   <td><%= distribution_item_row.item.name %></td>
 </tr>
