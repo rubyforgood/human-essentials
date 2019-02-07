@@ -26,8 +26,13 @@ module Importable
   def import_csv
     if params[:file].present?
       data = File.read(params[:file].path, encoding: "BOM|UTF-8")
-      resource_model.import_csv(data, current_organization.id)
-      flash[:notice] = "#{resource_model_humanized} were imported successfully!"
+      csv = CSV.parse(data, headers: true).reject { |row| row.to_hash.values.any?(&:nil?) }
+      if csv.count.positive? && csv.first.headers.all? { |header| !header.nil? }
+        resource_model.import_csv(csv, current_organization.id)
+        flash[:notice] = "#{resource_model_humanized} were imported successfully!"
+      else
+        flash[:error] = "Check headers in file!"
+      end
     else
       flash[:error] = "No file was attached!"
     end

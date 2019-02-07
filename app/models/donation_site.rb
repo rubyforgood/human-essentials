@@ -29,8 +29,8 @@ class DonationSite < ApplicationRecord
       .order(:name)
   }
 
-  def self.import_csv(data, organization)
-    CSV.parse(data, headers: true) do |row|
+  def self.import_csv(csv, organization)
+    csv.each do |row|
       loc = DonationSite.new(row.to_hash)
       loc.organization_id = organization
       loc.save!
