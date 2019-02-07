@@ -72,12 +72,8 @@ module Itemizable
     end
   end
 
-  def price_per_itemizable
-    tp = 0
-    line_items.each do |line_item|
-      tp += line_item.item.price * line_item.quantity
-    end
-    tp
+  def value_per_itemizable
+    line_items.sum(&:value_per_line_item)
   end
 
   private

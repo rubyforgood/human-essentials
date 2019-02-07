@@ -18,7 +18,7 @@ class LineItem < ApplicationRecord
   validates :item_id, presence: true
   validates :quantity, numericality: { other_than: 0, only_integer: true }
 
-  def price_per_line_item
-    item.price * quantity
+  def value_per_line_item
+    item.value * quantity
   end
 end
