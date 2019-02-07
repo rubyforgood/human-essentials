@@ -4,7 +4,7 @@ class AuditsController < ApplicationController
 
   def index
     @selected_location = filter_params[:at_location]
-    @audits = current_organization.audits.filter(filter_params)
+    @audits = current_organization.audits.class_filter(filter_params)
     @storage_locations = Audit.storage_locations_audited_for(current_organization).uniq
   end
 
