@@ -1,9 +1,9 @@
 module ItemsHelper
-  def item_price(price, addition = '')
-    if price.zero?
+  def item_value(value, addition = '')
+    if value.zero?
       ''
     else
-      addition + number_to_currency(price, precision: price.round == price ? 0 : 2)
+      addition + ActionController::Base.helpers.number_to_currency(value, precision: value.round == value ? 0 : 2)
     end
   end
 end

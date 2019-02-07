@@ -1,7 +1,6 @@
 class DistributionPdf
   include Prawn::View
   include ItemsHelper
-  include ActionView::Helpers::NumberHelper
 
   def initialize(organization, distribution)
     @distribution = distribution
@@ -11,11 +10,11 @@ class DistributionPdf
       text organization.address, align: :right
       text organization.email, align: :right
     end
-    data = [["Items Received", "Price/item", "Total price", "Quantity"]]
+    data = [["Items Received", "Value/item", "Total value", "Quantity"]]
     data += @distribution.line_items.sorted.map do |c|
-      [c.item.name, item_price(c.item.price), item_price(c.price_per_line_item), c.quantity]
+      [c.item.name, item_value(c.item.value), item_value(c.value_per_line_item), c.quantity]
     end
-    data += [["", "", "", ""], ["Total Items Received", "", item_price(@distribution.price_per_itemizable), @distribution.line_items.total]]
+    data += [["", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total]]
 
     move_down 55
 
