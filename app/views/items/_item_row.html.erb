@@ -3,6 +3,7 @@
   <td><%= item_row.category %></td>
   <td><%= item_row.barcode_count %></td>
   <td><%= item_row.canonical_item.name %></td>
+  <td><%= item_value(item_row.value) %></td>
   <td class="text-right">
     <%= view_button_to item_path(item_row) %>
     <%= edit_button_to edit_item_path(item_row) %>

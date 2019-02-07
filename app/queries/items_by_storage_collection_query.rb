@@ -19,6 +19,7 @@ class ItemsByStorageCollectionQuery
                         items.category,
                         items.barcode_count,
                         items.partner_key,
+                        items.value,
                         storage_locations.name as storage_name,
                         storage_locations.id as storage_id,
                         sum(inventory_items.quantity) as quantity

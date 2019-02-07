@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_13_213136) do
+ActiveRecord::Schema.define(version: 2019_02_06_074807) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(version: 2019_01_13_213136) do
     t.integer "organization_id"
     t.boolean "active", default: true
     t.string "partner_key"
+    t.decimal "value", precision: 5, scale: 2, default: "0.0"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
