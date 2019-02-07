@@ -30,7 +30,8 @@ RSpec.describe DonationSite, type: :model do
       organization = create(:organization)
       import_file_path = Rails.root.join("spec", "fixtures", "donation_sites.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
-      DonationSite.import_csv(data, organization.id)
+      csv = CSV.parse(data, headers: true)
+      DonationSite.import_csv(csv, organization.id)
       expect(DonationSite.count).to eq 3
     end
   end
