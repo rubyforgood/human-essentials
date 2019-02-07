@@ -20,7 +20,7 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <h3 class="box-title"><%= @item.name %></h3>
+    <h3 class="box-title"><%= @item.name %>  <%= item_value(@item.value, ', value per Item: ') %></h3>
   </div>
   <div class="box-body">
 
@@ -92,3 +92,4 @@
 <% end %>
   </div>
 </div>
+</section>

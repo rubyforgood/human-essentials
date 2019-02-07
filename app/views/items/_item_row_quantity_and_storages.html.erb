@@ -6,5 +6,6 @@
   <td><%= row_item[storage.id] %></td>
 <% end %>
 <td><%= row_item[:quantity] == 0? '': row_item[:quantity] %></td>
+  <td><%= item_value(row_item[:item_value]) %></td>
 <td>
 </tr>
