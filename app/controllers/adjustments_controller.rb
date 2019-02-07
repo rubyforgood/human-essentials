@@ -5,7 +5,7 @@ class AdjustmentsController < ApplicationController
   # GET /adjustments.json
   def index
     @selected_location = filter_params[:at_location]
-    @adjustments = current_organization.adjustments.filter(filter_params)
+    @adjustments = current_organization.adjustments.class_filter(filter_params)
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
   end
