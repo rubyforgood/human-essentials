@@ -54,6 +54,10 @@
 
     <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
 
+    <%= f.input :default_email_text, wrapper: :vertical_input_group do %>
+      <%= f.rich_text_area :default_email_text %>
+    <% end %>
+
     <%= f.input :logo, wrapper: :vertical_input_group do %>
 
       <% if current_organization.logo.attached? %>
