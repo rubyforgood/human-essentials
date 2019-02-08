@@ -346,6 +346,12 @@
                     <p>Your distribution has been set to be picked up on <%= @distribution.issued_at.strftime("%m/%d/%Y") %>.</p>
                     <p>See you soon!</p>
                   </td>
+                <tr>
+                  <td><%= @default_email_text %></td>
+                </tr>
+                <tr>
+                  <td><%= @comment %></td>
+                </tr>
                 </tr>
               </table>
             </td>
