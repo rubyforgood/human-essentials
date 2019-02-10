@@ -14,7 +14,7 @@
 //= require jquery_ujs
 //= require bootstrap.min
 //= require fastclick
-//= require adminlte.min
+//= require inspinia
 //= require cocoon
 //= require toastr
 //= require Chart.bundle

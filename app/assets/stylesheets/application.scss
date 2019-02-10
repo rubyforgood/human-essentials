@@ -13,6 +13,7 @@
  *= require toastr
  *= require font-awesome
  *= require ionicons
+ *= require style
  *= require bootstrap.min
  *= require fullcalendar
  */
@@ -22,10 +23,8 @@
  @import 'base/_variables';
 
  // import other stylesheets after variables
-@import 'AdminLTE';
-@import '_all-skins';
+
 @import 'scale';
 @import 'progress_stepper';
-@import 'admin_layout';
 @import 'audits';
 @import 'modal-dialog';
