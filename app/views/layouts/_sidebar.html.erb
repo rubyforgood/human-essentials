@@ -1,21 +1,18 @@
 <nav class="navbar-default navbar-static-side" role="navigation">
   <div class="sidebar-collapse">
     <ul class="nav metismenu" id="side-menu">
-      <li class="header all-caps">Main Navigation</li>
       <li class="<%= active_class(['dashboard']) %>">
         <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
           <i class="fa fa-dashboard"></i> <span>Dashboard</span>
         <% end %>
       </li>
-      <li class="<%= active_class(['donations']) %> treeview">
+      <li class="<%= active_class(['donations']) %>">
         <a href="#">
           <i class="fa fa-gratipay"></i>
-          <span>Donations</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+          <span class="nav-label">Donations</span>
+          <span class="fa arrow"></span>
         </a>
-        <ul class="treeview-menu">
+        <ul class="nav nav-second-level">
           <li class="<%= 'active' if current_page?(donations_path(organization_id: current_user.organization)) %>">
             <%= link_to(donations_path(organization_id: current_user.organization)) do %>
               <i class="fa fa-circle-o"></i> All Donations
@@ -33,15 +30,13 @@
           </li>
         </ul>
       </li>
-      <li class="<%= active_class(['purchases']) %> treeview">
+      <li class="<%= active_class(['purchases']) %>">
         <a href="#">
           <i class="fa fa-money"></i>
-          <span>Purchases</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+          <span class="nav-label">Purchases</span>
+          <span class="fa arrow"></span>
         </a>
-        <ul class="treeview-menu">
+        <ul class="nav nav-second-level">
           <li class="<%= 'active' if current_page?(purchases_path(organization_id: current_user.organization)) %>">
             <%= link_to(purchases_path(organization_id: current_user.organization)) do %>
               <i class="fa fa-circle-o"></i> All Purchases
@@ -57,29 +52,27 @@
       <li>
       <li class="<%= 'active' if current_page?(requests_path) %>">
         <%= link_to(requests_path) do %>
-          <i class="fa fa-file-text"></i> <span>Requests</span>
+          <i class="fa fa-file-text"></i> <span class="nav-label">Requests</span>
         <% end %>
       </li>
       <li class="<%= active_class(['distributions']) %>">
         <%= link_to(distributions_path(organization_id: current_user.organization)) do %>
-          <i class="fa fa-circle-o"></i> <span>Distributions</span>
+          <i class="fa fa-circle-o"></i> <span class="nav-label">Distributions</span>
         <% end %>
       </li>
       <li class="<%= 'active' if current_page?(pick_ups_distributions_path) %>">
         <%= link_to(pick_ups_distributions_path) do %>
-          <i class="fa fa-calendar-o"></i> <span>Pick Ups</span>
+          <i class="fa fa-calendar-o"></i> <span class="nav-label">Pick Ups</span>
         <% end %>
       </li>
       </li>
       <li class="<%= active_class(['items','barcode_items','storage_locations','adjustments','transfers']) %> treeview">
         <a href="#">
           <i class="fa fa-pie-chart"></i>
-          <span>Inventory</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+          <span class="nav-label">Inventory</span>
+          <span class="fa arrow"></span>
         </a>
-        <ul class="treeview-menu">
+        <ul class="nav nav-second-level">
           <li class="<%= active_class(['items']) %>">
             <%= link_to(items_path(organization_id: current_user.organization)) do %>
               <i class="fa fa-circle-o"></i> Items &amp; Inventory
@@ -110,12 +103,10 @@
       <li class="<%= active_class(['partners','donation_sites','diaper_drive_participants']) %> treeview">
         <a href="#">
           <i class="fa fa-laptop"></i>
-          <span>Community</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+          <span class="nav-label">Community</span>
+          <span class="fa arrow"></span>
         </a>
-        <ul class="treeview-menu">
+        <ul class="nav nav-second-level">
           <li class="<%= active_class(['donation_sites']) %>">
             <%= link_to(donation_sites_path(organization_id: current_user.organization)) do %>
               <i class="fa fa-circle-o"></i> Donation Sites
@@ -134,15 +125,13 @@
         </ul>
       </li>
       <% if current_user.organization_admin %>
-        <li class="<%= active_class(['audits']) %> treeview">
+        <li class="<%= active_class(['audits']) %>">
           <a href="#">
             <i class="fa fa-tasks"></i>
-            <span>Reporting & Auditing</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+            <span class="nav-label">Reporting & Auditing</span>
+            <span class="fa arrow"></span>
           </a>
-          <ul class="treeview-menu">
+          <ul class="nav nav-second-level">
             <li class="<%= active_class(['audits']) %>">
               <%= link_to(audits_path(organization_id: current_user.organization)) do %>
                 <i class="fa fa-circle-o"></i> Annual Audit
@@ -152,5 +141,5 @@
         </li>
       <% end %>
     </ul>
-  </section>
-</aside>
+  </div>
+</nav>
