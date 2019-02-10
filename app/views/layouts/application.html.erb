@@ -31,7 +31,7 @@
       <!-- Header Navbar: style can be found in header.less -->
       <% if user_signed_in? && current_organization.present? %>
         <% if admin_namespace? %>
-          <%= render partial: "layouts/lte_admin_navbar" %>
+          <%= render partial: "layouts/admin_navbar" %>
         <% else %>
           <%= render partial: "layouts/navbar" %>
         <% end %>
