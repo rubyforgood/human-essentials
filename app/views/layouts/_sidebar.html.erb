@@ -3,7 +3,7 @@
     <ul class="nav metismenu" id="side-menu">
       <li class="<%= active_class(['dashboard']) %>">
         <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
-          <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+          <i class="fa fa-dashboard"></i> <span class="nav-label">Dashboard</span>
         <% end %>
       </li>
       <li class="<%= active_class(['donations']) %>">

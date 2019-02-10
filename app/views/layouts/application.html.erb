@@ -28,7 +28,7 @@
 
   <div id="page-wrapper" class="gray-bg dashbard-1">
     <div class="row border-bottom">
-    <!-- Header Navbar: style can be found in header.less -->
+      <!-- Header Navbar: style can be found in header.less -->
       <% if user_signed_in? && current_organization.present? %>
         <% if admin_namespace? %>
           <%= render partial: "layouts/lte_admin_navbar" %>
@@ -36,46 +36,38 @@
           <%= render partial: "layouts/lte_navbar" %>
         <% end %>
       <% end %>
-    </nav>
-  </header>
+      </nav>
+      </header>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div id="flash-message-container">
-      <% flash.each do |key, value| %>
-        <div class="<%= flash_class(key) %> alert-dismissible">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-          <%= value %>
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div id="flash-message-container">
+          <% flash.each do |key, value| %>
+            <div class="<%= flash_class(key) %> alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+              <%= value %>
+            </div>
+          <% end %>
         </div>
-      <% end %>
+        <%= yield %>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+
+      <footer class="footer">
+        <div class="float-right">
+        </div>
+        <strong>Diaperbase was built with <i class="fa fa-heart"></i> by
+          <a href="http://rubyforgood.org">Ruby for Good</a>.</strong>
+      </footer>
+
+
     </div>
-    <%= yield %>
-    <!-- /.content -->
   </div>
-  <!-- /.content-wrapper -->
-
-  <footer class="footer">
-    <div class="float-right">
-    </div>
-    <strong>Diaperbase was built with <i class="fa fa-heart"></i> by <a href="http://rubyforgood.org">Ruby for Good</a>.</strong>
-  </footer>
-
 
 </div>
-</div>
-</aside>
-<!-- /.control-sidebar -->
-<!-- Add the sidebar's background. This div must be placed
-     immediately after the control sidebar -->
-<div class="control-sidebar-bg"></div>
-</div>
-<!-- ./wrapper -->
-<script>
-    $(document).ready(function () {
-        $('.sidebar-menu').tree()
-    })
-</script>
+
 </body>
 <div class="modal fade" id="modal_new_diaper_drive" role="dialog"></div>
 </html>
