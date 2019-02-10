@@ -15,31 +15,20 @@
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<body>
+<body class="md-skin">
 <!-- Site wrapper -->
 <div class="wrapper">
-
-  <header class="main-header">
-    <!-- Logo -->
-    <% if user_signed_in? %>
-      <a href="<%= root_path %>" class="logo">
+  <% if user_signed_in? %>
+    <% if admin_namespace? %>
+      <%= render partial: "layouts/admin_sidebar" %>
+    <% else %>
+      <%= render partial: "layouts/sidebar" %>
     <% end %>
-    <!-- mini logo for sidebar mini 50x50 pixels -->
-    <span class="logo-mini"><img src="/img/diaper-base-logo-icon.svg" alt="DiaperBase Logo (icon)" title="DiaperBase">
-    </span>
-    <!-- logo for regular state and mobile devices -->
-    <span class="logo-lg"><%= image_tag "/img/diaper-base-logo-words-white.svg", alt: "DiaperBase Logo", id: "logo" %></span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-      <!-- Sidebar toggle button-->
-      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
+  <% end %>
 
+  <div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row border-bottom">
+      <!-- Header Navbar: style can be found in header.less -->
       <% if user_signed_in? && current_organization.present? %>
         <% if admin_namespace? %>
           <%= render partial: "layouts/lte_admin_navbar" %>
@@ -47,59 +36,38 @@
           <%= render partial: "layouts/navbar" %>
         <% end %>
       <% end %>
-    </nav>
-  </header>
+      </nav>
+      </header>
 
-  <!-- =============================================== -->
-  <% # If there's no organization set, most of these routes won't work. %>
-  <% if user_signed_in? %>
-    <% if admin_namespace? %>
-      <%= render partial: "layouts/lte_admin_sidebar" %>
-    <% else %>
-      <%= render partial: "layouts/lte_sidebar" %>
-    <% end %>
-  <% end %>
-
-
-  <!-- =============================================== -->
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div id="flash-message-container">
-      <% flash.each do |key, value| %>
-        <div class="<%= flash_class(key) %> alert-dismissible">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-          <%= value %>
+      <!-- Content Wrapper. Contains page content -->
+      <div class="row  border-bottom white-bg dashboard-header">
+        <!-- Content Header (Page header) -->
+        <div id="flash-message-container">
+          <% flash.each do |key, value| %>
+            <div class="<%= flash_class(key) %> alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+              <%= value %>
+            </div>
+          <% end %>
         </div>
-      <% end %>
+        <%= yield %>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+
+      <footer class="footer">
+        <div class="float-right">
+        </div>
+        <strong>Diaperbase was built with <i class="fa fa-heart"></i> by
+          <a href="http://rubyforgood.org">Ruby for Good</a>.</strong>
+      </footer>
+
+
     </div>
-    <%= yield %>
-    <!-- /.content -->
   </div>
-  <!-- /.content-wrapper -->
-
-  <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-    </div>
-    <strong>Diaperbase was built with <i class="fa fa-heart"></i> by <a href="http://rubyforgood.org">Ruby for Good</a>.</strong>
-  </footer>
-
 
 </div>
-</div>
-</aside>
-<!-- /.control-sidebar -->
-<!-- Add the sidebar's background. This div must be placed
-     immediately after the control sidebar -->
-<div class="control-sidebar-bg"></div>
-</div>
-<!-- ./wrapper -->
-<script>
-    $(document).ready(function () {
-        $('.sidebar-menu').tree()
-    })
-</script>
+
 </body>
 <div class="modal fade" id="modal_new_diaper_drive" role="dialog"></div>
 </html>

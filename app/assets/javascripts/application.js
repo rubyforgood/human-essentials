@@ -20,6 +20,9 @@
 //= require Chart.bundle
 //= require chartkick
 //= require react
+//= require jquery.metisMenu
+//= require popper.min
+//= require jquery.slimscroll.min
 //= require react_ujs
 //= require components
 //= require moment
