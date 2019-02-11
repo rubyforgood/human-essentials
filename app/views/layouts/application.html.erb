@@ -17,7 +17,7 @@
 </head>
 <body class="md-skin">
 <!-- Site wrapper -->
-<div class="wrapper">
+<div id="wrapper">
   <% if user_signed_in? %>
     <% if admin_namespace? %>
       <%= render partial: "layouts/admin_sidebar" %>
@@ -28,7 +28,6 @@
 
   <div id="page-wrapper" class="gray-bg">
     <div class="row border-bottom">
-      <!-- Header Navbar: style can be found in header.less -->
       <% if user_signed_in? && current_organization.present? %>
         <% if admin_namespace? %>
           <%= render partial: "layouts/admin_navbar" %>
@@ -36,38 +35,18 @@
           <%= render partial: "layouts/navbar" %>
         <% end %>
       <% end %>
-      </nav>
-      </header>
-
-      <!-- Content Wrapper. Contains page content -->
-      <div class="row  border-bottom white-bg dashboard-header">
-        <!-- Content Header (Page header) -->
-        <div id="flash-message-container">
-          <% flash.each do |key, value| %>
-            <div class="<%= flash_class(key) %> alert-dismissible">
-              <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-              <%= value %>
-            </div>
-          <% end %>
-        </div>
-        <%= yield %>
-        <!-- /.content -->
+    </div>
+      <%= yield %>
+    <div class="footer">
+      <div class="float-left">
+        <strong>Diaperbase was built with <i class="fa fa-heart"></i > by
+          <a href = "http://rubyforgood.org" > Ruby for Good </a>.</strong >
       </div>
-      <!-- /.content-wrapper -->
-
-      <footer class="footer">
-        <div class="float-right">
-        </div>
-        <strong>Diaperbase was built with <i class="fa fa-heart"></i> by
-          <a href="http://rubyforgood.org">Ruby for Good</a>.</strong>
-      </footer>
-
-
     </div>
   </div>
-
 </div>
 
+
+
 </body>
-<div class="modal fade" id="modal_new_diaper_drive" role="dialog"></div>
 </html>
