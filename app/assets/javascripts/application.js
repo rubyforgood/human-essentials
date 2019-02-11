@@ -26,7 +26,7 @@
 //= require react_ujs
 //= require components
 //= require moment
-//= require fullcalendar
+//= require fullcalendar.min
 //= require_tree .
 
 

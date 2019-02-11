@@ -1,26 +1,48 @@
-<section class="content-header">
-  <% content_for :title, "Distribution Pick-ups - #{current_organization.name}" %>
-  <h1>
-    Pick Up Schedule
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><%= link_to "Distributions", (distributions_path) %></li>
-    <li class="active"> Pickups</li>
-      </ol>
-</section>
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-lg-8">
+    <h2>Pick Ups</h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="index.html">Home</a>
+      </li>
+      <li class="breadcrumb-item">
+        Distributions
+      </li>
+      <li class="breadcrumb-item active">
+        <strong>Pick Ups</strong>
+      </li>
+    </ol>
+  </div>
+</div>
 
-<!-- Main content -->
-<section class="content">
-
-  <!-- Default box -->
-
-  <div class="box box-primary">
-    <div class="box-body">
-
-      <div id="calendar" class="fc fc-unthemed fc-ltr"></div>
+<div class="wrapper wrapper-content">
+  <div class="row animated fadeInDown">
+    <div class="col-lg12">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5>Upcoming Partner Pick Ups </h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a href="#" class="dropdown-item">Config option 1</a>
+              </li>
+              <li><a href="#" class="dropdown-item">Config option 2</a>
+              </li>
+            </ul>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div id="calendar"></div>
+        </div>
+      </div>
     </div>
-</section>
+  </div>
+</div>

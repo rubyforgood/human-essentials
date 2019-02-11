@@ -4,7 +4,6 @@ $md-color-primary: #1AB394;
 $md-shadow-main: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
 body.md-skin {
-  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: #ffffff;
 }
 
@@ -16,7 +15,6 @@ body.md-skin {
   }
 
   .label, .badge {
-    font-family: 'Roboto';
   }
 
   ul.nav-second-level {
@@ -88,11 +86,11 @@ body.md-skin {
 
   #nestable-output,
   #nestable2-output {
-    font-family: 'Roboto', lucida grande, lucida sans unicode, helvetica, arial, sans-serif;
+
   }
 
   .landing-page {
-    font-family: 'Roboto', helvetica, arial, sans-serif;
+
   }
 
   .landing-page.navbar-default.navbar-scroll {
@@ -309,7 +307,7 @@ body.md-skin {
   }
 
   &.landing-page .navbar-default .nav li a {
-    font-family: 'Roboto', helvetica, arial, sans-serif;
+
   }
 
   &.landing-page .nav > li > a {
