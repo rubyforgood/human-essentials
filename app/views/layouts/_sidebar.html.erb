@@ -1,6 +1,12 @@
 <nav class="navbar-default navbar-static-side" role="navigation">
   <div class="sidebar-collapse">
     <ul class="nav metismenu" id="side-menu">
+      <li class="nav-header">
+        <div class="dropdown profile-element">
+          <img src="/img/diaper-base-logo-icon.svg" alt="DiaperBase Logo (icon)" title="DiaperBase">
+          <a href="<%= root_path %>" %><span class="block m-t-xs font-bold"><%= current_user.name %></span></a>
+        </div>
+      </li>
       <li class="<%= active_class(['dashboard']) %>">
         <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
           <i class="fa fa-dashboard"></i> <span class="nav-label">Dashboard</span>
