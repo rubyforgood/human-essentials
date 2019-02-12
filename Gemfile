@@ -69,6 +69,7 @@ group :development do
   gem "capistrano-bundler"
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
+  gem 'capistrano-webpacker-precompile', require: false
   gem "listen", "~> 3.1.5"
   gem "rails-erd"
   gem "spring"
