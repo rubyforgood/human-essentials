@@ -44,6 +44,9 @@ gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "sucker_punch", "~> 2.0"
+gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
+gem "image_processing"
+gem "webpacker", "~> 3.5"
 
 group :development, :test do
   gem "awesome_print"

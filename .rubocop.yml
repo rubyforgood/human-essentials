@@ -18,6 +18,7 @@ AllCops:
     - "Vagrantfile"
     - "Rakefile"
     - "tmp/*"
+    - "node_modules/**/*"
   UseCache: false
 Bundler/OrderedGems:
   Enabled: false

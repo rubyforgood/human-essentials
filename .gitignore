@@ -49,3 +49,8 @@ pdx_db_test
 # Ignore Docker stuff (see issues #503, #603)
 Dockerfile
 docker-compose.yml
+/public/packs
+/public/packs-test
+/node_modules
+yarn-debug.log*
+.yarn-integrity
