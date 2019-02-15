@@ -66,7 +66,7 @@
       </li>
       <li class="<%= active_class(['distributions']) %>">
         <%= link_to(distributions_path(organization_id: current_user.organization)) do %>
-          <i class="fa fa-circle-o"></i> <span class="nav-label">Distributions</span>
+          <i class="fa fa-exchange"></i> <span class="nav-label">Distributions</span>
         <% end %>
       </li>
       <li class="<%= 'active' if current_page?(pick_ups_distributions_path) %>">
