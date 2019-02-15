@@ -22,6 +22,7 @@
 //= require react
 //= require jquery.metisMenu
 //= require popper.min
+//= require pace.min
 //= require jquery.slimscroll.min
 //= require react_ujs
 //= require components

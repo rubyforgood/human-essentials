@@ -1,27 +1,30 @@
-<div class="row border-bottom white-bg dashboard-header">
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-lg-8">
+    <h2>Distributions for <%= current_organization.name %></h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active">
+        All Distributions
+      </li>
+    </ol>
+  </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= download_button_to(csv_path(format: :csv, type: "Distribution"), text: "Export Distributions", size: "lg") if @distributions.length > 0 %>
+      <%= new_button_to new_distribution_path(organization_id: current_organization), {text: "New Distribution"} %>
+    </div>
+  </div>
+</div>
 
 <div class="row">
-    <div class="col-lg-12">
-
-      <% content_for :title, "Distributions - #{current_organization.name}" %>
-      <h1>
-        Distributions
-        <small>for <%= current_organization.name %></small>
-      </h1>
-
-      <div class="btn-group pull-right">
-        <p>
-          <%= download_button_to(csv_path(format: :csv, type: "Distribution"), text: "Export Distributions", size: "lg") if @distributions.length > 0 %>
-
-          <%= new_button_to new_distribution_path(organization_id: current_organization), {text: "New Distribution"} %>
-        <p>
-      </div>
-    </div>
-  </div><!-- /.box-header -->
-
-  <div class="row">
-    <div class="col-lg-12">
-      <!-- /.box-header -->
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="row">
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
@@ -41,5 +44,7 @@
         </table>
       </div><!-- /.box-body.table-responsive -->
     </div><!-- /.col-xs-12 -->
+    </div>
+    </div>
   </div><!-- /.row -->
 </div>
