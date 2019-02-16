@@ -1,4 +1,5 @@
 <div class="row wrapper border-bottom white-bg page-heading">
+  <% content_for :title, "Distributions - #{current_organization.name}" %>
   <div class="col-lg-8">
     <h2>Distributions for <%= current_organization.name %></h2>
     <ol class="breadcrumb">
@@ -25,26 +26,26 @@
     <div class="wrapper wrapper-content animated fadeInRight">
       <div class="ibox-content p-xl">
         <div class="row">
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-          <tr>
-            <th>Partner</th>
-            <th>Date of Distribution</th>
-            <th>Source Inventory</th>
-            <th>Total items</th>
-            <th>Total value</th>
-            <th>&nbsp;</th>
-          </tr>
-          </thead>
-          <tbody>
-          <%= render partial: "distribution_row", collection: @distributions %>
-          <%= render partial: "distribution_total" %>
-          </tbody>
-        </table>
-      </div><!-- /.box-body.table-responsive -->
-    </div><!-- /.col-xs-12 -->
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>Partner</th>
+                <th>Date of Distribution</th>
+                <th>Source Inventory</th>
+                <th>Total items</th>
+                <th>Total value</th>
+                <th>&nbsp;</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: "distribution_row", collection: @distributions %>
+              <%= render partial: "distribution_total" %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-    </div>
-  </div><!-- /.row -->
+  </div>
 </div>
