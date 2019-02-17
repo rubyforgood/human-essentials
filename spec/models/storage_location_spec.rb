@@ -37,6 +37,51 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Methods >" do
+    #subject { create(:storage_location, :with_items, organization: organization) }
+    xdescribe "increase_inventory" do
+      #subject { create(:storage_location, :with_items, organization: organization) }
+      let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
+      it "increases inventory quantities from an itemizable object" do
+        expect {
+          subject.increase_inventory(donation)
+        }.to change{subject.size}.by(66)
+      end
+
+      context "when providing a new item that does not yet exist" do
+        let(:mystery_item) { create(:item, organization: organization) }
+        let(:donation_with_new_items) { create(:donation, organization: organization, line_items: build(:line_item, quantity: 10, item: mystery_item))  }
+        it "creates those new inventory items in the storage location" do
+          expect {
+            subject.increase_inventory(donation_with_new_items)
+          }.to change{subject.inventory_items.count}.by(1)
+        end
+      end
+    end
+
+    xdescribe "decrease_inventory" do
+      let(:distribution) { create(:distribution, :with_items, item_quantity: 66) }
+      it "decreases inventory quantities from an itemizable object" do
+        expect {
+          subject.decrease_inventory(distribution)
+        }.to change{subject.size}.by(-66)
+      end
+
+      context "when there is insufficient inventory available" do
+        let(:distribution_but_too_much) { create(:distribution, line_items: build(:line_item, quantity: 1000, item: subject.inventory_items.first.item, organization: organization) ) }
+        it "gives informative errors" do
+
+          ap subject.decrease_inventory(distribution_but_too_much).errors
+
+        end
+
+        it "does not change inventory quantities if there is an error" do
+          expect {
+            subject.decrease_inventory(distribution)
+          }.not_to change{subject.size}
+        end
+      end
+    end
+
     describe "StorageLocation.item_total" do
       it "gathers the final total of a single item across all inventories" do
         item = create(:item)
