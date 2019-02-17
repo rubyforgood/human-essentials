@@ -31,6 +31,8 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, :organization, presence: true
+  # InventoryItem knows it should never be negative, we can leverage this
+  validates_associated :inventory_items
 
   geocoded_by :address
   after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
@@ -286,22 +288,29 @@ class StorageLocation < ApplicationRecord
     false
   end
 
+  # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable)
     itemizable.line_items.each do |line_item|
       inventory_item = inventory_items.find_or_create_by!(item: line_item.item)
       inventory_item.increment(:quantity, line_item.quantity)
     end
-  end
-
+    # log could be pulled from dirty AR stuff
+    self.save!
+    # return log
   end
 
   def decrease_inventory(itemizable)
-    itemizble.line_items.each do |line_item|
-      # NOTE: Handle the ActiveRecord::RecordNotFound exception
-      inventory_item = inventory_items.find_by!(item: line_item.item)
+    itemizable.line_items.each do |line_item|
+      # Raise AR:RNF if it fails to find it
+      inventory_item = inventory_items.find_by(item: line_item.item) || inventory_items.build
+      # Attempt to reduce the inventory box quantity
       inventory_item.decrement(:quantity, line_item.quantity)
     end
+    # log could be pulled from dirty AR stuff
+    self.save!
+    # return log
   end
+
 
   def self.csv_export_headers
     ["Name", "Address", "Total Inventory"]
