@@ -69,7 +69,7 @@ class DonationsController < ApplicationController
   def create
     @donation = Donation.new(donation_params.merge(organization: current_organization))
     if @donation.save
-      @donation.storage_location.intake! @donation
+      @donation.storage_location.increase_inventory @donation
       redirect_to donations_path
     else
       load_form_collections

@@ -29,7 +29,8 @@ class AdjustmentsController < ApplicationController
     @items = current_organization.items.alphabetized
 
     if @adjustment.valid?
-      @adjustment.storage_location.adjust!(@adjustment)
+      # We use negative quantities for reduction
+      @adjustment.storage_location.increase_inventory @adjustment
 
       if @adjustment.save
         redirect_to adjustment_path(@adjustment), notice: "Adjustment was successfully created."

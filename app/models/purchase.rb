@@ -52,7 +52,7 @@ class Purchase < ApplicationRecord
   end
 
   def remove_inventory
-    storage_location.remove!(self)
+    storage_location.decrease_inventory self
   end
 
   def track(item, quantity)

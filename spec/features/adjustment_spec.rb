@@ -36,6 +36,22 @@ RSpec.feature "Adjustment management", type: :feature do
     expect(page).to have_content("Adjustment was successfully created")
   end
 
+  fscenario "User is informed politely that they're adjusting way too hard", js: true do
+    sub_quantity = -9001
+    storage_location = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
+    visit url_prefix + "/adjustments"
+    click_on "New Adjustment"
+    select storage_location.name, from: "From storage location"
+    fill_in "Comment", with: "something"
+    select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+    fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
+
+    expect do
+      click_button "Save"
+    end.not_to change { storage_location.size }
+    expect(page).to have_content("Adjustment was successfully created")
+  end
+
   scenario "User can filter the #index by storage location" do
     storage_location = create(:storage_location, name: "here", organization: @organization)
     storage_location2 = create(:storage_location, name: "there", organization: @organization)

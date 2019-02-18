@@ -11,7 +11,10 @@ class TransfersController < ApplicationController
     @transfer = current_organization.transfers.new(transfer_params)
 
     if @transfer.valid?
-      @transfer.from.move_inventory!(@transfer)
+      ActiveRecord::Base.transaction do
+        @transfer.from.decrease_inventory @transfer
+        @transfer.to.increase_inventory @transfer
+      end
 
       if @transfer.save
         redirect_to transfers_path, notice: "Transfer was successfully created."

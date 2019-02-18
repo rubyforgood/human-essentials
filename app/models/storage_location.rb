@@ -288,18 +288,22 @@ class StorageLocation < ApplicationRecord
 
   # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable)
+    log = {}
     itemizable.line_items.each do |line_item|
       inventory_item = inventory_items.find_or_create_by!(item: line_item.item)
       inventory_item.increment!(:quantity, line_item.quantity)
+      log[line_item.item_id] = "+#{line_item.quantity}"
     end
     # log could be pulled from dirty AR stuff
     save
     # return log
+    log
   end
 
   # TODO: re-evaluate this for optimization
   def decrease_inventory(itemizable)
     insufficient_items = []
+    log = {}
     itemizable.line_items.each do |line_item|
       inventory_item = inventory_items.find_by(item: line_item.item) || inventory_items.build
 
@@ -326,10 +330,12 @@ class StorageLocation < ApplicationRecord
       inventory_item = inventory_items.find_by(item: line_item.item)
       # Attempt to reduce the inventory box quantity
       inventory_item.decrement!(:quantity, line_item.quantity)
+      log[line_item.item_id] = "-#{line_item.quantity}"
     end
     # log could be pulled from dirty AR stuff
     save!
     # return log
+    log
   end
 =begin
 def distribute!(itemizable)

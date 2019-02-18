@@ -19,7 +19,7 @@ class PurchasesController < ApplicationController
   def create
     @purchase = current_organization.purchases.new(purchase_params)
     if @purchase.save
-      @purchase.storage_location.intake! @purchase
+      @purchase.storage_location.increase_inventory @purchase
       redirect_to purchases_path
     else
       load_form_collections

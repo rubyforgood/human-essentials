@@ -40,24 +40,18 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
 
     if @distribution.valid?
-      if params[:commit] == "Preview Distribution"
-        @distribution.line_items.combine!
-        @line_items = @distribution.line_items
-        render :show
+      @distribution.storage_location.decrease_inventory @distribution
+
+      if @distribution.save
+        update_request(params[:distribution][:request_attributes], @distribution.id)
+
+        send_notification(current_organization, @distribution)
+        flash[:notice] = "Distribution created!"
+        session[:created_distribution_id] = @distribution.id
+        redirect_to distributions_path
       else
-        @distribution.storage_location.distribute!(@distribution)
-
-        if @distribution.save
-          update_request(params[:distribution][:request_attributes], @distribution.id)
-
-          send_notification(current_organization.id, @distribution.id)
-          flash[:notice] = "Distribution created!"
-          session[:created_distribution_id] = @distribution.id
-          redirect_to distributions_path
-        else
-          flash[:error] = "There was an error, try again?"
-          render :new
-        end
+        flash[:error] = "There was an error, try again?"
+        render :new
       end
     else
       @storage_locations = current_organization.storage_locations
