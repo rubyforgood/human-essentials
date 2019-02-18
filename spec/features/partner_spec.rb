@@ -38,7 +38,7 @@ RSpec.feature "Partner management", type: :feature do
     partner = create(:partner, name: "Frank")
     visit url_prefix + "/partners/#{partner.id}/edit"
     fill_in "Name", with: "Franklin"
-    click_button "Save Invitation"
+    click_button "Send Invitation"
 
     expect(page.find(".alert")).to have_content "updated"
     partner.reload
