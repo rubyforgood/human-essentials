@@ -37,47 +37,57 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Methods >" do
-    #subject { create(:storage_location, :with_items, organization: organization) }
-    xdescribe "increase_inventory" do
-      #subject { create(:storage_location, :with_items, organization: organization) }
+    describe "increase_inventory" do
       let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
       it "increases inventory quantities from an itemizable object" do
+        item = create(:item)
+        storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
         expect {
-          subject.increase_inventory(donation)
-        }.to change{subject.size}.by(66)
+          storage_location.increase_inventory(donation)
+        }.to change{storage_location.size}.by(66)
       end
 
       context "when providing a new item that does not yet exist" do
         let(:mystery_item) { create(:item, organization: organization) }
-        let(:donation_with_new_items) { create(:donation, organization: organization, line_items: build(:line_item, quantity: 10, item: mystery_item))  }
+        let(:donation_with_new_items) { create(:donation, :with_items, organization: organization, item_quantity: 10, item: mystery_item)  }
         it "creates those new inventory items in the storage location" do
+          item = create(:item)
+          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           expect {
-            subject.increase_inventory(donation_with_new_items)
-          }.to change{subject.inventory_items.count}.by(1)
+            storage_location.increase_inventory(donation_with_new_items)
+          }.to change{storage_location.inventory_items.count}.by(1)
         end
       end
     end
 
-    xdescribe "decrease_inventory" do
-      let(:distribution) { create(:distribution, :with_items, item_quantity: 66) }
+    describe "decrease_inventory" do
+      let(:item) { create(:item) }
+      let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66) }
       it "decreases inventory quantities from an itemizable object" do
+        storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: @organization)        
         expect {
-          subject.decrease_inventory(distribution)
-        }.to change{subject.size}.by(-66)
+          storage_location.decrease_inventory(distribution)
+        }.to change{storage_location.size}.by(-66)
       end
 
       context "when there is insufficient inventory available" do
-        let(:distribution_but_too_much) { create(:distribution, line_items: build(:line_item, quantity: 1000, item: subject.inventory_items.first.item, organization: organization) ) }
+        let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001) }
         it "gives informative errors" do
-
-          ap subject.decrease_inventory(distribution_but_too_much).errors
-
+          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
+          expect {
+            storage_location.decrease_inventory(distribution_but_too_much).errors
+          }.to raise_error(Errors::InsufficientAllotment)
         end
 
         it "does not change inventory quantities if there is an error" do
-          expect {
-            subject.decrease_inventory(distribution)
-          }.not_to change{subject.size}
+          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
+          starting_size  = storage_location.size
+          begin
+            storage_location.decrease_inventory(distribution)
+          rescue Errors::InsufficientAllotment
+          end
+          storage_location.reload
+          expect(storage_location.size).to eq(starting_size)
         end
       end
     end

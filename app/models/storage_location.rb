@@ -31,8 +31,6 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, :organization, presence: true
-  # InventoryItem knows it should never be negative, we can leverage this
-  validates_associated :inventory_items
 
   geocoded_by :address
   after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
@@ -292,25 +290,72 @@ class StorageLocation < ApplicationRecord
   def increase_inventory(itemizable)
     itemizable.line_items.each do |line_item|
       inventory_item = inventory_items.find_or_create_by!(item: line_item.item)
-      inventory_item.increment(:quantity, line_item.quantity)
+      inventory_item.increment!(:quantity, line_item.quantity)
     end
     # log could be pulled from dirty AR stuff
-    self.save!
+    self.save
     # return log
   end
 
+  # TODO: re-evaluate this for optimization
   def decrease_inventory(itemizable)
+    insufficient_items = []
+    itemizable.line_items.each do |line_item|
+      inventory_item = inventory_items.find_by(item: line_item.item) || inventory_items.build
+    
+      if inventory_item.quantity < line_item.quantity
+        insufficient_items << {
+          item_id: line_item.item.id,
+          item_name: line_item.item.name,
+          quantity_on_hand: inventory_item.quantity,
+          quantity_requested: line_item.quantity
+        }
+      end
+    end
+
+    # NOTE: Could this be handled by a validation instead?
+    unless insufficient_items.empty?
+      raise Errors::InsufficientAllotment.new(
+        "Requested #{itemizable.class.name} items exceed the available inventory",
+        insufficient_items
+      )
+    end
+
+
     itemizable.line_items.each do |line_item|
       # Raise AR:RNF if it fails to find it
-      inventory_item = inventory_items.find_by(item: line_item.item) || inventory_items.build
+      inventory_item = inventory_items.find_by(item: line_item.item)
       # Attempt to reduce the inventory box quantity
-      inventory_item.decrement(:quantity, line_item.quantity)
+      inventory_item.decrement!(:quantity, line_item.quantity)
     end
     # log could be pulled from dirty AR stuff
     self.save!
     # return log
   end
+=begin
+def distribute!(itemizable)
+    # This is passed to update_inventory_inventory_items
+    updated_quantities = {}
+    # Used in the exception return value
+    insufficient_items = []
+    itemizable.line_items.each do |line_item|
+      inventory_item = inventory_items.find_by(item: line_item.item)
+      # NOTE: If the distribution isn't able to find the inventory item, it continues
+      next if inventory_item.nil?
 
+      if inventory_item.quantity >= line_item.quantity
+        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
+                                                 inventory_item.quantity) - line_item.quantity
+      else
+        insufficient_items << {
+          item_id: line_item.item.id,
+          item_name: line_item.item.name,
+          quantity_on_hand: inventory_item.quantity,
+          quantity_requested: line_item.quantity
+        }
+      end
+    end
+=end
 
   def self.csv_export_headers
     ["Name", "Address", "Total Inventory"]
