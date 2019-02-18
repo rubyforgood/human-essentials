@@ -293,7 +293,7 @@ class StorageLocation < ApplicationRecord
       inventory_item.increment!(:quantity, line_item.quantity)
     end
     # log could be pulled from dirty AR stuff
-    self.save
+    save
     # return log
   end
 
@@ -302,15 +302,15 @@ class StorageLocation < ApplicationRecord
     insufficient_items = []
     itemizable.line_items.each do |line_item|
       inventory_item = inventory_items.find_by(item: line_item.item) || inventory_items.build
-    
-      if inventory_item.quantity < line_item.quantity
-        insufficient_items << {
-          item_id: line_item.item.id,
-          item_name: line_item.item.name,
-          quantity_on_hand: inventory_item.quantity,
-          quantity_requested: line_item.quantity
-        }
-      end
+
+      next unless inventory_item.quantity < line_item.quantity
+
+      insufficient_items << {
+        item_id: line_item.item.id,
+        item_name: line_item.item.name,
+        quantity_on_hand: inventory_item.quantity,
+        quantity_requested: line_item.quantity
+      }
     end
 
     # NOTE: Could this be handled by a validation instead?
@@ -321,7 +321,6 @@ class StorageLocation < ApplicationRecord
       )
     end
 
-
     itemizable.line_items.each do |line_item|
       # Raise AR:RNF if it fails to find it
       inventory_item = inventory_items.find_by(item: line_item.item)
@@ -329,7 +328,7 @@ class StorageLocation < ApplicationRecord
       inventory_item.decrement!(:quantity, line_item.quantity)
     end
     # log could be pulled from dirty AR stuff
-    self.save!
+    save!
     # return log
   end
 =begin
