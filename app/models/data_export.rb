@@ -8,6 +8,7 @@ class DataExport
     Purchase
     Distribution
     DiaperDriveParticipant
+    Vendor
     StorageLocation
     Adjustment
     Transfer

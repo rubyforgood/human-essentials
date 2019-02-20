@@ -39,6 +39,7 @@ class Organization < ApplicationRecord
   has_many :purchases, dependent: :destroy
   has_many :donation_sites, dependent: :destroy
   has_many :diaper_drive_participants, dependent: :destroy
+  has_many :vendors, dependent: :destroy
   has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
   has_many :items, dependent: :destroy
