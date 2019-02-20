@@ -1,8 +1,8 @@
 # == Schema Information
 #
-# Table name: diaper_drive_participants
+# Table name: contractors
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  contact_name    :string
 #  email           :string
 #  phone           :string
@@ -14,13 +14,13 @@
 #  business_name   :string
 #  latitude        :float
 #  longitude       :float
+#  type            :string           default("DiaperDriveParticipant")
 #
 
-class DiaperDriveParticipant < ApplicationRecord
+class Contractor < ApplicationRecord
   require "csv"
 
   belongs_to :organization # Automatically validates presence as of Rails 5
-  has_many :donations, inverse_of: :diaper_drive_participant, dependent: :destroy
 
   validates :contact_name, presence: { message: "Must provide a name or a business name" }, if: proc { |ddp| ddp.business_name.blank? }
   validates :business_name, presence: { message: "Must provide a name or a business name" }, if: proc { |ddp| ddp.contact_name.blank? }
@@ -31,17 +31,12 @@ class DiaperDriveParticipant < ApplicationRecord
   after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
 
   scope :for_csv_export, ->(organization) {
-    where(organization: organization)
-      .order(:business_name)
+    where(organization: organization).order(:business_name)
   }
-
-  def volume
-    donations.map { |d| d.line_items.total }.reduce(:+)
-  end
 
   def self.import_csv(csv, organization)
     csv.each do |row|
-      loc = DiaperDriveParticipant.new(row.to_hash)
+      loc = new(row.to_hash)
       loc.organization_id = organization
       loc.save!
     end
@@ -52,12 +47,10 @@ class DiaperDriveParticipant < ApplicationRecord
   end
 
   def csv_export_attributes
-    [
-      business_name,
-      contact_name,
-      try(:phone) || "",
-      try(:email) || "",
-      volume
-    ]
+    [business_name,
+     contact_name,
+     try(:phone) || "",
+     try(:email) || "",
+     volume]
   end
 end
