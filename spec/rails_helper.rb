@@ -61,7 +61,9 @@ Capybara::Screenshot.prune_strategy = :keep_last_run
 def stub_addresses
   Geocoder.configure(lookup: :test)
 
-  ["1500 Remount Road, Front Royal, VA",].each do |address|
+  ["1500 Remount Road, Front Royal, VA 22630",
+   "123 Donation Site Way",
+   "Smithsonian Conservation Center new"].each do |address|
   # ["1500 Remount Road, Front Royal, VA",
   # "1111 Panda ave. Front Royal, VA 12345",
   # "Smithsonian Institute new",
