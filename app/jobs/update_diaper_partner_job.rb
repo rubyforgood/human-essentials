@@ -1,5 +1,5 @@
-class UpdateDiaperPartnerJob
-  include SuckerPunch::Job
+class UpdateDiaperPartnerJob < ActiveJob::Base
+  queue_as :default
   include DiaperPartnerClient
   workers 2
 
