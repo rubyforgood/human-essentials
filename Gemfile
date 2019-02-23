@@ -43,7 +43,6 @@ gem "uglifier", ">= 1.3.0"
 gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
-gem "sucker_punch", "~> 2.0"
 gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
 gem "image_processing"
 gem "webpacker", "~> 3.5"
@@ -69,6 +68,7 @@ group :development do
   gem "capistrano-bundler"
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
+  gem 'capistrano-sidekiq'
   gem "listen", "~> 3.1.5"
   gem "rails-erd"
   gem "spring"
