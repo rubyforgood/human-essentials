@@ -1,5 +1,4 @@
-class PartnerMailerJob
-  include SuckerPunch::Job
+class PartnerMailerJob < ActiveJob::Base
   workers 2
 
   def perform(current_organization, distribution)
