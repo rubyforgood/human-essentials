@@ -54,7 +54,7 @@ set :rvm_ruby_version, "2.6.1"
 #    user: 'deploy'
 # }
 
-set :pty, true
+set :pty, false
 #
 # The server-based syntax can be used to override options:
 # ------------------------------------
