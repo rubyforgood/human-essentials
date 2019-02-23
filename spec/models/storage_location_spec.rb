@@ -206,11 +206,13 @@ RSpec.describe StorageLocation, type: :model do
 
     describe "import_inventory" do
       it "imports storage locations from a csv file" do
+        donations_count = Donation.count
         organization
-        storage_location = create(:storage_location)
+        storage_location = create(:storage_location, organization_id: organization.id)
         import_file_path = Rails.root.join("spec", "fixtures", "inventory.csv").read
         StorageLocation.import_inventory(import_file_path, organization.id, storage_location.id)
         expect(storage_location.size).to eq 14_842
+        expect(donations_count).to eq Donation.count
       end
     end
 
