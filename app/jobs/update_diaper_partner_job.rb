@@ -1,7 +1,6 @@
 class UpdateDiaperPartnerJob < ActiveJob::Base
   queue_as :default
   include DiaperPartnerClient
-  workers 2
 
   def perform(partner_id)
     @partner = Partner.find(partner_id)
