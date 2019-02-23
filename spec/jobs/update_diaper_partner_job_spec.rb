@@ -1,9 +1,9 @@
 RSpec.describe UpdateDiaperPartnerJob, job: true do
-  describe ".perform_async" do
+  describe ".perform_later" do
     it "updates partner status to Pending" do
       partner = create(:partner)
 
-      UpdateDiaperPartnerJob.perform_async(partner.id)
+      UpdateDiaperPartnerJob.perform_later(partner.id)
 
       expect(partner.reload.status).to eq("Pending")
     end
@@ -14,7 +14,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
 
       expect(DiaperPartnerClient).to receive(:post)
 
-      UpdateDiaperPartnerJob.perform_async(partner.id)
+      UpdateDiaperPartnerJob.perform_later(partner.id)
     end
   end
 end
