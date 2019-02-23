@@ -1,43 +1,43 @@
-<section class="content-header">
-<% content_for :title, "Repackaged - Donations - #{current_organization.name}" %>
+<!--<section class="content-header">-->
+<%# content_for :title, "Repackaged - Donations - #{current_organization.name}" %>
 
-<h1>
-  Repackaged Donation
-  <small>for <%= current_organization.name %></small>
-</h1>
+<!--<h1>-->
+<!--  Repackaged Donation-->
+<!--  <small>for <%#= current_organization.name %></small>-->
+<!--</h1>-->
 
-<ol class="breadcrumb">
-<li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
-  </li>
-  <li><%= link_to "Donations", (donations_path) %></li>
-  <li class="active"> Repackaged Donation</li>
-</ol>
-</section>
+<!--<ol class="breadcrumb">-->
+<!--<li><%#= link_to(dashboard_path) do %>-->
+<!--    <i class="fa fa-dashboard"></i> Home-->
+  <%# end %>
+<!--  </li>-->
+<!--  <li><%#= link_to "Donations", (donations_path) %></li>-->
+<!--  <li class="active"> Repackaged Donation</li>-->
+<!--</ol>-->
+<!--</section>-->
 
 <!-- Main content -->
-<section class="content">
+<!--<section class="content">-->
 
-	<!-- Default box -->
-	<div class="box">
+<!--	<!-- Default box -->-->
+<!--	<div class="box">-->
 
-  <%= react_component("Scale", { 
-  	diaperBank: current_organization.id,
-    pu_2t_3t:  current_organization.scale_values[:pu_2t_3t],
-    pu_3t_4t:   current_organization.scale_values[:pu_3t_4t],
-    pu_4t_5t:   current_organization.scale_values[:pu_4t_5t],
-    k_preemie:  current_organization.scale_values[:k_preemie],
-    k_newborm:  current_organization.scale_values[:k_newborm],
-    k_size1:    current_organization.scale_values[:k_size1],
-    k_size2:    current_organization.scale_values[:k_size2],
-    k_size3:    current_organization.scale_values[:k_size3],
-    k_size4:    current_organization.scale_values[:k_size4],
-    k_size5:    current_organization.scale_values[:k_size5],
-    k_size6:    current_organization.scale_values[:k_size6]
+<!--  <%#= react_component("Scale", { -->
+<!--  	diaperBank: current_organization.id,-->
+<!--    pu_2t_3t:  current_organization.scale_values[:pu_2t_3t],-->
+<!--    pu_3t_4t:   current_organization.scale_values[:pu_3t_4t],-->
+<!--    pu_4t_5t:   current_organization.scale_values[:pu_4t_5t],-->
+<!--    k_preemie:  current_organization.scale_values[:k_preemie],-->
+<!--    k_newborm:  current_organization.scale_values[:k_newborm],-->
+<!--    k_size1:    current_organization.scale_values[:k_size1],-->
+<!--    k_size2:    current_organization.scale_values[:k_size2],-->
+<!--    k_size3:    current_organization.scale_values[:k_size3],-->
+<!--    k_size4:    current_organization.scale_values[:k_size4],-->
+<!--    k_size5:    current_organization.scale_values[:k_size5],-->
+<!--    k_size6:    current_organization.scale_values[:k_size6]-->
     }) %>
 
-	</div><!-- /.box -->
+<!--	</div><!-- /.box -->-->
 
 
-</section>
+<!--</section>-->
