@@ -3,7 +3,7 @@ class StorageLocationsController < ApplicationController
 
   def index
     @items = current_organization.storage_locations.items_inventoried
-    @storage_locations = current_organization.storage_locations.includes(:inventory_items).filter(filter_params)
+    @storage_locations = current_organization.storage_locations.includes(:inventory_items).class_filter(filter_params)
   end
 
   def create

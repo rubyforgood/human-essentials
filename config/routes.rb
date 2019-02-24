@@ -89,10 +89,10 @@ Rails.application.routes.draw do
     end
 
     resources :donations do
-      collection do
-        get :scale
-        post :scale_intake
-      end
+      # collection do
+      #   get :scale
+      #   post :scale_intake
+      # end
       patch :add_item, on: :member
       patch :remove_item, on: :member
     end

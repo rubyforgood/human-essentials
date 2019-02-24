@@ -72,6 +72,10 @@ module Itemizable
     end
   end
 
+  def value_per_itemizable
+    line_items.sum(&:value_per_line_item)
+  end
+
   private
 
   def line_item_items_quantity_is_positive

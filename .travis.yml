@@ -3,9 +3,20 @@ sudo: required
 addons:
   chrome: stable
   postgresql: "9.6"
+cache:
+  bundler: true
+  yarn: true
+  directories:
+    - node_modules
 before_install:
 - gem update --system
 - gem install bundler
+install:
+- bundle install
+- nvm install node
+- node -v
+- npm i -g yarn
+- yarn install
 script:
 - export RAILS_ENV=test
 - bundle exec rake db:create db:migrate

@@ -67,6 +67,40 @@ RSpec.feature "Distributions", type: :feature do
     end
   end
 
+  context "When creating a distribution and items have value" do
+    before do
+      item1 = create(:item, value: 10.5)
+      item2 = create(:item)
+      item3 = create(:item, value: 1)
+      @distribution1 = create(:distribution, :with_items, item: item1, agency_rep: "A Person", organization: @user.organization)
+      create(:distribution, :with_items, item: item2, agency_rep: "A Person", organization: @user.organization)
+      @distribution3 = create(:distribution, :with_items, item: item3, agency_rep: "A Person", organization: @user.organization)
+      visit @url_prefix + "/distributions"
+    end
+
+    scenario 'the user sees value in row on index page' do
+      # row: 100 items * 1$
+      expect(page).to have_content "$100"
+    end
+
+    scenario 'the user sees total value on index page' do
+      # 100 items * 10.5 + 100 items * 1
+      expect(page).to have_content "$1,150"
+    end
+
+    scenario 'the user sees value per item on show page' do
+      # item value 10.50
+      visit @url_prefix + "/distributions/#{@distribution1.id}"
+      expect(page).to have_content "$10.50"
+    end
+
+    scenario 'the user sees total value on show page' do
+      # 100 items * 10.5
+      visit @url_prefix + "/distributions/#{@distribution1.id}"
+      expect(page).to have_content "$1,050"
+    end
+  end
+
   context "When creating a distribution from a donation" do
     let(:donation) { create :donation, :with_items }
     before do

@@ -52,7 +52,8 @@ RSpec.describe DiaperDriveParticipant, type: :model do
       organization = create(:organization)
       import_file_path = Rails.root.join("spec", "fixtures", "diaper_drive_participants.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
-      DiaperDriveParticipant.import_csv(data, organization.id)
+      csv = CSV.parse(data, headers: true)
+      DiaperDriveParticipant.import_csv(csv, organization.id)
       expect(DiaperDriveParticipant.count).to eq before_import + 3
     end
   end
