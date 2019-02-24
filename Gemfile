@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "2.5.3"
+ruby "2.6.1"
 
 gem "api-auth", "~> 2.3"
 gem "bootstrap-sass"
@@ -34,7 +34,6 @@ gem "pg", "~> 1.1.3"
 gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 5.2.2"
-gem "react-rails", "~> 2.4.7"
 gem "sass-rails"
 gem "simple_form"
 gem "skylight"
@@ -44,6 +43,9 @@ gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "sucker_punch", "~> 2.0"
+gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
+gem "image_processing"
+gem "webpacker", "~> 3.5"
 
 group :development, :test do
   gem "awesome_print"

@@ -38,9 +38,12 @@
             <table class="table table-hover">
               <tr>
                 <th><b>Quantity</b></th>
+                <th><b>Value per item</b></th>
+                <th><b>Total value</b></th>
                 <th><b>Item</b></th>
               </tr>
               <%= render partial: "distribution_item_row", collection: @line_items %>
+              <%= render partial: "distribution_item_total" %>
             </table>
             <!-- /.box-body -->
 

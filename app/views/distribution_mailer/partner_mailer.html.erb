@@ -332,7 +332,7 @@
       <div class="content">
 
         <!-- START CENTERED WHITE CONTAINER -->
-        <span class="preheader">This is preheader text. Some clients will show this text as a preview.</span>
+        <span class="preheader">Your diaper request has been approved.</span>
         <table role="presentation" class="main">
 
           <!-- START MAIN CONTENT AREA -->
@@ -346,6 +346,12 @@
                     <p>Your distribution has been set to be picked up on <%= @distribution.issued_at.strftime("%m/%d/%Y") %>.</p>
                     <p>See you soon!</p>
                   </td>
+                <tr>
+                  <td><%= @default_email_text %></td>
+                </tr>
+                <tr>
+                  <td><%= @comment %></td>
+                </tr>
                 </tr>
               </table>
             </td>
