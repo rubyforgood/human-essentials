@@ -60,7 +60,7 @@ RSpec.feature "Admin Organization Management" do
       fill_in "organization_short_name", with: org_params[:short_name]
       fill_in "organization_url", with: org_params[:url]
       fill_in "organization_email", with: org_params[:email]
-     fill_in "organization_street", with: "1500 Remount Road"
+      fill_in "organization_street", with: "1500 Remount Road"
       fill_in "organization_city", with: "Front Royal"
       select("VA", from: "organization_state")
       fill_in "organization_zipcode", with: "22630"
