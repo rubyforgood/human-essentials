@@ -35,6 +35,7 @@ New Organization
   <%= f.input :city %>
   <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
   <%= f.input :zipcode %>
+  <%= f.rich_text_area :default_email_text %>
   <%= f.input :logo %>
   <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
     Only jpeg/png format is supported.

@@ -73,9 +73,9 @@ class StorageLocation < ApplicationRecord
     end
   end
 
-  def intake!(donation)
+  def intake!(adjustment)
     log = {}
-    donation.line_items.each do |line_item|
+    adjustment.line_items.each do |line_item|
       inventory_item = InventoryItem.find_or_create_by(storage_location_id: id,
                                                        item_id: line_item.item_id) do |inv_item|
         inv_item.quantity = 0
@@ -156,8 +156,8 @@ class StorageLocation < ApplicationRecord
     update_inventory_inventory_items(updated_quantities)
   end
 
-  def self.import_csv(data, organization)
-    CSV.parse(data, headers: true) do |row|
+  def self.import_csv(csv, organization)
+    csv.each do |row|
       loc = StorageLocation.new(row.to_hash)
       loc.organization_id = organization
       loc.save!
@@ -166,14 +166,12 @@ class StorageLocation < ApplicationRecord
 
   def self.import_inventory(filename, org, loc)
     current_org = Organization.find(org)
-    donation = current_org.donations.create(storage_location_id: loc.to_i,
-                                            source: "Misc. Donation",
-                                            organization_id: current_org.id)
+    adjustment = current_org.adjustments.create(storage_location_id: loc.to_i, comment: "Starting Inventory")
     CSV.parse(filename, headers: false) do |row|
-      donation.line_items
-              .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
+      adjustment.line_items
+                .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
-    donation.storage_location.intake!(donation)
+    adjustment.storage_location.intake!(adjustment)
   end
 
   # Used to move inventory between StorageLocations; reflects items being physically moved

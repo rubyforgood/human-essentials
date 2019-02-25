@@ -14,10 +14,10 @@ RSpec.feature "Admin Organization Management" do
       fill_in "organization_short_name", with: org_params[:short_name]
       fill_in "organization_url", with: org_params[:url]
       fill_in "organization_email", with: org_params[:email]
-      fill_in "organization_street", with: "1234 Banana Drive"
-      fill_in "organization_city", with: "Boston"
-      select("MA", from: "organization_state")
-      fill_in "organization_zipcode", with: "12345"
+      fill_in "organization_street", with: "1500 Remount Road"
+      fill_in "organization_city", with: "Front Royal"
+      select("VA", from: "organization_state")
+      fill_in "organization_zipcode", with: "22630"
 
       admin_user_params = attributes_for(:organization_admin)
       fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
@@ -35,10 +35,10 @@ RSpec.feature "Admin Organization Management" do
       end
 
       expect(page).to have_content(org_params[:name])
-      expect(page).to have_content("Banana")
-      expect(page).to have_content("Boston")
-      expect(page).to have_content("MA")
-      expect(page).to have_content("12345")
+      expect(page).to have_content("Remount")
+      expect(page).to have_content("Front Royal")
+      expect(page).to have_content("VA")
+      expect(page).to have_content("22630")
 
       expect(page).to have_content(admin_user_params[:name])
       expect(page).to have_content(admin_user_params[:email])
@@ -60,10 +60,10 @@ RSpec.feature "Admin Organization Management" do
       fill_in "organization_short_name", with: org_params[:short_name]
       fill_in "organization_url", with: org_params[:url]
       fill_in "organization_email", with: org_params[:email]
-      fill_in "organization_street", with: "1234 Potato Drive"
-      fill_in "organization_city", with: "New York"
-      select("NY", from: "organization_state")
-      fill_in "organization_zipcode", with: "54321"
+      fill_in "organization_street", with: "1500 Remount Road"
+      fill_in "organization_city", with: "Front Royal"
+      select("VA", from: "organization_state")
+      fill_in "organization_zipcode", with: "22630"
 
       admin_user_params = attributes_for(:organization_admin)
       fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
@@ -81,11 +81,10 @@ RSpec.feature "Admin Organization Management" do
       end
 
       expect(page).to have_content(org_params[:name])
-      expect(page).to have_content("Potato")
-      expect(page).to have_content("New York")
-      expect(page).to have_content("NY")
-      expect(page).to have_content("54321")
-
+      expect(page).to have_content("Remount")
+      expect(page).to have_content("Front Royal")
+      expect(page).to have_content("VA")
+      expect(page).to have_content("22630")
       expect(page).to have_content(admin_user_params[:name])
       expect(page).to have_content(admin_user_params[:email])
       expect(page).to have_content("invited")

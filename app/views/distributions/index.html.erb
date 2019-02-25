@@ -40,11 +40,13 @@
                   <th>Date of Distribution</th>
                   <th>Source Inventory</th>
                   <th>Total items</th>
+                  <th>Total value</th>
                   <th>&nbsp;</th>
                 </tr>
               </thead>
               <tbody>
                 <%= render partial: "distribution_row", collection: @distributions %>
+                <%= render partial: "distribution_total" %>
               </tbody>
             </table>
           </div><!-- /.box-body.table-responsive -->

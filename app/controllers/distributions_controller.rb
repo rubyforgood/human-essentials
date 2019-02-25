@@ -33,6 +33,7 @@ class DistributionsController < ApplicationController
                      .distributions
                      .includes(:partner, :storage_location, :line_items, :items)
                      .order(created_at: :desc)
+    @total_value_all_distributions = total_value(@distributions)
   end
 
   def create
@@ -134,5 +135,13 @@ class DistributionsController < ApplicationController
 
   def distribution_params
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))
+  end
+
+  def total_value(distributions)
+    total_value_all_distributions = 0
+    distributions.each do |distribution|
+      total_value_all_distributions += distribution.value_per_itemizable
+    end
+    total_value_all_distributions
   end
 end

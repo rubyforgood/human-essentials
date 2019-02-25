@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_13_213136) do
+ActiveRecord::Schema.define(version: 2019_02_11_063030) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -183,6 +193,7 @@ ActiveRecord::Schema.define(version: 2019_01_13_213136) do
     t.integer "organization_id"
     t.boolean "active", default: true
     t.string "partner_key"
+    t.decimal "value", precision: 5, scale: 2, default: "0.0"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
@@ -211,6 +222,7 @@ ActiveRecord::Schema.define(version: 2019_01_13_213136) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
+    t.text "default_email_text"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
