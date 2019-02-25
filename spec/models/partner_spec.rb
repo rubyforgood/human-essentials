@@ -64,15 +64,17 @@ RSpec.describe Partner, type: :model do
       before_import = Partner.count
       import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
-      Partner.import_csv(data, organization.id)
+      csv = CSV.parse(data, headers: true)
+      Partner.import_csv(csv, organization.id)
       expect(Partner.count).to eq before_import + 3
     end
 
     it "imports storage locations from a csv file with BOM encodings" do
       import_file_path = Rails.root.join("spec", "fixtures", "partners_with_bom_encoding.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
+      csv = CSV.parse(data, headers: true)
       expect do
-        Partner.import_csv(data, organization.id)
+        Partner.import_csv(csv, organization.id)
       end.to change { Partner.count }.by(20)
     end
   end

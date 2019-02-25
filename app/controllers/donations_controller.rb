@@ -30,7 +30,7 @@ class DonationsController < ApplicationController
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant)
                                      .order(created_at: :desc)
-                                     .filter(filter_params)
+                                     .class_filter(filter_params)
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum

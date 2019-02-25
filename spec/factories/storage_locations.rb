@@ -14,8 +14,8 @@
 
 FactoryBot.define do
   factory :storage_location do
-    name { "Smithsonian Institute" }
-    address { "1500 Remount Road, Front Royal, VA" }
+    name { "Smithsonian Conservation Center" }
+    address { "1500 Remount Road, Front Royal, VA 22630" }
     organization { Organization.try(:first) || create(:organization) }
 
     trait :with_items do

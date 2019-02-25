@@ -27,4 +27,17 @@ RSpec.shared_examples "csv import" do
       expect(subject.request.flash[:error]).to eq "No file was attached!"
     end
   end
+
+  context "csv file with wrong headers" do
+    let(:file) { Rack::Test::UploadedFile.new "spec/fixtures/wrong_headers.csv", "text/csv" }
+    subject { post :import_csv, params: default_params.merge(file: file) }
+
+    it "redirects to :index" do
+      expect(subject).to be_redirect
+    end
+
+    it "presents a flash error message" do
+      expect(subject.request.flash[:error]).to eq "Check headers in file!"
+    end
+  end
 end

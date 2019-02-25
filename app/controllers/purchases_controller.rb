@@ -7,7 +7,7 @@ class PurchasesController < ApplicationController
     @purchases = current_organization.purchases
                                      .includes(:line_items, :storage_location)
                                      .order(created_at: :desc)
-                                     .filter(filter_params)
+                                     .class_filter(filter_params)
     # Are these going to be inefficient with large datasets?
     # Using the @purchases allows drilling down instead of always starting with the total dataset
     @storage_locations = @purchases.collect(&:storage_location).compact.uniq
