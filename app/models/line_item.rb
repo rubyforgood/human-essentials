@@ -12,7 +12,7 @@
 #
 
 class LineItem < ApplicationRecord
-  belongs_to :itemizable, polymorphic: true, inverse_of: :line_items, required: true
+  belongs_to :itemizable, polymorphic: true, inverse_of: :line_items, optional: false
   belongs_to :item
 
   validates :item_id, presence: true

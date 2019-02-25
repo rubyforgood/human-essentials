@@ -200,7 +200,7 @@ RSpec.describe StorageLocation, type: :model do
         data = File.read(import_file_path, encoding: "BOM|UTF-8")
         csv = CSV.parse(data, headers: true)
         StorageLocation.import_csv(csv, organization.id)
-        expect(StorageLocation.count).to eq before_import + 3
+        expect(StorageLocation.count).to eq before_import + 1
       end
     end
 
@@ -292,7 +292,7 @@ RSpec.describe StorageLocation, type: :model do
     describe "geocode" do
       it "adds coordinates to the database" do
         storage_location = build(:storage_location,
-                                 "address" => "1500 Remount Road, Front Royal, VA")
+                                 "address" => "1500 Remount Road, Front Royal, VA 22630")
         storage_location.save
         expect(storage_location.latitude).not_to eq(nil)
         expect(storage_location.longitude).not_to eq(nil)
