@@ -31,7 +31,7 @@ RSpec.describe DonationSitesController, type: :controller do
 
     describe "POST #import_csv" do
       let(:model_class) { DonationSite }
-   it_behaves_like "csv import"
+      it_behaves_like "csv import"
     end
 
     describe "GET #show" do

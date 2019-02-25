@@ -199,7 +199,7 @@ RSpec.describe StorageLocation, type: :model do
         import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv")
         data = File.read(import_file_path, encoding: "BOM|UTF-8")
         csv = CSV.parse(data, headers: true)
-        StorageLocation.import_csv(data, organization.id)
+        StorageLocation.import_csv(csv, organization.id)
         expect(StorageLocation.count).to eq before_import + 1
       end
     end

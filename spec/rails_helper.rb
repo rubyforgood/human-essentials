@@ -64,22 +64,6 @@ def stub_addresses
   ["1500 Remount Road, Front Royal, VA 22630",
    "123 Donation Site Way",
    "Smithsonian Conservation Center new"].each do |address|
-  # ["1500 Remount Road, Front Royal, VA",
-  # "1111 Panda ave. Front Royal, VA 12345",
-  # "Smithsonian Institute new",
-  # "Smithsonian Conservation Center new",
-  # "3700 O St NW, Washington, DC 20057",
-  # "1500 Remount Road Front Royal, VA",
-  # "1500 Remount Road, Front Royal, VA 22630",
-  # "1234 Banana Drive Boston, MA 12345",
-  # "1234 Banana Drive, Boston, MA 12345",
-  # "1234 Potato Drive, New York, NY 54321",
-  # "123 Donation Site Way",
-  # "456 Donation Site Way",
-  # "789 Donation Site Way",
-  # "123 Location Way",
-  # "456 Location Way",
-  # "789 Location Way"].each do |address|
     Geocoder::Lookup::Test.add_stub(
       address, [
         {
