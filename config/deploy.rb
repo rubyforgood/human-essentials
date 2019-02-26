@@ -33,7 +33,7 @@ set :branch, ENV["BRANCH"] || :master
 # set :keep_releases, 5
 
 ## Linked Files & Directories (Default None):
-set :linked_files, %w{config/database.yml config/master.key}
+set :linked_files, %w{config/database.yml config/master.key .env.production}
 set :linked_dirs,  %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system storage}
 
 namespace :puma do
