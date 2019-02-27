@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: contractors
+# Table name: diaper_drive_participants
 #
 #  id              :integer          not null, primary key
 #  contact_name    :string
@@ -14,7 +14,6 @@
 #  business_name   :string
 #  latitude        :float
 #  longitude       :float
-#  type            :string           default("DiaperDriveParticipant")
 #
 
 require "rails_helper"

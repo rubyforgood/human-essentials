@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2019_02_19_080442) do
     t.string "partner_key"
   end
 
-  create_table "contractors", id: :serial, force: :cascade do |t|
+  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
     t.string "contact_name"
     t.string "email"
     t.string "phone"
@@ -106,8 +106,7 @@ ActiveRecord::Schema.define(version: 2019_02_19_080442) do
     t.string "business_name"
     t.float "latitude"
     t.float "longitude"
-    t.string "type", default: "DiaperDriveParticipant"
-    t.index ["latitude", "longitude"], name: "index_contractors_on_latitude_and_longitude"
+    t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
   end
 
   create_table "distributions", id: :serial, force: :cascade do |t|
@@ -319,6 +318,21 @@ ActiveRecord::Schema.define(version: 2019_02_19_080442) do
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "vendors", force: :cascade do |t|
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.string "comment"
+    t.integer "organization_id"
+    t.string "address"
+    t.string "business_name"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 
   add_foreign_key "adjustments", "organizations"
