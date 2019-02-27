@@ -99,7 +99,7 @@ Sometimes we want to get a PR up there and going so that other people can review
  
  ```rvm install 2.5.3 --with-openssl-dir=`brew --prefix openssl` ```.
 
-* If you have not already done so, you will need  to install Yarn, the Javascript package manager. [See here](https://yarnpkg.com/en/docs/install) for installation instructions suitable for your operating system.
+* If you have not already done so, you will need to install Yarn, the Javascript package manager. [See here](https://yarnpkg.com/en/docs/install) for installation instructions suitable for your operating system.
 
 ### Becoming a Repo Contributor
 
