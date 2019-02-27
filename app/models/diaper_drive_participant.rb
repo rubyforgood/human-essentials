@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: contractors
+# Table name: diaper_drive_participants
 #
 #  id              :integer          not null, primary key
 #  contact_name    :string
@@ -14,11 +14,15 @@
 #  business_name   :string
 #  latitude        :float
 #  longitude       :float
-#  type            :string           default("DiaperDriveParticipant")
 #
 
-class DiaperDriveParticipant < Contractor
+class DiaperDriveParticipant < ApplicationRecord
+  include Provideable
+
   has_many :donations, inverse_of: :diaper_drive_participant, dependent: :destroy
+
+  validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
+  validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
 
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)

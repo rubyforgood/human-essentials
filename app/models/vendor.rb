@@ -1,23 +1,24 @@
 # == Schema Information
 #
-# Table name: contractors
+# Table name: vendors
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  contact_name    :string
 #  email           :string
 #  phone           :string
 #  comment         :string
 #  organization_id :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
 #  address         :string
 #  business_name   :string
 #  latitude        :float
 #  longitude       :float
-#  type            :string           default("DiaperDriveParticipant")
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 
-class Vendor < Contractor
+class Vendor < ApplicationRecord
+  include Provideable
+
   has_many :purchases, inverse_of: :vendor, dependent: :destroy
 
   def volume
