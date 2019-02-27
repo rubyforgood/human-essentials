@@ -3,7 +3,8 @@
     { "name": "Adult Briefs (Large/X-Large)", "qty": [0,0,3741], "key": "adult_lxl" },
     { "name": "Adult Briefs (Medium/Large)", "qty": [0,0,108], "key": "adult_ml" },
     { "name": "Adult Briefs (Small/Medium)", "qty": [0,0,2742], "key": "adult_sm" },
-    { "name": "Adult Briefs (XXL)", "qty": [0,0,24], "key": "adult_xxl" }
+    { "name": "Adult Briefs (XXL)", "qty": [0,0,24], "key": "adult_xxl" },
+    { "name": "Adult Briefs (XS/Small)", "qty": [0,0,0], "key": "adult_xs" }
   ],
   "Diapers - Childrens": [
     { "name": "Cloth Diapers (Plastic Cover Pants)", "qty": [0,0,75], "key": "cloth" },
