@@ -222,7 +222,6 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
-    t.text "default_email_text"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
