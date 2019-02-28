@@ -16,5 +16,23 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
 
       UpdateDiaperPartnerJob.perform_async(partner.id)
     end
+
+    it "checks status wasn't updated given unsuccessfull POST" do
+        expect(response).to eq(NET::HTTPSuccess)
+    end
+
+
+#expect 2xx response code or NET::HTTPSuccess
+#test to see that status WAS updated given post was successfull
+
+
+
+
+#test to see that status WAS NOT updated given post was UNsuccessfull
+
+#?test to make sure no info sent to Partner app breaks Partner app?
+
+
+
   end
 end
