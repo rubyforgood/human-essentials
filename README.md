@@ -33,7 +33,7 @@ PG_PASSWORD=password
 If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplied`, it's because you have probably not done this.
 
 ## Seed the database
-From the root of the app, run `bundle exec rake db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
+From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
 ## Login
 To login, use these default credentials:
