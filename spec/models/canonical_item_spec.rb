@@ -2,15 +2,16 @@
 #
 # Table name: canonical_items
 #
-#  id            :bigint(8)        not null, primary key
-#  name          :string
-#  category      :string
-#  barcode_count :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  size          :string
-#  item_count    :integer
-#  partner_key   :string
+#  id              :bigint(8)        not null, primary key
+#  name            :string
+#  category        :string
+#  barcode_count   :integer
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  size            :string
+#  item_count      :integer
+#  partner_key     :string
+#  weight_in_grams :integer
 #
 
 require "rails_helper"

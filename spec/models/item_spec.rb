@@ -11,6 +11,7 @@
 #  organization_id :integer
 #  active          :boolean          default(TRUE)
 #  partner_key     :string
+#  weight_in_grams :integer
 #
 
 RSpec.describe Item, type: :model do
