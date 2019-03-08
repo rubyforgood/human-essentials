@@ -27,11 +27,12 @@
 #  organization_admin     :boolean
 #  name                   :string           default("CHANGEME"), not null
 #  super_admin            :boolean          default(FALSE)
+#  last_request_at        :datetime
 #
 
 class User < ApplicationRecord
   belongs_to :organization, optional: proc { |u| u.super_admin? }
-
+  has_many :feedback_messages, dependent: :destroy
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   # :invitable is from the devise_invitable gem

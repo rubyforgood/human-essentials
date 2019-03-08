@@ -15,6 +15,7 @@
  *= require ionicons
  *= require bootstrap.min
  *= require fullcalendar
+ *= require actiontext
  */
 
  //Use @import in order to process SCSS variables
@@ -27,4 +28,5 @@
 @import 'scale';
 @import 'progress_stepper';
 @import 'admin_layout';
+@import 'audits';
 @import 'modal-dialog';

@@ -20,10 +20,11 @@ Rails.application.routes.draw do
 
   # These are globally accessible
   resources :canonical_items, only: %i(index show)
+  resources :feedback_message, only: [:create]
 
   namespace :api, defaults: { format: "json" } do
     namespace :v1 do
-      resources :partner_requests, only: :create
+      resources :partner_requests, only: %i(create show)
       resources :partner_approvals, only: :create
     end
   end
@@ -41,6 +42,9 @@ Rails.application.routes.draw do
     end
 
     resources :adjustments, except: %i(edit update)
+    resources :audits do
+      post :finalize
+    end
     resources :transfers, only: %i(index create new show)
     resources :storage_locations do
       collection do
@@ -85,10 +89,10 @@ Rails.application.routes.draw do
     end
 
     resources :donations do
-      collection do
-        get :scale
-        post :scale_intake
-      end
+      # collection do
+      #   get :scale
+      #   post :scale_intake
+      # end
       patch :add_item, on: :member
       patch :remove_item, on: :member
     end

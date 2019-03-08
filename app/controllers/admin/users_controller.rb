@@ -1,14 +1,26 @@
 class Admin::UsersController < AdminController
-  before_action :load_organizations, only: %i[new create]
+  before_action :load_organizations, only: %i[new create edit update]
 
   def index
-    @users = User.all
+    @users = User.order(:name).all
   end
 
-  def update; end
+  def update
+    @user = User.find_by(id: params[:id])
+    if @user.update(user_params)
+      redirect_to admin_users_path, notice: "#{@user.name} updated!"
+    else
+      flash[:error] = "Something didn't work quite right -- try again?"
+      render action: :edit
+    end
+  end
 
   def new
     @user = User.new
+  end
+
+  def edit
+    @user = User.find_by(id: params[:id])
   end
 
   def create

@@ -21,7 +21,6 @@ RSpec.describe TransfersController, type: :controller do
         )
 
         post :create, params: { organization_id: @organization.short_name, transfer: attributes }
-        t = Transfer.last
         expect(response).to redirect_to(transfers_path)
       end
 

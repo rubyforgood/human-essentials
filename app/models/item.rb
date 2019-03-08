@@ -2,16 +2,17 @@
 #
 # Table name: items
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  category        :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  barcode_count   :integer
 #  organization_id :integer
 #  active          :boolean          default(TRUE)
 #  partner_key     :string
 #  weight_in_grams :integer
+#  value           :decimal(5, 2)    default(0.0)
 #
 
 class Item < ApplicationRecord
@@ -21,10 +22,11 @@ class Item < ApplicationRecord
   validates :name, presence: true
   validates :organization, presence: true
   validates :weight_in_grams, numericality: { greater_than: 0 }, allow_nil: true
+  validates :value, numericality: { greater_than_or_equal_to: 0 }
 
-  has_many :line_items
-  has_many :inventory_items
-  has_many :barcode_items, as: :barcodeable
+  has_many :line_items, dependent: :destroy
+  has_many :inventory_items, dependent: :destroy
+  has_many :barcode_items, as: :barcodeable, dependent: :destroy
   has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: Donation
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution

@@ -1,6 +1,6 @@
 class ItemsController < ApplicationController
   def index
-    @items = current_organization.items.includes(:canonical_item).alphabetized.filter(filter_params)
+    @items = current_organization.items.includes(:canonical_item).alphabetized.class_filter(filter_params)
     @storages = current_organization.storage_locations.order(id: :asc)
     @items_with_counts = ItemsByStorageCollectionQuery.new(organization: current_organization, filter_params: filter_params).call
     @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.new(organization: current_organization, filter_params: filter_params).call
@@ -53,7 +53,7 @@ class ItemsController < ApplicationController
   private
 
   def item_params
-    params.require(:item).permit(:name, :category, :partner_key)
+    params.require(:item).permit(:name, :category, :partner_key, :value)
   end
 
   def filter_params(parameters = nil)

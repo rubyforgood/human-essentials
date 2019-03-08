@@ -34,7 +34,6 @@ RSpec.describe DonationsController, type: :controller do
                       source: "Donation Site",
                       line_items: line_items }
         )
-        d = Donation.last
         expect(response).to redirect_to(donations_path)
       end
 

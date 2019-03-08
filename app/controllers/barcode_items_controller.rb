@@ -2,7 +2,7 @@ class BarcodeItemsController < ApplicationController
   def index
     @items = Item.gather_items(current_organization, @global)
     @canonical_items = CanonicalItem.all
-    @barcode_items = current_organization.barcode_items.include_global(false).filter(filter_params)
+    @barcode_items = current_organization.barcode_items.include_global(false).class_filter(filter_params)
   end
 
   def create
@@ -69,7 +69,7 @@ class BarcodeItemsController < ApplicationController
       raise if barcode.nil? || barcode.global?
 
       barcode.destroy
-    rescue Exception => e
+    rescue StandardError
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
     redirect_to barcode_items_path

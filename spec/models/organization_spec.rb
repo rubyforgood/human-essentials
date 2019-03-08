@@ -2,20 +2,21 @@
 #
 # Table name: organizations
 #
-#  id              :bigint(8)        not null, primary key
-#  name            :string
-#  short_name      :string
-#  email           :string
-#  url             :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  intake_location :integer
-#  street          :string
-#  city            :string
-#  state           :string
-#  zipcode         :string
-#  latitude        :float
-#  longitude       :float
+#  id                 :integer          not null, primary key
+#  name               :string
+#  short_name         :string
+#  email              :string
+#  url                :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  intake_location    :integer
+#  street             :string
+#  city               :string
+#  state              :string
+#  zipcode            :string
+#  latitude           :float
+#  longitude          :float
+#  default_email_text :text
 #
 
 RSpec.describe Organization, type: :model do
@@ -151,6 +152,14 @@ RSpec.describe Organization, type: :model do
     it 'does not add any separators after street when city, state, and zip are missing' do
       org = Organization.new(street: '123 Main St.')
       expect(org.address).to eq('123 Main St.')
+    end
+  end
+
+  describe 'valid_items' do
+    it 'returns an array of item partner keys' do
+      org = create(:organization)
+      expect(org.valid_items).to be_an(Array)
+      expect(org.valid_items.first).to be_an(String)
     end
   end
 end

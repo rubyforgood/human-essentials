@@ -12,9 +12,13 @@
 #
 
 class LineItem < ApplicationRecord
-  belongs_to :itemizable, polymorphic: true, inverse_of: :line_items, required: true
+  belongs_to :itemizable, polymorphic: true, inverse_of: :line_items, optional: false
   belongs_to :item
 
   validates :item_id, presence: true
   validates :quantity, numericality: { other_than: 0, only_integer: true }
+
+  def value_per_line_item
+    item.value * quantity
+  end
 end

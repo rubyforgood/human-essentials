@@ -2,20 +2,21 @@
 #
 # Table name: organizations
 #
-#  id              :bigint(8)        not null, primary key
-#  name            :string
-#  short_name      :string
-#  email           :string
-#  url             :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  intake_location :integer
-#  street          :string
-#  city            :string
-#  state           :string
-#  zipcode         :string
-#  latitude        :float
-#  longitude       :float
+#  id                 :integer          not null, primary key
+#  name               :string
+#  short_name         :string
+#  email              :string
+#  url                :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  intake_location    :integer
+#  street             :string
+#  city               :string
+#  state              :string
+#  zipcode            :string
+#  latitude           :float
+#  longitude          :float
+#  default_email_text :text
 #
 
 class Organization < ApplicationRecord
@@ -27,24 +28,27 @@ class Organization < ApplicationRecord
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
   validate :correct_logo_mime_type
 
-  has_many :adjustments
-  has_many :barcode_items do
+  has_many :adjustments, dependent: :destroy
+  has_many :barcode_items, dependent: :destroy do
     def all
       unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.global = ?", proxy_association.owner.id, true)
     end
   end
-  has_many :distributions
-  has_many :donations
-  has_many :purchases
-  has_many :donation_sites
-  has_many :diaper_drive_participants
-  has_many :storage_locations
+  has_many :distributions, dependent: :destroy
+  has_many :donations, dependent: :destroy
+  has_many :purchases, dependent: :destroy
+  has_many :donation_sites, dependent: :destroy
+  has_many :diaper_drive_participants, dependent: :destroy
+  has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
-  has_many :items
-  has_many :partners
-  has_many :transfers
-  has_many :users
-  has_many :requests
+  has_many :items, dependent: :destroy
+  has_many :partners, dependent: :destroy
+  has_many :transfers, dependent: :destroy
+  has_many :users, dependent: :destroy
+  has_many :requests, dependent: :destroy
+  has_many :audits, dependent: :destroy
+
+  has_rich_text :default_email_text
 
   has_one_attached :logo
 
@@ -123,6 +127,10 @@ class Organization < ApplicationRecord
     else
       Organization::DIAPER_APP_LOGO.to_s
     end
+  end
+
+  def valid_items
+    items.map(&:partner_key)
   end
 
   private

@@ -40,7 +40,7 @@ RSpec.feature "Barcode management", type: :feature do
 
   scenario "User can filter the #index by those that contain certain items" do
     item = create(:item, name: "1T Diapers")
-    item2 = create(:item, name: "2T Diapers")
+    create(:item, name: "2T Diapers")
     location1 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Foo")
     location2 = create(:storage_location, name: "Bar")
     visit url_prefix + "/storage_locations"
@@ -58,9 +58,9 @@ RSpec.feature "Barcode management", type: :feature do
     item2 = create(:item, name: "ABC Diapers")
     item3 = create(:item, name: "Wonder Diapers")
     expected_order = [item1.name, item2.name, item3.name]
-    storage_location1 = create(:storage_location, :with_items, item: item2, item_quantity: 10, name: "Foo")
-    storage_location2 = create(:storage_location, :with_items, item: item1, item_quantity: 10, name: "Bar")
-    storage_location3 = create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
+    create(:storage_location, :with_items, item: item2, item_quantity: 10, name: "Foo")
+    create(:storage_location, :with_items, item: item1, item_quantity: 10, name: "Bar")
+    create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
     visit url_prefix + "/storage_locations"
 
     expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).to eq(expected_order)
@@ -69,8 +69,8 @@ RSpec.feature "Barcode management", type: :feature do
 
   scenario "Items in (adjustments)" do
     item = create(:item, name: "AAA Diapers")
-    storage_location = create(:storage_location, :with_items,  item: item, name: "here")
-    adjustment = create(:adjustment, :with_items, storage_location: storage_location)
+    storage_location = create(:storage_location, :with_items, item: item, name: "here")
+    create(:adjustment, :with_items, storage_location: storage_location)
     visit url_prefix + "/storage_locations/" + storage_location.id.to_s
     click_link "Inventory coming in"
 
@@ -79,9 +79,9 @@ RSpec.feature "Barcode management", type: :feature do
 
   scenario "Items out (distributions)" do
     item = create(:item, name: "AAA Diapers")
-    storage_location = create(:storage_location, :with_items,  item: item, name: "here")
-    adjustment = create(:adjustment, :with_items, storage_location: storage_location)
-    distribution = create(:distribution, :with_items, storage_location: storage_location)
+    storage_location = create(:storage_location, :with_items, item: item, name: "here")
+    create(:adjustment, :with_items, storage_location: storage_location)
+    create(:distribution, :with_items, storage_location: storage_location)
     visit url_prefix + "/storage_locations/" + storage_location.id.to_s
     click_on "Inventory going out"
 

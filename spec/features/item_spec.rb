@@ -16,7 +16,6 @@ RSpec.feature "Item management", type: :feature do
 
   scenario "User creates a new item with empty attributes" do
     visit url_prefix + "/items/new"
-    item_traits = attributes_for(:item)
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
@@ -42,8 +41,8 @@ RSpec.feature "Item management", type: :feature do
 
   scenario "User can filter the #index by category type" do
     Item.delete_all
-    item = create(:item, category: "Diapers")
-    item2 = create(:item, category: "Menstrual Products")
+    create(:item, category: "Diapers")
+    create(:item, category: "Menstrual Products")
     visit url_prefix + "/items"
     select Item.first.category, from: "filters_in_category"
     click_button "Filter"
@@ -53,8 +52,8 @@ RSpec.feature "Item management", type: :feature do
 
   scenario "User can filter the #index by canonical item" do
     Item.delete_all
-    item = create(:item, canonical_item: CanonicalItem.first)
-    item2 = create(:item, canonical_item: CanonicalItem.last)
+    create(:item, canonical_item: CanonicalItem.first)
+    create(:item, canonical_item: CanonicalItem.last)
     visit url_prefix + "/items"
     select CanonicalItem.first.name, from: "filters_by_canonical_item"
     click_button "Filter"

@@ -40,7 +40,6 @@ RSpec.describe DistributionsController, type: :controller do
         post :create, params: default_params.merge(distribution: { storage_location_id: i.id, partner_id: p.id })
         expect(response).to have_http_status(:redirect)
 
-        d = Distribution.last
         expect(response).to redirect_to(distributions_path)
       end
 

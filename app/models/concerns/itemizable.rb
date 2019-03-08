@@ -72,7 +72,25 @@ module Itemizable
     end
   end
 
+  def value_per_itemizable
+    line_items.sum(&:value_per_line_item)
+  end
+
   private
+
+  def line_item_items_quantity_is_positive
+    return if storage_location.nil?
+
+    line_items.each do |line_item|
+      next unless line_item.item
+
+      next unless line_item.quantity <= 0
+
+      errors.add(:inventory,
+                 "#{line_item.item.name}'s quantity " \
+                 "needs to be positive")
+    end
+  end
 
   def line_item_items_exist_in_inventory
     return if storage_location.nil?

@@ -3,6 +3,7 @@
   <td><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %> </td>
   <td><%= distribution_row.storage_location.name %></td>
   <td><%= distribution_row.line_items.total %></td>
+  <td><%= item_value(distribution_row.value_per_itemizable) %></td>
   <td class="text-right">
     <%= view_button_to distribution_path(distribution_row) %>
     <%= edit_button_to edit_distribution_path(distribution_row) %>
