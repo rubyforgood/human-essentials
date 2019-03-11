@@ -117,12 +117,15 @@ RSpec.feature "Purchases", type: :feature, js: true do
     # Bug fix -- Issue #378
     # A user can view another organizations purchase
     context "Editing purchase" do
-      before(:each) do
-        purchase = create(:purchase, organization: create(:organization))
-        visit edit_purchase_path(@user.organization.short_name, purchase)
+      scenario "A user can see purchased_from value" do
+        purchase = create(:purchase, purchased_from: "Old Vendor")
+        visit edit_purchase_path(@organization.to_param, purchase)
+        expect(page).to have_content("Vendor (Old Vendor)")
       end
 
-      scenario "A user can view another organizations puchanse" do
+      scenario "A user can view another organizations purchase" do
+        purchase = create(:purchase, organization: create(:organization))
+        visit edit_purchase_path(@user.organization.short_name, purchase)
         expect(page).to have_content("Still haven't found what you're looking for")
       end
     end
