@@ -9,14 +9,14 @@ shared_examples_for "provideable" do
     end
 
     it "is invalid without an organization" do
-      expect(build(:vendor, organization: nil)).not_to be_valid
+      expect(build(model_f, organization: nil)).not_to be_valid
     end
   end
 
   describe "geocode" do
     it "adds coordinates to the database" do
       ddp = build(model_f,
-                  "address" => "1500 Remount Road, Front Royal, VA")
+                  "address" => "123 Donation Site Way")
       ddp.save
       expect(ddp.latitude).not_to eq(nil)
       expect(ddp.longitude).not_to eq(nil)
