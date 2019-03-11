@@ -1,6 +1,16 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  require 'sidekiq/web'
+  if Rails.env.production?
+    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+      ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])) &
+        ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_PASSWORD"]))
+    end
+  end
+  mount Sidekiq::Web => '/sidekiq'
+  Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
+
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
       username == ENV["FLIPPER_USERNAME"] && password == ENV["FLIPPER_PASSWORD"]
@@ -94,10 +104,10 @@ Rails.application.routes.draw do
     end
 
     resources :donations do
-      collection do
-        get :scale
-        post :scale_intake
-      end
+      # collection do
+      #   get :scale
+      #   post :scale_intake
+      # end
       patch :add_item, on: :member
       patch :remove_item, on: :member
     end

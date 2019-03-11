@@ -10,15 +10,21 @@ RSpec.feature "Distributions", type: :feature do
   end
 
   scenario "User creates a new distribution" do
-    visit @url_prefix + "/distributions/new"
+    with_features email_active: true do
+      visit @url_prefix + "/distributions/new"
 
-    select @partner.name, from: "Partner"
-    select @storage_location.name, from: "From storage location"
+      select @partner.name, from: "Partner"
+      select @storage_location.name, from: "From storage location"
 
-    fill_in "Comment", with: "Take my wipes... please"
-    click_button "Save", match: :first
-    expect(page).to have_content "Distributions"
-    expect(page.find(".alert-info")).to have_content "reated"
+      fill_in "Comment", with: "Take my wipes... please"
+
+      expect do
+        click_button "Save", match: :first
+      end.to change { PartnerMailerJob.jobs.size }.by(1)
+
+      expect(page).to have_content "Distributions"
+      expect(page.find(".alert-info")).to have_content "reated"
+    end
   end
 
   scenario "User doesn't fill storage_location" do

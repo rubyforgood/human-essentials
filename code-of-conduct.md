@@ -30,4 +30,4 @@ If a participant engages in harassing behavior, the organizers may take any acti
 
 We're people trying to make the world better.
 
-_For our Code of Conduct we have based ours on the excellent one made by the Django Project._
+_For our Code of Conduct, we have based ours on the excellent one made by the Django Project._
