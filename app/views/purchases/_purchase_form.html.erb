@@ -6,7 +6,7 @@
         <%= f.association :vendor,
                           collection: @vendors,
                           label_method: :business_name,
-                          label: "Vendor",
+                          label: "Vendor #{@purchase.purchased_from.nil? ? "" : "(#{@purchase.purchased_from})"}",
                           error: "Which vendor was this from?",
                           wrapper: :vertical_input_group %>
       </div>
