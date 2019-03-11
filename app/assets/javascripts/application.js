@@ -19,9 +19,6 @@
 //= require toastr
 //= require Chart.bundle
 //= require chartkick
-//= require react
-//= require react_ujs
-//= require components
 //= require moment
 //= require fullcalendar
 //= require_tree .

@@ -9,7 +9,7 @@ set :puma_workers,    0
 set :ssh_options, keys: ["config/deploy_id_rsa"] if File.exist?("config/deploy_id_rsa")
 
 # Don't change these unless you know what you're doing
-set :pty,             true
+set :pty,             false
 set :use_sudo,        false
 # set :stage,           :production
 set :deploy_via,      :remote_cache
@@ -23,6 +23,7 @@ set :ssh_options,     forward_agent: true, user: fetch(:user), keys: %w(~/.ssh/i
 set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true # Change to false when not using ActiveRecord
+set :sidekiq_processes, 2
 
 ## Defaults:
 # set :scm,           :git
@@ -32,7 +33,7 @@ set :branch, ENV["BRANCH"] || :master
 # set :keep_releases, 5
 
 ## Linked Files & Directories (Default None):
-set :linked_files, %w{config/database.yml}
+set :linked_files, %w{config/database.yml config/master.key .env.production}
 set :linked_dirs,  %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system storage}
 
 namespace :puma do
