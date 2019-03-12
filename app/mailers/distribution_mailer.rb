@@ -9,7 +9,8 @@ class DistributionMailer < ApplicationMailer
     @distribution = distribution
     @default_email_text = current_organization.default_email_text
     @comment = distribution.comment
+    @from_email = current_organization.email || current_organization.users.first.email
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = DistributionPdf.new(current_organization, @distribution).render
-    mail(to: @partner.email, from: current_organization.email, subject: "Your Distribution")
+    mail(to: @partner.email, from: @from_email, subject: "Your Distribution")
   end
 end
