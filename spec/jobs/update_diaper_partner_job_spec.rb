@@ -17,43 +17,38 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
       UpdateDiaperPartnerJob.perform_async(partner.id)
     end
 
-######### NEW CODE FROM HERE DOWN
-#test to see that status WAS updated given post was successfull
-    it "checks status given successfull POST" do
+    describe "Responses >" do
+      before do
+        allow(Flipper).to receive(:enabled?) { true }
+        @partner = create(:partner)
+      end
+      context "with a successful POST response" do
         before do
-            @response&.value = Net::HTTPSuccess
+          response = double("Response", value: Net::HTTPSuccess)
+          allow(DiaperPartnerClient).to receive(:post).and_return(response)
         end
-        expect(@partner.status).to eq("Pending")
-    end
 
-#2 tests to see that status WAS NOT updated given post was UNsuccessfull
-    it "checks status given unsuccessfull POST(Client Error)" do
+        it "sets the partner status to pending" do
+          expect do
+            UpdateDiaperPartnerJob.perform_async(@partner.id)
+            @partner.reload
+          end.to change { @partner.status }.to("Pending")
+        end
+      end
+
+      context "with a unsuccessful POST response" do
         before do
-            @response&.value = Net::HTTPClientError
+          response = double("Response", value: nil)
+          allow(DiaperPartnerClient).to receive(:post).and_return(response)
         end
-        expect(@partner.status).to eq("Error")
-    end
 
-    it "checks status given unsuccessfull POST(Server Error)" do
-        before do
-            @response&.value = Net::HTTPServerError
+        it "sets the partner status to error" do
+          expect do
+            UpdateDiaperPartnerJob.perform_async(@partner.id)
+            @partner.reload
+          end.to change { @partner.status }.to("Error")
         end
-        expect(@partner.status).to eq("Error")
+      end
     end
-
-
-
-
-#?test to make sure no info sent to Partner app breaks Partner app?
-
   end
 end
-
-
-
-
-
-## 2 tests that mock DiaperPartnerClient and responds with 1)successfull and 2)unsuccessfull
-## test the response of the entire job(should be @partner status)
-
-##factory that creates fake partner which would allow complete controll over both inputs which would make the test more reliable and repeatable
