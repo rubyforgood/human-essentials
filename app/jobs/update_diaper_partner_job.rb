@@ -1,7 +1,6 @@
 class UpdateDiaperPartnerJob
-  include SuckerPunch::Job
+  include Sidekiq::Worker
   include DiaperPartnerClient
-  workers 2
 
   def perform(partner_id)
     @partner = Partner.find(partner_id)
