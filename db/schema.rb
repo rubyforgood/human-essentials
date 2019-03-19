@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_11_063030) do
+ActiveRecord::Schema.define(version: 2019_02_19_080442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -245,6 +245,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.datetime "issued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "vendor_id"
     t.index ["organization_id"], name: "index_purchases_on_organization_id"
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end
@@ -316,6 +317,21 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "vendors", force: :cascade do |t|
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.string "comment"
+    t.integer "organization_id"
+    t.string "address"
+    t.string "business_name"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 
   add_foreign_key "adjustments", "organizations"

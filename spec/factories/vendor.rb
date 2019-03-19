@@ -1,8 +1,8 @@
 # == Schema Information
 #
-# Table name: diaper_drive_participants
+# Table name: vendor
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  contact_name    :string
 #  email           :string
 #  phone           :string
@@ -17,7 +17,7 @@
 #
 
 FactoryBot.define do
-  factory :diaper_drive_participant do
+  factory :vendor do
     organization { Organization.try(:first) || create(:organization) }
     contact_name { "Don Draper" }
     business_name { "Awesome Business" }
