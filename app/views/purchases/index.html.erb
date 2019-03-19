@@ -26,6 +26,12 @@
               <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_storage_location }, class: "form-control") %>
             </div>
           <% end %>
+          <% if @vendors.present? %>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "by Vendors" %>
+              <%= collection_select(:filters, :from_vendor, @vendors || {}, :id, :business_name, { include_blank: true, selected: @selected_vendor }, class: "form-control") %>
+            </div>
+          <% end %>
         </div><!-- /.row -->
         <div class="row">
           <div class="col-xs-12">

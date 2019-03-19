@@ -11,6 +11,7 @@
 #  issued_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  vendor_id           :integer
 #
 
 FactoryBot.define do
@@ -21,6 +22,7 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     issued_at { nil }
     amount_spent { 10 }
+    vendor { Vendor.try(:first) || create(:vendor) }
 
     transient do
       item_quantity { 10 }
