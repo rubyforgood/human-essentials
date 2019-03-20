@@ -26,6 +26,8 @@ class Partner < ApplicationRecord
       .order(:name)
   }
 
+  scope :unapproved, -> { where(status: "Pending").or(where(status: "Awaiting Review")) }
+
   after_create :register_on_partnerbase
 
   # better to extract this outside of the model
