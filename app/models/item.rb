@@ -29,10 +29,12 @@ class Item < ApplicationRecord
   has_many :donations, through: :line_items, source: :itemizable, source_type: Donation
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
+  scope :alphabetized, -> { order(:name) }
+
   include Filterable
   scope :active, -> { where(active: true) }
-  scope :alphabetized, -> { order(:name) }
   scope :in_category, ->(category) { where(category: category) }
+  scope :alpha_by_column, ->(column) { order(column) }
   scope :by_canonical_item, ->(canonical_item) { where(canonical_item: canonical_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
   scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }

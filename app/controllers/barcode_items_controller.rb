@@ -1,7 +1,7 @@
 class BarcodeItemsController < ApplicationController
   def index
-    @items = Item.gather_items(current_organization, @global)
-    @canonical_items = CanonicalItem.all
+    @items = Item.alphabetized.gather_items(current_organization, @global)
+    @canonical_items = CanonicalItem.alphabetized
     @barcode_items = current_organization.barcode_items.include_global(false).class_filter(filter_params)
   end
 

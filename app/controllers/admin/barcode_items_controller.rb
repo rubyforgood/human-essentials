@@ -48,7 +48,7 @@ class Admin::BarcodeItemsController < AdminController
   private
 
   def load_canonical_items
-    @canonical_items = CanonicalItem.order(:name).all
+    @canonical_items = CanonicalItem.alphabetized
   end
 
   def barcode_item_params

@@ -22,4 +22,5 @@ class CanonicalItem < ApplicationRecord
   validates :partner_key, presence: true, uniqueness: true
 
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
+  scope :alphabetized, -> { order(:name) }
 end

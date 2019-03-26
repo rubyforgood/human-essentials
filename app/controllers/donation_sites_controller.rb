@@ -2,7 +2,8 @@ class DonationSitesController < ApplicationController
   include Importable
 
   def index
-    @donation_sites = current_organization.donation_sites.all.order(:name)
+    @donation_sites = current_organization.donation_sites.merge(DonationSite.alphabetized)
+    puts @donation_sites.inspect
     @donation_site = current_organization.donation_sites.new
   end
 

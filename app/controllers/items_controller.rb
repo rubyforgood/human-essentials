@@ -1,9 +1,10 @@
 class ItemsController < ApplicationController
   def index
-    @items = current_organization.items.includes(:canonical_item).alphabetized.class_filter(filter_params)
+    @items = current_organization.items.alphabetized.includes(:canonical_item).class_filter(filter_params)
     @storages = current_organization.storage_locations.order(id: :asc)
     @items_with_counts = ItemsByStorageCollectionQuery.new(organization: current_organization, filter_params: filter_params).call
     @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.new(organization: current_organization, filter_params: filter_params).call
+    @canonical_items = CanonicalItem.alphabetized
   end
 
   def create

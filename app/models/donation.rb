@@ -1,4 +1,4 @@
-# == Schema Information
+ # == Schema Information
 #
 # Table name: donations
 #
@@ -28,6 +28,7 @@ class Donation < ApplicationRecord
   include Itemizable
 
   include Filterable
+  scope :alphabetized, -> { order(:name) }
   scope :at_storage_location, ->(storage_location_id) {
     where(storage_location_id: storage_location_id)
   }

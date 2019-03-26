@@ -14,7 +14,7 @@ class Admin::CanonicalItemsController < AdminController
   end
 
   def index
-    @canonical_items = CanonicalItem.order(:name).all
+    @canonical_items = CanonicalItem.alphabetized
   end
 
   def new

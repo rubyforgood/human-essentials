@@ -38,7 +38,7 @@ class DonationsController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @sources = @donations.collect(&:source).uniq
     @selected_source = filter_params[:by_source]
-    @donation_sites = @donations.collect(&:donation_site).compact.uniq
+    @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by {|m| m.name.downcase}
     @selected_donation_site = filter_params[:from_donation_site]
     @diaper_drives = @donations.collect do |d|
       d.source == Donation::SOURCES[:diaper_drive] ? d.diaper_drive_participant : nil

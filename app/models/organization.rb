@@ -28,6 +28,8 @@ class Organization < ApplicationRecord
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
   validate :correct_logo_mime_type
 
+  scope :alphabetized, -> { order(:name) }
+
   has_many :adjustments, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
     def all

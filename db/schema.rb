@@ -129,6 +129,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
+    t.text "default_email_text"
     t.float "latitude"
     t.float "longitude"
     t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
@@ -222,7 +223,6 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
-    t.text "default_email_text"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end

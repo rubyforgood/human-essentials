@@ -24,6 +24,9 @@ class DonationSite < ApplicationRecord
   geocoded_by :address
   after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
 
+  scope :alphabetized, -> {
+    order(arel_table['name'].lower)
+  }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
       .order(:name)
