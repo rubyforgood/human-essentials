@@ -15,6 +15,10 @@ class RequestsController < ApplicationController
   # Clicking the "Fullfill" button will set the the request to fulfilled
   # and will move the user to the new distribution page with a
   # pre-filled distribution containing all the requested items.
+
+
+#Add here
+
   def fullfill
     request = Request.find(params[:id])
     request.update(status: "Fulfilled")
