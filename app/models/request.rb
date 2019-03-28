@@ -20,7 +20,7 @@ class Request < ApplicationRecord
 
   scope :active, -> { where(status: "Active") }
 
-  STATUSES = %w[Active Fulfilled].freeze
+  STATUSES = %w[Active Started Fulfilled].freeze
 
   def items_hash
     @items_hash ||= request_items.collect do |key, _|
