@@ -1,0 +1,79 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Guardian first name:</strong>
+  <%= @family.guardian_first_name %>
+</p>
+
+<p>
+  <strong>Guardian last name:</strong>
+  <%= @family.guardian_last_name %>
+</p>
+
+<p>
+  <strong>Guardian zip code:</strong>
+  <%= @family.guardian_zip_code %>
+</p>
+
+<p>
+  <strong>Guardian country:</strong>
+  <%= @family.guardian_country %>
+</p>
+
+<p>
+  <strong>Guardian phone:</strong>
+  <%= @family.guardian_phone %>
+</p>
+
+<p>
+  <strong>Agency guardian:</strong>
+  <%= @family.agency_guardian_id %>
+</p>
+
+<p>
+  <strong>Home adult count:</strong>
+  <%= @family.home_adult_count %>
+</p>
+
+<p>
+  <strong>Home child count:</strong>
+  <%= @family.home_child_count %>
+</p>
+
+<p>
+  <strong>Home young child count:</strong>
+  <%= @family.home_young_child_count %>
+</p>
+
+<p>
+  <strong>Sources of income:</strong>
+  <%= @family.sources_of_income %>
+</p>
+
+<p>
+  <strong>Guardian employed:</strong>
+  <%= @family.guardian_employed %>
+</p>
+
+<p>
+  <strong>Guardian employment type:</strong>
+  <%= @family.guardian_employment_type %>
+</p>
+
+<p>
+  <strong>Guardian monthly pay:</strong>
+  <%= @family.guardian_monthly_pay %>
+</p>
+
+<p>
+  <strong>Guardian health insurance:</strong>
+  <%= @family.guardian_health_insurance %>
+</p>
+
+<p>
+  <strong>Comments:</strong>
+  <%= @family.comments %>
+</p>
+
+<%= link_to 'Edit', edit_family_path(@family) %> |
+<%= link_to 'Back', families_path %>
