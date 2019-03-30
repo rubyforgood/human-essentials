@@ -1,6 +1,16 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  require 'sidekiq/web'
+  if Rails.env.production?
+    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+      ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])) &
+        ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_PASSWORD"]))
+    end
+  end
+  mount Sidekiq::Web => '/sidekiq'
+  Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
+
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
       username == ENV["FLIPPER_USERNAME"] && password == ENV["FLIPPER_PASSWORD"]
@@ -73,6 +83,11 @@ Rails.application.routes.draw do
       end
     end
     resources :diaper_drive_participants, except: [:destroy] do
+      collection do
+        post :import_csv
+      end
+    end
+    resources :vendors, except: [:destroy] do
       collection do
         post :import_csv
       end

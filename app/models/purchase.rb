@@ -11,11 +11,13 @@
 #  issued_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  vendor_id           :integer
 #
 
 class Purchase < ApplicationRecord
   belongs_to :organization
   belongs_to :storage_location
+  belongs_to :vendor
 
   include Itemizable
   include Filterable
@@ -24,6 +26,9 @@ class Purchase < ApplicationRecord
   scope :at_storage_location, ->(storage_location_id) {
                                 where(storage_location_id: storage_location_id)
                               }
+  scope :from_vendor, ->(vendor_id) {
+    where(vendor_id: vendor_id)
+  }
   scope :purchased_from, ->(purchased_from) { where(purchased_from: purchased_from) }
   scope :during, ->(range) { where(purchases: { issued_at: range }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
@@ -40,6 +45,10 @@ class Purchase < ApplicationRecord
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
+  end
+
+  def purchased_from_view
+    vendor.nil? ? purchased_from : vendor.business_name
   end
 
   def remove_inventory

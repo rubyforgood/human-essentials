@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "2.6.1"
+ruby "2.6.2"
 
 gem "api-auth", "~> 2.3"
 gem "bootstrap-sass", ">= 3.4.1"
@@ -35,6 +35,7 @@ gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 5.2.2"
 gem "sass-rails"
+gem "sidekiq"
 gem "simple_form"
 gem "skylight"
 gem "sprockets", "~> 3.7.2"
@@ -42,7 +43,6 @@ gem "uglifier", ">= 1.3.0"
 gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
-gem "sucker_punch", "~> 2.0"
 gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
 gem "image_processing"
 gem "webpacker", "~> 3.5"
@@ -68,6 +68,7 @@ group :development do
   gem "capistrano-bundler"
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
+  gem 'capistrano-sidekiq'
   gem "listen", "~> 3.1.5"
   gem "rails-erd"
   gem "spring"

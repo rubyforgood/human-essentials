@@ -2,21 +2,20 @@
 #
 # Table name: organizations
 #
-#  id                 :integer          not null, primary key
-#  name               :string
-#  short_name         :string
-#  email              :string
-#  url                :string
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  intake_location    :integer
-#  street             :string
-#  city               :string
-#  state              :string
-#  zipcode            :string
-#  latitude           :float
-#  longitude          :float
-#  default_email_text :text
+#  id              :integer          not null, primary key
+#  name            :string
+#  short_name      :string
+#  email           :string
+#  url             :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  intake_location :integer
+#  street          :string
+#  city            :string
+#  state           :string
+#  zipcode         :string
+#  latitude        :float
+#  longitude       :float
 #
 
 class Organization < ApplicationRecord
@@ -39,6 +38,7 @@ class Organization < ApplicationRecord
   has_many :purchases, dependent: :destroy
   has_many :donation_sites, dependent: :destroy
   has_many :diaper_drive_participants, dependent: :destroy
+  has_many :vendors, dependent: :destroy
   has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
   has_many :items, dependent: :destroy
