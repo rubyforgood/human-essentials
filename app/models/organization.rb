@@ -70,11 +70,6 @@ class Organization < ApplicationRecord
     requests.order(status: :asc, updated_at: :desc)
   end
 
-  def quantity_categories
-    storage_locations.map(&:inventory_items).flatten.reject { |i| i.item.nil? }.group_by { |i| i.item.category }
-                     .map { |i| [i[0], i[1].map(&:quantity).sum] }.sort_by { |_, v| -v }
-  end
-
   def upcoming_distributions
     distributions&.this_week&.count || 0
   end
@@ -116,7 +111,7 @@ class Organization < ApplicationRecord
   def self.seed_items(org)
     Rails.logger.info "Seeding #{org.name}'s items..."
     org_id = org.id
-    canonical_items = CanonicalItem.pluck(:partner_key, :name, :category).collect { |c| { partner_key: c[0], name: c[1], category: c[2], organization_id: org_id } }
+    canonical_items = CanonicalItem.pluck(:partner_key, :name).collect { |c| { partner_key: c[0], name: c[1], organization_id: org_id } }
     Item.create(canonical_items)
     org.reload
   end

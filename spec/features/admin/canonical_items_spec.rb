@@ -14,7 +14,6 @@ RSpec.feature "Canonical Item Admin" do
 
       scenario "it succeeds when creating a new canonical item with good data" do
         fill_in "Name", with: canonical_item_traits[:name]
-        fill_in "Category", with: canonical_item_traits[:category]
         fill_in "canonical_item_partner_key", with: canonical_item_traits[:partner_key]
         click_button "Save"
 
@@ -52,7 +51,7 @@ RSpec.feature "Canonical Item Admin" do
       count = canonical_item.item_count
       visit admin_canonical_items_path
       expect(page).to have_content(canonical_item.name)
-      within "table tbody tr#canonical-item-row-#{canonical_item.to_param} td:nth-child(3)" do
+      within "table tbody tr#canonical-item-row-#{canonical_item.to_param} td:nth-child(2)" do
         expect(page).to have_content(count)
       end
     end
@@ -79,7 +78,6 @@ RSpec.feature "Canonical Item Admin" do
 
       scenario "it succeeds when creating a new canonical item with good data" do
         fill_in "Name", with: canonical_item_traits[:name]
-        fill_in "Category", with: canonical_item_traits[:category]
         fill_in "canonical_item_partner_key", with: canonical_item_traits[:partner_key]
         click_button "Save"
 
@@ -117,7 +115,7 @@ RSpec.feature "Canonical Item Admin" do
       count = canonical_item.item_count
       visit admin_canonical_items_path
       expect(page).to have_content(canonical_item.name)
-      within "table tbody tr#canonical-item-row-#{canonical_item.to_param} td:nth-child(3)" do
+      within "table tbody tr#canonical-item-row-#{canonical_item.to_param} td:nth-child(2)" do
         expect(page).to have_content(count)
       end
     end

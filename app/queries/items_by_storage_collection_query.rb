@@ -16,7 +16,6 @@ class ItemsByStorageCollectionQuery
                 .select('
                         items.id,
                         items.name,
-                        items.category,
                         items.barcode_count,
                         items.partner_key,
                         items.value,
