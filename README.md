@@ -97,7 +97,7 @@ Sometimes we want to get a PR up there and going so that other people can review
 * The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
 * If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
  
- ```rvm install 2.5.3 --with-openssl-dir=`brew --prefix openssl` ```.
+ ```rvm install 2.6.2 --with-openssl-dir=`brew --prefix openssl` ```.
 
 * If you have not already done so, you will need to install Yarn, the Javascript package manager. [See here](https://github.com/rubyforgood/diaper/wiki/Installing-Yarn) for installation instructions suitable for your operating system.
 
