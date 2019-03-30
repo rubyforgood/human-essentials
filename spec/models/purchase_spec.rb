@@ -11,6 +11,7 @@
 #  issued_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  vendor_id           :integer
 #
 
 RSpec.describe Purchase, type: :model do
