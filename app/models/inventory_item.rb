@@ -22,8 +22,4 @@ class InventoryItem < ApplicationRecord
   scope :by_partner_key, ->(partner_key) { joins(:item).merge(Item.by_partner_key(partner_key)) }
 
   delegate :name, to: :item, prefix: true
-
-  def self.quantity_by_category
-    includes(:item).select("items.category").group("items.category").sum(:quantity).sort_by { |_, v| -v }
-  end
 end

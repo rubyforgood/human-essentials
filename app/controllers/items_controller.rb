@@ -29,7 +29,6 @@ class ItemsController < ApplicationController
 
   def show
     @item = current_organization.items.find(params[:id])
-    @items_in_category = current_organization.items.in_same_category_as(@item)
     @storage_locations_containing = current_organization.items.storage_locations_containing(@item)
     @barcodes_for = current_organization.items.barcodes_for(@item)
   end
@@ -53,11 +52,11 @@ class ItemsController < ApplicationController
   private
 
   def item_params
-    params.require(:item).permit(:name, :category, :partner_key, :value)
+    params.require(:item).permit(:name, :partner_key, :value)
   end
 
   def filter_params(parameters = nil)
-    parameters = (%i(in_category by_canonical_item) + [parameters]).flatten.uniq
+    parameters = (%i(by_canonical_item) + [parameters]).flatten.uniq
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(*parameters)
