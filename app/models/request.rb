@@ -50,7 +50,7 @@ class Request < ApplicationRecord
       item_request = ItemRequest.new
       item_request.item = Item.find(item['item_id'])
 
-      item_request.quantity = item_request.item.default_quantity * item['count']
+      item_request.quantity = item_request.item.default_quantity * item['person_count']
       request.item_requests << item_request
     end
 
