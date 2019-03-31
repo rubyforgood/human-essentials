@@ -79,16 +79,18 @@ RSpec.describe DistributionsController, type: :controller do
 
       let(:distribution) { create(:distribution, partner: partner) }
       let(:issued_at) { distribution.issued_at }
-      let(:distribution_params) { default_params.merge(
-        { id: distribution.id,
+      let(:distribution_params) do
+        default_params.merge(
+          id: distribution.id,
           distribution: {
             partner_id: partner.id,
             storage_location_id: location.id,
             'issued_at(1i)' => issued_at.to_date.year,
             'issued_at(2i)' => issued_at.to_date.month,
             'issued_at(3i)' => issued_at.to_date.day
-        } }
-      )}
+          }
+        )
+      end
 
       subject { patch :update, params: distribution_params }
 
