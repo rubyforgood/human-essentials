@@ -157,9 +157,10 @@ RSpec.describe Organization, type: :model do
 
   describe 'valid_items' do
     it 'returns an array of item partner keys' do
-      org = create(:organization)
-      expect(org.valid_items).to be_an(Array)
-      expect(org.valid_items.first).to be_an(String)
+      item = organization.items.first
+      expected = { name: item.name, id: item.id, partner_key: item.partner_key }
+      expect(organization.valid_items.count).to eq(organization.items.count)
+      expect(organization.valid_items).to include(expected)
     end
   end
 end
