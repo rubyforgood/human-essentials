@@ -1,1 +1,1 @@
-json.array! @children, partial: 'children/child', as: :child
+json.array! @children, partial: "children/child", as: :child
