@@ -120,6 +120,15 @@ class DistributionsController < ApplicationController
     end
   end
 
+  def fulfill
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution.line_items.build
+    @items = current_organization.items.alphabetized
+    @storage_locations = current_organization.storage_locations
+    @barcode_items = BarcodeItem.where(barcodeable_id: @items.map(&:id))
+
+  end
+
   private
 
   # If a request id is provided, update the request with the newly created distribution's id
@@ -144,4 +153,5 @@ class DistributionsController < ApplicationController
     end
     total_value_all_distributions
   end
+
 end

@@ -69,6 +69,7 @@ Rails.application.routes.draw do
     resources :distributions, except: %i(destroy) do
       get :print, on: :member
       post :reclaim, on: :member
+      get :fulfill, on: :member
       collection do
         get :pick_ups
       end

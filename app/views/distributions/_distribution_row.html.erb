@@ -5,6 +5,7 @@
   <td><%= distribution_row.line_items.total %></td>
   <td><%= item_value(distribution_row.value_per_itemizable) %></td>
   <td class="text-right">
+    <%= fulfill_button_to fulfill_distribution_path(distribution_row) %>
     <%= view_button_to distribution_path(distribution_row) %>
     <%= edit_button_to edit_distribution_path(distribution_row) %>
     <%= print_button_to print_distribution_path(distribution_row, format: :pdf) %>

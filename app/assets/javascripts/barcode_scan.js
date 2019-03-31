@@ -3,7 +3,6 @@ $(document).ready(function () {
     var target = $(e.target)
     load_quagga(target);
     
-    
   });
   function order_by_occurrence(arr) {
     var counts = {};
@@ -18,25 +17,26 @@ $(document).ready(function () {
         return counts[curKey] < counts[nextKey];
     });
   }
-  
+  function scanShit(result) {
+      var last_code = result.codeResult.code;
+      last_result.push(last_code);
+      if (last_result.length > 19) {
+        upc_code = order_by_occurrence(last_result)[0];
+        
+        // last_result = [];
+        Quagga.stop();
+        Quagga.offDetected(scanShit);
+        $("#the-one-true-barcode-scanner").empty()
+        last_target.prev().val(upc_code)
+        }
+      
+  }
   function load_quagga(target){
     if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
-  
-      var last_result = [];
-
-        Quagga.onDetected(function(result) {
-          var last_code = result.codeResult.code;
-          last_result.push(last_code);
-          if (last_result.length > 20) {
-            upc_code = order_by_occurrence(last_result)[0];
-            last_result = [];
-            Quagga.stop();
-            target.prev().val(upc_code)
-            $("#the-one-true-barcode-scanner").empty()
-          }
-        });
-
-  
+      window.last_result = [];
+      window.last_target = target
+      Quagga.onDetected(scanShit);
+     
       Quagga.init({
         inputStream : {
           name : "Live",
