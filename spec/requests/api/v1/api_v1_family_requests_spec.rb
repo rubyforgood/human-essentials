@@ -46,7 +46,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
         expected_items = request_items.map do |item|
           {
             'item_id' => item['item_id'],
-            'count' => item['count'] * 50
+            'count' => item['person_count'] * 50
           }
         end
         expect(returned_body['requested_items']).to eq(expected_items)
