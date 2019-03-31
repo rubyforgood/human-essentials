@@ -22,7 +22,7 @@ Rails.application.routes.draw do
   get :admin, to: "admin#dashboard"
   namespace :admin do
     get :dashboard
-    resources :canonical_items
+    resources :base_items
     resources :organizations
     resources :users
     resources :barcode_items

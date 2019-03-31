@@ -7,7 +7,7 @@ RSpec.feature "Item management", type: :feature do
     visit url_prefix + "/items/new"
     item_traits = attributes_for(:item)
     fill_in "Name", with: item_traits[:name]
-    select CanonicalItem.last.name, from: "Base Item"
+    select BaseItem.last.name, from: "Base Item"
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "added"
@@ -37,12 +37,12 @@ RSpec.feature "Item management", type: :feature do
     expect(page.find(".alert")).to have_content "didn't work"
   end
 
-  scenario "User can filter the #index by canonical item" do
+  scenario "User can filter the #index by base item" do
     Item.delete_all
-    create(:item, canonical_item: CanonicalItem.first)
-    create(:item, canonical_item: CanonicalItem.last)
+    create(:item, base_item: BaseItem.first)
+    create(:item, base_item: BaseItem.last)
     visit url_prefix + "/items"
-    select CanonicalItem.first.name, from: "filters_by_canonical_item"
+    select BaseItem.first.name, from: "filters_by_base_item"
     click_button "Filter"
     within "#tbl_items" do
       expect(page).to have_css("tbody tr", count: 1)
