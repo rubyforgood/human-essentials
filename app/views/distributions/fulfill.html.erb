@@ -1,0 +1,15 @@
+  <section class="content">
+  <% @distribution.line_items.each do |line_item| %>
+    <div class="row box">
+      <% bc_item_quantity = @barcode_items.where(barcodeable_id: line_item.item_id).first ? @barcode_items.where(barcodeable_id: line_item.item_id).first.quantity : 0 %>
+      <% multiplier = bc_item_quantity > 0 ? (line_item.quantity / bc_item_quantity).floor : 0 %>
+      <% line_item_quantity = line_item.quantity ? line_item.quantity : 0 %>
+     
+      <div class='col-md-12 box-header with-border bg-gray'> <%= line_item.item ? line_item.item.name : '' %></div>
+      <div class='col-md-6 col-12'> Total: <%= line_item_quantity%> </div>
+       <div class='col-md-6 col-12'> Each container has:<%= bc_item_quantity %></div>
+      <div class='col-md-6 col-12'>Complete Containers: <%= multiplier %></div>
+      <div class='col-md-6 col-12'>Individual Items: <%= line_item_quantity - (multiplier * bc_item_quantity ) %></div>
+    </div>
+  <% end %>
+  </section>
