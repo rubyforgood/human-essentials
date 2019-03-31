@@ -1,14 +1,14 @@
 <section class="content-header">
-  <% content_for :title, "Canonical Items" %>
+  <% content_for :title, "Base Items" %>
   <h1>
-    Canonical Items
+    Base Items
   </h1>
   <ol class="breadcrumb">
     <li><%= link_to(admin_dashboard_path) do %>
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><a href="#">All Canonical Items</a></li>
+    <li><a href="#">All Base Items</a></li>
   </ol>
 </section>
 
@@ -28,7 +28,7 @@
               </tr>
             </thead>
             <tbody>
-              <%= render partial: "canonical_item_row", collection: @canonical_items %>
+              <%= render partial: "base_item_row", collection: @base_items %>
             </tbody>
           </table>
         </div><!-- /.col-xs-12 -->
