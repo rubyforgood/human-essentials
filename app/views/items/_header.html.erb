@@ -3,8 +3,6 @@
     <%= form_tag(items_path, method: :get) do |f| %>
       <div class="row">
         <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-          <%= label_tag "Filter by Item Category" %>
-          <%= collection_select(:filters, :in_category, Item.categories || {}, :category, :category, { include_blank: true }, class: "form-control") %>
           <%= label_tag "Filter by Base Item" %>
           <%= collection_select(:filters, :by_canonical_item, CanonicalItem.all, :partner_key, :name, { include_blank: true }, class: "form-control") %>
         </div>

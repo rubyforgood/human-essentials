@@ -98,9 +98,19 @@ class DistributionsController < ApplicationController
 
   def update
     distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+
+    # there are ways to convert issued_at(*i) to Date but they are uglier then just remember it here
+    # see examples: https://stackoverflow.com/questions/13605598/how-to-get-a-date-from-date-select-or-select-date-in-rails
+    old_issued_at = distribution.issued_at
+
     if distribution.storage_location.update_distribution!(distribution, distribution_params)
       @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
       @line_items = @distribution.line_items
+
+      if distribution.issued_at.to_date != old_issued_at.to_date
+        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{distribution.issued_at}")
+      end
+
       flash[:notice] = "Distribution updated!"
       render :show
     else
@@ -129,8 +139,8 @@ class DistributionsController < ApplicationController
     end
   end
 
-  def send_notification(org, dist)
-    PartnerMailerJob.perform_async(org, dist) if Flipper.enabled?(:email_active)
+  def send_notification(org, dist, subject: 'Your Distribution')
+    PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
   def distribution_params

@@ -40,24 +40,6 @@ shared_examples_for "itemizable" do
       end
     end
 
-    describe "quantities_by_category" do
-      subject { create(model_f) }
-
-      it "groups the quantities by category" do
-        categories = { "cat1" => 20, "cat2" => 10 }
-        item1_cat1 = create(:item, name: "item1", category: categories.keys[0], organization: @organization)
-        item2_cat1 = create(:item, name: "item2", category: categories.keys[0], organization: @organization)
-        item3_cat2 = create(:item, name: "item3", category: categories.keys[1], organization: @organization)
-
-        subject.line_items << create(:line_item, item: item1_cat1, quantity: 10)
-        subject.line_items << create(:line_item, item: item2_cat1, quantity: 10)
-        subject.line_items << create(:line_item, item: item3_cat2, quantity: 10)
-
-        # It yields a hash
-        expect(subject.line_items.quantities_by_category).to eq(categories)
-      end
-    end
-
     describe "quantities_by_name" do
       let(:item1) { create(:item, name: "item1", organization: @organization) }
       let(:item2) { create(:item, name: "item2", organization: @organization) }

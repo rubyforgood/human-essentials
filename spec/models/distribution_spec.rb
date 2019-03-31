@@ -68,7 +68,7 @@ RSpec.describe Distribution, type: :model do
 
   context "Methods >" do
     let(:distribution) { create(:distribution) }
-    let(:item) { create(:item, name: "AAA", category: "Foo") }
+    let(:item) { create(:item, name: "AAA") }
     let(:donation) { create(:donation) }
 
     describe "#distributed_at" do

@@ -29,7 +29,6 @@ Rails.application.routes.draw do
   end
 
   # These are globally accessible
-  resources :canonical_items, only: %i(index show)
   resources :feedback_message, only: [:create]
 
   namespace :api, defaults: { format: "json" } do
