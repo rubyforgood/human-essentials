@@ -78,7 +78,7 @@ RSpec.describe Distribution, type: :model do
       end
 
       it "shows the hour and minutes if it has been provided" do
-        distribution.issued_at = Time.parse("2014-03-01 14:30:00 UTC")
+        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00 UTC")
         expect(distribution.distributed_at).to eq("March 1 2014 2:30pm")
       end
     end

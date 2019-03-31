@@ -51,10 +51,10 @@ class Distribution < ApplicationRecord
   delegate :name, to: :partner, prefix: true
 
   def distributed_at
-    if is_midnight(self.issued_at)
-      self.issued_at.strftime("%B %-d %Y")
+    if is_midnight(issued_at)
+      issued_at.strftime("%B %-d %Y")
     else
-      self.issued_at.to_s(:distribution_date_time)
+      issued_at.to_s(:distribution_date_time)
     end
   end
 
