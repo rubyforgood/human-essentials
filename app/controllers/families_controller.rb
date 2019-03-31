@@ -10,8 +10,7 @@ class FamiliesController < ApplicationController
 
   # GET /families/1
   # GET /families/1.json
-  def show
-  end
+  def show; end
 
   # GET /families/new
   def new
@@ -19,8 +18,7 @@ class FamiliesController < ApplicationController
   end
 
   # GET /families/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /families
   # POST /families.json
@@ -29,7 +27,7 @@ class FamiliesController < ApplicationController
 
     respond_to do |format|
       if @family.save
-        format.html { redirect_to @family, notice: 'Family was successfully created.' }
+        format.html { redirect_to @family, notice: "Family was successfully created." }
         format.json { render :show, status: :created, location: @family }
       else
         format.html { render :new }
@@ -43,7 +41,7 @@ class FamiliesController < ApplicationController
   def update
     respond_to do |format|
       if @family.update(family_params)
-        format.html { redirect_to @family, notice: 'Family was successfully updated.' }
+        format.html { redirect_to @family, notice: "Family was successfully updated." }
         format.json { render :show, status: :ok, location: @family }
       else
         format.html { render :edit }
@@ -57,19 +55,20 @@ class FamiliesController < ApplicationController
   def destroy
     @family.destroy
     respond_to do |format|
-      format.html { redirect_to families_url, notice: 'Family was successfully destroyed.' }
+      format.html { redirect_to families_url, notice: "Family was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_family
-      @family = Family.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def family_params
-      params.require(:family).permit(:guardian_first_name, :guardian_last_name, :guardian_zip_code, :guardian_country, :guardian_phone, :agency_guardian_id, :home_adult_count, :home_child_count, :home_young_child_count, :sources_of_income, :guardian_employed, :guardian_employment_type, :guardian_monthly_pay, :guardian_health_insurance, :comments)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_family
+    @family = Family.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def family_params
+    params.require(:family).permit(:guardian_first_name, :guardian_last_name, :guardian_zip_code, :guardian_country, :guardian_phone, :agency_guardian_id, :home_adult_count, :home_child_count, :home_young_child_count, :sources_of_income, :guardian_employed, :guardian_employment_type, :guardian_monthly_pay, :guardian_health_insurance, :comments)
+  end
 end
