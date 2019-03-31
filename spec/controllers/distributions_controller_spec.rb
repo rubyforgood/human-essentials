@@ -1,5 +1,5 @@
 RSpec.describe DistributionsController, type: :controller do
-  let(:distribution) { crate(:distribution) }
+  let(:distribution) { create(:distribution) }
   let(:default_params) do
     { organization_id: @organization.to_param }
   end

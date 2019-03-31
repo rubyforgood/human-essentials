@@ -6,6 +6,36 @@ shared_examples_for "itemizable" do
   end
 
   context ".line_items" do
+    describe "replicate_to" do
+      it "copies the line_items to the provided Itemizable object" do
+        f = build(model_f)
+        line_item = build(:line_item, item: item, quantity: 10)
+        f.line_items << line_item
+        g = build(model_f)
+        f.line_items.replicate_to(g)
+        expect(f.line_items.to_a.first.item_id).to eq(g.line_items.to_a.first.item_id)
+      end
+
+      it "raises an ArgumentError if the object provided isn't Itemizable" do
+        expect { build(model_f).line_items.replicate_to(Object.new) }.to raise_error(ArgumentError)
+      end
+
+      it "allows a block to be passed to transform the line_items first" do
+        other_item = create(:item, name: item.name + "-other")
+        f = create(model_f)
+        a_line_item = build(:line_item, item: item, quantity: 5)
+        another_line_item = build(:line_item, item: other_item, quantity: 50)
+        f.line_items << a_line_item
+        f.line_items << another_line_item
+        g = build(model_f)
+        f.line_items.replicate_to(g) do |line_item|
+          next if line_item.quantity > 10
+        end
+
+        expect(f.line_items.to_a.first.item_id).to eq(g.line_items.to_a.first.item_id)
+      end
+    end
+
     describe "combine!" do
       it "combines multiple line_items with the same item_id into a single record" do
         storage_location = create(:storage_location, :with_items, item: item, organization: @organization)

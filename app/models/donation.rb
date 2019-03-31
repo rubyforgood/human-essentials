@@ -43,7 +43,6 @@ class Donation < ApplicationRecord
   }
 
   before_create :combine_duplicates
-  before_destroy :remove_inventory
 
   validates :donation_site, presence:
     { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
@@ -134,10 +133,6 @@ class Donation < ApplicationRecord
     # Inventory can never be negative
     line_item.quantity = 0 if line_item.quantity.negative?
     line_item.save
-  end
-
-  def remove_inventory
-    storage_location.remove!(self)
   end
 
   def self.csv_export_headers

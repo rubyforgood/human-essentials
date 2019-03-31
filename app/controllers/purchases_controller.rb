@@ -25,7 +25,7 @@ class PurchasesController < ApplicationController
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
       flash[:error] = "There was an error starting this purchase, try again?"
-      Rails.logger.error "ERROR: #{@purchase.errors}"
+      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors}"
       render action: :new
     end
   end
@@ -60,8 +60,13 @@ class PurchasesController < ApplicationController
   end
 
   def destroy
-    @purchase = current_organization.purchases.includes(:line_items, storage_location: :inventory_items).find(params[:id])
-    @purchase.destroy
+    ActiveRecord::Base.transaction do
+      purchase = current_organization.purchases.find(params[:id])
+      purchase.storage_location.decrease_inventory(purchase)
+      purchase.destroy!
+    end
+
+    flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path
   end
 

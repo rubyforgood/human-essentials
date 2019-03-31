@@ -36,7 +36,7 @@ RSpec.feature "Adjustment management", type: :feature do
     expect(page).to have_content("Adjustment was successfully created")
   end
 
-  fscenario "User is informed politely that they're adjusting way too hard", js: true do
+  scenario "User is informed politely that they're adjusting way too hard", js: true do
     sub_quantity = -9001
     storage_location = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
     visit url_prefix + "/adjustments"

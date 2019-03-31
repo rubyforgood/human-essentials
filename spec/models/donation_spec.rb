@@ -173,15 +173,6 @@ RSpec.describe Donation, type: :model do
       end
     end
 
-    describe "remove_inventory" do
-      it "removes inventory from the right storage location when donation is destroyed" do
-        donation = create(:donation, :with_items)
-        expect do
-          donation.destroy
-        end.to change { donation.storage_location.size }.by(-donation.total_quantity)
-      end
-    end
-
     describe "money_raised" do
       it "tracks the money raised in a donation" do
         donation = create(:donation, :with_items, money_raised: 100)

@@ -67,7 +67,7 @@ class DonationsController < ApplicationController
   end
 
   def create
-    @donation = Donation.new(donation_params.merge(organization: current_organization))
+    @donation = current_organization.donations.new(donation_params)
     if @donation.save
       @donation.storage_location.increase_inventory @donation
       redirect_to donations_path
@@ -75,7 +75,7 @@ class DonationsController < ApplicationController
       load_form_collections
       @donation.line_items.build if @donation.line_items.count.zero?
       flash[:error] = "There was an error starting this donation, try again?"
-      Rails.logger.error "ERROR: #{@donation.errors}"
+      Rails.logger.error "[!] DonationsController#create Error: #{@donation.errors}"
       render action: :new
     end
   end
@@ -109,8 +109,13 @@ class DonationsController < ApplicationController
   end
 
   def destroy
-    @donation = current_organization.donations.includes(:line_items, storage_location: :inventory_items).find(params[:id])
-    @donation.destroy
+    ActiveRecord::Base.transaction do
+      donation = current_organization.donations.find(params[:id])
+      donation.storage_location.decrease_inventory(donation)
+      donation.destroy!
+    end
+
+    flash[:notice] = "Donation #{params[:id]} has been removed!"
     redirect_to donations_path
   end
 

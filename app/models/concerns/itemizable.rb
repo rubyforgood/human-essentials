@@ -12,6 +12,22 @@ module Itemizable
     end
 
     has_many :line_items, as: :itemizable, inverse_of: :itemizable do
+      def replicate_to(itemizable)
+        raise ArgumentError unless itemizable.respond_to?(:line_items)
+
+        all_line_items = if block_given?
+                           collect do |line_item|
+                             yield(line_item)
+                             line_item
+                           end.compact
+                         else
+                           collect
+                         end
+
+        all_line_items.each { |li| itemizable.line_items << li.dup }
+        itemizable
+      end
+
       def combine!
         # Bail if there's nothing
         return if size.zero?
@@ -19,11 +35,11 @@ module Itemizable
         # First we'll collect all the line_items that are used
         combined = {}
         parent_id = first.itemizable_id
-        each do |i|
-          next unless i.valid?
+        each do |line_item|
+          next unless line_item.valid?
 
-          combined[i.item_id] ||= 0
-          combined[i.item_id] += i.quantity
+          combined[line_item.item_id] ||= 0
+          combined[line_item.item_id] += line_item.quantity
         end
         # Delete all the existing ones in this association -- this
         # method aliases to `delete_all`

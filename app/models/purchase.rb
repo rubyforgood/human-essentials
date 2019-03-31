@@ -39,7 +39,6 @@ class Purchase < ApplicationRecord
   }
 
   before_create :combine_duplicates
-  before_destroy :remove_inventory
 
   validates :amount_spent, numericality: { greater_than: 0 }
 
@@ -49,10 +48,6 @@ class Purchase < ApplicationRecord
 
   def purchased_from_view
     vendor.nil? ? purchased_from : vendor.business_name
-  end
-
-  def remove_inventory
-    storage_location.decrease_inventory self
   end
 
   def track(item, quantity)
@@ -105,7 +100,7 @@ class Purchase < ApplicationRecord
   private
 
   def combine_duplicates
-    Rails.logger.info "Combining!"
+    Rails.logger.info "[!] Purchase.combine_duplicates: Combining!"
     line_items.combine!
   end
 end

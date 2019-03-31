@@ -16,7 +16,7 @@ class DistributionsController < ApplicationController
 
   def destroy
     ActiveRecord::Base.transaction do
-      distribution = Distribution.find(params[:id])
+      distribution = current_organization.distributions.find(params[:id])
       distribution.storage_location.increase_inventory(distribution)
       distribution.destroy!
     end
