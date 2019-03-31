@@ -1,12 +1,14 @@
 class AddPartnerKeyToCanonicalItem < ActiveRecord::Migration[5.2]
   def up
+    # #762 - I have to change migration here because this is not pure migration, but seed
+
     add_column :canonical_items, :partner_key, :string
-    canonical_items = File.read(Rails.root.join("db", "canonical_items.json"))
+    canonical_items = File.read(Rails.root.join("db", "base_items.json"))
     items_by_category = JSON.parse(canonical_items)
     # Creates the Canonical Items
     items_by_category.each do |category, entries|
       entries.each do |entry|
-        c = CanonicalItem.find_or_initialize_by(name: entry["name"])
+        c = BaseItem.find_or_initialize_by(name: entry["name"])
         c.category ||= category
         c.partner_key = entry["key"]
         c.save
