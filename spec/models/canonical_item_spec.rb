@@ -17,10 +17,6 @@ require "rails_helper"
 
 RSpec.describe CanonicalItem, type: :model do
   describe "Validations >" do
-    it "is invalid without a category" do
-      expect(build(:canonical_item, category: nil)).not_to be_valid
-    end
-
     it "is invalid without a name" do
       expect(build(:canonical_item, name: nil)).not_to be_valid
     end
