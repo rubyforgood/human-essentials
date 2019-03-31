@@ -103,4 +103,8 @@ class Item < ApplicationRecord
       canonical_item.name
     ]
   end
+
+  def default_quantity
+    50
+  end
 end
