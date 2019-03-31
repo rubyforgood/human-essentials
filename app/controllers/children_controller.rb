@@ -10,8 +10,7 @@ class ChildrenController < ApplicationController
 
   # GET /children/1
   # GET /children/1.json
-  def show
-  end
+  def show; end
 
   # GET /children/new
   def new
@@ -19,8 +18,7 @@ class ChildrenController < ApplicationController
   end
 
   # GET /children/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /children
   # POST /children.json
@@ -29,7 +27,7 @@ class ChildrenController < ApplicationController
 
     respond_to do |format|
       if @child.save
-        format.html { redirect_to @child, notice: 'Child was successfully created.' }
+        format.html { redirect_to @child, notice: "Child was successfully created." }
         format.json { render :show, status: :created, location: @child }
       else
         format.html { render :new }
@@ -43,7 +41,7 @@ class ChildrenController < ApplicationController
   def update
     respond_to do |format|
       if @child.update(child_params)
-        format.html { redirect_to @child, notice: 'Child was successfully updated.' }
+        format.html { redirect_to @child, notice: "Child was successfully updated." }
         format.json { render :show, status: :ok, location: @child }
       else
         format.html { render :edit }
@@ -57,19 +55,20 @@ class ChildrenController < ApplicationController
   def destroy
     @child.destroy
     respond_to do |format|
-      format.html { redirect_to children_url, notice: 'Child was successfully destroyed.' }
+      format.html { redirect_to children_url, notice: "Child was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_child
-      @child = Child.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def child_params
-      params.require(:child).permit(:first_name, :last_name, :date_of_birth, :gender, :child_lives_with, :race, :agency_child_id, :health_insurance, :item_needed, :comments)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_child
+    @child = Child.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def child_params
+    params.require(:child).permit(:first_name, :last_name, :date_of_birth, :gender, :child_lives_with, :race, :agency_child_id, :health_insurance, :item_needed, :comments)
+  end
 end
