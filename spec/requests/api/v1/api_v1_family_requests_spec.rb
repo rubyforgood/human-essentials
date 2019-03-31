@@ -8,7 +8,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
       Item.all.pluck(:id).sample(3).collect do |k|
         {
           "item_id" => k,
-          "count" => rand(3..10)
+          "person_count" => rand(3..10)
         }
       end
     end
