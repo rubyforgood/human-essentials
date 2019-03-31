@@ -75,7 +75,8 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
         end
 
         it "returns a body with valid items" do
-          expect(JSON.parse(response.body)).to match_array(organization.valid_items)
+          expected_items = organization.valid_items.map(&:with_indifferent_access)
+          expect(JSON.parse(response.body)).to match_array(expected_items)
         end
       end
 
