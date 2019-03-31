@@ -23,6 +23,7 @@
 /db/*.sqlite3-journal
 pdx_db_test
 /db/data
+dump.rdb
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
