@@ -4,4 +4,4 @@
 #
 # Usage: @distribution.issued_at.to_s(:distribution_date_time)
 #
-Time::DATE_FORMATS[:distribution_date_time] = "%b %-d, %Y %-l:%M%P"
+Time::DATE_FORMATS[:distribution_date_time] = "%B %-d %Y %-l:%M%P"
