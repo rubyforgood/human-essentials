@@ -244,22 +244,6 @@ class StorageLocation < ApplicationRecord
     update_inventory_inventory_items(updated_quantities)
   end
 
-  # NOTE: This reverses a distribution
-  # NOTE: Too much knowledge about distribution
-  def reclaim!(distribution)
-    ActiveRecord::Base.transaction do
-      distribution.line_items.each do |line_item|
-        if line_item.item.nil? || !line_item.item.active?
-          # If the item was previously hidden (inactive), make it active
-          Item.unscoped.find(line_item.item_id).update(active: true)
-          line_item.reload
-        end
-        inventory_item = inventory_items.find_by(item: line_item.item)
-        inventory_item.update!(quantity: inventory_item.quantity + line_item.quantity)
-      end
-    end
-  end
-
   # NOTE: This has WAY too much knowledge of distribution
   def update_distribution!(distribution, new_distribution_params)
     ActiveRecord::Base.transaction do
@@ -288,13 +272,24 @@ class StorageLocation < ApplicationRecord
 
   # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable)
+    # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
+    # Iterate through each of the line-items in the moving box
     itemizable.line_items.each do |line_item|
+      if line_item.item.nil? || !line_item.item.active?
+        # If the item was previously hidden (inactive), make it active
+        Item.unscoped.find(line_item.item_id).update(active: true)
+        line_item.reload
+      end
+      # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item: line_item.item)
+      # Increase the quantity-on-record for that item
       inventory_item.increment!(:quantity, line_item.quantity)
+      # Record in the log that this has occurred
       log[line_item.item_id] = "+#{line_item.quantity}"
     end
-    # log could be pulled from dirty AR stuff
+    # log could be pulled from dirty AR stuff?
+    # Save the final changes -- does this need to occur here?
     save
     # return log
     log
@@ -302,13 +297,18 @@ class StorageLocation < ApplicationRecord
 
   # TODO: re-evaluate this for optimization
   def decrease_inventory(itemizable)
-    insufficient_items = []
+    # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
+    # This tracks items that have insufficient inventory counts to be reduced as much
+    insufficient_items = []
+    # Iterate through each of the line-items in the moving box
     itemizable.line_items.each do |line_item|
+      # Locate the storage box for the item, or create an empty storage box
       inventory_item = inventory_items.find_by(item: line_item.item) || inventory_items.build
-
+      # If we've got sufficient inventory in the storage box to fill the moving box, then continue
       next unless inventory_item.quantity < line_item.quantity
 
+      # Otherwise, we need to record that there was insufficient inventory on-hand
       insufficient_items << {
         item_id: line_item.item.id,
         item_name: line_item.item.name,
@@ -318,18 +318,25 @@ class StorageLocation < ApplicationRecord
     end
 
     # NOTE: Could this be handled by a validation instead?
+    # If we found any insufficiencies
     unless insufficient_items.empty?
+      # Raise this custom error with information about each of the items that showed insufficient
+      # This bails out of the method!
       raise Errors::InsufficientAllotment.new(
         "Requested #{itemizable.class.name} items exceed the available inventory",
         insufficient_items
       )
     end
 
+    # Re-run through the items in the moving box again
     itemizable.line_items.each do |line_item|
-      # Raise AR:RNF if it fails to find it
+      # Look for the moving box for this item -- we know there is sufficient quantity this time
+      # Raise AR:RNF if it fails to find it -- though that seems moot since it would have been
+      # captured by the previous block.
       inventory_item = inventory_items.find_by(item: line_item.item)
-      # Attempt to reduce the inventory box quantity
+      # Reduce the inventory box quantity
       inventory_item.decrement!(:quantity, line_item.quantity)
+      # Record in the log that this has occurred
       log[line_item.item_id] = "-#{line_item.quantity}"
     end
     # log could be pulled from dirty AR stuff

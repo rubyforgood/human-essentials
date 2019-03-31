@@ -14,15 +14,14 @@ class DistributionsController < ApplicationController
     end
   end
 
-  def reclaim
+  def destroy
     ActiveRecord::Base.transaction do
-      @distribution_id = params[:id]
       distribution = Distribution.find(params[:id])
-      distribution.storage_location.reclaim!(distribution)
+      distribution.storage_location.increase_inventory(distribution)
       distribution.destroy!
     end
 
-    flash[:notice] = "Distribution #{@distribution_id} has been reclaimed!"
+    flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
     redirect_to distributions_path
   end
 
@@ -38,6 +37,7 @@ class DistributionsController < ApplicationController
 
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
+    @storage_locations = current_organization.storage_locations
 
     if @distribution.valid?
       @distribution.storage_location.decrease_inventory @distribution
@@ -54,9 +54,8 @@ class DistributionsController < ApplicationController
         render :new
       end
     else
-      @storage_locations = current_organization.storage_locations
       flash[:error] = "An error occurred, try again?"
-      logger.error "failed to save distribution: #{@distribution.errors.full_messages}"
+      logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
