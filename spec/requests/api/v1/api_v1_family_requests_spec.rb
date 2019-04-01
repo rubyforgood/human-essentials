@@ -28,7 +28,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
         headers = {
           "ACCEPT" => "application/json",
           "Content-Type" => "application/json",
-          "X-Api-Key" => "some-fake-key",
+          "X-Api-Key" => "some-fake-key"
         }
 
         params = {
