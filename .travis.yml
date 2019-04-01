@@ -19,7 +19,7 @@ install:
 - yarn install
 script:
 - export RAILS_ENV=test
-- bundle exec rake db:create db:migrate
+- bundle exec rake db:create db:schema:load
 - bundle exec rake spec
 - bundle exec rubocop
 after_success:
