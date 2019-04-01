@@ -87,6 +87,19 @@
       </p>
 
     <% end %>
+    <%= f.input :reminder do %>
+      <fieldset class="">
+        <div class="row">
+          <div class="col-md-6">
+            <%= f.input :deadline_date, label: "Partner request deadline", hint: "Day of the month (1-28)" %>
+          </div>
+          <div class="col-md-6">
+            <%= f.input :reminder_days_before_deadline, label: "Days before deadline to send email", hint: "Allowed values: 1-14" %> 
+          </div>
+        </div>
+      </fieldset>
+      
+    <% end %>
     <%= submit_button %>
     
   </div>
