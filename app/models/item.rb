@@ -32,10 +32,8 @@ class Item < ApplicationRecord
   include Filterable
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
-  scope :in_category, ->(category) { where(category: category) }
   scope :by_canonical_item, ->(canonical_item) { where(canonical_item: canonical_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
-  scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
 
   scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size }) }
   scope :for_csv_export, ->(organization) {
@@ -45,10 +43,6 @@ class Item < ApplicationRecord
   }
 
   default_scope { active }
-
-  def self.categories
-    select(:category).group(:category).order(:category)
-  end
 
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
@@ -92,13 +86,12 @@ class Item < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Category", "Barcodes", "Base Item"]
+    ["Name", "Barcodes", "Base Item"]
   end
 
   def csv_export_attributes
     [
       name,
-      category,
       barcode_count,
       canonical_item.name
     ]
