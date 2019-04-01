@@ -4,7 +4,10 @@ class AddPartnerKeyToItem < ActiveRecord::Migration[5.2]
     add_index :items, :partner_key
 
     # Migrate existing references to partner keys
-    canonical_items = CanonicalItem.pluck(:id, :partner_key).to_h
+    # `CanonicalItem` is later renamed to `BaseItem`. It was a bad choice to
+    # do it this way in a migration, but here we are. The database doesn't
+    # yet know about the BaseItem name change, but the codebase does.
+    canonical_items = BaseItem.pluck(:id, :partner_key).to_h
     Item.all.each do |i|
       i.update_attribute(:partner_key, canonical_items[i.canonical_item_id])
     end
@@ -16,7 +19,7 @@ class AddPartnerKeyToItem < ActiveRecord::Migration[5.2]
     add_column :items, :canonical_item_id, :integer
 
     # Migrate existing references back to numerical id
-    canonical_items = CanonicalItem.pluck(:partner_key, :id).to_h
+    canonical_items = BaseItem.pluck(:partner_key, :id).to_h
     Item.all.each do |i|
       i.update_attribute(:canonical_item_id, canonical_items[i.partner_key])
     end
