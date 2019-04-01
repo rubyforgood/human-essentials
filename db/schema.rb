@@ -222,7 +222,7 @@ ActiveRecord::Schema.define(version: 2019_03_31_220545) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
-    t.integer "reminder_date"
+    t.integer "reminder_days_before_deadline"
     t.integer "deadline_date"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
