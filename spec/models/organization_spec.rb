@@ -161,4 +161,21 @@ RSpec.describe Organization, type: :model do
       expect(org.valid_items.first).to be_an(String)
     end
   end
+  describe 'reminder_days_before_deadline' do
+    it "can only contain numbers 1-14" do
+      expect(build(:organization, reminder_days_before_deadline: 14)).to be_valid
+      expect(build(:organization, reminder_days_before_deadline: 1)).to be_valid
+      expect(build(:organization, reminder_days_before_deadline: 0)).to_not be_valid
+      expect(build(:organization, reminder_days_before_deadline: -5)).to_not be_valid
+      expect(build(:organization, reminder_days_before_deadline: 15)).to_not be_valid
+    end
+  end
+  describe 'deadline_date' do
+    it "can only contain numbers 1-28" do
+      expect(build(:organization, deadline_date: 28)).to be_valid
+      expect(build(:organization, deadline_date: 0)).to_not be_valid
+      expect(build(:organization, deadline_date: -5)).to_not be_valid
+      expect(build(:organization, deadline_date: 29)).to_not be_valid
+    end
+  end
 end
