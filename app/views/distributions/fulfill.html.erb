@@ -4,25 +4,27 @@
       <% bc_item_quantity = @barcode_items.where(barcodeable_id: line_item.item_id).first ? @barcode_items.where(barcodeable_id: line_item.item_id).first.quantity : 0 %>
       <% multiplier = bc_item_quantity > 0 ? (line_item.quantity / bc_item_quantity).floor : 0 %>
       <% line_item_quantity = line_item.quantity ? line_item.quantity : 0 %>
-      <% %>
-     
-      <div class='col-md-12 box-header with-border bg-gray'> <%= line_item.item ? line_item.item.name : '' %></div>
+
+      <div class='col-md-12 box-header line-item-name with-border bg-gray'> <%= line_item.item ? line_item.item.name : '' %></div>
       
-      <div class='col-md-6 col-12 distribution-total-items' data-total="<%= line_item_quantity %>">Total:  <%= line_item_quantity%> </div>
+      <div class='col-md-6 col-12 distribution-total-items' data-total="<%= line_item_quantity %>">Total Requested:  <%= line_item_quantity%> </div>
       
-      <div class='col-md-6 col-12 distribution-remaining-items' data-remaining="<%= line_item_quantity %>"> Remaining: <%= line_item_quantity%> </div>
+      <div class='col-md-6 col-12 distribution-remaining-items' data-remaining="0"> Fulfilled: 0 </div>
+      <hr />
        <!-- <%# <div class='col-md-6 col-12'> Each container has:<%= bc_item_quantity %></div> %>
       <%# <div class='col-md-6 col-12'>Complete Containers: <%= multiplier %></div>%>
      <%#  <div class='col-md-6 col-12'>Individual Items: <%= line_item_quantity - (multiplier * bc_item_q uantity ) %></div> %>-->
-      <div class="item-distribution-upc col-md-6 col-12">
-        barcode: <input class="upc" type="text" value="<%= line_item.id %>"></input>
-        <div id="barcode-id" class="fa fa-barcode barcode_scanner"></div> 
-      </div>
-      <div class="item-distribution-quantity col-md-4 col-12">
-        quantity: <input class="quantity" type="text" value="<%= bc_item_quantity %>"></input>
-      </div>
-      <div class="col-md-2 col-12">
-        <button class="add-item-to-distribution">ADD</button>
+      <div class="add-items-container">
+        <div class="item-distribution-upc col-md-6 col-12">
+          barcode: <input class="upc" type="text" value="<%= line_item.id %>"></input>
+          <div id="barcode-id" class="btn fa fa-barcode barcode_scanner"></div> 
+        </div>
+        <div class="item-distribution-quantity col-md-4 col-12">
+          quantity: <input class="quantity" type="text" value="<%= bc_item_quantity %>"></input>
+        </div>
+        <div class="col-md-2 col-12">
+          <button class="add-item-to-distribution">ADD</button>
+        </div>
       </div>
       <div class="col-12 col-md-12 distributed-item-list">
       </div>

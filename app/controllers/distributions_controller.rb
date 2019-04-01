@@ -126,7 +126,6 @@ class DistributionsController < ApplicationController
     @items = current_organization.items.alphabetized
     @storage_locations = current_organization.storage_locations
     @barcode_items = BarcodeItem.where(barcodeable_id: @items.map(&:id))
-
   end
 
   private
@@ -153,5 +152,4 @@ class DistributionsController < ApplicationController
     end
     total_value_all_distributions
   end
-
 end
