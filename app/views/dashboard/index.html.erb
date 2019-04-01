@@ -188,22 +188,6 @@
               <%= link_to "See more...", purchases_path %>
             </div>
           </div>
-          <div class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">Items on Hand</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body">
-              <div class="chart">
-                <h5 class="text-center">Item categories on hand <%= display_interval %></h5>
-                <%= pie_chart pie_chart_data, legend: "right" %>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
