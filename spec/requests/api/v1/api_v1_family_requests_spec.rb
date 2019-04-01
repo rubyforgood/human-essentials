@@ -1,29 +1,39 @@
 require 'rails_helper'
 
 RSpec.describe "API::V1::FamilyRequests", type: :request do
+  before :all do
+    @organization = create(:organization)
+    @partner = create(:partner, organization: @organization)
+  end
+
   describe "POST /api/v1/family_requests" do
-    let!(:organization) { create(:organization) }
-    let!(:partner) { create(:partner, organization: organization) }
+    # let!(:organization) { @organization }
+    # let!(:partner) { @organization }
+    let(:items) { Item.all.sample(3) }
     let(:request_items) do
-      Item.all.pluck(:id).sample(3).collect do |k|
+      items.collect do |item|
         {
-          "item_id" => k,
+          "item_id" => item.id,
           "person_count" => rand(3..10)
         }
       end
     end
 
     context "with a valid API key" do
+      before do
+        allow_any_instance_of(API::V1::FamilyRequestsController).to receive(:api_key_valid?).and_return(true)
+      end
+
       subject do
         headers = {
           "ACCEPT" => "application/json",
           "Content-Type" => "application/json",
-          "X-Api-Key" => ENV["PARTNER_KEY"]
+          "X-Api-Key" => "some-fake-key",
         }
 
         params = {
-          organization_id: organization.id,
-          partner_id: partner.id,
+          organization_id: @organization.id,
+          partner_id: @partner.id,
           comments: "please and thank you",
           requested_items: request_items
         }.to_json
@@ -46,7 +56,8 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
         expected_items = request_items.map do |item|
           {
             'item_id' => item['item_id'],
-            'count' => item['person_count'] * 50
+            'count' => item['person_count'] * 50,
+            'item_name' => items.find { |i| i.id == item['item_id'] }.name
           }
         end
         expect(returned_body['requested_items']).to eq(expected_items)
@@ -62,8 +73,8 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
 
         params = {
           request: {
-            organization_id: organization.id,
-            partner_id: partner.id,
+            organization_id: @organization.id,
+            partner_id: @partner.id,
             comments: "please and thank you",
             request_items: random_keys(3).collect { |k| [k, rand(3..10)] }.to_h
           }

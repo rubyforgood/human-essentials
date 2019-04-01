@@ -36,7 +36,8 @@ class Request < ApplicationRecord
       "requested_items": item_requests.map do |ir|
         {
           "item_id": ir.item_id,
-          "count": ir.quantity
+          "count": ir.quantity,
+          "item_name": ir.item.name
         }
       end
     }
@@ -49,7 +50,6 @@ class Request < ApplicationRecord
     family_request['requested_items'].each do |item|
       item_request = ItemRequest.new
       item_request.item = Item.find(item['item_id'])
-
       item_request.quantity = item_request.item.default_quantity * item['person_count']
       request.item_requests << item_request
     end
