@@ -42,10 +42,6 @@ module DashboardHelper
     end
   end
 
-  def pie_chart_data
-    current_organization.quantity_categories
-  end
-
   def received_distributed_data(range = selected_range)
     {
       "Received donations" => total_received_donations_unformatted(range),
