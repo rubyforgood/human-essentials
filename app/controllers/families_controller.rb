@@ -23,7 +23,7 @@ class FamiliesController < ApplicationController
   # POST /families
   # POST /families.json
   def create
-    @family = Family.new(family_params)
+    @family = current_partner.families.new(family_params)
 
     respond_to do |format|
       if @family.save
