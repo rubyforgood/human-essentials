@@ -26,6 +26,9 @@ Rails.application.routes.draw do
     resources :organizations
     resources :users
     resources :barcode_items
+    resources :feedback_messages do
+      get :resolve
+    end
   end
 
   # These are globally accessible

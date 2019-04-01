@@ -5,11 +5,11 @@
     <!-- sidebar menu: : style can be found in sidebar.less -->
     <ul class="sidebar-menu" data-widget="tree">
       <li class="header all-caps">Main Navigation</li>
-        <li class="<%= active_class(['dashboard']) %>">
-          <%= link_to(admin_dashboard_path) do %>
-            <i class="fa fa-dashboard"></i> <span>Admin Dashboard</span>
-          <% end %>
-        </li>
+      <li class="<%= active_class(['dashboard']) %>">
+        <%= link_to(admin_dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> <span>Admin Dashboard</span>
+        <% end %>
+      </li>
       <li class="<%= active_class(['barcode_items']) %> treeview">
         <a href="#">
           <i class="fa fa-barcode"></i>
@@ -94,6 +94,11 @@
             <% end %>
           </li>
         </ul>
+      </li>
+      <li class="<%= active_class(['feedback_messages']) %>">
+        <%= link_to(admin_feedback_messages_path) do %>
+          <i class="fa fa-sticky-note"></i> User Feedback
+        <% end %>
       </li>
     </ul>
   </section>
