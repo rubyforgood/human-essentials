@@ -71,7 +71,7 @@ DonationSite.find_or_create_by!(name: "Eagleton Country Club") do |location|
   location.organization = pdx_org
 end
 
-Partner.find_or_create_by!(name: "Pawnee Parent Service", email: "someone@pawneeparent.org") do |partner|
+Partner.find_or_create_by!(name: "Pawnee Parent Service", email: "someone@pawneeparent.org", status: "Approved") do |partner|
   partner.organization = pdx_org
 end
 Partner.find_or_create_by!(name: "Pawnee Homeless Shelter", email: "anyone@pawneehomelss.com") do |partner|
