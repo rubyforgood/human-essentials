@@ -17,7 +17,7 @@ $(document).ready(function () {
         return counts[curKey] < counts[nextKey];
     });
   }
-  function scanShit(result) {
+  function startScan(result) {
       var last_code = result.codeResult.code;
       last_result.push(last_code);
       if (last_result.length > 19) {
@@ -25,7 +25,7 @@ $(document).ready(function () {
         
         // last_result = [];
         Quagga.stop();
-        Quagga.offDetected(scanShit);
+        Quagga.offDetected(startScan);
         $("#the-one-true-barcode-scanner").empty()
         last_target.prev().val(upc_code)
         }
@@ -35,7 +35,7 @@ $(document).ready(function () {
     if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function') {
       window.last_result = [];
       window.last_target = target
-      Quagga.onDetected(scanShit);
+      Quagga.onDetected(startScan);
      
       Quagga.init({
         inputStream : {
