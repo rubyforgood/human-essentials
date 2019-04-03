@@ -18,9 +18,13 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    @partner.update(status: "Approved")
-    DiaperPartnerClient.put(@partner.attributes)
-    redirect_to partners_path
+    client_response = DiaperPartnerClient.put(@partner.attributes)
+    if client_response.is_a?(Net::HTTPSuccess)
+      @partner.update(status: "Approved")
+      redirect_to partners_path, notice: "Partner Approved!"
+    else 
+      redirect_to partners_path, notice: "Partner Application Error!"
+    end
   end
 
   def show
