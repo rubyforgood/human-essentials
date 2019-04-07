@@ -47,6 +47,14 @@
         <% else %>
           <%= render partial: "layouts/lte_navbar" %>
         <% end %>
+      <% else %>
+        <div class="navbar-custom-menu">
+         <ul class="nav navbar-nav">
+          <li class="user user-menu">
+           <%= delete_button_to destroy_user_session_path(organization_id: nil), { text: "Log out", icon: "sign-out", no_confirm: true, size: "md" } %>
+          </li>
+         </ul>
+        </div>
       <% end %>
     </nav>
   </header>
@@ -102,5 +110,5 @@
     })
 </script>
 </body>
-<div class="modal fade" id="modal_new_diaper_drive" role="dialog"></div>
+<div class="modal fade" id="modal_new" role="dialog"></div>
 </html>

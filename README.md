@@ -6,7 +6,7 @@
 
 This application is an inventory management system that is built to address the needs of [Diaper Banks](http://nationaldiaperbanknetwork.org/what-is-diaper-need/diaper-facts/) as directly and explicitly as possible. Diaper Banks maintain inventory, receive donations and other means of intaking diapers (and related supplies), and issue Distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data, and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
 
-For a general overview of the application, please see the [Application Overview](/rubyforgood/diaper/wiki/Application-Overview) wiki article.
+For a general overview of the application, please see the [Application Overview](https://github.com/rubyforgood/diaper/wiki/Application-Overview) wiki article.
 
 ### Closed Beta
 
@@ -19,7 +19,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 ## Development
 
 ### Ruby Version
-This app uses Ruby version 2.5.3, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
+This app uses Ruby version 2.6.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
 
 ### Database Configuration
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_development` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.

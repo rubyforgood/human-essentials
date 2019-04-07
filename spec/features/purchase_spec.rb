@@ -31,12 +31,24 @@ RSpec.feature "Purchases", type: :feature, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
     end
+    scenario "User can filter the #index by vendor" do
+      vendor1 = create(:vendor, business_name: "vendor 1")
+      vendor2 = create(:vendor, business_name: "vendor 2")
+      create(:purchase, vendor: vendor1)
+      create(:purchase, vendor: vendor2)
+      visit @url_prefix + "/purchases"
+      expect(page).to have_css("table tbody tr", count: 2)
+      select vendor1.business_name, from: "filters_from_vendor"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
   end
 
   context "When creating a new purchase" do
     before(:each) do
       create(:item, organization: @organization)
       create(:storage_location, organization: @organization)
+      create(:vendor, organization: @organization)
       @organization.reload
     end
 
@@ -45,9 +57,20 @@ RSpec.feature "Purchases", type: :feature, js: true do
         visit @url_prefix + "/purchases/new"
       end
 
+      scenario "User can create vendor from purchase" do
+        select "---Not Listed---", from: "purchase_vendor_id"
+        expect(page).to have_content("New Vendor")
+        fill_in "vendor_business_name", with: "businesstest"
+        fill_in "vendor_contact_name", with: "test"
+        fill_in "vendor_email", with: "123@mail.ru"
+        click_on "vendor-submit"
+        select "businesstest", from: "purchase_vendor_id"
+      end
+
       scenario "User can create a purchase IN THE PAST" do
         select StorageLocation.first.name, from: "purchase_storage_location_id"
         select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
+        select Vendor.first.business_name, from: "purchase_vendor_id"
         fill_in "purchase_line_items_attributes_0_quantity", with: "5"
         fill_in "purchase_issued_at", with: "01/01/2001"
         fill_in "purchase_amount_spent", with: "10"
@@ -62,6 +85,7 @@ RSpec.feature "Purchases", type: :feature, js: true do
       scenario "multiple line items for the same item type are accepted and combined on the backend" do
         select StorageLocation.first.name, from: "purchase_storage_location_id"
         select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
+        select Vendor.first.business_name, from: "purchase_vendor_id"
         fill_in "purchase_line_items_attributes_0_quantity", with: "5"
         page.find(:css, "#__add_line_item").click
         select_id = page.find(:xpath, '//*[@id="purchase_line_items"]/div[2]/select')[:id]
@@ -93,12 +117,15 @@ RSpec.feature "Purchases", type: :feature, js: true do
     # Bug fix -- Issue #378
     # A user can view another organizations purchase
     context "Editing purchase" do
-      before(:each) do
-        purchase = create(:purchase, organization: create(:organization))
-        visit edit_purchase_path(@user.organization.short_name, purchase)
+      scenario "A user can see purchased_from value" do
+        purchase = create(:purchase, purchased_from: "Old Vendor")
+        visit edit_purchase_path(@organization.to_param, purchase)
+        expect(page).to have_content("Vendor (Old Vendor)")
       end
 
-      scenario "A user can view another organizations puchanse" do
+      scenario "A user can view another organizations purchase" do
+        purchase = create(:purchase, organization: create(:organization))
+        visit edit_purchase_path(@user.organization.short_name, purchase)
         expect(page).to have_content("Still haven't found what you're looking for")
       end
     end

@@ -2,7 +2,7 @@
 #
 # Table name: adjustments
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  organization_id     :integer
 #  storage_location_id :integer
 #  comment             :text

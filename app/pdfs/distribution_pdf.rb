@@ -66,34 +66,6 @@ class DistributionPdf
       column(1).style align: :right
     end
 
-    move_down 50
-
-    summary = [["Distribution Breakdown", "Quantity"]]
-    summary += @distribution.line_items.quantities_by_category.to_a
-
-    table(summary) do
-      self.header = true
-      self.cell_style = {
-        padding: [5, 20, 5, 20]
-      }
-      self.row_colors = %w(dddddd ffffff)
-
-      cells.borders = []
-
-      # Header row
-      row(0).borders = [:bottom]
-      row(0).border_width = 2
-      row(0).font_style = :bold
-      row(0).column(-1).borders = %i(bottom left)
-
-      column(0).width = 400
-
-      # Quantity column
-      column(1).row(1..-1).borders = [:left]
-      column(1).row(1..-1).border_left_color = "aaaaaa"
-      column(1).style align: :right
-    end
-
     number_pages "Page <page> of <total>",
                  start_count_at: 1,
                  at: [bounds.right - 130, 22],
