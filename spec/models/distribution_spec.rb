@@ -2,10 +2,10 @@
 #
 # Table name: distributions
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  comment             :text
-#  created_at          :datetime
-#  updated_at          :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #  storage_location_id :integer
 #  partner_id          :integer
 #  organization_id     :integer
@@ -68,14 +68,18 @@ RSpec.describe Distribution, type: :model do
 
   context "Methods >" do
     let(:distribution) { create(:distribution) }
-    let(:item) { create(:item, name: "AAA", category: "Foo") }
+    let(:item) { create(:item, name: "AAA") }
     let(:donation) { create(:donation) }
 
     describe "#distributed_at" do
-      it "displays either the explicit distributed_at date, or falls-through to issued_at" do
-        two_days_ago = 2.days.ago
+      it "displays explicit issued_at date" do
+        two_days_ago = 2.days.ago.midnight
         expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime("%B %-d %Y"))
-        expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime("%B %-d %Y"))
+      end
+
+      it "shows the hour and minutes if it has been provided" do
+        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00 UTC")
+        expect(distribution.distributed_at).to eq("March 1 2014 2:30pm")
       end
     end
 

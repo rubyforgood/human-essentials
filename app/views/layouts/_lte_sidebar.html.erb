@@ -136,6 +136,11 @@
               <i class="fa fa-circle-o"></i> Diaper Drive Participants
             <% end %>
           </li>
+          <li class="<%= active_class(['vendors']) %>">
+            <%= link_to(vendors_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Vendors
+            <% end %>
+          </li>
         </ul>
       </li>
       <% if current_user.organization_admin %>

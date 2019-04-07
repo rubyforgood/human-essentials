@@ -1,11 +1,13 @@
+require 'time_util'
+
 # == Schema Information
 #
 # Table name: distributions
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  comment             :text
-#  created_at          :datetime
-#  updated_at          :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #  storage_location_id :integer
 #  partner_id          :integer
 #  organization_id     :integer
@@ -49,7 +51,11 @@ class Distribution < ApplicationRecord
   delegate :name, to: :partner, prefix: true
 
   def distributed_at
-    issued_at.strftime("%B %-d %Y")
+    if is_midnight(issued_at)
+      issued_at.strftime("%B %-d %Y")
+    else
+      issued_at.to_s(:distribution_date_time)
+    end
   end
 
   def combine_duplicates

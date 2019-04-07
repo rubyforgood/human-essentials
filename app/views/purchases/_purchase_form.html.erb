@@ -3,8 +3,12 @@
 
     <div class="row">
       <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.input :purchased_from,
-                    wrapper: :vertical_input_group %>
+        <%= f.association :vendor,
+                          collection: @vendors,
+                          label_method: :business_name,
+                          label: "Vendor #{purchased_from(@purchase)}",
+                          error: "Which vendor was this from?",
+                          wrapper: :vertical_input_group %>
       </div>
     </div>
 
