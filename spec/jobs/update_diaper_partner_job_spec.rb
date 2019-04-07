@@ -5,7 +5,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
 
       UpdateDiaperPartnerJob.perform_async(partner.id)
 
-      expect(partner.reload.status).to eq("Pending")
+      expect(partner.reload.status).to eq("pending")
     end
 
     it "posts via DiaperPartnerClient" do
