@@ -1,4 +1,4 @@
-<!--Read comments, before commiting pull request read checklist again
+<!--Read comments, before committing pull request read checklist again
 
 # Checklist:
 

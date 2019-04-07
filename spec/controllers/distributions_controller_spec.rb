@@ -36,11 +36,15 @@ RSpec.describe DistributionsController, type: :controller do
 
         expect(i).to be_valid
         expect(p).to be_valid
+        expect(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
+
+        jobs_count = PartnerMailerJob.jobs.count
 
         post :create, params: default_params.merge(distribution: { storage_location_id: i.id, partner_id: p.id })
         expect(response).to have_http_status(:redirect)
 
         expect(response).to redirect_to(distributions_path)
+        expect(PartnerMailerJob.jobs.count).to eq(jobs_count + 1)
       end
 
       it "renders #new again on failure, with notice" do
@@ -67,6 +71,41 @@ RSpec.describe DistributionsController, type: :controller do
     context "Looking at a different organization" do
       let(:object) { create(:distribution, organization: create(:organization)) }
       include_examples "requiring authorization"
+    end
+
+    describe "POST #update" do
+      let(:location) { create(:storage_location) }
+      let(:partner) { create(:partner) }
+
+      let(:distribution) { create(:distribution, partner: partner) }
+      let(:issued_at) { distribution.issued_at }
+      let(:distribution_params) do
+        default_params.merge(
+          id: distribution.id,
+          distribution: {
+            partner_id: partner.id,
+            storage_location_id: location.id,
+            'issued_at(1i)' => issued_at.to_date.year,
+            'issued_at(2i)' => issued_at.to_date.month,
+            'issued_at(3i)' => issued_at.to_date.day
+          }
+        )
+      end
+
+      subject { patch :update, params: distribution_params }
+
+      it { expect(subject).to have_http_status(:ok) }
+
+      context "mail follow up" do
+        before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
+
+        it { expect { subject }.not_to change { PartnerMailerJob.jobs.count } }
+
+        context "sending" do
+          let(:issued_at) { distribution.issued_at + 1.day }
+          it { expect { subject }.to change { PartnerMailerJob.jobs.count } }
+        end
+      end
     end
   end
 

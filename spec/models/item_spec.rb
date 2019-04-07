@@ -2,15 +2,16 @@
 #
 # Table name: items
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  category        :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  barcode_count   :integer
 #  organization_id :integer
 #  active          :boolean          default(TRUE)
 #  partner_key     :string
+#  value           :decimal(5, 2)    default(0.0)
 #
 
 RSpec.describe Item, type: :model do
@@ -31,21 +32,6 @@ RSpec.describe Item, type: :model do
   context "Filtering >" do
     it "can filter" do
       expect(subject.class).to respond_to :class_filter
-    end
-
-    it "->in_category returns all items in the provided category" do
-      create(:item, category: "same")
-      create(:item, category: "not same")
-      expect(Item.in_category("same").length).to eq(1)
-    end
-
-    it "->in_same_category_as returns all items in the same category other than the provided item" do
-      item = create(:item, name: "Foo", category: "same")
-      other = create(:item, name: "Bar", category: "same")
-      create(:item, category: "not same")
-      result = Item.in_same_category_as(item)
-      expect(result.length).to eq(1)
-      expect(result.first).to eq(other)
     end
 
     it "->by_size returns all items with the same size, per their CanonicalItem parent" do
@@ -105,25 +91,6 @@ RSpec.describe Item, type: :model do
   end
 
   context "Methods >" do
-    describe "categories" do
-      it "returns a list of all categories, unique" do
-        create(:item, category: "same")
-        create(:item, category: "different")
-        result = Item.categories
-        expect(result.length).to eq(12)
-      end
-
-      it "returns the list of categories alphabetized" do
-        Item.delete_all
-        item1 = create(:item, category: "one")
-        item2 = create(:item, category: "two")
-        item3 = create(:item, category: "three")
-        alphabetized_list = [item1, item3, item2]
-        result = Item.categories
-        expect(result.map(&:category)).to eq(alphabetized_list.map(&:category))
-      end
-    end
-
     describe "storage_locations_containing" do
       it "retrieves all storage locations that contain an item" do
         item = create(:item)

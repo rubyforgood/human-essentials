@@ -1,6 +1,6 @@
 module DiaperPartnerClient
   def self.post(attributes)
-    return if Rails.env != "production"
+    return if Rails.env != "production" # did ryan change this from development?
 
     partner = { partner:
       { diaper_bank_id: attributes["organization_id"],

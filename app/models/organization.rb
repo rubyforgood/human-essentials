@@ -2,21 +2,20 @@
 #
 # Table name: organizations
 #
-#  id                 :integer          not null, primary key
-#  name               :string
-#  short_name         :string
-#  email              :string
-#  url                :string
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  intake_location    :integer
-#  street             :string
-#  city               :string
-#  state              :string
-#  zipcode            :string
-#  latitude           :float
-#  longitude          :float
-#  default_email_text :text
+#  id              :integer          not null, primary key
+#  name            :string
+#  short_name      :string
+#  email           :string
+#  url             :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  intake_location :integer
+#  street          :string
+#  city            :string
+#  state           :string
+#  zipcode         :string
+#  latitude        :float
+#  longitude       :float
 #
 
 class Organization < ApplicationRecord
@@ -27,6 +26,8 @@ class Organization < ApplicationRecord
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
   validate :correct_logo_mime_type
+  validates :deadline_date, numericality: { only_integer: true, less_than_or_equal_to: 28, greater_than_or_equal_to: 1, allow_nil: true }
+  validates :reminder_days_before_deadline, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
 
   has_many :adjustments, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
@@ -39,6 +40,7 @@ class Organization < ApplicationRecord
   has_many :purchases, dependent: :destroy
   has_many :donation_sites, dependent: :destroy
   has_many :diaper_drive_participants, dependent: :destroy
+  has_many :vendors, dependent: :destroy
   has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
   has_many :items, dependent: :destroy
@@ -68,11 +70,6 @@ class Organization < ApplicationRecord
 
   def ordered_requests
     requests.order(status: :asc, updated_at: :desc)
-  end
-
-  def quantity_categories
-    storage_locations.map(&:inventory_items).flatten.reject { |i| i.item.nil? }.group_by { |i| i.item.category }
-                     .map { |i| [i[0], i[1].map(&:quantity).sum] }.sort_by { |_, v| -v }
   end
 
   def upcoming_distributions
@@ -116,7 +113,7 @@ class Organization < ApplicationRecord
   def self.seed_items(org)
     Rails.logger.info "Seeding #{org.name}'s items..."
     org_id = org.id
-    canonical_items = CanonicalItem.pluck(:partner_key, :name, :category).collect { |c| { partner_key: c[0], name: c[1], category: c[2], organization_id: org_id } }
+    canonical_items = CanonicalItem.pluck(:partner_key, :name).collect { |c| { partner_key: c[0], name: c[1], organization_id: org_id } }
     Item.create(canonical_items)
     org.reload
   end

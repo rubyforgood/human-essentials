@@ -27,11 +27,13 @@ RSpec.describe PurchasesController, type: :controller do
     describe "POST#create" do
       let!(:storage_location) { create(:storage_location, organization: @organization) }
       let(:line_items) { [create(:line_item)] }
+      let(:vendor) { create(:vendor, organization: @organization) }
 
       it "redirects to GET#edit on success" do
         post :create, params: default_params.merge(
           purchase: { storage_location_id: storage_location.id,
                       purchased_from: "Google",
+                      vendor_id: vendor.id,
                       amount_spent: 10,
                       line_items: line_items }
         )

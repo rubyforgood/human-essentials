@@ -16,7 +16,6 @@
 FactoryBot.define do
   factory :canonical_item do
     sequence(:name) { |size| "#{size}T Diapers" }
-    category { "Infant Diapers" }
     size { nil }
     sequence(:partner_key) { |n| "#{n}t_diapers" }
   end
