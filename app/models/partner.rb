@@ -14,7 +14,7 @@
 class Partner < ApplicationRecord
   require "csv"
 
-  enum status: [:pending, :awaiting_review, :approved]
+  enum status: [:pending, :awaiting_review, :approved, :error]
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy
@@ -27,7 +27,7 @@ class Partner < ApplicationRecord
     where(organization: organization)
       .order(:name)
   }
-  
+
   after_create :register_on_partnerbase
 
   # better to extract this outside of the model
