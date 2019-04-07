@@ -6,9 +6,12 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
     @partner = create(:partner, organization: @organization)
   end
 
+  after :all do
+    @partner.destroy!
+    @organization.destroy!
+  end
+
   describe "POST /api/v1/family_requests" do
-    # let!(:organization) { @organization }
-    # let!(:partner) { @organization }
     let(:items) { Item.all.sample(3) }
     let(:request_items) do
       items.collect do |item|
@@ -125,7 +128,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
     context "without a valid API key" do
       headers = {
         "ACCEPT" => "application/json",
-        "X-Api-Key" => "blarg"
+        "X-Api-Key" => "some-invalid-key"
       }
 
       before { get api_v1_partner_request_path(organization.id), headers: headers }
