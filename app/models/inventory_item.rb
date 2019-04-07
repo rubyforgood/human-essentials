@@ -2,12 +2,12 @@
 #
 # Table name: inventory_items
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  storage_location_id :integer
 #  item_id             :integer
 #  quantity            :integer          default(0)
-#  created_at          :datetime
-#  updated_at          :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #
 
 class InventoryItem < ApplicationRecord
@@ -22,8 +22,4 @@ class InventoryItem < ApplicationRecord
   scope :by_partner_key, ->(partner_key) { joins(:item).merge(Item.by_partner_key(partner_key)) }
 
   delegate :name, to: :item, prefix: true
-
-  def self.quantity_by_category
-    includes(:item).select("items.category").group("items.category").sum(:quantity).sort_by { |_, v| -v }
-  end
 end

@@ -24,7 +24,6 @@
   </div>
   <div class="box-body">
 
-  <p>Found in category: <%= @item.category %></p>
 <% if @storage_locations_containing.present? %>
 <h4>This item is contained in these inventories</h4>
 
@@ -81,14 +80,6 @@
     <!-- /.box -->
     </div>
   </div>
-<% end %>
-<% if @items_in_category.present? %>
-<h2>Other items in this category</h2>
-<ul id="category">
-  <% @items_in_category.each do |item| %>
-    <li><%= link_to item.name, item_path(item) %></li>
-  <% end %>
-</ul>
 <% end %>
   </div>
 </div>
