@@ -27,9 +27,7 @@ class Partner < ApplicationRecord
     where(organization: organization)
       .order(:name)
   }
-
-  scope :unapproved, -> { where(status: "Awaiting Review") }
-
+  
   after_create :register_on_partnerbase
 
   # better to extract this outside of the model
