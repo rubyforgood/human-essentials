@@ -70,14 +70,14 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page).to have_css("table tbody tr", count: 1)
   end
 
-  scenario "User can filter the #index by canonical item type" do
+  scenario "User can filter the #index by base item type" do
     Item.delete_all
-    item = create(:item, name: "Red 1T Diapers", canonical_item: CanonicalItem.first)
-    item2 = create(:item, name: "Blue 1T Diapers", canonical_item: CanonicalItem.first)
+    item = create(:item, name: "Red 1T Diapers", base_item: BaseItem.first)
+    item2 = create(:item, name: "Blue 1T Diapers", base_item: BaseItem.first)
     create(:barcode_item, organization: @organization, barcodeable: item)
     create(:barcode_item, organization: @organization, barcodeable: item2)
     visit url_prefix + "/barcode_items"
-    select CanonicalItem.first.name, from: "filters_by_item_partner_key"
+    select BaseItem.first.name, from: "filters_by_item_partner_key"
     click_button "Filter"
 
     expect(page).to have_css("table tbody tr", count: 2)

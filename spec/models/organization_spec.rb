@@ -39,10 +39,10 @@ RSpec.describe Organization, type: :model do
   end
 
   describe "seed_items" do
-    it "loads the canonical items into Item records" do
-      canonical_items_count = CanonicalItem.count
+    it "loads the base items into Item records" do
+      base_items_count = BaseItem.count
       Organization.seed_items(organization)
-      expect(organization.items.count).to eq(canonical_items_count)
+      expect(organization.items.count).to eq(base_items_count)
     end
   end
 

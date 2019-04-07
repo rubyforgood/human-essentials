@@ -16,7 +16,7 @@
 
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
-  belongs_to :canonical_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
+  belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
@@ -32,13 +32,13 @@ class Item < ApplicationRecord
   include Filterable
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
-  scope :by_canonical_item, ->(canonical_item) { where(canonical_item: canonical_item) }
+  scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
-  scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size }) }
+  scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
-      .includes(:canonical_item)
+      .includes(:base_item)
       .alphabetized
   }
 
@@ -93,7 +93,7 @@ class Item < ApplicationRecord
     [
       name,
       barcode_count,
-      canonical_item.name
+      base_item.name
     ]
   end
 end
