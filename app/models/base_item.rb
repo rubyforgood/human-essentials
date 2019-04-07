@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: canonical_items
+# Table name: base_items
 #
 #  id            :bigint(8)        not null, primary key
 #  name          :string
@@ -13,9 +13,9 @@
 #  partner_key   :string
 #
 
-class CanonicalItem < ApplicationRecord
-  has_many :items, dependent: :destroy, inverse_of: :canonical_item, foreign_key: :partner_key, primary_key: :partner_key
-  has_many :barcode_items, as: :barcodeable, dependent: :destroy, inverse_of: :canonical_items
+class BaseItem < ApplicationRecord
+  has_many :items, dependent: :destroy, inverse_of: :base_item, foreign_key: :partner_key, primary_key: :partner_key
+  has_many :barcode_items, as: :barcodeable, dependent: :destroy, inverse_of: :base_items
 
   validates :name, presence: true, uniqueness: true
   validates :partner_key, presence: true, uniqueness: true
