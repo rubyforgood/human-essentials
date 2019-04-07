@@ -8,7 +8,7 @@ class API::V1::PartnerApprovalsController < ApplicationController
     return head :forbidden unless api_key_valid?
 
     @partner = Partner.find(approval_params[:diaper_partner_id])
-    @partner.update(status: "Awaiting Review")
+    @partner.awaiting_review!
     render json: { message: "Status changed to awaiting review." }, status: :ok
   end
 
