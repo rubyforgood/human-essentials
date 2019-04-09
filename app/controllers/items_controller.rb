@@ -1,6 +1,6 @@
 class ItemsController < ApplicationController
   def index
-    @items = current_organization.items.includes(:canonical_item).alphabetized.class_filter(filter_params)
+    @items = current_organization.items.includes(:base_item).alphabetized.class_filter(filter_params)
     @storages = current_organization.storage_locations.order(id: :asc)
     @items_with_counts = ItemsByStorageCollectionQuery.new(organization: current_organization, filter_params: filter_params).call
     @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.new(organization: current_organization, filter_params: filter_params).call
@@ -11,19 +11,19 @@ class ItemsController < ApplicationController
     if @item.save
       redirect_to items_path, notice: "#{@item.name} added!"
     else
-      @canonical_items = CanonicalItem.all
+      @base_items = BaseItem.all
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
 
   def new
-    @canonical_items = CanonicalItem.all
+    @base_items = BaseItem.all
     @item = current_organization.items.new
   end
 
   def edit
-    @canonical_items = CanonicalItem.all
+    @base_items = BaseItem.all
     @item = current_organization.items.find(params[:id])
   end
 
@@ -38,7 +38,7 @@ class ItemsController < ApplicationController
     if @item.update(item_params)
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      @canonical_items = CanonicalItem.all
+      @base_items = BaseItem.all
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
@@ -56,7 +56,7 @@ class ItemsController < ApplicationController
   end
 
   def filter_params(parameters = nil)
-    parameters = (%i(by_canonical_item) + [parameters]).flatten.uniq
+    parameters = (%i(by_base_item) + [parameters]).flatten.uniq
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(*parameters)

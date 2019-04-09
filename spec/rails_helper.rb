@@ -126,15 +126,15 @@ RSpec.configure do |config|
       -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
     ASCIIART
 
-    Rails.logger.info "-~=> Destroying all Canonical Items ... "
-    CanonicalItem.delete_all
-    # Canonical Items are independent of all other data, though other models depend on
+    Rails.logger.info "-~=> Destroying all Base Items ... "
+    BaseItem.delete_all
+    # Base Items are independent of all other data, though other models depend on
     # their existence, so we'll persist them
-    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata canonical_items))
+    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata base_items))
     DatabaseCleaner.strategy = :transaction
     __start_db_cleaning_with_log
     __sweep_up_db_with_log
-    seed_canonical_items_for_tests
+    seed_base_items_for_tests
   end
 
   config.before(:each) do
@@ -174,20 +174,20 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 end
 
-def seed_canonical_items_for_tests
-  Rails.logger.info "-~=> Destroying all Canonical Items ... "
-  CanonicalItem.delete_all
-  canonical_items = File.read(Rails.root.join("db", "canonical_items.json"))
-  items_by_category = JSON.parse(canonical_items)
-  Rails.logger.info "Creating Canonical Items: "
+def seed_base_items_for_tests
+  Rails.logger.info "-~=> Destroying all Base Items ... "
+  BaseItem.delete_all
+  base_items = File.read(Rails.root.join("db", "base_items.json"))
+  items_by_category = JSON.parse(base_items)
+  Rails.logger.info "Creating Base Items: "
   batch_insert = []
   items_by_category.each do |category, entries|
     entries.each do |entry|
       batch_insert << { name: entry["name"], category: category, partner_key: entry["key"] }
     end
   end
-  CanonicalItem.create(batch_insert)
-  Rails.logger.info "~-=> Done creating Canonical Items!"
+  BaseItem.create(batch_insert)
+  Rails.logger.info "~-=> Done creating Base Items!"
 end
 
 def __start_db_cleaning_with_log

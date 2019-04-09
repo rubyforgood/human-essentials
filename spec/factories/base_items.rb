@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: canonical_items
+# Table name: base_items
 #
 #  id            :bigint(8)        not null, primary key
 #  name          :string
@@ -14,7 +14,7 @@
 #
 
 FactoryBot.define do
-  factory :canonical_item do
+  factory :base_item do
     sequence(:name) { |size| "#{size}T Diapers" }
     size { nil }
     sequence(:partner_key) { |n| "#{n}t_diapers" }

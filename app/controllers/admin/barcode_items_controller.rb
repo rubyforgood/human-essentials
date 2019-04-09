@@ -1,5 +1,5 @@
 class Admin::BarcodeItemsController < AdminController
-  before_action :load_canonical_items, only: %i(edit index new)
+  before_action :load_base_items, only: %i(edit index new)
   before_action :load_barcode_item, only: %i(edit update show destroy)
 
   def edit; end
@@ -22,14 +22,14 @@ class Admin::BarcodeItemsController < AdminController
   end
 
   def create
-    @barcode_item = BarcodeItem.create(barcode_item_params.merge(global: true, barcodeable_type: "CanonicalItem"))
+    @barcode_item = BarcodeItem.create(barcode_item_params.merge(global: true, barcodeable_type: "BaseItem"))
     if @barcode_item.save
       respond_to do |format|
         format.html { redirect_to admin_barcode_items_path, notice: "Barcode Item added!" }
         format.js
       end
     else
-      load_canonical_items
+      load_base_items
       flash[:error] = "Failed to create Barcode Item."
       render :new
     end
@@ -47,8 +47,8 @@ class Admin::BarcodeItemsController < AdminController
 
   private
 
-  def load_canonical_items
-    @canonical_items = CanonicalItem.order(:name).all
+  def load_base_items
+    @base_items = BaseItem.order(:name).all
   end
 
   def barcode_item_params
@@ -58,7 +58,7 @@ class Admin::BarcodeItemsController < AdminController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :include_global, :canonical_item_id)
+    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :include_global, :base_item_id)
   end
 
   def load_barcode_item

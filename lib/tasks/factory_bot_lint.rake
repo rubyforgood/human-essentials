@@ -3,8 +3,8 @@ namespace :factory_bot do
   desc "Verify that all FactoryBot factories are valid"
   task lint: :environment do
     if Rails.env.test?
-      Rails.logger.info "-~=> [PRE-LINT] Destroying all Canonical Items ... "
-      CanonicalItem.delete_all
+      Rails.logger.info "-~=> [PRE-LINT] Destroying all Base Items ... "
+      BaseItem.delete_all
       DatabaseCleaner.cleaning do
         Rails.logger.info "///////////////////////////////////////////////"
         Rails.logger.info "////////////////// LINTING ////////////////////"
