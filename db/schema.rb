@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(version: 2019_04_07_203351) do
     t.string "path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "resolved"
     t.index ["user_id"], name: "index_feedback_messages_on_user_id"
   end
 
