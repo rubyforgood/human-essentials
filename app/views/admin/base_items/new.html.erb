@@ -1,15 +1,15 @@
 <section class="content-header">
-  <% content_for :title, "New - Canonical Items" %>
+  <% content_for :title, "New - Base Items" %>
   <h1>
-    New Canonical Item
+    New Base Item
   </h1>
   <ol class="breadcrumb">
   <li><%= link_to(admin_dashboard_path) do %>
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "All Canonical Items", (admin_canonical_items_path) %></li>
-    <li class="active"> New Canonical Item</li>
+    <li><%= link_to "All Base Items", (admin_base_items_path) %></li>
+    <li class="active"> New Base Item</li>
   </ol>
 </section>
 
@@ -19,11 +19,11 @@
   <!-- Default box -->
   <div class="box">
     <div class="box-header with-border">
-      <h3 class="box-title">New Canonical Item</h3>
+      <h3 class="box-title">New Base Item</h3>
     </div>
     <div class="box-body">
       <div class="box-body">
-        <%= simple_form_for [:admin, @canonical_item], html: { class: 'form-horizontal' } do |f| %>
+        <%= simple_form_for [:admin, @base_item], html: { class: 'form-horizontal' } do |f| %>
           <%= render partial: "form", object: f %>
           <%= submit_button %>
         <% end %>

@@ -43,13 +43,13 @@ end
 
 RSpec.describe BarcodeItem, type: :model do
   context "Global barcodes" do
-    let(:canonical_item) { create(:canonical_item) }
-    let(:global_barcode_item) { create(:global_barcode_item, barcodeable: canonical_item) }
+    let(:base_item) { create(:base_item) }
+    let(:global_barcode_item) { create(:global_barcode_item, barcodeable: base_item) }
 
-    it "updates a counter in CanonicalItem whenever it tracks a new barcode" do
+    it "updates a counter in BaseItem whenever it tracks a new barcode" do
       expect do
-        create(:global_barcode_item, barcodeable: canonical_item)
-      end.to change { canonical_item.barcode_count }.to(1)
+        create(:global_barcode_item, barcodeable: base_item)
+      end.to change { base_item.barcode_count }.to(1)
     end
 
     # These are scopes that are expressly to integrate with Filterable
@@ -57,16 +57,16 @@ RSpec.describe BarcodeItem, type: :model do
       it "->barcodeable_id shows only barcodes for a specific barcodeable_id" do
         global_barcode_item          # initial creation
         create(:global_barcode_item) # create a null case
-        results = BarcodeItem.barcodeable_id(canonical_item.id)
+        results = BarcodeItem.barcodeable_id(base_item.id)
         expect(results.length).to eq(1)
         expect(results.first).to eq(global_barcode_item)
       end
-      it "#by_canonical_item_partner_key returns barcodes that match the partner key" do
-        c1 = create(:canonical_item, partner_key: "foo")
-        c2 = create(:canonical_item, partner_key: "bar")
+      it "#by_base_item_partner_key returns barcodes that match the partner key" do
+        c1 = create(:base_item, partner_key: "foo")
+        c2 = create(:base_item, partner_key: "bar")
         b1 = create(:global_barcode_item, barcodeable: c1)
         create(:global_barcode_item, barcodeable: c2)
-        expect(BarcodeItem.by_canonical_item_partner_key("foo").first).to eq(b1)
+        expect(BarcodeItem.by_base_item_partner_key("foo").first).to eq(b1)
       end
       it "->by_value returns the barcode with that value" do
         b1 = create(:global_barcode_item, value: "DEADBEEF")
@@ -96,10 +96,10 @@ RSpec.describe BarcodeItem, type: :model do
         expect(build(:global_barcode_item, value: barcode.value)).not_to be_valid
       end
 
-      it "allows multiple barcodes to point at the same canonical item" do
-        canonical_item = CanonicalItem.first
-        create(:global_barcode_item, barcodeable: canonical_item)
-        expect(build(:global_barcode_item, barcodeable: canonical_item)).to be_valid
+      it "allows multiple barcodes to point at the same base item" do
+        base_item = BaseItem.first
+        create(:global_barcode_item, barcodeable: base_item)
+        expect(build(:global_barcode_item, barcodeable: base_item)).to be_valid
       end
 
       include_examples "common barcode tests", :global_barcode_item
@@ -134,8 +134,8 @@ RSpec.describe BarcodeItem, type: :model do
         expect(results.first).to eq(barcode_item)
       end
       it "#by_item_partner_key returns barcodes that match the partner key" do
-        i1 = create(:item, canonical_item: CanonicalItem.first)
-        i2 = create(:item, canonical_item: CanonicalItem.last)
+        i1 = create(:item, base_item: BaseItem.first)
+        i2 = create(:item, base_item: BaseItem.last)
         b1 = create(:barcode_item, barcodeable: i1)
         create(:global_barcode_item, barcodeable: i2)
         expect(BarcodeItem.by_item_partner_key(i1.partner_key).first).to eq(b1)
@@ -157,11 +157,11 @@ RSpec.describe BarcodeItem, type: :model do
     end
 
     context "when searching for a barcode where there is a global and local with the same value" do
-      let!(:canonical_item) { create(:canonical_item, partner_key: "foo", name: "base item") }
+      let!(:base_item) { create(:base_item, partner_key: "foo", name: "base item") }
       let!(:item) { create(:item, partner_key: "foo", name: "custom item", organization: @organization) }
       let!(:other_item) { create(:item, partner_key: "foo", name: "other item", organization: create(:organization, skip_items: true)) }
 
-      let!(:global) { create(:global_barcode_item, value: "DEADBEEF", barcodeable: canonical_item) }
+      let!(:global) { create(:global_barcode_item, value: "DEADBEEF", barcodeable: base_item) }
       let!(:local) { create(:barcode_item, value: "DEADBEEF", barcodeable: item, organization: @organization) }
       let!(:other_local) { create(:barcode_item, value: "DEADBEEF", barcodeable: other_item, organization: other_item.organization) }
 

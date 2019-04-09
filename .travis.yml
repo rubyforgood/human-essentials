@@ -20,7 +20,7 @@ install:
 script:
 - bundle exec rubocop
 - export RAILS_ENV=test
-- bundle exec rake db:create db:migrate
+- bundle exec rake db:create db:schema:load
 - bundle exec rake spec
 after_success:
 - if [ $TRAVIS_PULL_REQUEST == false ] && [ $TRAVIS_BRANCH == "master" ]; then
