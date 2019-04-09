@@ -13,6 +13,7 @@ gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
 gem "coffee-rails"
+gem 'delayed_job', '~> 4.1.5'
 gem "devise"
 gem "devise_invitable"
 gem "dotenv-rails"

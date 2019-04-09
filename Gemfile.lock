@@ -139,6 +139,8 @@ GEM
     crass (1.0.4)
     database_cleaner (1.7.0)
     debug_inspector (0.0.3)
+    delayed_job (4.1.5)
+      activesupport (>= 3.0, < 5.3)
     devise (4.5.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -486,6 +488,7 @@ DEPENDENCIES
   cocoon
   coffee-rails
   database_cleaner
+  delayed_job (~> 4.1.5)
   devise
   devise_invitable
   dotenv-rails
