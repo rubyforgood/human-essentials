@@ -1,6 +1,6 @@
-class UpdateDiaperPartnerJob
-  include Sidekiq::Worker
+class UpdateDiaperPartnerJob < ApplicationJob
   include DiaperPartnerClient
+  queue_as :default
 
   def perform(partner_id)
     @partner = Partner.find(partner_id)

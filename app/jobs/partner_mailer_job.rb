@@ -1,5 +1,5 @@
-class PartnerMailerJob
-  include Sidekiq::Worker
+class PartnerMailerJob < ApplicationJob
+  queue_as :default
 
   def perform(org_id, dist_id, subject)
     current_organization = Organization.find(org_id)
