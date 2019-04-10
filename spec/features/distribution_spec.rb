@@ -20,7 +20,7 @@ RSpec.feature "Distributions", type: :feature do
 
       expect do
         click_button "Save", match: :first
-      end.to change { PartnerMailerJob.jobs.size }.by(1)
+      end.to change { Delayed::Job.count }.by(1)
 
       expect(page).to have_content "Distributions"
       expect(page.find(".alert-info")).to have_content "reated"

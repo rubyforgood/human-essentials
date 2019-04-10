@@ -1,4 +1,8 @@
 RSpec.describe DistributionsController, type: :controller do
+  # def queue_adapter_for_test
+  #   ActiveJob::QueueAdapters::DelayedJobAdapter.new
+  # end
+
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -38,13 +42,13 @@ RSpec.describe DistributionsController, type: :controller do
         expect(p).to be_valid
         expect(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        jobs_count = PartnerMailerJob.jobs.count
+        jobs_count = Delayed::Job.count
 
         post :create, params: default_params.merge(distribution: { storage_location_id: i.id, partner_id: p.id })
         expect(response).to have_http_status(:redirect)
 
         expect(response).to redirect_to(distributions_path)
-        expect(PartnerMailerJob.jobs.count).to eq(jobs_count + 1)
+        expect(Delayed::Job.count).to eq(jobs_count + 1)
       end
 
       it "renders #new again on failure, with notice" do
@@ -99,11 +103,11 @@ RSpec.describe DistributionsController, type: :controller do
       context "mail follow up" do
         before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 
-        it { expect { subject }.not_to change { PartnerMailerJob.jobs.count } }
+        it { expect { subject }.not_to change { Delayed::Job.count } }
 
         context "sending" do
           let(:issued_at) { distribution.issued_at + 1.day }
-          it { expect { subject }.to change { PartnerMailerJob.jobs.count } }
+          it { expect { subject }.to change { Delayed::Job.count } }
         end
       end
     end
