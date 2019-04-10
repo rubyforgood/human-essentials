@@ -47,6 +47,6 @@ class Partner < ApplicationRecord
   end
 
   def register_on_partnerbase
-    UpdateDiaperPartnerJob.perform_async(id)
+    UpdateDiaperPartnerJob.perform_later(id)
   end
 end

@@ -140,7 +140,7 @@ class DistributionsController < ApplicationController
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_later(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
   def distribution_params
