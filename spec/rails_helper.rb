@@ -9,7 +9,6 @@ require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
-Sidekiq::Testing.fake! # fake is the default mode
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
