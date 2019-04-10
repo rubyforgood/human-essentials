@@ -36,7 +36,6 @@ gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 5.2.2"
 gem "sass-rails"
-gem "sidekiq"
 gem "simple_form"
 gem "skylight"
 gem "sprockets", "~> 3.7.2"
@@ -69,7 +68,6 @@ group :development do
   gem "capistrano-bundler"
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
-  gem 'capistrano-sidekiq'
   gem "listen", "~> 3.1.5"
   gem "rails-erd"
   gem "spring"
