@@ -9,12 +9,10 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
 
       it "sets the partner status to pending" do
         with_features email_active: true do
-          Sidekiq::Testing.inline! do
-            expect do
-              UpdateDiaperPartnerJob.perform_async(@partner.id)
-              @partner.reload
-            end.to change { @partner.status }.to("Pending")
-          end
+          expect do
+            UpdateDiaperPartnerJob.perform_now(@partner.id)
+            @partner.reload
+          end.to change { @partner.status }.to("Pending")
         end
       end
     end
@@ -28,24 +26,20 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
 
       it "sets the partner status to error" do
         with_features email_active: true do
-          Sidekiq::Testing.inline! do
-            expect do
-              UpdateDiaperPartnerJob.perform_async(@partner.id)
-              @partner.reload
-            end.to change { @partner.status }.to("Error")
-          end
+          expect do
+            UpdateDiaperPartnerJob.perform_now(@partner.id)
+            @partner.reload
+          end.to change { @partner.status }.to("Error")
         end
       end
       it "posts via DiaperPartnerClient" do
         with_features email_active: true do
-          Sidekiq::Testing.inline! do
-            partner = create(:partner)
-            allow(Flipper).to receive(:enabled?) { true }
+          partner = create(:partner)
+          allow(Flipper).to receive(:enabled?) { true }
 
-            expect(DiaperPartnerClient).to receive(:post)
+          expect(DiaperPartnerClient).to receive(:post)
 
-            UpdateDiaperPartnerJob.perform_async(partner.id)
-          end
+          UpdateDiaperPartnerJob.perform_now(partner.id)
         end
       end
     end
