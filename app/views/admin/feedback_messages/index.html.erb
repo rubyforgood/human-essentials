@@ -30,14 +30,14 @@
               </tr>
               </thead>
               <tbody>
-              <tr>
-                <% @feedback_messages.each do |feedback| %>
+              <% @feedback_messages.each do |feedback| %>
+                <tr>
                   <td><%= feedback.message %></td>
                   <td><%= feedback.user.email %></td>
                   <td><%= feedback.path %></td>
-                  <td><%= check_box_tag 'Resolved', feedback.resolved, feedback.resolved, data: { url: admin_feedback_message_resolve_path(feedback), remote: true, method: :get } %></td>
-                <% end %>
-              </tr>
+                  <td><%= check_box_tag 'Resolved', feedback.resolved, feedback.resolved, data: {url: admin_feedback_message_resolve_path(feedback), remote: true, method: :get} %></td>
+                </tr>
+              <% end %>
               </tbody>
             </table>
           </div><!-- /.box-body -->
