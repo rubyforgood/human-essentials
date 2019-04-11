@@ -10,7 +10,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
       it "sets the partner status to pending" do
         with_features email_active: true do
           expect do
-            UpdateDiaperPartnerJob.perform_now(@partner.id)
+            UpdateDiaperPartnerJob.perform_later(@partner.id)
             @partner.reload
           end.to change { @partner.status }.to("Pending")
         end
