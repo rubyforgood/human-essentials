@@ -1,14 +1,14 @@
 <div class="box-body">
   <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
-      <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
-    <span class="input-group-addon"><i class="fa fa-user"></i></span>
-    <%= f.input_field :name, class: "form-control" %>
-  <% end %>
-      <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-          <%= f.input_field :email, class: "form-control" %>
-        <% end %>
+    <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :name, class: "form-control" %>
+    <% end %>
+    <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+      <%= f.input_field :email, class: "form-control" %>
+    <% end %>
 
-        <%= submit_button({text: "Send Invitation", icon: "envelope"}) %>
+    <%= submit_button(submit_btn_options) %>
   <% end %>
 </div>
