@@ -34,6 +34,7 @@ class DonationsController < ApplicationController
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum
+    @total_value_all_donations = total_value(@donations)
     @storage_locations = @donations.collect(&:storage_location).compact.uniq
     @selected_storage_location = filter_params[:at_storage_location]
     @sources = @donations.collect(&:source).uniq
@@ -164,5 +165,13 @@ class DonationsController < ApplicationController
 
     params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
+  end
+
+  def total_value(donations)
+    total_value_all_donations = 0
+    donations.each do |distribution|
+      total_value_all_donations += distribution.value_per_itemizable
+    end
+    total_value_all_donations
   end
 end
