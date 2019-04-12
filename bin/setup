@@ -4,9 +4,9 @@ require 'fileutils'
 include FileUtils
 
 def detect_os
-  if `uname` == "Darwin"
+  if `uname`.chomp == "Darwin"
     'mac'
-  elsif `expr substr $(uname -s) 1 5` == "Linux"
+  elsif `expr substr $(uname -s) 1 5`.chomp == "Linux"
     'linux'
   end
 end
