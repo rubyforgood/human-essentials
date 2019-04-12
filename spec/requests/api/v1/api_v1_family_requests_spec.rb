@@ -83,7 +83,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
   end
 
   describe "GET /api/v1/family_request/:id" do
-    #let(:organization) { create(:organization) }
+    # let(:organization) { create(:organization) }
 
     context "with a valid API key" do
       context 'with a valid organization id' do
@@ -129,5 +129,3 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
     end
   end
 end
-
-
