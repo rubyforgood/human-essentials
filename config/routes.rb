@@ -38,6 +38,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :partner_requests, only: %i(create show)
       resources :partner_approvals, only: :create
+      resources :family_requests, only: %i(create show)
     end
   end
 
