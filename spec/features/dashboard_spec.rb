@@ -110,6 +110,7 @@ RSpec.feature "Dashboard", type: :feature do
 
   scenario "getting started guide works as expected", js: true do
     # When dashboard loads, ensure that we are on step 1 (Partner Agencies)
+    Partner.delete_all
     visit @url_prefix + "/dashboard"
     expect(page).to have_selector("#getting-started-guide", count: 1)
     expect(page).to have_selector("#org-stats-call-to-action-partners", count: 1)
@@ -118,7 +119,7 @@ RSpec.feature "Dashboard", type: :feature do
     expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
 
     # After we create a partner, ensure that we are on step 2 (Storage Locations)
-    create(:partner)
+    @partner = create(:partner, organization: @organization)
     visit @url_prefix + "/dashboard"
     expect(page).to have_selector("#getting-started-guide", count: 1)
     expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
