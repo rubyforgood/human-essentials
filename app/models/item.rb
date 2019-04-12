@@ -96,4 +96,9 @@ class Item < ApplicationRecord
       base_item.name
     ]
   end
+
+  def default_quantity
+    # TODO: actual logic for calculating and letting users configure this calculation
+    50
+  end
 end
