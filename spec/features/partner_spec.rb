@@ -12,7 +12,7 @@ RSpec.feature "Partner management", type: :feature do
       visit url_prefix + "/partners"
     end
     scenario "the partner agency names are in alphabetical order" do
-      expect(page).to have_css("table tr", count: 4)
+      expect(page).to have_css("table tr", count: 5)
       expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
     end

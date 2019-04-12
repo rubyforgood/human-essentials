@@ -1,16 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "API::V1::FamilyRequests", type: :request do
-  before :all do
-    @organization = create(:organization)
-    @partner = create(:partner, organization: @organization)
-  end
-
-  after :all do
-    @partner.destroy!
-    @organization.destroy!
-  end
-
   describe "POST /api/v1/family_requests" do
     let(:items) { Item.all.sample(3) }
     let(:request_items) do
@@ -93,7 +83,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
   end
 
   describe "GET /api/v1/family_request/:id" do
-    let(:organization) { create(:organization) }
+    #let(:organization) { create(:organization) }
 
     context "with a valid API key" do
       context 'with a valid organization id' do
@@ -101,14 +91,14 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
           "ACCEPT" => "application/json",
           "X-Api-Key" => ENV["PARTNER_KEY"]
         }
-        before { get api_v1_partner_request_path(organization.id), headers: headers }
+        before { get api_v1_partner_request_path(@organization.id), headers: headers }
 
         it "returns HTTP success" do
           expect(response).to be_successful
         end
 
         it "returns a body with valid items" do
-          expect(JSON.parse(response.body)).to match_array(organization.valid_items)
+          expect(JSON.parse(response.body)).to match_array(@organization.valid_items)
         end
       end
 
@@ -131,7 +121,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
         "X-Api-Key" => "some-invalid-key"
       }
 
-      before { get api_v1_partner_request_path(organization.id), headers: headers }
+      before { get api_v1_partner_request_path(@organization.id), headers: headers }
 
       it "returns HTTP forbidden" do
         expect(response).to have_http_status(:forbidden)
