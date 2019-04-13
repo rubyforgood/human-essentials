@@ -315,13 +315,13 @@ RSpec.feature "Donations", type: :feature, js: true do
 
       context "when the barcode is a global barcode" do
         before do
-          canonical_item = CanonicalItem.first
+          base_item = BaseItem.first
           # Create a global barcode item first
-          @global_barcode = create(:global_barcode_item, barcodeable: canonical_item)
-          # make sure there are no other items associated with that canonical_item in this org
-          Item.where(partner_key: canonical_item.partner_key).delete_all
-          # Now create an item that's associated with that canonical item,
-          @item = create(:item, canonical_item: canonical_item, organization: @organization, created_at: 1.week.ago)
+          @global_barcode = create(:global_barcode_item, barcodeable: base_item)
+          # make sure there are no other items associated with that base_item in this org
+          Item.where(partner_key: base_item.partner_key).delete_all
+          # Now create an item that's associated with that base item,
+          @item = create(:item, base_item: base_item, organization: @organization, created_at: 1.week.ago)
         end
 
         scenario "the barcode lookup for the global barcode will add the oldest item it can find for that" do
