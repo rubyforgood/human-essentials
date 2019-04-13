@@ -17,10 +17,10 @@ FactoryBot.define do
   factory :global_barcode_item, class: "BarcodeItem" do
     sequence(:value) { (SecureRandom.random_number * (10**12)).to_i } # 037000863427
     quantity { 50 }
-    barcodeable { create(:canonical_item) }
+    barcodeable { create(:base_item) }
     global { true }
     # after(:build) do |instance, evaluator|
-    #   instance.barcodeable = evaluator.barcodeable || create(:canonical_item, organization: instance.organization)
+    #   instance.barcodeable = evaluator.barcodeable || create(:base_item, organization: instance.organization)
     # end
   end
 
@@ -34,7 +34,7 @@ FactoryBot.define do
     after(:build) do |instance, evaluator|
       instance.barcodeable = evaluator.barcodeable || create(:item,
                                                              organization: (instance.organization || Organization.try(:first)),
-                                                             canonical_item: (CanonicalItem.try(:first) || create(:canonical_item)))
+                                                             base_item: (BaseItem.try(:first) || create(:base_item)))
     end
   end
 end

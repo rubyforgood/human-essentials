@@ -20,8 +20,8 @@
         <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
           <div class="row">
             <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter By Canonical Item Category" %>
-              <%= collection_select(:filters, :barcodeable_id, @canonical_items.order('name'), :id, :name, { include_blank: true }, class: "form-control") %>
+              <%= label_tag "Filter By Base Item Category" %>
+              <%= collection_select(:filters, :barcodeable_id, @base_items.order('name'), :id, :name, { include_blank: true }, class: "form-control") %>
             </div>
           </div><!-- /.row -->
           <div class="row">
