@@ -8,13 +8,13 @@
 # Creates Seed Data for the organization
 
 # qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
-canonical_items = File.read(Rails.root.join("db", "canonical_items.json"))
-items_by_category = JSON.parse(canonical_items)
+base_items = File.read(Rails.root.join("db", "base_items.json"))
+items_by_category = JSON.parse(base_items)
 
-# Creates the Canonical Items
+# Creates the Base Items
 items_by_category.each do |category, entries|
   entries.each do |entry|
-    CanonicalItem.find_or_create_by!(name: entry["name"], category: category, partner_key: entry["key"])
+    BaseItem.find_or_create_by!(name: entry["name"], category: category, partner_key: entry["key"])
   end
 end
 

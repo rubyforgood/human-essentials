@@ -44,7 +44,7 @@ RSpec.describe InventoryItem, type: :model do
         InventoryItem.delete_all
         @item1 = create(:inventory_item)
       end
-      it "shows the Canonical Items by partner_key" do
+      it "shows the Base Items by partner_key" do
         expect(InventoryItem.by_partner_key(@item1.item.partner_key).size).to eq(1)
       end
     end
