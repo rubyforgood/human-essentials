@@ -32,6 +32,6 @@ class API::V1::PartnerRequestsController < ApplicationController
 
   def request_params
     params.require(:request).permit(:organization_id, :partner_id, :comments,
-                                    request_items: CanonicalItem.pluck(:partner_key).map(&:to_sym))
+                                    request_items: BaseItem.pluck(:partner_key).map(&:to_sym))
   end
 end

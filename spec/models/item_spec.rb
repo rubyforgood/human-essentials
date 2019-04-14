@@ -19,7 +19,7 @@ RSpec.describe Item, type: :model do
     it "must belong to an organization" do
       expect(build(:item, organization_id: nil)).not_to be_valid
     end
-    it "requires a Canonical Item base" do
+    it "requires a Base Item base" do
       expect(build(:item, partner_key: nil)).not_to be_valid
     end
     it "requires a unique name" do
@@ -34,12 +34,12 @@ RSpec.describe Item, type: :model do
       expect(subject.class).to respond_to :class_filter
     end
 
-    it "->by_size returns all items with the same size, per their CanonicalItem parent" do
-      size4 = create(:canonical_item, size: "4")
-      size_z = create(:canonical_item, size: "Z")
-      create(:item, canonical_item: size4)
-      create(:item, canonical_item: size4)
-      create(:item, canonical_item: size_z)
+    it "->by_size returns all items with the same size, per their BaseItem parent" do
+      size4 = create(:base_item, size: "4")
+      size_z = create(:base_item, size: "Z")
+      create(:item, base_item: size4)
+      create(:item, base_item: size4)
+      create(:item, base_item: size_z)
       expect(Item.by_size("4").length).to eq(2)
     end
 
@@ -61,29 +61,29 @@ RSpec.describe Item, type: :model do
       expect(Item.active.to_a).to match_array([item])
     end
 
-    describe "->by_canonical_item" do
+    describe "->by_base_item" do
       before(:each) do
         Item.delete_all
-        @c1 = create(:canonical_item)
-        create(:item, canonical_item: @c1, organization: @organization)
-        create(:item, canonical_item: create(:canonical_item), organization: @organization)
+        @c1 = create(:base_item)
+        create(:item, base_item: @c1, organization: @organization)
+        create(:item, base_item: create(:base_item), organization: @organization)
       end
-      it "shows the items for a particular canonical_item" do
-        expect(Item.by_canonical_item(@c1).size).to eq(1)
+      it "shows the items for a particular base_item" do
+        expect(Item.by_base_item(@c1).size).to eq(1)
       end
       it "can be chained to organization to constrain it to just 1 org's items" do
-        create(:item, canonical_item: @c1, organization: create(:organization))
-        expect(@organization.items.by_canonical_item(@c1).size).to eq(1)
+        create(:item, base_item: @c1, organization: create(:organization))
+        expect(@organization.items.by_base_item(@c1).size).to eq(1)
       end
     end
 
     describe "->by_partner_key" do
       it "filters by partner key" do
         Item.delete_all
-        c1 = create(:canonical_item, partner_key: "foo")
-        c2 = create(:canonical_item, partner_key: "bar")
-        create(:item, canonical_item: c1, partner_key: "foo", organization: @organization)
-        create(:item, canonical_item: c2, partner_key: "bar", organization: @organization)
+        c1 = create(:base_item, partner_key: "foo")
+        c2 = create(:base_item, partner_key: "bar")
+        create(:item, base_item: c1, partner_key: "foo", organization: @organization)
+        create(:item, base_item: c2, partner_key: "bar", organization: @organization)
         expect(Item.by_partner_key("foo").size).to eq(1)
         expect(Item.all.size).to be > 1
       end

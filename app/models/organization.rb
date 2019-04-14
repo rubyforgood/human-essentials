@@ -113,8 +113,8 @@ class Organization < ApplicationRecord
   def self.seed_items(org)
     Rails.logger.info "Seeding #{org.name}'s items..."
     org_id = org.id
-    canonical_items = CanonicalItem.pluck(:partner_key, :name).collect { |c| { partner_key: c[0], name: c[1], organization_id: org_id } }
-    Item.create(canonical_items)
+    base_items = BaseItem.pluck(:partner_key, :name).collect { |c| { partner_key: c[0], name: c[1], organization_id: org_id } }
+    Item.create(base_items)
     org.reload
   end
 

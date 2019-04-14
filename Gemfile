@@ -57,6 +57,7 @@ group :development, :test do
   gem "terminal-notifier"
   gem "timecop"
   gem "rubocop"
+  gem "fakeredis", require: "fakeredis/rspec"
 end
 
 group :development do
