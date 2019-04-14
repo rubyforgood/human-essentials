@@ -18,6 +18,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
           end
         end
       end
+    end
 
     context "with a unsuccessful POST response" do
       before do
