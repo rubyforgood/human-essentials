@@ -33,7 +33,7 @@
                 <i class="fa fa-ban"></i> Clear Filters
               <% end %>
               <div class="btn-group pull-right">
-                <%= link_to new_admin_barcode_item_path(organization_id: current_organization), class: "btn btn-success" do %>
+                <%= link_to new_admin_barcode_item_path(organization_id: current_organization), onclick: "$('#newBarcode').modal(); return false;", class: "btn btn-success" do %>
                   <i class="fa fa-plus"></i> Add New Barcode
                 <% end %>
               </div>
@@ -66,3 +66,5 @@
     </div><!-- /.box-body -->
   </div><!-- /.box -->
 </section>
+
+<%= render partial:"donations/barcode_modal" %>

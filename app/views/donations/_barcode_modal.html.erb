@@ -6,7 +6,7 @@
       <h2 class="modal-title">Add New Barcode</h4>
     </div>
     <div class="modal-body">
-    <%= simple_form_for BarcodeItem.new, html: { role: "form" }, :remote => true do |f| %>
+    <%= simple_form_for BarcodeItem.new, html: { role: "form" } do |f| %>
       <div class="box-body ">
         <div class="row">
           <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
@@ -30,7 +30,7 @@
                 as: :radio_buttons,
                 label: "Make this barcode available to everyone?" %>
         </div><!-- /.row -->
-<% end %>        
+<% end %>
         <%= submit_button({ id: "awesomebutton" }) %>
       </div><!-- /.box-body -->
       <% end #form %>
