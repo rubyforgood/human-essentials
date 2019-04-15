@@ -18,6 +18,7 @@
 
 class Vendor < ApplicationRecord
   include Provideable
+  include Geocodable
 
   has_many :purchases, inverse_of: :vendor, dependent: :destroy
 
