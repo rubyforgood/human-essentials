@@ -18,6 +18,7 @@
 
 class DiaperDriveParticipant < ApplicationRecord
   include Provideable
+  include Geocodable
 
   has_many :donations, inverse_of: :diaper_drive_participant, dependent: :destroy
 

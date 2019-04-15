@@ -19,12 +19,12 @@ items_by_category.each do |category, entries|
 end
 
 pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
-  organization.name = "PDX Diaper Bank"
+  organization.name = "Pawnee Diaper Bank"
   organization.street = "P.O. Box 22613"
-  organization.city = "Portland"
-  organization.state = "OR"
-  organization.zipcode = "97269"
-  organization.email = "info@pdxdiaperbank.org"
+  organization.city = "Pawnee"
+  organization.state = "Indiana"
+  organization.zipcode = "12345"
+  organization.email = "info@pawneediaper.org"
 end
 Organization.seed_items(pdx_org)
 
@@ -54,79 +54,38 @@ User.create email: 'test@example.com', password: 'password', password_confirmati
 User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org, organization_admin: true
 
 
-DonationSite.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
-  location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"
+DonationSite.find_or_create_by!(name: "Pawnee Hardware") do |location|
+  location.address = "1234 SE Some Ave., Pawnee, OR 12345"
   location.organization = pdx_org
 end
-DonationSite.find_or_create_by!(name: "Tidee Didee Diaper Service") do |location|
-  location.address = "6011 SE 92nd Ave., Portland,OR 97266"
+DonationSite.find_or_create_by!(name: "Parks Department") do |location|
+  location.address = "2345 NE Some St., Pawnee, OR 12345"
   location.organization = pdx_org
 end
-DonationSite.find_or_create_by!(name: "Southside Swap & Play") do |location|
-  location.address = "5239 SE Woodstock Ave, Portland, OR 97206"
+DonationSite.find_or_create_by!(name: "Waffle House") do |location|
+  location.address = "3456 Some Bay., Pawnee, OR 12345"
   location.organization = pdx_org
 end
-DonationSite.find_or_create_by!(name: "Kuts 4 Kids & Adults") do |location|
-  location.address = "4423 SE Hawthorne Blvd., Portland, OR 97215"
-  location.organization = pdx_org
-end
-DonationSite.find_or_create_by!(name: "JJ Jump") do |location|
-  location.address = "9057 SE Jannsen Rd., Clackamas, OR 97015"
+DonationSite.find_or_create_by!(name: "Eagleton Country Club") do |location|
+  location.address = "4567 Some Blvd., Pawnee, OR 12345"
   location.organization = pdx_org
 end
 
-Partner.find_or_create_by!(name: "Teen Parent Services - PPS", email: "someone@teenservices.org") do |partner|
+Partner.find_or_create_by!(name: "Pawnee Parent Service", email: "someone@pawneeparent.org", status: "Approved") do |partner|
   partner.organization = pdx_org
 end
-Partner.find_or_create_by!(name: "Portland Homeless Family Solutions", email: "anyone@portlandhomeless.com") do |partner|
+Partner.find_or_create_by!(name: "Pawnee Homeless Shelter", email: "anyone@pawneehomelss.com") do |partner|
   partner.organization = pdx_org
 end
-Partner.find_or_create_by!(name: "Pregnancy Resource Center", email: "contactus@pregnancyresources.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Rose Haven", email: "contact@rosehaven.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Volunteers of America", email: "info@volunteersofamerica.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Clackamas Service Center", email: "outreach@clackamas.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Housing Alternatives", email: "support@housingalternatives.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "JOIN", email: "info@join.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Emmanuel Housing Center", email: "contact@emmanuelhousingcenter.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Catholic Charities", email: "contactus@catholiccharities.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Healthy Families of Oregon", email: "info@oregonfamilies.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "NARA Northwest", email: "contactus@naranorthwest.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Job Corps", email: "someone@jobcorps.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Helensview Middle and High School", email: "programs@helensviewschooldistrict.edu") do |partner|
+Partner.find_or_create_by!(name: "Pawnee Pregnancy Center", email: "contactus@pawneepregnancy.com") do |partner|
   partner.organization = pdx_org
 end
 
-inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage (Arborscape)") do |inventory|
+inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage Location") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = pdx_org
 end
-inv_dsu = StorageLocation.find_or_create_by!(name: "Diaper Storage Unit") do |inventory|
-  inventory.address = "Unknown"
-  inventory.organization = pdx_org
-end
-inv_pdxdb = StorageLocation.find_or_create_by!(name: "PDX Diaper Bank (Office)") do |inventory|
+inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = pdx_org
 end
@@ -144,7 +103,6 @@ end
 items_by_category.each do |_category, entries|
   entries.each do |entry|
     seed_quantity(entry['name'], pdx_org, inv_arbor.id, entry['qty'][0])
-    seed_quantity(entry['name'], pdx_org, inv_dsu.id, entry['qty'][1])
     seed_quantity(entry['name'], pdx_org, inv_pdxdb.id, entry['qty'][2])
   end
 end
