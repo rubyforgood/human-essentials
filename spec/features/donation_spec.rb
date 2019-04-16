@@ -339,4 +339,30 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
     end
   end
+
+  context "When donation items have value" do
+    before do
+      item1 = create(:item, value: 1.25)
+      item2 = create(:item)
+      item3 = create(:item, value: 2)
+      @donation1 = create(:donation, :with_items, item: item1, source: Donation::SOURCES[:misc])
+      create(:donation, :with_items, item: item2, source: Donation::SOURCES[:misc])
+      create(:donation, :with_items, item: item3, source: Donation::SOURCES[:misc])
+
+      visit @url_prefix + "/donations"
+    end
+
+    scenario 'the user sees value in row on index page' do
+      expect(page).to have_content "$125"
+    end
+
+    scenario 'the user sees total value on index page' do
+      expect(page).to have_content "$325"
+    end
+
+    scenario 'the user sees total value on show page' do
+      visit @url_prefix + "/donations/#{@donation1.id}"
+      expect(page).to have_content "$125"
+    end
+  end
 end
