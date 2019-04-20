@@ -21,8 +21,10 @@ class MovePartnerStatusToAnIntergerType < ActiveRecord::Migration[5.2]
     Partner.where(status: "Error").update_all(temp_status: 3)
 
     # 2.4 print those partners which could not be migrated
+    # We assume that all partners will conform to the previous string statuses
+    # but maybe not. At least we can capture them here if not.
     Partner.where.not(status: ["Pending", "Awaiting Review", "Approved", "Error"]).each do |partner|
-      puts "Could not update Partner #{partner.id}"
+      puts "Could not update Partner #{partner.id} with status #{partner.status}"
       puts partner.inspect
     end
 
@@ -54,12 +56,6 @@ class MovePartnerStatusToAnIntergerType < ActiveRecord::Migration[5.2]
     # 2.3 map 3 value to "Error" value
     puts "updating Approved partners. will update #{Partner.where(status: 3).count} partners"
     Partner.where(status: 3).update_all(temp_status: "Error")
-
-    # 2.4 print those partners which could not be migrated
-    Partner.where.not(status: [:pending, :awaiting_review, :approved, :error]).each do |partner|
-      puts "Could not update Partner #{partner.id}"
-      puts partner.inspect
-    end
 
     # 3. Delete "status" column
     puts "removing status column"
