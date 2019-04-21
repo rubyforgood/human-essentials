@@ -30,7 +30,7 @@ RSpec.feature "Donation Site", type: :feature do
 
   scenario "User creates a new donation site on index" do
     donation_site_name = "A Unique Donation Site Name"
-    donation_site_address = "3700 O St NW, Washington, DC 20057"
+    donation_site_address = "1500 Remount Road, Front Royal, VA 22630"
 
     visit url_prefix + "/donation_sites"
     fill_in "donation_site_name", with: donation_site_name

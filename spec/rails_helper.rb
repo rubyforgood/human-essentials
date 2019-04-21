@@ -9,7 +9,8 @@ require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
-require "sucker_punch/testing/inline"
+require 'sidekiq/testing'
+Sidekiq::Testing.fake! # fake is the default mode
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -58,25 +59,26 @@ Capybara.asset_host = "http://localhost:3000"
 # Only keep the most recent run
 Capybara::Screenshot.prune_strategy = :keep_last_run
 
+def with_features(**features)
+  adapter = Flipper::Adapters::Memory.new
+  flipper = Flipper.new(adapter)
+  features.each do |feature, enabled|
+    if enabled
+      flipper.enable(feature)
+    else
+      flipper.disable(feature)
+    end
+  end
+  stub_const('Flipper', flipper)
+  yield
+end
+
 def stub_addresses
   Geocoder.configure(lookup: :test)
 
-  ["1500 Remount Road, Front Royal, VA",
-   "1111 Panda ave. Front Royal, VA 12345",
-   "Smithsonian Institute new",
-   "Smithsonian Conservation Center new",
-   "3700 O St NW, Washington, DC 20057",
-   "1500 Remount Road Front Royal, VA",
-   "1500 Remount Road, Front Royal, VA 22630",
-   "1234 Banana Drive Boston, MA 12345",
-   "1234 Banana Drive, Boston, MA 12345",
-   "1234 Potato Drive, New York, NY 54321",
+  ["1500 Remount Road, Front Royal, VA 22630",
    "123 Donation Site Way",
-   "456 Donation Site Way",
-   "789 Donation Site Way",
-   "123 Location Way",
-   "456 Location Way",
-   "789 Location Way"].each do |address|
+   "Smithsonian Conservation Center new"].each do |address|
     Geocoder::Lookup::Test.add_stub(
       address, [
         {
@@ -115,8 +117,6 @@ RSpec.configure do |config|
   # Preparatifyication
   config.before(:suite) do
     Rails.logger.info <<~ASCIIART
-
-
       -~~==]}>        ######## ###########  ####      ########    ###########
       -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
       -~~==]}>     +#+           +#+    +#+   +#+   +#+      +#+    +#+
@@ -124,28 +124,26 @@ RSpec.configure do |config|
       -~~==]}>          +:+    +:+    +:+    +:+  +:+     +:+     +:+
       -~~==]}>  :+:    :+:    :+:    :+:    :+:  :+:      :+:    :+:
       -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
-
-
-
     ASCIIART
 
-    Rails.logger.info "-~=> Destroying all Canonical Items ... "
-    CanonicalItem.delete_all
-    # Canonical Items are independent of all other data, though other models depend on
+    Rails.logger.info "-~=> Destroying all Base Items ... "
+    BaseItem.delete_all
+    # Base Items are independent of all other data, though other models depend on
     # their existence, so we'll persist them
-    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata canonical_items))
+    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata base_items))
     DatabaseCleaner.strategy = :transaction
     __start_db_cleaning_with_log
     __sweep_up_db_with_log
-    seed_canonical_items_for_tests
+    seed_base_items_for_tests
   end
 
   config.before(:each) do
     __start_db_cleaning_with_log
 
     # prepare a default @organization and @user to always be available for testing
-    Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
+    Rails.logger.info "\n\n-~=> Creating DEFAULT organization & partner"
     @organization = create(:organization, name: "DEFAULT")
+    @partner = create(:partner, organization: @organization)
     Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
     @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
     @user = create(:user, organization: @organization, name: "DEFAULT USER")
@@ -177,20 +175,20 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 end
 
-def seed_canonical_items_for_tests
-  Rails.logger.info "-~=> Destroying all Canonical Items ... "
-  CanonicalItem.delete_all
-  canonical_items = File.read(Rails.root.join("db", "canonical_items.json"))
-  items_by_category = JSON.parse(canonical_items)
-  Rails.logger.info "Creating Canonical Items: "
+def seed_base_items_for_tests
+  Rails.logger.info "-~=> Destroying all Base Items ... "
+  BaseItem.delete_all
+  base_items = File.read(Rails.root.join("db", "base_items.json"))
+  items_by_category = JSON.parse(base_items)
+  Rails.logger.info "Creating Base Items: "
   batch_insert = []
   items_by_category.each do |category, entries|
     entries.each do |entry|
       batch_insert << { name: entry["name"], category: category, partner_key: entry["key"] }
     end
   end
-  CanonicalItem.create(batch_insert)
-  Rails.logger.info "~-=> Done creating Canonical Items!"
+  BaseItem.create(batch_insert)
+  Rails.logger.info "~-=> Done creating Base Items!"
 end
 
 def __start_db_cleaning_with_log

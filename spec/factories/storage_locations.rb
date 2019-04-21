@@ -2,11 +2,11 @@
 #
 # Table name: storage_locations
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  address         :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  organization_id :integer
 #  latitude        :float
 #  longitude       :float
@@ -14,8 +14,8 @@
 
 FactoryBot.define do
   factory :storage_location do
-    name { "Smithsonian Institute" }
-    address { "1500 Remount Road, Front Royal, VA" }
+    name { "Smithsonian Conservation Center" }
+    address { "1500 Remount Road, Front Royal, VA 22630" }
     organization { Organization.try(:first) || create(:organization) }
 
     trait :with_items do

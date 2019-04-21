@@ -2,11 +2,11 @@
 #
 # Table name: donations
 #
-#  id                          :bigint(8)        not null, primary key
+#  id                          :integer          not null, primary key
 #  source                      :string
 #  donation_site_id            :integer
-#  created_at                  :datetime
-#  updated_at                  :datetime
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
 #  storage_location_id         :integer
 #  comment                     :text
 #  organization_id             :integer

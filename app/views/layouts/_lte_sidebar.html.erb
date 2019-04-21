@@ -26,11 +26,13 @@
               <i class="fa fa-circle-o"></i> New Donation
             <% end %>
           </li>
-          <li class="<%= 'active' if current_page?(scale_donations_path(organization_id: current_user.organization)) %>">
-            <%= link_to(scale_donations_path(organization_id: current_user.organization)) do %>
+          <!-- NOTE(chaserx): temporarily removing repackaged donation from the nav
+          <li class="<%#= 'active' if current_page?(scale_donations_path(organization_id: current_user.organization)) %>">
+            <%#= link_to(scale_donations_path(organization_id: current_user.organization)) do %>
               <i class="fa fa-circle-o"></i> Repackaged Donation
-            <% end %>
-          </li>
+            <%# end %>
+          </li>ra
+          -->
         </ul>
       </li>
       <li class="<%= active_class(['purchases']) %> treeview">
@@ -129,6 +131,11 @@
           <li class="<%= active_class(['diaper_drive_participants']) %>">
             <%= link_to(diaper_drive_participants_path(organization_id: current_user.organization)) do %>
               <i class="fa fa-circle-o"></i> Diaper Drive Participants
+            <% end %>
+          </li>
+          <li class="<%= active_class(['vendors']) %>">
+            <%= link_to(vendors_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Vendors
             <% end %>
           </li>
         </ul>
