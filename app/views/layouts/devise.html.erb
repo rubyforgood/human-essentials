@@ -11,21 +11,18 @@
   <%= javascript_include_tag 'application' %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <!-- iCheck -->
-  <link rel="stylesheet" href="/assets/blue.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <style>
+    background-color: #fff;
   .checkbox label{
     padding-left: 0px;
   }
 </style>
 </head>
-<body id="devise" class="hold-transition login-page">
+<body class="gray-bg">
   <!-- /.login-logo -->
-  <div class="login-box-body">
-    <div class="form-group has-feedback">
+
       <%= yield %>
-    </div>
-  </div>
+
   <!-- /.login-box-body -->
 <!-- /.login-box -->
 
