@@ -32,11 +32,6 @@
               <i class="fa fa-circle-o"></i> New Donation
             <% end %>
           </li>
-          <li class="<%= 'active' if current_page?(scale_donations_path(organization_id: current_user.organization)) %>">
-            <%= link_to(scale_donations_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Repackaged Donation
-            <% end %>
-          </li>
         </ul>
       </li>
       <li class="<%= active_class(['purchases']) %>">

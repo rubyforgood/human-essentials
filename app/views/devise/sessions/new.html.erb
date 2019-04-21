@@ -1,27 +1,39 @@
-<div class="medium-offset-3 medium-6">
-	<h2>Sign In</h2>
-</div>
-<%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="form-inputs">
-			<%= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
+<div class="middle-box text-center loginscreen animated fadeInDown">
+  <div>
+    <div>
+
+      <img id="MastheadLogo" src="/img/diaper-base-logo-full-white-text.svg" style="width: 80%; height: 80%; " alt="Diaperbase" title="Diaperbase" class="serv_icon"/>
+
+    </div>
+    <p>Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
+      <!--Continually expanded and constantly improved Inspinia Admin Them (IN+)-->
+    </p>
+    <p>Login in. To see it in action.</p>
+    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="form-inputs">
+    <form class="m-t" role="form" action="index.html">
+      <div class="form-group">
+        <%= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
           <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
           <%= f.input_field :email, class: "form-control" %>
-        <% end %>    
-			<%= f.input :email, label: "Password:", wrapper: :vertical_input_group do %>
+        <% end %>
+      </div>
+      <div class="form-group">
+        <%= f.input :email, label: "Password:", wrapper: :vertical_input_group do %>
           <span class="input-group-addon"><i class="fa fa-lock"></i></span>
           <%= f.input_field :password, class: "form-control" %>
+        <% end %>      </div>
+
+      <%= f.button :submit, "Log in" %>
+
+      <%= render "devise/shared/links" %>
+
+    </form>
         <% end %>
-    <%= f.input :remember_me, label: " Remember me", as: :boolean if devise_mapping.rememberable? %>
   </div>
-<div class="medium-offset-3 medium-6">
-
-  <div class="form-actions">
-    <%= f.button :submit, "Log in" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
 </div>
+
+
 <script>
     $(document).ready(function() {
 
