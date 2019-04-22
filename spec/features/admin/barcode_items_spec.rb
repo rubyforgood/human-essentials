@@ -13,7 +13,6 @@ RSpec.feature "Barcode Items Admin" do
         select item.canonical_item.name, from: "barcode_item_barcodeable_id"
         fill_in "Barcode", with: 6666
         click_on "Save"
-        expect(current_path).to eq("Happy")
         expect(page).to have_content("6666")
         expect(page).to have_content("Tampons")
         expect(page).to have_content("100")
