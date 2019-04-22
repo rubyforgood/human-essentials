@@ -21,6 +21,21 @@ RSpec.describe RequestsController, type: :controller do
         expect(subject).to be_successful
       end
     end
+
+    context "start a request" do
+      let!(:request) { create(:request) }
+      let(:request_id) { request.id }
+      let(:params) { default_params.merge( { id: request_id } ) }
+
+      before { post :start, params: params }
+
+      it "change request status to started" do
+        expect(request.reload).to be_status_started
+      end
+      it "redirect to new distribution path" do
+        expect(response).to redirect_to(new_distribution_path(request_id: request_id))
+      end
+    end
   end
 
   context "While not signed in" do
