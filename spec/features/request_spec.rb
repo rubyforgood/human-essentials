@@ -36,16 +36,30 @@ RSpec.feature "Requests", type: :feature do
       expect(page).to have_content("334")
     end
 
-    scenario "the request is fullfillable", js: true do
-      visit url_prefix + "/requests/#{@request.id}"
-      click_on "Fulfill request"
-      expect(page).to have_content "fulfilled"
-      select @storage_location.name, from: "From storage location"
-      fill_in "Comment", with: "Take my wipes... please"
-      click_on "Save"
-      expect(page).to have_content "Distributions"
-      expect(page).to have_content "Distribution created"
-      expect(@request.reload.distribution_id).to eq Distribution.last.id
+    context "change status request" do
+      before do
+        visit url_prefix + "/requests/#{@request.id}"
+        click_on "New Distribution"
+      end
+
+      scenario 'to started',js: true do
+        visit url_prefix + "/requests"
+        expect(page).to have_content "started"
+        expect(@request.reload).to be_status_started
+      end
+
+      context 'when save the distribution ' do
+        scenario "is fullfillable", js: true do
+          expect(page).to have_content "started"
+          select @storage_location.name, from: "From storage location"
+          fill_in "Comment", with: "Take my wipes... please"
+          click_on "Save"
+          expect(page).to have_content "Distributions"
+          expect(page).to have_content "Distribution created"
+          expect(@request.reload.distribution_id).to eq Distribution.last.id
+          expect(@request.reload).to be_status_fulfilled
+        end
+      end
     end
   end
 end

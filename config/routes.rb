@@ -119,7 +119,7 @@ Rails.application.routes.draw do
     resources :purchases
     resources :requests, only: %i(index new show) do
       member do
-        post :fullfill
+        post :start
       end
     end
 
