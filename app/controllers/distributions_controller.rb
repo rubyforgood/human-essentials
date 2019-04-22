@@ -135,6 +135,7 @@ class DistributionsController < ApplicationController
   # If a request id is provided, update the request with the newly created distribution's id
   def update_request(request_atts, distribution_id)
     return if request_atts.blank?
+
     request = Request.find(request_atts[:id])
     request.update(distribution_id: distribution_id, status: 'fulfilled')
   end
