@@ -25,7 +25,7 @@ RSpec.describe RequestsController, type: :controller do
     context "start a request" do
       let!(:request) { create(:request) }
       let(:request_id) { request.id }
-      let(:params) { default_params.merge( { id: request_id } ) }
+      let(:params) { default_params.merge(id: request_id) }
 
       before { post :start, params: params }
 
