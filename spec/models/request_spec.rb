@@ -16,7 +16,7 @@
 RSpec.describe Request, type: :model do
   describe "Enums >" do
     describe "#status" do
-      let!(:request_pending) { create(:request, :pending) }
+      let!(:request_pending) { create(:request) }
       let!(:request_started) { create(:request, :started) }
       let!(:request_fulfilled) { create(:request, :fulfilled) }
 
