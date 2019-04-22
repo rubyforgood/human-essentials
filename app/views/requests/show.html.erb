@@ -1,64 +1,65 @@
 <section class="content-header">
-  <% content_for :title, "Requests - #{@request.id} - #{current_organization.name}" %>
-  <h1>
-    Request
-    <small>from <%= @request.partner.name %></small>
-  </h1>
-
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Requests", (requests_path) %></li>
-    <li class="active"> Request from <%= @request.partner.name %> at <%= @request.created_at.strftime("%B %-d %Y") %></li>
-  </ol>
+    <% content_for :title, "Requests - #{@request.id} - #{current_organization.name}" %>
+    <h1>
+        Request
+        <small>from <%= @request.partner.name %></small>
+    </h1>
+    
+    <ol class="breadcrumb">
+        <li><%= link_to(dashboard_path) do %>
+            <i class="fa fa-dashboard"></i> Home
+            <% end %>
+        </li>
+        <li><%= link_to "Requests", (requests_path) %></li>
+        <li class="active"> Request from <%= @request.partner.name %> at <%= @request.created_at.strftime("%B %-d %Y") %></li>
+    </ol>
 </section>
 
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border">
-      <fieldset>
-        <p>This request was sent on <%= @request.created_at.strftime("%B %-d %Y") %>:</p>
-        <ul class="list-group">
-          <li class="list-group-item">It was sent by: <%= @request.partner.name %></li>
-          <li class="list-group-item">It has a status of: <%= @request.status %></li>
-          <li class="list-group-item">Comments: <%= @request.comments || 'None' %></li>
-        </ul>
-
-        <section id="line_items">
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="box-body table-responsive no-padding">
-                <table class="table table-hover">
-                  <thead>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Estimated on-hand</th>
-                  </thead>
-
-                  <tbody>
-                    <% @request_items.each do |item| %>
-                      <tr>
-                        <td><%= item.name %></td>
-                        <td><%= item.quantity %></td>
-                        <td><%= item.on_hand %></td>
-                      </tr>
-                    <% end %>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <br>
-      </fieldset>
-
+    <div class="box">
+        <div class="box-header with-border">
+            <fieldset>
+                <p>This request was sent on <%= @request.created_at.strftime("%B %-d %Y") %>:</p>
+                <ul class="list-group">
+                    <li class="list-group-item">It was sent by: <%= @request.partner.name %></li>
+                    <li class="list-group-item">It has a status of: <%= @request.status %></li>
+                    <li class="list-group-item">Comments: <%= @request.comments || 'None' %></li>
+                </ul>
+                
+                <section id="line_items">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box-body table-responsive no-padding">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Estimated on-hand</th>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        <% @request_items.each do |item| %>
+                                        <tr>
+                                            <td><%= item.name %></td>
+                                            <td><%= item.quantity %></td>
+                                            <td><%= item.on_hand %></td>
+                                        </tr>
+                                        <% end %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <br>
+            </fieldset>
+            
+        </div>
+        <div class="box-footer">
+            <%= cancel_button_to request_path(@request), { text: "Cancel request" , method: :delete, data: {confirm: 'Are you sure?'}}  unless @request.distribution %>
+            <%= submit_button_to fullfill_request_path(@request), { text: "Fulfill request" } unless @request.distribution %>
+            <%= view_button_to(distribution_path(@request.distribution), { text: "View Associated Distribution", size: "lg" }) if @request.distribution %>
+        </div>
     </div>
-    <div class="box-footer">
-      <%= submit_button_to fullfill_request_path(@request), { text: "Fulfill request" } unless @request.distribution %>
-      <%= view_button_to(distribution_path(@request.distribution), { text: "View Associated Distribution", size: "lg" }) if @request.distribution %>
-    </div>
-  </div>
 </section>

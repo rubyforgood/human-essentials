@@ -1,8 +1,15 @@
 <tr>
-  <td><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
-  <td><%= request_row.partner.name %> </td>
-  <td><%= request_row.status %></td>
-  <td class="text-right">
-    <%= view_button_to request_path(request_row) %>
-  </td>
+    <td><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
+    <td><%= request_row.partner.name %> </td>
+    <td><%= request_row.status %></td>
+    <td class="text-right">
+        <%= view_button_to request_path(request_row) %>
+        <%= cancel_button_to request_path(request_row),
+            { confirm: "Are you sure you want to reclaim this distribution to #{request_row.partner.name}?",
+                text: "Cancel",
+                method: "delete",
+                icon: "ban" }
+        %>
+    </td>
 </tr>
+
