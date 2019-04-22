@@ -42,14 +42,14 @@ RSpec.feature "Requests", type: :feature do
         click_on "New Distribution"
       end
 
-      scenario 'to started',js: true do
+      scenario "to started", js: true do
         visit url_prefix + "/requests"
         expect(page).to have_content "started"
         expect(@request.reload).to be_status_started
       end
 
-      context 'when save the distribution ' do
-        scenario "is fullfillable", js: true do
+      context "when save the distribution" do
+        scenario "change request to fulfilled", js: true do
           expect(page).to have_content "started"
           select @storage_location.name, from: "From storage location"
           fill_in "Comment", with: "Take my wipes... please"

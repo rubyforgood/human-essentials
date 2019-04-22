@@ -176,7 +176,7 @@ RSpec.feature "Distributions", type: :feature do
       @request = create :request, organization: @organization, request_items: request_items
 
       visit @url_prefix + "/requests/#{@request.id}"
-      click_on "Fulfill request"
+      click_on "New Distribution"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
         click_on "Save"
@@ -185,8 +185,9 @@ RSpec.feature "Distributions", type: :feature do
       @distribution = Distribution.last
     end
 
-    scenario "it sets the distribution id on the request" do
+    scenario "it sets the distribution id and fulfilled status on the request" do
       expect(@request.reload.distribution_id).to eq @distribution.id
+      expect(@request.reload).to be_status_fulfilled
     end
   end
 

@@ -30,17 +30,21 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     describe "POST #create" do
-      it "redirects to #index on success" do
-        i = create(:storage_location)
-        p = create(:partner)
+      let!(:storage_location) { create(:storage_location) }
+      let!(:partner) { create(:partner) }
+      let(:distribution) do
+        { distribution: { storage_location_id: storage_location.id, partner_id: partner.id } }
+      end
 
-        expect(i).to be_valid
-        expect(p).to be_valid
+      it "redirects to #index on success" do
+        params = default_params.merge(distribution)
+        expect(storage_location).to be_valid
+        expect(partner).to be_valid
         expect(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
         jobs_count = PartnerMailerJob.jobs.count
 
-        post :create, params: default_params.merge(distribution: { storage_location_id: i.id, partner_id: p.id })
+        post :create, params: params
         expect(response).to have_http_status(:redirect)
 
         expect(response).to redirect_to(distributions_path)
