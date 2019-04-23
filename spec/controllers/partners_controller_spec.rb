@@ -71,16 +71,16 @@ RSpec.describe PartnersController, type: :controller do
     end
   end
   describe "DiaperPartnerClient first" do
-    let(:partner) { create(:partner)}
-    subject { put :approve_application, params: {organization_id: partner.organization.id, 
-      id: partner.id}
+    let(:partner) { create(:partner) }
+    subject { put :approve_application, params: { organization_id: partner.organization.id, 
+      id: partner.id }
     }
     it "Always redirects to partners_path" do
       expect(subject).to redirect_to partners_path
     end
     context "Working Partner API" do
       it "Changes Status to Approved" do
-        allow(DiaperPartnerClient).to receive(:put){ Net::HTTPSuccess.new(1.0, '200', 'OK')}
+        allow(DiaperPartnerClient).to receive(:put){ Net::HTTPSuccess.new(1.0, '200', 'OK') }
         subject
         expect(partner.reload.status).to eq("Approved")
       end
