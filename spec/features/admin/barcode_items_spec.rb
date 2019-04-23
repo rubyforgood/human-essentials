@@ -7,6 +7,7 @@ RSpec.feature "Barcode Items Admin" do
       visit admin_barcode_items_path
     end
     let(:item) { create(:item) }
+
     scenario "creating a new global barcode", js: true do
       click_on "Add New Barcode"
       fill_in "Quantity", with: 100
