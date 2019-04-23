@@ -18,6 +18,7 @@ RSpec.feature "Barcode Items Admin" do
       expect(page).to have_content("Tampons")
       expect(page).to have_content("100")
     end
+    
     scenario "editing an existing global barcode"
     scenario "deleting a global barcode"
     scenario "viewing a barcode shows details about it"
