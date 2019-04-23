@@ -35,9 +35,8 @@ class RequestsController < ApplicationController
   end
   
   def destroy
-      @request=Request.find(params[:id])
+     request= Request.find(params[:id]).destroy
       #TODO :kick off job to destroy & send email
-      flash[:notice] ="Request marked as canceled"
-      redirect_to(@request.request_items)
+      redirect_to dashboard_path
   end
 end

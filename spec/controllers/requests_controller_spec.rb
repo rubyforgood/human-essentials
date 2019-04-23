@@ -14,6 +14,13 @@ RSpec.describe RequestsController, type: :controller do
         expect(subject).to be_successful
       end
     end
+    
+    describe "DELETE #destroy" do
+        subject { delete :destroy, params: default_params.merge(id: create(:request, organization: @organization)) }
+        it "returns http success" do
+            expect(subject).to be_successful
+        end
+    end
 
     describe "GET #show" do
       subject { get :show, params: default_params.merge(id: create(:request, organization: @organization)) }
