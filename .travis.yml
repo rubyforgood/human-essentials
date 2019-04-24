@@ -13,7 +13,7 @@ before_install:
 - gem install bundler
 install:
 - bundle install
-- nvm install node
+- nvm install v10
 - node -v
 - npm i -g yarn
 - yarn install
