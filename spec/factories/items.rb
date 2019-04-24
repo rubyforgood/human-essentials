@@ -19,5 +19,13 @@ FactoryBot.define do
     sequence(:name) { |n| "#{n}T Diapers" }
     organization { Organization.try(:first) || create(:organization) }
     partner_key { BaseItem.first&.partner_key || create(:base_item).partner_key }
+
+    trait :active do
+      active { true }
+    end
+
+    trait :inactive do
+      active { false }
+    end
   end
 end
