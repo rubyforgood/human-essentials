@@ -2,20 +2,21 @@
 <tr>
   <td><%= partner_row.name %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
-  <td>  <% case status
-    when "Pending" %>
-      <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-maroon" do %><%= status %><% end %>
-    <% when "Awaiting Review" %>
-      <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-orange" do %><%= status %><% end %>
-    <% when "Approved" %>
-      <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" do %><%= status %><% end %>
-  <% end %>
+  <td>
+    <% case status %>
+      <% when "pending" %>
+        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-maroon" do %><%= status.humanize %><% end %>
+      <% when "awaiting_review" %>
+        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-orange" do %><%= status.humanize %><% end %>
+      <% when "approved" %>
+        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" do %><%= status.humanize %><% end %>
+    <% end %>
   </td>
   <!-- <td><%== (rand < 0.7) ? '<span class="label label-success">Approved</span>' :
   '<span class="label label-warning">In Progress</span>' %></td> -->
   <td class="text-right">
     <%= view_button_to partner_path(partner_row) %>
-    <%= edit_button_to edit_partner_path(partner_row) %> 
+    <%= edit_button_to edit_partner_path(partner_row) %>
     <%= delete_button_to partner_path(partner_row), { confirm: confirm_delete_msg(partner_row.name) } %>
   </td>
 </tr>
