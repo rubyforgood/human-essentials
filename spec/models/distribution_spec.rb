@@ -74,7 +74,8 @@ RSpec.describe Distribution, type: :model do
     describe "#distributed_at" do
       it "displays explicit issued_at date" do
         two_days_ago = 2.days.ago.midnight
-        expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime("%B %-d %Y"))
+        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00 UTC")
+        expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.to_s(:distribution_date))
       end
 
       it "shows the hour and minutes if it has been provided" do
