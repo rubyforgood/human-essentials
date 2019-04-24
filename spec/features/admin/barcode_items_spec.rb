@@ -10,7 +10,7 @@ RSpec.feature "Barcode Items Admin" do
     scenario "creating a new global barcode", js: true do
       click_on "Add New Barcode"
       fill_in "Quantity", with: 100
-      select item.canonical_item.name, from: "barcode_item_barcodeable_id"
+      select item.base_item.name, from: "barcode_item_barcodeable_id"
       fill_in "Barcode", with: 6666
       click_on "Save"
       expect(page).to have_content("6666")
