@@ -10,7 +10,7 @@
     <% end %>
     </li>
     <li><%= link_to "Donations", (donations_path) %></li>
-    <li class="active"> <%= @donation.source %> on <%= @donation.created_at.strftime("%B %-d %Y") %></li>
+    <li class="active"> <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></li>
   </ol>
 </section>
 
@@ -19,7 +19,7 @@
   <div class="box">
     <div class="box-header with-border">
       <fieldset>
-        <p>This donation was started on <%= @donation.created_at.strftime("%B %-d %Y") %>:</p>
+        <p>This donation was started on <%= @donation.created_at.to_s(:distribution_date) %>:</p>
         <ul class="list-group">
           <li class="list-group-item">It was collected through: <%= @donation.source %></li>
           <li class="list-group-item">It was dropped off at: <%= @donation.donation_site_view %></li>
