@@ -17,7 +17,7 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    @partner.update(status: "Approved")
+    @partner.approved!
     DiaperPartnerClient.put(@partner.attributes)
     redirect_to partners_path
   end

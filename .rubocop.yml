@@ -308,3 +308,5 @@ Rails/UnknownEnv:
     - production
     - development
     - test
+Style/SymbolArray:
+  Enabled: false

@@ -14,6 +14,8 @@
 class Partner < ApplicationRecord
   require "csv"
 
+  enum status: [:pending, :awaiting_review, :approved, :error]
+
   belongs_to :organization
   has_many :distributions, dependent: :destroy
 
