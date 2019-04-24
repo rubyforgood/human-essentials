@@ -52,7 +52,7 @@ class Distribution < ApplicationRecord
 
   def distributed_at
     if is_midnight(issued_at)
-      issued_at.strftime("%B %-d %Y")
+      issued_at.to_s(:distribution_date)
     else
       issued_at.to_s(:distribution_date_time)
     end
