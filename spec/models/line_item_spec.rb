@@ -29,4 +29,20 @@ RSpec.describe LineItem, type: :model do
       expect(build(:line_item, quantity: 1)).to be_valid
     end
   end
+
+  describe "Scopes >" do
+    describe "->active" do
+      let!(:active_item) { create(:item, :active) }
+      let!(:inactive_item) { create(:item, :inactive) }
+
+      before do
+        create(:line_item, item: active_item)
+        create(:line_item, item: inactive_item)
+      end
+
+      it "retrieves only those with active status" do
+        expect(described_class.active.size).to eq(1)
+      end
+    end
+  end
 end
