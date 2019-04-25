@@ -2,7 +2,7 @@
 #
 # Table name: line_items
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  quantity        :integer
 #  item_id         :integer
 #  itemizable_id   :integer
@@ -27,6 +27,22 @@ RSpec.describe LineItem, type: :model do
       expect(build(:line_item, quantity: 0)).not_to be_valid
       expect(build(:line_item, quantity: -1)).to be_valid
       expect(build(:line_item, quantity: 1)).to be_valid
+    end
+  end
+
+  describe "Scopes >" do
+    describe "->active" do
+      let!(:active_item) { create(:item, :active) }
+      let!(:inactive_item) { create(:item, :inactive) }
+
+      before do
+        create(:line_item, item: active_item)
+        create(:line_item, item: inactive_item)
+      end
+
+      it "retrieves only those with active status" do
+        expect(described_class.active.size).to eq(1)
+      end
     end
   end
 end

@@ -30,7 +30,7 @@ RSpec.feature "Requests", type: :feature do
       ####
       @second_storage_location = create(:storage_location, organization: @organization)
       @item = Item.find_by(
-        canonical_item: CanonicalItem.find_by(
+        base_item: BaseItem.find_by(
           partner_key: @request.request_items.keys.first
         )
       )

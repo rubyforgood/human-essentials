@@ -27,11 +27,13 @@ class API::V1::PartnerRequestsController < ApplicationController
   private
 
   def api_key_valid?
+    return true if Rails.env.development?
+
     request.headers["X-Api-Key"] == ENV["PARTNER_KEY"]
   end
 
   def request_params
     params.require(:request).permit(:organization_id, :partner_id, :comments,
-                                    request_items: CanonicalItem.pluck(:partner_key).map(&:to_sym))
+                                    request_items: BaseItem.pluck(:partner_key).map(&:to_sym))
   end
 end

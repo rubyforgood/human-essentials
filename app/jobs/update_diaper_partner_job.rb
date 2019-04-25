@@ -7,9 +7,9 @@ class UpdateDiaperPartnerJob
     @response = DiaperPartnerClient.post(@partner.attributes) if Flipper.enabled?(:email_active)
 
     if @response&.value == Net::HTTPSuccess
-      @partner.update(status: "Pending")
+      @partner.pending!
     else
-      @partner.update(status: "Error")
+      @partner.error!
     end
   end
 end

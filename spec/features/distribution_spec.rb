@@ -171,7 +171,7 @@ RSpec.feature "Distributions", type: :feature do
 
   context "When creating a distrubition from a request" do
     before do
-      request_items = @storage_location.items.map(&:canonical_item).pluck(:partner_key).collect { |k| [k, rand(3..10)] }.to_h
+      request_items = @storage_location.items.map(&:base_item).pluck(:partner_key).collect { |k| [k, rand(3..10)] }.to_h
       @request = create :request, organization: @organization, request_items: request_items
 
       visit @url_prefix + "/requests/#{@request.id}"

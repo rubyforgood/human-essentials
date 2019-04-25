@@ -12,7 +12,7 @@ RSpec.feature "Partner management", type: :feature do
       visit url_prefix + "/partners"
     end
     scenario "the partner agency names are in alphabetical order" do
-      expect(page).to have_css("table tr", count: 4)
+      expect(page).to have_css("table tr", count: 5)
       expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
     end
@@ -38,7 +38,7 @@ RSpec.feature "Partner management", type: :feature do
     partner = create(:partner, name: "Frank")
     visit url_prefix + "/partners/#{partner.id}/edit"
     fill_in "Name", with: "Franklin"
-    click_button "Send Invitation"
+    click_button "Update Partner"
 
     expect(page.find(".alert")).to have_content "updated"
     partner.reload
@@ -49,7 +49,7 @@ RSpec.feature "Partner management", type: :feature do
     partner = create(:partner, name: "Frank")
     visit url_prefix + "/partners/#{partner.id}/edit"
     fill_in "Name", with: ""
-    click_button "Send Invitation"
+    click_button "Update Partner"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
