@@ -67,13 +67,12 @@ RSpec.feature "Dashboard", type: :feature do
     end
 
     context "inactive item cannot count in totals" do
-
       scenario 'for donations' do
         item = donation.storage_location.items.first
         visit @url_prefix + "/dashboard"
         expect(page).to have_content("100 items received year to date")
 
-        inactive_item = item.update(active: false)
+        item.update(active: false)
         visit @url_prefix + "/dashboard"
         expect(page).to_not have_content("100 items received year to date")
       end
@@ -83,7 +82,7 @@ RSpec.feature "Dashboard", type: :feature do
         visit @url_prefix + "/dashboard"
         expect(page).to have_content("100 items received year to date")
 
-        inactive_item = item.update(active: false)
+        item.update(active: false)
         visit @url_prefix + "/dashboard"
         expect(page).to_not have_content("100 items received year to date")
       end
@@ -93,21 +92,10 @@ RSpec.feature "Dashboard", type: :feature do
         visit @url_prefix + "/dashboard"
         expect(page).to have_content("100 items distributed year to date")
 
-        inactive_item = item.update(active: false)
+        item.update(active: false)
         visit @url_prefix + "/dashboard"
         expect(page).to_not have_content("100 items distributed year to date")
       end
-    end
-
-
-    scenario 'when have a donation. and inactive an item then cannot count in totals on the dashboard' do
-      item = donation.storage_location.items.first
-      visit @url_prefix + "/dashboard"
-
-      expect(page).to have_content("100 items received year to date")
-      inactive_item = item.update(active: false)
-      visit @url_prefix + "/dashboard"
-      expect(page).to_not have_content("100 items received year to date")
     end
 
     scenario "totals on dashboard are updated immediately after donations and distributions are made", js: true do
