@@ -8,7 +8,6 @@ class PartnersController < ApplicationController
   def create
     @partner = current_organization.partners.new(partner_params)
     if @partner.save
-      UpdateDiaperPartnerJob.perform_async(@partner.id)
       redirect_to partners_path, notice: "Partner added!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
@@ -18,7 +17,7 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    @partner.update(status: "Approved")
+    @partner.approved!
     DiaperPartnerClient.put(@partner.attributes)
     redirect_to partners_path
   end

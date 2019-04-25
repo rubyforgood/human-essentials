@@ -16,7 +16,7 @@
 
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
-  belongs_to :canonical_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
+  belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
@@ -32,23 +32,17 @@ class Item < ApplicationRecord
   include Filterable
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
-  scope :in_category, ->(category) { where(category: category) }
-  scope :by_canonical_item, ->(canonical_item) { where(canonical_item: canonical_item) }
+  scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
-  scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
 
-  scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size }) }
+  scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
-      .includes(:canonical_item)
+      .includes(:base_item)
       .alphabetized
   }
 
   default_scope { active }
-
-  def self.categories
-    select(:category).group(:category).order(:category)
-  end
 
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
@@ -92,15 +86,19 @@ class Item < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Category", "Barcodes", "Base Item"]
+    ["Name", "Barcodes", "Base Item"]
   end
 
   def csv_export_attributes
     [
       name,
-      category,
       barcode_count,
-      canonical_item.name
+      base_item.name
     ]
+  end
+
+  def default_quantity
+    # TODO: actual logic for calculating and letting users configure this calculation
+    50
   end
 end

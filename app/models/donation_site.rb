@@ -2,11 +2,11 @@
 #
 # Table name: donation_sites
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  address         :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  organization_id :integer
 #  latitude        :float
 #  longitude       :float
@@ -21,8 +21,7 @@ class DonationSite < ApplicationRecord
 
   has_many :donations, dependent: :destroy
 
-  geocoded_by :address
-  after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
+  include Geocodable
 
   scope :for_csv_export, ->(organization) {
     where(organization: organization)

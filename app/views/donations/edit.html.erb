@@ -9,8 +9,8 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "Donations", (donations_path) %></li>  
-    <li class="active"> Editing <%= @donation.source %> on <%= @donation.created_at.strftime("%B %-d %Y") %></li>
+    <li><%= link_to "Donations", (donations_path) %></li>
+    <li class="active"> Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></li>
   </ol>
 </section>
 

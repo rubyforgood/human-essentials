@@ -2,17 +2,19 @@
 #
 # Table name: partners
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  email           :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  organization_id :integer
 #  status          :string
 #
 
 class Partner < ApplicationRecord
   require "csv"
+
+  enum status: [:pending, :awaiting_review, :approved, :error]
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy

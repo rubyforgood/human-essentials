@@ -2,7 +2,7 @@
 #
 # Table name: line_items
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  quantity        :integer
 #  item_id         :integer
 #  itemizable_id   :integer
@@ -17,6 +17,7 @@ class LineItem < ApplicationRecord
 
   validates :item_id, presence: true
   validates :quantity, numericality: { other_than: 0, only_integer: true }
+  scope :active, -> { joins(:item).where(items: { active: true }) }
 
   def value_per_line_item
     item.value * quantity

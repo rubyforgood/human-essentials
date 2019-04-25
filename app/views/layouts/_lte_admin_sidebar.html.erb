@@ -5,11 +5,11 @@
     <!-- sidebar menu: : style can be found in sidebar.less -->
     <ul class="sidebar-menu" data-widget="tree">
       <li class="header all-caps">Main Navigation</li>
-        <li class="<%= active_class(['dashboard']) %>">
-          <%= link_to(admin_dashboard_path) do %>
-            <i class="fa fa-dashboard"></i> <span>Admin Dashboard</span>
-          <% end %>
-        </li>
+      <li class="<%= active_class(['dashboard']) %>">
+        <%= link_to(admin_dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> <span>Admin Dashboard</span>
+        <% end %>
+      </li>
       <li class="<%= active_class(['barcode_items']) %> treeview">
         <a href="#">
           <i class="fa fa-barcode"></i>
@@ -31,23 +31,23 @@
           </li>
         </ul>
       </li>
-      <li class="<%= active_class(['canonical_items']) %> treeview">
+      <li class="<%= active_class(['base_items']) %> treeview">
         <a href="#">
           <i class="fa fa-people-sitemap"></i>
-          <span>Canonical Items</span>
+          <span>Base Items</span>
           <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
         </a>
         <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(admin_canonical_items_path) %>">
-            <%= link_to(admin_canonical_items_path) do %>
-              <i class="fa fa-circle-o"></i> All Canonical Items
+          <li class="<%= 'active' if current_page?(admin_base_items_path) %>">
+            <%= link_to(admin_base_items_path) do %>
+              <i class="fa fa-circle-o"></i> All Base Items
             <% end %>
           </li>
-          <li class="<%= 'active' if current_page?(new_admin_canonical_item_path) %>">
-            <%= link_to(new_admin_canonical_item_path) do %>
-              <i class="fa fa-plus-circle"></i> New Canonical Item
+          <li class="<%= 'active' if current_page?(new_admin_base_item_path) %>">
+            <%= link_to(new_admin_base_item_path) do %>
+              <i class="fa fa-plus-circle"></i> New Base Item
             <% end %>
           </li>
         </ul>
@@ -94,6 +94,11 @@
             <% end %>
           </li>
         </ul>
+      </li>
+      <li class="<%= active_class(['feedback_messages']) %>">
+        <%= link_to(admin_feedback_messages_path) do %>
+          <i class="fa fa-sticky-note"></i> User Feedback
+        <% end %>
       </li>
     </ul>
   </section>

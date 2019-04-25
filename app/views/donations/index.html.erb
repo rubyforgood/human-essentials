@@ -77,6 +77,7 @@
                   <th>Storage Location</th>
                   <th>Quantity of Items</th>
                   <th>Variety of Items</th>
+                  <th>In Kind Value</th>
                   <th>&nbsp;</th>
                 </tr>
               </thead>
@@ -89,6 +90,7 @@
                   <td></td>
                   <td><strong><%= @donations_quantity %></strong></td>
                   <td></td>
+                  <td><strong><%= item_value(@total_value_all_donations) %></strong></td>
                   <td></td>
                 </tr>
               </tbody>
