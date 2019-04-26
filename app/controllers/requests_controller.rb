@@ -26,7 +26,7 @@ class RequestsController < ApplicationController
     # using Struct vs Hash so we can use dot notation in the view
     Struct.new('Item', :name, :quantity, :on_hand)
     request_items.map do |key, quantity|
-      Struct::Item.new(@request.items_hash[key].name, quantity, sum_inventory(key))
+      Struct::Item.new(Item.find(key["item_id"]).name, key["quantity"], sum_inventory(Item.find(key["item_id"]).partner_key))
     end
   end
 
