@@ -28,8 +28,6 @@ class Partner < ApplicationRecord
       .order(:name)
   }
 
-  after_create :register_on_partnerbase
-
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
     csv.each do |row|

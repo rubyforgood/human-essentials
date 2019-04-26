@@ -52,6 +52,11 @@ RSpec.describe PartnersController, type: :controller do
       it "redirects to #index" do
         expect(subject).to redirect_to(partners_path)
       end
+
+      it "send partner invitation" do
+        expect(UpdateDiaperPartnerJob).to receive(:perform_async)
+        subject
+      end
     end
 
     context "unsuccessful save due to empty params" do
