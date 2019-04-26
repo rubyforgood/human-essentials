@@ -52,60 +52,100 @@ RSpec.feature "Dashboard", type: :feature do
     end
   end
 
-  scenario "inventory totals on dashboard are updated immediately after donations and distributions are made", js: true do
-    create(:partner)
-    create(:item, organization: @organization)
-    create(:storage_location, organization: @organization)
-    create(:donation_site, organization: @organization)
-    create(:diaper_drive_participant, organization: @organization)
-    @organization.reload
+  context "inventory" do
+    let(:donation) { create(:donation, :with_items, organization: @organization) }
+    let(:purchase) { create(:purchase, :with_items, organization: @organization) }
+    let(:distribution) { create(:distribution, :with_items, organization: @organization) }
 
-    # Verify the initial totals on dashboard
-    visit @url_prefix + "/dashboard"
-    expect(page).to have_content("0 items received")
-    expect(page).to have_content("0 items on-hand")
+    before do
+      create(:partner)
+      create(:item, organization: @organization)
+      create(:storage_location, organization: @organization)
+      create(:donation_site, organization: @organization)
+      create(:diaper_drive_participant, organization: @organization)
+      @organization.reload
+    end
 
-    # Make a donation
-    visit @url_prefix + "/donations/new"
-    select "Misc. Donation", from: "donation_source"
-    expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
-    expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
-    select StorageLocation.first.name, from: "donation_storage_location_id"
-    select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-    fill_in "donation_line_items_attributes_0_quantity", with: "100"
-    click_button "Save"
+    context "inactive item cannot count in totals" do
+      scenario 'for donations' do
+        item = donation.storage_location.items.first
+        visit @url_prefix + "/dashboard"
+        expect(page).to have_content("100 items received year to date")
 
-    # Make a diaper drive donation
-    visit @url_prefix + "/donations/new"
-    select "Diaper Drive", from: "donation_source"
-    select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
-    select StorageLocation.first.name, from: "donation_storage_location_id"
-    select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-    fill_in "donation_line_items_attributes_0_quantity", with: "100"
-    click_button "Save"
+        item.update(active: false)
+        visit @url_prefix + "/dashboard"
+        expect(page).to_not have_content("100 items received year to date")
+      end
 
-    # Check the dashboard now
-    visit @url_prefix + "/dashboard"
-    expect(page).to have_content("200 items received")
-    expect(page).to have_content("200 items on-hand")
+      scenario 'for purchases' do
+        item = purchase.storage_location.items.first
+        visit @url_prefix + "/dashboard"
+        expect(page).to have_content("100 items received year to date")
 
-    # Check distributions
-    visit @url_prefix + "/distributions/new"
-    select Partner.last.name, from: "distribution_partner_id"
-    select @organization.storage_locations.first.name, from: "distribution_storage_location_id"
-    select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
-    fill_in "distribution_line_items_attributes_0_quantity", with: "50"
-    click_button "Save"
-    click_on "View", match: :first
-    expect(page).to have_content "Distribution Manifest for"
-    expect(page).to have_xpath("//table/tbody/tr/td", text: "50")
+        item.update(active: false)
+        visit @url_prefix + "/dashboard"
+        expect(page).to_not have_content("100 items received year to date")
+      end
 
-    # Check the dashboard now
-    visit @url_prefix + "/dashboard"
-    expect(page).to have_content("200 items received")
-    expect(page).to have_content("50 items distributed")
-    expect(page).to have_content("150 items on-hand")
-    expect(page).to have_content("1 Diaper Drives")
+      scenario 'for distributions' do
+        item = distribution.storage_location.items.first
+        visit @url_prefix + "/dashboard"
+        expect(page).to have_content("100 items distributed year to date")
+
+        item.update(active: false)
+        visit @url_prefix + "/dashboard"
+        expect(page).to_not have_content("100 items distributed year to date")
+      end
+    end
+
+    scenario "totals on dashboard are updated immediately after donations and distributions are made", js: true do
+      # Verify the initial totals on dashboard
+      visit @url_prefix + "/dashboard"
+      expect(page).to have_content("0 items received")
+      expect(page).to have_content("0 items on-hand")
+
+      # Make a donation
+      visit @url_prefix + "/donations/new"
+      select "Misc. Donation", from: "donation_source"
+      expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
+      expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
+      select StorageLocation.first.name, from: "donation_storage_location_id"
+      select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+      fill_in "donation_line_items_attributes_0_quantity", with: "100"
+      click_button "Save"
+
+      # Make a diaper drive donation
+      visit @url_prefix + "/donations/new"
+      select "Diaper Drive", from: "donation_source"
+      select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
+      select StorageLocation.first.name, from: "donation_storage_location_id"
+      select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+      fill_in "donation_line_items_attributes_0_quantity", with: "100"
+      click_button "Save"
+
+      # Check the dashboard now
+      visit @url_prefix + "/dashboard"
+      expect(page).to have_content("200 items received")
+      expect(page).to have_content("200 items on-hand")
+
+      # Check distributions
+      visit @url_prefix + "/distributions/new"
+      select Partner.last.name, from: "distribution_partner_id"
+      select @organization.storage_locations.first.name, from: "distribution_storage_location_id"
+      select Item.last.name, from: "distribution_line_items_attributes_0_item_id"
+      fill_in "distribution_line_items_attributes_0_quantity", with: "50"
+      click_button "Save"
+      click_on "View", match: :first
+      expect(page).to have_content "Distribution Manifest for"
+      expect(page).to have_xpath("//table/tbody/tr/td", text: "50")
+
+      # Check the dashboard now
+      visit @url_prefix + "/dashboard"
+      expect(page).to have_content("200 items received")
+      expect(page).to have_content("50 items distributed")
+      expect(page).to have_content("150 items on-hand")
+      expect(page).to have_content("1 Diaper Drives")
+    end
   end
 
   scenario "getting started guide works as expected", js: true do

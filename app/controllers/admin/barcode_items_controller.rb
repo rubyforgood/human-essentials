@@ -15,6 +15,7 @@ class Admin::BarcodeItemsController < AdminController
 
   def index
     @barcode_items = BarcodeItem.global
+    @items = BaseItem.all
   end
 
   def new

@@ -33,9 +33,7 @@
                 <i class="fa fa-ban"></i> Clear Filters
               <% end %>
               <div class="btn-group pull-right">
-                <%= link_to new_admin_barcode_item_path(organization_id: current_organization), class: "btn btn-success" do %>
-                  <i class="fa fa-plus"></i> Add New Barcode
-                <% end %>
+                <%= modal_button_to("#newBarcode", { text: "Add New Barcode", icon: "check-circle", size: "lg", type: "success" }) %>
               </div>
             </div>
           </div><!-- /.row -->
@@ -66,3 +64,45 @@
     </div><!-- /.box-body -->
   </div><!-- /.box -->
 </section>
+
+<div id="newBarcode" class="modal fade">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h2 class="modal-title">Add New Barcode</h4>
+    </div>
+    <div class="modal-body">
+    <%= simple_form_for BarcodeItem.new, url: admin_barcode_items_path, html: { method: :post } do |f| %>
+      <div class="box-body ">
+        <div class="row">
+          <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
+            <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+            <%= f.input_field :quantity, class: "form-control" %>
+            <% end %>
+        </div><!-- /.row -->
+        <div class="row">
+          <%= f.association :barcodeable, collection: @items, label: "Item" %>
+        </div>
+        <div class="row">
+          <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
+            <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+            <%= f.input_field :value, class: "form-control" %>
+          <% end %>
+        </div><!-- /.row -->
+<% # TODO: Revisit this. I *think* globals should only be done in admin area but... %>
+<% if current_user.super_admin? %>
+        <div class="row">
+          <%= f.input :global,
+                as: :radio_buttons,
+                label: "Make this barcode available to everyone?" %>
+        </div><!-- /.row -->
+<% end %>
+        <%= submit_button({ id: "awesomebutton" }) %>
+      </div><!-- /.box-body -->
+      <% end #form %>
+      <input type="hidden" value="" id="trigger-field-id" />
+    </div>
+  </div>
+</div>
+</div>
