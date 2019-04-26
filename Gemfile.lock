@@ -59,8 +59,6 @@ GEM
       activerecord (>= 3.2, < 6.0)
       rake (>= 10.4, < 13.0)
     api-auth (2.3.1)
-    archive-zip (0.11.0)
-      io-like (~> 0.3.0)
     arel (9.0.0)
     ast (2.4.0)
     autoprefixer-rails (9.4.3)
@@ -119,9 +117,6 @@ GEM
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
     choice (0.2.0)
-    chromedriver-helper (2.1.0)
-      archive-zip (~> 0.10)
-      nokogiri (~> 1.8)
     climate_control (0.2.0)
     cocoon (1.2.12)
     coderay (1.1.2)
@@ -161,6 +156,8 @@ GEM
     factory_bot_rails (4.11.1)
       factory_bot (~> 4.11.1)
       railties (>= 3.0.0)
+    fakeredis (0.7.0)
+      redis (>= 3.2, < 5.0)
     ffi (1.9.25)
     flipper (0.16.0)
     flipper-active_record (0.16.0)
@@ -205,7 +202,6 @@ GEM
     image_processing (1.7.1)
       mini_magick (~> 4.0)
       ruby-vips (>= 2.0.13, < 3)
-    io-like (0.3.0)
     jaro_winkler (1.5.1)
     jbuilder (2.8.0)
       activesupport (>= 4.2.0)
@@ -247,6 +243,7 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (5.0.2)
+    net_http_ssl_fix (0.0.10)
     newrelic_rpm (5.6.0.349)
     nio4r (2.3.1)
     nokogiri (1.10.1)
@@ -446,6 +443,11 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
+    webdrivers (3.7.2)
+      net_http_ssl_fix
+      nokogiri (~> 1.6)
+      rubyzip (~> 1.0)
+      selenium-webdriver (~> 3.0)
     webmock (3.5.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -482,7 +484,6 @@ DEPENDENCIES
   capybara (~> 3.12)
   capybara-screenshot
   chartkick
-  chromedriver-helper
   cocoon
   coffee-rails
   database_cleaner
@@ -490,6 +491,7 @@ DEPENDENCIES
   devise_invitable
   dotenv-rails
   factory_bot_rails
+  fakeredis
   flipper
   flipper-active_record
   flipper-ui
@@ -519,7 +521,6 @@ DEPENDENCIES
   rspec-rails (~> 3.8)
   rubocop
   sass-rails
-  selenium-webdriver
   sidekiq
   simple_form
   skylight
@@ -534,6 +535,7 @@ DEPENDENCIES
   tzinfo-data (~> 1.2)
   uglifier (>= 1.3.0)
   web-console
+  webdrivers (~> 3.0)
   webmock (~> 3.5)
   webpacker (~> 3.5)
   yajl-ruby

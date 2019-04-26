@@ -21,8 +21,7 @@ class DonationSite < ApplicationRecord
 
   has_many :donations, dependent: :destroy
 
-  geocoded_by :address
-  after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
+  include Geocodable
 
   scope :for_csv_export, ->(organization) {
     where(organization: organization)

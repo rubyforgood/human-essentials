@@ -1,7 +1,7 @@
 class BarcodeItemsController < ApplicationController
   def index
     @items = Item.gather_items(current_organization, @global)
-    @canonical_items = CanonicalItem.all
+    @base_items = BaseItem.all
     @barcode_items = current_organization.barcode_items.include_global(false).class_filter(filter_params)
   end
 
@@ -41,9 +41,9 @@ class BarcodeItemsController < ApplicationController
     # Global barcodes don't explicitly map to organization items, so we can do a lookup to clarify that
     if @barcode_item.global?
       # So in this case, we need to do an item lookup. #593 clarifies that we should fall through to the
-      # *oldest* item that the organization has that matches this canonical item type.
-      canonical_item = @barcode_item.barcodeable
-      @item = current_organization.items.by_canonical_item(canonical_item).order("created_at ASC").first
+      # *oldest* item that the organization has that matches this base item type.
+      base_item = @barcode_item.barcodeable
+      @item = current_organization.items.by_base_item(base_item).order("created_at ASC").first
     else
       # It was a local barcode_item, which maps directly to a known org item. We're set!
       @item = @barcode_item.item

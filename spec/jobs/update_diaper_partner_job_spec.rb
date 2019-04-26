@@ -37,6 +37,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
           end
         end
       end
+
       it "posts via DiaperPartnerClient" do
         with_features email_active: true do
           Sidekiq::Testing.inline! do

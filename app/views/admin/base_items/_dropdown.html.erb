@@ -1,6 +1,5 @@
-  <%= dropdown.association :canonical_item,
-    collection: @canonical_items,
-    value_method: :partner_key,
+  <%= dropdown.association :base_item,
+    collection: @base_items,
     label: "Base Item",
     error: "Please choose what kind of basic item this is",
     wrapper: :vertical_input_group %>

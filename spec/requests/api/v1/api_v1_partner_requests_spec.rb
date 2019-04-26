@@ -108,6 +108,6 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
 end
 
 def random_keys(sample_size)
-  CanonicalItem.all.pluck(:partner_key).sample(sample_size).uniq.map(&:to_sym)
+  BaseItem.all.pluck(:partner_key).sample(sample_size).uniq.map(&:to_sym)
 end
 

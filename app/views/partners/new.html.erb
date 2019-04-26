@@ -9,7 +9,7 @@
     <i class="fa fa-dashboard"></i> Home
   <% end %>
   </li>
-  <li><%= link_to "Partners", (partners_path) %></li>  
+  <li><%= link_to "Partners", (partners_path) %></li>
   <li class="active"> New Partner</li>
 </ol>
 </section>
@@ -25,12 +25,10 @@
   <div class="box-body">
 
   <h1 class="medium-offset-3 medium-6"></h1>
-  
-  <%= render partial: "form", object: @partner %>
+
+  <%= render partial: "form", object: @partner, locals: { submit_btn_options: { text: "Send Invitation", icon: "envelope"} } %>
   </div>
 </div>
 <!-- /.box -->
 
 </section>
-
-

@@ -56,8 +56,7 @@ class Organization < ApplicationRecord
 
   accepts_nested_attributes_for :users
 
-  geocoded_by :address
-  after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
+  include Geocodable
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
@@ -113,8 +112,8 @@ class Organization < ApplicationRecord
   def self.seed_items(org)
     Rails.logger.info "Seeding #{org.name}'s items..."
     org_id = org.id
-    canonical_items = CanonicalItem.pluck(:partner_key, :name).collect { |c| { partner_key: c[0], name: c[1], organization_id: org_id } }
-    Item.create(canonical_items)
+    base_items = BaseItem.pluck(:partner_key, :name).collect { |c| { partner_key: c[0], name: c[1], organization_id: org_id } }
+    Item.create(base_items)
     org.reload
   end
 

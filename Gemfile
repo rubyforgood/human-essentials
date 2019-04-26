@@ -57,6 +57,7 @@ group :development, :test do
   gem "terminal-notifier"
   gem "timecop"
   gem "rubocop"
+  gem "fakeredis", require: "fakeredis/rspec"
 end
 
 group :development do
@@ -82,12 +83,10 @@ group :test do
   gem "database_cleaner"
   gem "factory_bot_rails"
   gem "launchy"
-  gem "chromedriver-helper"
-  gem "selenium-webdriver"
+  gem 'webdrivers', '~> 3.0'
   gem "rails-controller-testing"
   gem "webmock", "~> 3.5"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
-
