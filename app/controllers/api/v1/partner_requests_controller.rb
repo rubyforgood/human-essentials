@@ -8,6 +8,10 @@ class API::V1::PartnerRequestsController < ApplicationController
     return head :forbidden unless api_key_valid?
 
     request = Request.new(request_params)
+    unless request&.partner&.approved?
+      request.status = "recertification_required"
+    end
+
     if request.save
       render json: request, status: :created
     else
