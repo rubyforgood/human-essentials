@@ -65,6 +65,12 @@ class PartnersController < ApplicationController
     redirect_to partners_path
   end
 
+  def invite
+    partner = current_organization.partners.find(params[:id])
+    partner.register_on_partnerbase
+    redirect_to partners_path, notice: "#{partner.name} invited!"
+  end
+
   private
 
   def autovivifying_hash
