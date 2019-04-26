@@ -10,6 +10,8 @@
         <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-orange" do %><%= status.humanize %><% end %>
       <% when "approved" %>
         <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" do %><%= status.humanize %><% end %>
+    <% when "recertification_required" %>
+      <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-red" do %><%= status.humanize %><% end %>
     <% end %>
   </td>
   <!-- <td><%== (rand < 0.7) ? '<span class="label label-success">Approved</span>' :
