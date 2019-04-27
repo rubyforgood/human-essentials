@@ -18,6 +18,7 @@ class Partner < ApplicationRecord
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy
+  has_many :requests, dependent: :destroy
 
   validates :organization, presence: true
   validates :name, :email, presence: true, uniqueness: true
