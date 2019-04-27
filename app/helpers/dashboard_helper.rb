@@ -42,10 +42,6 @@ module DashboardHelper
     end
   end
 
-  def pie_chart_data
-    current_organization.quantity_categories
-  end
-
   def received_distributed_data(range = selected_range)
     {
       "Received donations" => total_received_donations_unformatted(range),
@@ -77,14 +73,14 @@ module DashboardHelper
   private
 
   def total_received_donations_unformatted(range = selected_range)
-    LineItem.where(itemizable: current_organization.donations.during(range)).sum(:quantity)
+    LineItem.active.where(itemizable: current_organization.donations.during(range)).sum(:quantity)
   end
 
   def total_purchased_unformatted(range = selected_range)
-    LineItem.where(itemizable: current_organization.purchases.during(range)).sum(:quantity)
+    LineItem.active.where(itemizable: current_organization.purchases.during(range)).sum(:quantity)
   end
 
   def total_distributed_unformatted(range = selected_range)
-    LineItem.where(itemizable: current_organization.distributions.during(range)).sum(:quantity)
+    LineItem.active.where(itemizable: current_organization.distributions.during(range)).sum(:quantity)
   end
 end

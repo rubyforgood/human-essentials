@@ -88,6 +88,15 @@ RSpec.describe DataExport, type: :model do
       end
     end
 
+    context "type is Vendor >" do
+      let(:type) { "Vendor" }
+      let!(:participant) { create(:vendor, organization: org) }
+
+      it "should return a CSV string with Vendor data" do
+        expect(subject.as_csv).to include(participant.business_name)
+      end
+    end
+
     context "type is StorageLocation >" do
       let(:type) { "StorageLocation" }
       let!(:location) { create(:storage_location, organization: org) }
@@ -121,12 +130,7 @@ RSpec.describe DataExport, type: :model do
 
     context "type is Item >" do
       let(:type) { "Item" }
-      let(:category) { "Dope Category" }
-      let!(:item) { create(:item, category: category, organization: org) }
-
-      it "should return a CSV string with item data" do
-        expect(subject.as_csv).to include(category)
-      end
+      let!(:item) { create(:item, organization: org) }
     end
 
     context "type is BarcodeItem >" do

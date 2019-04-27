@@ -13,7 +13,6 @@ class ItemsByStorageCollectionAndQuantityQuery
       unless @items_by_storage_collection_and_quantity.key?(row.id)
         @items_by_storage_collection_and_quantity[row.id] = {
           item_name: row.name,
-          item_category: row.category,
           item_value: row.value,
           item_barcode_count: row.barcode_count
         }

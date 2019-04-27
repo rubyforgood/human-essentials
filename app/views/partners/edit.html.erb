@@ -5,11 +5,12 @@
   <small>for <%= current_organization.name %></small>
 </h1>
 <ol class="breadcrumb">
-<li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
+  <li>
+    <%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
   </li>
-  <li><%= link_to "Partners", (partners_path) %></li>  
+  <li><%= link_to "Partners", (partners_path) %></li>
   <li class="active">Editing <%= @partner.name %></li>
 </ol>
 </section>
@@ -23,11 +24,9 @@
     <h3 class="box-title">Update record for <%= @partner.name %></h3>
   </div>
   <div class="box-body">
-    <%= render partial: "form", object: @partner %>
+    <%= render partial: "form", object: @partner, locals: { submit_btn_options: { text: "Update Partner" } } %>
   </div>
 </div>
 <!-- /.box -->
 
 </section>
-
-

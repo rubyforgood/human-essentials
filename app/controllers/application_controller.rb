@@ -27,6 +27,9 @@ class ApplicationController < ActionController::Base
       options[:organization_id] = current_organization.to_param
     elsif current_user && !current_user.super_admin? && current_user.organization.present?
       options[:organization_id] = current_user.organization.to_param
+    elsif current_user&.super_admin?
+      # FIXME: This *might* not be the best way to approach this...
+      options[:organization_id] = "admin"
     end
     options
   end
