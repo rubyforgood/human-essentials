@@ -8,7 +8,8 @@ class PartnersController < ApplicationController
   def create
     @partner = current_organization.partners.new(partner_params)
     if @partner.save
-      redirect_to partners_path, notice: "Partner added!"
+      @partner.register_on_partnerbase
+      redirect_to partners_path, notice: "Partner added and invited!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
@@ -62,6 +63,12 @@ class PartnersController < ApplicationController
   def destroy
     current_organization.partners.find(params[:id]).destroy
     redirect_to partners_path
+  end
+
+  def invite
+    partner = current_organization.partners.find(params[:id])
+    partner.register_on_partnerbase
+    redirect_to partners_path, notice: "#{partner.name} invited!"
   end
 
   private
