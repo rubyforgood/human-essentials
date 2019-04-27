@@ -8,7 +8,6 @@ class RequestsController < ApplicationController
 
   def show
     @request = Request.find(params[:id])
-    @items = @request.items_hash
     @request_items = get_items(@request.request_items)
   end
 
@@ -24,6 +23,8 @@ class RequestsController < ApplicationController
 
   def get_items(request_items)
     # using Struct vs Hash so we can use dot notation in the view
+    return unless request_items
+
     Struct.new('Item', :name, :quantity, :on_hand)
     request_items.map do |key|
       Struct::Item.new(Item.find(key["item_id"]).name, key["quantity"], sum_inventory(Item.find(key["item_id"])))
