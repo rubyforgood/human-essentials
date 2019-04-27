@@ -29,11 +29,7 @@ RSpec.feature "Requests", type: :feature do
       # Add inventory items to both storage locations
       ####
       @second_storage_location = create(:storage_location, organization: @organization)
-      @item = Item.find_by(
-        base_item: BaseItem.find_by(
-          partner_key: @request.request_items.keys.first
-        )
-      )
+      @item = Item.find(@request.request_items.first["item_id"])
       @storage_location.inventory_items.create!(quantity: 234, item: @item)
       @second_storage_location.inventory_items.create!(quantity: 100, item: @item)
       visit url_prefix + "/requests/#{@request.id}"
