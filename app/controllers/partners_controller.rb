@@ -30,6 +30,7 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.new
   end
 
+  # review_application
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
 

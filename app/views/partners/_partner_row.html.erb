@@ -3,27 +3,18 @@
   <td><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
   <td>
-    <% case status %>
-      <% when "pending" %>
-        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-maroon" do %><%= status.humanize %><% end %>
-      <% when "awaiting_review" %>
-        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-orange" do %><%= status.humanize %><% end %>
-      <% when "approved" %>
-        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" do %><%= status.humanize %><% end %>
-    <% when "recertification_required" %>
-      <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-red" do %><%= status.humanize %><% end %>
-    <% end %>
+    <%= partner_row.status.humanize %>
   </td>
   <!-- <td><%== (rand < 0.7) ? '<span class="label label-success">Approved</span>' :
   '<span class="label label-warning">In Progress</span>' %></td> -->
   <td>
     <% case status %>
     <% when "pending" %>
-      <%= link_to "Approve", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
+      <%= link_to "Review Application", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
     <% when "awaiting_review" %>
-      <%= link_to "Approve", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
+      <%= link_to "Review Application", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
     <% when "approved" %>
-      <%= link_to "Recertify", recertify_partner_partner_path(partner_row), class: "btn btn-xs bg-red" %>
+      <%= link_to "Recertify", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-red" %>
     <% end %>
   </td>
 </tr>
