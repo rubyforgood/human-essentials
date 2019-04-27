@@ -126,7 +126,13 @@ class Organization < ApplicationRecord
   end
 
   def valid_items
-    items.map(&:partner_key)
+    items.map do |item|
+      {
+        id: item.id,
+        partner_key: item.partner_key,
+        name: item.name
+      }
+    end
   end
 
   private
