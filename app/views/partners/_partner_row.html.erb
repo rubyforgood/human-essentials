@@ -1,6 +1,6 @@
 <% status = partner_row.status%>
 <tr>
-  <td><%= partner_row.name %></td>
+  <td><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
   <td>
     <% case status %>
@@ -16,9 +16,14 @@
   </td>
   <!-- <td><%== (rand < 0.7) ? '<span class="label label-success">Approved</span>' :
   '<span class="label label-warning">In Progress</span>' %></td> -->
-  <td class="text-right">
-    <%= view_button_to partner_path(partner_row) %>
-    <%= edit_button_to edit_partner_path(partner_row) %>
-    <%= delete_button_to partner_path(partner_row), { confirm: confirm_delete_msg(partner_row.name) } %>
+  <td>
+    <% case status %>
+    <% when "pending" %>
+      <%= link_to "Approve", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
+    <% when "awaiting_review" %>
+      <%= link_to "Approve", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
+    <% when "approved" %>
+      <%= link_to "Recertify", recertify_partner_partner_path(partner_row), class: "btn btn-xs bg-red" %>
+    <% end %>
   </td>
 </tr>
