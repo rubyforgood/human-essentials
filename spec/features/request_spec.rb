@@ -31,7 +31,7 @@ RSpec.feature "Requests", type: :feature do
       @second_storage_location = create(:storage_location, organization: @organization)
       @item = Item.find_by(
         base_item: BaseItem.find_by(
-          partner_key: @request.request_items.keys.first
+          partner_key: Item.find(@request.request_items.first["item_id"]).partner_key
         )
       )
       @storage_location.inventory_items.create!(quantity: 234, item: @item)

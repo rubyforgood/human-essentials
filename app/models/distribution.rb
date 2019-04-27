@@ -82,10 +82,10 @@ class Distribution < ApplicationRecord
     self.partner_id = request.partner_id
     self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
-    request.request_items.each do |key, quantity|
+    request.request_items.each do |item|
       line_items.new(
-        quantity: quantity,
-        item: Item.joins(:inventory_items).eager_load(:base_item).find_by(organization: request.organization, base_items: { partner_key: key }),
+        quantity: item["quantity"],
+        item: Item.joins(:inventory_items).eager_load(:base_item).find_by(organization: request.organization, id: item["item_id"]),
         itemizable_id: request.id,
         itemizable_type: "Distribution"
       )
