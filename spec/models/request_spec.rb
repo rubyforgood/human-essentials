@@ -24,19 +24,4 @@ RSpec.describe Request, type: :model do
       end
     end
   end
-
-  describe "Methods >" do
-    describe "items_hash" do
-      it "retrieves a hash that materializes the items from the JSONB" do
-        c1, c2 = BaseItem.all.take(2)
-        request = create(:request, request_items:
-            [{ "item_id" => c1.items.first.id, "quantity" => 10},
-             { "item_id" => c2.items.first.id, "quantity" => 10}])
-
-        items_hash = request.items_hash
-        expect(items_hash.keys).to match_array([c1.items.first.partner_key, c2.items.first.partner_key])
-        expect(items_hash.values).to match_array([c1.items.first, c2.items.first])
-      end
-    end
-  end
 end

@@ -13,15 +13,16 @@
 #  distribution_id :integer
 #
 
-def random_keys(sample_size)
-  Item.all.pluck(:id).sample(sample_size)
+def random_request_items
+  keys = Item.all.pluck(:id).sample(3)
+  keys.map { |k| { "item_id" => k, "quantity" => rand(3..10) } }
 end
 
 FactoryBot.define do
   factory :request do
     partner { Partner.try(:first) || create(:partner) }
     organization { Organization.try(:first) || create(:organization) }
-    request_items { random_keys(3).map {|k| { "item_id" => k, "quantity" => rand(3..10) } } }
+    request_items { random_request_items }
     status { "Active" }
     comments { "Urgent" }
   end

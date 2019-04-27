@@ -16,7 +16,7 @@ RSpec.describe RequestsController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:request, organization: @organization)) }
+      subject { get :show, params: default_params.merge(id: create(:request, organization: @organization, comments: "comments", request_items: nil)) }
       it "returns http success" do
         expect(subject).to be_successful
       end

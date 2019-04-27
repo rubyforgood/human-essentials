@@ -23,12 +23,6 @@ class Request < ApplicationRecord
 
   STATUSES = %w[Active Fulfilled].freeze
 
-  def items_hash
-    @items_hash ||= request_items.collect do |item|
-      [Item.order("created_at ASC").find_by(id: item["item_id"]).partner_key, Item.order("created_at ASC").find_by(id: item["item_id"])]
-    end.to_h
-  end
-
   def family_request_reply
     {
       "organization_id": organization_id,
