@@ -103,6 +103,7 @@ Rails.application.routes.draw do
       member do
         get :approve_application
         get :approve_partner
+        post :invite
         post :recertify_partner
       end
     end
