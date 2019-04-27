@@ -25,12 +25,12 @@ class RequestsController < ApplicationController
   def get_items(request_items)
     # using Struct vs Hash so we can use dot notation in the view
     Struct.new('Item', :name, :quantity, :on_hand)
-    request_items.map do |key, quantity|
-      Struct::Item.new(Item.find(key["item_id"]).name, key["quantity"], sum_inventory(Item.find(key["item_id"]).partner_key))
+    request_items.map do |key|
+      Struct::Item.new(Item.find(key["item_id"]).name, key["quantity"], sum_inventory(Item.find(key["item_id"])))
     end
   end
 
-  def sum_inventory(partner_key)
-    current_organization.inventory_items.by_partner_key(partner_key).sum(:quantity)
+  def sum_inventory(key)
+    current_organization.inventory_items.where(item_id: key).sum(:quantity)
   end
 end
