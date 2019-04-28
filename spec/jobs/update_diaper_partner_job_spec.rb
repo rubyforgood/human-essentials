@@ -14,7 +14,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
               UpdateDiaperPartnerJob.perform_async(@partner.id)
               @partner.reload
             end
-            expect(@partner.status).to eq("pending")
+            expect(@partner.status).to eq("uninvited")
           end
         end
       end

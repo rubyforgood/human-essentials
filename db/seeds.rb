@@ -74,10 +74,10 @@ end
 Partner.find_or_create_by!(name: "Pawnee Parent Service", email: "someone@pawneeparent.org", status: :approved) do |partner|
   partner.organization = pdx_org
 end
-Partner.find_or_create_by!(name: "Pawnee Homeless Shelter", email: "anyone@pawneehomelss.com") do |partner|
+Partner.find_or_create_by!(name: "Pawnee Homeless Shelter", email: "anyone@pawneehomelss.com", status: :invited) do |partner|
   partner.organization = pdx_org
 end
-Partner.find_or_create_by!(name: "Pawnee Pregnancy Center", email: "contactus@pawneepregnancy.com") do |partner|
+Partner.find_or_create_by!(name: "Pawnee Pregnancy Center", email: "contactus@pawneepregnancy.com", status: :invited) do |partner|
   partner.organization = pdx_org
 end
 
@@ -221,9 +221,9 @@ end
   Request.create(
     partner: random_record(Partner),
     organization: random_record(Organization),
-    request_items: { k_size5: 3,
-                     k_size6: 2
-                   },
+    request_items: [{ "item_id" => Item.all.pluck(:id).sample, "quantity" => 3},
+                    { "item_id" => Item.all.pluck(:id).sample, "quantity" => 2}
+                   ],
     comments: "Urgent",
     status: status
   )
