@@ -7,11 +7,12 @@
     <% when "uninvited" %>
       <button class="btn btn-xs bg-teal">Uninvited</button>
       <% when "invited" %>
-        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-maroon" do %><%= status.humanize %><% end %>
+      <%= view_button_to approve_partner_partner_path(partner_row), { text: "#{status.humanize}", icon: "check" } %>
+
       <% when "awaiting_review" %>
-        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-orange" do %><%= status.humanize %><% end %>
+      <%= view_button_to approve_partner_partner_path(partner_row), { text: "#{status.humanize}", icon: "check", type: "warning" } %>
       <% when "approved" %>
-        <%= link_to approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" do %><%= status.humanize %><% end %>
+      <%= view_button_to approve_partner_partner_path(partner_row), { text: "#{status.humanize}", icon: "check", type: "success" } %>
     <% else %>
       <span class="label label-teal">Errored</span>
     <% end %>
