@@ -1,3 +1,4 @@
+class Request < ApplicationRecord; end
 class ChangeStatusToEnumInRequests < ActiveRecord::Migration[5.2]
   def up
     add_column :requests, :status_new, :integer, default: 0
