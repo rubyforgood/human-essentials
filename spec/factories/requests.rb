@@ -22,7 +22,7 @@ FactoryBot.define do
   factory :request do
     partner { Partner.try(:first) || create(:partner) }
     organization { Organization.try(:first) || create(:organization) }
-    request_items { random_keys(3).collect { |k| [k, rand(3..10)] }.to_h }
+    request_items { random_request_items }
     comments { "Urgent" }
   end
 
