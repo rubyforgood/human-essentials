@@ -44,7 +44,7 @@ RSpec.feature "Requests", type: :feature do
 
       scenario "to started", js: true do
         visit url_prefix + "/requests"
-        expect(page).to have_content "started"
+        expect(page).to have_content "Started"
         expect(@request.reload).to be_status_started
       end
 
@@ -52,7 +52,7 @@ RSpec.feature "Requests", type: :feature do
         scenario "change request to fulfilled", js: true do
           expect(page).to have_content "started"
           select @storage_location.name, from: "From storage location"
-          fill_in "Comment", with: "Take my wipes... please"
+          fill_in "Comment", with: "Tak4e my wipes... please"
           click_on "Save"
           expect(page).to have_content "Distributions"
           expect(page).to have_content "Distribution created"
