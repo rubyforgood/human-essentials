@@ -217,7 +217,7 @@ end
 end
 
 20.times.each do |count|
-  status = count > 15 ? 'Fulfilled' : 'Active'
+  status = count > 15 ? 'fulfilled' : 'pending'
   Request.create(
     partner: random_record(Partner),
     organization: random_record(Organization),
