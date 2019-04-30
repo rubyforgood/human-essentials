@@ -14,13 +14,16 @@
 #
 
 RSpec.describe Request, type: :model do
-  describe "Scopes >" do
-    describe "->active" do
-      it "retrieves only those with active status" do
-        Request.delete_all
-        create(:request, status: "Fulfilled")
-        create(:request, status: "Active")
-        expect(Request.active.size).to eq(1)
+  describe "Enums >" do
+    describe "#status" do
+      let!(:request_pending) { create(:request) }
+      let!(:request_started) { create(:request, :started) }
+      let!(:request_fulfilled) { create(:request, :fulfilled) }
+
+      it "scopes" do
+        expect(Request.status_pending).to eq([request_pending])
+        expect(Request.status_started).to eq([request_started])
+        expect(Request.status_fulfilled).to eq([request_fulfilled])
       end
     end
   end

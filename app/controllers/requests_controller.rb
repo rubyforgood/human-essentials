@@ -11,13 +11,13 @@ class RequestsController < ApplicationController
     @request_items = get_items(@request.request_items)
   end
 
-  # Clicking the "Fullfill" button will set the the request to fulfilled
+  # Clicking the "New Distribution" button will set the the request to started
   # and will move the user to the new distribution page with a
   # pre-filled distribution containing all the requested items.
-  def fullfill
+  def start
     request = Request.find(params[:id])
-    request.update(status: "Fulfilled")
-    flash[:notice] = "Request marked as fulfilled"
+    request.status_started!
+    flash[:notice] = "Request started"
     redirect_to new_distribution_path(request_id: request.id)
   end
 

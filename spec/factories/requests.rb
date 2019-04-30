@@ -23,7 +23,14 @@ FactoryBot.define do
     partner { Partner.try(:first) || create(:partner) }
     organization { Organization.try(:first) || create(:organization) }
     request_items { random_request_items }
-    status { "Active" }
     comments { "Urgent" }
+  end
+
+  trait :started do
+    status { 'started' }
+  end
+
+  trait :fulfilled do
+    status { 'fulfilled' }
   end
 end
