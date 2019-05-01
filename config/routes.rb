@@ -103,6 +103,7 @@ Rails.application.routes.draw do
       member do
         get :approve_application
         get :approve_partner
+        post :invite
       end
     end
 
@@ -118,7 +119,7 @@ Rails.application.routes.draw do
     resources :purchases
     resources :requests, only: %i(index new show) do
       member do
-        post :fullfill
+        post :start
       end
     end
 

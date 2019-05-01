@@ -8,7 +8,7 @@ RSpec.feature "Partner management", type: :feature do
     before(:each) do
       @second = create(:partner, name: "Bcd")
       @first = create(:partner, name: "Abc")
-      @third = create(:partner, name: "Cde")
+      @third = create(:partner, :approved, name: "Cde")
       visit url_prefix + "/partners"
     end
     scenario "the partner agency names are in alphabetical order" do
@@ -16,20 +16,26 @@ RSpec.feature "Partner management", type: :feature do
       expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
     end
+
+    scenario "shows invite button only for unapproved partners" do
+      expect(page.find(:xpath, "//table/tbody/tr[1]/td[4]")).to have_content('Invite')
+      expect(page.find(:xpath, "//table/tbody/tr[2]/td[4]")).to have_content('Invite')
+      expect(page.find(:xpath, "//table/tbody/tr[3]/td[4]")).not_to have_content('Invite')
+    end
   end
 
   scenario "User can add a new partner" do
     visit url_prefix + "/partners/new"
     fill_in "Name", with: "Frank"
     fill_in "E-mail", with: "frank@frank.com"
-    click_button "Send Invitation"
+    click_button "Add Partner Agency"
 
     expect(page.find(".alert")).to have_content "added"
   end
 
   scenario "User creates a new partner with empty name" do
     visit url_prefix + "/partners/new"
-    click_button "Send Invitation"
+    click_button "Add Partner Agency"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
@@ -52,5 +58,17 @@ RSpec.feature "Partner management", type: :feature do
     click_button "Update Partner"
 
     expect(page.find(".alert")).to have_content "didn't work"
+  end
+
+  scenario "User invite a partner", :js do
+    partner = create(:partner, name: 'Charities')
+    visit url_prefix + "/partners"
+
+    within("table > tbody > tr:nth-child(1) > td.text-right") { click_on "Invite" }
+    invite_alert = page.driver.browser.switch_to.alert
+    expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
+
+    invite_alert.accept
+    expect(page.find(".alert")).to have_content "invited!"
   end
 end

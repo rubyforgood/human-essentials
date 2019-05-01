@@ -19,15 +19,7 @@ class Request < ApplicationRecord
   belongs_to :distribution, optional: true
   has_many :item_requests, dependent: :destroy
 
-  scope :active, -> { where(status: "Active") }
-
-  STATUSES = %w[Active Fulfilled].freeze
-
-  def items_hash
-    @items_hash ||= request_items.collect do |key, _|
-      [key, Item.order("created_at ASC").find_by(partner_key: key)]
-    end.to_h
-  end
+  enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
   def family_request_reply
     {

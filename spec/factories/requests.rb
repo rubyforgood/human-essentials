@@ -13,16 +13,24 @@
 #  distribution_id :integer
 #
 
-def random_keys(sample_size)
-  BaseItem.all.pluck(:partner_key).sample(sample_size).uniq.map(&:to_sym)
+def random_request_items
+  keys = Item.all.pluck(:id).sample(3)
+  keys.map { |k| { "item_id" => k, "quantity" => rand(3..10) } }
 end
 
 FactoryBot.define do
   factory :request do
     partner { Partner.try(:first) || create(:partner) }
     organization { Organization.try(:first) || create(:organization) }
-    request_items { random_keys(3).collect { |k| [k, rand(3..10)] }.to_h }
-    status { "Active" }
+    request_items { random_request_items }
     comments { "Urgent" }
+  end
+
+  trait :started do
+    status { 'started' }
+  end
+
+  trait :fulfilled do
+    status { 'fulfilled' }
   end
 end

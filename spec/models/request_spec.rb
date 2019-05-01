@@ -14,25 +14,16 @@
 #
 
 RSpec.describe Request, type: :model do
-  describe "Scopes >" do
-    describe "->active" do
-      it "retrieves only those with active status" do
-        Request.delete_all
-        create(:request, status: "Fulfilled")
-        create(:request, status: "Active")
-        expect(Request.active.size).to eq(1)
-      end
-    end
-  end
+  describe "Enums >" do
+    describe "#status" do
+      let!(:request_pending) { create(:request) }
+      let!(:request_started) { create(:request, :started) }
+      let!(:request_fulfilled) { create(:request, :fulfilled) }
 
-  describe "Methods >" do
-    describe "items_hash" do
-      it "retrieves a hash that materializes the items from the JSONB" do
-        c1, c2 = BaseItem.all.take(2)
-        request = create(:request, request_items: { c1.partner_key => 5, c2.partner_key => 10 })
-        items_hash = request.items_hash
-        expect(items_hash.keys).to match_array([c1.partner_key, c2.partner_key])
-        expect(items_hash.values).to match_array([c1.items.first, c2.items.first])
+      it "scopes" do
+        expect(Request.status_pending).to eq([request_pending])
+        expect(Request.status_started).to eq([request_started])
+        expect(Request.status_fulfilled).to eq([request_fulfilled])
       end
     end
   end

@@ -69,7 +69,7 @@ RSpec.describe Organization, type: :model do
   describe "#ordered_requests" do
     let!(:new_active_request)  { create(:request, comments: "first active") }
     let!(:old_active_request) { create(:request, comments: "second active") }
-    let!(:fulfilled_request) { create(:request, status: 'Fulfilled', comments: "first fulfilled") }
+    let!(:fulfilled_request) { create(:request, :fulfilled, comments: "first fulfilled") }
     let!(:organization) { create(:organization, requests: [old_active_request, fulfilled_request, new_active_request]) }
 
     it "puts active requests before fulfilled requests" do
@@ -156,9 +156,10 @@ RSpec.describe Organization, type: :model do
 
   describe 'valid_items' do
     it 'returns an array of item partner keys' do
-      org = create(:organization)
-      expect(org.valid_items).to be_an(Array)
-      expect(org.valid_items.first).to be_an(String)
+      item = organization.items.first
+      expected = { name: item.name, id: item.id, partner_key: item.partner_key }
+      expect(organization.valid_items.count).to eq(organization.items.count)
+      expect(organization.valid_items).to include(expected)
     end
   end
   describe 'reminder_days_before_deadline' do
