@@ -28,18 +28,18 @@
       <li class="<%= active_class(['canonical_items']) %> treeview">
         <a href="#">
           <i class="fa fa-people-sitemap"></i>
-          <span class="nav-label">Canonical Items</span>
+          <span class="nav-label">Base Items</span>
           <span class="fa arrow"></span>
         </a>
         <ul class="nav nav-second-level">
-          <li class="<%= 'active' if current_page?(admin_canonical_items_path) %>">
-            <%= link_to(admin_canonical_items_path) do %>
-              <i class="fa fa-circle-o"></i> All Canonical Items
+          <li class="<%= 'active' if current_page?(admin_base_items_path) %>">
+            <%= link_to(admin_base_items_path) do %>
+              <i class="fa fa-circle-o"></i> All Base Items
             <% end %>
           </li>
-          <li class="<%= 'active' if current_page?(new_admin_canonical_item_path) %>">
-            <%= link_to(new_admin_canonical_item_path) do %>
-              <i class="fa fa-plus-circle"></i> New Canonical Item
+          <li class="<%= 'active' if current_page?(new_admin_base_item_path) %>">
+            <%= link_to(new_admin_base_item_path) do %>
+              <i class="fa fa-plus-circle"></i> New Base Item
             <% end %>
           </li>
         </ul>
