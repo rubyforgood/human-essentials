@@ -12,7 +12,6 @@ module Itemizable
     end
 
     has_many :line_items, as: :itemizable, inverse_of: :itemizable do
-
       def combine!
         # Bail if there's nothing
         return if size.zero?

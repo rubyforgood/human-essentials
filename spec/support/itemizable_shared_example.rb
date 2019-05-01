@@ -6,7 +6,6 @@ shared_examples_for "itemizable" do
   end
 
   context ".line_items" do
-    
     describe "combine!" do
       it "combines multiple line_items with the same item_id into a single record" do
         storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
