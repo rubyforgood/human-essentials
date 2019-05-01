@@ -315,35 +315,6 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "reclaim!" do
-      it "adds distribution items back to storage location" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
-        storage_location.reclaim!(distribution)
-        expect(storage_location.inventory_items.first.quantity).to eq 350
-      end
-
-      it "re-activates items that were previously deleted" do
-        storage_location = create :storage_location, :with_items, item_quantity: 200
-        distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
-        item = distribution.line_items.first.item
-        expect do
-          item.destroy
-        end.to change { item.active }.from(true).to(false)
-        expect do
-          storage_location.reclaim!(distribution)
-          item.reload
-        end.to change { item.active }.from(false).to(true)
-      end
-
-      it "does not destroy the distribution" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
-        storage_location.reclaim!(distribution)
-        expect(Distribution.find(distribution.id)).to eql distribution
-      end
-    end
-
     describe "geocode" do
       it "adds coordinates to the database" do
         storage_location = build(:storage_location,
