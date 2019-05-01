@@ -31,24 +31,8 @@ class Adjustment < ApplicationRecord
   end
 
   def split_difference
-    # Adjustments are weird. They'll have positive AND negative values, instead
-    # of just one or the other. Negative values mean "decrease", positive values
-    # mean "increase". Because Storage location only needs an Itemizable duck,
-    # We're going to create two temporary copies, one for increasing and one
-    # for decreasing.
-
-    increasing_adjustment = ::Adjustment.new
-    decreasing_adjustment = ::Adjustment.new
-
-    line_items.replicate_to(increasing_adjustment) do |line_item|
-      next if line_item.quantity.negative?
-    end
-
-    line_items.replicate_to(decreasing_adjustment) do |line_item|
-      next if line_item.quantity.positive?
-    end
-
-    [increasing_adjustment, decreasing_adjustment]
+    pre_adjustment = line_items.partition {|line_item| line_item.quantity.negative?}
+    pre_adjustment.map {|pre_adjustment| Adjustment.new(line_items: pre_adjustment)  }
   end
 
   def self.csv_export_headers
@@ -73,5 +57,21 @@ class Adjustment < ApplicationRecord
     unless organization.storage_locations.include?(storage_location)
       errors.add :storage_location, "storage location must belong to organization"
     end
+  end
+
+  def replicate_to(itemizable)
+    raise ArgumentError unless itemizable.respond_to?(:line_items)
+
+    all_line_items = if block_given?
+                       collect do |line_item|
+                         yield(line_item)
+                         line_item
+                       end.compact
+                     else
+                       collect
+                     end
+
+    all_line_items.each { |li| itemizable.line_items << li.dup }
+    itemizable
   end
 end
