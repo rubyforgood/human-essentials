@@ -17,7 +17,7 @@ RSpec.feature "Adjustment management", type: :feature do
     expect do
       click_button "Save"
     end.to change { storage_location.size }.by(add_quantity)
-    expect(page).to have_content("Adjustment was successfully created")
+    expect(page).to have_content("Adjustment was successful")
   end
 
   scenario "User can subtract an inventory adjustment at a storage location", js: true do
@@ -33,7 +33,7 @@ RSpec.feature "Adjustment management", type: :feature do
     expect do
       click_button "Save"
     end.to change { storage_location.size }.by(sub_quantity)
-    expect(page).to have_content("Adjustment was successfully created")
+    expect(page).to have_content("Adjustment was successful")
   end
 
   scenario "User is informed politely that they're adjusting way too hard", js: true do
@@ -49,7 +49,7 @@ RSpec.feature "Adjustment management", type: :feature do
     expect do
       click_button "Save"
     end.not_to change { storage_location.size }
-    expect(page).to have_content("Adjustment was successfully created")
+    expect(page).to have_content("Requested Adjustment items exceed the available inventory")
   end
 
   scenario "User can filter the #index by storage location" do
