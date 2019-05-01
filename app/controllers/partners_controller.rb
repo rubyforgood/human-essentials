@@ -17,7 +17,7 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    @partner.update(status: "Approved")
+    @partner.approved!
     DiaperPartnerClient.put(@partner.attributes)
     redirect_to partners_path
   end
@@ -62,6 +62,12 @@ class PartnersController < ApplicationController
   def destroy
     current_organization.partners.find(params[:id]).destroy
     redirect_to partners_path
+  end
+
+  def invite
+    partner = current_organization.partners.find(params[:id])
+    partner.register_on_partnerbase
+    redirect_to partners_path, notice: "#{partner.name} invited!"
   end
 
   private

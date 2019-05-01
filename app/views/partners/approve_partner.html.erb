@@ -148,7 +148,7 @@
         <!-- /.box -->
       </div>
       <div class="box-footer">
-        <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "lg" } if @partner.status == "Awaiting Review" %>
+        <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "lg" } if @partner.awaiting_review? %>
       </div>
     </div>
   </div>

@@ -28,7 +28,7 @@
           <div class="row">
             <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
               <%= label_tag "Filter By Base Item" %>
-              <%= collection_select(:filters, :by_item_partner_key, @canonical_items.order('name'), :partner_key, :name, { include_blank: true }, class: "form-control") %>
+              <%= collection_select(:filters, :by_item_partner_key, @base_items.order('name'), :partner_key, :name, { include_blank: true }, class: "form-control") %>
             </div>
           </div><!-- /.row -->
           <div class="row">

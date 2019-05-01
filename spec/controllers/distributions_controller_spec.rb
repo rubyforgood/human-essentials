@@ -1,10 +1,7 @@
 RSpec.describe DistributionsController, type: :controller do
-  let(:distribution) { create(:distribution) }
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
-  let(:storage_location) { create(:storage_location) }
-  let(:partner) { create(:partner) }
 
   context "While signed in" do
     before do
@@ -12,7 +9,14 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     describe "GET #print" do
-      subject { get :print, params: default_params.merge(id: distribution.id) }
+      subject { get :print, params: default_params.merge(id: create(:distribution).id) }
+      it "returns http success" do
+        expect(subject).to be_successful
+      end
+    end
+
+    describe "GET #reclaim" do
+      subject { get :index, params: default_params.merge(organization_id: @organization, id: create(:distribution).id) }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -26,14 +30,21 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     describe "POST #create" do
+      let!(:storage_location) { create(:storage_location) }
+      let!(:partner) { create(:partner) }
+      let(:distribution) do
+        { distribution: { storage_location_id: storage_location.id, partner_id: partner.id } }
+      end
+
       it "redirects to #index on success" do
+        params = default_params.merge(distribution)
         expect(storage_location).to be_valid
         expect(partner).to be_valid
         expect(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
         jobs_count = PartnerMailerJob.jobs.count
 
-        post :create, params: default_params.merge(distribution: { storage_location_id: storage_location.id, partner_id: partner.id })
+        post :create, params: params
         expect(response).to have_http_status(:redirect)
 
         expect(response).to redirect_to(distributions_path)
@@ -55,7 +66,7 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: distribution.id) }
+      subject { get :show, params: default_params.merge(id: create(:distribution).id) }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -67,6 +78,9 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     describe "POST #update" do
+      let(:location) { create(:storage_location) }
+      let(:partner) { create(:partner) }
+
       let(:distribution) { create(:distribution, partner: partner) }
       let(:issued_at) { distribution.issued_at }
       let(:distribution_params) do
@@ -74,7 +88,7 @@ RSpec.describe DistributionsController, type: :controller do
           id: distribution.id,
           distribution: {
             partner_id: partner.id,
-            storage_location_id: storage_location.id,
+            storage_location_id: location.id,
             'issued_at(1i)' => issued_at.to_date.year,
             'issued_at(2i)' => issued_at.to_date.month,
             'issued_at(3i)' => issued_at.to_date.day

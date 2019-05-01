@@ -22,10 +22,13 @@ Rails.application.routes.draw do
   get :admin, to: "admin#dashboard"
   namespace :admin do
     get :dashboard
-    resources :canonical_items
+    resources :base_items
     resources :organizations
     resources :users
     resources :barcode_items
+    resources :feedback_messages do
+      get :resolve
+    end
   end
 
   # These are globally accessible
@@ -35,6 +38,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :partner_requests, only: %i(create show)
       resources :partner_approvals, only: :create
+      resources :family_requests, only: %i(create show)
     end
   end
 
@@ -98,6 +102,7 @@ Rails.application.routes.draw do
       member do
         get :approve_application
         get :approve_partner
+        post :invite
       end
     end
 
@@ -113,7 +118,7 @@ Rails.application.routes.draw do
     resources :purchases
     resources :requests, only: %i(index new show) do
       member do
-        post :fullfill
+        post :start
       end
     end
 

@@ -10,7 +10,7 @@
     <% end %>
     </li>
     <li><%= link_to "Purchases", (purchases_path) %></li>
-    <li class="active"> <%= @purchase.purchased_from_view %> on <%= @purchase.created_at.strftime("%B %-d %Y") %></li>
+    <li class="active"> <%= @purchase.purchased_from_view %> on <%= @purchase.created_at.to_s(:distribution_date) %></li>
   </ol>
 </section>
 
@@ -19,7 +19,7 @@
   <div class="box">
     <div class="box-header with-border">
       <fieldset>
-        <p>This donation was started on <%= @purchase.created_at.strftime("%B %-d %Y") %>:</p>
+        <p>This donation was started on <%= @purchase.created_at.to_s(:distribution_date) %>:</p>
         <ul class="list-group">
           <li class="list-group-item">It was bought from: <%= @purchase.purchased_from_view %></li>
           <li class="list-group-item">It will be stored at: <%= @purchase.storage_view %></li>
@@ -48,13 +48,13 @@
         -->
         </section>
       </fieldset>
-      
+
     </div>
     <div class="box-footer">
       <%= edit_button_to edit_purchase_path(@purchase), { text: "Make a correction", size: "lg" } %>
     </div>
   </div>
-</section>  
+</section>
 
 
 

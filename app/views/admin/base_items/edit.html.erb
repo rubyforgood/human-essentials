@@ -1,7 +1,7 @@
 <section class="content-header">
-  <% content_for :title, "Edit - Items - #{@canonical_item.name} - Inventory" %>
+  <% content_for :title, "Edit - Items - #{@base_item.name} - Inventory" %>
 <h1>
-  Editing Canonical Item
+  Editing Base Item
 </h1>
 <ol class="breadcrumb">
   <li>
@@ -9,8 +9,8 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
   </li>
-  <li><%= link_to "All Canonical Items", (admin_canonical_items_path) %></li>
-  <li class="active">Editing <%= @canonical_item.name %></li>
+  <li><%= link_to "All Base Items", (admin_base_items_path) %></li>
+  <li class="active">Editing <%= @base_item.name %></li>
 </ol>
 </section>
 
@@ -20,11 +20,11 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <h3 class="box-title">Update <%= @canonical_item.name %></h3>
+    <h3 class="box-title">Update <%= @base_item.name %></h3>
   </div>
   <div class="box-body">
     <div class="box-body">
-      <%= simple_form_for [:admin, @canonical_item], html: { class: 'form-horizontal' },  url: admin_canonical_item_path(@canonical_item) do |f| %>
+      <%= simple_form_for [:admin, @base_item], html: { class: 'form-horizontal' },  url: admin_base_item_path(@base_item) do |f| %>
         <%= render partial: "form", object: f %>
         <%= submit_button %>
       <% end %>
