@@ -142,14 +142,5 @@ RSpec.describe Purchase, type: :model do
         end.not_to change { purchase.line_items.count }
       end
     end
-
-    describe "remove_inventory" do
-      it "removes inventory from the right storage location when purchase deleted" do
-        purchase = create(:purchase, :with_items)
-        expect do
-          purchase.remove_inventory
-        end.to change { purchase.storage_location.size }.by(-purchase.total_quantity)
-      end
-    end
   end
 end

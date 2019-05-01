@@ -17,7 +17,7 @@ RSpec.feature "Transfer management", type: :feature do
       fill_in "transfer_line_items_attributes_0_quantity", with: "10"
       click_on "Save"
     end
-    expect(page).to have_content("Transfer was successfully created")
+    expect(page).to have_content("10 items have been transferred")
   end
 
   scenario "User can filter the #index by storage location both from and to" do
