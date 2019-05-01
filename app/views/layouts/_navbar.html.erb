@@ -68,8 +68,8 @@
         <li class="dropdown notifications-menu">
           <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
             <i class="fa fa-bell-o"></i>
-            <% if current_organization && current_organization.requests.active.size > 0 %>
-              <span class="label label-warning"><%= current_organization.requests.active.size %></span>
+            <% if current_organization && current_organization.requests.size > 0 %>
+              <span class="label label-warning"><%= current_organization.requests.size %></span>
             <% end %>
           </a>
           <ul class="dropdown-menu dropdown-menu-right">
