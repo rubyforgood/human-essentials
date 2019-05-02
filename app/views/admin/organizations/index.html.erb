@@ -1,49 +1,49 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Admin - Organizations" %>
-  <h1>
-    All Diaperbase Organizations
-    <small></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li>
-      <%= link_to(admin_dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><a href="#">All Diaperbase organizations</a></li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h2>
+      All Diaperbase Organizations
+    </h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(admin_dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active">
+        All Diaperbase Organizations
+      </li>
+    </ol>
+  </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= new_button_to new_admin_organization_path, { text: "Add New Organization" } %>
+    </div>
+  </div>
+</div>
 
-<!-- Main content -->
-<section class="content">
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-body">
-      <div class="text-right">
-        <%= new_button_to new_admin_organization_path, { text: "Add New Organization" } %>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="row">
+          <div class="table-responsive">
             <table class="table table-hover">
               <thead>
-              <tr>
-                <th>Organization</th>
-                <th>Contact E-mail</th>
-                <th>Added On</th>
-                <th class="text-right">Actions</th>
-              </tr>
+                <tr>
+                  <th>Organization</th>
+                  <th>Contact E-mail</th>
+                  <th>Added On</th>
+                  <th class="text-right">Actions</th>
+                </tr>
               </thead>
               <tbody>
-              <%= render partial: "organization_row", collection: @organizations %>
+                <%= render partial: "organization_row", collection: @organizations %>
               </tbody>
             </table>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
         </div>
       </div>
     </div>
   </div>
-</section>
+</div>
