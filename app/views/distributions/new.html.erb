@@ -18,12 +18,10 @@
   </div>
 </div>
 
-<!-- Main content -->
-<section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-body">
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
 
   <%= simple_form_for @distribution, html: { class: "storage-location-required" } do |f| %>
     <%= f.simple_fields_for :request do |r| %>
@@ -50,23 +48,21 @@
           <%= render 'line_items/line_item_fields', f: item %>
         </div>
       <% end %>
-      <div class="row links">
+      <div class="links">
         <div class="col-xs-12">
           <%= add_line_item_button f, "#distribution_line_items" %>
         </div>
       </div>
 
     </fieldset>
-      <div class="row">
-        <div class="col-xs-12">
-          <%= submit_button %>
-      </div>
+    <div class="col-xs-12 text-right">
+      <%= submit_button(align: nil) %>
     </div>
   <% end %>
   </div>
 </div>
-<!-- /.box -->
+</div>
 
 <%= render partial: "donations/barcode_modal" %>
 
-</section>
+</div>
