@@ -1,4 +1,4 @@
-<section class="content-header">
+<div class="content-header">
   <% content_for :title, "Donation Sites - Agencies - #{current_organization.name}" %>
   <h1>
     Donation Sites
@@ -11,13 +11,13 @@
     </li>
     <li><a href="#">Donation Sites</a></li>
   </ol>
-</section>
+</div>
 
 <!-- Main content -->
-<section class="content">
+<div class="content">
   <div class="box">
     <div class="box-header with-border bg-gray">
-      <section id="filters">
+      <div id="filters">
         <!-- TBA; replicate HTML from other #index views -->
         <div class="pull-right">
           <!-- Button HTML (to Trigger Modal) -->
@@ -25,7 +25,7 @@
           <%= download_button_to(csv_path(format: :csv, type: "DonationSite"), { text: "Export Donation Sites", size: "lg" }) if @donation_sites.any? %>
           <%= new_button_to new_donation_site_path(organization_id: current_organization), { text: "New Donation Site" } %>
         </div>
-      </section><!-- /#filters -->
+      </div><!-- /#filters -->
     </div><!-- /.box-header -->
     <div class="box-body">
       <% if @donation_sites.empty? %>
@@ -69,5 +69,5 @@
   <li>Save the file as a csv file.</li>
 <% end %>
 
-</section><!-- /.content -->
+</div><!-- /.content -->
 
