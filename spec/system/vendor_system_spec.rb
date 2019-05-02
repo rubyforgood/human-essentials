@@ -11,14 +11,14 @@ RSpec.describe "Vendor", type: :system do
         @third = create(:vendor, business_name: "Cde")
         visit url_prefix + "/vendors"
         end
-        scenario "the vendor names are in alphabetical order" do
+        it "should have the vendor names in alphabetical order" do
         expect(page).to have_xpath("//table//tr", count: 4)
         expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.business_name)
         expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.business_name)
         end
     end
 
-    scenario "User can create a new vendor instance" do
+    it "can create a new vendor instance as a user" do
         visit url_prefix + "/vendors/new"
         vendor_traits = attributes_for(:vendor)
         fill_in "Contact Name", with: vendor_traits[:contact_name]
@@ -32,14 +32,14 @@ RSpec.describe "Vendor", type: :system do
         expect(page.find(".alert")).to have_content "added"
     end
 
-    scenario "User add a new vendor instance with empty attributes" do
+    it "can add a new vendor instance with empty attributes as a user" do
         visit url_prefix + "/vendors/new"
         click_button "Save"
 
         expect(page.find(".alert")).to have_content "didn't work"
     end
 
-    scenario "User can update the contact info for a vendor" do
+    it "can update the contact info for a vendor as a user" do
         vendor = create(:vendor)
         new_email = "foo@bar.com"
         visit url_prefix + "/vendors/#{vendor.id}/edit"
@@ -52,7 +52,7 @@ RSpec.describe "Vendor", type: :system do
         expect(page).to have_content(new_email)
     end
 
-    scenario "User updates a vendor with empty attributes" do
+    it "can update a vendor with empty attributes as a user" do
         vendor = create(:vendor)
         visit url_prefix + "/vendors/#{vendor.id}/edit"
         fill_in "Business Name", with: ""
@@ -69,13 +69,13 @@ RSpec.describe "Vendor", type: :system do
         create(:purchase, :with_items, created_at: 1.week.ago, item_quantity: 15, amount_spent: 1, vendor: @vendor)
         end
 
-        scenario "Existing vendors show in the #index with some summary stats" do
+        it "can have existing vendors show in the #index with some summary stats" do
         visit url_prefix + "/vendors"
         expect(page).to have_xpath("//table/tbody/tr/td", text: @vendor.business_name)
         expect(page).to have_xpath("//table/tbody/tr/td", text: "25")
         end
 
-        scenario "Single vendor show semi-detailed stats about purchases" do
+        it "can have a single vendor show semi-detailed stats about purchases" do
         visit url_prefix + "/vendors/#{@vendor.to_param}"
         expect(page).to have_xpath("//table/tr", count: 3)
         expect(page).to have_xpath("//table/tr/td", text: "10")
