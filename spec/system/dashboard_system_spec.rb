@@ -1,5 +1,3 @@
-require "timecop"
-
 RSpec.describe "Dashboard", type: :system do
   before do
     sign_in(@user)
