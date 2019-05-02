@@ -1,4 +1,4 @@
-RSpec.feature "Barcode management", type: :feature do
+RSpec.describe "Barcode management", type: :system do
   before do
     sign_in(@user)
   end
@@ -12,7 +12,7 @@ RSpec.feature "Barcode management", type: :feature do
       visit url_prefix + "/barcode_items"
     end
 
-    scenario "only shows the barcodes created within the organization" do
+    it "should only show the barcodes created within the organization" do
       expect(page).to have_css("table#tbl_barcode_items tbody tr", count: 1)
     end
   end
@@ -21,7 +21,7 @@ RSpec.feature "Barcode management", type: :feature do
     let(:barcode_traits) { attributes_for(:barcode_item, organization_id: @organization.id) }
     let(:barcode) { create(:barcode_item, organization_id: @organization.id) }
 
-    scenario "User adds a new barcode" do
+    it "can have a user add a new barcode" do
       Item.delete_all
       item = create(:item, name: "1T Diapers")
       visit url_prefix + "/barcode_items/new"
@@ -49,7 +49,7 @@ RSpec.feature "Barcode management", type: :feature do
       expect(page.find(".alert")).to have_content "updated"
     end
 
-    scenario "User updates an existing barcode with empty attributes" do
+    it "can have a user update an existing barcode with empty attributes" do
       barcode
       visit url_prefix + "/barcode_items/#{barcode.id}/edit"
       fill_in "Quantity", id: "barcode_item_quantity", with: ""
@@ -59,7 +59,7 @@ RSpec.feature "Barcode management", type: :feature do
     end
   end
 
-  scenario "User can filter the #index by item type" do
+  it "can have a user filter the #index by item type" do
     Item.delete_all
     b = create(:barcode_item, organization: @organization)
     create(:barcode_item, organization: @organization)
@@ -70,7 +70,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page).to have_css("table tbody tr", count: 1)
   end
 
-  scenario "User can filter the #index by base item type" do
+  it "can have a user filter the #index by base item type" do
     Item.delete_all
     item = create(:item, name: "Red 1T Diapers", base_item: BaseItem.first)
     item2 = create(:item, name: "Blue 1T Diapers", base_item: BaseItem.first)
@@ -83,7 +83,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page).to have_css("table tbody tr", count: 2)
   end
 
-  scenario "User can filter the #index by barcode value" do
+  it "can have a user filter the #index by barcode value" do
     Item.delete_all
     b = create(:barcode_item, organization: @organization)
     create(:barcode_item, organization: @organization)
@@ -94,7 +94,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page).to have_css("table tbody tr", count: 1)
   end
 
-  scenario "Filter presented to user lists items in alphabetical order" do
+  it "should have the filter presented to user list items in alphabetical order" do
     item1 = create(:item, name: "AAA Diapers")
     item2 = create(:item, name: "Wonder Diapers")
     item3 = create(:item, name: "ABC Diapers")
@@ -109,7 +109,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.all("select#filters_barcodeable_id option").map(&:text)).not_to eq(expected_order.reverse)
   end
 
-  scenario "User add a new barcode with empty attributes" do
+  it "can have a user add a new barcode with empty attributes" do
     visit url_prefix + "/barcode_items/new"
     click_button "Save"
 
