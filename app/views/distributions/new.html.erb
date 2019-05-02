@@ -22,47 +22,46 @@
   <div class="col-lg-12">
     <div class="wrapper wrapper-content animated fadeInRight">
       <div class="ibox-content p-xl">
+        <%= simple_form_for @distribution, html: { class: "storage-location-required" } do |f| %>
+          <%= f.simple_fields_for :request do |r| %>
+            <%= r.input :id, as: :hidden %>
+          <% end %>
 
-  <%= simple_form_for @distribution, html: { class: "storage-location-required" } do |f| %>
-    <%= f.simple_fields_for :request do |r| %>
-      <%= r.input :id, as: :hidden %>
-    <% end %>
+          <%= f.association :partner,
+            collection: current_organization.partners,
+            label: "Partner",
+            error: "Which partner is this distribution going to?" %>
 
-    <%= f.association :partner,
-      collection: current_organization.partners,    
-      label: "Partner",
-      error: "Which partner is this distribution going to?" %>
+            <%= f.input :issued_at, as: :date, label: "Distribution pick-up date" %>
+            <%= f.input :agency_rep, label: "Agency representative" %>
 
-      <%= f.input :issued_at, as: :date, label: "Distribution pick-up date" %>
-      <%= f.input :agency_rep, label: "Agency representative" %>
+          <%= render partial: "storage_locations/source", object: f %>
 
-    <%= render partial: "storage_locations/source", object: f %>
-    
-    <%= f.input :comment, label: "Comment" %>
+          <%= f.input :comment, label: "Comment" %>
 
 
-    <fieldset style="margin-bottom: 2rem;" class="form-inline">
-      <legend>Items in this distribution</legend>
-      <%= f.simple_fields_for :line_items do |item| %>
-        <div id="distribution_line_items" class="line-item-fields" data-capture-barcode="true">
-          <%= render 'line_items/line_item_fields', f: item %>
-        </div>
-      <% end %>
-      <div class="links">
-        <div class="col-xs-12">
-          <%= add_line_item_button f, "#distribution_line_items" %>
-        </div>
+          <fieldset style="margin-bottom: 2rem;" class="form-inline">
+            <legend>Items in this distribution</legend>
+            <%= f.simple_fields_for :line_items do |item| %>
+              <div id="distribution_line_items" class="line-item-fields" data-capture-barcode="true">
+                <%= render 'line_items/line_item_fields', f: item %>
+              </div>
+            <% end %>
+            <div class="links">
+              <div class="col-xs-12">
+                <%= add_line_item_button f, "#distribution_line_items" %>
+              </div>
+            </div>
+
+          </fieldset>
+          <div class="col-xs-12 text-right">
+            <%= submit_button(align: nil) %>
+          </div>
+        <% end %>
       </div>
-
-    </fieldset>
-    <div class="col-xs-12 text-right">
-      <%= submit_button(align: nil) %>
     </div>
-  <% end %>
   </div>
-</div>
-</div>
 
-<%= render partial: "donations/barcode_modal" %>
+  <%= render partial: "donations/barcode_modal" %>
 
 </div>
