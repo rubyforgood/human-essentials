@@ -1,18 +1,22 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "New - Distributions - #{current_organization.name}" %>
-  <h1>
-    New Distribution
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Distributions", (distributions_path) %></li>
-    <li class="active"> New Distribution</li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h2>New Distribution for <%= current_organization.name %></h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item">
+        <%= link_to "Distributions", (distributions_path) %>
+      </li>
+      <li class="breadcrumb-item active">
+        New Distribution
+      </li>
+    </ol>
+  </div>
+</div>
 
 <!-- Main content -->
 <section class="content">
