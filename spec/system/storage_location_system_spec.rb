@@ -1,9 +1,9 @@
-RSpec.feature "Barcode management", type: :feature do
+RSpec.describe "Barcode management", type: :system do
   before do
     sign_in(@user)
   end
   let!(:url_prefix) { "/#{@organization.to_param}" }
-  scenario "User creates a new storage location" do
+  it "User creates a new storage location" do
     visit url_prefix + "/storage_locations/new"
     storage_location_traits = attributes_for(:storage_location)
     fill_in "Name", with: storage_location_traits[:name]
@@ -13,14 +13,14 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.find(".alert")).to have_content "added"
   end
 
-  scenario "User creates a new storage location with empty attributes" do
+  it "User creates a new storage location with empty attributes" do
     visit url_prefix + "/storage_locations/new"
     click_on "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
 
-  scenario "User updates an existing storage location" do
+  it "User updates an existing storage location" do
     storage_location = create(:storage_location)
     visit url_prefix + "/storage_locations/#{storage_location.id}/edit"
     fill_in "Address", with: storage_location.name + " new"
@@ -29,7 +29,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.find(".alert")).to have_content "updated"
   end
 
-  scenario "User updates an existing storage location with empty name" do
+  it "User updates an existing storage location with empty name" do
     storage_location = create(:storage_location)
     visit url_prefix + "/storage_locations/#{storage_location.id}/edit"
     fill_in "Name", with: ""
@@ -38,7 +38,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.find(".alert")).to have_content "didn't work"
   end
 
-  scenario "User can filter the #index by those that contain certain items" do
+  it "User can filter the #index by those that contain certain items" do
     item = create(:item, name: "1T Diapers")
     create(:item, name: "2T Diapers")
     location1 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Foo")
@@ -53,7 +53,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page).not_to have_xpath("//table/tbody/tr/td", text: location2.name)
   end
 
-  scenario "Filter list presented to user is in alphabetical order by item name" do
+  it "Filter list presented to user is in alphabetical order by item name" do
     item1 = create(:item, name: "AAA Diapers")
     item2 = create(:item, name: "ABC Diapers")
     item3 = create(:item, name: "Wonder Diapers")
@@ -67,7 +67,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
   end
 
-  scenario "Items in (adjustments)" do
+  it "Items in (adjustments)" do
     item = create(:item, name: "AAA Diapers")
     storage_location = create(:storage_location, :with_items, item: item, name: "here")
     create(:adjustment, :with_items, storage_location: storage_location)
@@ -77,7 +77,7 @@ RSpec.feature "Barcode management", type: :feature do
     expect(page.find("table#sectionB.table.table-hover", visible: true)).to have_content "100"
   end
 
-  scenario "Items out (distributions)" do
+  it "Items out (distributions)" do
     item = create(:item, name: "AAA Diapers")
     storage_location = create(:storage_location, :with_items, item: item, name: "here")
     create(:adjustment, :with_items, storage_location: storage_location)
