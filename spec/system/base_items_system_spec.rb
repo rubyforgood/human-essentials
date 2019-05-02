@@ -1,4 +1,4 @@
-RSpec.feature "Base Item Admin" do
+RSpec.describe "Base Item Admin" do
   context "While signed in as an Administrative User (super admin)" do
     before do
       sign_in(@super_admin)
@@ -12,7 +12,7 @@ RSpec.feature "Base Item Admin" do
 
       let(:base_item_traits) { attributes_for(:base_item) }
 
-      scenario "it succeeds when creating a new base item with good data" do
+      it "should succeed when creating a new base item with good data" do
         fill_in "Name", with: base_item_traits[:name]
         fill_in "base_item_partner_key", with: base_item_traits[:partner_key]
         click_button "Save"
@@ -20,7 +20,7 @@ RSpec.feature "Base Item Admin" do
         expect(page.find(".alert")).to have_content "added"
       end
 
-      scenario "it fails when creating a new base item with empty attributes" do
+      it "should fail when creating a new base item with empty attributes" do
         click_button "Save"
         expect(page.find(".alert")).to have_content "ailed"
       end
@@ -32,20 +32,20 @@ RSpec.feature "Base Item Admin" do
       end
       let(:base_item) { BaseItem.first }
 
-      scenario "succeeds when changing the name" do
+      it "should succeed when changing the name" do
         fill_in "Name", with: base_item.name + " new"
         click_button "Save"
         expect(page.find(".alert")).to have_content "pdated"
       end
 
-      scenario "fails when updating the name to empty" do
+      it "should fail when updating the name to empty" do
         fill_in "Name", with: ""
         click_button "Save"
         expect(page.find(".alert")).to have_content "ailed"
       end
     end
 
-    scenario "viewing a listing of all Base Items that shows a summary of its sub-items" do
+    it "can view a listing of all Base Items that shows a summary of its sub-items" do
       base_item = BaseItem.first
       create_list(:item, 2, base_item: base_item)
       count = base_item.item_count
@@ -56,7 +56,7 @@ RSpec.feature "Base Item Admin" do
       end
     end
 
-    scenario "viewing a single Base Item" do
+    it "can view a single Base Item" do
       base_item = BaseItem.first
       visit admin_base_item_path(base_item)
       expect(page).to have_content(base_item.name)
@@ -76,7 +76,7 @@ RSpec.feature "Base Item Admin" do
 
       let(:base_item_traits) { attributes_for(:base_item) }
 
-      scenario "it succeeds when creating a new base item with good data" do
+      it "should succeed when creating a new base item with good data" do
         fill_in "Name", with: base_item_traits[:name]
         fill_in "base_item_partner_key", with: base_item_traits[:partner_key]
         click_button "Save"
@@ -84,7 +84,7 @@ RSpec.feature "Base Item Admin" do
         expect(page.find(".alert")).to have_content "added"
       end
 
-      scenario "it fails when creating a new base item with empty attributes" do
+      it "should fail when creating a new base item with empty attributes" do
         click_button "Save"
         expect(page.find(".alert")).to have_content "ailed"
       end
@@ -96,20 +96,20 @@ RSpec.feature "Base Item Admin" do
       end
       let(:base_item) { BaseItem.first }
 
-      scenario "succeeds when changing the name" do
+      it "should succeed when changing the name" do
         fill_in "Name", with: base_item.name + " new"
         click_button "Save"
         expect(page.find(".alert")).to have_content "pdated"
       end
 
-      scenario "fails when updating the name to empty" do
+      it "should fail when updating the name to empty" do
         fill_in "Name", with: ""
         click_button "Save"
         expect(page.find(".alert")).to have_content "ailed"
       end
     end
 
-    scenario "viewing a listing of all Base Items that shows a summary of its sub-items" do
+    it "can view a listing of all Base Items that shows a summary of its sub-items" do
       base_item = BaseItem.first
       create_list(:item, 2, base_item: base_item)
       count = base_item.item_count
@@ -120,7 +120,7 @@ RSpec.feature "Base Item Admin" do
       end
     end
 
-    scenario "viewing a single Base Item" do
+    it "can view a single Base Item" do
       base_item = BaseItem.first
       visit admin_base_item_path(base_item)
       expect(page).to have_content(base_item.name)
@@ -131,7 +131,7 @@ RSpec.feature "Base Item Admin" do
     before do
       sign_in(@user)
     end
-    scenario "A normal user can't see anything" do
+    it "should have a normal user not see anything" do
       visit new_admin_base_item_path
       expect(page).to have_content("Access Denied")
       visit admin_base_items_path
