@@ -1,6 +1,6 @@
 <div class="nested-fields">
   <%= render partial: "barcode_items/barcode_item_lookup", locals: {index: f.options[:child_index]} %>
-  <label>OR</label>
+  <span>OR</span>
   <%= f.input_field :item_id, collection: @items, prompt: "Choose an item", class: 'form-control' %>
   <%= f.input_field :quantity, placeholder: "Quantity", class: 'form-control' %>
   <%= delete_line_item_button f %>
