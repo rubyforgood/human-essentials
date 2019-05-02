@@ -1,4 +1,4 @@
-RSpec.feature "Feedback Message", type: :feature do
+RSpec.describe "Feedback Message", type: :system do
   before do
     sign_in(@user)
   end
@@ -10,7 +10,7 @@ RSpec.feature "Feedback Message", type: :feature do
       visit @visited_url
     end
 
-    scenario "stores feedback" do
+    it "stores feedback" do
       expect(FeedbackMessage.count).to eql 0
       find(".fa-bug").click
       expect(page).to have_content "Submit your bug/message/input"
