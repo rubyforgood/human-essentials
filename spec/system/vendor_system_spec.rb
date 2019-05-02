@@ -1,4 +1,4 @@
-RSpec.feature "Vendor", type: :feature do
+RSpec.describe "Vendor", type: :system do
     before do
         sign_in(@user)
     end
