@@ -5,11 +5,6 @@ class UpdateDiaperPartnerJob
   def perform(partner_id)
     @partner = Partner.find(partner_id)
     @response = DiaperPartnerClient.post(@partner.attributes) if Flipper.enabled?(:email_active)
-
-    if @response&.value == Net::HTTPSuccess
-      @partner.invited!
-    else
-      @partner.error!
-    end
+    @partner.invited!
   end
 end
