@@ -1,5 +1,5 @@
-RSpec.feature "Donations", type: :feature, js: true do
-  before :each do
+RSpec.describe "Donations", type: :system do
+  before do
     sign_in @user
     @url_prefix = "/#{@organization.short_name}"
   end
@@ -11,21 +11,21 @@ RSpec.feature "Donations", type: :feature, js: true do
       visit @url_prefix + "/donations"
     end
 
-    scenario "User can click to the new donation form" do
+    it "Allows User to click to the new donation form" do
       find(".fa-plus").click
 
       expect(current_path).to eq(new_donation_path(@organization))
       expect(page).to have_content "Start a new donation"
     end
 
-    scenario "Total quantity on the index page" do
+    it "Displays Total quantity on the index page" do
       expect(page.find(:css, "table.table-hover", visible: true)).to have_content("20")
     end
   end
 
   context "When filtering on the index page" do
     let!(:item) { create(:item) }
-    scenario "User can filter by the source" do
+    it "Filters by the source" do
       create(:donation, source: Donation::SOURCES[:misc])
       create(:donation, source: Donation::SOURCES[:donation_site])
       visit @url_prefix + "/donations"
@@ -34,7 +34,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
-    scenario "User can filter by diaper drive" do
+    it "Filters by diaper drive" do
       a = create(:diaper_drive_participant, business_name: "A")
       b = create(:diaper_drive_participant, business_name: "B")
       create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: a)
@@ -45,7 +45,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
-    scenario "User can filter by donation site" do
+    it "Filters by donation site" do
       location1 = create(:donation_site, name: "location 1")
       location2 = create(:donation_site, name: "location 2")
       create(:donation, donation_site: location1)
@@ -55,7 +55,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
-    scenario "User can filter the #index by storage location" do
+    it "Filters by storage location" do
       storage1 = create(:storage_location, name: "storage1")
       storage2 = create(:storage_location, name: "storage2")
       create(:donation, storage_location: storage1)
@@ -66,7 +66,21 @@ RSpec.feature "Donations", type: :feature, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
-    scenario "Filters drill down if you pick from multiples" do
+    it "Filters by date" do
+      storage = create(:storage_location, name: "storage")
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1), source: Donation::SOURCES[:misc])
+      visit @url_prefix + "/donations"
+      select "March", from: "date_filters_issued_at_2i"
+      select "2018", from: "date_filters_issued_at_1i"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+      select "February", from: "date_filters_issued_at_2i"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
+    end
+    it "Filters by multiple attributes" do
       storage1 = create(:storage_location, name: "storage1")
       storage2 = create(:storage_location, name: "storage2")
       create(:donation, storage_location: storage1, source: Donation::SOURCES[:misc])
@@ -81,20 +95,6 @@ RSpec.feature "Donations", type: :feature, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
-    scenario "Filter by issued_at" do
-      storage = create(:storage_location, name: "storage")
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1), source: Donation::SOURCES[:misc])
-      visit @url_prefix + "/donations"
-      select "March", from: "date_filters_issued_at_2i"
-      select "2018", from: "date_filters_issued_at_1i"
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 3)
-      select "February", from: "date_filters_issued_at_2i"
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 2)
-    end
   end
 
   context "When creating a new donation" do
@@ -106,12 +106,12 @@ RSpec.feature "Donations", type: :feature, js: true do
       @organization.reload
     end
 
-    context "via manual entry" do
+    context "Via manual entry" do
       before(:each) do
         visit @url_prefix + "/donations/new"
       end
 
-      scenario "User can create a donation IN THE PAST" do
+      it "Allows donations to be created IN THE PAST" do
         select Donation::SOURCES[:misc], from: "donation_source"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -122,10 +122,10 @@ RSpec.feature "Donations", type: :feature, js: true do
           click_button "Save"
         end.to change { Donation.count }.by(1)
 
-        expect(Donation.last.issued_at).to eq(Date.parse("01/01/2001"))
+        expect(Donation.last.issued_at).to eq("01/01/2001")
       end
 
-      scenario "multiple line items for the same item type are accepted and combined on the backend" do
+      it "Accepts and combines multiple line items for the same item type" do
         select Donation::SOURCES[:misc], from: "donation_source"
         select StorageLocation.first.name, from: "donation_storage_location_id"
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -143,7 +143,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(Donation.last.line_items.first.quantity).to eq(15)
       end
 
-      scenario "User can create a donation for a Diaper Drive source" do
+      it "Allows User to create a donation for a Diaper Drive source" do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
         expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
@@ -157,7 +157,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         end.to change { Donation.count }.by(1)
       end
 
-      scenario "User can create a Diaper Drive from donation" do
+      it "Allows User to create a Diaper Drive from donation" do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         select "---Create new diaper drive---", from: "donation_diaper_drive_participant_id"
         expect(page).to have_content("New Diaper Drive Participant")
@@ -168,7 +168,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         select "businesstest", from: "donation_diaper_drive_participant_id"
       end
 
-      scenario "User can create a donation for a Donation Site source" do
+      it "Allows User to create a donation for a Donation Site source" do
         select Donation::SOURCES[:donation_site], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_donation_site_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
@@ -182,7 +182,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         end.to change { Donation.count }.by(1)
       end
 
-      scenario "User can create a donation for Purchased Supplies" do
+      it "Allows User to create a donation for Purchased Supplies" do
         select Donation::SOURCES[:misc], from: "donation_source"
         expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
@@ -195,7 +195,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         end.to change { Donation.count }.by(1)
       end
 
-      scenario "User can create a donation with a Miscellaneous source" do
+      it "Allows User to create a donation with a Miscellaneous source" do
         select Donation::SOURCES[:misc], from: "donation_source"
         expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
         expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
@@ -210,7 +210,7 @@ RSpec.feature "Donations", type: :feature, js: true do
 
       # Since the form only shows/hides the irrelevant field, if the user already selected something it would still
       # submit. The app should sanitize this so we aren't saving extraneous data
-      scenario "extraneous data is stripped if the user adds both donation_site and diaper_drive_participant" do
+      it "Strips extraneous data if the user adds both Donation Site and Diaper Drive Participant" do
         select Donation::SOURCES[:donation_site], from: "donation_source"
         select DonationSite.first.name, from: "donation_donation_site_id"
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
@@ -227,7 +227,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       # Bug fix -- Issue #71
       # When a user creates a donation without it passing validation, the items
       # dropdown is not populated on the return trip.
-      scenario "items dropdown is still repopulated even if initial submission doesn't validate" do
+      it "Repopulates items dropdown even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
         expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
         click_button "Save"
@@ -237,7 +237,7 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
 
       # Bug fix -- Issue #526
-      scenario "Bar code fields have unique ids" do
+      it "Ensures Barcode Entry fields have unique ids" do
         page.find(:css, "#__add_line_item").click
         page.find(:css, "#__add_line_item").click
         expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
@@ -245,13 +245,13 @@ RSpec.feature "Donations", type: :feature, js: true do
       end
     end
 
-    context "via barcode entry" do
+    context "Via barcode entry" do
       before(:each) do
         initialize_barcodes
         visit @url_prefix + "/donations/new"
       end
 
-      scenario "a user can add items via scanning them in by barcode", :js do
+      it "Allows User to add items by barcode", :js do
         # enter the barcode into the barcode field
 
         within "#donation_line_items" do
@@ -267,7 +267,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(qty).to eq(@existing_barcode.quantity.to_s)
       end
 
-      scenario "User scan same barcode 2 times", :js do
+      it "Updates the line item when the same barcode is scanned twice", :js do
         within "#donation_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
           fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
@@ -283,7 +283,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         expect(page).to have_field "donation_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
       end
 
-      scenario "a user can add items that do not yet have a barcode", :js do
+      it "Allows User to add items that do not yet have a barcode", :js do
         new_barcode = @existing_barcode.value + "000"
         # enter a new barcode
         within "#donation_line_items" do
@@ -313,7 +313,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         # form updates
       end
 
-      context "when the barcode is a global barcode" do
+      context "When the barcode is a global barcode" do
         before do
           base_item = BaseItem.first
           # Create a global barcode item first
@@ -324,7 +324,7 @@ RSpec.feature "Donations", type: :feature, js: true do
           @item = create(:item, base_item: base_item, organization: @organization, created_at: 1.week.ago)
         end
 
-        scenario "the barcode lookup for the global barcode will add the oldest item it can find for that" do
+        it "Adds the oldest item it can find for the global barcode" do
           visit @url_prefix + "/donations/new"
           within "#donation_line_items" do
             expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
@@ -352,15 +352,15 @@ RSpec.feature "Donations", type: :feature, js: true do
       visit @url_prefix + "/donations"
     end
 
-    scenario 'the user sees value in row on index page' do
+    it 'Displays the individual value on the index page' do
       expect(page).to have_content "$125"
     end
 
-    scenario 'the user sees total value on index page' do
+    it 'Displays the total value on the index page' do
       expect(page).to have_content "$325"
     end
 
-    scenario 'the user sees total value on show page' do
+    it 'Displays the total value on the show page' do
       visit @url_prefix + "/donations/#{@donation1.id}"
       expect(page).to have_content "$125"
     end
