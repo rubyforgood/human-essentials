@@ -1,51 +1,53 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Adjustments - Inventory - #{current_organization.name}" %>
-  <h1>
-    Inventory Adjustments
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Adjustments</a></li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h2>Inventory Adjustments for <%= current_organization.name %></h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+      <%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
+      </li>
+      <li class="breadcrumb-item active">
+        Adjustments
+      </li>
+    </ol>
+  </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= download_button_to(csv_path(format: :csv, type: "Adjustment"), { size: "lg", text: "Export Adjustments" }) if @adjustments.length > 0 %>
+      <%= new_button_to new_adjustment_path(organization_id: current_organization), { text: "New Adjustment"} %>
+    </div>
+  </div>
+</div>
 
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(adjustments_path, method: :get) do |f| %>
-          <div class="row">
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter by Storage Location" %>
-              <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }, class: "form-control") %>
-            </div>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <%= form_tag(adjustments_path, method: :get) do |f| %>
+        <div class="row">
+          <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+            <%= label_tag "Filter by Storage Location" %>
+            <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }, class: "form-control") %>
           </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <%= filter_button %>
-              <%= cancel_button_to adjustments_path, size: "md", text: "Clear Filters" %>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <%= filter_button %>
+            <%= cancel_button_to adjustments_path, size: "md", text: "Clear Filters" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
 
-              <div class="btn-group pull-right">
-                <p>
-                <%= download_button_to(csv_path(format: :csv, type: "Adjustment"), { size: "lg", text: "Export Adjustments" }) if @adjustments.length > 0 %>
-
-                <%= new_button_to new_adjustment_path(organization_id: current_organization), { text: "New Adjustment"} %>
-                </p>
-              </div>
-            </div>
-          </div><!-- /.row -->
-        <% end %>
-      </section>
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="row">
+          <div class="table-responsive">
             <table class="table table-hover">
               <thead>
                 <tr>
@@ -70,9 +72,11 @@
                 <% end %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
