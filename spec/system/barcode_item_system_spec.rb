@@ -1,4 +1,4 @@
-RSpec.feature "Barcode management", type: :system do
+RSpec.describe "Barcode management", type: :system do
 before do
     sign_in(@user)
 end
