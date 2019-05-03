@@ -1,4 +1,4 @@
-RSpec.feature "Item management", type: :feature do
+RSpec.describe "Item management", type: :system do
     before do
         sign_in(@user)
     end
