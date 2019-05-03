@@ -1,4 +1,4 @@
-RSpec.feature "Admin Organization Management" do
+RSpec.describe "Admin Organization Management" do
     context "While signed in as an Administrative User (super admin)" do
         before :each do
         sign_in(@super_admin)
