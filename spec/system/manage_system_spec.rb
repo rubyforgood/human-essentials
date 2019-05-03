@@ -1,4 +1,4 @@
-RSpec.feature "Organization Administration", type: :feature do
+RSpec.describe "Organization Administration", type: :system do
     subject { "/#{@organization.to_param}/organization" }
     context "while signed in as a normal user" do
         before do
