@@ -1,4 +1,4 @@
-RSpec.feature "Transfer management", type: :feature do
+RSpec.describe "Transfer management", type: :system do
     before do
         sign_in(@user)
     end
