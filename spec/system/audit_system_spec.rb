@@ -217,5 +217,4 @@ RSpec.describe "Audit management", type: :system do
       end
     end
   end
-
 end
