@@ -1,4 +1,4 @@
-RSpec.feature "Organization management", type: :feature do
+RSpec.describe "Organization management", type: :system do
     let!(:url_prefix) { "/#{@organization.to_param}" }
 
     context "while signed in as a normal user" do
