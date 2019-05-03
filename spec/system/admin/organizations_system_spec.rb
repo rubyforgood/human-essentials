@@ -4,7 +4,7 @@ RSpec.describe "Admin Organization Management" do
         sign_in(@super_admin)
         end
 
-        scenario "creating a new organization" do
+        it "creates a new organization" do
         allow(User).to receive(:invite!).and_return(true)
         visit new_admin_organization_path
         screenshot_and_open_image
@@ -50,7 +50,7 @@ RSpec.describe "Admin Organization Management" do
         sign_in(@super_admin_no_org)
         end
 
-        scenario "creating a new organization" do
+        it "creates a new organization" do
         allow(User).to receive(:invite!).and_return(true)
         visit new_admin_organization_path
         screenshot_and_open_image
