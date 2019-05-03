@@ -1,4 +1,4 @@
-RSpec.feature "Organization management", type: :feature do
+RSpec.describe "Organization management", type: :system do
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
   context "while signed in as a normal user" do
@@ -6,7 +6,7 @@ RSpec.feature "Organization management", type: :feature do
       sign_in(@user)
     end
 
-    scenario "The user can see summary details about the organization" do
+    it "can see summary details about the organization as a user" do
       visit url_prefix + "/organization"
     end
   end
@@ -19,7 +19,7 @@ RSpec.feature "Organization management", type: :feature do
       before do
         visit url_prefix + "/manage/edit"
       end
-      scenario "the user is prompted with placeholder text and a more helpful error message to ensure correct URL format" do
+      it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
         fill_in "Url", with: "www.diaperbase.com"
         click_on "Save"
 
@@ -29,7 +29,7 @@ RSpec.feature "Organization management", type: :feature do
       end
     end
 
-    scenario "Can add a new user to an organization" do
+    it "can add a new user to an organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit url_prefix + "/organization"
       click_on "Invite User to this Organization"
@@ -40,7 +40,7 @@ RSpec.feature "Organization management", type: :feature do
       expect(page).to have_content("invited to organization")
     end
 
-    scenario "Can re-invite a user to an organization after 7 days" do
+    it "can re-invite a user to an organization after 7 days" do
       create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
       visit url_prefix + "/organization"
       expect(page).to have_xpath("//i[@alt='Re-send invitation']")
