@@ -1,4 +1,4 @@
-RSpec.feature "Requests", type: :feature do
+RSpec.describe "Requests", type: :system do
     before do
         sign_in(@user)
         @request = create(:request, organization: @organization)
