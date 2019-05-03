@@ -77,7 +77,7 @@ RSpec.describe "Vendor", type: :system do
 
     it "can have a single vendor show semi-detailed stats about purchases" do
       visit url_prefix + "/vendors/#{@vendor.to_param}"
-      expect(page).to have_xpath("//table/tr", count: 3)
+      expect(page).to have_xpath("//table/tbody/tr", count: 3)
       expect(page).to have_xpath("//table/tr/td", text: "10")
     end
   end
