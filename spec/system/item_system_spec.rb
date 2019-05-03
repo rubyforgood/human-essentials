@@ -3,7 +3,7 @@ RSpec.describe "Item management", type: :system do
         sign_in(@user)
     end
     let!(:url_prefix) { "/#{@organization.to_param}" }
-    scenario "User creates a new item" do
+    it "can create a new item as a user" do
         visit url_prefix + "/items/new"
         item_traits = attributes_for(:item)
         fill_in "Name", with: item_traits[:name]
@@ -13,14 +13,14 @@ RSpec.describe "Item management", type: :system do
         expect(page.find(".alert")).to have_content "added"
     end
 
-    scenario "User creates a new item with empty attributes" do
+    it "can create a new item with empty attributes as a user" do
         visit url_prefix + "/items/new"
         click_button "Save"
 
         expect(page.find(".alert")).to have_content "didn't work"
     end
 
-    scenario "User updates an existing item" do
+    it "can update an existing item as a user" do
         item = create(:item)
         visit url_prefix + "/items/#{item.id}/edit"
         click_button "Save"
@@ -28,7 +28,7 @@ RSpec.describe "Item management", type: :system do
         expect(page.find(".alert")).to have_content "updated"
     end
 
-    scenario "User updates an existing item with empty attributes" do
+    it "can update an existing item with empty attributes as a user" do
         item = create(:item)
         visit url_prefix + "/items/#{item.id}/edit"
         fill_in "Name", with: ""
@@ -37,7 +37,7 @@ RSpec.describe "Item management", type: :system do
         expect(page.find(".alert")).to have_content "didn't work"
     end
 
-    scenario "User can filter the #index by base item" do
+    it "can filter the #index by base item as a user" do
         Item.delete_all
         create(:item, base_item: BaseItem.first)
         create(:item, base_item: BaseItem.last)
@@ -49,7 +49,7 @@ RSpec.describe "Item management", type: :system do
         end
     end
 
-    scenario "User can delete an item" do
+    it "can delete an item as a user" do
         item = create(:item, organization: @user.organization)
         visit url_prefix + "/items"
         expect do
@@ -59,7 +59,7 @@ RSpec.describe "Item management", type: :system do
         end.to change { Item.count }.by(-1)
     end
 
-    scenario "A user can 'delete' an item that has history, but it only soft-deletes it" do
+    it "can 'delete' an item that has history, but it only soft-deletes it as a user" do
         item = create(:item, name: "DELETEME", organization: @user.organization)
         create(:donation, :with_items, item: item)
         visit url_prefix + "/items"
@@ -93,7 +93,7 @@ RSpec.describe "Item management", type: :system do
         visit url_prefix + "/items"
         end
         # Consolidated these into one to reduce the setup/teardown
-        scenario "Displays items in separate tabs", js: true do
+        it "should display items in separate tabs", js: true do
         tab_items_only_text = page.find("table#tbl_items", visible: true).text
         expect(tab_items_only_text).not_to have_content "Quantity"
         expect(tab_items_only_text).to have_content item_pullups.name
