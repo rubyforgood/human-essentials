@@ -66,7 +66,9 @@ RSpec.describe "Item management", type: :system do
     expect(page).to have_content("DELETEME")
     expect do
       within "tr[data-item-id='#{item.id}']" do
-        click_on "Delete", match: :first
+        accept_confirm do
+          click_on "Delete", match: :first
+        end
       end
     end.not_to change { Item.unscoped.count }
     item.reload
