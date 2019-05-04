@@ -38,12 +38,24 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
+# an org with no info seeded, for testing onboarding workflows
+bare_org = Organization.find_or_create_by!(short_name: "sqeuaky") do |organization|
+  organization.name = "Squeaky Clean Diaperbank"
+  organization.street = "P.O. Box 12345"
+  organization.city = "Noinfo"
+  organization.state = "NY"
+  organization.zipcode = "10101"
+  organization.email = "info@sqeuakyclean.org"
+end
+Organization.seed_items(bare_org)
+
 # super admin
 user = User.create email: 'superadmin@example.com', password: 'password', password_confirmation: 'password', organization_admin: false, super_admin: true
 
 # org admins
 user = User.create email: 'org_admin1@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: true
 user2 = User.create email: 'org_admin2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org, organization_admin: true
+user3 = User.create email: 'bare_admin@example.com', password: 'password', password_confirmation: 'password', organization: bare_org, organization_admin: true
 
 # regular users
 User.create email: 'user_1@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: false

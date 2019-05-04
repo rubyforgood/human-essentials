@@ -16,6 +16,7 @@ $ ->
   append('<option value="">---Create new diaper drive---</option>')
 
   $(document).on "change", diaper_drive_participant_id, (evt) ->
+    console.log("TEST")
     selection = $(diaper_drive_participant_id + " option").
     filter(':selected').text()
     if (selection is create_new_diaper_drive_text)

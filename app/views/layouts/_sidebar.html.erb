@@ -1,0 +1,154 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+  <div class="sidebar-collapse">
+    <ul class="nav metismenu" id="side-menu">
+      <li class="nav-header">
+        <div class="dropdown profile-element">
+          <img src="/img/diaper-base-logo-icon.svg" alt="DiaperBase Logo (icon)" title="DiaperBase">
+          <a href="<%= root_path %>" %><span class="block m-t-xs font-bold"><%= current_user.name %></span></a>
+          <div class="logo-element">
+            ADS
+          </div>
+        </div>
+      </li>
+      <li class="<%= active_class(['dashboard']) %>">
+        <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
+          <i class="fa fa-dashboard"></i> <span class="nav-label">Dashboard</span>
+        <% end %>
+      </li>
+      <li class="<%= active_class(['donations']) %>">
+        <a href="#">
+          <i class="fa fa-gratipay"></i>
+          <span class="nav-label">Donations</span>
+          <span class="fa arrow"></span>
+        </a>
+        <ul class="nav nav-second-level">
+          <li class="<%= 'active' if current_page?(donations_path(organization_id: current_user.organization)) %>">
+            <%= link_to(donations_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> All Donations
+            <% end %>
+          </li>
+          <li class="<%= 'active' if current_page?(new_donation_path(organization_id: current_user.organization)) %>">
+            <%= link_to(new_donation_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> New Donation
+            <% end %>
+          </li>
+        </ul>
+      </li>
+      <li class="<%= active_class(['purchases']) %>">
+        <a href="#">
+          <i class="fa fa-money"></i>
+          <span class="nav-label">Purchases</span>
+          <span class="fa arrow"></span>
+        </a>
+        <ul class="nav nav-second-level">
+          <li class="<%= 'active' if current_page?(purchases_path(organization_id: current_user.organization)) %>">
+            <%= link_to(purchases_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> All Purchases
+            <% end %>
+          </li>
+          <li class="<%= 'active' if current_page?(new_purchase_path(organization_id: current_user.organization)) %>">
+            <%= link_to(new_purchase_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> New Purchase
+            <% end %>
+          </li>
+        </ul>
+      </li>
+      <li>
+      <li class="<%= 'active' if current_page?(requests_path) %>">
+        <%= link_to(requests_path) do %>
+          <i class="fa fa-file-text"></i> <span class="nav-label">Requests</span>
+        <% end %>
+      </li>
+      <li class="<%= active_class(['distributions']) %>">
+        <%= link_to(distributions_path(organization_id: current_user.organization)) do %>
+          <i class="fa fa-exchange"></i> <span class="nav-label">Distributions</span>
+        <% end %>
+      </li>
+      <li class="<%= 'active' if current_page?(pick_ups_distributions_path) %>">
+        <%= link_to(pick_ups_distributions_path) do %>
+          <i class="fa fa-calendar-o"></i> <span class="nav-label">Pick Ups</span>
+        <% end %>
+      </li>
+      </li>
+      <li class="<%= active_class(['items','barcode_items','storage_locations','adjustments','transfers']) %> treeview">
+        <a href="#">
+          <i class="fa fa-pie-chart"></i>
+          <span class="nav-label">Inventory</span>
+          <span class="fa arrow"></span>
+        </a>
+        <ul class="nav nav-second-level">
+          <li class="<%= active_class(['items']) %>">
+            <%= link_to(items_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Items &amp; Inventory
+            <% end %>
+          </li>
+          <li class="<%= active_class(['barcode_items']) %>">
+            <%= link_to(barcode_items_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Barcode Items
+            <% end %>
+          </li>
+          <li class="<%= active_class(['storage_locations']) %>">
+            <%= link_to(storage_locations_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Storage Locations
+            <% end %>
+          </li>
+          <li class="<%= active_class(['adjustments']) %>">
+            <%= link_to(adjustments_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Inventory Adjustments
+            <% end %>
+          </li>
+          <li class="<%= active_class(['transfers']) %>">
+            <%= link_to(transfers_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Transfers
+            <% end %>
+          </li>
+        </ul>
+      </li>
+      <li class="<%= active_class(['partners','donation_sites','diaper_drive_participants']) %> treeview">
+        <a href="#">
+          <i class="fa fa-laptop"></i>
+          <span class="nav-label">Community</span>
+          <span class="fa arrow"></span>
+        </a>
+        <ul class="nav nav-second-level">
+          <li class="<%= active_class(['donation_sites']) %>">
+            <%= link_to(donation_sites_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Donation Sites
+            <% end %>
+          </li>
+          <li class="<%= active_class(['partners']) %>">
+            <%= link_to(partners_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Partner Agencies
+            <% end %>
+          </li>
+          <li class="<%= active_class(['diaper_drive_participants']) %>">
+            <%= link_to(diaper_drive_participants_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Diaper Drive Participants
+            <% end %>
+          </li>
+          <li class="<%= active_class(['vendors']) %>">
+            <%= link_to(vendors_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> Vendors
+            <% end %>
+          </li>
+        </ul>
+      </li>
+      <% if current_user.organization_admin %>
+        <li class="<%= active_class(['audits']) %>">
+          <a href="#">
+            <i class="fa fa-tasks"></i>
+            <span class="nav-label">Reporting & Auditing</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            <li class="<%= active_class(['audits']) %>">
+              <%= link_to(audits_path(organization_id: current_user.organization)) do %>
+                <i class="fa fa-circle-o"></i> Annual Audit
+              <% end %>
+            </li>
+          </ul>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</nav>

@@ -11,8 +11,8 @@ RSpec.describe "Requests", type: :system do
       visit url_prefix + "/requests"
     end
 
-    it "should list requests" do
-      expect(page).to have_xpath("//h1", text: "Requests")
+    it "has a heading that says Requests" do
+      expect(page).to have_xpath("//h2", text: "Requests")
     end
   end
 

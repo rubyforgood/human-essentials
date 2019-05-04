@@ -87,7 +87,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
         select Vendor.first.business_name, from: "purchase_vendor_id"
         fill_in "purchase_line_items_attributes_0_quantity", with: "5"
-        page.find(:css, "#__add_line_item").click
+        click_on "Add another item"
         select_id = page.find(:xpath, '//*[@id="purchase_line_items"]/div[2]/select')[:id]
         select Item.alphabetized.first.name, from: select_id
         text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/div[2]/input[2]')[:id]
@@ -137,11 +137,10 @@ RSpec.describe "Purchases", type: :system, js: true do
       end
 
       it "a user can add items via scanning them in by barcode" do
-        pending "The JS doesn't appear to be executing in this correctly"
         # enter the barcode into the barcode field
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
+          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
         end
         # the form should update
         expect(page).to have_xpath('//input[@id="purchase_line_items_attributes_0_quantity"]')
@@ -150,20 +149,16 @@ RSpec.describe "Purchases", type: :system, js: true do
         expect(qty).to eq(@existing_barcode.quantity.to_s)
       end
 
-      it "User scan same barcode 2 times" do
-        pending "The JS doesn't appear to be executing in this correctly"
+      it "handles scanning the same barcode 2 times" do
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
+          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
         end
-
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
-
-        page.find(:css, "#__add_line_item").click
 
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-          fill_in "_barcode-lookup-1", with: @existing_barcode.value + 13.chr
+          fill_in "_barcode-lookup-1", with: @existing_barcode.value + 10.chr
         end
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s

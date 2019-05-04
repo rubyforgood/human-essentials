@@ -12,3 +12,6 @@ $ ->
     filter(':selected').text()
     if (selection is create_new_vendor_text)
       $("#new_vendor").click()
+
+  $(document).on "cocoon:after-insert", "form#new_purchase", (e, insertedItem) ->
+    insertedItem.find('#_barcode-lookup-new_line_items').attr('id', '_barcode-lookup-' + ($('.nested-fields').size() - 1))
