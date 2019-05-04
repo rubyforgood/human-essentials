@@ -11,14 +11,14 @@ RSpec.describe "Donation Site", type: :system do
         @third = create(:donation_site, name: "Cde")
         visit url_prefix + "/donation_sites"
         end
-        scenario "the donation sites are in alphabetical order" do
+        it "should show donation sites in alphabetical order" do
         expect(page).to have_xpath("//table/tbody/tr", count: 3)
         expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
         expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
         end
     end
 
-    scenario "User creates a new donation site" do
+    it "creates a new donation site as a user" do
         visit url_prefix + "/donation_sites/new"
         donation_site_traits = attributes_for(:donation_site)
         fill_in "Name", with: donation_site_traits[:name]
@@ -28,7 +28,7 @@ RSpec.describe "Donation Site", type: :system do
         expect(page.find(".alert")).to have_content "added"
     end
 
-    scenario "User creates a new donation site on index" do
+    it "creates a new donation site on index as a user" do
         donation_site_name = "A Unique Donation Site Name"
         donation_site_address = "1500 Remount Road, Front Royal, VA 22630"
 
@@ -39,14 +39,14 @@ RSpec.describe "Donation Site", type: :system do
         expect(page.find("tbody tr")).to have_content(donation_site_name)
     end
 
-    scenario "User creates a new donation site with empty attributes" do
+    it "creates a new donation site with empty attributes as a user" do
         visit url_prefix + "/donation_sites/new"
         click_button "Save"
 
         expect(page.find(".alert")).to have_content "didn't work"
     end
 
-    scenario "User updates an existing donation site" do
+    it "updates an existing donation site as a user" do
         donation_site = create(:donation_site)
         visit url_prefix + "/donation_sites/#{donation_site.id}/edit"
         fill_in "Address", with: donation_site.name + " new"
@@ -55,7 +55,7 @@ RSpec.describe "Donation Site", type: :system do
         expect(page.find(".alert")).to have_content "updated"
     end
 
-    scenario "User updates an existing donation site with empty attributes" do
+    it "updates an existing donation site with empty attributes as a user" do
         donation_site = create(:donation_site)
         visit url_prefix + "/donation_sites/#{donation_site.id}/edit"
         fill_in "Name", with: ""
