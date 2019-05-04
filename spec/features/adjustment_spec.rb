@@ -17,7 +17,7 @@ RSpec.feature "Adjustment management", type: :feature do
     expect do
       click_button "Save"
     end.to change { storage_location.size }.by(add_quantity)
-    
+
     expect(page).to have_content("djustment was successfully created")
   end
 
