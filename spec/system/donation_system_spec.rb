@@ -259,7 +259,6 @@ RSpec.describe "Donations", type: :system do
           fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
         end
         # the form should update
-        # save_and_open_page
         expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
         expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @existing_barcode.item.name)).to eq(true)
         qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value

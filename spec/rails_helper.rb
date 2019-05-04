@@ -119,7 +119,7 @@ RSpec.configure do |config|
 
   # set driver for system tests
   config.before(:each, type: :system) do
-    driven_by :selenium_chrome_headless
+    driven_by :chrome
     Capybara.server = :puma, { Silent: true }
   end
 

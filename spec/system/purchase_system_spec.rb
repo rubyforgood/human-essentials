@@ -144,7 +144,6 @@ RSpec.describe "Purchases", type: :system, js: true do
           fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
         end
         # the form should update
-        # save_and_open_page
         expect(page).to have_xpath('//input[@id="purchase_line_items_attributes_0_quantity"]')
         qty = page.find(:xpath, '//input[@id="purchase_line_items_attributes_0_quantity"]').value
 

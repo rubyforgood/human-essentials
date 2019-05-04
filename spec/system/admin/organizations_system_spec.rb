@@ -7,7 +7,6 @@ RSpec.describe "Admin Organization Management" do
     it "creates a new organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path
-      screenshot_and_open_image
       click_link "Add New Organization"
       org_params = attributes_for(:organization)
       fill_in "organization_name", with: org_params[:name]
@@ -53,7 +52,6 @@ RSpec.describe "Admin Organization Management" do
     it "creates a new organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path
-      screenshot_and_open_image
       click_link "Add New Organization"
       org_params = attributes_for(:organization)
       fill_in "organization_name", with: org_params[:name]
