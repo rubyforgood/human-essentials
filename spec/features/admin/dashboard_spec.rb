@@ -8,10 +8,10 @@ RSpec.feature "Dashboard" do
 
     scenario "the side and top nav both have a link to return to their organization dashboard" do
       visit admin_dashboard_path
-      within "section.sidebar" do
+      within ".navbar-static-top" do
         expect(page).to have_xpath("//li/a[@href='#{dashboard_path(@organization.short_name)}']")
       end
-      within "nav.navbar" do
+      within ".navbar-static-side" do
         expect(page).to have_xpath("//li/a[@href='#{dashboard_path(@organization.short_name)}']")
       end
     end
@@ -26,10 +26,10 @@ RSpec.feature "Dashboard" do
 
     scenario "the side and top navs DO NOT have a link to the organization dashboard" do
       visit admin_dashboard_path
-      within "section.sidebar" do
+      within ".navbar-static-side" do
         expect(page).not_to have_xpath("//li/a[@href='#{dashboard_path(@organization.short_name)}']")
       end
-      within "nav.navbar" do
+      within ".navbar-static-top" do
         expect(page).not_to have_xpath("//li/a[@href='#{dashboard_path(@organization.short_name)}']")
       end
     end

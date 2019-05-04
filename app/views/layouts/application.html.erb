@@ -26,13 +26,21 @@
       <%= render partial: "layouts/sidebar" %>
     <% end %>
   <% end %>
-
   <div id="page-wrapper" class="gray-bg">
+    <!-- Content Header (Page header) -->
+    <div id="flash-message-container">
+      <% flash.each do |key, value| %>
+        <div class="<%= flash_class(key) %> alert-dismissible">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+          <%= value %>
+        </div>
+      <% end %>
+    </div>
     <div class="row border-bottom">
-      <% if user_signed_in? && current_organization.present? %>
+      <% if user_signed_in? %>
         <% if admin_namespace? %>
           <%= render partial: "layouts/admin_navbar" %>
-        <% else %>
+        <% elsif current_organization.present? %>
           <%= render partial: "layouts/navbar" %>
         <% end %>
       <% end %>

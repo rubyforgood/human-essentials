@@ -157,7 +157,7 @@ RSpec.feature "Donations", type: :feature, js: true do
         end.to change { Donation.count }.by(1)
       end
 
-      scenario "User can create a Diaper Drive from donation" do
+      scenario "User can create a Diaper Drive from donation", js: true do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         select "---Create new diaper drive---", from: "donation_diaper_drive_participant_id"
         expect(page).to have_content("New Diaper Drive Participant")
