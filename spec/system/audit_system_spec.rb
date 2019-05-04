@@ -55,7 +55,7 @@ RSpec.describe "Audit management", type: :system do
       fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
       expect do
-        click_button "Save Progress"
+        click_on "Save Progress"
         expect(Audit.last.in_progress?).to be_truthy
         expect(Audit.last.line_items.count).to be(1)
         expect(Audit.last.line_items.last.quantity).to be(quantity)

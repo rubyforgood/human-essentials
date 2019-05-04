@@ -14,13 +14,17 @@
 //= require jquery_ujs
 //= require bootstrap.min
 //= require fastclick
-//= require adminlte.min
+//= require inspinia
 //= require cocoon
 //= require toastr
 //= require Chart.bundle
 //= require chartkick
+//= require jquery.metisMenu
+//= require popper.min
+//= require pace.min
+//= require jquery.slimscroll.min
 //= require moment
-//= require fullcalendar
+//= require fullcalendar.min
 //= require_tree .
 
 

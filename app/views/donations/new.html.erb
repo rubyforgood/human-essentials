@@ -21,7 +21,7 @@
 	<!-- Default box -->
 	<div class="box">
     <%= render partial: "donation_form", object: @donation %>
-    <%= link_to "Add diaper drive", new_diaper_drive_participant_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_diaper_drive", "style" => "display: none;"}  %>
+    <%= link_to "Add diaper drive", new_diaper_drive_participant_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_diaper_drive", class: "invisible" }  %>
 	</div><!-- /.box -->
 
   <%= render partial: "barcode_modal" %>

@@ -17,7 +17,8 @@ RSpec.feature "Adjustment management", type: :feature do
     expect do
       click_button "Save"
     end.to change { storage_location.size }.by(add_quantity)
-    expect(page).to have_content("Adjustment was successfully created")
+
+    expect(page).to have_content("djustment was successfully created")
   end
 
   scenario "User can subtract an inventory adjustment at a storage location", js: true do

@@ -33,10 +33,16 @@ RSpec.describe "Donation Site", type: :system do
     donation_site_address = "1500 Remount Road, Front Royal, VA 22630"
 
     visit url_prefix + "/donation_sites"
-    fill_in "donation_site_name", with: donation_site_name
-    fill_in "donation_site_address", with: donation_site_address
-    click_button "Create"
-    expect(page.find("tbody tr")).to have_content(donation_site_name)
+    within "#tblDonationSites" do
+      fill_in "donation_site_name", with: donation_site_name
+      fill_in "donation_site_address", with: donation_site_address
+      click_button "Create"
+
+      within "tbody" do
+        expect(page).to have_css("tr", count: 1)
+        expect(page).to have_content(donation_site_name)
+      end
+    end
   end
 
   it "creates a new donation site with empty attributes as a user" do

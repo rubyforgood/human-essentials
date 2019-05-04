@@ -29,14 +29,14 @@ RSpec.describe "Diaper Drive Participant", type: :system do
       click_button "Save"
     end.to change { DiaperDriveParticipant.count }.by(1)
 
-    expect(page.find(".alert")).to have_content "added"
+    expect(page).to have_content(diaper_drive_participant_traits[:contact_name])
   end
 
   it "allows a user to add a new diaper drive instance with empty attributes" do
     visit url_prefix + "/diaper_drive_participants/new"
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
+    expect(page).to have_content("Must provide a ")
   end
 
   it "allows a user to update the contact info for a diaper drive participant" do
