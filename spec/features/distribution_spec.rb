@@ -198,15 +198,8 @@ RSpec.feature "Distributions", type: :feature do
     end
 
     scenario "a user can add items via scanning them in by barcode", js: true do
-      pending "The JS doesn't appear to be executing in this correctly"
-      # I tried (3 Feb) to get this working and it still doesn't execute.
-      # The data gets put into the field correctly, tho it doesn't show up on
-      # the browser snapshot -- but the Ajax doesn't execute. Not sure why this is broken.
-      # enter the barcode into the barcode field
-      page.fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
-      # the form should update
+      page.fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
-      # save_and_open_page
 
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end

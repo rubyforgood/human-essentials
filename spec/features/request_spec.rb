@@ -12,7 +12,7 @@ RSpec.feature "Requests", type: :feature do
     end
 
     scenario "the requests are listed" do
-      expect(page).to have_xpath("//h1", text: "Requests")
+      expect(page).to have_xpath("//h2", text: "Requests")
     end
   end
 

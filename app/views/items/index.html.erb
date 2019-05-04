@@ -20,10 +20,16 @@
     <div class="box-body">
       <div class="row">
         <div class="col-xs-12">
-          <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a data-toggle="tab" href="#sectionA">Item List</a></li>
-            <li role="presentation"><a data-toggle="tab" href="#sectionB">Items and Quantity</a></li>
-            <li role="presentation"><a data-toggle="tab" href="#sectionC">Items, Quantity, and Location</a></li>
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation">
+              <a class="nav-link active" id="item-list-tab" data-toggle="tab" href="#sectionA" role="tab">Item List</a>
+            </li>
+            <li role="presentation">
+              <a class="nav-link" id="item-qty-tab" data-toggle="tab" href="#sectionB" role="tab">Items and Quantity</a>
+            </li>
+            <li role="presentation">
+              <a class="nav-link" id="item-qty-loc-tab" data-toggle="tab" href="#sectionC" role="tab">Items, Quantity, and Location</a>
+            </li>
           </ul>
 
           <div class="tab-content">

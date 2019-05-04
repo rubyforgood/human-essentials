@@ -1,4 +1,4 @@
-<%= simple_form_for @purchase, html: { class: "storage-location-required" } do |f| %>
+<%= simple_form_for @purchase do |f| %>
   <%= f.association :vendor,
                     collection: @vendors,
                     label_method: :business_name,
@@ -18,12 +18,12 @@
 
   <fieldset style="margin-bottom: 2rem;" class="form-inline">
     <legend>Items in this purchase</legend>
-    <%= f.simple_fields_for :line_items do |item| %>
-      <div id="purchase_line_items" class="line-item-fields" data-capture-barcode="true">
+    <div id="purchase_line_items" class="line-item-fields" data-capture-barcode="true">
+      <%= f.simple_fields_for :line_items do |item| %>
         <%= render 'line_items/line_item_fields', f: item %>
-      </div>
-    <% end %>
-    <div class="links">
+      <% end %>
+    </div>
+    <div class="row links">
       <div class="col-xs-12">
         <%= add_line_item_button f, "#purchase_line_items", {} %>
       </div>
