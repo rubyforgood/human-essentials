@@ -1,60 +1,56 @@
-<div class="content-header">
-  <% content_for :title, "Donation Sites - Agencies - #{current_organization.name}" %>
-  <h1>
-    Donation Sites
-    <small>for <%= current_organization.name %></small>
-  </h1>
+<div class="row wrapper border-bottom white-bg page-heading">
+<% content_for :title, "Donation Sites - Agencies - #{current_organization.name}" %>
+<div class="col-lg-8">
+  <h2>Donation Sites for <%= current_organization.name %></h2>
   <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
+    <li class="breadcrumb-item">
+      <%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
     </li>
-    <li><a href="#">Donation Sites</a></li>
+    <li class="breadcrumb-item active">
+      Donation Sites
+    </li>
   </ol>
 </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Donation Sites", size: "lg"}) if @donation_sites.empty? %>
+      <%= download_button_to(csv_path(format: :csv, type: "DonationSite"), {text: "Export Donation Sites", size: "lg"}) if @donation_sites.any? %>
+      <%= new_button_to new_donation_site_path(organization_id: current_organization), {text: "New Donation Site"} %>
+    </div>
+  </div>
+</div>
 
-<!-- Main content -->
-<div class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <div id="filters">
-        <!-- TBA; replicate HTML from other #index views -->
-        <div class="pull-right">
-          <!-- Button HTML (to Trigger Modal) -->
-          <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Donation Sites", size: "lg" }) if @donation_sites.empty? %>
-          <%= download_button_to(csv_path(format: :csv, type: "DonationSite"), { text: "Export Donation Sites", size: "lg" }) if @donation_sites.any? %>
-          <%= new_button_to new_donation_site_path(organization_id: current_organization), { text: "New Donation Site" } %>
-        </div>
-      </div><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <% if @donation_sites.empty? %>
-        
-      <% end %>
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover index">
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="row">
+          <div class="table-responsive">
+            <table class="table table-hover">
               <thead>
-                <tr>
-                  <th>Donation Site</th>
-                  <th>Address</th>
-                  <th>&nbsp;</th>
-                </tr>
-                <%= render partial: 'shared/table_row_form',
-                           object:  @donation_site,
-                           locals: {columns: [{name: :text_field}, {address: :text_field}]}
-                %>
+              <tr>
+                <th>Donation Site</th>
+                <th>Address</th>
+                <th>&nbsp;</th>
+              </tr>
+              <%= render partial: 'shared/table_row_form',
+                         object:  @donation_site,
+                         locals: {columns: [{name: :text_field}, {address: :text_field}]}
+              %>
               </thead>
               <tbody>
-                <%= render partial: "donation_site_row", collection: @donation_sites %>
+              <%= render partial: "donation_site_row", collection: @donation_sites %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <%= render(
     layout: "shared/csv_import_modal",
@@ -68,6 +64,3 @@
   <li>Delete the sample data and enter your donation site names and addresses in the appropriate columns.</li>
   <li>Save the file as a csv file.</li>
 <% end %>
-
-</div><!-- /.content -->
-

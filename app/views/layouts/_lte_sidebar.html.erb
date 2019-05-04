@@ -1,9 +1,6 @@
-<!-- Left side column. contains the sidebar -->
-<aside class="main-sidebar">
-  <!-- sidebar: style can be found in sidebar.less -->
-  <section class="sidebar">
-    <!-- sidebar menu: : style can be found in sidebar.less -->
-    <ul class="sidebar-menu" data-widget="tree">
+<nav class="navbar-default navbar-static-side" role="navigation">
+  <div class="sidebar-collapse">
+    <ul class="nav metismenu" id="side-menu">
       <li class="header all-caps">Main Navigation</li>
       <li class="<%= active_class(['dashboard']) %>">
         <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>

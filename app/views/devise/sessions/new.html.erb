@@ -1,34 +1,38 @@
-<div class="medium-offset-3 medium-6">
-	<h2>Sign In</h2>
-</div>
-<%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="form-inputs">
-			<%= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-          <%= f.input_field :email, class: "form-control" %>
-        <% end %>    
-			<%= f.input :email, label: "Password:", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-          <%= f.input_field :password, class: "form-control" %>
-        <% end %>
-    <%= f.input :remember_me, label: " Remember me", as: :boolean if devise_mapping.rememberable? %>
+<div class="middle-box text-center loginscreen animated fadeInDown">
+  <div>
+    <div>
+      <img src="/img/diaper-base-logo-icon.svg" alt="DiaperBase Logo (icon)" title="DiaperBase"></div>
+    <h2>Sign In</h2>
+    <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="form-inputs">
+        <div class="form-group">
+          <%= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
+            <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+            <%= f.input_field :email, class: "form-control" %>
+          <% end %>
+        </div>
+        <div class="form-group">
+          <%= f.input :email, label: "Password:", wrapper: :vertical_input_group do %>
+            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+            <%= f.input_field :password, class: "form-control" %>
+          <% end %>
+          <%= f.input :remember_me, label: "Remember me", as: :boolean, class: "form-control", input_html: {checked: false} if devise_mapping.rememberable? %>
+          <%= f.button :submit, "Log in" %>
+          <br>
+          <%= render "devise/shared/links" %>
+        </div>
+    <% end %>
+    </div>
   </div>
-<div class="medium-offset-3 medium-6">
-
-  <div class="form-actions">
-    <%= f.button :submit, "Log in" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
 </div>
+
 <script>
-    $(document).ready(function() {
+  $(document).ready(function () {
 
-        if (document.URL == "https://diaperbase.org/users/sign_in") {
-            $('#exampleModal').modal('show');
-        }
-    });
+    if (document.URL == "https://diaperbase.org/users/sign_in") {
+      $('#exampleModal').modal('show');
+    }
+  });
 </script>
 
 <!-- Modal -->
@@ -39,7 +43,8 @@
         <h3 class="modal-title" id="exampleModalLabel">Demo Site Reminder</h3>
       </div>
       <div class="modal-body">
-        Please be aware that diaperbase.org is a demo/test server for <a href="https://diaper.app">diaper.app</a>. Multiple people have access to the test accounts so please do not save or upload any sensitive data.
+        Please be aware that diaperbase.org is a demo/test server for <a href="https://diaper.app">diaper.app</a>.
+        Multiple people have access to the test accounts so please do not save or upload any sensitive data.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">I Understand</button>

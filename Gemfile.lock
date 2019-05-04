@@ -172,10 +172,6 @@ GEM
     font-ionicons-rails (2.0.1.5)
       railties (>= 3.2, < 6.0)
     formatador (0.2.5)
-    fullcalendar-rails (3.9.0.0)
-      jquery-rails (>= 4.0.5, < 5.0.0)
-      jquery-ui-rails (>= 5.0.2)
-      momentjs-rails (>= 2.9.0)
     geocoder (1.5.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
@@ -493,7 +489,6 @@ DEPENDENCIES
   flipper-ui
   font-awesome-rails
   font-ionicons-rails
-  fullcalendar-rails
   geocoder
   groupdate (~> 4.1)
   guard-rspec
