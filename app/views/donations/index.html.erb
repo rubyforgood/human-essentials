@@ -34,7 +34,7 @@
           <% end %>
           <% if @diaper_drives.present? %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "by Diaper Drive" %>
+              <%= label_tag "by Diaper Drive Participants" %>
               <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :business_name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
             </div>
           <% end %>
