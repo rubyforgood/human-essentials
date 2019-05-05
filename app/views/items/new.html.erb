@@ -1,33 +1,35 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
 	<% content_for :title, "New - Items - Inventory - #{current_organization.name}" %>
-  <h1>
-    New Item Type
-    <small>for <%= current_organization.name %></small>
-  </h1>
-	<ol class="breadcrumb">
-	<li><%= link_to(dashboard_path) do %>
-	    <i class="fa fa-dashboard"></i> Home
-	  <% end %>
-	  </li>
-	  <li><%= link_to "All Item Types", (items_path) %></li>  
-	  <li class="active"> New Item Type</li>
-	</ol>
-</section>
+	<div class="col-lg-8">
+  	<h2>New Item Type for <%= current_organization.name %></h2>
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<%= link_to(dashboard_path) do %>
+					<i class="fa fa-dashboard"></i> Home
+				<% end %>
+			</li>
+			<li class="breadcrumb-item">
+				<%= link_to "All Item Types", (items_path) %>
+			</li>  
+			<li class="breadcrumb-item active">
+				New Item Type
+			</li>
+		</ol>
+	</div>
+</div>
 
 <!-- Main content -->
-<section class="content">
-
-	<!-- Default box -->
-	<div class="box">
-	  <div class="box-header with-border">
-	    <h3 class="box-title">New Item Type</h3>
-	  </div>
-	  <div class="box-body">
-			<%= render partial: "form", object: @item %>
-	  </div>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="ibox-title">
+	    		<h3>New Item Type</h3>
+	  		</div>
+				<div class="ibox-content">
+					<%= render partial: "form", object: @item %>
+				</div>
+			</div>
+		</div>
 	</div>
-	<!-- /.box -->
-
-</section>
-
-
+</div>
