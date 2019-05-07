@@ -1,58 +1,58 @@
-<section class="content-header">
-<% content_for :title, "Purchases - #{current_organization.name}" %>
-<h1>
-  Purchases
-  <small>for <%= current_organization.name %></small>
-</h1>
-<ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
-  </li>
-  <li><a href="#">Purchases</a></li>
-</ol>
-</section>
+<div class="row wrapper border-bottom white-bg page-heading">
+  <% content_for :title, "Purchases - #{current_organization.name}" %>
+  <div class="col-lg-8">
+    <h2>
+      Purchases
+      <small>for <%= current_organization.name %></small>
+    </h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active">
+        Purchases
+      </li>
+    </ol>
+  </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= download_button_to(csv_path(format: :csv, type: "Purchase"), text: "Export Export Purchases", size: "lg") if @purchases.any? %>
+      <%= new_button_to new_purchase_path(organization_id: current_organization), {text: "New Purchase"} %>
+    </div>
+  </div>
+</div>
 
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(purchases_path, method: :get) do |f| %>
-        <div class="row">
-          <% if @storage_locations.present? %>
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "by Storage Location" %>
-              <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_storage_location }, class: "form-control") %>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <section id="filters">
+          <%= form_tag(purchases_path, method: :get) do |f| %>
+            <div class="row">
+              <% if @storage_locations.present? %>
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "by Storage Location" %>
+                  <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_storage_location }, class: "form-control") %>
+                </div>
+              <% end %>
+              <% if @vendors.present? %>
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "by Vendors" %>
+                  <%= collection_select(:filters, :from_vendor, @vendors || {}, :id, :business_name, { include_blank: true, selected: @selected_vendor }, class: "form-control") %>
+                </div>
+              <% end %>
             </div>
-          <% end %>
-          <% if @vendors.present? %>
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "by Vendors" %>
-              <%= collection_select(:filters, :from_vendor, @vendors || {}, :id, :business_name, { include_blank: true, selected: @selected_vendor }, class: "form-control") %>
-            </div>
-          <% end %>
-        </div><!-- /.row -->
-        <div class="row">
-          <div class="col-xs-12">
             <%= filter_button %>
             <%= cancel_button_to purchases_path, { text: "Clear Filters" } %>
+          <% end %>
+        </section>
+      </div>
 
-            <div class="pull-right">
-              <%= download_button_to(csv_path(format: :csv, type: "Purchase"), { text: "Export Purchases", size: "lg" }) if @purchases.any? %>
-              <%= new_button_to new_purchase_path(organization_id: current_organization), { text: "New Purchase" } %>              
-            </div>
-        
-          </div>
-        </div><!-- /.row -->
-        <% end # form %>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
+      <div class="ibox-content p-xl">
+        <div class="row">
+          <div class="table-responsive">
             <table class="table table-hover">
               <thead>
                 <tr>
@@ -68,9 +68,9 @@
                 <%= render partial: "purchase_row", collection: @purchases %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
