@@ -1,3 +1,4 @@
+# [Super Admin] This is for administrating users at a global level. We can create, view, modify, etc.
 class Admin::UsersController < AdminController
   before_action :load_organizations, only: %i[new create edit update]
 

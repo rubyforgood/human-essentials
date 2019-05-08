@@ -1,3 +1,4 @@
+# Configures a Prawn PDF template for generating Distribution manifests
 class DistributionPdf
   include Prawn::View
   include ItemsHelper

@@ -1,3 +1,4 @@
+# Provides limited R/W to a scope-limited organization resource (member-routes-only)
 class OrganizationsController < ApplicationController
   before_action :authorize_admin, except: [:show]
   before_action :authorize_user, only: [:show]

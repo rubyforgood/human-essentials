@@ -1,4 +1,6 @@
+# Encapsulates some user-oriented business logic
 module UsersHelper
+  # Displays a gravatar, because people still use these, right?
   def gravatar_url(email, size)
     gravatar = Digest::MD5.hexdigest(email).downcase
     "http://gravatar.com/avatar/#{gravatar}.png?s=#{size}"

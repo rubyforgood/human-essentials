@@ -1,3 +1,4 @@
+# Encapsulates methods used on the Dashboard that need some business logic
 module DashboardHelper
   def display_interval
     selected_interval.humanize.downcase

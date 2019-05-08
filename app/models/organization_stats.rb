@@ -1,3 +1,6 @@
+# TODO: Move this out of models
+# Creates a service object to provide macros for some common organization stats
+# These are largely used in the Organization dashboard.
 class OrganizationStats
   delegate :partners,
            :storage_locations,

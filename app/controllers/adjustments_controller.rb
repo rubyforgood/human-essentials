@@ -1,3 +1,4 @@
+# Provides limited CRUD for Adjustments, which are the way that Diaper Banks fix incorrect inventory totals at Storage Locations
 class AdjustmentsController < ApplicationController
   before_action :set_adjustment, only: %i(show destroy)
 

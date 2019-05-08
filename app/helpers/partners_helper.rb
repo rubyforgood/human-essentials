@@ -1,3 +1,4 @@
+# Encapsulates methods that need some business logic
 module PartnersHelper
   def documentation_url(path)
     # NOTE(chaserx): add to .env with http://localhost:3001 or https://partnerbase.org
