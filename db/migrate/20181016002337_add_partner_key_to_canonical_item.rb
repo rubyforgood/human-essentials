@@ -3,6 +3,7 @@
 # yet know about the BaseItem name change, but the codebase does.
 class CanonicalItem < ApplicationRecord; end
 
+# The partner key is used as the lingua franca when receiving Requests
 class AddPartnerKeyToCanonicalItem < ActiveRecord::Migration[5.2]
   def up
     add_column :canonical_items, :partner_key, :string

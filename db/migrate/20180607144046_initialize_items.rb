@@ -3,6 +3,7 @@
 # yet know about the BaseItem name change, but the codebase does.
 class CanonicalItem < ApplicationRecord; end
 
+# This ensures that every existing item is associated with a canonical/base item
 class InitializeItems < ActiveRecord::Migration[5.2]
   def up
     ci = CanonicalItem.find_or_initialize_by(name: "Other") do |ci|

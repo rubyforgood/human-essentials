@@ -1,3 +1,4 @@
+# Stakeholder wanted the ability to track inventory purchased directly
 class CreatePurchases < ActiveRecord::Migration[5.1]
   def change
     create_table :purchases do |t|
