@@ -1,6 +1,6 @@
 <div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Edit - Barcode Items - #{@barcode_item.item.name} - Inventory - #{current_organization.name}" %>
-    <div class="col-lg-8">
+  <div class="col-lg-8">
     <h1>
       Editing Barcode
       <small>for <%= current_organization.name %></small>
@@ -8,26 +8,27 @@
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
+          <i class="fa fa-dashboard"></i> Home
         <% end %>
       </li>
       <li class="breadcrumb-item active">
         <%= link_to "All Barcodes", (barcode_items_path) %>
-      </li>  
+      </li>
       <li class="breadcrumb-item active">Editing Barcode
       </li>
     </ol>
   </div>
 </div>
-
 <div class="row">
   <div class="col-lg-12">
     <div class="wrapper wrapper-content animated fadeInRight">
       <div class="ibox-content p-xl">
-        <h3 class="box-title">Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %></h3>
+        <div class="ibox-title">
+          <h3 class="box-title">Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %></h3>
+        </div>
         <div class="ibox-content">
           <%= render partial: "form", object: @barcode_item %>
-        </div>  
+        </div>
       </div>
     </div>
   </div>
