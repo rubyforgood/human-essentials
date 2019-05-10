@@ -15,7 +15,7 @@
     <% when "awaiting_review" %>
       <%= link_to "Review Application", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
     <% when "approved" %>
-      <%= link_to "Recertify", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-red" %>
+      <%= button_to "Request Recertification", recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" %>
     <% end %>
   </td>
 </tr>
