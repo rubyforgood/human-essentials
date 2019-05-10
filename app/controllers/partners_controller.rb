@@ -72,6 +72,13 @@ class PartnersController < ApplicationController
     redirect_to partners_path, notice: "#{partner.name} invited!"
   end
 
+  def recertify_partner
+    @partner = current_organization.partners.find(params[:id])
+    @partner.pending!
+    DiaperPartnerClient.put(@partner.attributes)
+    redirect_to partners_path, notice: "#{@partner.name} recertification successfully requested!"
+  end
+
   private
 
   def autovivifying_hash
@@ -82,3 +89,5 @@ class PartnersController < ApplicationController
     params.require(:partner).permit(:name, :email)
   end
 end
+
+
