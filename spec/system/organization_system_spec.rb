@@ -33,7 +33,8 @@ RSpec.describe "Organization management", type: :system do
       allow(User).to receive(:invite!).and_return(true)
       visit url_prefix + "/organization"
       click_on "Invite User to this Organization"
-      within "#addUserModal" do
+      sleep 3
+      within ".modal-content" do
         fill_in "email", with: "some_new_user@website.com"
         click_on "Invite User"
       end
