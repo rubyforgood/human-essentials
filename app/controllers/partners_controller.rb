@@ -31,7 +31,7 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.new
   end
 
-  # review_application
+  # NOTE(chaserx): this could be renamed to review_application
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
 
@@ -74,7 +74,7 @@ class PartnersController < ApplicationController
 
   def recertify_partner
     @partner = current_organization.partners.find(params[:id])
-    @partner.pending!
+    @partner.recertification_required!
     DiaperPartnerClient.put(@partner.attributes)
     redirect_to partners_path, notice: "#{@partner.name} recertification successfully requested!"
   end

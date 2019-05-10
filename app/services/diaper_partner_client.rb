@@ -31,7 +31,8 @@ module DiaperPartnerClient
   def self.put(attributes)
     partner = { partner:
                     {
-                      diaper_partner_id: attributes["id"]
+                      diaper_partner_id: attributes["id"],
+                      status: attributes["status"]
                     } }
 
     uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{attributes["id"]}")
