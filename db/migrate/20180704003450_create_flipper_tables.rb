@@ -1,3 +1,4 @@
+# Flipper enables us to do FeatureFlagging 
 class CreateFlipperTables < ActiveRecord::Migration[5.2]
   def self.up
     create_table :flipper_features do |t|

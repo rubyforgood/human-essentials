@@ -1,3 +1,7 @@
+# Creates common methods that we can use throughout the app to ensure that buttons display consistently, which
+# hopefully creates a better UX overall. Anytime a button or pseudo-button are displayed, it should *always*
+# be through one of these methods. Most of these can be adapted to display in different ways, but those alterations
+# will be evident in the source code that it's deviating from the standard.
 module UiHelper
   def add_line_item_button(form, node, options = {})
     text = options[:text] || "Add another item"

@@ -1,3 +1,6 @@
+# There was some confusion because we were using both "Dropoff Location" and "Pickup Location". 
+# There was a misunderstanding about who is doing the 
+# "dropping off" at a dropoff location. So instead, we changed it to Donation site.
 class ChangeDropoffLocationToDonationSite < ActiveRecord::Migration[5.1]
   def up
     remove_index :donations, :dropoff_location_id if index_exists?(:donations, :dropoff_location_id)

@@ -1,3 +1,6 @@
+# Provides full CRUD for Partners. These are minimal representations of corresponding Partner records in PartnerBase.
+# Though the functionality of Partners is actually fleshed out in PartnerBase, in DiaperBase, we maintain a collection
+# of which Partners are associated with which Diaperbanks.
 class PartnersController < ApplicationController
   include Importable
 

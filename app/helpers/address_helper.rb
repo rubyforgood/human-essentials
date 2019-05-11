@@ -1,3 +1,4 @@
+# Puts every state name ever into a single file, so we don't have to do it anywhere else.
 module AddressHelper
   def us_states
     [

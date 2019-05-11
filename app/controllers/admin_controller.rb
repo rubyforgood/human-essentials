@@ -1,3 +1,4 @@
+# [Super Admin] This is the parent controller for the Admin namespace, and also provides the Dashboard data for SuperAdmins.
 class AdminController < ApplicationController
   before_action :require_admin
 

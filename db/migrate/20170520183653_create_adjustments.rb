@@ -1,3 +1,4 @@
+# Creates the initial Adjustments table
 class CreateAdjustments < ActiveRecord::Migration[5.0]
   def change
     create_table :adjustments do |t|

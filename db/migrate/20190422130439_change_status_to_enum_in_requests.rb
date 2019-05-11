@@ -1,4 +1,7 @@
+# Fix to ensure that the object is available in the migration
 class Request < ApplicationRecord; end
+
+# We're changing our state-tracking to Enums because it just makes more sense to do it that way
 class ChangeStatusToEnumInRequests < ActiveRecord::Migration[5.2]
   def up
     add_column :requests, :status_new, :integer, default: 0

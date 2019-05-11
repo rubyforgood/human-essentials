@@ -1,3 +1,4 @@
+# This exists so that we can override some of the devise resource
 class Users::ConfirmationsController < Devise::ConfirmationsController
   # GET /resource/confirmation/new
   # def new
