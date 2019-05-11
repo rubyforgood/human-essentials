@@ -1,3 +1,4 @@
+# This mailer is for correspondence about Distributions; primarily for notifying Partners about pending distributions
 class DistributionMailer < ApplicationMailer
   # Subject can be set in your I18n file at config/locales/en.yml
   # with the following lookup:

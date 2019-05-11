@@ -2,11 +2,11 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  email           :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  created_at      :datetime
+#  updated_at      :datetime
 #  organization_id :integer
 #  status          :string
 #

@@ -1,3 +1,4 @@
+# Bring in Devise! Hooray for Multitenancy!
 class DeviseCreateUsers < ActiveRecord::Migration[5.0]
   def change
     create_table :users do |t|

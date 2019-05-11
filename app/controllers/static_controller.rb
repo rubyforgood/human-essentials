@@ -1,3 +1,4 @@
+# Provides a means to present static pages that still use the site layout
 class StaticController < ApplicationController
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!

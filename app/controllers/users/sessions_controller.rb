@@ -1,3 +1,4 @@
+# This exists so that we can override some of the devise resource
 class Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
   layout "devise"

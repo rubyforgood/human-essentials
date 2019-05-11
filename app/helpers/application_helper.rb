@@ -1,5 +1,6 @@
 require "active_support/core_ext/module/aliasing"
 
+# Encapsulates view methods that need some business logic
 module ApplicationHelper
   def dashboard_path_from_user
     if current_user.super_admin?

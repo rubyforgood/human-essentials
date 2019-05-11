@@ -1,3 +1,4 @@
+# Extracts geocoding logic.
 module Geocodable
   extend ActiveSupport::Concern
   included do
