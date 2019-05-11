@@ -160,7 +160,7 @@
         <% end %>
         <li>
           <div class="text-center link-block">
-            <%= link_to destroy_user_session_path(organization_id: nil) do %>
+            <%= link_to destroy_user_session_path(organization_id: nil), method: :delete do %>
               <i class="fa fa-sign-out"></i> Log out
             <% end %>
           </div>
