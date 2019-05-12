@@ -231,26 +231,6 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "adjust!" do
-      it "combines line item quantities with inventory amounts" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        adjustment = build :adjustment, :with_items, storage_location: storage_location, item_quantity: 50
-        storage_location.adjust!(adjustment)
-        expect(storage_location.inventory_items.first.quantity).to eq 350
-
-        adjustment2 = build :adjustment, :with_items, storage_location: storage_location, item_quantity: -50
-        storage_location.adjust!(adjustment2)
-        expect(storage_location.inventory_items.first.quantity).to eq 300
-      end
-      it "ensures that a user cannot adjust an inventory into the negative" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        adjustment = build :adjustment, :with_items, storage_location: storage_location, item_quantity: -301
-        expect do
-          storage_location.adjust!(adjustment)
-        end.to raise_error(Errors::InsufficientAllotment)
-      end
-    end
-
     describe "move_inventory!" do
       it "removes inventory from a storage location and adds them to another storage location" do
         item = create(:item)

@@ -187,32 +187,6 @@ class StorageLocation < ApplicationRecord
     update_inventory_inventory_items(updated_quantities)
   end
 
-  # Used to adjust inventory at a StorageLocation to reflect reality
-  # Ex: we thought we had 200 size "5" diapers, but we actually have 180 size "5" diapers
-  # NOTE: Has too much knowledge about adjustments -- should be moved to `Adjustment`
-  def adjust!(adjustment)
-    updated_quantities = {}
-    item_validator = Errors::InsufficientAllotment.new("Adjustment exceeds the available inventory")
-
-    adjustment.line_items.each do |line_item|
-      inventory_item = inventory_items.find_by(item: line_item.item)
-      next if inventory_item.nil? || inventory_item.quantity.zero?
-
-      if (inventory_item.quantity + line_item.quantity) >= 0
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
-                                                 inventory_item.quantity) + line_item.quantity
-      else
-        item_validator.add_insufficiency(line_item.item,
-                                         inventory_item.quantity,
-                                         line_item.quantity)
-      end
-    end
-
-    raise item_validator unless item_validator.satisfied?
-
-    update_inventory_inventory_items(updated_quantities)
-  end
-
   # NOTE: This has WAY too much knowledge of distribution
   def update_distribution!(distribution, new_distribution_params)
     ActiveRecord::Base.transaction do
