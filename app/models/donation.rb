@@ -102,6 +102,19 @@ class Donation < ApplicationRecord
     end
   end
 
+  def replace_increase!(previous_line_item_values)
+    ActiveRecord::Base.transaction do
+      # Roll back distribution output by increasing storage location
+      storage_location.increase_inventory(to_a)
+      # Apply the new changes to the storage location inventory
+      storage_location.decrease_inventory(previous_line_item_values)
+      # TODO: Discuss this -- *should* we be removing InventoryItems when they hit 0 count?
+      storage_location.inventory_items.where(quantity: 0).destroy_all
+    end
+  rescue ActiveRecord::RecordInvalid
+    false
+  end
+
   def remove(item)
     # doing this will handle either an id or an object
     item_id = item.to_i

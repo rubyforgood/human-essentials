@@ -65,15 +65,6 @@ module Itemizable
     validates_associated :line_items
   end
 
-  # TODO: Remove this
-  # app/controllers/purchases_controller.rb
-  # app/controllers/donations_controller.rb
-  # app/models/concerns/itemizable.rb
-  # spec/models/storage_location_spec.rb
-  def line_items_quantities
-    to_a
-  end
-
   def value_per_itemizable
     line_items.sum(&:value_per_line_item)
   end
@@ -84,17 +75,6 @@ module Itemizable
       item = Item.unscoped.find(l.item_id)
       { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
     end
-  end
-
-  def replace_increase!(previous_line_item_values)
-    ActiveRecord::Base.transaction do
-      # Roll back distribution output by increasing storage location
-      storage_location.increase_inventory(to_a)
-      # Apply the new changes to the storage location inventory
-      storage_location.decrease_inventory(previous_line_item_values)
-    end
-  rescue ActiveRecord::RecordInvalid
-    false
   end
 
   private

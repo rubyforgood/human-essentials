@@ -132,55 +132,6 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "adjust_from_past!" do
-      let(:storage_location) { create(:storage_location) }
-      let(:purchase)         { create(:purchase, :with_items, item_quantity: 10) }
-      let(:donation)         { create(:donation, :with_items, item_quantity: 10) }
-
-      context "with_donations" do
-        before(:each) do
-          storage_location.increase_inventory(donation)
-        end
-
-        it "updates the quantity of items" do
-          previous_quantities = donation.line_items_quantities
-          donation.line_items.first.update(quantity: 5)
-          expect do
-            storage_location.adjust_from_past!(donation, previous_quantities)
-            storage_location.reload
-          end.to change { storage_location.size }.by(-5)
-        end
-
-        it "removes the inventory item from the DB if the item's removal results in a 0 count" do
-          previous_quantities = donation.line_items_quantities
-          donation.line_items.first.update(quantity: 0)
-
-          expect do
-            storage_location.adjust_from_past!(donation, previous_quantities)
-            storage_location.reload
-          end.to change { storage_location.inventory_items.size }.by(-1)
-                                                                 .and change { InventoryItem.count }.by(-1)
-        end
-      end
-      context "With purchases" do
-        before(:each) do
-          storage_location.increase_inventory(purchase)
-          storage_location.items.reload
-        end
-
-        it "removes the inventory item from the DB if the item's removal results in a 0 count" do
-          previous_quantities = purchase.line_items_quantities
-          purchase.line_items.first.update(quantity: 0)
-
-          expect do
-            storage_location.adjust_from_past!(purchase, previous_quantities)
-            storage_location.reload
-          end.to change { storage_location.inventory_items.size }.by(-1)
-                                                                 .and change { InventoryItem.count }.by(-1)
-        end
-      end
-    end
-
     describe "import_csv" do
       it "imports storage locations from a csv file" do
         organization

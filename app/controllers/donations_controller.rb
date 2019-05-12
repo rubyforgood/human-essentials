@@ -100,9 +100,10 @@ class DonationsController < ApplicationController
 
   def update
     @donation = Donation.find(params[:id])
-    previous_quantities = @donation.line_items_quantities
+    previous_quantities = @donation.to_a
     if @donation.update(donation_params)
-      @donation.storage_location.adjust_from_past!(@donation, previous_quantities)
+      # TODO: Move update into replace_increase!
+      @donation.replace_increase!(@donation, previous_quantities)
       redirect_to donations_path
     else
       render "edit"
