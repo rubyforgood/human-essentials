@@ -19,6 +19,8 @@ class Request < ApplicationRecord
   belongs_to :distribution, optional: true
   has_many :item_requests, dependent: :destroy
 
+  scope :active_requests, -> { where(status: :pending) + where(status: :started) }
+
   enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
   def family_request_reply

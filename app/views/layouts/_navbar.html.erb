@@ -76,8 +76,8 @@
     <li class="dropdown">
       <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
         <i class="fa fa-bell-o"></i>
-        <% if current_organization && current_organization.requests.size > 0 %>
-          <span class="label label-warning"><%= current_organization&.requests.size rescue "0" %></span>
+        <% if current_organization && current_organization.requests.active_requests.size > 0 %>
+          <span class="label label-warning"><%= current_organization&.requests.active_requests.size rescue "0" %></span>
         <% end %>
       </a>
       <ul class="dropdown-menu dropdown-messages">
@@ -88,7 +88,7 @@
             </a>
             <div>
               <%= link_to(requests_path) do %>
-                <%= current_organization&.requests.pending.size rescue "0" %>
+                <%= current_organization&.requests.active_requests.size rescue "0" %>
                 Diaper Requests
               <% end %>
               <br>
