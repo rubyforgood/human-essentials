@@ -141,13 +141,14 @@ RSpec.feature "Distributions", type: :feature do
         expect(page).to have_content 13
       end
 
-      scenario "User creates a distribution from a donation then tries to make the quantity too big" do
+      scenario "User creates a distribution from a donation then tries to make the quantity too big", js: true do
         within "#edit_distribution_#{@distribution.to_param}" do
           first(".numeric").set 999_999
           click_on "Save"
         end
         expect(page).to have_no_content "Distribution updated!"
-        expect(page).to have_content "Distribution could not be updated!"
+        # NOTE: This is rendering the app/views/errors/insufficient.html.erb template
+        expect(page).to have_content /Insufficient/i
         expect(page).to have_no_content 999_999
         expect(Distribution.first.line_items.count).to eq 1
       end

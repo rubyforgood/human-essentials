@@ -96,7 +96,7 @@ class DistributionsController < ApplicationController
     # see examples: https://stackoverflow.com/questions/13605598/how-to-get-a-date-from-date-select-or-select-date-in-rails
     old_issued_at = distribution.issued_at
 
-    if distribution.storage_location.update_distribution!(distribution, distribution_params)
+    if distribution.replace_distribution!(distribution_params)
       @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
       @line_items = @distribution.line_items
 
