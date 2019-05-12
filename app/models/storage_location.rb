@@ -272,10 +272,9 @@ class StorageLocation < ApplicationRecord
   # item_id
   # quantity
   # FIXME: After this is stable, revisit how we do logging
-  def increase_inventory(itemizable)
-    itemizable_array = itemizable.line_items.map do |l| 
-      { item_id: l.item_id, quantity: l.quantity, active: l.item.active }.with_indifferent_access
-    end
+  def increase_inventory(itemizable_array)
+    itemizable_array = itemizable_array.is_a?(Array) ? itemizable_array : itemizable_array.to_a
+
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # Iterate through each of the line-items in the moving box
@@ -300,10 +299,8 @@ class StorageLocation < ApplicationRecord
   end
 
   # TODO: re-evaluate this for optimization
-  def decrease_inventory(itemizable)
-    itemizable_array = itemizable.line_items.map do |l| 
-      { item_id: l.item_id, name: l.item.name, quantity: l.quantity, active: l.item.active }.with_indifferent_access
-    end
+  def decrease_inventory(itemizable_array)
+    itemizable_array = itemizable_array.is_a?(Array) ? itemizable_array : itemizable_array.to_a
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # This tracks items that have insufficient inventory counts to be reduced as much
