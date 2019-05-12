@@ -115,41 +115,6 @@ class StorageLocation < ApplicationRecord
     adjustment.storage_location.increase_inventory(adjustment)
   end
 
-  # Used to move inventory between StorageLocations; reflects items being physically moved
-  # Ex: move 500 size "2" diapers from main warehouse to overflow warehouse because insufficient space in main warehouse
-  # This could all be moved over to the `Transfer` model
-  def move_inventory!(transfer)
-    # Contains the total deltas from/to for all the InventoryItem records that are being changed
-    updated_quantities = {}
-    item_validator = Errors::InsufficientAllotment.new("Transfer items exceeds \
-                                                        the available inventory")
-    transfer.line_items.each do |line_item|
-      # NOTE: We should do it this way more
-      from_inventory_item = inventory_items.find_by(item: line_item.item)
-      # NOTE: Initialize the inventory item on the destination storage location; "to" = "a storage location"
-      to_inventory_item = transfer.to.inventory_items.find_or_create_by(item: line_item.item)
-      # NOTE: this is for if the transfer includes inventory items that are nonexistent / zero, we can't transfer them
-      # maybe we could do this as a validation, or at the model level instead?
-      next if from_inventory_item.nil? || from_inventory_item.quantity.zero?
-
-      if from_inventory_item.quantity >= line_item.quantity
-        # NOTE: this is subtracting the inventory found on each line item, from the running total of inventory available at the source location
-        updated_quantities[from_inventory_item.id] = (updated_quantities[from_inventory_item.id] || from_inventory_item.quantity) - line_item.quantity
-        # NOTE: this is adding the inventory found to the new destination at the new storage location
-        updated_quantities[to_inventory_item.id] = (updated_quantities[to_inventory_item.id] || to_inventory_item.quantity) + line_item.quantity
-      else
-        item_validator.add_insufficiency(line_item.item,
-                                         from_inventory_item.quantity,
-                                         line_item.quantity)
-      end
-    end
-
-    raise item_validator unless item_validator.satisfied?
-
-    # NOTE: Run the transaction
-    update_inventory_inventory_items(updated_quantities)
-  end
-
   # NOTE: This has WAY too much knowledge of distribution
   def update_distribution!(distribution, new_distribution_params)
     ActiveRecord::Base.transaction do
