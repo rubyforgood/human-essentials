@@ -94,43 +94,6 @@ class StorageLocation < ApplicationRecord
     end
   end
 
-  # This is the "subtract inventory method"
-  # NOTE: This is not returning a log object
-  def distribute!(itemizable)
-    # This is passed to update_inventory_inventory_items
-    updated_quantities = {}
-    # Used in the exception return value
-    insufficient_items = []
-    itemizable.line_items.each do |line_item|
-      inventory_item = inventory_items.find_by(item: line_item.item)
-      # NOTE: If the distribution isn't able to find the inventory item, it continues
-      next if inventory_item.nil?
-
-      if inventory_item.quantity >= line_item.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
-                                                 inventory_item.quantity) - line_item.quantity
-      else
-        insufficient_items << {
-          item_id: line_item.item.id,
-          item_name: line_item.item.name,
-          quantity_on_hand: inventory_item.quantity,
-          quantity_requested: line_item.quantity
-        }
-      end
-    end
-
-    # NOTE: Could this be handled by a validation instead?
-    unless insufficient_items.empty?
-      raise Errors::InsufficientAllotment.new(
-        "#{itemizable.class.name} line_items exceed the available inventory",
-        insufficient_items
-      )
-    end
-
-    # NOTE: This executes the transaction to actually change the data
-    update_inventory_inventory_items(updated_quantities)
-  end
-
   # NOTE: We should generalize this elsewhere -- Importable concern?
   def self.import_csv(csv, organization)
     csv.each do |row|
@@ -290,30 +253,6 @@ class StorageLocation < ApplicationRecord
     # return log
     log
   end
-=begin
-def distribute!(itemizable)
-    # This is passed to update_inventory_inventory_items
-    updated_quantities = {}
-    # Used in the exception return value
-    insufficient_items = []
-    itemizable.line_items.each do |line_item|
-      inventory_item = inventory_items.find_by(item: line_item.item)
-      # NOTE: If the distribution isn't able to find the inventory item, it continues
-      next if inventory_item.nil?
-
-      if inventory_item.quantity >= line_item.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] ||
-                                                 inventory_item.quantity) - line_item.quantity
-      else
-        insufficient_items << {
-          item_id: line_item.item.id,
-          item_name: line_item.item.name,
-          quantity_on_hand: inventory_item.quantity,
-          quantity_requested: line_item.quantity
-        }
-      end
-    end
-=end
 
   def self.csv_export_headers
     ["Name", "Address", "Total Inventory"]

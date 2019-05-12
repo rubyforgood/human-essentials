@@ -181,32 +181,6 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "distribute!" do
-      it "distrbutes items from storage location" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = build :distribution, :with_items, storage_location: storage_location, item_quantity: 50
-        storage_location.distribute!(distribution)
-        expect(storage_location.inventory_items.first.quantity).to eq 250
-      end
-
-      it "raises error when distribution exceeds storage location inventory" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = build :distribution, :with_items, storage_location: storage_location, item_quantity: 350
-        item = distribution.line_items.first.item
-        expect do
-          storage_location.distribute!(distribution)
-        end.to raise_error do |error|
-          expect(error).to be_a Errors::InsufficientAllotment
-          expect(error.insufficient_items).to include(
-            item_id: item.id,
-            item_name: item.name,
-            quantity_on_hand: 300,
-            quantity_requested: 350
-          )
-        end
-      end
-    end
-
     describe "import_csv" do
       it "imports storage locations from a csv file" do
         organization

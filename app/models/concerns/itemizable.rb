@@ -78,7 +78,9 @@ module Itemizable
 
   def to_a
     line_items.map do |l|
-      { item_id: l.item_id, name: l.item.name, quantity: l.quantity, active: l.item.active }.with_indifferent_access
+      # When the item isn't found, it's probably just inactive. This ensures it's available.
+      item = Item.unscoped.find(l.item_id)
+      { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
     end
   end
 

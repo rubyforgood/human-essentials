@@ -49,7 +49,7 @@ RSpec.feature "Adjustment management", type: :feature do
     expect do
       click_button "Save"
     end.not_to change { storage_location.size }
-    expect(page).to have_content("Requested Adjustment items exceed the available inventory")
+    expect(page).to have_content("items exceed the available inventory")
   end
 
   scenario "User can filter the #index by storage location" do
