@@ -103,7 +103,7 @@ class DonationsController < ApplicationController
     previous_quantities = @donation.to_a
     if @donation.update(donation_params)
       # TODO: Move update into replace_increase!
-      @donation.replace_increase!(@donation, previous_quantities)
+      @donation.replace_increase!(previous_quantities)
       redirect_to donations_path
     else
       render "edit"
