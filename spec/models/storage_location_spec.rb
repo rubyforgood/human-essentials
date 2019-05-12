@@ -132,27 +132,6 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "remove!" do
-      let(:storage_location) { create(:storage_location) }
-      let(:donation)         { create(:donation, :with_items, item_quantity: 10) }
-
-      before(:each) do
-        storage_location.increase_inventory(donation)
-        storage_location.items.reload
-
-        expect(storage_location.size).to eq(10)
-        expect(storage_location.items.count).to eq(1)
-      end
-
-      it "removes items from a storage location" do
-        expect do
-          storage_location.remove!(donation)
-        end.to change { storage_location.size }.by(-donation.total_quantity)
-                                               .and change { storage_location.inventory_items.size }.by(-donation.line_items.count)
-                                                                                                    .and change { InventoryItem.count }.by(-donation.line_items.count)
-      end
-    end
-
     describe "adjust_from_past!" do
       let(:storage_location) { create(:storage_location) }
       let(:purchase)         { create(:purchase, :with_items, item_quantity: 10) }

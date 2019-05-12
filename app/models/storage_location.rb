@@ -71,24 +71,6 @@ class StorageLocation < ApplicationRecord
     end
   end
 
-  # NOTE: This knows too much about donations/purchases
-  # NOTE: Can we do logging better? It seems like a side effect
-  def remove!(itemizable)
-    log = {}
-    itemizable.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_by(storage_location: id, item_id: line_item.item_id)
-      # NOTE: Code smell - are we sure we want to allow this to be destroyed if < 0?
-      if (inventory_item.quantity - line_item.quantity) <= 0
-        # NOTE: Instead of deleting, maybe we could leave it at 0, and hide it in the UI instead
-        inventory_item.destroy
-      else
-        inventory_item.update(quantity: inventory_item.quantity - line_item.quantity)
-      end
-      log[line_item.item_id] = "-#{line_item.quantity}"
-    end
-    log
-  end
-
   # NOTE: Make this code clearer in its intent -- needs more context
   def adjust_from_past!(itemizable, previous_line_item_values)
     itemizable.line_items.each do |line_item|
@@ -268,7 +250,7 @@ class StorageLocation < ApplicationRecord
       unless item_hash[:active]
         # If the item was previously hidden (inactive), make it active
         Item.unscoped.find(item_hash[:item_id]).update(active: true)
-        #line_item.reload
+        # line_item.reload
       end
       # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
