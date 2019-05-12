@@ -71,18 +71,6 @@ class StorageLocation < ApplicationRecord
     end
   end
 
-  def intake!(adjustment)
-    log = {}
-    adjustment.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id,
-                                                       item_id: line_item.item_id)
-      inventory_item.quantity += line_item&.quantity || 0
-      inventory_item.save
-      log[line_item.item_id] = "+#{line_item.quantity}"
-    end
-    log
-  end
-
   # NOTE: This knows too much about donations/purchases
   # NOTE: Can we do logging better? It seems like a side effect
   def remove!(itemizable)
@@ -174,11 +162,12 @@ class StorageLocation < ApplicationRecord
   def self.import_inventory(filename, org, loc)
     current_org = Organization.find(org)
     adjustment = current_org.adjustments.create(storage_location_id: loc.to_i, comment: "Starting Inventory")
-    CSV.parse(filename, headers: false) do |row|
+    # NOTE: this was originally headers: false; it may create buggy behavior
+    CSV.parse(filename, headers: true) do |row|
       adjustment.line_items
                 .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
-    adjustment.storage_location.intake!(adjustment)
+    adjustment.storage_location.increase_inventory(adjustment)
   end
 
   # Used to move inventory between StorageLocations; reflects items being physically moved
@@ -268,9 +257,6 @@ class StorageLocation < ApplicationRecord
     false
   end
 
-  # item.active?
-  # item_id
-  # quantity
   # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable_array)
     itemizable_array = itemizable_array.is_a?(Array) ? itemizable_array : itemizable_array.to_a

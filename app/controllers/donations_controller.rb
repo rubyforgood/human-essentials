@@ -63,7 +63,7 @@ class DonationsController < ApplicationController
                                 line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
                                                                   "quantity" => params["number_of_diapers"],
                                                                   "_destroy" => "false" } })
-    @donation.storage_location.intake! @donation
+    @donation.storage_location.increase_inventory @donation
     render status: :ok, json: @donation.to_json
   end
 

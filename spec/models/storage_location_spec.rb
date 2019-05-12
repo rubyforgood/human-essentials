@@ -38,13 +38,15 @@ RSpec.describe StorageLocation, type: :model do
 
   context "Methods >" do
     describe "increase_inventory" do
-      let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
-      it "increases inventory quantities from an itemizable object" do
-        item = create(:item)
-        storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
-        expect do
-          storage_location.increase_inventory(donation)
-        end.to change { storage_location.size }.by(66)
+      context "With existing inventory" do
+        let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
+        it "increases inventory quantities from an itemizable object" do
+          item = create(:item)
+          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
+          expect do
+            storage_location.increase_inventory(donation.to_a)
+          end.to change { storage_location.size }.by(66)
+        end
       end
 
       context "when providing a new item that does not yet exist" do
@@ -54,7 +56,7 @@ RSpec.describe StorageLocation, type: :model do
           item = create(:item)
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           expect do
-            storage_location.increase_inventory(donation_with_new_items)
+            storage_location.increase_inventory(donation_with_new_items.to_a)
           end.to change { storage_location.inventory_items.count }.by(1)
         end
       end
@@ -66,7 +68,7 @@ RSpec.describe StorageLocation, type: :model do
       it "decreases inventory quantities from an itemizable object" do
         storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: @organization)
         expect do
-          storage_location.decrease_inventory(distribution)
+          storage_location.decrease_inventory(distribution.to_a)
         end.to change { storage_location.size }.by(-66)
       end
 
@@ -75,7 +77,7 @@ RSpec.describe StorageLocation, type: :model do
         it "gives informative errors" do
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           expect do
-            storage_location.decrease_inventory(distribution_but_too_much).errors
+            storage_location.decrease_inventory(distribution_but_too_much.to_a).errors
           end.to raise_error(Errors::InsufficientAllotment)
         end
 
@@ -83,7 +85,7 @@ RSpec.describe StorageLocation, type: :model do
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           starting_size = storage_location.size
           begin
-            storage_location.decrease_inventory(distribution)
+            storage_location.decrease_inventory(distribution.to_a)
           rescue Errors::InsufficientAllotment
           end
           storage_location.reload
@@ -130,33 +132,12 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "intake!" do
-      it "adds items to a storage location even if none exist" do
-        storage_location = create(:storage_location)
-        donation = create(:donation, :with_items, item_quantity: 10)
-        expect do
-          storage_location.intake!(donation)
-          storage_location.items.reload
-        end.to change { storage_location.items.count }.by(1)
-        expect(storage_location.size).to eq(10)
-      end
-
-      it "adds items to the storage location total if that item already exists in inventory" do
-        storage_location = create(:storage_location, :with_items, item_quantity: 10)
-        donation = create(:donation, :with_items, item_quantity: 10, item: storage_location.inventory_items.first.item)
-        storage_location.intake!(donation)
-
-        expect(storage_location.inventory_items.count).to eq(1)
-        expect(storage_location.inventory_items.where(item_id: donation.line_items.first.item).first.quantity).to eq(20)
-      end
-    end
-
     describe "remove!" do
       let(:storage_location) { create(:storage_location) }
       let(:donation)         { create(:donation, :with_items, item_quantity: 10) }
 
       before(:each) do
-        storage_location.intake!(donation)
+        storage_location.increase_inventory(donation)
         storage_location.items.reload
 
         expect(storage_location.size).to eq(10)
@@ -179,7 +160,7 @@ RSpec.describe StorageLocation, type: :model do
 
       context "with_donations" do
         before(:each) do
-          storage_location.intake!(donation)
+          storage_location.increase_inventory(donation)
         end
 
         it "updates the quantity of items" do
@@ -204,7 +185,7 @@ RSpec.describe StorageLocation, type: :model do
       end
       context "With purchases" do
         before(:each) do
-          storage_location.intake!(purchase)
+          storage_location.increase_inventory(purchase)
           storage_location.items.reload
         end
 

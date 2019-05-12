@@ -77,7 +77,7 @@ module Itemizable
   end
 
   def to_a
-    line_items.map do |l| 
+    line_items.map do |l|
       { item_id: l.item_id, name: l.item.name, quantity: l.quantity, active: l.item.active }.with_indifferent_access
     end
   end
