@@ -105,10 +105,10 @@ shared_examples_for "itemizable" do
       it "updates storage location quantity by the correct amount" do
         line_item = subject.line_items.create(item_id: item.id, quantity: 10)
         inventory_item = create(:inventory_item, storage_location: storage_location, item_id: line_item.item_id)
-        previous_quantities = subject.line_items_quantities
+        previous_quantities = subject.to_a
         line_item.update!(quantity: 5)
         expect do
-          storage_location.adjust_from_past!(subject, previous_quantities)
+          subject.replace_increase!(previous_quantities)
         end.to change { inventory_item.reload.quantity }.by(-5)
       end
     end

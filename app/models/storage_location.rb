@@ -71,29 +71,6 @@ class StorageLocation < ApplicationRecord
     end
   end
 
-  # NOTE: Make this code clearer in its intent -- needs more context
-  def adjust_from_past!(itemizable, previous_line_item_values)
-    itemizable.line_items.each do |line_item|
-      # NOTE: Can't we do an association lookup, instead of going all the way up to the model?
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id, item_id: line_item.item_id)
-      # If the item wasn't deleted by the user, then it will be present to be deleted
-      # here, and delete returns the item as a return value.
-      if previous_line_item_value = previous_line_item_values.delete(line_item.id)
-        inventory_item.quantity += line_item.quantity
-        inventory_item.quantity -= previous_line_item_value.quantity
-        inventory_item.save!
-      end
-      inventory_item.destroy! if inventory_item.quantity.zero?
-    end
-    # Update storage for line items that are no longer persisted because they
-    # were removed during the update/delete process.
-    previous_line_item_values.values.each do |value|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: id, item_id: value.item_id)
-      inventory_item.decrement!(:quantity, value.quantity)
-      inventory_item.destroy! if inventory_item.quantity.zero?
-    end
-  end
-
   # NOTE: We should generalize this elsewhere -- Importable concern?
   def self.import_csv(csv, organization)
     csv.each do |row|
@@ -196,15 +173,5 @@ class StorageLocation < ApplicationRecord
 
   def csv_export_attributes
     [name, address, size]
-  end
-
-  private
-
-  def update_inventory_inventory_items(records)
-    ActiveRecord::Base.transaction do
-      records.each do |inventory_item_id, quantity|
-        InventoryItem.find(inventory_item_id).update(quantity: quantity)
-      end
-    end
   end
 end

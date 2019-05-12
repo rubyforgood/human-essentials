@@ -148,7 +148,7 @@ RSpec.feature "Distributions", type: :feature do
         end
         expect(page).to have_no_content "Distribution updated!"
         # NOTE: This is rendering the app/views/errors/insufficient.html.erb template
-        expect(page).to have_content /Insufficient/i
+        expect(page).to have_content(/Insufficient/i)
         expect(page).to have_no_content 999_999
         expect(Distribution.first.line_items.count).to eq 1
       end
