@@ -90,18 +90,6 @@ class Donation < ApplicationRecord
                       .sum("line_items.quantity")
   end
 
-  # def self.total_received
-  #    self.includes(:line_items).map(&:total_quantity).reduce(0, :+)
-  #  end
-
-  def track(item, quantity)
-    if contains_item_id?(item.id)
-      update_quantity(quantity, item)
-    else
-      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
-    end
-  end
-
   def replace_increase!(new_donation_params)
     old_data = to_a
     item_ids = new_donation_params.values.flatten.map { |i| i[:item_id].to_i }
@@ -139,20 +127,6 @@ class Donation < ApplicationRecord
 
   def total_quantity
     line_items.sum(:quantity)
-  end
-
-  def contains_item_id?(id)
-    line_items.find_by(item_id: id).present?
-  end
-
-  # Use a negative quantity to subtract inventory
-  def update_quantity(quantity, item)
-    item_id = item.to_i
-    line_item = line_items.find_by(item_id: item_id)
-    line_item.quantity += quantity
-    # Inventory can never be negative
-    line_item.quantity = 0 if line_item.quantity.negative?
-    line_item.save
   end
 
   def self.csv_export_headers

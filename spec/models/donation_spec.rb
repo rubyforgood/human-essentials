@@ -122,36 +122,6 @@ RSpec.describe Donation, type: :model do
       end
     end
 
-    describe "contains_item_id?" do
-      it "returns true if the item_id already exists" do
-        donation = create(:donation, :with_items)
-        expect(donation.contains_item_id?(donation.items.last.id)).to be_truthy
-      end
-    end
-
-    describe "update_quantity" do
-      let!(:donation) { create(:donation, :with_items) }
-      it "adds an additional quantity to the existing line_item" do
-        expect do
-          donation.update_quantity(1, donation.items.first)
-          donation.reload
-        end.to change { donation.line_items.first.quantity }.by(1)
-      end
-
-      it "can receive a negative quantity to subtract inventory" do
-        expect do
-          donation.update_quantity(-1, donation.items.first)
-        end.to change { donation.total_quantity }.by(-1)
-      end
-
-      it "works whether you give it an item or an id" do
-        expect do
-          donation.update_quantity(1, donation.items.first.id)
-          donation.reload
-        end.to change { donation.line_items.first.quantity }.by(1)
-      end
-    end
-
     describe "remove" do
       let!(:donation) { create(:donation, :with_items) }
 

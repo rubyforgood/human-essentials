@@ -50,18 +50,6 @@ class Purchase < ApplicationRecord
     vendor.nil? ? purchased_from : vendor.business_name
   end
 
-  def track(item, quantity)
-    if contains_item_id?(item.id)
-      update_quantity(quantity, item)
-    else
-      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
-    end
-  end
-
-  def contains_item_id?(id)
-    line_items.find_by(item_id: id).present?
-  end
-
   def total_quantity
     line_items.sum(:quantity)
   end
@@ -91,16 +79,6 @@ class Purchase < ApplicationRecord
     end
   rescue ActiveRecord::RecordInvalid
     false
-  end
-
-  # Use a negative quantity to subtract inventory
-  def update_quantity(quantity, item)
-    item_id = item.to_i
-    line_item = line_items.find_by(item_id: item_id)
-    line_item.quantity += quantity
-    # Inventory can never be negative
-    line_item.quantity = 0 if line_item.quantity.negative?
-    line_item.save
   end
 
   def self.csv_export_headers

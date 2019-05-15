@@ -79,52 +79,6 @@ RSpec.describe Purchase, type: :model do
   end
 
   context "Methods >" do
-    describe "track" do
-      let!(:purchase) { create(:purchase) }
-      let!(:item) { create(:item) }
-
-      it "does not add a new line_item unnecessarily, updating existing line_item instead" do
-        item = create :item
-        purchase.track(item, 5)
-        expect do
-          purchase.track(item, 10)
-          purchase.reload
-        end.not_to change { purchase.line_items.count }
-
-        expect(purchase.line_items.first.quantity).to eq(15)
-      end
-    end
-
-    describe "contains_item_id?" do
-      it "returns true if the item_id already exists" do
-        purchase = create(:purchase, :with_items)
-        expect(purchase.contains_item_id?(purchase.items.first.id)).to be_truthy
-      end
-    end
-
-    describe "update_quantity" do
-      let!(:purchase) { create(:purchase, :with_items) }
-      it "adds an additional quantity to the existing line_item" do
-        expect do
-          purchase.update_quantity(1, purchase.items.first)
-          purchase.reload
-        end.to change { purchase.line_items.first.quantity }.by(1)
-      end
-
-      it "can receive a negative quantity to subtract inventory" do
-        expect do
-          purchase.update_quantity(-1, purchase.items.first)
-        end.to change { purchase.total_quantity }.by(-1)
-      end
-
-      it "works whether you give it an item or an id" do
-        expect do
-          purchase.update_quantity(1, purchase.items.first.id)
-          purchase.reload
-        end.to change { purchase.line_items.first.quantity }.by(1)
-      end
-    end
-
     describe "remove" do
       let!(:purchase) { create(:purchase, :with_items) }
 
