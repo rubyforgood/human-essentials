@@ -1,22 +1,24 @@
 <div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Audits - Inventory - #{current_organization.name}" %>
-  <h1>
-    Inventory Audit
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-      <%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li class="breadcrumb-item">
-      <%= link_to "All Adjustments", (audits_path) %>
-    </li>
-    <li class="active breadcrumb-item">
-      Audit (<%= @audit.created_at.strftime("%m/%d/%Y")%>)
-    </li>
-  </ol>
+  <div class="col-lg-8">
+    <h1>
+      Inventory Audit
+      <small>for <%= current_organization.name %></small>
+    </h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item">
+        <%= link_to "All Adjustments", (audits_path) %>
+      </li>
+      <li class="active breadcrumb-item">
+        Audit (<%= @audit.created_at.strftime("%m/%d/%Y")%>)
+      </li>
+    </ol>
+  </div>
 </div>
 
 <!-- Main content -->
