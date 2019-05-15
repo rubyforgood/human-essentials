@@ -97,31 +97,14 @@ RSpec.describe Donation, type: :model do
     describe "items >" do
       it "has_many" do
         donation = create(:donation)
-        item = create(:item)
-        # Using donation.track because it marshalls the HMT
-        donation.track(item, 1)
+        line_item = create(:line_item)
+        donation.line_items << line_item
         expect(donation.items.count).to eq(1)
       end
     end
   end
 
   context "Methods >" do
-    describe "track" do
-      let!(:donation) { create(:donation) }
-      let!(:item) { create(:item) }
-
-      it "does not add a new line_item unnecessarily, updating existing line_item instead" do
-        item = create :item
-        donation.track(item, 5)
-        expect do
-          donation.track(item, 10)
-          donation.reload
-        end.not_to change { donation.line_items.count }
-
-        expect(donation.line_items.first.quantity).to eq(15)
-      end
-    end
-
     describe "remove" do
       let!(:donation) { create(:donation, :with_items) }
 

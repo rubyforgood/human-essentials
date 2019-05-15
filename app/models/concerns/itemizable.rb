@@ -79,6 +79,11 @@ module Itemizable
 
   private
 
+  # From Controller parameters
+  def line_items_attributes(params)
+    Array.wrap(params[:line_items_attributes]&.values)
+  end
+
   def line_item_items_quantity_is_positive
     return if storage_location.nil?
 

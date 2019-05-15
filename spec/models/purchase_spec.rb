@@ -70,9 +70,8 @@ RSpec.describe Purchase, type: :model do
     describe "items >" do
       it "has_many" do
         purchase = create(:purchase)
-        item = create(:item)
-        # Using purchase.track because it marshalls the HMT
-        purchase.track(item, 1)
+        line_item = create(:line_item)
+        purchase.line_items << line_item
         expect(purchase.items.count).to eq(1)
       end
     end
@@ -102,7 +101,7 @@ RSpec.describe Purchase, type: :model do
       subject { create(:purchase, :with_items, item_quantity: 5, storage_location: storage_location, organization: @organization) }
 
       it "updates the quantity of items" do
-        attributes = { line_items_attributes: [{ item_id: subject.line_items.first.item_id, quantity: 2 }] }
+        attributes = { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } }
         expect do
           subject.replace_increase!(attributes)
           storage_location.reload
@@ -110,7 +109,7 @@ RSpec.describe Purchase, type: :model do
       end
 
       it "removes the inventory item if the item's removal results in a 0 count" do
-        attributes = { line_items_attributes: [{}] }
+        attributes = { line_items_attributes: {} }
         expect do
           subject.replace_increase!(attributes)
           storage_location.reload
@@ -120,7 +119,7 @@ RSpec.describe Purchase, type: :model do
 
       context "when adding an item that has been previously deleted" do
         let!(:inactive_item) { create(:item, active: false, organization: @organization) }
-        let(:attributes) { { line_items_attributes: [{ item_id: inactive_item.id, quantity: 10 }] } }
+        let(:attributes) { { line_items_attributes: { "0": { item_id: inactive_item.id, quantity: 10 } } } }
         it "re-creates the item" do
           expect do
             subject.replace_increase!(attributes)

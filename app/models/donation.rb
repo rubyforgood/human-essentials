@@ -92,13 +92,13 @@ class Donation < ApplicationRecord
 
   def replace_increase!(new_donation_params)
     old_data = to_a
-    item_ids = Array.wrap(new_donation_params[:line_items_attributes]&.values).map { |i| i[:item_id].to_i }
+    item_ids = line_items_attributes(new_donation_params).map { |i| i[:item_id].to_i }
 
     ActiveRecord::Base.transaction do
       line_items.map(&:destroy!)
       reload
       Item.reactivate(item_ids)
-      Array.wrap(new_donation_params[:line_items_attributes]&.values).map { |i| i.delete(:id) }
+      line_items_attributes(new_donation_params).map { |i| i.delete(:id) }
       update! new_donation_params
       # Roll back distribution output by increasing storage location
       storage_location.increase_inventory(to_a)
