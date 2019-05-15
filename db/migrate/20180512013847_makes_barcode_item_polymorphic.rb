@@ -1,3 +1,4 @@
+# Barcode items need to be able to be attached to either BaseItems or regular Items
 class MakesBarcodeItemPolymorphic < ActiveRecord::Migration[5.1]
   def up
   	change_table :barcode_items do |t|

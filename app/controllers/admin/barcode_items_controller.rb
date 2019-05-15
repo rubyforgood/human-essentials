@@ -1,3 +1,5 @@
+# [Super Admin] - Manage globally available barcodes. The key difference here is that these barcodes
+# will be associated with BaseItems, whereas user-barcodes are associated with regular Items.
 class Admin::BarcodeItemsController < AdminController
   before_action :load_base_items, only: %i(edit index new)
   before_action :load_barcode_item, only: %i(edit update show destroy)

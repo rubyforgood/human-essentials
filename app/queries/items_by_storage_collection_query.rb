@@ -1,3 +1,6 @@
+# Creates a query object for retrieving the items, grouped by storage location
+# We're using query objects for some of these more complicated queries to get
+# the raw SQL out of the models and encapsulate it.
 class ItemsByStorageCollectionQuery
   attr_reader :organization
   attr_reader :filter_params

@@ -1,3 +1,4 @@
+# [Super Admin] This is for administrating organizations at a global level. We can create, view, modify, etc.
 class Admin::OrganizationsController < AdminController
   def edit
     @organization = Organization.find(params[:id])

@@ -101,11 +101,12 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
   config.include Devise::Test::IntegrationHelpers, type: :feature
+  config.include Devise::Test::IntegrationHelpers, type: :system
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   # Location for fixtures (logo, etc)
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -115,6 +116,12 @@ RSpec.configure do |config|
 
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
+
+  # set driver for system tests
+  config.before(:each, type: :system) do
+    driven_by :chrome
+    Capybara.server = :puma, { Silent: true }
+  end
 
   # Preparatifyication
   config.before(:suite) do

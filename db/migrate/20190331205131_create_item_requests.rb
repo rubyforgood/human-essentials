@@ -1,3 +1,4 @@
+# Connects Items to the Requests
 class CreateItemRequests < ActiveRecord::Migration[5.2]
   def change
     create_table :item_requests do |t|

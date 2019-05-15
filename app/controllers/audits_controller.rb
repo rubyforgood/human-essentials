@@ -1,3 +1,4 @@
+# [Organization Admin] Audits are for OrgAdmins to reconcile their real-world counts with their digital counts.
 class AuditsController < ApplicationController
   before_action :authorize_admin
   before_action :set_audit, only: %i(show edit update destroy finalize)

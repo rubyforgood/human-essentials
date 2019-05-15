@@ -1,5 +1,7 @@
-# H/T to http://www.justinweiss.com/articles/search-and-filter-rails-models-without-bloating-your-controller/
-
+# Creates a veritable powerhouse.
+# This module provides Duck Typed behaviors for anything that shuttle Items
+# throughout the system. e.g. things that `has_many :line_items` -- this provides
+# all the logic about how those kinds of things behave.
 module Itemizable
   extend ActiveSupport::Concern
 

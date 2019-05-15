@@ -1,10 +1,10 @@
-RSpec.feature "Transfer management", type: :feature do
+RSpec.describe "Transfer management", type: :system do
   before do
     sign_in(@user)
   end
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
-  scenario "User can transfer an inventory from a storage location to another" do
+  it "can transfer an inventory from a storage location to another as a user" do
     from_storage_location = create(:storage_location, :with_items, name: "From me", organization: @organization)
     to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
     visit url_prefix + "/transfers"
@@ -39,7 +39,7 @@ RSpec.feature "Transfer management", type: :feature do
     end
   end
 
-  scenario "User can filter the #index by storage location both from and to" do
+  it "can filter the #index by storage location both from and to as a user" do
     from_storage_location = create(:storage_location, name: "here", organization: @organization)
     to_storage_location = create(:storage_location, name: "there", organization: @organization)
     create(:transfer, organization: @organization, from: from_storage_location, to: to_storage_location)

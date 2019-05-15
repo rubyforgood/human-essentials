@@ -1,5 +1,8 @@
 require "csv"
 
+# TODO: Move this out of models
+# Encapsulates CSV Export logic into a single class. `SUPPORTED_TYPES` lists
+# the classes for which this can work.
 class DataExport
   SUPPORTED_TYPES = %w(
     Donation

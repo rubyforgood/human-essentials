@@ -1,3 +1,4 @@
+# All Partners must be approved before they can begin submitting Requests. This is done over the API.
 class API::V1::PartnerApprovalsController < ApplicationController
   skip_before_action :verify_authenticity_token
   skip_before_action :authenticate_user!

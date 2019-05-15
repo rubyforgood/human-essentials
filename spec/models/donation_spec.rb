@@ -2,11 +2,11 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
+#  id                          :bigint(8)        not null, primary key
 #  source                      :string
 #  donation_site_id            :integer
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
+#  created_at                  :datetime
+#  updated_at                  :datetime
 #  storage_location_id         :integer
 #  comment                     :text
 #  organization_id             :integer
@@ -138,7 +138,7 @@ RSpec.describe Donation, type: :model do
       subject { create(:donation, :with_items, organization: @organization, item_quantity: 5, storage_location: storage_location) }
 
       context "changing the donation" do
-        let(:attributes) { { line_items_attributes: [{ item_id: subject.line_items.first.item_id, quantity: 2 }] } }
+        let(:attributes) { { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } } }
 
         it "updates the quantity of items" do
           expect do
@@ -150,7 +150,7 @@ RSpec.describe Donation, type: :model do
 
       context "when adding an item that has been previously deleted" do
         let!(:inactive_item) { create(:item, active: false) }
-        let(:attributes) { { line_items_attributes: [{ item_id: inactive_item.to_param, quantity: 10 }] } }
+        let(:attributes) { { line_items_attributes: { "0": { item_id: inactive_item.to_param, quantity: 10 } } } }
 
         it "re-creates the item" do
           expect do
@@ -162,7 +162,7 @@ RSpec.describe Donation, type: :model do
       end
 
       context "with empty line_items" do
-        let(:attributes) { { line_items_attributes: [{}] } }
+        let(:attributes) { { line_items_attributes: {} } }
 
         it "removes the inventory item if the item's removal results in a 0 count" do
           expect do
