@@ -144,27 +144,36 @@ RSpec.describe Purchase, type: :model do
     end
 
     describe "replace_increase!" do
-      let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 10, organization: @organization) }
-      subject { create(:purchase, :with_items, organization: @organization, item_quantity: 10, storage_location: storage_location) }
+      let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 5, organization: @organization) }
+      subject { create(:purchase, :with_items, item_quantity: 5, storage_location: storage_location, organization: @organization) }
 
       it "updates the quantity of items" do
-        previous_quantities = subject.to_a
-        subject.line_items.first.update(quantity: 5)
+        attributes = { line_items_attributes: [{ item_id: subject.line_items.first.item_id, quantity: 2 }] }
         expect do
-          subject.replace_increase!(previous_quantities)
+          subject.replace_increase!(attributes)
           storage_location.reload
-        end.to change { storage_location.size }.by(-5)
+        end.to change { storage_location.size }.by(-3)
       end
 
       it "removes the inventory item if the item's removal results in a 0 count" do
-        previous_quantities = subject.to_a
-        subject.line_items.first.update(quantity: 0)
-
+        attributes = { line_items_attributes: [{}] }
         expect do
-          subject.replace_increase!(previous_quantities)
+          subject.replace_increase!(attributes)
           storage_location.reload
         end.to change { storage_location.inventory_items.size }.by(-1)
                                                                .and change { InventoryItem.count }.by(-1)
+      end
+
+      context "when adding an item that has been previously deleted" do
+        let!(:inactive_item) { create(:item, active: false, organization: @organization) }
+        let(:attributes) { { line_items_attributes: [{ item_id: inactive_item.id, quantity: 10 }] } }
+        it "re-creates the item" do
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.size }.by(5)
+                                                 .and change { Item.count }.by(1)
+        end
       end
     end
   end

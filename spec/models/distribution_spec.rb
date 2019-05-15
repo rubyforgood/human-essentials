@@ -101,5 +101,9 @@ RSpec.describe Distribution, type: :model do
         expect(distribution.line_items.first.quantity).to eq 15
       end
     end
+
+    describe "#replace_distribution!" do
+      # TODO: Add these
+    end
   end
 end

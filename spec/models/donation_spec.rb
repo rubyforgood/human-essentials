@@ -179,30 +179,46 @@ RSpec.describe Donation, type: :model do
         expect(donation.money_raised).to eq(100)
       end
     end
-  end
 
-  describe "replace_increase!" do
-    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 10, organization: @organization) }
-    subject { create(:donation, :with_items, organization: @organization, item_quantity: 10, storage_location: storage_location) }
+    describe "replace_increase!" do
+      let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 5, organization: @organization) }
+      subject { create(:donation, :with_items, organization: @organization, item_quantity: 5, storage_location: storage_location) }
 
-    it "updates the quantity of items" do
-      previous_quantities = subject.to_a
-      subject.line_items.first.update(quantity: 5)
-      expect do
-        subject.replace_increase!(previous_quantities)
-        storage_location.reload
-      end.to change { storage_location.size }.by(-5)
-    end
+      context "changing the donation" do
+        let(:attributes) { { line_items_attributes: [{ item_id: subject.line_items.first.item_id, quantity: 2 }] } }
 
-    it "removes the inventory item if the item's removal results in a 0 count" do
-      previous_quantities = subject.to_a
-      subject.line_items.first.update(quantity: 0)
+        it "updates the quantity of items" do
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.size }.by(-3)
+        end
+      end
 
-      expect do
-        subject.replace_increase!(previous_quantities)
-        storage_location.reload
-      end.to change { storage_location.inventory_items.size }.by(-1)
-                                                             .and change { InventoryItem.count }.by(-1)
+      context "when adding an item that has been previously deleted" do
+        let!(:inactive_item) { create(:item, active: false) }
+        let(:attributes) { { line_items_attributes: [{ item_id: inactive_item.to_param, quantity: 10 }] } }
+
+        it "re-creates the item" do
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.size }.by(5) # We had 5 items of a different kind before, now we have 10
+                                                 .and change { Item.count }.by(1)
+        end
+      end
+
+      context "with empty line_items" do
+        let(:attributes) { { line_items_attributes: [{}] } }
+
+        it "removes the inventory item if the item's removal results in a 0 count" do
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.inventory_items.size }.by(-1)
+                                                                 .and change { InventoryItem.count }.by(-1)
+        end
+      end
     end
   end
 

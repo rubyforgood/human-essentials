@@ -56,6 +56,11 @@ class Item < ApplicationRecord
     BarcodeItem.where("barcodeable_id = ?", item.id)
   end
 
+  def self.reactivate(item_ids)
+    item_ids = Array.wrap(item_ids)
+    Item.unscoped.where(id: item_ids).find_each { |item| item.update(active: true) }
+  end
+
   # Override `destroy` to ensure Item isn't accidentally destroyed
   # without first being disassociated with its historical presence
   def destroy

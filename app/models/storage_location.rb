@@ -101,7 +101,7 @@ class StorageLocation < ApplicationRecord
     # Iterate through each of the line-items in the moving box
     itemizable_array.each do |item_hash|
       # TODO: make this an aggregate change
-      Item.unscoped.find(item_hash[:item_id]).update(active: true)
+      Item.reactivate(item_hash[:item_id])
       # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
       # Increase the quantity-on-record for that item

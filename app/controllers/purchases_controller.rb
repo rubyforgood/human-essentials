@@ -50,10 +50,7 @@ class PurchasesController < ApplicationController
   def update
     @purchase = current_organization.purchases.find(params[:id])
     @purchase.changed?
-    previous_quantities = @purchase.to_a
-    if @purchase.update(purchase_params)
-      # TODO: Revisit this. Move update into method.
-      @purchase.replace_increase!(previous_quantities)
+    if @purchase.replace_increase!(purchase_params)
       redirect_to purchases_path
     else
       render "edit"

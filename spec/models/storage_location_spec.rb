@@ -13,8 +13,6 @@
 #
 
 RSpec.describe StorageLocation, type: :model do
-  let(:organization) { create(:organization) }
-
   context "Validations >" do
     it "requires a name" do
       expect(build(:storage_location, name: nil)).not_to be_valid
@@ -39,7 +37,8 @@ RSpec.describe StorageLocation, type: :model do
   context "Methods >" do
     describe "increase_inventory" do
       context "With existing inventory" do
-        let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
+        let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: @organization) }
+
         it "increases inventory quantities from an itemizable object" do
           item = create(:item)
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
@@ -50,8 +49,9 @@ RSpec.describe StorageLocation, type: :model do
       end
 
       context "when providing a new item that does not yet exist" do
-        let(:mystery_item) { create(:item, organization: organization) }
-        let(:donation_with_new_items) { create(:donation, :with_items, organization: organization, item_quantity: 10, item: mystery_item) }
+        let(:mystery_item) { create(:item, organization: @organization) }
+        let(:donation_with_new_items) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: mystery_item) }
+
         it "creates those new inventory items in the storage location" do
           item = create(:item)
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
@@ -60,11 +60,25 @@ RSpec.describe StorageLocation, type: :model do
           end.to change { storage_location.inventory_items.count }.by(1)
         end
       end
+
+      context "when increasing with an inactive item" do
+        let(:inactive_item) { create(:item, active: false, organization: @organization) }
+        let(:donation_with_inactive_item) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: inactive_item) }
+
+        it "re-activates the item as part of the creation process" do
+          storage_location = create(:storage_location, organization: @organization)
+          expect do
+            storage_location.increase_inventory(donation_with_inactive_item.to_a)
+          end.to change { storage_location.inventory_items.count }.by(1)
+                                                                  .and change { Item.count }.by(1)
+        end
+      end
     end
 
     describe "decrease_inventory" do
       let(:item) { create(:item) }
       let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66) }
+
       it "decreases inventory quantities from an itemizable object" do
         storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: @organization)
         expect do
@@ -74,6 +88,7 @@ RSpec.describe StorageLocation, type: :model do
 
       context "when there is insufficient inventory available" do
         let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001) }
+
         it "gives informative errors" do
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           expect do
@@ -134,12 +149,11 @@ RSpec.describe StorageLocation, type: :model do
 
     describe "import_csv" do
       it "imports storage locations from a csv file" do
-        organization
         before_import = StorageLocation.count
         import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv")
         data = File.read(import_file_path, encoding: "BOM|UTF-8")
         csv = CSV.parse(data, headers: true)
-        StorageLocation.import_csv(csv, organization.id)
+        StorageLocation.import_csv(csv, @organization.id)
         expect(StorageLocation.count).to eq before_import + 1
       end
     end
@@ -147,10 +161,9 @@ RSpec.describe StorageLocation, type: :model do
     describe "import_inventory" do
       it "imports storage locations from a csv file" do
         donations_count = Donation.count
-        organization
-        storage_location = create(:storage_location, organization_id: organization.id)
+        storage_location = create(:storage_location, organization_id: @organization.id)
         import_file_path = Rails.root.join("spec", "fixtures", "inventory.csv").read
-        StorageLocation.import_inventory(import_file_path, organization.id, storage_location.id)
+        StorageLocation.import_inventory(import_file_path, @organization.id, storage_location.id)
         expect(storage_location.size).to eq 14_842
         expect(donations_count).to eq Donation.count
       end
