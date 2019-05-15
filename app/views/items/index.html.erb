@@ -1,44 +1,56 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Items - Inventory - #{current_organization.name}" %>
-  <h1>
-    Item Types
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">All Items</a></li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h2>Item Types for <%= current_organization.name %></h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active">
+        <a href="#">All Items</a>
+      </li>
+    </ol>
+  </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= download_button_to(csv_path(format: :csv, type: "Item"),
+        { text: "Export Items", size: "lg" }) if @items.any? %>
+      <%= new_button_to new_item_path(organization_id: current_organization),
+        { text: "Create New Item" } %>
+    </div>
+  </div>
+</div>
 
-<!-- Main content -->
 <section class="content">
   <div class="box">
-    <%= render partial: 'header' %>
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation">
-              <a class="nav-link active" id="item-list-tab" data-toggle="tab" href="#sectionA" role="tab">Item List</a>
-            </li>
-            <li role="presentation">
-              <a class="nav-link" id="item-qty-tab" data-toggle="tab" href="#sectionB" role="tab">Items and Quantity</a>
-            </li>
-            <li role="presentation">
-              <a class="nav-link" id="item-qty-loc-tab" data-toggle="tab" href="#sectionC" role="tab">Items, Quantity, and Location</a>
-            </li>
-          </ul>
-
-          <div class="tab-content">
-            <%= render partial: 'item_list' %>
-            <%= render partial: 'items_and_quantity' %>
-            <%= render partial: 'items_quantity_and_location' %>
-          </div><!-- /.tab-content -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInRight">
+          <div class="ibox-content p-xl">
+            <div class="box-header with-border bg-gray">
+              <%= render partial: 'header' %>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <nav>
+                  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="item-list-tab" data-toggle="tab" href="#sectionA" role="tab">Item List</a>
+                    <a class="nav-item nav-link" id="item-qty-tab" data-toggle="tab" href="#sectionB" role="tab">Items and Quantity</a>
+                    <a class="nav-item nav-link" id="item-qty-loc-tab" data-toggle="tab" href="#sectionC" role="tab">Items, Quantity, and Location</a>
+                  </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                  <%= render partial: 'item_list' %>
+                  <%= render partial: 'items_and_quantity' %>
+                  <%= render partial: 'items_quantity_and_location' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
