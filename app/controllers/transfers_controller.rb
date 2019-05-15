@@ -10,8 +10,9 @@ class TransfersController < ApplicationController
   def create
     @transfer = current_organization.transfers.new(transfer_params)
 
-    if @transfer.valid? && @transfer.save
+    if @transfer.valid?
       ActiveRecord::Base.transaction do
+        @transfer.save
         @transfer.from.decrease_inventory @transfer
         @transfer.to.increase_inventory @transfer
       end
