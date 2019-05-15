@@ -49,7 +49,6 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = current_organization.purchases.find(params[:id])
-    @purchase.changed?
     if @purchase.replace_increase!(purchase_params)
       redirect_to purchases_path
     else
