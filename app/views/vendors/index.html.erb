@@ -1,58 +1,56 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Vendors - #{current_organization.name}" %>
-  <h1>
-    Vendors
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Vendors</a></li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h2>Vendors for <%= current_organization.name %></h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active">
+        Vendors
+      </li>
+    </ol>
+  </div>
 
 
-
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <div class="btn-group pull-right">
+  <div class="col-lg-4">
+    <div class="title-action">
           <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Vendors", size: "lg"}) if @vendors.empty? %>
           <%= download_button_to(csv_path(format: :csv, type: "Vendor"), { text: "Export Vendors", size: "lg" }) if @vendors.any? %>
           <%= new_button_to new_vendor_path(organization_id: current_organization), text: "New Vendor" %>
-        </div>
-      </section>
     </div>
-   <div class="box-body">
-    <div class="row">
-      <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Buisness Name</th>
-                <th>Contact Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Total Diapers</th>
-                <th>&nbsp;</th>
-              </tr>
-            </thead>
-            <tbody>
-              <%= render partial: "vendor_row", collection: @vendors %>
-            </tbody>
-          </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+  </div>
+</div>        
+      
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="row">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Business Name</th>
+                  <th>Contact Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Total Diapers</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "vendor_row", collection: @vendors %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <%= render(
   layout: "shared/csv_import_modal",
