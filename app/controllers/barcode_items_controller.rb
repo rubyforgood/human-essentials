@@ -1,3 +1,5 @@
+# Provides full CRUD+ for Barcode Items. These barcode items are all associated with regular Items. The one
+# anomaly here is the :find action, which has some special logic built-in to it, see the comments below.
 class BarcodeItemsController < ApplicationController
   def index
     @items = Item.gather_items(current_organization, @global)

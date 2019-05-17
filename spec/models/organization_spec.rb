@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  short_name      :string
 #  email           :string
@@ -69,7 +69,7 @@ RSpec.describe Organization, type: :model do
   describe "#ordered_requests" do
     let!(:new_active_request)  { create(:request, comments: "first active") }
     let!(:old_active_request) { create(:request, comments: "second active") }
-    let!(:fulfilled_request) { create(:request, status: 'Fulfilled', comments: "first fulfilled") }
+    let!(:fulfilled_request) { create(:request, :fulfilled, comments: "first fulfilled") }
     let!(:organization) { create(:organization, requests: [old_active_request, fulfilled_request, new_active_request]) }
 
     it "puts active requests before fulfilled requests" do

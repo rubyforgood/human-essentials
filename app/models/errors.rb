@@ -1,4 +1,6 @@
+# Creates Error objects that are slightly more useful than plain ol' Standard Errors
 module Errors
+  # Use this Error for when a storage location does not have enough inventory on-hand to satisfy a request
   class InsufficientAllotment < StandardError
     attr_accessor :insufficient_items
 

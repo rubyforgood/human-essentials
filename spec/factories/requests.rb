@@ -5,7 +5,7 @@
 #  id              :bigint(8)        not null, primary key
 #  partner_id      :bigint(8)
 #  organization_id :bigint(8)
-#  status          :string           default("Active")
+#  status          :string           default(NULL)
 #  request_items   :jsonb
 #  comments        :text
 #  created_at      :datetime         not null
@@ -23,7 +23,14 @@ FactoryBot.define do
     partner { Partner.try(:first) || create(:partner) }
     organization { Organization.try(:first) || create(:organization) }
     request_items { random_request_items }
-    status { "Active" }
     comments { "Urgent" }
+  end
+
+  trait :started do
+    status { 'started' }
+  end
+
+  trait :fulfilled do
+    status { 'fulfilled' }
   end
 end

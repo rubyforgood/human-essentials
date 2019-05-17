@@ -49,7 +49,6 @@ gem "webpacker", "~> 3.5"
 
 group :development, :test do
   gem "awesome_print"
-  gem "pry-byebug"
   gem "guard-rspec"
   gem "pry-rails"
   gem "rspec-rails", "~> 3.8"

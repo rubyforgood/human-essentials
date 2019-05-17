@@ -1,3 +1,4 @@
+# Users can now send feedback about bugs, features, etc directly to the devs
 class AddFeedbackMessage < ActiveRecord::Migration[5.2]
   def change
 

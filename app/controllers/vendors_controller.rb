@@ -1,3 +1,4 @@
+# Provides full CRUD of the Vendor Resource
 class VendorsController < ApplicationController
   include Importable
 

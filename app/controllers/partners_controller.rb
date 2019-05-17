@@ -1,3 +1,6 @@
+# Provides full CRUD for Partners. These are minimal representations of corresponding Partner records in PartnerBase.
+# Though the functionality of Partners is actually fleshed out in PartnerBase, in DiaperBase, we maintain a collection
+# of which Partners are associated with which Diaperbanks.
 class PartnersController < ApplicationController
   include Importable
 
@@ -8,8 +11,7 @@ class PartnersController < ApplicationController
   def create
     @partner = current_organization.partners.new(partner_params)
     if @partner.save
-      @partner.register_on_partnerbase
-      redirect_to partners_path, notice: "Partner added and invited!"
+      redirect_to partners_path, notice: "Partner added!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new

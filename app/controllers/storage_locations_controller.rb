@@ -1,3 +1,4 @@
+# Provides Full CRUD+ for Storage Locations, which are digital representations of inventory holdings
 class StorageLocationsController < ApplicationController
   include Importable
 
@@ -24,6 +25,7 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
   end
 
+  # TODO: Move these queries to Query Objects
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
     # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model

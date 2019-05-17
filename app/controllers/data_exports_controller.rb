@@ -1,3 +1,4 @@
+# Provides a pseudo-resource for `DataExport`, a service object that encapsulates exporting functions.
 class DataExportsController < ApplicationController
   respond_to :csv
 

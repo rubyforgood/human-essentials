@@ -1,3 +1,4 @@
+# Default Cable
 module ApplicationCable
   class Channel < ActionCable::Channel::Base
   end

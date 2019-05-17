@@ -1,3 +1,8 @@
+# Provides full CRUD+ for Distributions, which are the primary way for inventory to leave a Diaperbank. Most
+# Distributions are given out through community partners (either via Partnerbase, or to Partners-on-record). It's
+# technically possible to also do Direct Services by having a Partner called "Direct Services" and then issuing
+# Distributions to them, though it would lack some of the additional featuers and failsafes that a Diaperbank
+# might want if they were doing direct services.
 class DistributionsController < ApplicationController
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
@@ -14,6 +19,7 @@ class DistributionsController < ApplicationController
     end
   end
 
+  # TODO: This should be renamed :destroy, because that's what it does. I think the name is vestigial from a time when it didn't actually destroy the object
   def reclaim
     ActiveRecord::Base.transaction do
       @distribution_id = params[:id]
@@ -119,10 +125,12 @@ class DistributionsController < ApplicationController
     end
   end
 
+  # TODO: This needs a little more context. Is it JSON only? HTML?
   def pick_ups
     @pick_ups = current_organization.distributions
   end
 
+  # TODO: This shouldl probably be private
   def insufficient_amount!
     respond_to do |format|
       format.html { render template: "errors/insufficient", layout: "layouts/application", status: :ok }
@@ -134,9 +142,10 @@ class DistributionsController < ApplicationController
 
   # If a request id is provided, update the request with the newly created distribution's id
   def update_request(request_atts, distribution_id)
-    if request_atts
-      Request.find(request_atts[:id]).update(distribution_id: distribution_id)
-    end
+    return if request_atts.blank?
+
+    request = Request.find(request_atts[:id])
+    request.update(distribution_id: distribution_id, status: 'fulfilled')
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')

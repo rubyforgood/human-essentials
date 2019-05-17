@@ -1,3 +1,4 @@
+# Initial table for Audits
 class CreateAudits < ActiveRecord::Migration[5.2]
   def change
     create_table :audits do |t|

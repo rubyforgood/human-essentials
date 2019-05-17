@@ -5,7 +5,7 @@
 #  id              :bigint(8)        not null, primary key
 #  partner_id      :bigint(8)
 #  organization_id :bigint(8)
-#  status          :string           default("Active")
+#  status          :string           default(NULL)
 #  request_items   :jsonb
 #  comments        :text
 #  created_at      :datetime         not null
@@ -19,9 +19,7 @@ class Request < ApplicationRecord
   belongs_to :distribution, optional: true
   has_many :item_requests, dependent: :destroy
 
-  scope :active, -> { where(status: "Active") }
-
-  STATUSES = %w[Active Fulfilled].freeze
+  enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
   def family_request_reply
     {

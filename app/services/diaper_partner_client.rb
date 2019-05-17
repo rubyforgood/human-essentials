@@ -1,3 +1,6 @@
+# Establishes some methods that are used to communicate with the Partner app.
+# The Diaper and Partner apps must communicate as if by magic, over a bi-directional
+# API.
 module DiaperPartnerClient
   def self.post(attributes)
     partner = { partner:

@@ -1,30 +1,8 @@
+# Provides CRUD+ for Donations, which are digital representations of one of the ways Diaperbanks take in new inventory
 class DonationsController < ApplicationController
-  # We load the resources in before_filters so that they are not re-loaded
-  # by Cancan, which won't use the correct methods.
-  # before_filter :simple_load, only: [:track, :remove_item, :edit, :update, :destroy]
-  # before_filter :eager_load_single, only: [:show]
-  # before_filter :load_collection, only: [:index]
-  # before_filter :load_new, only: [:new]
-
-  # Cancan authorization
-  # load_and_authorize_resource
-
   skip_before_action :verify_authenticity_token, only: %i(scale_intake scale)
   skip_before_action :authenticate_user!, only: %i(scale_intake scale)
   skip_before_action :authorize_user, only: %i(scale_intake scale)
-
-  #  def add_item
-  #    @donation = current_organization.donations.find(params[:id])
-  #    if (donation_item_params.has_key?(:barcode_id))
-  #      donation_item_params[:item_id] = BarcodeItem.find!(donation_item_params[:barcode_id]).item_id
-  #    end
-  #    @donation.track(donation_item_params[:item_id], donation_item_params[:quantity])
-  #  end
-
-  #  def remove_item
-  #    @donation = current_organization.donations.find(params[:id])
-  #    @donation.remove(donation_item_params[:item_id])
-  #  end
 
   def index
     @donations = current_organization.donations

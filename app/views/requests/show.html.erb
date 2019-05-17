@@ -57,7 +57,7 @@
 
     </div>
     <div class="box-footer">
-      <%= submit_button_to fullfill_request_path(@request), { text: "Fulfill request" } unless @request.distribution %>
+      <%= submit_button_to start_request_path(@request), { text: "New Distribution" } unless @request.distribution %>
       <%= view_button_to(distribution_path(@request.distribution), { text: "View Associated Distribution", size: "lg" }) if @request.distribution %>
     </div>
   </div>

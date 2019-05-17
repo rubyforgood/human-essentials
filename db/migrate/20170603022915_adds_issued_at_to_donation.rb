@@ -1,3 +1,5 @@
+# The Stakeholder wanted the ability to set an alternate timestamp for when the donation actually
+# comes in. :created_at and :updated_at were too restrictive
 class AddsIssuedAtToDonation < ActiveRecord::Migration[5.0]
   # doin this old-school because we need to initialize it programmatically
   def up

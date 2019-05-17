@@ -15,37 +15,38 @@
 
 <!-- Main content -->
 <section class="content">
-
   <!-- Default box -->
   <div class="box">
-    <div class="box-body">
-      <div class="text-right">
+    <div class="box-header with-border bg-gray">
+      <div class="btn-group pull-right">
         <%= modal_button_to("#addUserModal", { text: "Invite User to this Organization" }) if can_administrate? %>
       </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                <th>Name</th>
-                <th>Email</th>
-              </tr>
-              </thead>
-              <tbody>
-                <% @users.each do |user| %>
-                <tr>
-                  <td><%= user.name %></td>
-                  <td><%= user.email %></td>
+      <div class="box-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
                 </tr>
-                <% end %>
-              </tbody>
-            </table>
-          <!-- /.box-body -->
+                </thead>
+                <tbody>
+                  <% @users.each do |user| %>
+                  <tr>
+                    <td><%= user.name %></td>
+                    <td><%= user.email %></td>
+                  </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <!-- /.box-body -->
+            </div>
           </div>
+            <!-- /.box -->
         </div>
-          <!-- /.box -->
       </div>
     </div>
   </div>

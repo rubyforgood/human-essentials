@@ -1,4 +1,4 @@
-RSpec.feature "Organization Administration", type: :feature do
+RSpec.describe "Organization Administration", type: :system do
   subject { "/#{@organization.to_param}/organization" }
   context "while signed in as a normal user" do
     before do
@@ -6,7 +6,7 @@ RSpec.feature "Organization Administration", type: :feature do
       visit subject
     end
 
-    scenario "the user does not see an edit link" do
+    it "cannot see an edit link as a user" do
       expect(page).not_to have_link("Edit")
     end
   end
@@ -16,11 +16,11 @@ RSpec.feature "Organization Administration", type: :feature do
       visit subject
     end
 
-    scenario "the user can bail back to their own site" do
+    it "can bail back to their own site as a user" do
       expect(page).to have_xpath("//a[@href='#{dashboard_path(organization_id: @organization.to_param)}']")
     end
 
-    scenario "An admin can edit the properties for an organization" do
+    it "can edit the properties for an organization as an admin" do
       click_on "Edit"
       fill_in "Name", with: "Something else"
       click_button "Save"
@@ -33,7 +33,7 @@ RSpec.feature "Organization Administration", type: :feature do
         @organization.users << create(:user, email: "yet_another_user@website.com")
         visit subject
       end
-      scenario "Admin can view details about an organization, including the users" do
+      it "can view details about an organization, including the users as an admin" do
         expect(page).to have_content(@organization.email)
         expect(page).to have_content(@organization.address)
         @organization.users.each do |u|

@@ -2,11 +2,11 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  email           :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  created_at      :datetime
+#  updated_at      :datetime
 #  organization_id :integer
 #  status          :string
 #
@@ -14,7 +14,7 @@
 class Partner < ApplicationRecord
   require "csv"
 
-  enum status: [:pending, :awaiting_review, :approved, :error, :recertification_required]
+  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error, :recertification_required]
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy

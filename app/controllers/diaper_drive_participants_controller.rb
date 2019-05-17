@@ -1,5 +1,9 @@
+# Provides (nearly) full CRUD for DiaperDriveParticipants, which are the community entities that yield inventory during
+# a Diaper Drive.
 class DiaperDriveParticipantsController < ApplicationController
   include Importable
+
+  # TODO: Should there be a :destroy action for this?
 
   def index
     @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all.order(:business_name)

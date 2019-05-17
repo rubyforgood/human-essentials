@@ -1,3 +1,5 @@
+# Provides full CRUD to Items. Every item is rooted in a BaseItem, but Diaperbanks have full control to do whatever
+# they like with their own Items.
 class ItemsController < ApplicationController
   def index
     @items = current_organization.items.includes(:base_item).alphabetized.class_filter(filter_params)

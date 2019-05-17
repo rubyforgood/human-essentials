@@ -1,3 +1,4 @@
+# Encapsulates methods that need some business logic
 module ItemsHelper
   def item_value(value, addition = '')
     if value.zero?

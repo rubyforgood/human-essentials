@@ -1,3 +1,4 @@
+# Users can only write messages, they cannot read any messages, even their own.
 class FeedbackMessageController < ApplicationController
   def create
     @feedback_message = FeedbackMessage.new(feedback_message_params)

@@ -1,4 +1,4 @@
-RSpec.feature "Barcode Items Admin" do
+RSpec.describe "Barcode Items Admin" do
   before do
     sign_in(@super_admin)
   end
@@ -7,7 +7,7 @@ RSpec.feature "Barcode Items Admin" do
       visit admin_barcode_items_path
     end
     let(:item) { create(:item) }
-    scenario "creating a new global barcode", js: true do
+    it "should create a new global barcode", js: true do
       click_on "Add New Barcode"
       fill_in "Quantity", with: 100
       select item.base_item.name, from: "barcode_item_barcodeable_id"
@@ -17,8 +17,8 @@ RSpec.feature "Barcode Items Admin" do
       expect(page).to have_content("Tampons")
       expect(page).to have_content("100")
     end
-    scenario "editing an existing global barcode"
-    scenario "deleting a global barcode"
-    scenario "viewing a barcode shows details about it"
+    it "should edit an existing global barcode"
+    it "should delete a global barcode"
+    it "should view a barcode shows details about it"
   end
 end

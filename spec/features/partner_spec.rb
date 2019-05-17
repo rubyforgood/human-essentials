@@ -28,14 +28,14 @@ RSpec.feature "Partner management", type: :feature do
     visit url_prefix + "/partners/new"
     fill_in "Name", with: "Frank"
     fill_in "E-mail", with: "frank@frank.com"
-    click_button "Send Invitation"
+    click_button "Add Partner Agency"
 
     expect(page.find(".alert")).to have_content "added"
   end
 
   scenario "User creates a new partner with empty name" do
     visit url_prefix + "/partners/new"
-    click_button "Send Invitation"
+    click_button "Add Partner Agency"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
@@ -66,7 +66,7 @@ RSpec.feature "Partner management", type: :feature do
 
     within("table > tbody > tr:nth-child(1) > td.text-right") { click_on "Invite" }
     invite_alert = page.driver.browser.switch_to.alert
-    expect(invite_alert.text).to eq("Send an invitation to #{partner.name}?")
+    expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
 
     invite_alert.accept
     expect(page.find(".alert")).to have_content "invited!"

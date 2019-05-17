@@ -1,3 +1,5 @@
+# The Stakeholder wanted the ability to set an alternate timestamp for when the distribution actually
+# leaves. :created_at and :updated_at were too restrictive
 class AddIssuedAtToDistribution < ActiveRecord::Migration[5.1]
   # doin this old-school because we need to initialize it programmatically
   def up

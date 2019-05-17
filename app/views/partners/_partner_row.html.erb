@@ -8,14 +8,17 @@
   <!-- <td><%== (rand < 0.7) ? '<span class="label label-success">Approved</span>' :
   '<span class="label label-warning">In Progress</span>' %></td> -->
   <td>
-    <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name}?") unless partner_row.approved? %>
     <% case status %>
-    <% when "pending" %>
-      <%= link_to "Review Application", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
+     <% when "uninvited" %>
+      <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+    <% when "invited" %>
+      <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
     <% when "awaiting_review" %>
-      <%= link_to "Review Application", approve_partner_partner_path(partner_row), class: "btn btn-xs bg-olive" %>
+      <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
     <% when "approved" %>
       <%= button_to "Request Recertification", recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" %>
+    <% else %>
+      &nbsp;
     <% end %>
   </td>
 </tr>

@@ -1,3 +1,4 @@
+# This job notifies a Partner that they have a pending distribution
 class PartnerMailerJob
   include Sidekiq::Worker
 
