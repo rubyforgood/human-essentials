@@ -13,7 +13,7 @@ class DistributionPdf
     end
     data = [["Items Received", "Value/item", "Total value", "Quantity"]]
     data += @distribution.line_items.sorted.map do |c|
-      [c.item.name, item_value(c.item.value), item_value(c.value_per_line_item), c.quantity]
+      [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity]
     end
     data += [["", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total]]
 
