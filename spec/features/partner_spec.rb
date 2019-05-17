@@ -64,7 +64,7 @@ RSpec.feature "Partner management", type: :feature do
     partner = create(:partner, name: 'Charities')
     visit url_prefix + "/partners"
 
-    within("table > tbody > tr:nth-child(1) > td.text-right") { click_on "Invite" }
+    within("table > tbody > tr:nth-child(1) > td:nth-child(4)") { click_on "Invite" }
     invite_alert = page.driver.browser.switch_to.alert
     expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
 
