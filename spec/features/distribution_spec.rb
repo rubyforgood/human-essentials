@@ -75,9 +75,9 @@ RSpec.feature "Distributions", type: :feature do
 
   context "When creating a distribution and items have value" do
     before do
-      item1 = create(:item, value: 10.5)
+      item1 = create(:item, value_in_cents: 1050)
       item2 = create(:item)
-      item3 = create(:item, value: 1)
+      item3 = create(:item, value_in_cents: 100)
       @distribution1 = create(:distribution, :with_items, item: item1, agency_rep: "A Person", organization: @user.organization)
       create(:distribution, :with_items, item: item2, agency_rep: "A Person", organization: @user.organization)
       @distribution3 = create(:distribution, :with_items, item: item3, agency_rep: "A Person", organization: @user.organization)

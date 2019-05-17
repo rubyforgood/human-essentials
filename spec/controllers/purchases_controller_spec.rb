@@ -34,14 +34,14 @@ RSpec.describe PurchasesController, type: :controller do
           purchase: { storage_location_id: storage_location.id,
                       purchased_from: "Google",
                       vendor_id: vendor.id,
-                      amount_spent: 10,
+                      amount_spent_in_cents: 10,
                       line_items: line_items }
         )
         expect(response).to redirect_to(purchases_path)
       end
 
       it "renders GET#new with error on failure" do
-        post :create, params: default_params.merge(purchase: { storage_location_id: nil, amount_spent: nil })
+        post :create, params: default_params.merge(purchase: { storage_location_id: nil, amount_spent_in_cents: nil })
         expect(response).to be_successful # Will render :new
         expect(flash[:error]).to match(/error/i)
       end
