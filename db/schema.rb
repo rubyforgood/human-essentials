@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_11_063030) do
+ActiveRecord::Schema.define(version: 2019_04_22_130439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "adjustments", id: :serial, force: :cascade do |t|
+  create_table "adjustments", force: :cascade do |t|
     t.integer "organization_id"
     t.integer "storage_location_id"
     t.text "comment"
@@ -70,7 +70,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["user_id"], name: "index_audits_on_user_id"
   end
 
-  create_table "barcode_items", id: :serial, force: :cascade do |t|
+  create_table "barcode_items", force: :cascade do |t|
     t.string "value"
     t.integer "barcodeable_id"
     t.integer "quantity"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
   end
 
-  create_table "canonical_items", force: :cascade do |t|
+  create_table "base_items", force: :cascade do |t|
     t.string "name"
     t.string "category"
     t.integer "barcode_count"
@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.integer "weight_in_grams"
   end
 
-  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
+  create_table "diaper_drive_participants", force: :cascade do |t|
     t.string "contact_name"
     t.string "email"
     t.string "phone"
@@ -110,10 +110,10 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
   end
 
-  create_table "distributions", id: :serial, force: :cascade do |t|
+  create_table "distributions", force: :cascade do |t|
     t.text "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer "storage_location_id"
     t.integer "partner_id"
     t.integer "organization_id"
@@ -124,11 +124,11 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
   end
 
-  create_table "donation_sites", id: :serial, force: :cascade do |t|
+  create_table "donation_sites", force: :cascade do |t|
     t.string "name"
     t.string "address"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
@@ -136,11 +136,11 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
 
-  create_table "donations", id: :serial, force: :cascade do |t|
+  create_table "donations", force: :cascade do |t|
     t.string "source"
     t.integer "donation_site_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer "storage_location_id"
     t.text "comment"
     t.integer "organization_id"
@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.string "path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "resolved"
     t.index ["user_id"], name: "index_feedback_messages_on_user_id"
   end
 
@@ -177,33 +178,40 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
-  create_table "inventory_items", id: :serial, force: :cascade do |t|
+  create_table "inventory_items", force: :cascade do |t|
     t.integer "storage_location_id"
     t.integer "item_id"
     t.integer "quantity", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "items", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.string "category"
+  create_table "item_requests", force: :cascade do |t|
+    t.bigint "request_id"
+    t.bigint "item_id"
+    t.integer "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_requests_on_item_id"
+    t.index ["request_id"], name: "index_item_requests_on_request_id"
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.string "name"
+    t.string "category"
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer "barcode_count"
     t.integer "organization_id"
     t.boolean "active", default: true
     t.string "partner_key"
-<<<<<<< HEAD
-    t.integer "weight_in_grams"
-=======
     t.decimal "value", precision: 5, scale: 2, default: "0.0"
->>>>>>> master
+    t.integer "weight_in_grams"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
 
-  create_table "line_items", id: :serial, force: :cascade do |t|
+  create_table "line_items", force: :cascade do |t|
     t.integer "quantity"
     t.integer "item_id"
     t.integer "itemizable_id"
@@ -213,7 +221,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
   end
 
-  create_table "organizations", id: :serial, force: :cascade do |t|
+  create_table "organizations", force: :cascade do |t|
     t.string "name"
     t.string "short_name"
     t.string "email"
@@ -227,18 +235,20 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
-    t.text "default_email_text"
+    t.integer "reminder_days_before_deadline"
+    t.integer "deadline_date"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
-  create_table "partners", id: :serial, force: :cascade do |t|
+  create_table "partners", force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer "organization_id"
-    t.string "status"
+    t.boolean "send_reminders", default: false, null: false
+    t.integer "status", default: 0
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 
@@ -251,6 +261,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.datetime "issued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "vendor_id"
     t.index ["organization_id"], name: "index_purchases_on_organization_id"
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end
@@ -258,21 +269,22 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
   create_table "requests", force: :cascade do |t|
     t.bigint "partner_id"
     t.bigint "organization_id"
-    t.string "status", default: "Active"
     t.jsonb "request_items", default: {}
     t.text "comments"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "distribution_id"
+    t.integer "status", default: 0
     t.index ["organization_id"], name: "index_requests_on_organization_id"
     t.index ["partner_id"], name: "index_requests_on_partner_id"
+    t.index ["status"], name: "index_requests_on_status"
   end
 
-  create_table "storage_locations", id: :serial, force: :cascade do |t|
+  create_table "storage_locations", force: :cascade do |t|
     t.string "name"
     t.string "address"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
@@ -280,7 +292,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end
 
-  create_table "transfers", id: :serial, force: :cascade do |t|
+  create_table "transfers", force: :cascade do |t|
     t.integer "from_id"
     t.integer "to_id"
     t.string "comment"
@@ -290,7 +302,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -324,11 +336,28 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "vendors", force: :cascade do |t|
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.string "comment"
+    t.integer "organization_id"
+    t.string "address"
+    t.string "business_name"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
+  end
+
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "item_requests", "items"
+  add_foreign_key "item_requests", "requests"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end
