@@ -1,7 +1,6 @@
 <% row_item = row.last %>
 <tr>
 <td><%= row_item[:item_name] %></td>
-<td><%= row_item[:item_category] %></td>
 <% @storages.each do |storage| %>
   <td><%= row_item[storage.id] %></td>
 <% end %>

@@ -1,3 +1,6 @@
+# Extracts the logic for models that have an `issued_at` field
+# This allows DiaperBanks to record a date when the inventory itself was
+# issued, which might be different from when the record was last created or manipulated
 module IssuedAt
   extend ActiveSupport::Concern
 

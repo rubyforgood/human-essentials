@@ -8,7 +8,8 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  organization_id :integer
-#  status          :string
+#  send_reminders  :boolean          default(FALSE), not null
+#  status          :integer          default("uninvited")
 #
 
 FactoryBot.define do
@@ -16,5 +17,9 @@ FactoryBot.define do
     sequence(:name) { |n| "Leslie Sue, the #{n}" }
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
     organization { Organization.try(:first) || create(:organization) }
+  end
+
+  trait :approved do
+    status { :approved }
   end
 end

@@ -1,7 +1,8 @@
+# Establishes some methods that are used to communicate with the Partner app.
+# The Diaper and Partner apps must communicate as if by magic, over a bi-directional
+# API.
 module DiaperPartnerClient
   def self.post(attributes)
-    return if Rails.env != "production"
-
     partner = { partner:
       { diaper_bank_id: attributes["organization_id"],
         diaper_partner_id: attributes["id"],
@@ -19,8 +20,6 @@ module DiaperPartnerClient
   end
 
   def self.get(attributes)
-    return if Rails.env != "production"
-
     id = attributes[:id]
     uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{id}")
     req = Net::HTTP::Get.new(uri, "Content-Type" => "application/json")
@@ -33,8 +32,6 @@ module DiaperPartnerClient
   end
 
   def self.put(attributes)
-    return if Rails.env != "production"
-
     partner = { partner:
                     {
                       diaper_partner_id: attributes["id"]

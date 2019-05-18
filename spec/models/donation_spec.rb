@@ -97,61 +97,14 @@ RSpec.describe Donation, type: :model do
     describe "items >" do
       it "has_many" do
         donation = create(:donation)
-        item = create(:item)
-        # Using donation.track because it marshalls the HMT
-        donation.track(item, 1)
+        line_item = create(:line_item)
+        donation.line_items << line_item
         expect(donation.items.count).to eq(1)
       end
     end
   end
 
   context "Methods >" do
-    describe "track" do
-      let!(:donation) { create(:donation) }
-      let!(:item) { create(:item) }
-
-      it "does not add a new line_item unnecessarily, updating existing line_item instead" do
-        item = create :item
-        donation.track(item, 5)
-        expect do
-          donation.track(item, 10)
-          donation.reload
-        end.not_to change { donation.line_items.count }
-
-        expect(donation.line_items.first.quantity).to eq(15)
-      end
-    end
-
-    describe "contains_item_id?" do
-      it "returns true if the item_id already exists" do
-        donation = create(:donation, :with_items)
-        expect(donation.contains_item_id?(donation.items.last.id)).to be_truthy
-      end
-    end
-
-    describe "update_quantity" do
-      let!(:donation) { create(:donation, :with_items) }
-      it "adds an additional quantity to the existing line_item" do
-        expect do
-          donation.update_quantity(1, donation.items.first)
-          donation.reload
-        end.to change { donation.line_items.first.quantity }.by(1)
-      end
-
-      it "can receive a negative quantity to subtract inventory" do
-        expect do
-          donation.update_quantity(-1, donation.items.first)
-        end.to change { donation.total_quantity }.by(-1)
-      end
-
-      it "works whether you give it an item or an id" do
-        expect do
-          donation.update_quantity(1, donation.items.first.id)
-          donation.reload
-        end.to change { donation.line_items.first.quantity }.by(1)
-      end
-    end
-
     describe "remove" do
       let!(:donation) { create(:donation, :with_items) }
 
@@ -173,19 +126,51 @@ RSpec.describe Donation, type: :model do
       end
     end
 
-    describe "remove_inventory" do
-      it "removes inventory from the right storage location when donation is destroyed" do
-        donation = create(:donation, :with_items)
-        expect do
-          donation.destroy
-        end.to change { donation.storage_location.size }.by(-donation.total_quantity)
-      end
-    end
-
     describe "money_raised" do
       it "tracks the money raised in a donation" do
         donation = create(:donation, :with_items, money_raised: 100)
         expect(donation.money_raised).to eq(100)
+      end
+    end
+
+    describe "replace_increase!" do
+      let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 5, organization: @organization) }
+      subject { create(:donation, :with_items, organization: @organization, item_quantity: 5, storage_location: storage_location) }
+
+      context "changing the donation" do
+        let(:attributes) { { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } } }
+
+        it "updates the quantity of items" do
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.size }.by(-3)
+        end
+      end
+
+      context "when adding an item that has been previously deleted" do
+        let!(:inactive_item) { create(:item, active: false) }
+        let(:attributes) { { line_items_attributes: { "0": { item_id: inactive_item.to_param, quantity: 10 } } } }
+
+        it "re-creates the item" do
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.size }.by(5) # We had 5 items of a different kind before, now we have 10
+                                                 .and change { Item.count }.by(1)
+        end
+      end
+
+      context "with empty line_items" do
+        let(:attributes) { { line_items_attributes: {} } }
+
+        it "removes the inventory item if the item's removal results in a 0 count" do
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.inventory_items.size }.by(-1)
+                                                                 .and change { InventoryItem.count }.by(-1)
+        end
       end
     end
   end

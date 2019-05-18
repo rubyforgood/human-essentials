@@ -1,3 +1,4 @@
+# Prepares data to be shown to the users for their dashboard.
 class DashboardController < ApplicationController
   respond_to :html, :js
 

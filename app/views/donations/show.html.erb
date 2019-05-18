@@ -9,8 +9,8 @@
       <i class="fa fa-dashboard"></i> Home
     <% end %>
     </li>
-    <li><%= link_to "Donations", (donations_path) %></li>  
-    <li class="active"> <%= @donation.source %> on <%= @donation.created_at.strftime("%B %-d %Y") %></li>
+    <li><%= link_to "Donations", (donations_path) %></li>
+    <li class="active"> <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></li>
   </ol>
 </section>
 
@@ -19,7 +19,7 @@
   <div class="box">
     <div class="box-header with-border">
       <fieldset>
-        <p>This donation was started on <%= @donation.created_at.strftime("%B %-d %Y") %>:</p>
+        <p>This donation was started on <%= @donation.created_at.to_s(:distribution_date) %>:</p>
         <ul class="list-group">
           <li class="list-group-item">It was collected through: <%= @donation.source %></li>
           <li class="list-group-item">It was dropped off at: <%= @donation.donation_site_view %></li>
@@ -35,10 +35,15 @@
                   <thead>
                     <th>Item</th>
                     <th>Quantity</th>
+                    <th>In Kind Value</th>
                   </thead>
-
                   <tbody>
                     <%= render partial: "donation_item_row", collection: @line_items %>
+                    <tr>
+                      <td></td>
+                      <td><strong>Total</strong></td>
+                      <td><strong><%= item_value(@donation.value_per_itemizable) %></strong></td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -55,9 +60,4 @@
       <%= new_button_to new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
     </div>
   </div>
-</section>  
-
-
-
-
-
+</section>

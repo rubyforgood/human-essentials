@@ -68,14 +68,19 @@ RSpec.describe Distribution, type: :model do
 
   context "Methods >" do
     let(:distribution) { create(:distribution) }
-    let(:item) { create(:item, name: "AAA", category: "Foo") }
+    let(:item) { create(:item, name: "AAA") }
     let(:donation) { create(:donation) }
 
     describe "#distributed_at" do
-      it "displays either the explicit distributed_at date, or falls-through to issued_at" do
-        two_days_ago = 2.days.ago
-        expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.strftime("%B %-d %Y"))
-        expect(create(:distribution).distributed_at).to eq(Time.zone.now.strftime("%B %-d %Y"))
+      it "displays explicit issued_at date" do
+        two_days_ago = 2.days.ago.midnight
+        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00 UTC")
+        expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.to_s(:distribution_date))
+      end
+
+      it "shows the hour and minutes if it has been provided" do
+        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00 UTC")
+        expect(distribution.distributed_at).to eq("March 1 2014 2:30pm")
       end
     end
 
@@ -94,6 +99,17 @@ RSpec.describe Distribution, type: :model do
         distribution.combine_duplicates
         expect(distribution.line_items.size).to eq 1
         expect(distribution.line_items.first.quantity).to eq 15
+      end
+    end
+
+    describe "#replace_distribution!" do
+      subject { create(:distribution, :with_items, item_quantity: 10) }
+      let(:attributes) { { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } } }
+
+      it "replaces a big distribution with a smaller one, resulting in increased stored quantities" do
+        expect do
+          subject.replace_distribution!(attributes)
+        end.to change { subject.storage_location.size }.by(8)
       end
     end
   end

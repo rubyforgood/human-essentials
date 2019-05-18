@@ -2,21 +2,22 @@
 #
 # Table name: organizations
 #
-#  id                 :integer          not null, primary key
-#  name               :string
-#  short_name         :string
-#  email              :string
-#  url                :string
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  intake_location    :integer
-#  street             :string
-#  city               :string
-#  state              :string
-#  zipcode            :string
-#  latitude           :float
-#  longitude          :float
-#  default_email_text :text
+#  id                            :bigint(8)        not null, primary key
+#  name                          :string
+#  short_name                    :string
+#  email                         :string
+#  url                           :string
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  intake_location               :integer
+#  street                        :string
+#  city                          :string
+#  state                         :string
+#  zipcode                       :string
+#  latitude                      :float
+#  longitude                     :float
+#  reminder_days_before_deadline :integer
+#  deadline_date                 :integer
 #
 
 FactoryBot.define do

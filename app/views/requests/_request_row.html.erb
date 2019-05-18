@@ -1,7 +1,7 @@
 <tr>
   <td><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
   <td><%= request_row.partner.name %> </td>
-  <td><%= request_row.status %></td>
+  <td><%= request_row.status.try(:humanize) %></td>
   <td class="text-right">
     <%= view_button_to request_path(request_row) %>
   </td>

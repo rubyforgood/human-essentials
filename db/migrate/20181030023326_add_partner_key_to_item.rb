@@ -1,3 +1,12 @@
+# `CanonicalItem` is later renamed to `BaseItem`. It was a bad choice to
+# do it this way in a migration, but here we are. The database doesn't
+# yet know about the BaseItem name change, but the codebase does.  
+class CanonicalItem < ApplicationRecord; end
+
+# Stubbed class for forward compatibility
+class Item < ApplicationRecord; end
+
+# Uses `:partner_key` as the foreign key to connect Items and CanonicalItems
 class AddPartnerKeyToItem < ActiveRecord::Migration[5.2]
   def up
     add_column :items, :partner_key, :string

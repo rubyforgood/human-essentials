@@ -1,0 +1,7 @@
+<% flash.discard %>
+$("#modal_new").modal("hide");
+$("#purchase_vendor_id").empty();
+$("#purchase_vendor_id").
+html('<%= j options_from_collection_for_select(current_organization.vendors, :id, :business_name) %>');
+$("#purchase_vendor_id").append('<option value="">---Not Listed---</option>');
+$("#purchase_vendor_id").val('<%= @vendor[:id] %>');

@@ -2,21 +2,22 @@
 #
 # Table name: organizations
 #
-#  id                 :integer          not null, primary key
-#  name               :string
-#  short_name         :string
-#  email              :string
-#  url                :string
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  intake_location    :integer
-#  street             :string
-#  city               :string
-#  state              :string
-#  zipcode            :string
-#  latitude           :float
-#  longitude          :float
-#  default_email_text :text
+#  id                            :bigint(8)        not null, primary key
+#  name                          :string
+#  short_name                    :string
+#  email                         :string
+#  url                           :string
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  intake_location               :integer
+#  street                        :string
+#  city                          :string
+#  state                         :string
+#  zipcode                       :string
+#  latitude                      :float
+#  longitude                     :float
+#  reminder_days_before_deadline :integer
+#  deadline_date                 :integer
 #
 
 RSpec.describe Organization, type: :model do
@@ -40,10 +41,10 @@ RSpec.describe Organization, type: :model do
   end
 
   describe "seed_items" do
-    it "loads the canonical items into Item records" do
-      canonical_items_count = CanonicalItem.count
+    it "loads the base items into Item records" do
+      base_items_count = BaseItem.count
       Organization.seed_items(organization)
-      expect(organization.items.count).to eq(canonical_items_count)
+      expect(organization.items.count).to eq(base_items_count)
     end
   end
 
@@ -70,7 +71,7 @@ RSpec.describe Organization, type: :model do
   describe "#ordered_requests" do
     let!(:new_active_request)  { create(:request, comments: "first active") }
     let!(:old_active_request) { create(:request, comments: "second active") }
-    let!(:fulfilled_request) { create(:request, status: 'Fulfilled', comments: "first fulfilled") }
+    let!(:fulfilled_request) { create(:request, :fulfilled, comments: "first fulfilled") }
     let!(:organization) { create(:organization, requests: [old_active_request, fulfilled_request, new_active_request]) }
 
     it "puts active requests before fulfilled requests" do
@@ -157,9 +158,27 @@ RSpec.describe Organization, type: :model do
 
   describe 'valid_items' do
     it 'returns an array of item partner keys' do
-      org = create(:organization)
-      expect(org.valid_items).to be_an(Array)
-      expect(org.valid_items.first).to be_an(String)
+      item = organization.items.first
+      expected = { name: item.name, id: item.id, partner_key: item.partner_key }
+      expect(organization.valid_items.count).to eq(organization.items.count)
+      expect(organization.valid_items).to include(expected)
+    end
+  end
+  describe 'reminder_days_before_deadline' do
+    it "can only contain numbers 1-14" do
+      expect(build(:organization, reminder_days_before_deadline: 14)).to be_valid
+      expect(build(:organization, reminder_days_before_deadline: 1)).to be_valid
+      expect(build(:organization, reminder_days_before_deadline: 0)).to_not be_valid
+      expect(build(:organization, reminder_days_before_deadline: -5)).to_not be_valid
+      expect(build(:organization, reminder_days_before_deadline: 15)).to_not be_valid
+    end
+  end
+  describe 'deadline_date' do
+    it "can only contain numbers 1-28" do
+      expect(build(:organization, deadline_date: 28)).to be_valid
+      expect(build(:organization, deadline_date: 0)).to_not be_valid
+      expect(build(:organization, deadline_date: -5)).to_not be_valid
+      expect(build(:organization, deadline_date: 29)).to_not be_valid
     end
   end
 end

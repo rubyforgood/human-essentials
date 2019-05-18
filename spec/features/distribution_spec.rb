@@ -10,15 +10,21 @@ RSpec.feature "Distributions", type: :feature do
   end
 
   scenario "User creates a new distribution" do
-    visit @url_prefix + "/distributions/new"
+    with_features email_active: true do
+      visit @url_prefix + "/distributions/new"
 
-    select @partner.name, from: "Partner"
-    select @storage_location.name, from: "From storage location"
+      select @partner.name, from: "Partner"
+      select @storage_location.name, from: "From storage location"
 
-    fill_in "Comment", with: "Take my wipes... please"
-    click_button "Save", match: :first
-    expect(page).to have_content "Distributions"
-    expect(page.find(".alert-info")).to have_content "reated"
+      fill_in "Comment", with: "Take my wipes... please"
+
+      expect do
+        click_button "Save", match: :first
+      end.to change { PartnerMailerJob.jobs.size }.by(1)
+
+      expect(page).to have_content "Distributions"
+      expect(page.find(".alert-info")).to have_content "reated"
+    end
   end
 
   scenario "User doesn't fill storage_location" do
@@ -55,11 +61,13 @@ RSpec.feature "Distributions", type: :feature do
     end
 
     context "when one of the items has been 'deleted'" do
-      scenario "the user can still reclaim it and it reactivates the item" do
+      scenario "the user can still reclaim it and it reactivates the item", js: true do
         item = distribution.line_items.first.item
         item.destroy
         expect do
-          click_on "Reclaim"
+          accept_confirm do
+            click_on "Reclaim"
+          end
           page.find ".alert"
         end.to change { Distribution.count }.by(-1).and change { Item.count }.by(1)
         expect(page).to have_content "reclaimed"
@@ -69,9 +77,9 @@ RSpec.feature "Distributions", type: :feature do
 
   context "When creating a distribution and items have value" do
     before do
-      item1 = create(:item, value: 10.5)
+      item1 = create(:item, value_in_cents: 1050)
       item2 = create(:item)
-      item3 = create(:item, value: 1)
+      item3 = create(:item, value_in_cents: 100)
       @distribution1 = create(:distribution, :with_items, item: item1, agency_rep: "A Person", organization: @user.organization)
       create(:distribution, :with_items, item: item2, agency_rep: "A Person", organization: @user.organization)
       @distribution3 = create(:distribution, :with_items, item: item3, agency_rep: "A Person", organization: @user.organization)
@@ -133,13 +141,14 @@ RSpec.feature "Distributions", type: :feature do
         expect(page).to have_content 13
       end
 
-      scenario "User creates a distribution from a donation then tries to make the quantity too big" do
+      scenario "User creates a distribution from a donation then tries to make the quantity too big", js: true do
         within "#edit_distribution_#{@distribution.to_param}" do
           first(".numeric").set 999_999
           click_on "Save"
         end
         expect(page).to have_no_content "Distribution updated!"
-        expect(page).to have_content "Distribution could not be updated!"
+        # NOTE: This is rendering the app/views/errors/insufficient.html.erb template
+        expect(page).to have_content(/Insufficient/i)
         expect(page).to have_no_content 999_999
         expect(Distribution.first.line_items.count).to eq 1
       end
@@ -165,11 +174,12 @@ RSpec.feature "Distributions", type: :feature do
 
   context "When creating a distrubition from a request" do
     before do
-      request_items = @storage_location.items.map(&:canonical_item).pluck(:partner_key).collect { |k| [k, rand(3..10)] }.to_h
+      items = @storage_location.items.pluck(:id).sample(2)
+      request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: @organization, request_items: request_items
 
       visit @url_prefix + "/requests/#{@request.id}"
-      click_on "Fulfill request"
+      click_on "New Distribution"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
         click_on "Save"
@@ -178,8 +188,9 @@ RSpec.feature "Distributions", type: :feature do
       @distribution = Distribution.last
     end
 
-    scenario "it sets the distribution id on the request" do
+    scenario "it sets the distribution id and fulfilled status on the request" do
       expect(@request.reload.distribution_id).to eq @distribution.id
+      expect(@request.reload).to be_status_fulfilled
     end
   end
 
@@ -198,7 +209,6 @@ RSpec.feature "Distributions", type: :feature do
       page.fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
-      # save_and_open_page
 
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end

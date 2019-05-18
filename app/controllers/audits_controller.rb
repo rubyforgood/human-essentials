@@ -1,3 +1,4 @@
+# [Organization Admin] Audits are for OrgAdmins to reconcile their real-world counts with their digital counts.
 class AuditsController < ApplicationController
   before_action :authorize_admin
   before_action :set_audit, only: %i(show edit update destroy finalize)
@@ -33,7 +34,11 @@ class AuditsController < ApplicationController
       end
     end
 
-    @audit.adjustment.storage_location.adjust!(@audit.adjustment)
+    increasing_adjustment, decreasing_adjustment = @audit.adjustment.split_difference
+    ActiveRecord::Base.transaction do
+      @audit.storage_location.increase_inventory increasing_adjustment
+      @audit.storage_location.decrease_inventory decreasing_adjustment
+    end
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized."
   end

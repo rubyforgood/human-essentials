@@ -1,23 +1,13 @@
 <div class="box-body">
   <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
-    <%= render partial: "canonical_items/dropdown", object: f %>
+    <%= render partial: "base_items/dropdown", object: f %>
     <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-tag"></i></span>
       <%= f.input_field :name, class: "form-control" %>
     <% end %>
     <%= f.input :name, label: "Value per item", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-money"></i></span>
-      <%= f.input_field :value, class: "form-control" %>
-    <% end %>
-
-    <%= f.input :category, label: "Category", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-cubes"></i></span>
-      <%= f.input_field :category, class: "form-control", list:"category" %>
-      <datalist id="category">
-        <%- Item.all.map(&:category).uniq.each do |category| %>
-          <option><%= category %></option>
-        <% end %>
-      </datalist>
+      <%= f.input_field :value_in_cents, class: "form-control" %>
     <% end %>
 
     <%= submit_button %>

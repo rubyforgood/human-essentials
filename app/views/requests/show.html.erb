@@ -11,7 +11,7 @@
     <% end %>
     </li>
     <li><%= link_to "Requests", (requests_path) %></li>
-    <li class="active"> Request from <%= @request.partner.name %> at <%= @request.created_at.strftime("%B %-d %Y") %></li>
+    <li class="active"> Request from <%= @request.partner.name %> at <%= @request.created_at.to_s(:distribution_date) %></li>
   </ol>
 </section>
 
@@ -19,7 +19,7 @@
   <div class="box">
     <div class="box-header with-border">
       <fieldset>
-        <p>This request was sent on <%= @request.created_at.strftime("%B %-d %Y") %>:</p>
+        <p>This request was sent on <%= @request.created_at.to_s(:distribution_date) %>:</p>
         <ul class="list-group">
           <li class="list-group-item">It was sent by: <%= @request.partner.name %></li>
           <li class="list-group-item">It has a status of: <%= @request.status %></li>
@@ -57,7 +57,7 @@
 
     </div>
     <div class="box-footer">
-      <%= submit_button_to fullfill_request_path(@request), { text: "Fulfill request" } unless @request.distribution %>
+      <%= submit_button_to start_request_path(@request), { text: "New Distribution" } unless @request.distribution %>
       <%= view_button_to(distribution_path(@request.distribution), { text: "View Associated Distribution", size: "lg" }) if @request.distribution %>
     </div>
   </div>

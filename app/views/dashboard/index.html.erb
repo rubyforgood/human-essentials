@@ -42,12 +42,12 @@
             </div>
             <div class="text-center">
               <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
-              
+
               <div class="inventory-actions">
                   <%= new_button_to new_transfer_path, { text: "Make a transfer", size: "xs" } %>
                   <%= new_button_to new_adjustment_path, { text: "Make an adjustment", size: "xs" } %>
               </div>
-            
+
             </div>
           </div>
         </div>
@@ -78,7 +78,7 @@
           </div>
           <div class="box box-danger">
             <div class="box-header with-border">
-              <h3 class="box-title">Distributions</h3>
+              <h3 class="box-title">Activity</h3>
               <div class="box-tools">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
@@ -86,7 +86,7 @@
               </div>
             </div>
             <div class="box-body text-center">
-              <h5 class="text-center">Distribution <%= display_interval %></h5>
+              <h5 class="text-center">Activity <%= display_interval %></h5>
               <%= bar_chart received_distributed_data %>
             </div>
           </div>
@@ -123,7 +123,7 @@
               <div class="box-body">
                 <h4>Recent donations</h4>
                 <%= render partial: "donation", collection: @recent_donations, as: :donation %>
-                
+
               </div>
             </div>
             <div class="box-footer text-center">
@@ -149,8 +149,8 @@
               </div>
             </div>
             <div class="box-footer text-center">
-              <%= link_to "See more...", donations_path( 
-                filters: { 
+              <%= link_to "See more...", donations_path(
+                filters: {
                   by_source: "Diaper Drive"
                 }) %>
             </div>
@@ -186,22 +186,6 @@
             </div>
             <div class="box-footer text-center">
               <%= link_to "See more...", purchases_path %>
-            </div>
-          </div>
-          <div class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">Items on Hand</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body">
-              <div class="chart">
-                <h5 class="text-center">Item categories on hand <%= display_interval %></h5>
-                <%= pie_chart pie_chart_data, legend: "right" %>
-              </div>
             </div>
           </div>
         </div>
