@@ -1,25 +1,34 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Edit - Donations - #{@donation.source} - #{current_organization.name}" %>
-  <h1>
-    Editing Donation
-    <small>from <%= @donation.source %></small>
-  </h1>
+  <div class="col-lg-8">
+  <h2> Editing Donation from <%= @donation.source %></h2>
   <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
+    <li class="breadcrumb-item">
+      <%= link_to(dashboard_path) do %>
       <i class="fa fa-dashboard"></i> Home
-    <% end %>
+      <% end %>
     </li>
-    <li><%= link_to "Donations", (donations_path) %></li>
-    <li class="active"> Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></li>
+    <li class="breadcrumb-item">
+      <%= link_to "Donations", (donations_path) %>
+    </li>
+    <li class="breadcrumb-item active">
+      Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %>
+    </li>
   </ol>
-</section>
+<div>
 
-<section class="content">
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-
-      <%= render partial: "donation_form", object: @donation %>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="ibox-title">
+          <h3>Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></h3>
+        </div>
+        <div class="ibox-content">
+          <%= render partial: "donation_form", object: @donation %>
+        </div>
+      </div>
     </div>
   </div>
-</section>
+</div>
+<!-- Main content -->
