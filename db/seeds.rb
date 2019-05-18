@@ -80,6 +80,12 @@ end
 Partner.find_or_create_by!(name: "Pawnee Pregnancy Center", email: "contactus@pawneepregnancy.com", status: :invited) do |partner|
   partner.organization = pdx_org
 end
+Partner.find_or_create_by!(name: "Pawnee Family Center", email: "families@pawneefamilies.org", status: :uninvited) do |partner|
+  partner.organization = pdx_org
+end
+Partner.find_or_create_by!(name: "Pawnee Senior Citizens Center", email: "help@pscc.org", status: :recertification_required) do |partner|
+  partner.organization = pdx_org
+end
 
 inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage Location") do |inventory|
   inventory.address = "Unknown"
