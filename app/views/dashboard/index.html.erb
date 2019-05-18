@@ -1,182 +1,206 @@
-<section class="content-header">
-  <% content_for :title, "Dashboard - #{current_organization.name}" %>
-  <h1>
-    Dashboard
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li><a href="#">Dashboard</a></li>
-    <li class="active"><%= current_organization.name %></li>
-  </ol>
-</section>
-
-    <!-- Main content -->
-<section class="content">
+<div class="row wrapper border-bottom white-bg page-heading">
+  <% content_for :title, "Dashboard for - #{current_organization.name}" %>
+  <div class="col-lg-8">
+    <h1>
+      Dashboard
+      <small>for <%= current_organization.name %></small>
+    </h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="">Dashboard</a></li>
+      <li class="breadcrumb-item active"><%= current_organization.name %></li>
+    </ol>
+  </div>
+</div>
+<div class="wrapper wrapper-content">
   <div class="row">
-    <%= render partial: "getting_started_prompt", locals: { org_stats: @org_stats } %>
-
-    <div class="col-md-12">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title"><%= current_organization.name %></h3>
-          <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-            </button>
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5><%= current_organization.name %></h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
           </div>
         </div>
-        <div class="box-body">
-          <div class="col-xlg 7 col-md-7 col-sm-12">
-            <div class="logo">
-              <%= display_logo_or_name %>
-            </div>
-          </div>
-          <div class="col-xlg-3 col-xlg-offset-2 col-md-5 col-sm-12">
-            <div class="filter">
-              <h3 class="text-center">Select Time Frame</h3>
-              <div class="text-center">
-                <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
-                  <%= f.select :interval, filter_intervals, selected: selected_interval, class: "text-center" %>
-                <% end %>
+        <div class="ibox-content">
+          <div class="box-body">
+            <div class="row">
+              <div class="col-lg-9">
+                <div class="logo">
+                  <%== display_logo_or_name %>
+                </div>
               </div>
-            </div>
-            <div class="text-center">
-              <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
+              <div class="col-lg-3">
+                <div class="filter">
+                  <h3 class="text-center">Select Time Frame</h3>
+                  <div class="text-center">
+                    <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
+                      <%= f.select :interval, filter_intervals, selected: selected_interval, class: "text-center" %>
+                    <% end %>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
 
-              <div class="inventory-actions">
-                  <%= new_button_to new_transfer_path, { text: "Make a transfer", size: "xs" } %>
-                  <%= new_button_to new_adjustment_path, { text: "Make an adjustment", size: "xs" } %>
+                  <div class="inventory-actions">
+                    <%= new_button_to new_transfer_path, {text: "Make a transfer", size: "xs"} %>
+                    <%= new_button_to new_adjustment_path, {text: "Make an adjustment", size: "xs"} %>
+                  </div>
+                </div>
               </div>
-
             </div>
           </div>
         </div>
       </div>
-
-      <div class="row">
-        <div class="col-md-6">
-          <div class="box box-primary">
-            <div class="box-header with-border">
-              <h3 class="box-title">Distribution</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
+    </div>
+  </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="ibox ">
+          <div class="ibox-title">
+            <h5>Distributions</h5>
+            <div class="ibox-tools">
+              <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+              </a>
+              <a class="close-link">
+                <i class="fa fa-times"></i>
+              </a>
             </div>
+          </div>
+          <div class="ibox-content">
             <div class="box-body text-center float-center">
-              <%= new_button_to new_distribution_path, { text: "New Distribution" } %>
+              <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
               <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
-              <div class="box-body">
+              <div class="box-body text-center">
                 <h4>Recent distributions</h4>
                 <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
               </div>
             </div>
+            <hr>
             <div class="box-footer text-center">
               <%= link_to "See more...", distributions_path %>
             </div>
           </div>
-          <div class="box box-danger">
-            <div class="box-header with-border">
-              <h3 class="box-title">Activity</h3>
-              <div class="box-tools">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="ibox ">
+          <div class="ibox-title">
+            <h5>Donations</h5>
+            <div class="ibox-tools">
+              <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+              </a>
+              <a class="close-link">
+                <i class="fa fa-times"></i>
+              </a>
             </div>
-            <div class="box-body text-center">
-              <h5 class="text-center">Activity <%= display_interval %></h5>
-              <%= bar_chart received_distributed_data %>
+          </div>
+          <div class="ibox-content">
+            <div class="box-body text-center float-center">
+              <%= new_button_to new_donation_path, {text: "New Donation", type: "primary"} %>
+            </div>
+            <h3 class="text-center"><%= total_received_donations %> items received <%= display_interval %></h3>
+            <h3 class="text-center">$<%= total_received_money_donations %> raised  <%= display_interval %></h3>
+            <div class="box-body">
+              <h4>Recent donations</h4>
+              <%= render partial: "donation", collection: @recent_donations, as: :donation %>
+            </div>
+            <hr>
+            <div class="box-footer text-center">
+              <%= link_to "See more...", donations_path %>
             </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">Donations</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="ibox ">
+          <div class="ibox-title">
+            <h5>Activity</h5>
+            <div class="ibox-tools">
+              <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+              </a>
+              <a class="close-link">
+                <i class="fa fa-times"></i>
+              </a>
             </div>
-            <div class="box-body text-center float-center">
-              <span class="float-center text-center">
-                  <div class="dropdown">
-                    <%= dropdown_button "dropdownMenu1", { text: "New Inventory", size: "lg" } %>
-                    <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu1">
-                     <li class="center-block">
-                      <%= view_button_to donations_path, { text: "All Donations", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%= new_button_to new_donation_path, { text: "New Donation", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%#= new_button_to scale_donations_path, { text: "Repackaged Donation", type: '', size: "md" } %>
-                    </li>
-                    </ul>
-                </div>
-              </span>
-              <h3 class="text-center"><%= total_received_donations %> items received <%= display_interval %></h3>
-              <h3 class="text-center">$<%= total_received_money_donations %> raised  <%= display_interval %></h3>
-              <div class="box-body">
-                <h4>Recent donations</h4>
-                <%= render partial: "donation", collection: @recent_donations, as: :donation %>
-
-              </div>
-            </div>
-            <div class="box-footer text-center">
-                <%= link_to "See more...", donations_path %>
-              </div>
           </div>
-          <div class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">Diaper Drives</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          <div class="ibox-content">
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+              <div class="box-body text-center">
+                <h5 class="text-center">Activity <%= display_interval %></h5>
+                <%= bar_chart received_distributed_data %>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="ibox ">
+          <div class="ibox-title">
+            <h5>Diaper Drives</h5>
+            <div class="ibox-tools">
+              <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+              </a>
+              <a class="close-link">
+                <i class="fa fa-times"></i>
+              </a>
+            </div>
+          </div>
+          <div class="ibox-content">
             <div class="box-body text-center float-center">
-              <h3 class="text-center"><%= @recent_donations.by_source(:diaper_drive).count %> Diaper Drives <%= display_interval %> for a total of <%= number_with_delimiter(@recent_donations.by_source(:diaper_drive).sum { |d| d.line_items.total }) %> items collected</h3>
+              <h3 class="text-center"><%= @recent_donations.by_source(:diaper_drive).count %> Diaper
+                Drives <%= display_interval %> for a total
+                of <%= number_with_delimiter(@recent_donations.by_source(:diaper_drive).sum {|d| d.line_items.total}) %>
+                items collected</h3>
             </div>
             <div class="box-body">
               <div class="box-body text-center float-center">
-              <h4>Recent Donations from Diaper Drives</h4>
-              <%= render partial: "diaper_drive", collection: @recent_donations.by_source(:diaper_drive), as: :donation %>
+                <h4>Recent Donations from Diaper Drives</h4>
+                <%= render partial: "diaper_drive", collection: @recent_donations.by_source(:diaper_drive), as: :donation %>
               </div>
             </div>
+            <hr>
             <div class="box-footer text-center">
               <%= link_to "See more...", donations_path(
-                filters: {
-                  by_source: "Diaper Drive"
-                }) %>
+                  filters: {
+                      by_source: "Diaper Drive"
+                  }) %>
             </div>
           </div>
-          <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">Purchases</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
+        </div>
+        <div class="ibox ">
+          <div class="ibox-title">
+            <h5>Purchases</h5>
+            <div class="ibox-tools">
+              <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+              </a>
+              <a class="close-link">
+                <i class="fa fa-times"></i>
+              </a>
             </div>
+          </div>
+          <div class="ibox-content">
             <div class="box-body text-center float-center">
               <span class="float-center text-center">
-                <div class="dropdown">
-                    <%= dropdown_button "dropdownMenu2", { text: "New Inventory", size: "lg" } %>
-                    <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu2">
-                     <li class="center-block">
-                      <%= view_button_to purchases_path, { text: "All Purchases", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%= new_button_to new_purchase_path, { text: "New Purchase", type: '', size: "md" } %>
-                    </li>
-                    </ul>
-                </div>
+          <div class="box-body text-center float-center">
+            <%= new_button_to new_purchase_path, {text: "New Purchases", type: "primary"} %>
+          </div>
               </span>
               <h3 class="text-center"><%= total_purchased %> items received <%= display_interval %></h3>
               <div class="box-body">
@@ -184,6 +208,7 @@
                 <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>
               </div>
             </div>
+            <hr>
             <div class="box-footer text-center">
               <%= link_to "See more...", purchases_path %>
             </div>
@@ -192,4 +217,3 @@
       </div>
     </div>
   </div>
-</section>
