@@ -14,7 +14,9 @@
     <% when "awaiting_review" %>
       <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
     <% when "approved" %>
-      <%= button_to "Request Recertification", recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" %>
+      <%= button_to recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" do %>
+        <i class="fa fa-refresh"></i> Request Recertification
+      <% end %>
     <% else %>
       &nbsp;
     <% end %>
