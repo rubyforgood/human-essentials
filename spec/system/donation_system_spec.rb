@@ -341,9 +341,9 @@ RSpec.describe "Donations", type: :system do
 
   context "When donation items have value" do
     before do
-      item1 = create(:item, value: 1.25)
+      item1 = create(:item, value_in_cents: 125)
       item2 = create(:item)
-      item3 = create(:item, value: 2)
+      item3 = create(:item, value_in_cents: 200)
       @donation1 = create(:donation, :with_items, item: item1, source: Donation::SOURCES[:misc])
       create(:donation, :with_items, item: item2, source: Donation::SOURCES[:misc])
       create(:donation, :with_items, item: item3, source: Donation::SOURCES[:misc])

@@ -73,7 +73,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         select Vendor.first.business_name, from: "purchase_vendor_id"
         fill_in "purchase_line_items_attributes_0_quantity", with: "5"
         fill_in "purchase_issued_at", with: "01/01/2001"
-        fill_in "purchase_amount_spent", with: "10"
+        fill_in "purchase_amount_spent_in_cents", with: "10"
 
         expect do
           click_button "Save"
@@ -92,7 +92,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         select Item.alphabetized.first.name, from: select_id
         text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/div[2]/input[2]')[:id]
         fill_in text_id, with: "10"
-        fill_in "purchase_amount_spent", with: "10"
+        fill_in "purchase_amount_spent_in_cents", with: "10"
 
         expect do
           click_button "Save"

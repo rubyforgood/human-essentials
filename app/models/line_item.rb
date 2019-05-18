@@ -20,6 +20,6 @@ class LineItem < ApplicationRecord
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
   def value_per_line_item
-    item.value * quantity
+    item.value_in_cents * quantity
   end
 end
