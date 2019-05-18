@@ -51,6 +51,7 @@ group :development, :test do
   gem "awesome_print"
   gem "guard-rspec"
   gem "pry-rails"
+  gem "pry-nav"
   gem "rspec-rails", "~> 3.8"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"

@@ -61,11 +61,13 @@ RSpec.feature "Distributions", type: :feature do
     end
 
     context "when one of the items has been 'deleted'" do
-      scenario "the user can still reclaim it and it reactivates the item" do
+      scenario "the user can still reclaim it and it reactivates the item", js: true do
         item = distribution.line_items.first.item
         item.destroy
         expect do
-          click_on "Reclaim"
+          accept_confirm do
+            click_on "Reclaim"
+          end
           page.find ".alert"
         end.to change { Distribution.count }.by(-1).and change { Item.count }.by(1)
         expect(page).to have_content "reclaimed"
@@ -75,9 +77,9 @@ RSpec.feature "Distributions", type: :feature do
 
   context "When creating a distribution and items have value" do
     before do
-      item1 = create(:item, value: 10.5)
+      item1 = create(:item, value_in_cents: 1050)
       item2 = create(:item)
-      item3 = create(:item, value: 1)
+      item3 = create(:item, value_in_cents: 100)
       @distribution1 = create(:distribution, :with_items, item: item1, agency_rep: "A Person", organization: @user.organization)
       create(:distribution, :with_items, item: item2, agency_rep: "A Person", organization: @user.organization)
       @distribution3 = create(:distribution, :with_items, item: item3, agency_rep: "A Person", organization: @user.organization)
@@ -139,13 +141,14 @@ RSpec.feature "Distributions", type: :feature do
         expect(page).to have_content 13
       end
 
-      scenario "User creates a distribution from a donation then tries to make the quantity too big" do
+      scenario "User creates a distribution from a donation then tries to make the quantity too big", js: true do
         within "#edit_distribution_#{@distribution.to_param}" do
           first(".numeric").set 999_999
           click_on "Save"
         end
         expect(page).to have_no_content "Distribution updated!"
-        expect(page).to have_content "Distribution could not be updated!"
+        # NOTE: This is rendering the app/views/errors/insufficient.html.erb template
+        expect(page).to have_content(/Insufficient/i)
         expect(page).to have_no_content 999_999
         expect(Distribution.first.line_items.count).to eq 1
       end

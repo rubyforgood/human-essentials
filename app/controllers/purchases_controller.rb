@@ -20,13 +20,13 @@ class PurchasesController < ApplicationController
   def create
     @purchase = current_organization.purchases.new(purchase_params)
     if @purchase.save
-      @purchase.storage_location.intake! @purchase
+      @purchase.storage_location.increase_inventory @purchase
       redirect_to purchases_path
     else
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
       flash[:error] = "There was an error starting this purchase, try again?"
-      Rails.logger.error "ERROR: #{@purchase.errors}"
+      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors}"
       render action: :new
     end
   end
@@ -50,10 +50,7 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = current_organization.purchases.find(params[:id])
-    @purchase.changed?
-    previous_quantities = @purchase.line_items_quantities
-    if @purchase.update(purchase_params)
-      @purchase.storage_location.adjust_from_past!(@purchase, previous_quantities)
+    if @purchase.replace_increase!(purchase_params)
       redirect_to purchases_path
     else
       render "edit"
@@ -61,8 +58,13 @@ class PurchasesController < ApplicationController
   end
 
   def destroy
-    @purchase = current_organization.purchases.includes(:line_items, storage_location: :inventory_items).find(params[:id])
-    @purchase.destroy
+    ActiveRecord::Base.transaction do
+      purchase = current_organization.purchases.find(params[:id])
+      purchase.storage_location.decrease_inventory(purchase)
+      purchase.destroy!
+    end
+
+    flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path
   end
 
@@ -76,7 +78,7 @@ class PurchasesController < ApplicationController
 
   def purchase_params
     params = compact_line_items
-    params.require(:purchase).permit(:comment, :amount_spent, :purchased_from, :storage_location_id, :issued_at, :vendor_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
+    params.require(:purchase).permit(:comment, :amount_spent_in_cents, :purchased_from, :storage_location_id, :issued_at, :vendor_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
 
   def filter_params

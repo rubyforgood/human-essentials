@@ -17,7 +17,7 @@ RSpec.describe "Adjustment management", type: :system do
     expect do
       click_button "Save"
     end.to change { storage_location.size }.by(add_quantity)
-    expect(page).to have_content("Adjustment was successfully created")
+    expect(page).to have_content(/Adjustment was successful/i)
   end
 
   it "can subtract an inventory adjustment at a storage location", js: true do
@@ -33,7 +33,7 @@ RSpec.describe "Adjustment management", type: :system do
     expect do
       click_button "Save"
     end.to change { storage_location.size }.by(sub_quantity)
-    expect(page).to have_content("Adjustment was successfully created")
+    expect(page).to have_content(/Adjustment was successful/i)
   end
 
   it "can filter the #index by storage location" do

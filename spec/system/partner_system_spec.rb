@@ -1,4 +1,4 @@
-RSpec.feature "Partner management", type: :feature do
+RSpec.describe "Partner management", type: :system, js: true do
   before do
     sign_in(@user)
   end
@@ -11,20 +11,20 @@ RSpec.feature "Partner management", type: :feature do
       @third = create(:partner, :approved, name: "Cde")
       visit url_prefix + "/partners"
     end
-    scenario "the partner agency names are in alphabetical order" do
+    it "the partner agency names are in alphabetical order" do
       expect(page).to have_css("table tr", count: 5)
       expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
     end
 
-    scenario "shows invite button only for unapproved partners" do
+    it "shows invite button only for unapproved partners" do
       expect(page.find(:xpath, "//table/tbody/tr[1]/td[4]")).to have_content('Invite')
       expect(page.find(:xpath, "//table/tbody/tr[2]/td[4]")).to have_content('Invite')
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[4]")).not_to have_content('Invite')
     end
   end
 
-  scenario "User can add a new partner" do
+  it "User can add a new partner" do
     visit url_prefix + "/partners/new"
     fill_in "Name", with: "Frank"
     fill_in "E-mail", with: "frank@frank.com"
@@ -33,14 +33,14 @@ RSpec.feature "Partner management", type: :feature do
     expect(page.find(".alert")).to have_content "added"
   end
 
-  scenario "User creates a new partner with empty name" do
+  it "User creates a new partner with empty name" do
     visit url_prefix + "/partners/new"
     click_button "Add Partner Agency"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
 
-  scenario "User can update a partner" do
+  it "User can update a partner" do
     partner = create(:partner, name: "Frank")
     visit url_prefix + "/partners/#{partner.id}/edit"
     fill_in "Name", with: "Franklin"
@@ -51,7 +51,7 @@ RSpec.feature "Partner management", type: :feature do
     expect(partner.name).to eq("Franklin")
   end
 
-  scenario "User updates a partner with empty name" do
+  it "User updates a partner with empty name" do
     partner = create(:partner, name: "Frank")
     visit url_prefix + "/partners/#{partner.id}/edit"
     fill_in "Name", with: ""
@@ -60,7 +60,7 @@ RSpec.feature "Partner management", type: :feature do
     expect(page.find(".alert")).to have_content "didn't work"
   end
 
-  scenario "User invite a partner", :js do
+  it "User invite a partner", :js do
     partner = create(:partner, name: 'Charities')
     visit url_prefix + "/partners"
 
