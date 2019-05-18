@@ -7,7 +7,7 @@
 #  comment             :text
 #  organization_id     :integer
 #  storage_location_id :integer
-#  amount_spent        :integer
+#  amount_spent_in_cents        :integer
 #  issued_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null

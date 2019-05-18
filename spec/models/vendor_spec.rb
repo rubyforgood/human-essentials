@@ -25,7 +25,7 @@ RSpec.describe Vendor, type: :model do
     describe "volume" do
       it "retrieves the amount of product that has been bought from this vendor" do
         vendor = create(:vendor)
-        create(:purchase, :with_items, item_quantity: 10, amount_spent: 1, vendor: vendor)
+        create(:purchase, :with_items, item_quantity: 10, amount_spent_in_cents: 1, vendor: vendor)
         expect(vendor.volume).to eq(10)
       end
     end

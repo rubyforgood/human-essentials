@@ -7,7 +7,7 @@
 #  comment             :text
 #  organization_id     :integer
 #  storage_location_id :integer
-#  amount_spent        :integer
+#  amount_spent_in_cents        :integer
 #  issued_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -40,7 +40,7 @@ class Purchase < ApplicationRecord
 
   before_create :combine_duplicates
 
-  validates :amount_spent, numericality: { greater_than: 0 }
+  validates :amount_spent_in_cents, numericality: { greater_than: 0 }
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
@@ -84,7 +84,7 @@ class Purchase < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent"]
+    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent in Cents"]
   end
 
   def csv_export_attributes
@@ -93,7 +93,7 @@ class Purchase < ApplicationRecord
       storage_location.name,
       line_items.total,
       line_items.size,
-      amount_spent,
+      amount_spent_in_cents,
     ]
   end
 

@@ -65,8 +65,8 @@ RSpec.describe "Vendor", type: :system do
   context "When vendor have purchases associated with them already" do
     before(:each) do
       @vendor = create(:vendor)
-      create(:purchase, :with_items, created_at: 1.day.ago, item_quantity: 10, amount_spent: 1, vendor: @vendor)
-      create(:purchase, :with_items, created_at: 1.week.ago, item_quantity: 15, amount_spent: 1, vendor: @vendor)
+      create(:purchase, :with_items, created_at: 1.day.ago, item_quantity: 10, amount_spent_in_cents: 1, vendor: @vendor)
+      create(:purchase, :with_items, created_at: 1.week.ago, item_quantity: 15, amount_spent_in_cents: 1, vendor: @vendor)
     end
 
     it "can have existing vendors show in the #index with some summary stats" do

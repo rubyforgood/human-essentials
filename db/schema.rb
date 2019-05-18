@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_22_130439) do
+ActiveRecord::Schema.define(version: 2019_05_17_141740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -204,7 +204,7 @@ ActiveRecord::Schema.define(version: 2019_04_22_130439) do
     t.integer "organization_id"
     t.boolean "active", default: true
     t.string "partner_key"
-    t.decimal "value", precision: 5, scale: 2, default: "0.0"
+    t.integer "value_in_cents", default: 0
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
@@ -255,7 +255,7 @@ ActiveRecord::Schema.define(version: 2019_04_22_130439) do
     t.text "comment"
     t.integer "organization_id"
     t.integer "storage_location_id"
-    t.integer "amount_spent"
+    t.integer "amount_spent_in_cents"
     t.datetime "issued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
