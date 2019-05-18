@@ -35,16 +35,17 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Methods >" do
+    let!(:item) { create(:item) }
+    subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization) }
+
     describe "increase_inventory" do
       context "With existing inventory" do
         let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: @organization) }
 
         it "increases inventory quantities from an itemizable object" do
-          item = create(:item)
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           expect do
-            storage_location.increase_inventory(donation.to_a)
-          end.to change { storage_location.size }.by(66)
+            subject.increase_inventory(donation.to_a)
+          end.to change { subject.size }.by(66)
         end
       end
 
@@ -53,11 +54,9 @@ RSpec.describe StorageLocation, type: :model do
         let(:donation_with_new_items) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: mystery_item) }
 
         it "creates those new inventory items in the storage location" do
-          item = create(:item)
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           expect do
-            storage_location.increase_inventory(donation_with_new_items.to_a)
-          end.to change { storage_location.inventory_items.count }.by(1)
+            subject.increase_inventory(donation_with_new_items.to_a)
+          end.to change { subject.inventory_items.count }.by(1)
         end
       end
 
@@ -66,10 +65,9 @@ RSpec.describe StorageLocation, type: :model do
         let(:donation_with_inactive_item) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: inactive_item) }
 
         it "re-activates the item as part of the creation process" do
-          storage_location = create(:storage_location, organization: @organization)
           expect do
-            storage_location.increase_inventory(donation_with_inactive_item.to_a)
-          end.to change { storage_location.inventory_items.count }.by(1)
+            subject.increase_inventory(donation_with_inactive_item.to_a)
+          end.to change { subject.inventory_items.count }.by(1)
                                                                   .and change { Item.count }.by(1)
         end
       end

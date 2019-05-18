@@ -94,14 +94,13 @@ class StorageLocation < ApplicationRecord
 
   # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable_array)
-    itemizable_array = Array.wrap(itemizable_array)
+    itemizable_array = itemizable_array.to_a
 
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # Iterate through each of the line-items in the moving box
+    Item.reactivate(itemizable_array.map { |item_hash| item_hash[:item_id] })
     itemizable_array.each do |item_hash|
-      # TODO: make this an aggregate change
-      Item.reactivate(item_hash[:item_id])
       # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
       # Increase the quantity-on-record for that item
@@ -118,24 +117,25 @@ class StorageLocation < ApplicationRecord
 
   # TODO: re-evaluate this for optimization
   def decrease_inventory(itemizable_array)
-    itemizable_array = Array.wrap(itemizable_array)
+    itemizable_array = itemizable_array.to_a
+
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # This tracks items that have insufficient inventory counts to be reduced as much
     insufficient_items = []
     # Iterate through each of the line-items in the moving box
-    itemizable_array.each do |item|
+    itemizable_array.each do |item_hash|
       # Locate the storage box for the item, or create an empty storage box
-      inventory_item = inventory_items.find_by(item_id: item[:item_id]) || inventory_items.build
+      inventory_item = inventory_items.find_by(item_id: item_hash[:item_id]) || inventory_items.build
       # If we've got sufficient inventory in the storage box to fill the moving box, then continue
-      next unless inventory_item.quantity < item[:quantity]
+      next unless inventory_item.quantity < item_hash[:quantity]
 
       # Otherwise, we need to record that there was insufficient inventory on-hand
       insufficient_items << {
-        item_id: item[:item_id],
-        item_name: item[:name],
+        item_id: item_hash[:item_id],
+        item_name: item_hash[:name],
         quantity_on_hand: inventory_item.quantity,
-        quantity_requested: item[:quantity]
+        quantity_requested: item_hash[:quantity]
       }
     end
 
@@ -151,15 +151,15 @@ class StorageLocation < ApplicationRecord
     end
 
     # Re-run through the items in the moving box again
-    itemizable_array.each do |item|
+    itemizable_array.each do |item_hash|
       # Look for the moving box for this item -- we know there is sufficient quantity this time
       # Raise AR:RNF if it fails to find it -- though that seems moot since it would have been
       # captured by the previous block.
-      inventory_item = inventory_items.find_by(item_id: item[:item_id])
+      inventory_item = inventory_items.find_by(item_id: item_hash[:item_id])
       # Reduce the inventory box quantity
-      inventory_item.decrement!(:quantity, item[:quantity])
+      inventory_item.decrement!(:quantity, item_hash[:quantity])
       # Record in the log that this has occurred
-      log[item[:item_id]] = "-#{item[:quantity]}"
+      log[item_hash[:item_id]] = "-#{item_hash[:quantity]}"
     end
     # log could be pulled from dirty AR stuff
     save!
