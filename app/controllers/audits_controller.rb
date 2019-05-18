@@ -34,7 +34,11 @@ class AuditsController < ApplicationController
       end
     end
 
-    @audit.adjustment.storage_location.adjust!(@audit.adjustment)
+    increasing_adjustment, decreasing_adjustment = @audit.adjustment.split_difference
+    ActiveRecord::Base.transaction do
+      @audit.storage_location.increase_inventory increasing_adjustment
+      @audit.storage_location.decrease_inventory decreasing_adjustment
+    end
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized."
   end
