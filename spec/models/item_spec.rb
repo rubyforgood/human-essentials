@@ -143,29 +143,25 @@ RSpec.describe Item, type: :model do
         expect(item).not_to be_active
       end
     end
-  end
 
-  # context "Callbacks >" do
-  #   describe "when DIAPER_PARTNER_URL is present" do
-  #     let(:diaper_partner_url) { "http://diaper.partner.io" }
-  #     let(:callback_url) { "#{diaper_partner_url}/items" }
-  #
-  #     before do
-  #       stub_env "DIAPER_PARTNER_URL", diaper_partner_url
-  #       stub_env "DIAPER_PARTNER_SECRET_KEY", "secretkey123"
-  #       stub_request :post, callback_url
-  #     end
-  #
-  #     it "notifies the Diaper Partner app" do
-  #       item = create :item
-  #       headers = {
-  #         "Authorization" => /APIAuth diaperbase:.*/,
-  #         "Content-Type" => "application/x-www-form-urlencoded"
-  #       }
-  #       body = URI.encode_www_form item.attributes
-  #       expect(WebMock).to have_requested(:post, callback_url)
-  #         .with(headers: headers, body: body).once
-  #     end
-  #   end
-  # end
+    describe "#reactivate!" do
+      context "given an array of item ids" do
+        let(:item_array) { create_list(:item, 2, :inactive).collect(&:id) }
+        it "sets the active trait to true for all of them" do
+          expect do
+            Item.reactivate(item_array)
+          end.to change { Item.active.size }.by(item_array.size)
+        end
+      end
+
+      context "given a single item id" do
+        let(:item_id) { create(:item).id }
+        it "sets the active trait to true for that item" do
+          expect do
+            Item.reactivate(item_id)
+          end.to change { Item.active.size }.by(1)
+        end
+      end
+    end
+  end
 end

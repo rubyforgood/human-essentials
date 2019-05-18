@@ -55,20 +55,20 @@ RSpec.describe PurchasesController, type: :controller do
       end
 
       it "updates storage quantity correctly" do
-        purchase = create(:purchase, :with_items, item_quantity: 10)
+        purchase = create(:purchase, :with_items, item_quantity: 5)
         line_item = purchase.line_items.first
         line_item_params = {
           "0" => {
             "_destroy" => "false",
             item_id: line_item.item_id,
-            quantity: "5",
+            quantity: "10",
             id: line_item.id
           }
         }
         purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
         expect do
           put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
-        end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-5)
+        end.to change { purchase.storage_location.inventory_items.first.quantity }.by(5)
       end
 
       describe "when removing a line item" do

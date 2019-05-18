@@ -41,20 +41,20 @@ class DonationsController < ApplicationController
                                 line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
                                                                   "quantity" => params["number_of_diapers"],
                                                                   "_destroy" => "false" } })
-    @donation.storage_location.intake! @donation
+    @donation.storage_location.increase_inventory @donation
     render status: :ok, json: @donation.to_json
   end
 
   def create
-    @donation = Donation.new(donation_params.merge(organization: current_organization))
+    @donation = current_organization.donations.new(donation_params)
     if @donation.save
-      @donation.storage_location.intake! @donation
+      @donation.storage_location.increase_inventory @donation
       redirect_to donations_path
     else
       load_form_collections
       @donation.line_items.build if @donation.line_items.count.zero?
       flash[:error] = "There was an error starting this donation, try again?"
-      Rails.logger.error "ERROR: #{@donation.errors}"
+      Rails.logger.error "[!] DonationsController#create Error: #{@donation.errors}"
       render action: :new
     end
   end
@@ -78,9 +78,7 @@ class DonationsController < ApplicationController
 
   def update
     @donation = Donation.find(params[:id])
-    previous_quantities = @donation.line_items_quantities
-    if @donation.update(donation_params)
-      @donation.storage_location.adjust_from_past!(@donation, previous_quantities)
+    if @donation.replace_increase!(donation_params)
       redirect_to donations_path
     else
       render "edit"
@@ -88,8 +86,13 @@ class DonationsController < ApplicationController
   end
 
   def destroy
-    @donation = current_organization.donations.includes(:line_items, storage_location: :inventory_items).find(params[:id])
-    @donation.destroy
+    ActiveRecord::Base.transaction do
+      donation = current_organization.donations.find(params[:id])
+      donation.storage_location.decrease_inventory(donation)
+      donation.destroy!
+    end
+
+    flash[:notice] = "Donation #{params[:id]} has been removed!"
     redirect_to donations_path
   end
 
