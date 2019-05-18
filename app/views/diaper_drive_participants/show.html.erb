@@ -29,43 +29,40 @@
         </div>
         <div class="ibox-content">
           <p>Business name: <%= @diaper_drive_participant.business_name %></p>
-        <p>Contact Name: <%= @diaper_drive_participant.contact_name %></p>
+          <p>Contact Name: <%= @diaper_drive_participant.contact_name %></p>
 
-        <% if @diaper_drive_participant.phone.present? %>
-          <p>Phone: <%= @diaper_drive_participant.phone %></p>
-        <% end %>
-        <% if @diaper_drive_participant.email.present? %>
-          <p>Email: <%= link_to @diaper_drive_participant.email, "mailto:#{@diaper_drive_participant.email}" %></p>
-        <% end %>
+          <% if @diaper_drive_participant.phone.present? %>
+            <p>Phone: <%= @diaper_drive_participant.phone %></p>
+          <% end %>
+          <% if @diaper_drive_participant.email.present? %>
+            <p>Email: <%= link_to @diaper_drive_participant.email, "mailto:#{@diaper_drive_participant.email}" %></p>
+          <% end %>
           <p>Address: <%= @diaper_drive_participant.address %></p>
-        <% if @diaper_drive_participant.present? %>
-          <h4>Past Diaper Drives with this Partner</h4>
-          <div class="row">
-          <div class="col-xs-12">
+          <% if @diaper_drive_participant.present? %>
+            <h4>Past Diaper Drives with this Partner</h4>
+            <div class="col-xs-12">
               <!-- /.box-header -->
               <div class="box-body table-responsive no-padding">
                 <table class="table table-hover">
-                <tr>
-                  <th>Date</th>
-                  <th>Volume</th>
-                  <th>Details</th>
-                </tr>
+                  <tr>
+                    <th>Date</th>
+                    <th>Volume</th>
+                    <th>Details</th>
+                  </tr>
 
-                <% @diaper_drive_participant.donations.each do |donation| %>
+                  <% @diaper_drive_participant.donations.each do |donation| %>
                     <tr>
                       <td><%= donation.created_at.strftime("%m/%d/%Y") %></td>
                       <td><%= donation.line_items.total %></td>
-                      <td><%= view_button_to donation, { text: "View donation details" } %></td>
-                  </tr>
+                      <td><%= view_button_to donation, {text: "View donation details"} %></td>
+                    </tr>
                   <% end %>
                 </table>
-              <!-- /.box-body -->
-
+                <!-- /.box-body -->
               </div>
-            <!-- /.box -->
+              <!-- /.box -->
             </div>
-          </div>
-        <% end %>
+          <% end %>
         </div>
       </div>
     </div>

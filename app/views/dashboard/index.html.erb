@@ -35,6 +35,7 @@
         <div class="ibox-content">
           <div class="box-body">
             <div class="row">
+              <%= render partial: "getting_started_prompt", locals: { org_stats: @org_stats } %>
               <div class="col-lg-9">
                 <div class="logo">
                   <%== display_logo_or_name %>

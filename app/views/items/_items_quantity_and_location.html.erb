@@ -1,22 +1,20 @@
 <div id="sectionC" class="tab-pane fade" role="tabpanel" aria-labelledby="item-qty-loc-tab">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="box-body table-responsive no-padding">
-        <table id="tbl_items_location" class="table table-hover">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <%= render partial: "storage_column", collection: @storages %>
-              <th>Total Quantity</th>
-              <th>Value per Item</th>
-              <th>&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= render partial: "item_row_quantity_and_storages", collection: @items_by_storage_collection_and_quantity, as: :row %>
-          </tbody>
-        </table>
-      </div><!-- /.box-body.table-responsive -->
-    </div><!-- /.col-xs-12 -->
-  </div><!-- /.row -->
-</div><!-- /#sectionC -->
+  <div class="col-xs-12">
+    <div class="box-body table-responsive no-padding">
+      <table id="tbl_items_location" class="table table-hover">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <%= render partial: "storage_column", collection: @storages %>
+          <th>Total Quantity</th>
+          <th>Value per Item</th>
+          <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <%= render partial: "item_row_quantity_and_storages", collection: @items_by_storage_collection_and_quantity, as: :row %>
+        </tbody>
+      </table>
+    </div><!-- /.box-body.table-responsive -->
+  </div><!-- /.col-xs-12 -->
+</div><!-- /.row -->
