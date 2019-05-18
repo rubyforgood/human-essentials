@@ -11,6 +11,7 @@ RSpec.describe "Partner management", type: :system, js: true do
       @third = create(:partner, :approved, name: "Cde")
       visit url_prefix + "/partners"
     end
+
     it "the partner agency names are in alphabetical order" do
       expect(page).to have_css("table tr", count: 5)
       expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
@@ -24,40 +25,47 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
   end
 
-  it "User can add a new partner" do
-    visit url_prefix + "/partners/new"
-    fill_in "Name", with: "Frank"
-    fill_in "E-mail", with: "frank@frank.com"
-    click_button "Add Partner Agency"
+  context "when creating a new partner" do
+    subject { url_prefix + "/partners/new" }
 
-    expect(page.find(".alert")).to have_content "added"
+    it "User can add a new partner" do
+      visit subject
+      fill_in "Name", with: "Frank"
+      fill_in "E-mail", with: "frank@frank.com"
+      click_button "Add Partner Agency"
+
+      expect(page.find(".alert")).to have_content "added"
+    end
+
+    it "disallows a user from creating a new partner with empty name" do
+      visit subject
+      click_button "Add Partner Agency"
+
+      expect(page.find(".alert")).to have_content "didn't work"
+    end
   end
 
-  it "User creates a new partner with empty name" do
-    visit url_prefix + "/partners/new"
-    click_button "Add Partner Agency"
+  context "when editing an existing partner" do
+    let!(:partner) { create(:partner, name: "Frank") }
+    subject { url_prefix + "/partners/#{partner.id}/edit" }
 
-    expect(page.find(".alert")).to have_content "didn't work"
-  end
+    it "User can update a partner" do
+      visit subject
+      fill_in "Name", with: "Franklin"
+      click_button "Update Partner"
 
-  it "User can update a partner" do
-    partner = create(:partner, name: "Frank")
-    visit url_prefix + "/partners/#{partner.id}/edit"
-    fill_in "Name", with: "Franklin"
-    click_button "Update Partner"
+      expect(page.find(".alert")).to have_content "updated"
+      partner.reload
+      expect(partner.name).to eq("Franklin")
+    end
 
-    expect(page.find(".alert")).to have_content "updated"
-    partner.reload
-    expect(partner.name).to eq("Franklin")
-  end
+    it "prevents a user from updating a partner with empty name" do
+      visit subject
+      fill_in "Name", with: ""
+      click_button "Update Partner"
 
-  it "User updates a partner with empty name" do
-    partner = create(:partner, name: "Frank")
-    visit url_prefix + "/partners/#{partner.id}/edit"
-    fill_in "Name", with: ""
-    click_button "Update Partner"
-
-    expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find(".alert")).to have_content "didn't work"
+    end
   end
 
   it "User invite a partner", :js do
