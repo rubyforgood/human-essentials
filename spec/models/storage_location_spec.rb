@@ -68,7 +68,7 @@ RSpec.describe StorageLocation, type: :model do
           expect do
             subject.increase_inventory(donation_with_inactive_item.to_a)
           end.to change { subject.inventory_items.count }.by(1)
-                                                                  .and change { Item.count }.by(1)
+                                                         .and change { Item.count }.by(1)
         end
       end
     end
