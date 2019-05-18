@@ -10,8 +10,6 @@ class API::V1::PartnerRequestsController < ApplicationController
 
     request = Request.new(request_params)
 
-    organization = Organization.find(params[])
-
     if request.save
       render json: request, status: :created
     else
