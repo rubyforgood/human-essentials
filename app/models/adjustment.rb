@@ -61,20 +61,4 @@ class Adjustment < ApplicationRecord
       errors.add :storage_location, "storage location must belong to organization"
     end
   end
-
-  def replicate_to(itemizable)
-    raise ArgumentError unless itemizable.respond_to?(:line_items)
-
-    all_line_items = if block_given?
-                       collect do |line_item|
-                         yield(line_item)
-                         line_item
-                       end.compact
-                     else
-                       collect
-                     end
-
-    all_line_items.each { |li| itemizable.line_items << li.dup }
-    itemizable
-  end
 end

@@ -56,7 +56,7 @@ class Distribution < ApplicationRecord
       # Roll back distribution output by increasing storage location
       storage_location.increase_inventory(to_a)
       # Delete the line items -- they'll be replaced later
-      line_items.map(&:destroy!)
+      line_items.each(&:destroy!)
       reload
 
       # Replace the current distribution with the new parameters
