@@ -9,8 +9,8 @@ RSpec.describe "Authorization", type: :system do
 
   it "redirects to the organization dashboard when authorized" do
     sign_in(@user)
-    visit "/#{@organization.name}/dashboard"
+    visit dashboard_path(@user.organization)
 
-    expect(current_path).to eql "/DEFAULT/dashboard"
+    expect(current_path).to eql "/#{@user.organization.short_name}/dashboard"
   end
 end
