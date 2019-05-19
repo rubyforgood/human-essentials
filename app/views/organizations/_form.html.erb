@@ -1,0 +1,73 @@
+<div class="box-body">
+    <%= simple_form_for current_organization, url: { controller: "organizations", action: "update" } do |f| %>
+    <%= f.error_notification %>
+
+    <div class="form-inputs">
+        <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+        <%= f.input_field :name, class: "form-control" %>
+        <% end %>
+        <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-desktop"></i></span>
+        <%= f.input_field :short_name, disabled: true, class: "form-control" %>
+        <% end %>
+        <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-link"></i></span>
+        <%= f.input_field :url, class: "form-control" %>
+        <% end %>
+        <%= f.input :email, wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+        <%= f.input_field :email, class: "form-control" %>
+        <% end %>
+
+        <%= f.input :address, wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-address-book"></i></span>
+        <%= f.input_field :street, class: "form-control", placeholder: "street" %>
+        <%= f.input_field :city, class: "form-control", placeholder: "city" %>
+        <%= f.input_field :state, collection: us_states, class: "form-control", placeholder: "state" %>
+        <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
+        <% end %>
+
+        <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
+
+        <%= f.input :default_email_text, wrapper: :vertical_input_group do %>
+        <%= f.rich_text_area :default_email_text %>
+        <% end %>
+
+        <%= f.input :logo, wrapper: :vertical_input_group do %>
+
+        <% if current_organization.logo.attached? %>
+            <div>
+            <p>
+                <%= image_tag current_organization.logo %>
+            </p>
+            <p>
+                <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+                View Original
+                </a>
+            </p>
+            <div id="showTheLogo" class="modal fade">
+                <div class="modal-dialog">
+                <%= image_tag current_organization.logo, class: "thumbnail" %>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            </div>
+            <label class="control-label">Update Logo</label>
+        <% end %>
+
+        <%= f.input_field :logo, as: :file %>
+        <p class="help-block">
+            Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
+            Only jpeg/png format is supported.
+        </p>
+
+        <% end %>
+        <%= submit_button %>
+
+    </div>
+
+    </div>
+
+    <% end %>
+</div>
