@@ -1,4 +1,4 @@
-RSpec.describe "Requests", type: :system do
+RSpec.describe "Requests", type: :system, js: true do
   before do
     sign_in(@user)
     @request = create(:request, organization: @organization)
@@ -17,13 +17,13 @@ RSpec.describe "Requests", type: :system do
   end
 
   context "While viewing the request page" do
-    it "should show the request", js: true do
+    it "should show the request" do
       visit url_prefix + "/requests/#{@request.id}"
       expect(page).to have_content("Request from #{@request.partner.name}")
       expect(page).to have_content("Estimated on-hand")
     end
 
-    it "should show the number of items on-hand", js: true do
+    it "should show the number of items on-hand" do
       ####
       # Create a secondary storage location to test the sum view of estimated on-hand items
       # Add inventory items to both storage locations
@@ -42,7 +42,7 @@ RSpec.describe "Requests", type: :system do
         click_on "New Distribution"
       end
 
-      it "should change to started", js: true do
+      it "should change to started" do
         visit url_prefix + "/requests"
         expect(page).to have_content "Started"
         expect(@request.reload).to be_status_started
@@ -52,7 +52,7 @@ RSpec.describe "Requests", type: :system do
         it "should change request to fulfilled", js: true do
           expect(page).to have_content "started"
           select @storage_location.name, from: "From storage location"
-          fill_in "Comment", with: "Tak4e my wipes... please"
+          fill_in "Comment", with: "Take my wipes... please"
           click_on "Save"
           expect(page).to have_content "Distributions"
           expect(page).to have_content "Distribution created"
