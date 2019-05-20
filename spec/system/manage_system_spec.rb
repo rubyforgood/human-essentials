@@ -1,5 +1,6 @@
-RSpec.describe "Organization Administration", type: :system do
+RSpec.describe "Organization Administration", type: :system, js: true do
   subject { "/#{@organization.to_param}/organization" }
+
   context "while signed in as a normal user" do
     before do
       sign_in(@user)
@@ -10,6 +11,7 @@ RSpec.describe "Organization Administration", type: :system do
       expect(page).not_to have_link("Edit")
     end
   end
+
   context "while signed in as an organization admin" do
     before do
       sign_in(@organization_admin)
@@ -33,6 +35,7 @@ RSpec.describe "Organization Administration", type: :system do
         @organization.users << create(:user, email: "yet_another_user@website.com")
         visit subject
       end
+
       it "can view details about an organization, including the users as an admin" do
         expect(page).to have_content(@organization.email)
         expect(page).to have_content(@organization.address)

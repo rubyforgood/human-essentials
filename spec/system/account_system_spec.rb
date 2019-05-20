@@ -1,7 +1,9 @@
-RSpec.describe "User account management", type: :system do
+RSpec.describe "User account management", type: :system, js: true do
+  subject { "/users/edit" }
+
   before do
     sign_in(@user)
-    visit "/users/edit"
+    visit subject
   end
 
   it "should change a user name" do

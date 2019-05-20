@@ -1,4 +1,4 @@
-RSpec.describe "Admin Users Management" do
+RSpec.describe "Admin Users Management", type: :system, js: true do
   context "While signed in as an Administrative User (super admin)" do
     before :each do
       sign_in(@super_admin)
