@@ -29,10 +29,10 @@ class StorageLocationsController < ApplicationController
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
     # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
-    @items_out = @storage_location.items_out
-    @items_out_total = @storage_location.items_out_total
-    @items_in = @storage_location.items_in
-    @items_in_total = @storage_location.items_in_total
+    @items_out = ItemsOutQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
                       
     respond_to do |format|
       format.html
