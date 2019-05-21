@@ -34,12 +34,8 @@ FactoryBot.define do
       end
 
       after(:build) do |instance, evaluator|
-        instance.from = create(:storage_location, :with_items, item: evaluator.item, organization: evaluator.organization)
-        item = if evaluator.item.nil?
-                 instance.from.inventory_items.first.item
-               else
-                 evaluator.item
-               end
+        instance.from ||= create(:storage_location, :with_items, item: evaluator.item, organization: evaluator.organization)
+        item = evaluator.item || instance.from.inventory_items.first.item
         instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
