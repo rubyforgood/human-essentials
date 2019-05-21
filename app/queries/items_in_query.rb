@@ -20,10 +20,10 @@ LEFT OUTER JOIN purchases ON purchases.id = line_items.itemizable_id AND line_it
 LEFT OUTER JOIN items ON items.id = line_items.item_id
 LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
 LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-    .where("(donations.storage_location_id = :id or purchases.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organization_id", id: @storage_location.id, organization_id: @organization.id)
-    .select("sum(line_items.quantity) as quantity, items.id AS item_id, items.name")
-    .group("items.name, items.id")
-    .order("items.name")
+                        .where("(donations.storage_location_id = :id or purchases.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organization_id", id: @storage_location.id, organization_id: @organization.id)
+                        .select("sum(line_items.quantity) as quantity, items.id AS item_id, items.name")
+                        .group("items.name, items.id")
+                        .order("items.name")
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 end

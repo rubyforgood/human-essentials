@@ -66,7 +66,7 @@ class Adjustment < ApplicationRecord
     return if storage_location.nil?
 
     line_items.each do |line_item|
-      next unless line_item.quantity < 0
+      next unless line_item.quantity.negative?
 
       inventory_item = storage_location.inventory_items.find_by(item: line_item.item)
       next unless inventory_item.nil?

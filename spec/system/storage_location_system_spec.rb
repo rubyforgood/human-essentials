@@ -57,7 +57,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       create(:purchase, :with_items, item: item, item_quantity: 49, storage_location: location1)
 
       visit subject
-      
+
       click_on "View", match: :first
 
       within "ul.nav-tabs" do
@@ -69,7 +69,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       end
 
       within "ul.nav-tabs" do
-       click_on "Inventory"
+        click_on "Inventory"
       end
 
       within "table#sectionA tbody" do
