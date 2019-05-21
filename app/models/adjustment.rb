@@ -23,7 +23,7 @@ class Adjustment < ApplicationRecord
   }
 
   validates :storage_location, :organization, presence: true
-  validate :line_item_items_exist_in_inventory
+  validate :negative_line_item_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
 
   def self.storage_locations_adjusted_for(organization)
@@ -59,6 +59,20 @@ class Adjustment < ApplicationRecord
 
     unless organization.storage_locations.include?(storage_location)
       errors.add :storage_location, "storage location must belong to organization"
+    end
+  end
+
+  def negative_line_item_items_exist_in_inventory
+    return if storage_location.nil?
+
+    line_items.each do |line_item|
+      next unless line_item.quantity < 0
+
+      inventory_item = storage_location.inventory_items.find_by(item: line_item.item)
+      next unless inventory_item.nil?
+
+      errors.add(:inventory,
+                 "#{line_item.item.name} is not available to be removed from this storage location")
     end
   end
 end
