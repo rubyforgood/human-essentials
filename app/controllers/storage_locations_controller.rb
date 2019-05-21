@@ -25,14 +25,14 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
   end
 
-  # TODO: Move these queries to Query Objects
+  # TODO: Move these queries to Query Object
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
     # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
-    @items_out = LineItem.items_out(params[:id], current_organization.id)
-    @items_out_total = LineItem.items_out_total(params[:id], current_organization.id)
-    @items_in = LineItem.items_in(params[:id], current_organization.id)
-    @items_in_total = LineItem.items_in_total(params[:id], current_organization.id)
+    @items_out = @storage_location.items_out
+    @items_out_total = @storage_location.items_out_total
+    @items_in = @storage_location.items_in
+    @items_in_total = @storage_location.items_in_total
                       
     respond_to do |format|
       format.html
