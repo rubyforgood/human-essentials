@@ -71,7 +71,9 @@ class Purchase < ApplicationRecord
       Item.reactivate(item_ids)
       line_items_attributes(new_purchase_params).map { |i| i.delete(:id) }
 
+
       update! new_purchase_params
+
       # Roll back distribution output by increasing storage location
       storage_location.increase_inventory(to_a)
       # Apply the new changes to the storage location inventory

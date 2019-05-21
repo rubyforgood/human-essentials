@@ -97,11 +97,12 @@ RSpec.describe Purchase, type: :model do
     end
 
     describe "replace_increase!" do
-      let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 5, organization: @organization) }
+      let!(:storage_location) { create(:storage_location, organization: @organization) }
       subject { create(:purchase, :with_items, item_quantity: 5, storage_location: storage_location, organization: @organization) }
 
       it "updates the quantity of items" do
         attributes = { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } }
+        subject
         expect do
           subject.replace_increase!(attributes)
           storage_location.reload
@@ -110,6 +111,7 @@ RSpec.describe Purchase, type: :model do
 
       it "removes the inventory item if the item's removal results in a 0 count" do
         attributes = { line_items_attributes: {} }
+        subject
         expect do
           subject.replace_increase!(attributes)
           storage_location.reload
@@ -121,6 +123,7 @@ RSpec.describe Purchase, type: :model do
         let!(:inactive_item) { create(:item, active: false, organization: @organization) }
         let(:attributes) { { line_items_attributes: { "0": { item_id: inactive_item.id, quantity: 10 } } } }
         it "re-creates the item" do
+          subject
           expect do
             subject.replace_increase!(attributes)
             storage_location.reload
