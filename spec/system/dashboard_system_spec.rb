@@ -34,19 +34,25 @@ RSpec.describe "Dashboard", type: :system do
       create(:donation, :with_items, item: item, item_quantity: 200, storage_location: sl, issued_at: Time.zone.today)
       create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: sl, issued_at: 1.month.ago,)
       create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: sl, issued_at: Time.zone.today,)
-      @organization.reload
+
+      m_a = create(:manufacturer)
+      m_b = create(:manufacturer)
+      create(:donation, :with_items, item: item, item_quantity: 25, source: Donation::SOURCES[:manufacturer], manufacturer: m_a, issued_at: 1.month.ago)
+      create(:donation, :with_items, item: item, item_quantity: 75, source: Donation::SOURCES[:manufacturer], manufacturer: m_b, issued_at: Time.zone.today)
 
       # Verify the initial totals are correct
       visit url_prefix + "/dashboard"
-      expect(page).to have_content("210 items received year to date")
+      expect(page).to have_content("310 items received year to date")
       expect(page).to have_content("105 items distributed year to date")
       expect(page).to have_content("0 Diaper Drives")
+      expect(page).to have_content("100 items donated year to date by 2 Manufacturers")
 
       # Scope it down to just today, should omit the first donation
       # select "Yesterday", from: "dashboard_filter_interval" # LET'S PRETEND BECAUSE OF REASONS!
       visit url_prefix + "/dashboard?dashboard_filter[interval]=last_month"
-      expect(page).to have_content("10 items received last month")
+      expect(page).to have_content("35 items received last month")
       expect(page).to have_content("5 items distributed last month")
+      expect(page).to have_content("25 items donated last month by 1 Manufacturer")
     end
   end
 
@@ -61,6 +67,7 @@ RSpec.describe "Dashboard", type: :system do
       create(:storage_location, organization: @organization)
       create(:donation_site, organization: @organization)
       create(:diaper_drive_participant, organization: @organization)
+      create(:manufacturer, organization: @organization)
       @organization.reload
     end
 
@@ -107,6 +114,7 @@ RSpec.describe "Dashboard", type: :system do
       select "Misc. Donation", from: "donation_source"
       expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
       expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
+      expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
       select StorageLocation.first.name, from: "donation_storage_location_id"
       select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
       fill_in "donation_line_items_attributes_0_quantity", with: "100"
@@ -121,10 +129,20 @@ RSpec.describe "Dashboard", type: :system do
       fill_in "donation_line_items_attributes_0_quantity", with: "100"
       click_button "Save"
 
+      # Make a manufacturer donation
+      visit url_prefix + "/donations/new"
+      select "Manufacturer", from: "donation_source"
+      select Manufacturer.first.name, from: "donation_manufacturer_id"
+      select StorageLocation.first.name, from: "donation_storage_location_id"
+      select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+      fill_in "donation_line_items_attributes_0_quantity", with: "75"
+      click_button "Save"
+
       # Check the dashboard now
       visit url_prefix + "/dashboard"
-      expect(page).to have_content("200 items received")
-      expect(page).to have_content("200 items on-hand")
+      expect(page).to have_content("275 items received")
+      expect(page).to have_content("275 items on-hand")
+      expect(page).to have_content("75 items donated year to date by 1 Manufacturer")
 
       # Check distributions
       visit url_prefix + "/distributions/new"
@@ -139,10 +157,27 @@ RSpec.describe "Dashboard", type: :system do
 
       # Check the dashboard now
       visit url_prefix + "/dashboard"
-      expect(page).to have_content("200 items received")
+      expect(page).to have_content("275 items received")
       expect(page).to have_content("50 items distributed")
-      expect(page).to have_content("150 items on-hand")
+      expect(page).to have_content("225 items on-hand")
       expect(page).to have_content("1 Diaper Drives")
+    end
+
+    it "should list top 10 manufacturers" do
+      visit url_prefix + "/dashboard"
+      expect(page).to have_content("0 items donated year to date by 0 Manufacturers")
+
+      item_qty = 200
+      12.times do
+        manufacturer = create(:manufacturer)
+        create(:donation, :with_items, item: Item.first, item_quantity: item_qty, source: Donation::SOURCES[:manufacturer], manufacturer: manufacturer, issued_at: Time.zone.today)
+        item_qty -= 1
+      end
+
+      visit url_prefix + "/dashboard"
+      expect(page).to have_content("2,334 items donated year to date by 12 Manufacturers")
+      expect(page).to have_content "Top Manufacturer Donations"
+      expect(page).to have_css(".manufacturer", count: 10)
     end
   end
 
