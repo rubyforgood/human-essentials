@@ -33,7 +33,7 @@ class StorageLocationsController < ApplicationController
     @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
-                      
+
     respond_to do |format|
       format.html
       format.csv { send_data @storage_location.to_csv }

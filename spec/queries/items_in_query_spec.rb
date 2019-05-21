@@ -23,6 +23,4 @@ RSpec.describe ItemsInQuery do
       expect(subject.to_a.size).to eq(4)
     end
   end
-
-
 end
