@@ -176,5 +176,44 @@ RSpec.describe StorageLocation, type: :model do
         expect(storage_location.longitude).not_to eq(nil)
       end
     end
+
+    describe "Reports" do
+      subject { create(:storage_location) }
+
+      describe "items_in" do
+        before do
+          create(:donation, :with_items, item: create(:item), item_quantity: 10, storage_location: subject)
+          create(:purchase, :with_items, item: create(:item), item_quantity: 10, storage_location: subject)
+          create(:adjustment, :with_items, item: create(:item), item_quantity: 10, storage_location: subject)
+          other_storage_location = create(:storage_location, :with_items, item: create(:item), item_quantity: 10, organization: subject.organization)
+          create(:transfer, :with_items, item_quantity: 10, item: other_storage_location.inventory_items.first.item, from: other_storage_location, to: subject)
+        end
+
+        it "returns a collection with the fields name, item_id, quantity" do
+          first_items_in = subject.items_in.first
+          expect(first_items_in).to be_respond_to(:name)
+          expect(first_items_in).to be_respond_to(:quantity)
+          expect(first_items_in).to be_respond_to(:item_id)
+        end
+        it "includes donations, purchases, adjustments, transfers among sources" do
+          expect(subject.items_in.to_a.size).to eq(4)
+        end
+      end
+
+      describe "items_out" do
+        it "returns a collection with the fields name, item_id, quantity"
+        it "includes distributions, adjustments, transfers among sources"
+      end
+
+      describe "items_in_total" do
+        it "returns a sum total of all in-flows"
+        it "includes donations, purchases, adjustments, and transfers among sources"
+      end
+
+      describe "items_out_total" do
+        it "returns a sum total of all out-flows"
+        it "includes distributions, adjustments, and transfers among sources"
+      end
+    end
   end
 end
