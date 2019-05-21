@@ -13,6 +13,7 @@
 #  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
 #  money_raised                :integer
+#  manufacturer_id             :bigint(8)
 #
 
 RSpec.describe Donation, type: :model do
