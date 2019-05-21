@@ -50,7 +50,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     subject { url_prefix + "/storage_locations" }
 
     # BUG#1008
-    fit "shows totals that are the sum totals of all inputs" do
+    it "shows totals that are the sum totals of all inputs" do
       item = create(:item, name: "Needle")
       location1 = create(:storage_location, name: "Foo")
       create(:donation, :with_items, item: item, item_quantity: 51, storage_location: location1)
@@ -71,6 +71,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       within "ul.nav-tabs" do
        click_on "Inventory"
       end
+
       within "table#sectionA tbody" do
         expect(page).to have_content("Needle")
         expect(page).to have_content(100)
