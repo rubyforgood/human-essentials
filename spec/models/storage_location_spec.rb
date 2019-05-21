@@ -202,8 +202,24 @@ RSpec.describe StorageLocation, type: :model do
       end
 
       describe "items_out" do
-        it "returns a collection with the fields name, item_id, quantity"
-        it "includes distributions, adjustments, transfers among sources"
+        before do
+          items = create_list(:inventory_item, 3, storage_location: subject, quantity: 10).collect(&:item)
+          other_storage_location = create(:storage_location, organization: subject.organization)
+          create(:transfer, :with_items, item_quantity: 10, item: items[0], to: other_storage_location, from: subject)
+          create(:distribution, :with_items, item: items[1], item_quantity: 10, storage_location: subject)
+          create(:adjustment, :with_items, item: items[2], item_quantity: -10, storage_location: subject)
+        end
+
+        it "returns a collection with the fields name, item_id, quantity" do
+          first_items_out = subject.items_out.first
+          expect(first_items_out).to be_respond_to(:name)
+          expect(first_items_out).to be_respond_to(:quantity)
+          expect(first_items_out).to be_respond_to(:item_id)
+        end
+
+        it "includes distributions, adjustments, transfers among sources" do
+          expect(subject.items_out.to_a.size).to eq(3)
+        end
       end
 
       describe "items_in_total" do
@@ -221,8 +237,17 @@ RSpec.describe StorageLocation, type: :model do
       end
 
       describe "items_out_total" do
-        it "returns a sum total of all out-flows"
-        it "includes distributions, adjustments, and transfers among sources"
+        before do
+          items = create_list(:inventory_item, 3, storage_location: subject, quantity: 10).collect(&:item)
+          other_storage_location = create(:storage_location, organization: subject.organization)
+          create(:transfer, :with_items, item_quantity: 10, item: items[0], to: other_storage_location, from: subject)
+          create(:distribution, :with_items, item: items[1], item_quantity: 10, storage_location: subject)
+          create(:adjustment, :with_items, item: items[2], item_quantity: -10, storage_location: subject)
+        end
+
+        it "returns a sum total of all out-flows" do
+          expect(subject.items_out_total).to eq(30)
+        end
       end
     end
   end
