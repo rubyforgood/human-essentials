@@ -1,4 +1,4 @@
-RSpec.describe "Vendor", type: :system do
+RSpec.describe "Vendor", type: :system, js: true do
   before do
     sign_in(@user)
   end
@@ -18,48 +18,54 @@ RSpec.describe "Vendor", type: :system do
     end
   end
 
-  it "can create a new vendor instance as a user" do
-    visit url_prefix + "/vendors/new"
-    vendor_traits = attributes_for(:vendor)
-    fill_in "Contact Name", with: vendor_traits[:contact_name]
-    fill_in "Business Name", with: vendor_traits[:business_name]
-    fill_in "Phone", with: vendor_traits[:phone]
+  context "when creating a new vendor" do
+    subject { url_prefix + "/vendors/new" }
 
-    expect do
+    it "can create a new vendor instance as a user" do
+      visit subject
+      vendor_traits = attributes_for(:vendor)
+      fill_in "Contact Name", with: vendor_traits[:contact_name]
+      fill_in "Business Name", with: vendor_traits[:business_name]
+      fill_in "Phone", with: vendor_traits[:phone]
+
+      expect do
+        click_button "Save"
+      end.to change { Vendor.count }.by(1)
+
+      expect(page.find(".alert")).to have_content "added"
+    end
+
+    it "cannot add a new vendor instance with empty attributes" do
+      visit subject
       click_button "Save"
-    end.to change { Vendor.count }.by(1)
 
-    expect(page.find(".alert")).to have_content "added"
+      expect(page.find(".alert")).to have_content "didn't work"
+    end
   end
 
-  it "can add a new vendor instance with empty attributes as a user" do
-    visit url_prefix + "/vendors/new"
-    click_button "Save"
+  context "when editing an existing vendor" do
+    let!(:vendor) { create(:vendor) }
+    subject { url_prefix + "/vendors/#{vendor.id}/edit" }
+    it "can update the contact info for a vendor as a user" do
+      new_email = "foo@bar.com"
+      visit subject
+      fill_in "Phone", with: ""
+      fill_in "E-mail", with: new_email
+      click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
-  end
+      expect(page.find(".alert")).to have_content "updated"
+      expect(page).to have_content(vendor.contact_name)
+      expect(page).to have_content(new_email)
+    end
 
-  it "can update the contact info for a vendor as a user" do
-    vendor = create(:vendor)
-    new_email = "foo@bar.com"
-    visit url_prefix + "/vendors/#{vendor.id}/edit"
-    fill_in "Phone", with: ""
-    fill_in "E-mail", with: new_email
-    click_button "Save"
+    it "does not update a vendor with empty attributes" do
+      visit subject
+      fill_in "Business Name", with: ""
+      fill_in "Contact Name", with: ""
+      click_button "Save"
 
-    expect(page.find(".alert")).to have_content "updated"
-    expect(page).to have_content(vendor.contact_name)
-    expect(page).to have_content(new_email)
-  end
-
-  it "can update a vendor with empty attributes as a user" do
-    vendor = create(:vendor)
-    visit url_prefix + "/vendors/#{vendor.id}/edit"
-    fill_in "Business Name", with: ""
-    fill_in "Contact Name", with: ""
-    click_button "Save"
-
-    expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find(".alert")).to have_content "didn't work"
+    end
   end
 
   context "When vendor have purchases associated with them already" do

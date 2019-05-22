@@ -1,12 +1,13 @@
-RSpec.describe "Dashboard", type: :system do
+RSpec.describe "Dashboard", type: :system, js: true do
   before do
     sign_in(@user)
   end
   let!(:url_prefix) { "/#{@organization.short_name}" }
+  subject { url_prefix + "/dashboard" }
 
   context "When visiting a new dashboard" do
     before(:each) do
-      visit url_prefix + "/dashboard"
+      visit subject
     end
 
     it "should show the User their organization name unless they have a logo set" do
@@ -19,7 +20,7 @@ RSpec.describe "Dashboard", type: :system do
 
       @organization.logo.purge
       @organization.save
-      visit url_prefix + "/dashboard"
+      visit subject
 
       expect(page).not_to have_xpath("//div/img")
       expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@organization.name)
@@ -74,38 +75,38 @@ RSpec.describe "Dashboard", type: :system do
     context "inactive item" do
       it 'should not count totals for donations' do
         item = donation.storage_location.items.first
-        visit url_prefix + "/dashboard"
+        visit subject
         expect(page).to have_content("100 items received year to date")
 
         item.update(active: false)
-        visit url_prefix + "/dashboard"
+        visit subject
         expect(page).to_not have_content("100 items received year to date")
       end
 
       it 'should not count totals for purchases' do
         item = purchase.storage_location.items.first
-        visit url_prefix + "/dashboard"
+        visit subject
         expect(page).to have_content("100 items received year to date")
 
         item.update(active: false)
-        visit url_prefix + "/dashboard"
+        visit subject
         expect(page).to_not have_content("100 items received year to date")
       end
 
       it 'should not count totals for distributions' do
         item = distribution.storage_location.items.first
-        visit url_prefix + "/dashboard"
+        visit subject
         expect(page).to have_content("100 items distributed year to date")
 
         item.update(active: false)
-        visit url_prefix + "/dashboard"
+        visit subject
         expect(page).to_not have_content("100 items distributed year to date")
       end
     end
 
     it "should update totals on dashboard immediately after donations and distributions are made", js: true do
       # Verify the initial totals on dashboard
-      visit url_prefix + "/dashboard"
+      visit subject
       expect(page).to have_content("0 items received")
       expect(page).to have_content("0 items on-hand")
 
@@ -184,7 +185,7 @@ RSpec.describe "Dashboard", type: :system do
   it "displays the getting started guide as expected", js: true do
     # When dashboard loads, ensure that we are on step 1 (Partner Agencies)
     Partner.delete_all
-    visit url_prefix + "/dashboard"
+    visit subject
     expect(page).to have_selector("#getting-started-guide", count: 1)
     expect(page).to have_selector("#org-stats-call-to-action-partners", count: 1)
     expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
@@ -193,7 +194,7 @@ RSpec.describe "Dashboard", type: :system do
 
     # After we create a partner, ensure that we are on step 2 (Storage Locations)
     @partner = create(:partner, organization: @organization)
-    visit url_prefix + "/dashboard"
+    visit subject
     expect(page).to have_selector("#getting-started-guide", count: 1)
     expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
     expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 1)
@@ -202,7 +203,7 @@ RSpec.describe "Dashboard", type: :system do
 
     # After we create a storage location, ensure that we are on step 3 (Donation Site)
     create(:storage_location, organization: @organization)
-    visit url_prefix + "/dashboard"
+    visit subject
     expect(page).to have_selector("#getting-started-guide", count: 1)
     expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
     expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
@@ -211,7 +212,7 @@ RSpec.describe "Dashboard", type: :system do
 
     # After we create a donation site, ensure that we are on step 4 (Inventory)
     create(:donation_site, organization: @organization)
-    visit url_prefix + "/dashboard"
+    visit subject
     expect(page).to have_selector("#getting-started-guide", count: 1)
     expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
     expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
@@ -219,9 +220,8 @@ RSpec.describe "Dashboard", type: :system do
     expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 1)
 
     # After we add inventory to a storage location, ensure that the getting starting guide is gone
-    item = create(:item, organization: @organization)
-    create(:storage_location, :with_items, item: item, item_quantity: 125, organization: @organization)
-    visit url_prefix + "/dashboard"
+    create(:storage_location, :with_items, item_quantity: 125, organization: @organization)
+    visit subject
     expect(page).to have_selector("#getting-started-guide", count: 0)
   end
 end

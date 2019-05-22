@@ -1,4 +1,4 @@
-RSpec.describe "Feedback Message", type: :system do
+RSpec.describe "Feedback Message", type: :system, js: true do
   before do
     sign_in(@user)
   end

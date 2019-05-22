@@ -1,10 +1,10 @@
-RSpec.describe "Admin Feedback Message Management", type: :system do
+RSpec.describe "Admin Feedback Message Management", type: :system, js: true do
   context "While signed in as an Administrative User (super admin)" do
     before :each do
       sign_in(@super_admin)
     end
 
-    it "viewing and marking feedback as resolved", js: true do
+    it "viewing and marking feedback as resolved" do
       feedback_message = FactoryBot.create(:feedback_message)
       visit admin_feedback_messages_path
 

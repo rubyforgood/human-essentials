@@ -1,12 +1,12 @@
 RSpec.describe "Purchases", type: :system, js: true do
+  let!(:url_prefix) { "/#{@organization.short_name}" }
   before :each do
     sign_in @user
-    @url_prefix = "/#{@organization.short_name}"
   end
 
   context "When visiting the index page" do
     before(:each) do
-      visit @url_prefix + "/purchases"
+      visit url_prefix + "/purchases"
     end
 
     it "User can click to the new purchase form" do
@@ -19,24 +19,26 @@ RSpec.describe "Purchases", type: :system, js: true do
 
   context "When filtering on the index page" do
     let!(:item) { create(:item) }
+    subject { url_prefix + "/purchases" }
 
     it "User can filter the #index by storage location" do
       storage1 = create(:storage_location, name: "storage1")
       storage2 = create(:storage_location, name: "storage2")
       create(:purchase, storage_location: storage1)
       create(:purchase, storage_location: storage2)
-      visit @url_prefix + "/purchases"
+      visit subject
       expect(page).to have_css("table tbody tr", count: 2)
       select storage1.name, from: "filters_at_storage_location"
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
     end
+
     it "User can filter the #index by vendor" do
       vendor1 = create(:vendor, business_name: "vendor 1")
       vendor2 = create(:vendor, business_name: "vendor 2")
       create(:purchase, vendor: vendor1)
       create(:purchase, vendor: vendor2)
-      visit @url_prefix + "/purchases"
+      visit subject
       expect(page).to have_css("table tbody tr", count: 2)
       select vendor1.business_name, from: "filters_from_vendor"
       click_button "Filter"
@@ -51,10 +53,11 @@ RSpec.describe "Purchases", type: :system, js: true do
       create(:vendor, organization: @organization)
       @organization.reload
     end
+    subject { url_prefix + "/purchases/new" }
 
     context "via manual entry" do
       before(:each) do
-        visit @url_prefix + "/purchases/new"
+        visit subject
       end
 
       it "User can create vendor from purchase" do
@@ -133,7 +136,7 @@ RSpec.describe "Purchases", type: :system, js: true do
     context "via barcode entry" do
       before(:each) do
         initialize_barcodes
-        visit @url_prefix + "/purchases/new"
+        visit url_prefix + "/purchases/new"
       end
 
       it "a user can add items via scanning them in by barcode" do

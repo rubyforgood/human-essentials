@@ -1,4 +1,4 @@
-RSpec.describe "Donations", type: :system do
+RSpec.describe "Donations", type: :system, js: true do
   before do
     sign_in @user
     @url_prefix = "/#{@organization.short_name}"
