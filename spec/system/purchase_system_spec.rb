@@ -143,7 +143,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         # enter the barcode into the barcode field
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          Barcode.boop_barcode(@existing_barcode.value)
+          Barcode.boop(@existing_barcode.value)
         end
         # the form should update
         expect(page).to have_xpath('//input[@id="purchase_line_items_attributes_0_quantity"]')
@@ -156,7 +156,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         pending "The JS doesn't appear to be executing in this correctly"
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          Barcode.boop_barcode(@existing_barcode.value)
+          Barcode.boop(@existing_barcode.value)
         end
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
@@ -165,7 +165,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-          Barcode.boop_barcode(@existing_barcode.value)
+          Barcode.boop(@existing_barcode.value)
         end
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s

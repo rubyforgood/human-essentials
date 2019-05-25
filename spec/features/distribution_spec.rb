@@ -201,7 +201,7 @@ RSpec.feature "Distributions", type: :feature do
     end
 
     scenario "a user can add items via scanning them in by barcode", js: true do
-      Barcode.boop_barcode(@existing_barcode.value)
+      Barcode.boop(@existing_barcode.value)
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
 
