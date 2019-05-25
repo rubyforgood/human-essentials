@@ -15,6 +15,13 @@ RSpec.describe RequestsController, type: :controller do
       end
     end
 
+    describe "DELETE #destroy" do
+      subject { delete :destroy, params: default_params.merge(id: create(:request, organization: @organization)) }
+      it "redirects to the requests index" do
+        expect(subject).to redirect_to(requests_path)
+      end
+    end
+
     describe "GET #show" do
       subject { get :show, params: default_params.merge(id: create(:request, organization: @organization, comments: "comments", request_items: nil)) }
       it "returns http success" do

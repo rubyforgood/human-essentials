@@ -172,6 +172,7 @@ RSpec.feature "Distributions", type: :feature do
     end
   end
 
+  # TODO: This should probably be in the Request resource specs, not Distribution
   context "When creating a distrubition from a request" do
     before do
       items = @storage_location.items.pluck(:id).sample(2)
@@ -179,7 +180,7 @@ RSpec.feature "Distributions", type: :feature do
       @request = create :request, organization: @organization, request_items: request_items
 
       visit @url_prefix + "/requests/#{@request.id}"
-      click_on "New Distribution"
+      click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
         click_on "Save"
