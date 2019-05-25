@@ -44,20 +44,13 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
     @storage_locations = current_organization.storage_locations
 
-    if @distribution.valid?
+    if @distribution.save
       @distribution.storage_location.decrease_inventory @distribution
-
-      if @distribution.save
-        update_request(params[:distribution][:request_attributes], @distribution.id)
-
-        send_notification(current_organization, @distribution)
-        flash[:notice] = "Distribution created!"
-        session[:created_distribution_id] = @distribution.id
-        redirect_to distributions_path
-      else
-        flash[:error] = "There was an error, try again?"
-        render :new
-      end
+      update_request(params[:distribution][:request_attributes], @distribution.id)
+      send_notification(current_organization, @distribution)
+      flash[:notice] = "Distribution created!"
+      session[:created_distribution_id] = @distribution.id
+      redirect_to distributions_path
     else
       flash[:error] = "An error occurred, try again?"
       logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
