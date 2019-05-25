@@ -1,0 +1,7 @@
+<% flash.discard %>
+$("#modal_new").modal("hide");
+$("#donation_manufacturer_id").empty();
+$("#donation_manufacturer_id").
+html('<%= j options_from_collection_for_select(current_organization.manufacturers, :id, :name) %>');
+$("#donation_manufacturer_id").append('<option value="">---Create new Manufacturer---</option>');
+$("#donation_manufacturer_id").val('<%= @manufacturer[:id] %>');

@@ -13,6 +13,7 @@
 #  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
 #  money_raised                :integer
+#  manufacturer_id             :bigint(8)
 #
 
 RSpec.describe Donation, type: :model do
@@ -25,10 +26,17 @@ RSpec.describe Donation, type: :model do
     it "requires a donation_site if the source is 'Donation Site'" do
       expect(build(:donation, source: "Donation Site", donation_site: nil)).not_to be_valid
       expect(build(:donation, source: "Misc. Donation", donation_site: nil)).to be_valid
+      expect(build(:donation, source: "Manufacturer", donation_site: nil)).to be_valid
     end
     it "requires a diaper drive participant if the source is 'Diaper Drive'" do
       expect(build(:donation, source: "Diaper Drive", diaper_drive_participant_id: nil)).not_to be_valid
+      expect(build(:donation, source: "Manufacturer", diaper_drive_participant_id: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", diaper_drive_participant_id: nil)).to be_valid
+    end
+    it "requires a manufacturer if the source is 'Manufacturer'" do
+      expect(build(:donation, source: "Manufacturer", manufacturer: nil)).not_to be_valid
+      expect(build(:donation, source: "Diaper Drive", manufacturer: nil)).to be_valid
+      expect(build(:donation, source: "Misc. Donation", manufacturer: nil)).to be_valid
     end
     it "requires a source from the list of available sources" do
       expect(build(:donation, source: nil)).not_to be_valid
