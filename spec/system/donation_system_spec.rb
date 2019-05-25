@@ -256,7 +256,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
         within "#donation_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
+          Barcode.boop(@existing_barcode.value)
         end
         # the form should update
         expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
@@ -269,14 +269,14 @@ RSpec.describe "Donations", type: :system, js: true do
       it "Updates the line item when the same barcode is scanned twice", :js do
         within "#donation_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          fill_in "_barcode-lookup-0", with: @existing_barcode.value + 10.chr
+          Barcode.boop(@existing_barcode.value)
         end
 
         expect(page).to have_field "donation_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
         within "#donation_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-          fill_in "_barcode-lookup-1", with: @existing_barcode.value + 10.chr
+          Barcode.boop(@existing_barcode.value)
         end
 
         expect(page).to have_field "donation_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
@@ -287,7 +287,7 @@ RSpec.describe "Donations", type: :system, js: true do
         # enter a new barcode
         within "#donation_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-          fill_in "_barcode-lookup-0", with: new_barcode + 10.chr
+          Barcode.boop(new_barcode)
         end
 
         # form finds no barcode and responds by prompting user to choose an item and quantity
@@ -327,7 +327,7 @@ RSpec.describe "Donations", type: :system, js: true do
           visit @url_prefix + "/donations/new"
           within "#donation_line_items" do
             expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-            fill_in "_barcode-lookup-0", with: @global_barcode.value + 10.chr
+            Barcode.boop(@global_barcode.value)
           end
           expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
           expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @item.name)).to eq(true)
