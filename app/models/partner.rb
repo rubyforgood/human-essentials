@@ -14,8 +14,11 @@
 class Partner < ApplicationRecord
   require "csv"
 
+  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error]
+
   belongs_to :organization
   has_many :distributions, dependent: :destroy
+  has_many :requests, dependent: :destroy
 
   validates :organization, presence: true
   validates :name, :email, presence: true, uniqueness: true
@@ -25,8 +28,6 @@ class Partner < ApplicationRecord
     where(organization: organization)
       .order(:name)
   }
-
-  after_create :register_on_partnerbase
 
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)

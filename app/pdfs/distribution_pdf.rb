@@ -1,3 +1,4 @@
+# Configures a Prawn PDF template for generating Distribution manifests
 class DistributionPdf
   include Prawn::View
   include ItemsHelper
@@ -12,7 +13,7 @@ class DistributionPdf
     end
     data = [["Items Received", "Value/item", "Total value", "Quantity"]]
     data += @distribution.line_items.sorted.map do |c|
-      [c.item.name, item_value(c.item.value), item_value(c.value_per_line_item), c.quantity]
+      [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity]
     end
     data += [["", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total]]
 
@@ -63,34 +64,6 @@ class DistributionPdf
       # Quantity column
       column(1..3).row(1..-3).borders = [:left]
       column(1..3).row(1..-3).border_left_color = "aaaaaa"
-      column(1).style align: :right
-    end
-
-    move_down 50
-
-    summary = [["Distribution Breakdown", "Quantity"]]
-    summary += @distribution.line_items.quantities_by_category.to_a
-
-    table(summary) do
-      self.header = true
-      self.cell_style = {
-        padding: [5, 20, 5, 20]
-      }
-      self.row_colors = %w(dddddd ffffff)
-
-      cells.borders = []
-
-      # Header row
-      row(0).borders = [:bottom]
-      row(0).border_width = 2
-      row(0).font_style = :bold
-      row(0).column(-1).borders = %i(bottom left)
-
-      column(0).width = 400
-
-      # Quantity column
-      column(1).row(1..-1).borders = [:left]
-      column(1).row(1..-1).border_left_color = "aaaaaa"
       column(1).style align: :right
     end
 

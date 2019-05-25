@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_11_063030) do
+ActiveRecord::Schema.define(version: 2019_05_17_141740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
   end
 
-  create_table "canonical_items", force: :cascade do |t|
+  create_table "base_items", force: :cascade do |t|
     t.string "name"
     t.string "category"
     t.integer "barcode_count"
@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.string "path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "resolved"
     t.index ["user_id"], name: "index_feedback_messages_on_user_id"
   end
 
@@ -184,6 +185,16 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "item_requests", force: :cascade do |t|
+    t.bigint "request_id"
+    t.bigint "item_id"
+    t.integer "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_requests_on_item_id"
+    t.index ["request_id"], name: "index_item_requests_on_request_id"
+  end
+
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "category"
@@ -193,7 +204,7 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.integer "organization_id"
     t.boolean "active", default: true
     t.string "partner_key"
-    t.decimal "value", precision: 5, scale: 2, default: "0.0"
+    t.integer "value_in_cents", default: 0
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
@@ -222,7 +233,8 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
-    t.text "default_email_text"
+    t.integer "reminder_days_before_deadline"
+    t.integer "deadline_date"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -233,7 +245,8 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
-    t.string "status"
+    t.integer "status", default: 0
+    t.boolean "send_reminders", default: false, null: false
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 
@@ -242,10 +255,11 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.text "comment"
     t.integer "organization_id"
     t.integer "storage_location_id"
-    t.integer "amount_spent"
+    t.integer "amount_spent_in_cents"
     t.datetime "issued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "vendor_id"
     t.index ["organization_id"], name: "index_purchases_on_organization_id"
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end
@@ -253,14 +267,15 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
   create_table "requests", force: :cascade do |t|
     t.bigint "partner_id"
     t.bigint "organization_id"
-    t.string "status", default: "Active"
     t.jsonb "request_items", default: {}
     t.text "comments"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "distribution_id"
+    t.integer "status", default: 0
     t.index ["organization_id"], name: "index_requests_on_organization_id"
     t.index ["partner_id"], name: "index_requests_on_partner_id"
+    t.index ["status"], name: "index_requests_on_status"
   end
 
   create_table "storage_locations", id: :serial, force: :cascade do |t|
@@ -319,11 +334,28 @@ ActiveRecord::Schema.define(version: 2019_02_11_063030) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "vendors", force: :cascade do |t|
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.string "comment"
+    t.integer "organization_id"
+    t.string "address"
+    t.string "business_name"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
+  end
+
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "item_requests", "items"
+  add_foreign_key "item_requests", "requests"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

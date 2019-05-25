@@ -1,3 +1,4 @@
+# This exists so that we can override some of the devise resource
 class Users::UnlocksController < Devise::UnlocksController
   # GET /resource/unlock/new
   # def new

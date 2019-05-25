@@ -1,3 +1,4 @@
+# This exists so that we can override some of the devise resource
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # You should configure your model like this:
   # devise :omniauthable, omniauth_providers: [:twitter]

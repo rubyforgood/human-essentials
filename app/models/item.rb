@@ -2,25 +2,25 @@
 #
 # Table name: items
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  category        :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  created_at      :datetime
+#  updated_at      :datetime
 #  barcode_count   :integer
 #  organization_id :integer
 #  active          :boolean          default(TRUE)
 #  partner_key     :string
-#  value           :decimal(5, 2)    default(0.0)
+#  value_in_cents  :integer   default(0)
 #
 
 class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
-  belongs_to :canonical_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
+  belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
-  validates :value, numericality: { greater_than_or_equal_to: 0 }
+  validates :value_in_cents, numericality: { greater_than_or_equal_to: 0 }
 
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
@@ -32,23 +32,17 @@ class Item < ApplicationRecord
   include Filterable
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
-  scope :in_category, ->(category) { where(category: category) }
-  scope :by_canonical_item, ->(canonical_item) { where(canonical_item: canonical_item) }
+  scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
-  scope :in_same_category_as, ->(item) { where(category: item.category).where.not(id: item.id) }
 
-  scope :by_size, ->(size) { joins(:canonical_item).where(canonical_items: { size: size }) }
+  scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
-      .includes(:canonical_item)
+      .includes(:base_item)
       .alphabetized
   }
 
   default_scope { active }
-
-  def self.categories
-    select(:category).group(:category).order(:category)
-  end
 
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
@@ -60,6 +54,11 @@ class Item < ApplicationRecord
 
   def self.barcodes_for(item)
     BarcodeItem.where("barcodeable_id = ?", item.id)
+  end
+
+  def self.reactivate(item_ids)
+    item_ids = Array.wrap(item_ids)
+    Item.unscoped.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
   # Override `destroy` to ensure Item isn't accidentally destroyed
@@ -92,15 +91,19 @@ class Item < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Category", "Barcodes", "Base Item"]
+    ["Name", "Barcodes", "Base Item"]
   end
 
   def csv_export_attributes
     [
       name,
-      category,
       barcode_count,
-      canonical_item.name
+      base_item.name
     ]
+  end
+
+  def default_quantity
+    # TODO: actual logic for calculating and letting users configure this calculation
+    50
   end
 end

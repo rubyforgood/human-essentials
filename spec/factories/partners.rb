@@ -17,4 +17,8 @@ FactoryBot.define do
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
     organization { Organization.try(:first) || create(:organization) }
   end
+
+  trait :approved do
+    status { :approved }
+  end
 end

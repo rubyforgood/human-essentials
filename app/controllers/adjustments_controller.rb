@@ -1,6 +1,5 @@
+# Provides limited CRUD for Adjustments, which are the way that Diaper Banks fix incorrect inventory totals at Storage Locations
 class AdjustmentsController < ApplicationController
-  before_action :set_adjustment, only: %i(show destroy)
-
   # GET /adjustments
   # GET /adjustments.json
   def index
@@ -12,44 +11,45 @@ class AdjustmentsController < ApplicationController
 
   # GET /adjustments/1
   # GET /adjustments/1.json
-  def show; end
+  def show
+    @adjustment = current_organization.adjustments.find(params[:id])
+  end
 
   # GET /adjustments/new
   def new
     @adjustment = current_organization.adjustments.new
     @adjustment.line_items.build
-    @storage_locations = current_organization.storage_locations
-    @items = current_organization.items.alphabetized
+    load_form_collections
   end
 
   # POST /adjustments
   def create
     @adjustment = current_organization.adjustments.new(adjustment_params)
-    @storage_locations = current_organization.storage_locations
-    @items = current_organization.items.alphabetized
 
-    if @adjustment.valid?
-      @adjustment.storage_location.adjust!(@adjustment)
-
-      if @adjustment.save
-        redirect_to adjustment_path(@adjustment), notice: "Adjustment was successfully created."
-      else
-        flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }.join("<br />".html_safe)
-        render :new
+    if @adjustment.valid? && @adjustment.save
+      increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
+      ActiveRecord::Base.transaction do
+        @adjustment.storage_location.increase_inventory increasing_adjustment
+        @adjustment.storage_location.decrease_inventory decreasing_adjustment
       end
+
+      redirect_to adjustment_path(@adjustment), notice: "Adjustment was successful."
     else
       flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }.join("<br />".html_safe)
+      load_form_collections
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
     flash[:error] = ex.message
+    load_form_collections
     render :new
   end
 
   private
 
-  def set_adjustment
-    @adjustment = current_organization.adjustments.find(params[:id])
+  def load_form_collections
+    @storage_locations = current_organization.storage_locations
+    @items = current_organization.items.alphabetized
   end
 
   def adjustment_params

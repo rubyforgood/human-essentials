@@ -40,24 +40,6 @@ shared_examples_for "itemizable" do
       end
     end
 
-    describe "quantities_by_category" do
-      subject { create(model_f) }
-
-      it "groups the quantities by category" do
-        categories = { "cat1" => 20, "cat2" => 10 }
-        item1_cat1 = create(:item, name: "item1", category: categories.keys[0], organization: @organization)
-        item2_cat1 = create(:item, name: "item2", category: categories.keys[0], organization: @organization)
-        item3_cat2 = create(:item, name: "item3", category: categories.keys[1], organization: @organization)
-
-        subject.line_items << create(:line_item, item: item1_cat1, quantity: 10)
-        subject.line_items << create(:line_item, item: item2_cat1, quantity: 10)
-        subject.line_items << create(:line_item, item: item3_cat2, quantity: 10)
-
-        # It yields a hash
-        expect(subject.line_items.quantities_by_category).to eq(categories)
-      end
-    end
-
     describe "quantities_by_name" do
       let(:item1) { create(:item, name: "item1", organization: @organization) }
       let(:item2) { create(:item, name: "item2", organization: @organization) }
@@ -113,21 +95,6 @@ shared_examples_for "itemizable" do
         expect do
           2.times { subject.line_items << create(:line_item, quantity: 5) }
         end.to change { subject.line_items.total }.by(10)
-      end
-    end
-
-    describe "updated line item quantity" do
-      subject { create(model_f, organization: @organization) }
-      let(:storage_location) { subject.storage_location }
-
-      it "updates storage location quantity by the correct amount" do
-        line_item = subject.line_items.create(item_id: item.id, quantity: 10)
-        inventory_item = create(:inventory_item, storage_location: storage_location, item_id: line_item.item_id)
-        previous_quantities = subject.line_items_quantities
-        line_item.update!(quantity: 5)
-        expect do
-          storage_location.adjust_from_past!(subject, previous_quantities)
-        end.to change { inventory_item.reload.quantity }.by(-5)
       end
     end
   end

@@ -1,3 +1,5 @@
+# Provides full CRUD for DonationSites. Donation sites are the locations where people in the community can drop off
+# donations.
 class DonationSitesController < ApplicationController
   include Importable
 

@@ -1,3 +1,4 @@
+require 'time_util'
 # == Schema Information
 #
 # Table name: distributions
@@ -48,8 +49,32 @@ class Distribution < ApplicationRecord
 
   delegate :name, to: :partner, prefix: true
 
+  # TODO: kill me
+  def replace_distribution!(new_distribution_params)
+    ActiveRecord::Base.transaction do
+      # fixed_distribution_params = new_distribution_params["line_items_attributes"].to_h.values.reject { |f| f["item_id"].blank? && f["quantity"].blank? }
+      # Roll back distribution output by increasing storage location
+      storage_location.increase_inventory(to_a)
+      # Delete the line items -- they'll be replaced later
+      line_items.each(&:destroy!)
+      reload
+
+      # Replace the current distribution with the new parameters
+      update! new_distribution_params
+
+      # Apply the new changes to the storage location inventory
+      storage_location.decrease_inventory(to_a)
+    end
+  rescue ActiveRecord::RecordInvalid
+    false
+  end
+
   def distributed_at
-    issued_at.strftime("%B %-d %Y")
+    if is_midnight(issued_at)
+      issued_at.to_s(:distribution_date)
+    else
+      issued_at.to_s(:distribution_date_time)
+    end
   end
 
   def combine_duplicates
@@ -76,10 +101,10 @@ class Distribution < ApplicationRecord
     self.partner_id = request.partner_id
     self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
-    request.request_items.each do |key, quantity|
+    request.request_items.each do |item|
       line_items.new(
-        quantity: quantity,
-        item: Item.joins(:inventory_items).eager_load(:canonical_item).find_by(organization: request.organization, canonical_items: { partner_key: key }),
+        quantity: item["quantity"],
+        item: Item.joins(:inventory_items).eager_load(:base_item).find_by(organization: request.organization, id: item["item_id"]),
         itemizable_id: request.id,
         itemizable_type: "Distribution"
       )

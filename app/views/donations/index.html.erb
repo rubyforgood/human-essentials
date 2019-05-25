@@ -34,7 +34,7 @@
           <% end %>
           <% if @diaper_drives.present? %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "by Diaper Drive" %>
+              <%= label_tag "by Diaper Drive Participants" %>
               <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :business_name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
             </div>
           <% end %>
@@ -77,6 +77,7 @@
                   <th>Storage Location</th>
                   <th>Quantity of Items</th>
                   <th>Variety of Items</th>
+                  <th>In Kind Value</th>
                   <th>&nbsp;</th>
                 </tr>
               </thead>
@@ -89,6 +90,7 @@
                   <td></td>
                   <td><strong><%= @donations_quantity %></strong></td>
                   <td></td>
+                  <td><strong><%= item_value(@total_value_all_donations) %></strong></td>
                   <td></td>
                 </tr>
               </tbody>

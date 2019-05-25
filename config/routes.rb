@@ -1,6 +1,16 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  require 'sidekiq/web'
+  if Rails.env.production?
+    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+      ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])) &
+        ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_PASSWORD"]))
+    end
+  end
+  mount Sidekiq::Web => '/sidekiq'
+  Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
+
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
       username == ENV["FLIPPER_USERNAME"] && password == ENV["FLIPPER_PASSWORD"]
@@ -12,20 +22,23 @@ Rails.application.routes.draw do
   get :admin, to: "admin#dashboard"
   namespace :admin do
     get :dashboard
-    resources :canonical_items
+    resources :base_items
     resources :organizations
     resources :users
     resources :barcode_items
+    resources :feedback_messages do
+      get :resolve
+    end
   end
 
   # These are globally accessible
-  resources :canonical_items, only: %i(index show)
   resources :feedback_message, only: [:create]
 
   namespace :api, defaults: { format: "json" } do
     namespace :v1 do
       resources :partner_requests, only: %i(create show)
       resources :partner_approvals, only: :create
+      resources :family_requests, only: %i(create show)
     end
   end
 
@@ -56,9 +69,8 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :distributions, except: %i(destroy) do
+    resources :distributions do
       get :print, on: :member
-      post :reclaim, on: :member
       collection do
         get :pick_ups
       end
@@ -77,6 +89,11 @@ Rails.application.routes.draw do
         post :import_csv
       end
     end
+    resources :vendors, except: [:destroy] do
+      collection do
+        post :import_csv
+      end
+    end
     resources :items
     resources :partners do
       collection do
@@ -85,6 +102,7 @@ Rails.application.routes.draw do
       member do
         get :approve_application
         get :approve_partner
+        post :invite
       end
     end
 
@@ -101,7 +119,7 @@ Rails.application.routes.draw do
     #MODIFIED route by adding destroy to
     resources :requests, only: %i(index new show destroy) do
       member do
-        post :fullfill
+        post :start
       end
     end
     

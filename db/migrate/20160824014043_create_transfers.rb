@@ -1,3 +1,4 @@
+# Initial table for Transfers
 class CreateTransfers < ActiveRecord::Migration[5.0]
   def change
     create_table :transfers do |t|

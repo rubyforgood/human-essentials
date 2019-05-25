@@ -70,4 +70,12 @@ RSpec.describe PartnersController, type: :controller do
       expect(subject).to redirect_to(partners_path)
     end
   end
+
+  describe "POST #invite" do
+    subject { post :invite, params: default_params.merge(id: create(:partner, organization: @organization)) }
+    it "send the invite" do
+      expect(UpdateDiaperPartnerJob).to receive(:perform_async)
+      subject
+    end
+  end
 end

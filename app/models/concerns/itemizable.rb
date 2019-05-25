@@ -1,5 +1,7 @@
-# H/T to http://www.justinweiss.com/articles/search-and-filter-rails-models-without-bloating-your-controller/
-
+# Creates a veritable powerhouse.
+# This module provides Duck Typed behaviors for anything that shuttle Items
+# throughout the system. e.g. things that `has_many :line_items` -- this provides
+# all the logic about how those kinds of things behave.
 module Itemizable
   extend ActiveSupport::Concern
 
@@ -19,11 +21,11 @@ module Itemizable
         # First we'll collect all the line_items that are used
         combined = {}
         parent_id = first.itemizable_id
-        each do |i|
-          next unless i.valid?
+        each do |line_item|
+          next unless line_item.valid?
 
-          combined[i.item_id] ||= 0
-          combined[i.item_id] += i.quantity
+          combined[line_item.item_id] ||= 0
+          combined[line_item.item_id] += line_item.quantity
         end
         # Delete all the existing ones in this association -- this
         # method aliases to `delete_all`
@@ -65,18 +67,24 @@ module Itemizable
     validates_associated :line_items
   end
 
-  def line_items_quantities
-    line_items.inject(Hash.new) do |hash, line_item|
-      hash[line_item.id] = OpenStruct.new(quantity: line_item.quantity, item_id: line_item.item_id)
-      hash
-    end
-  end
-
   def value_per_itemizable
     line_items.sum(&:value_per_line_item)
   end
 
+  def to_a
+    line_items.map do |l|
+      # When the item isn't found, it's probably just inactive. This ensures it's available.
+      item = Item.unscoped.find(l.item_id)
+      { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
+    end
+  end
+
   private
+
+  # From Controller parameters
+  def line_items_attributes(params)
+    Array.wrap(params[:line_items_attributes]&.values)
+  end
 
   def line_item_items_quantity_is_positive
     return if storage_location.nil?

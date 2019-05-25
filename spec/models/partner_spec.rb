@@ -52,11 +52,6 @@ RSpec.describe Partner, type: :model do
   #   end
   # end
 
-  it 'fires send_email method as after_create method callbacks' do
-    expect(subject).to receive(:register_on_partnerbase)
-    subject.run_callbacks(:create)
-  end
-
   describe "import_csv" do
     let(:organization) { create(:organization) }
 
@@ -76,6 +71,15 @@ RSpec.describe Partner, type: :model do
       expect do
         Partner.import_csv(csv, organization.id)
       end.to change { Partner.count }.by(20)
+    end
+
+    it "not send emails after importing a csv file" do
+      expect(UpdateDiaperPartnerJob).not_to receive(:perform_async)
+
+      import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
+      data = File.read(import_file_path, encoding: "BOM|UTF-8")
+      csv = CSV.parse(data, headers: true)
+      Partner.import_csv(csv, organization.id)
     end
   end
 end

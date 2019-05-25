@@ -1,3 +1,8 @@
+# Provides full CRUD+ for Distributions, which are the primary way for inventory to leave a Diaperbank. Most
+# Distributions are given out through community partners (either via Partnerbase, or to Partners-on-record). It's
+# technically possible to also do Direct Services by having a Partner called "Direct Services" and then issuing
+# Distributions to them, though it would lack some of the additional featuers and failsafes that a Diaperbank
+# might want if they were doing direct services.
 class DistributionsController < ApplicationController
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
@@ -14,15 +19,14 @@ class DistributionsController < ApplicationController
     end
   end
 
-  def reclaim
+  def destroy
     ActiveRecord::Base.transaction do
-      @distribution_id = params[:id]
-      distribution = Distribution.find(params[:id])
-      distribution.storage_location.reclaim!(distribution)
+      distribution = current_organization.distributions.find(params[:id])
+      distribution.storage_location.increase_inventory(distribution)
       distribution.destroy!
     end
 
-    flash[:notice] = "Distribution #{@distribution_id} has been reclaimed!"
+    flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
     redirect_to distributions_path
   end
 
@@ -38,31 +42,25 @@ class DistributionsController < ApplicationController
 
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
+    @storage_locations = current_organization.storage_locations
 
     if @distribution.valid?
-      if params[:commit] == "Preview Distribution"
-        @distribution.line_items.combine!
-        @line_items = @distribution.line_items
-        render :show
+      @distribution.storage_location.decrease_inventory @distribution
+
+      if @distribution.save
+        update_request(params[:distribution][:request_attributes], @distribution.id)
+
+        send_notification(current_organization, @distribution)
+        flash[:notice] = "Distribution created!"
+        session[:created_distribution_id] = @distribution.id
+        redirect_to distributions_path
       else
-        @distribution.storage_location.distribute!(@distribution)
-
-        if @distribution.save
-          update_request(params[:distribution][:request_attributes], @distribution.id)
-
-          send_notification(current_organization, @distribution)
-          flash[:notice] = "Distribution created!"
-          session[:created_distribution_id] = @distribution.id
-          redirect_to distributions_path
-        else
-          flash[:error] = "There was an error, try again?"
-          render :new
-        end
+        flash[:error] = "There was an error, try again?"
+        render :new
       end
     else
-      @storage_locations = current_organization.storage_locations
       flash[:error] = "An error occurred, try again?"
-      logger.error "failed to save distribution: #{@distribution.errors.full_messages}"
+      logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
@@ -98,9 +96,19 @@ class DistributionsController < ApplicationController
 
   def update
     distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-    if distribution.storage_location.update_distribution!(distribution, distribution_params)
+
+    # there are ways to convert issued_at(*i) to Date but they are uglier then just remember it here
+    # see examples: https://stackoverflow.com/questions/13605598/how-to-get-a-date-from-date-select-or-select-date-in-rails
+    old_issued_at = distribution.issued_at
+
+    if distribution.replace_distribution!(distribution_params)
       @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
       @line_items = @distribution.line_items
+
+      if distribution.issued_at.to_date != old_issued_at.to_date
+        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{distribution.issued_at}")
+      end
+
       flash[:notice] = "Distribution updated!"
       render :show
     else
@@ -109,10 +117,12 @@ class DistributionsController < ApplicationController
     end
   end
 
+  # TODO: This needs a little more context. Is it JSON only? HTML?
   def pick_ups
     @pick_ups = current_organization.distributions
   end
 
+  # TODO: This shouldl probably be private
   def insufficient_amount!
     respond_to do |format|
       format.html { render template: "errors/insufficient", layout: "layouts/application", status: :ok }
@@ -124,13 +134,14 @@ class DistributionsController < ApplicationController
 
   # If a request id is provided, update the request with the newly created distribution's id
   def update_request(request_atts, distribution_id)
-    if request_atts
-      Request.find(request_atts[:id]).update(distribution_id: distribution_id)
-    end
+    return if request_atts.blank?
+
+    request = Request.find(request_atts[:id])
+    request.update(distribution_id: distribution_id, status: 'fulfilled')
   end
 
-  def send_notification(org, dist)
-    PartnerMailerJob.perform_async(org, dist) if Flipper.enabled?(:email_active)
+  def send_notification(org, dist, subject: 'Your Distribution')
+    PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
   def distribution_params

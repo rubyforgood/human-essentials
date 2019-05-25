@@ -20,11 +20,10 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <h3 class="box-title"><%= @item.name %>  <%= item_value(@item.value, ', value per Item: ') %></h3>
+    <h3 class="box-title"><%= @item.name %>  <%= item_value(@item.value_in_cents, ', value per Item (in cents): ') %></h3>
   </div>
   <div class="box-body">
 
-  <p>Found in category: <%= @item.category %></p>
 <% if @storage_locations_containing.present? %>
 <h4>This item is contained in these inventories</h4>
 
@@ -81,14 +80,6 @@
     <!-- /.box -->
     </div>
   </div>
-<% end %>
-<% if @items_in_category.present? %>
-<h2>Other items in this category</h2>
-<ul id="category">
-  <% @items_in_category.each do |item| %>
-    <li><%= link_to item.name, item_path(item) %></li>
-  <% end %>
-</ul>
 <% end %>
   </div>
 </div>

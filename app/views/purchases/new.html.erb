@@ -22,6 +22,7 @@
 	<!-- Default box -->
 	<div class="box">
     <%= render partial: "purchase_form", object: @purchase %>
+    <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"}  %>
 	</div><!-- /.box -->
 
   <%= render partial: "barcode_modal" %>

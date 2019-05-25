@@ -1,3 +1,4 @@
+# Encapsulates methods that need some business logic
 module OrganizationHelper
   def display_logo_or_name(organization = nil)
     organization ||= current_organization

@@ -1,3 +1,4 @@
+# Creates the primary channel through which Partners submit requests, which occurs via the API
 class API::V1::PartnerRequestsController < ApplicationController
   skip_before_action :verify_authenticity_token
   skip_before_action :authenticate_user!
@@ -27,11 +28,13 @@ class API::V1::PartnerRequestsController < ApplicationController
   private
 
   def api_key_valid?
+    return true if Rails.env.development?
+
     request.headers["X-Api-Key"] == ENV["PARTNER_KEY"]
   end
 
   def request_params
     params.require(:request).permit(:organization_id, :partner_id, :comments,
-                                    request_items: CanonicalItem.pluck(:partner_key).map(&:to_sym))
+                                    request_items: [:item_id, :quantity])
   end
 end
