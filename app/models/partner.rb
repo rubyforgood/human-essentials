@@ -50,4 +50,13 @@ class Partner < ApplicationRecord
   def register_on_partnerbase
     UpdateDiaperPartnerJob.perform_async(id)
   end
+
+  def quantity_year_to_date
+    self.distributions
+      .includes(items: :line_items)
+      .where("line_items.created_at > ?", Date.today.beginning_of_year)
+      .references(items: :line_items).map do |distribution|
+        distribution.items.map(&:line_items)
+      end.flatten.sum(&:quantity)
+  end
 end

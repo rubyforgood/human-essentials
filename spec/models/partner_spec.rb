@@ -82,4 +82,23 @@ RSpec.describe Partner, type: :model do
       Partner.import_csv(csv, organization.id)
     end
   end
+
+  describe '#quantity_year_to_date' do
+    let(:partner) { create(:partner) }
+    before do
+      create(:distribution, :with_items, partner: partner)
+      create(:distribution, :with_items, partner: partner)
+      create(:distribution, :with_items, partner: partner)
+    end
+
+    it "includes all item quantities for the given year" do
+      expect(partner.quantity_year_to_date).to eq(300)
+    end
+
+    it "does not include quantities from last year" do
+      LineItem.last
+        .update_column(:created_at, Date.today.beginning_of_year - 20)
+      expect(partner.quantity_year_to_date).to eq(200)
+    end
+  end
 end
