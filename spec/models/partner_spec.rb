@@ -96,8 +96,7 @@ RSpec.describe Partner, type: :model do
     end
 
     it "does not include quantities from last year" do
-      LineItem.last
-        .update_column(:created_at, Date.today.beginning_of_year - 20)
+      LineItem.last.update(created_at: Time.zone.today.beginning_of_year - 20)
       expect(partner.quantity_year_to_date).to eq(200)
     end
   end
