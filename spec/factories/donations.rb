@@ -13,12 +13,14 @@
 #  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
 #  money_raised                :integer
+#  manufacturer_id             :bigint(8)
 #
 
 FactoryBot.define do
   factory :donation do
     donation_site
     diaper_drive_participant
+    manufacturer
     source { Donation::SOURCES[:misc] }
     comment { "It's a fine day for diapers." }
     storage_location
