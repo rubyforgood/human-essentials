@@ -37,10 +37,10 @@ class RequestsController < ApplicationController
   def sum_inventory(key)
     current_organization.inventory_items.where(item_id: key).sum(:quantity)
   end
-  
+
   def destroy
-     request= Request.find(params[:id]).destroy
-      #TODO :kick off job to destroy & send email
-      redirect_to dashboard_path
+    Request.find(params[:id]).destroy
+    # TODO: kick off job to destroy & send email
+    redirect_to dashboard_path
   end
 end

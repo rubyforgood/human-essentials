@@ -116,19 +116,19 @@ Rails.application.routes.draw do
     end
 
     resources :purchases
-    #MODIFIED route by adding destroy to
+    # MODIFIED route by adding destroy to
     resources :requests, only: %i(index new show destroy) do
       member do
         post :start
       end
     end
-    
+
     resources :requests, except: %i(destroy) do
-        get :print, on: :member
-        post :cancel, on: :member
-        collection do
-            get :partner_requests
-        end
+      get :print, on: :member
+      post :cancel, on: :member
+      collection do
+        get :partner_requests
+      end
     end
 
     get "dashboard", to: "dashboard#index"
