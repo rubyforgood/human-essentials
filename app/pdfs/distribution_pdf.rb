@@ -28,6 +28,10 @@ class DistributionPdf
     text @distribution.distributed_at
     move_down 10
 
+    text "Items Received Year-to-Date", style: :bold
+    text @distribution.partner.quantity_year_to_date.to_s
+    move_down 10
+
     text "Comments:", style: :bold
     text @distribution.comment
 
