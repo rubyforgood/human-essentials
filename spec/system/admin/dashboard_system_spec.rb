@@ -1,6 +1,6 @@
 RSpec.describe "Dashboard", type: :system, js: true do
   subject { admin_dashboard_path }
-  
+
   context "When the super admin user also has an organization assigned" do
     before do
       @super_admin.organization = @organization
