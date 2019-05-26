@@ -47,7 +47,12 @@ class ItemsController < ApplicationController
   end
 
   def destroy
-    current_organization.items.find(params[:id]).destroy
+    item = current_organization.items.find(params[:id])
+    ActiveRecord::Base.transaction do
+      item.destroy
+    end
+
+    flash[:notice] = "#{item.name} has been removed."
     redirect_to items_path
   end
 

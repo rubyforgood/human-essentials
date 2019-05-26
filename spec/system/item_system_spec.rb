@@ -49,32 +49,44 @@ RSpec.describe "Item management", type: :system do
     end
   end
 
-  it "can delete an item as a user" do
-    item = create(:item, organization: @user.organization)
-    visit url_prefix + "/items"
-    expect do
-      within "tr[data-item-id='#{item.id}']" do
-        click_on "Delete", match: :first
+  describe "destroying items" do
+    subject { create(:item, name: "DELETEME", organization: @user.organization) }
+    context "when an item has history" do
+      before do
+        create(:donation, :with_items, item: subject)
       end
-    end.to change { Item.count }.by(-1)
-  end
+      it "can be soft-deleted (deactivated) by the user" do
+        expect do
+          visit url_prefix + "/items"
+          expect(page).to have_content(subject.name)
+          within "tr[data-item-id='#{subject.id}']" do
+            accept_confirm do
+              click_on "Delete", match: :first
+            end
+          end
+          page.find(".alert-info")
+        end.to change { Item.unscoped.count }.by(0).and change { Item.count }.by(-1)
+        subject.reload
+        expect(subject).not_to be_active
+      end
+    end
 
-  it "can 'delete' an item that has history, but it only soft-deletes it as a user" do
-    item = create(:item, name: "DELETEME", organization: @user.organization)
-    create(:donation, :with_items, item: item)
-    visit url_prefix + "/items"
-    expect(page).to have_content("DELETEME")
-    expect do
-      within "tr[data-item-id='#{item.id}']" do
-        accept_confirm do
-          click_on "Delete", match: :first
-        end
+    context "when an item does not have history" do
+      it "can be fully deleted by the user" do
+        subject
+        expect do
+          visit url_prefix + "/items"
+          expect(page).to have_content(subject.name)
+          within "tr[data-item-id='#{subject.id}']" do
+            accept_confirm do
+              click_on "Delete", match: :first
+            end
+          end
+          page.find(".alert-info")
+        end.to change { Item.unscoped.count }.by(-1).and change { Item.count }.by(-1)
+        expect{subject.reload}.to raise_error(ActiveRecord::RecordNotFound)
       end
-    end.not_to change { Item.unscoped.count }
-    item.reload
-    expect(item).not_to be_active
-    visit url_prefix + "/items"
-    expect(page).not_to have_content("DELETEME")
+    end
   end
 
   describe "Item Table Tabs >" do
@@ -90,8 +102,8 @@ RSpec.describe "Item management", type: :system do
     let(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
     let(:donation_aux_tampons) { create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons) }
     before do
-      storage.intake!(donation_tampons)
-      aux_storage.intake!(donation_aux_tampons)
+      storage.increase_inventory(donation_tampons)
+      aux_storage.increase_inventory(donation_aux_tampons)
       visit url_prefix + "/items"
     end
     # Consolidated these into one to reduce the setup/teardown
