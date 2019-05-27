@@ -24,8 +24,6 @@ DIAPERBANK_PARTNER_REQUEST_URL="https://diaper.test/api/v1/partner_requests"
 DIAPERBANK_KEY="secretpassword"
 ```
 
-In the diaper and partner apps you'll need to remove/comment out the environment checks. You can do a search for: `return if Rails.env != "production"` And just comment those out!
-
 In your development configuration files `development.rb` you may want to set the action_mailer config `config.action_mailer.default_url_options = { 'diaper.test' }` (or `partner.test`)
 
 Then start up puma-dev (`puma-dev` from the command line.)
