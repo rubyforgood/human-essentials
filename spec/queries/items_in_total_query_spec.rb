@@ -2,6 +2,8 @@
 
 RSpec.describe ItemsInTotalQuery do
   let!(:storage_location) { create(:storage_location, organization: @organization) }
+  let!(:other_storage_location) { create(:storage_location, :with_items, item: create(:item), item_quantity: 10, organization: @organization) }
+
   subject { ItemsInTotalQuery.new(storage_location: storage_location, organization: @organization).call }
 
   describe "items_in" do
@@ -9,12 +11,25 @@ RSpec.describe ItemsInTotalQuery do
       create(:donation, :with_items, item: create(:item), item_quantity: 10, storage_location: storage_location)
       create(:purchase, :with_items, item: create(:item), item_quantity: 10, storage_location: storage_location)
       create(:adjustment, :with_items, item: create(:item), item_quantity: 10, storage_location: storage_location)
-      other_storage_location = create(:storage_location, :with_items, item: create(:item), item_quantity: 10, organization: @organization)
       create(:transfer, :with_items, item_quantity: 10, item: other_storage_location.inventory_items.first.item, from: other_storage_location, to: storage_location)
     end
 
     it "returns a sum total of all in-flows" do
       expect(subject).to eq(40)
+    end
+
+    it "does not count negative adjustments towards in-flow" do
+      shared_item = create(:item)
+      create(:donation, :with_items, item: shared_item, item_quantity: 10, storage_location: storage_location)
+      create(:adjustment, :with_items, item: shared_item, item_quantity: -10, storage_location: storage_location)
+      expect(subject).to eq(50)
+    end
+
+    it "does not count transfers going in the negative direction" do
+      shared_item = create(:item)
+      create(:donation, :with_items, item: shared_item, item_quantity: 10, storage_location: storage_location)
+      create(:transfer, :with_items, item_quantity: 10, item: shared_item, from: storage_location, to: other_storage_location)
+      expect(subject).to eq(50)
     end
   end
 end
