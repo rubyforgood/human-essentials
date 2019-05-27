@@ -30,7 +30,7 @@
         <td><%= child.race %></td>
         <td><%= child.agency_child_id %></td>
         <td><%= child.health_insurance %></td>
-        <td><%= child.item_needed %></td>
+        <td><%= item_id_to_display_string_map[child.item_needed_diaperid] %></td>
         <td><%= child.comments %></td>
         <td><%= link_to 'Show', child %></td>
         <td><%= link_to 'Edit', edit_child_path(child) %></td>
