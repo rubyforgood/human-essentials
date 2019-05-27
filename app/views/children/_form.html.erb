@@ -1,72 +1,105 @@
 <%= form_with(model: child, local: true) do |form| %>
-  <% if child.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(child.errors.count, "error") %> prohibited this child from being saved:</h2>
+  <div class="row">
+    <div class="col-md-6">
+        <% if child.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(child.errors.count, "error") %> prohibited this child from being saved:</h2>
 
-      <ul>
-      <% child.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+            <ul>
+            <% child.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+      <div class="tile">
+        <h3 class="tile-title">Child Information</h3>
+
+        <div class="tile-body">
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :first_name, class: "control-label col-md-3"%>
+              <%= form.text_field :first_name, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :last_name, class: "control-label col-md-3"%>
+              <%= form.text_field :last_name, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :date_of_birth, class: "control-label col-md-3"%>
+              <%= form.date_select :date_of_birth, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :gender, class: "control-label col-md-3"%>
+              <%= form.text_field :gender, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :child_lives_with, class: "control-label col-md-3"%>
+              <%= form.text_field :child_lives_with, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :race, class: "control-label col-md-3" %>
+              <%= form.text_field :race, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :agency_child_id, class: "control-label col-md-3"%>
+              <%= form.text_field :agency_child_id, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :health_insurance, class: "control-label col-md-3"%>
+              <%= form.text_field :health_insurance, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :item_needed, class: "control-label col-md-3"%>
+              <%= form.text_field :item_needed, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :comments, class: "control-label col-md-3"%>
+              <%= form.text_area :comments, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :family_id, class: "control-label col-md-3"%>
+              <%= form.number_field :family_id, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="actions">
+            <%= form.submit(class: 'btn btn-primary') %>
+          </div>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :first_name %>
-    <%= form.text_field :first_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :last_name %>
-    <%= form.text_field :last_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :date_of_birth %>
-    <%= form.date_select :date_of_birth %>
-  </div>
-
-  <div class="field">
-    <%= form.label :gender %>
-    <%= form.text_field :gender %>
-  </div>
-
-  <div class="field">
-    <%= form.label :child_lives_with %>
-    <%= form.text_field :child_lives_with %>
-  </div>
-
-  <div class="field">
-    <%= form.label :race %>
-    <%= form.text_field :race %>
-  </div>
-
-  <div class="field">
-    <%= form.label :agency_child_id %>
-    <%= form.text_field :agency_child_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :health_insurance %>
-    <%= form.text_field :health_insurance %>
-  </div>
-
-  <div class="field">
-    <%= form.label :item_needed %>
-    <%= form.text_field :item_needed %>
-  </div>
-
-  <div class="field">
-    <%= form.label :comments %>
-    <%= form.text_area :comments %>
-  </div>
-
-  <div class="field">
-    <%= form.label :family_id %>
-    <%= form.number_field :family_id %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
   </div>
 <% end %>
