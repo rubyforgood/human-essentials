@@ -1,92 +1,130 @@
 <%= form_with(model: family, local: true) do |form| %>
-  <% if family.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(family.errors.count, "error") %> prohibited this family from being saved:</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <% if family.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(family.errors.count, "error") %> prohibited this family from being saved:</h2>
 
-      <ul>
-      <% family.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+            <ul>
+            <% family.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="tile">
+          <h3 class="tile-title">Family Information</h3>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_first_name, class: "control-label col-md-3" %>
+              <%= form.text_field :guardian_first_name, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_last_name, class: "control-label col-md-3" %>
+              <%= form.text_field :guardian_last_name, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_zip_code, class: "control-label col-md-3" %>
+              <%= form.text_field :guardian_zip_code, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_country, class: "control-label col-md-3" %>
+              <%= form.text_field :guardian_country, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_phone, class: "control-label col-md-3" %>
+              <%= form.text_field :guardian_phone , class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :agency_guardian_id, class: "control-label col-md-3" %>
+              <%= form.text_field :agency_guardia, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :home_adult_count, class: "control-label col-md-3" %>
+              <%= form.number_field :home_adult_, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :home_child_count, class: "control-label col-md-3" %>
+              <%= form.number_field :home_child, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :home_young_child_count, class: "control-label col-md-3" %>
+              <%= form.number_field :home_youn, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :sources_of_income, class: "control-label col-md-3" %>
+              <%= form.text_field :sources_of, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_employed, class: "control-label col-md-3" %>
+              <%= form.check_box :guardian_e, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_employment_type, class: "control-label col-md-3" %>
+              <%= form.text_field :guardian, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_monthly_pay, class: "control-label col-md-3" %>
+              <%= form.text_field :guardia, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :guardian_health_insurance, class: "control-label col-md-3" %>
+              <%= form.text_field :guardi, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :comments, class: "control-label col-md-3" %>
+              <%= form.text_area :commen, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+        <div class="actions">
+          <%= form.submit(class: 'btn btn-primary') %>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :guardian_first_name %>
-    <%= form.text_field :guardian_first_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :guardian_last_name %>
-    <%= form.text_field :guardian_last_name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :guardian_zip_code %>
-    <%= form.text_field :guardian_zip_code %>
-  </div>
-
-  <div class="field">
-    <%= form.label :guardian_country %>
-    <%= form.text_field :guardian_country %>
-  </div>
-
-  <div class="field">
-    <%= form.label :guardian_phone %>
-    <%= form.text_field :guardian_phone %>
-  </div>
-
-  <div class="field">
-    <%= form.label :agency_guardian_id %>
-    <%= form.text_field :agency_guardian_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :home_adult_count %>
-    <%= form.number_field :home_adult_count %>
-  </div>
-
-  <div class="field">
-    <%= form.label :home_child_count %>
-    <%= form.number_field :home_child_count %>
-  </div>
-
-  <div class="field">
-    <%= form.label :home_young_child_count %>
-    <%= form.number_field :home_young_child_count %>
-  </div>
-
-  <div class="field">
-    <%= form.label :sources_of_income %>
-    <%= form.text_field :sources_of_income %>
-  </div>
-
-  <div class="field">
-    <%= form.label :guardian_employed %>
-    <%= form.check_box :guardian_employed %>
-  </div>
-
-  <div class="field">
-    <%= form.label :guardian_employment_type %>
-    <%= form.text_field :guardian_employment_type %>
-  </div>
-
-  <div class="field">
-    <%= form.label :guardian_monthly_pay %>
-    <%= form.text_field :guardian_monthly_pay %>
-  </div>
-
-  <div class="field">
-    <%= form.label :guardian_health_insurance %>
-    <%= form.text_field :guardian_health_insurance %>
-  </div>
-
-  <div class="field">
-    <%= form.label :comments %>
-    <%= form.text_area :comments %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
   </div>
 <% end %>
