@@ -60,6 +60,18 @@ class ChildrenController < ApplicationController
     end
   end
 
+  helper_method :valid_items
+  def valid_items
+    @valid_items ||= DiaperBankClient.get_available_items(current_partner.diaper_bank_id)
+  end
+
+  helper_method :item_id_to_display_string_map
+  def item_id_to_display_string_map
+    @item_id_to_display_string_map ||= valid_items.each_with_object({}) do |item, hash|
+      hash[item['id'].to_i] = item['name']
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -69,6 +81,6 @@ class ChildrenController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def child_params
-    params.require(:child).permit(:first_name, :last_name, :date_of_birth, :gender, :child_lives_with, :race, :agency_child_id, :health_insurance, :item_needed, :comments, :family_id)
+    params.require(:child).permit(:first_name, :last_name, :date_of_birth, :gender, :child_lives_with, :race, :agency_child_id, :health_insurance, :item_needed_diaperid, :comments, :family_id)
   end
 end
