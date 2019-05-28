@@ -60,18 +60,6 @@ class ChildrenController < ApplicationController
     end
   end
 
-  helper_method :valid_items
-  def valid_items
-    @valid_items ||= DiaperBankClient.get_available_items(current_partner.diaper_bank_id)
-  end
-
-  helper_method :item_id_to_display_string_map
-  def item_id_to_display_string_map
-    @item_id_to_display_string_map ||= valid_items.each_with_object({}) do |item, hash|
-      hash[item['id'].to_i] = item['name']
-    end
-  end
-
   private
 
   # Use callbacks to share common setup or constraints between actions.
