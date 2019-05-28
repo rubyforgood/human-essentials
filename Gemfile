@@ -52,6 +52,7 @@ group :development, :test do
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "pry-rails"
+  gem "pry-remote"
   gem "pry-nav"
   gem 'rb-readline', '~> 0.5.3'
   gem "rspec-rails", "~> 3.8"
