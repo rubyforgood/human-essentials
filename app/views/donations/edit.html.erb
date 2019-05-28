@@ -1,21 +1,22 @@
 <div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Edit - Donations - #{@donation.source} - #{current_organization.name}" %>
   <div class="col-lg-8">
-  <h2> Editing Donation from <%= @donation.source %></h2>
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-      <%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li class="breadcrumb-item">
-      <%= link_to "Donations", (donations_path) %>
-    </li>
-    <li class="breadcrumb-item active">
-      Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %>
-    </li>
-  </ol>
-<div>
+    <h2> Editing Donation from <%= @donation.source %></h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item">
+        <%= link_to "Donations", (donations_path) %>
+      </li>
+      <li class="breadcrumb-item active">
+        Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %>
+      </li>
+    </ol>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-lg-12">
@@ -24,9 +25,7 @@
         <div class="ibox-title">
           <h3>Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></h3>
         </div>
-        <div class="ibox-content">
-          <%= render partial: "donation_form", object: @donation %>
-        </div>
+        <%= render partial: "donation_form", object: @donation %>
       </div>
     </div>
   </div>
