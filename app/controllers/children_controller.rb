@@ -17,6 +17,12 @@ class ChildrenController < ApplicationController
     @child = Child.new(family_id: params[:family_id])
   end
 
+  def active
+    child = Child.find(params[:child_id])
+    child.active = !child.active
+    child.save
+  end
+
   # GET /children/1/edit
   def edit; end
 
