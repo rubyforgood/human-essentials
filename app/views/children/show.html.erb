@@ -1,54 +1,66 @@
-<p id="notice"><%= notice %></p>
+<div class="app-title">
+  <div>
+    <h1><i class="fa fa-new"></i> Show Child</h1>
+  </div>
+  <ul class="app-breadcrumb breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-child"></i></li>
+    <li class="breadcrumb-item"><a href="#">Show Child</a></li>
+  </ul>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <% if notice %>
+      <div class="alert alert-dismissible alert-success">
+        <button class="close" type="button" data-dismiss="alert">×</button>
+        <p><%= notice %><a class="alert-link" href="#"></p>
+        </a></p>
+      </div>
+    <% end %>
 
-<p>
-  <strong>First name:</strong>
-  <%= @child.first_name %>
-</p>
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <div class="card mb-12">
+            <h5 class="card-header bg-primary text-white">Child Information</h5>
+            <div class="card-body">
+              <dl>
+                <dt>First name</dt>
+                <dd><%= @child.first_name %></dd>
 
-<p>
-  <strong>Last name:</strong>
-  <%= @child.last_name %>
-</p>
+                <dt>Last name:</dt>
+                <dd><%= @child.last_name %></dd>
 
-<p>
-  <strong>Date of birth:</strong>
-  <%= @child.date_of_birth %>
-</p>
+                <dt>Date of birth:</dt>
+                <dd><%= @child.date_of_birth %></dd>
 
-<p>
-  <strong>Gender:</strong>
-  <%= @child.gender %>
-</p>
+                <dt>Gender:</dt>
+                <dd><%= @child.gender %></dd>
 
-<p>
-  <strong>Child lives with:</strong>
-  <%= @child.child_lives_with %>
-</p>
+                <dt>Child lives with:</dt>
+                <dd><%= @child.child_lives_with %></dd>
 
-<p>
-  <strong>Race:</strong>
-  <%= @child.race %>
-</p>
+                <dt>Race:</dt>
+                <dd><%= @child.race %></dd>
 
-<p>
-  <strong>Agency child:</strong>
-  <%= @child.agency_child_id %>
-</p>
+                <dt>Agency child:</dt>
+                <dd><%= @child.agency_child_id %></dd>
 
-<p>
-  <strong>Health insurance:</strong>
-  <%= @child.health_insurance %>
-</p>
+                <dt>Health insurance:</dt>
+                <dd><%= @child.health_insurance %></dd>
 
-<p>
-  <strong>Item needed:</strong>
-  <%= item_id_to_display_string_map[@child.item_needed_diaperid] %>
-</p>
+                <dt>Item needed:</dt>
+                <dd><%= item_id_to_display_string_map[@child.item_needed_diaperid] %></dd>
 
-<p>
-  <strong>Comments:</strong>
-  <%= @child.comments %>
-</p>
+                <dt>Comments:</dt>
+                <dd><%= @child.comments %></dd>
+              </dl>
 
-<%= link_to 'Edit', edit_child_path(@child) %> |
-<%= link_to 'Back', children_path %>
+              <%= link_to 'Edit', edit_child_path(@child) %> |
+              <%= link_to 'Back', children_path %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
