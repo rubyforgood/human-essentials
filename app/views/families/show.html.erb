@@ -71,7 +71,8 @@
               </dl>
 
               <%= link_to 'Edit', edit_family_path(@family) %> |
-              <%= link_to 'Back', families_path %>
+              <%= link_to 'Back', families_path %> |
+              <%= link_to 'New Child', new_child_path(family_id: @family.id) %>
             </div>
           </div>
         </div>
