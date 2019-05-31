@@ -913,6 +913,211 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end                
       end
 
+      describe "Distributions" do
+        around do |example|
+          Timecop.travel(Date.parse("June 1 2018")) do
+            example.run
+          end
+        end
+
+        before do
+          @organization.distributions.destroy_all
+          storage_location = create(:storage_location, :with_items, item_quantity: 500, organization: @organization)
+
+          partner_1 = create(:partner, name: "Partner ABC", organization: @organization)
+          partner_2 = create(:partner, name: "Partner BCD", organization: @organization)
+          partner_3 = create(:partner, name: "Partner CDE", organization: @organization)
+          partner_4 = create(:partner, name: "Partner DEF", organization: @organization)
+
+          @this_years_distributions = {
+            today: create(:distribution, :with_items, partner: partner_1, issued_at: Time.zone.now, item_quantity: 10, storage_location: storage_location, organization: @organization),
+            yesterday: create(:distribution, :with_items, partner: partner_2, issued_at: Time.zone.yesterday, item_quantity: 11, storage_location: storage_location, organization: @organization),
+            earlier_this_week: create(:distribution, :with_items, partner: partner_3, issued_at: Time.zone.now.beginning_of_week, item_quantity: 12, storage_location: storage_location, organization: @organization),
+            beginning_of_year: create(:distribution, :with_items, partner: partner_4, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 13, storage_location: storage_location, organization: @organization)
+          }
+          @last_years_distributions = create_list(:distribution, 2, :with_items, partner: partner_1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 14, storage_location: storage_location, organization: @organization)
+          visit subject
+        end
+
+        it "has a link to create a new distribution" do
+          expect(page).to have_css("#distributions")          
+          within "#distributions" do
+            expect(page).to have_xpath("//a[@href='#{new_distribution_path(organization_id: @organization.to_param)}']")
+          end
+        end
+
+        context "with year-to-date selected" do
+          before do
+            page.select "Year to date", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum }
+          let(:partners) { @this_years_distributions.values.map(&:partner).map(&:name) }
+
+          it "has a widget displaying the year-to-date distribution totals, only using distributions from this year" do
+            within "#distributions" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent distributions" do
+            within "#distributions" do
+              expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 3)
+            end
+          end
+        end
+
+        context "with today selected" do
+          before do
+            page.select "Today", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_distributions[:today].line_items.total }
+          let(:partner) { @this_years_distributions[:today].partner.name }
+
+          it "has a widget displaying today's distributions totals, only using distributions from today" do
+            within "#distributions" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent distributions" do
+            within "#distributions" do
+              expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
+            end
+          end
+        end
+
+        context "with yesterday selected" do
+          before do
+            page.select "Yesterday", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_distributions[:yesterday].line_items.total }
+          let(:partner) { @this_years_distributions[:yesterday].partner.name }
+
+          it "has a widget displaying the distributions totals from yesterday, only using distributions from yesterday" do
+            within "#distributions" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent distributions" do
+            within "#distributions" do
+              expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
+            end
+          end
+        end
+
+        context "with this week selected" do
+          before do
+            page.select "This Week", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { [ @this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week] ].map(&:line_items).flatten.map(&:quantity).sum }
+          let(:partners) { [ @this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week] ].map(&:partner).map(&:name) }
+
+          it "has a widget displaying the distributions totals from this week, only using distributions from this week" do
+            within "#distributions" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent distributions" do
+            within "#distributions" do
+              partners.each do |partner|
+                expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
+              end
+            end
+          end
+        end
+
+        context "with this month selected" do
+          before do
+            page.select "This Month", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_distributions[:today].line_items.total }
+          let(:partner) { @this_years_distributions[:today].partner.name }
+
+          it "has a widget displaying the distributions totals from this month, only using distributions from this month" do
+            within "#distributions" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent distributions" do
+            within "#distributions" do
+              expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
+            end
+          end
+        end
+
+        context "with last month selected" do
+          before do
+            page.select "Last Month", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { [ @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week] ].map(&:line_items).flatten.map(&:quantity).sum }
+          let(:partners) { [ @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week] ].map(&:partner).map(&:name) }
+
+          it "has a widget displaying the distributions totals from last month, only using distributions from last month" do
+            within "#distributions" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent distributions" do
+            within "#distributions" do
+              partners.each do |partner|
+                expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
+              end
+            end
+          end
+        end
+
+        context "with last year selected" do
+          before do
+            page.select "Last Year", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @last_years_distributions.map(&:line_items).flatten.map(&:quantity).sum }
+          let(:partners) { @last_years_distributions.map(&:partner).map(&:name) }
+
+          it "has a widget displaying the distributions totals from last year, only using distributions from last year" do
+            within "#distributions" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent distributions from that time" do
+            within "#distributions" do
+              expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 2)              
+            end
+          end
+        end
+
+        context "with all time selected" do
+          before do
+            page.select "All time", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum + @last_years_distributions.map(&:line_items).flatten.map(&:quantity).sum }
+          let(:partners) { [ @this_years_distributions.values + @last_years_distributions].flatten.map(&:partner).map(&:name) }
+
+          it "has a widget displaying the distributions totals from last year, only using distributions from last year" do
+            within "#distributions" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent distributions from that time" do
+            within "#distributions" do
+              expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 3)              
+            end
+          end
+        end                
+      end
 
 
       xcontext "inactive item" do
