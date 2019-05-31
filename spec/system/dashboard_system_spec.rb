@@ -319,7 +319,192 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end                
       end
 
-      describe "Purchases" do
+      fdescribe "Purchases" do
+        around do |example|
+          Timecop.travel(Date.parse("June 1 2018")) do
+            example.run
+          end
+        end
+
+        before do
+          @organization.purchases.destroy_all
+          storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
+          @this_years_purchases = {
+            today: create(:purchase, :with_items, issued_at: Time.zone.now, item_quantity: 100, storage_location: storage_location, organization: @organization),
+            yesterday: create(:purchase, :with_items, issued_at: Time.zone.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
+            earlier_this_week: create(:purchase, :with_items, issued_at: Time.zone.now.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
+            beginning_of_year: create(:purchase, :with_items, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 103, storage_location: storage_location, organization: @organization)
+          }
+          @last_years_purchases = create_list(:purchase, 2, :with_items, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 104, storage_location: storage_location, organization: @organization)
+          visit subject
+        end
+
+        it "has a link to create a new purchase" do
+          expect(page).to have_css("#purchases")          
+          within "#purchases" do
+            expect(page).to have_xpath("//a[@href='#{new_purchase_path(organization_id: @organization.to_param)}']", visible: false)
+          end
+        end
+
+        context "with year-to-date selected" do
+          before do
+            page.select "Year to date", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum }
+
+          it "has a widget displaying the year-to-date Purchase totals, only using purchases from this year" do
+            within "#purchases" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent purchases" do
+            within "#purchases" do
+              expect(page).to have_css("a", text: /10\d items/i, count: 3)
+            end
+          end
+        end
+
+        context "with today selected" do
+          before do
+            page.select "Today", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_purchases[:today].total_quantity }
+
+          it "has a widget displaying today's Purchase totals, only using purchases from today" do
+            within "#purchases" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent purchases" do
+            within "#purchases" do
+              expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
+            end
+          end
+        end
+
+        context "with yesterday selected" do
+          before do
+            page.select "Yesterday", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_purchases[:yesterday].total_quantity }
+
+          it "has a widget displaying the Purchase totals from yesterday, only using purchases from yesterday" do
+            within "#purchases" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent purchases" do
+            within "#purchases" do
+              expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
+            end
+          end
+        end
+
+        context "with this week selected" do
+          before do
+            page.select "This Week", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { [ @this_years_purchases[:today], @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week] ].map(&:total_quantity).sum }
+
+          it "has a widget displaying the Purchase totals from this week, only using purchases from this week" do
+            within "#purchases" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent purchases" do
+            within "#purchases" do
+              expect(page).to have_css("a", text: /10\d items/i, count: 3)
+            end
+          end
+        end
+
+        context "with this month selected" do
+          before do
+            page.select "This Month", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_purchases[:today].total_quantity }
+
+          it "has a widget displaying the Purchase totals from this month, only using purchases from this month" do
+            within "#purchases" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent purchases" do
+            within "#purchases" do
+              expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
+            end
+          end
+        end
+
+        context "with last month selected" do
+          before do
+            page.select "Last Month", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { [ @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week] ].map(&:total_quantity).sum }
+
+          it "has a widget displaying the Purchase totals from last month, only using purchases from last month" do
+            within "#purchases" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent purchases" do
+            within "#purchases" do
+              expect(page).to have_css("a", text: /10\d items/i, count: 2)
+            end
+          end
+        end
+
+        context "with last year selected" do
+          before do
+            page.select "Last Year", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @last_years_purchases.map(&:total_quantity).sum }
+
+          it "has a widget displaying the Purchase totals from last year, only using purchases from last year" do
+            within "#purchases" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent purchases from that time" do
+            within "#purchases" do
+              expect(page).to have_css("a", text: /10\d items/i, count: 2)
+            end
+          end
+        end
+
+        context "with all time selected" do
+          before do
+            page.select "All time", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum + @last_years_purchases.map(&:total_quantity).sum }
+
+          it "has a widget displaying the Purchase totals from last year, only using purchases from last year" do
+            within "#purchases" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent purchases from that time" do
+            within "#purchases" do
+              expect(page).to have_css("a", text: /10\d items/i, count: 3)
+            end
+          end
+        end                
       end
 
 
