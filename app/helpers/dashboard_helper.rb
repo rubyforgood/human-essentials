@@ -82,7 +82,7 @@ module DashboardHelper
   end
 
   def total_received_from_diaper_drives_unformatted(range = selected_range)
-    LineItem.active.where(itemizable: current_organization.donations.by_source(:diaper_drive).during(range)).sum(:quantity)    
+    LineItem.active.where(itemizable: current_organization.donations.by_source(:diaper_drive).during(range)).sum(:quantity)
   end
 
   def total_purchased_unformatted(range = selected_range)

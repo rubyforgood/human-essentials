@@ -39,6 +39,6 @@ FactoryBot.define do
         item = evaluator.item || transfer.storage_location.inventory_items.first.item
         transfer.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: transfer)
       end
-    end    
+    end
   end
 end

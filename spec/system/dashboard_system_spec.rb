@@ -84,7 +84,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
     end
 
     describe "Date Ranges" do
-
       it "should scope down what the user sees in the dashboard using the date-range drop down" do
         Timecop.freeze(Time.utc(2018, 6, 15, 12, 0, 0)) do
           item = create(:item, organization: @organization)
@@ -117,18 +116,18 @@ RSpec.describe "Dashboard", type: :system, js: true do
     end
 
     describe "Inventory Totals" do
-#      let(:donation) { create(:donation, :with_items, organization: @organization) }
-#      let(:purchase) { create(:purchase, :with_items, organization: @organization) }
-#      let(:distribution) { create(:distribution, :with_items, organization: @organization) }
+      #      let(:donation) { create(:donation, :with_items, organization: @organization) }
+      #      let(:purchase) { create(:purchase, :with_items, organization: @organization) }
+      #      let(:distribution) { create(:distribution, :with_items, organization: @organization) }
 
       before do
-#        create(:partner)
-#        create(:item, organization: @organization)
-#        create(:storage_location, organization: @organization)
-#        create(:donation_site, organization: @organization)
-#        create(:diaper_drive_participant, organization: @organization)
-#        create(:manufacturer, organization: @organization)
-#        @organization.reload
+        #        create(:partner)
+        #        create(:item, organization: @organization)
+        #        create(:storage_location, organization: @organization)
+        #        create(:donation_site, organization: @organization)
+        #        create(:diaper_drive_participant, organization: @organization)
+        #        create(:manufacturer, organization: @organization)
+        #        @organization.reload
       end
 
       describe "Donations" do
@@ -152,7 +151,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "has a link to create a new donation" do
-          expect(page).to have_css("#donations")          
+          expect(page).to have_css("#donations")
           within "#donations" do
             expect(page).to have_xpath("//a[@href='#{new_donation_path(organization_id: @organization.to_param)}']", visible: false)
           end
@@ -223,7 +222,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "This Week", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
+          let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
 
           it "has a widget displaying the Donation totals from this week, only using donations from this week" do
             within "#donations" do
@@ -263,7 +262,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "Last Month", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
+          let(:total_inventory) { [@this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
 
           it "has a widget displaying the Donation totals from last month, only using donations from last month" do
             within "#donations" do
@@ -316,7 +315,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(page).to have_css("a", text: /10\d items/i, count: 3)
             end
           end
-        end                
+        end
       end
 
       describe "Purchases" do
@@ -340,7 +339,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "has a link to create a new purchase" do
-          expect(page).to have_css("#purchases")          
+          expect(page).to have_css("#purchases")
           within "#purchases" do
             expect(page).to have_xpath("//a[@href='#{new_purchase_path(organization_id: @organization.to_param)}']", visible: false)
           end
@@ -411,7 +410,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "This Week", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_purchases[:today], @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week] ].map(&:total_quantity).sum }
+          let(:total_inventory) { [@this_years_purchases[:today], @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week]].map(&:total_quantity).sum }
 
           it "has a widget displaying the Purchase totals from this week, only using purchases from this week" do
             within "#purchases" do
@@ -451,7 +450,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "Last Month", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week] ].map(&:total_quantity).sum }
+          let(:total_inventory) { [@this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week]].map(&:total_quantity).sum }
 
           it "has a widget displaying the Purchase totals from last month, only using purchases from last month" do
             within "#purchases" do
@@ -504,7 +503,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(page).to have_css("a", text: /10\d items/i, count: 3)
             end
           end
-        end                
+        end
       end
 
       describe "Diaper Drives" do
@@ -517,22 +516,22 @@ RSpec.describe "Dashboard", type: :system, js: true do
         before do
           @organization.donations.destroy_all
           storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
-          diaper_drive_1 = create(:diaper_drive_participant, business_name: "First Diaper Drive", organization: @organization)
-          diaper_drive_2 = create(:diaper_drive_participant, business_name: "Second Diaper Drive", organization: @organization)
+          diaper_drive1 = create(:diaper_drive_participant, business_name: "First Diaper Drive", organization: @organization)
+          diaper_drive2 = create(:diaper_drive_participant, business_name: "Second Diaper Drive", organization: @organization)
 
           @this_years_donations = {
-            today: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive_1, issued_at: Time.zone.now, item_quantity: 100, storage_location: storage_location, organization: @organization),
-            yesterday: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive_2, issued_at: Time.zone.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-            earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive_1, issued_at: Time.zone.now.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-            beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive_2, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 103, storage_location: storage_location, organization: @organization)
+            today: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive1, issued_at: Time.zone.now, item_quantity: 100, storage_location: storage_location, organization: @organization),
+            yesterday: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive2, issued_at: Time.zone.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
+            earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive1, issued_at: Time.zone.now.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
+            beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive2, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 103, storage_location: storage_location, organization: @organization)
           }
 
-          @last_years_donations = create_list(:diaper_drive_donation, 2, :with_items, diaper_drive_participant: diaper_drive_1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 104, storage_location: storage_location, organization: @organization)
+          @last_years_donations = create_list(:diaper_drive_donation, 2, :with_items, diaper_drive_participant: diaper_drive1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 104, storage_location: storage_location, organization: @organization)
           visit subject
         end
 
         it "has a widget for diaper drive summary data" do
-          expect(page).to have_css("#diaper_drives")          
+          expect(page).to have_css("#diaper_drives")
         end
 
         context "with year-to-date selected" do
@@ -603,7 +602,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "This Week", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
+          let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
 
           it "has a widget displaying the Diaper drive totals from this week, only using donations from this week" do
             within "#diaper_drives" do
@@ -645,7 +644,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "Last Month", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
+          let(:total_inventory) { [@this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
 
           it "has a widget displaying the Diaper drive totals from last month, only using donations from last month" do
             within "#diaper_drives" do
@@ -701,7 +700,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 3)
             end
           end
-        end                
+        end
       end
 
       describe "Manufacturer Donations" do
@@ -714,23 +713,23 @@ RSpec.describe "Dashboard", type: :system, js: true do
         before do
           @organization.donations.destroy_all
           storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
-          manufacturer_1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
-          manufacturer_2 = create(:manufacturer, name: "BCD Corp", organization: @organization)
-          manufacturer_3 = create(:manufacturer, name: "CDE Corp", organization: @organization)
-          manufacturer_4 = create(:manufacturer, name: "DEF Corp", organization: @organization)
+          manufacturer1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
+          manufacturer2 = create(:manufacturer, name: "BCD Corp", organization: @organization)
+          manufacturer3 = create(:manufacturer, name: "CDE Corp", organization: @organization)
+          manufacturer4 = create(:manufacturer, name: "DEF Corp", organization: @organization)
 
           @this_years_donations = {
-            today: create(:manufacturer_donation, :with_items, manufacturer: manufacturer_1, issued_at: Time.zone.now, item_quantity: 100, storage_location: storage_location, organization: @organization),
-            yesterday: create(:manufacturer_donation, :with_items, manufacturer: manufacturer_2, issued_at: Time.zone.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-            earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer_3, issued_at: Time.zone.now.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-            beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer_4, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 103, storage_location: storage_location, organization: @organization)
+            today: create(:manufacturer_donation, :with_items, manufacturer: manufacturer1, issued_at: Time.zone.now, item_quantity: 100, storage_location: storage_location, organization: @organization),
+            yesterday: create(:manufacturer_donation, :with_items, manufacturer: manufacturer2, issued_at: Time.zone.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
+            earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer3, issued_at: Time.zone.now.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
+            beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 103, storage_location: storage_location, organization: @organization)
           }
-          @last_years_donations = create_list(:manufacturer_donation, 2, :with_items, manufacturer: manufacturer_1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 104, storage_location: storage_location, organization: @organization)
+          @last_years_donations = create_list(:manufacturer_donation, 2, :with_items, manufacturer: manufacturer1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 104, storage_location: storage_location, organization: @organization)
           visit subject
         end
 
         it "has a link to create a new donation" do
-          expect(page).to have_css("#manufacturers")          
+          expect(page).to have_css("#manufacturers")
         end
 
         context "with year-to-date selected" do
@@ -804,8 +803,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "This Week", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
-          let(:manufacturers) { [ @this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:manufacturer).map(&:name) }
+          let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
+          let(:manufacturers) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:manufacturer).map(&:name) }
 
           it "has a widget displaying the Donation totals from this week, only using donations from this week" do
             within "#manufacturers" do
@@ -848,8 +847,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "Last Month", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
-          let(:manufacturers) { [ @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:manufacturer).map(&:name) }
+          let(:total_inventory) { [@this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
+          let(:manufacturers) { [@this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:manufacturer).map(&:name) }
 
           it "has a widget displaying the Donation totals from last month, only using donations from last month" do
             within "#manufacturers" do
@@ -880,7 +879,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
           end
 
-         it "displays the list of top manufacturers" do
+          it "displays the list of top manufacturers" do
             within "#manufacturers" do
               manufacturers.each do |manufacturer|
                 expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
@@ -910,7 +909,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               end
             end
           end
-        end                
+        end
       end
 
       describe "Distributions" do
@@ -924,23 +923,23 @@ RSpec.describe "Dashboard", type: :system, js: true do
           @organization.distributions.destroy_all
           storage_location = create(:storage_location, :with_items, item_quantity: 500, organization: @organization)
 
-          partner_1 = create(:partner, name: "Partner ABC", organization: @organization)
-          partner_2 = create(:partner, name: "Partner BCD", organization: @organization)
-          partner_3 = create(:partner, name: "Partner CDE", organization: @organization)
-          partner_4 = create(:partner, name: "Partner DEF", organization: @organization)
+          partner1 = create(:partner, name: "Partner ABC", organization: @organization)
+          partner2 = create(:partner, name: "Partner BCD", organization: @organization)
+          partner3 = create(:partner, name: "Partner CDE", organization: @organization)
+          partner4 = create(:partner, name: "Partner DEF", organization: @organization)
 
           @this_years_distributions = {
-            today: create(:distribution, :with_items, partner: partner_1, issued_at: Time.zone.now, item_quantity: 10, storage_location: storage_location, organization: @organization),
-            yesterday: create(:distribution, :with_items, partner: partner_2, issued_at: Time.zone.yesterday, item_quantity: 11, storage_location: storage_location, organization: @organization),
-            earlier_this_week: create(:distribution, :with_items, partner: partner_3, issued_at: Time.zone.now.beginning_of_week, item_quantity: 12, storage_location: storage_location, organization: @organization),
-            beginning_of_year: create(:distribution, :with_items, partner: partner_4, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 13, storage_location: storage_location, organization: @organization)
+            today: create(:distribution, :with_items, partner: partner1, issued_at: Time.zone.now, item_quantity: 10, storage_location: storage_location, organization: @organization),
+            yesterday: create(:distribution, :with_items, partner: partner2, issued_at: Time.zone.yesterday, item_quantity: 11, storage_location: storage_location, organization: @organization),
+            earlier_this_week: create(:distribution, :with_items, partner: partner3, issued_at: Time.zone.now.beginning_of_week, item_quantity: 12, storage_location: storage_location, organization: @organization),
+            beginning_of_year: create(:distribution, :with_items, partner: partner4, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 13, storage_location: storage_location, organization: @organization)
           }
-          @last_years_distributions = create_list(:distribution, 2, :with_items, partner: partner_1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 14, storage_location: storage_location, organization: @organization)
+          @last_years_distributions = create_list(:distribution, 2, :with_items, partner: partner1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 14, storage_location: storage_location, organization: @organization)
           visit subject
         end
 
         it "has a link to create a new distribution" do
-          expect(page).to have_css("#distributions")          
+          expect(page).to have_css("#distributions")
           within "#distributions" do
             expect(page).to have_xpath("//a[@href='#{new_distribution_path(organization_id: @organization.to_param)}']")
           end
@@ -1014,8 +1013,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "This Week", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week] ].map(&:line_items).flatten.map(&:quantity).sum }
-          let(:partners) { [ @this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week] ].map(&:partner).map(&:name) }
+          let(:total_inventory) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:line_items).flatten.map(&:quantity).sum }
+          let(:partners) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:partner).map(&:name) }
 
           it "has a widget displaying the distributions totals from this week, only using distributions from this week" do
             within "#distributions" do
@@ -1058,8 +1057,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
             page.select "Last Month", from: "dashboard_filter_interval"
           end
 
-          let(:total_inventory) { [ @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week] ].map(&:line_items).flatten.map(&:quantity).sum }
-          let(:partners) { [ @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week] ].map(&:partner).map(&:name) }
+          let(:total_inventory) { [@this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:line_items).flatten.map(&:quantity).sum }
+          let(:partners) { [@this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:partner).map(&:name) }
 
           it "has a widget displaying the distributions totals from last month, only using distributions from last month" do
             within "#distributions" do
@@ -1092,7 +1091,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           it "displays some recent distributions from that time" do
             within "#distributions" do
-              expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 2)              
+              expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 2)
             end
           end
         end
@@ -1103,7 +1102,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
           end
 
           let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum + @last_years_distributions.map(&:line_items).flatten.map(&:quantity).sum }
-          let(:partners) { [ @this_years_distributions.values + @last_years_distributions].flatten.map(&:partner).map(&:name) }
+          let(:partners) { [@this_years_distributions.values + @last_years_distributions].flatten.map(&:partner).map(&:name) }
 
           it "has a widget displaying the distributions totals from last year, only using distributions from last year" do
             within "#distributions" do
@@ -1113,12 +1112,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           it "displays some recent distributions from that time" do
             within "#distributions" do
-              expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 3)              
+              expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 3)
             end
           end
-        end                
+        end
       end
-
 
       xcontext "inactive item" do
         it 'should not count totals for donations' do

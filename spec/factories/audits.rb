@@ -35,6 +35,6 @@ FactoryBot.define do
         item = evaluator.item || audit.storage_location.inventory_items.first.item
         audit.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: audit)
       end
-    end    
+    end
   end
 end
