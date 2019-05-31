@@ -8,11 +8,11 @@ module DashboardHelper
     [
       %w(Today today),
       %w(Yesterday yesterday),
-      ["Week to date", "week_to_date"],
-      ["Month to date", "month_to_date"],
-      ["Last month", "last_month"],
+      ["This Week", "this_week"],
+      ["This Month", "this_month"],
+      ["Last Month", "last_month"],
       ["Year to date", "year_to_date"],
-      ["Last year", "last_year"],
+      ["Last Year", "last_year"],
       ["All time", "all_time"],
     ]
   end
@@ -22,15 +22,15 @@ module DashboardHelper
   end
 
   def selected_range
-    now = DateTime.now
+    now = Time.zone.now
     case selected_interval
     when "today"
       now.beginning_of_day..now
     when "yesterday"
       (now - 1).beginning_of_day..(now - 1).end_of_day
-    when "week_to_date"
+    when "this_week"
       now.beginning_of_week..now
-    when "month_to_date"
+    when "this_month"
       now.beginning_of_month..now
     when "last_month"
       (now - 1.month).beginning_of_month..(now - 1.month).end_of_month
@@ -39,7 +39,7 @@ module DashboardHelper
     when "last_year"
       (now - 1.year).beginning_of_year..(now - 1.year).end_of_year
     else
-      DateTime.new(2017, 1, 1, 0, 0, 0)..now
+      Time.zone.local(2017, 1, 1, 0, 0, 0)..now
     end
   end
 

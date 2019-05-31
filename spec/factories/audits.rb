@@ -31,15 +31,10 @@ FactoryBot.define do
         item { nil }
       end
 
-      after(:build) do |instance, evaluator|
-        instance.storage_location ||= create(:storage_location, :with_items, item: evaluator.item, organization: instance.organization)
-        item = if evaluator.item.nil?
-                 instance.storage_location.inventory_items.first.item
-               else
-                 evaluator.item
-               end
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+      after(:build) do |audit, evaluator|
+        item = evaluator.item || audit.storage_location.inventory_items.first.item
+        audit.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: audit)
       end
-    end
+    end    
   end
 end

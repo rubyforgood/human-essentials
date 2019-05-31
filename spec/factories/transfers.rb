@@ -28,20 +28,17 @@ FactoryBot.define do
     end
 
     trait :with_items do
+      storage_location { create :storage_location, :with_items, item: item || create(:item), organization: organization }
+
       transient do
         item_quantity { 100 }
         item { nil }
       end
 
-      after(:build) do |instance, evaluator|
-        instance.from = create(:storage_location, :with_items, item: evaluator.item, organization: evaluator.organization)
-        item = if evaluator.item.nil?
-                 instance.from.inventory_items.first.item
-               else
-                 evaluator.item
-               end
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+      after(:build) do |transfer, evaluator|
+        item = evaluator.item || transfer.storage_location.inventory_items.first.item
+        transfer.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: transfer)
       end
-    end
+    end    
   end
 end
