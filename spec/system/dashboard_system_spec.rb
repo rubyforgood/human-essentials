@@ -116,7 +116,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       end
     end
 
-    fdescribe "Inventory Totals" do
+    describe "Inventory Totals" do
 #      let(:donation) { create(:donation, :with_items, organization: @organization) }
 #      let(:purchase) { create(:purchase, :with_items, organization: @organization) }
 #      let(:distribution) { create(:distribution, :with_items, organization: @organization) }
@@ -319,7 +319,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end                
       end
 
-      fdescribe "Purchases" do
+      describe "Purchases" do
         around do |example|
           Timecop.travel(Date.parse("June 1 2018")) do
             example.run
@@ -507,6 +507,202 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end                
       end
 
+      describe "Diaper Drives" do
+        around do |example|
+          Timecop.travel(Date.parse("June 1 2018")) do
+            example.run
+          end
+        end
+
+        before do
+          @organization.donations.destroy_all
+          storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
+          diaper_drive_1 = create(:diaper_drive_participant, business_name: "First Diaper Drive", organization: @organization)
+          diaper_drive_2 = create(:diaper_drive_participant, business_name: "Second Diaper Drive", organization: @organization)
+
+          @this_years_donations = {
+            today: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive_1, issued_at: Time.zone.now, item_quantity: 100, storage_location: storage_location, organization: @organization),
+            yesterday: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive_2, issued_at: Time.zone.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
+            earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive_1, issued_at: Time.zone.now.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
+            beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive_2, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 103, storage_location: storage_location, organization: @organization)
+          }
+
+          @last_years_donations = create_list(:diaper_drive_donation, 2, :with_items, diaper_drive_participant: diaper_drive_1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 104, storage_location: storage_location, organization: @organization)
+          visit subject
+        end
+
+        it "has a widget for diaper drive summary data" do
+          expect(page).to have_css("#diaper_drives")          
+        end
+
+        context "with year-to-date selected" do
+          before do
+            page.select "Year to date", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
+
+          it "has a widget displaying the year-to-date Diaper drive totals, only using donations from this year" do
+            within "#diaper_drives" do
+              expect(page).to have_content(/2 diaper drives/i)
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent donations" do
+            within "#diaper_drives" do
+              expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 3)
+            end
+          end
+        end
+
+        context "with today selected" do
+          before do
+            page.select "Today", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations[:today].total_quantity }
+
+          it "has a widget displaying today's Diaper drive totals, only using donations from today" do
+            within "#diaper_drives" do
+              expect(page).to have_content(/1 diaper drive/i)
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent donations" do
+            within "#diaper_drives" do
+              expect(page).to have_css("a", text: /#{total_inventory} from first diaper drive/i, count: 1)
+            end
+          end
+        end
+
+        context "with yesterday selected" do
+          before do
+            page.select "Yesterday", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
+
+          it "has a widget displaying the Diaper drive totals from yesterday, only using donations from yesterday" do
+            within "#diaper_drives" do
+              expect(page).to have_content(/1 diaper drive/i)
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent donations" do
+            within "#diaper_drives" do
+              expect(page).to have_css("a", text: /#{total_inventory} from second diaper drive/i, count: 1)
+            end
+          end
+        end
+
+        context "with this week selected" do
+          before do
+            page.select "This Week", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { [ @this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
+
+          it "has a widget displaying the Diaper drive totals from this week, only using donations from this week" do
+            within "#diaper_drives" do
+              expect(page).to have_content(/2 diaper drives/i)
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent donations" do
+            within "#diaper_drives" do
+              expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 3)
+            end
+          end
+        end
+
+        context "with this month selected" do
+          before do
+            page.select "This Month", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations[:today].total_quantity }
+
+          it "has a widget displaying the Diaper drive totals from this month, only using donations from this month" do
+            within "#diaper_drives" do
+              expect(page).to have_content(/1 diaper drive/i)
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent donations" do
+            within "#diaper_drives" do
+              expect(page).to have_css("a", text: /#{total_inventory} from first diaper drive/i, count: 1)
+            end
+          end
+        end
+
+        context "with last month selected" do
+          before do
+            page.select "Last Month", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { [ @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
+
+          it "has a widget displaying the Diaper drive totals from last month, only using donations from last month" do
+            within "#diaper_drives" do
+              expect(page).to have_content(/2 diaper drives/i)
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays some recent donations" do
+            within "#diaper_drives" do
+              expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 2)
+            end
+          end
+        end
+
+        context "with last year selected" do
+          before do
+            page.select "Last Year", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @last_years_donations.map(&:total_quantity).sum }
+
+          it "has a widget displaying the Diaper drive totals from last year, only using donations from last year" do
+            within "#diaper_drives" do
+              expect(page).to have_content(total_inventory)
+              expect(page).to have_content(/1 diaper drive/i)
+            end
+          end
+
+          it "displays some recent donations from that time" do
+            within "#diaper_drives" do
+              expect(page).to have_css("a", text: /10\d from first diaper drive/i, count: 2)
+            end
+          end
+        end
+
+        context "with all time selected" do
+          before do
+            page.select "All time", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
+
+          it "has a widget displaying the Diaper drive totals from last year, only using donations from last year" do
+            within "#diaper_drives" do
+              expect(page).to have_content(total_inventory)
+              expect(page).to have_content(/2 diaper drives/i)
+            end
+          end
+
+          it "displays some recent donations from that time" do
+            within "#diaper_drives" do
+              expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 3)
+            end
+          end
+        end                
+      end
 
 
 
