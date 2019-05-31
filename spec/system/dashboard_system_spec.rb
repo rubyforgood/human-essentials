@@ -704,6 +704,214 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end                
       end
 
+      describe "Manufacturer Donations" do
+        around do |example|
+          Timecop.travel(Date.parse("June 1 2018")) do
+            example.run
+          end
+        end
+
+        before do
+          @organization.donations.destroy_all
+          storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
+          manufacturer_1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
+          manufacturer_2 = create(:manufacturer, name: "BCD Corp", organization: @organization)
+          manufacturer_3 = create(:manufacturer, name: "CDE Corp", organization: @organization)
+          manufacturer_4 = create(:manufacturer, name: "DEF Corp", organization: @organization)
+
+          @this_years_donations = {
+            today: create(:manufacturer_donation, :with_items, manufacturer: manufacturer_1, issued_at: Time.zone.now, item_quantity: 100, storage_location: storage_location, organization: @organization),
+            yesterday: create(:manufacturer_donation, :with_items, manufacturer: manufacturer_2, issued_at: Time.zone.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
+            earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer_3, issued_at: Time.zone.now.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
+            beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer_4, issued_at: Time.zone.parse("January 1, 2018 12:01am"), item_quantity: 103, storage_location: storage_location, organization: @organization)
+          }
+          @last_years_donations = create_list(:manufacturer_donation, 2, :with_items, manufacturer: manufacturer_1, issued_at: Time.zone.parse("June 1, 2017"), item_quantity: 104, storage_location: storage_location, organization: @organization)
+          visit subject
+        end
+
+        it "has a link to create a new donation" do
+          expect(page).to have_css("#manufacturers")          
+        end
+
+        context "with year-to-date selected" do
+          before do
+            page.select "Year to date", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
+          let(:manufacturers) { @this_years_donations.values.map(&:manufacturer).map(&:name) }
+
+          it "has a widget displaying the year-to-date Donation totals, only using donations from this year" do
+            within "#manufacturers" do
+              expect(page).to have_content(total_inventory)
+              expect(page).to have_content(/#{manufacturers.size} manufacturer/i)
+            end
+          end
+
+          it "displays the list of top manufacturers" do
+            within "#manufacturers" do
+              manufacturers.each do |manufacturer|
+                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
+              end
+            end
+          end
+        end
+
+        context "with today selected" do
+          before do
+            page.select "Today", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations[:today].total_quantity }
+          let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
+
+          it "has a widget displaying today's Donation totals, only using donations from today" do
+            within "#manufacturers" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays the list of top manufacturers" do
+            within "#manufacturers" do
+              expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
+            end
+          end
+        end
+
+        context "with yesterday selected" do
+          before do
+            page.select "Yesterday", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
+          let(:manufacturer) { @this_years_donations[:yesterday].manufacturer.name }
+
+          it "has a widget displaying the Donation totals from yesterday, only using donations from yesterday" do
+            within "#manufacturers" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays the list of top manufacturers" do
+            within "#manufacturers" do
+              expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
+            end
+          end
+        end
+
+        context "with this week selected" do
+          before do
+            page.select "This Week", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { [ @this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
+          let(:manufacturers) { [ @this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:manufacturer).map(&:name) }
+
+          it "has a widget displaying the Donation totals from this week, only using donations from this week" do
+            within "#manufacturers" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays the list of top manufacturers" do
+            within "#manufacturers" do
+              manufacturers.each do |manufacturer|
+                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
+              end
+            end
+          end
+        end
+
+        context "with this month selected" do
+          before do
+            page.select "This Month", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations[:today].total_quantity }
+          let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
+
+          it "has a widget displaying the Donation totals from this month, only using donations from this month" do
+            within "#manufacturers" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays the list of top manufacturers" do
+            within "#manufacturers" do
+              expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
+            end
+          end
+        end
+
+        context "with last month selected" do
+          before do
+            page.select "Last Month", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { [ @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:total_quantity).sum }
+          let(:manufacturers) { [ @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week] ].map(&:manufacturer).map(&:name) }
+
+          it "has a widget displaying the Donation totals from last month, only using donations from last month" do
+            within "#manufacturers" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays the list of top manufacturers" do
+            within "#manufacturers" do
+              manufacturers.each do |manufacturer|
+                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
+              end
+            end
+          end
+        end
+
+        context "with last year selected" do
+          before do
+            page.select "Last Year", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @last_years_donations.map(&:total_quantity).sum }
+          let(:manufacturers) { @last_years_donations.map(&:manufacturer).map(&:name) }
+
+          it "has a widget displaying the Donation totals from last year, only using donations from last year" do
+            within "#manufacturers" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+         it "displays the list of top manufacturers" do
+            within "#manufacturers" do
+              manufacturers.each do |manufacturer|
+                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
+              end
+            end
+          end
+        end
+
+        context "with all time selected" do
+          before do
+            page.select "All time", from: "dashboard_filter_interval"
+          end
+
+          let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
+          let(:manufacturers) { [@this_years_donations.values + @last_years_donations].flatten.map(&:manufacturer).map(&:name) }
+
+          it "has a widget displaying the Donation totals from last year, only using donations from last year" do
+            within "#manufacturers" do
+              expect(page).to have_content(total_inventory)
+            end
+          end
+
+          it "displays the list of top manufacturers" do
+            within "#manufacturers" do
+              manufacturers.each do |manufacturer|
+                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
+              end
+            end
+          end
+        end                
+      end
 
 
 
