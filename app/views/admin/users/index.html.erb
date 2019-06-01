@@ -1,32 +1,30 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Users" %>
-  <h1>
-    Users
-  </h1>
-  <ol class="breadcrumb">
-    <li>
-      <%= link_to(admin_dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><a href="#">All users</a></li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h2>Users</h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(admin_dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active">All users</li>
+    </ol>
+  </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= new_button_to new_admin_user_path, { text: "Invite a new user" } %>
+    </div>
+  </div>
+</div>
 
-<!-- Main content -->
-<section class="content">
-
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-body">
-      <div class="text-right">
-        <%= new_button_to new_admin_user_path, { text: "Invite a new user" } %>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover">
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="row">
+          <div class="table-responsive">
+            <table id="tblUsers" class="table table-hover index">
               <thead>
               <tr>
                 <th>Organization</th>
@@ -38,23 +36,20 @@
               <tbody>
               <% @users.each do |user| %>
                 <tr>
-                <td><%= user.organization&.name %></td>
-                <td><%= user.name %></td>
-                <td><%= user.email %></td>
-                <td class="text-right">
-                  <%= edit_button_to edit_admin_user_path(user) %>
-                  <%= delete_button_to(admin_user_path(user), { confirm: "Are you sure you want to permanently remove this user?" }) unless user == current_user %>
-                </td>
+                  <td><%= user.organization&.name %></td>
+                  <td><%= user.name %></td>
+                  <td><%= user.email %></td>
+                  <td class="text-right">
+                    <%= edit_button_to edit_admin_user_path(user) %>
+                    <%= delete_button_to(admin_user_path(user), { confirm: "Are you sure you want to permanently remove this user?" }) unless user == current_user %>
+                  </td>
+                </tr>
               <% end %>
-              </td>
-              </tr>
               </tbody>
             </table>
-            <!-- /.box-body -->
           </div>
         </div>
-        <!-- /.box -->
       </div>
     </div>
   </div>
-</section>
+</div>
