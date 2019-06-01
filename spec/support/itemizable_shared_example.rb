@@ -46,10 +46,10 @@ shared_examples_for "itemizable" do
 
       subject do
         s = create(model_f)
-        s.line_items << create(:line_item, item: item1,
-                                           quantity: 10)
-        s.line_items << create(:line_item, item: item2,
-                                           quantity: 20)
+        s.line_items << create(:line_item, model_f.to_sym, item: item1,
+                                                           quantity: 10)
+        s.line_items << create(:line_item, model_f.to_sym, item: item2,
+                                                           quantity: 20)
         s
       end
 
@@ -79,9 +79,9 @@ shared_examples_for "itemizable" do
 
       it "displays the items, sorted by name" do
         names = %w(abc def ghi)
-        subject.line_items << create(:line_item, item: create(:item, name: names[1]))
-        subject.line_items << create(:line_item, item: create(:item, name: names[0]))
-        subject.line_items << create(:line_item, item: create(:item, name: names[2]))
+        subject.line_items << create(:line_item, model_f.to_sym, item: create(:item, name: names[1]))
+        subject.line_items << create(:line_item, model_f.to_sym, item: create(:item, name: names[0]))
+        subject.line_items << create(:line_item, model_f.to_sym, item: create(:item, name: names[2]))
         # The default *shouldn't* be sorted
         expect(subject.line_items).not_to eq(subject.line_items.sorted)
         # But the sorted version should
@@ -93,7 +93,7 @@ shared_examples_for "itemizable" do
 
       it "has an item total" do
         expect do
-          2.times { subject.line_items << create(:line_item, quantity: 5) }
+          2.times { subject.line_items << create(:line_item, model_f.to_sym, quantity: 5) }
         end.to change { subject.line_items.total }.by(10)
       end
     end

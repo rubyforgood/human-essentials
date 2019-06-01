@@ -25,8 +25,8 @@ RSpec.describe LineItem, type: :model do
       expect(build(:line_item, quantity: "a")).not_to be_valid
       expect(build(:line_item, quantity: "1.0")).not_to be_valid
       expect(build(:line_item, quantity: 0)).not_to be_valid
-      expect(build(:line_item, quantity: -1)).to be_valid
-      expect(build(:line_item, quantity: 1)).to be_valid
+      expect(build_stubbed(:line_item, :purchase, quantity: -1)).to be_valid
+      expect(build_stubbed(:line_item, :purchase, quantity: 1)).to be_valid
     end
   end
 
@@ -50,8 +50,8 @@ RSpec.describe LineItem, type: :model do
       let!(:inactive_item) { create(:item, :inactive) }
 
       before do
-        create(:line_item, item: active_item)
-        create(:line_item, item: inactive_item)
+        create(:line_item, :purchase, item: active_item)
+        create(:line_item, :purchase, item: inactive_item)
       end
 
       it "retrieves only those with active status" do
