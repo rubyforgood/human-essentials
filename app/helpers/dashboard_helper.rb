@@ -11,14 +11,14 @@ module DashboardHelper
       ["This Week", "this_week"],
       ["This Month", "this_month"],
       ["Last Month", "last_month"],
-      ["Year to date", "year_to_date"],
+      ["This Year", "this_year"],
       ["Last Year", "last_year"],
-      ["All time", "all_time"],
+      ["All Time", "all_time"],
     ]
   end
 
   def selected_interval
-    params.dig(:dashboard_filter, :interval) || "year_to_date"
+    params.dig(:dashboard_filter, :interval) || "this_year"
   end
 
   def selected_range
@@ -34,7 +34,7 @@ module DashboardHelper
       now.beginning_of_month..now
     when "last_month"
       (now - 1.month).beginning_of_month..(now - 1.month).end_of_month
-    when "year_to_date"
+    when "this_year"
       now.beginning_of_year..now
     when "last_year"
       (now - 1.year).beginning_of_year..(now - 1.year).end_of_year

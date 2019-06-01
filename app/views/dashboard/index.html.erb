@@ -17,7 +17,7 @@
     <%= render partial: "getting_started_prompt", locals: { org_stats: @org_stats } %>
 
     <div class="col-md-12">
-      <div class="box box-primary">
+      <div id="summary" class="box box-primary">
         <div class="box-header with-border">
           <h3 class="box-title"><%= current_organization.name %></h3>
           <div class="box-tools pull-right">
@@ -32,14 +32,6 @@
             </div>
           </div>
           <div class="col-xlg-3 col-xlg-offset-2 col-md-5 col-sm-12">
-            <div class="filter">
-              <h3 class="text-center">Select Time Frame</h3>
-              <div class="text-center">
-                <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
-                  <%= f.select :interval, filter_intervals, selected: selected_interval, class: "text-center" %>
-                <% end %>
-              </div>
-            </div>
             <div class="text-center">
               <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
 
@@ -51,6 +43,20 @@
             </div>
           </div>
         </div>
+      </div>
+
+
+      <div class="box-header with-border bg-gray">
+        <section id="filters">
+          <div class="box-body">
+              <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
+                <div class="form-group col-md-offset-10 col-md-2 col-sm-offset-6 col-sm-6 col-xs-12">
+                  <label for="interval">Date Range</label>
+                  <%= f.select :interval, filter_intervals, { selected: selected_interval }, class: "form-control" %>
+                </div>
+              <% end %>
+            </div>
+        </section><!-- /#filters -->
       </div>
 
       <div class="row">
@@ -140,7 +146,7 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-              <h3 class="text-center"><%= @recent_donations.by_source(:diaper_drive).map(&:diaper_drive_participant).uniq.size %> Diaper Drives <%= display_interval %> for a total of <%= total_received_from_diaper_drives %> items collected</h3>
+              <h3 class="text-center"><%= @recent_donations.by_source(:diaper_drive).map(&:diaper_drive_participant).uniq.size %> Diaper Drive Participants <%= display_interval %> for a total of <%= total_received_from_diaper_drives %> items collected</h3>
             </div>
             <div class="box-body">
               <div class="box-body text-center float-center">
