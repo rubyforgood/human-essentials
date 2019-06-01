@@ -40,5 +40,9 @@ FactoryBot.define do
         instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
+
+    trait :diaper_drive do
+      source { Donation::SOURCES[:diaper_drive] }
+    end
   end
 end

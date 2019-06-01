@@ -140,7 +140,7 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-              <h3 class="text-center"><%= @recent_donations.by_source(:diaper_drive).count %> Diaper Drives <%= display_interval %> for a total of <%= number_with_delimiter(@recent_donations.by_source(:diaper_drive).sum { |d| d.line_items.total }) %> items collected</h3>
+              <h3 class="text-center"><%= @diaper_drives_donations.count %> Diaper Drives <%= display_interval %> for a total of <%= number_with_delimiter(@diaper_drives_donations.sum { |d| d.line_items.total }) %> items collected</h3>
             </div>
             <div class="box-body">
               <div class="box-body text-center float-center">
