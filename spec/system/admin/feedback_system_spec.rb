@@ -13,7 +13,7 @@ RSpec.describe "Admin Feedback Message Management", type: :system do
       expect(page).to have_content("https://example.com/diaperbank/dashboard")
 
       # mark the feedback as resolved
-      check "Resolved"
+      find(".toggle").click
       visit current_path
       feedback_message.reload
       expect(feedback_message.resolved).to eq(true)
