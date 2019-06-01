@@ -1,54 +1,50 @@
-<section class="content-header">
-  <% content_for :title, "Partners - Agencies - #{current_organization.name}" %>
-  <h1>
-    Partner Agencies
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Partner Agencies</a></li>
-  </ol>
-</section>
-
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <div class="pull-right">
-          <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "lg" }) if @partners.empty? %>
-          <%= download_button_to(csv_path(format: :csv, type: "Partner"), { text: "Export Partner Agencies", size: "lg" }) if @partners.any? %>
-          <%= new_button_to new_partner_path(organization_id: current_organization), { text: "New Partner Agency" } %>     
-        </div>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover">
+<div class="row wrapper border-bottom white-bg page-heading">
+<% content_for :title, "Partners - Agencies - #{current_organization.name}" %>
+  <div class="col-lg-8">
+    <h2>Partner Agencies for <%= current_organization.name %></h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
+      </li>
+      <li class="breadcrumb-item active">Partner Agencies</li>
+    </ol>
+  </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "lg" }) if @partners.empty? %>
+      <%= download_button_to(csv_path(format: :csv, type: "Partner"), { text: "Export Partner Agencies", size: "lg" }) if @partners.any? %>
+      <%= new_button_to new_partner_path(organization_id: current_organization), { text: "New Partner Agency" } %>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="row">
+          <div class="table-responsive">
+            <table id="tblDonationSites" class="table table-hover index">
               <thead>
-                <tr>
-                  <th>Partner</th>
-                  <th>E-mail</th>
-                  <th>Status</th>
-                  <!-- <th title="This field is currently mock data">Approved?</th> -->
-                  <th>&nbsp;</th>
-                </tr>
+              <tr>
+                <th>Partner</th>
+                <th>E-mail</th>
+                <th>Status</th>
+                <!-- <th title="This field is currently mock data">Approved?</th> -->
+                <th>&nbsp;</th>
+              </tr>
               </thead>
               <tbody>
-                <%= render partial: "partner_row", collection: @partners %>
+              <%= render partial: "partner_row", collection: @partners %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <%= render(
   layout: "shared/csv_import_modal",
