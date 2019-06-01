@@ -27,7 +27,7 @@ Rails.application.routes.draw do
     resources :users
     resources :barcode_items
     resources :feedback_messages do
-      get :resolve
+      post :resolve
     end
   end
 

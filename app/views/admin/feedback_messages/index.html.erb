@@ -14,31 +14,33 @@
     </ol>
   </div>
 </div>
-
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="ibox-content p-xl">
     <div class="table-responsive no-padding m-t">
       <table id="tbl_barcode_items" class="table table-hover">
         <thead>
-          <tr>
-            <th>Message</th>
-            <th>User</th>
-            <th>Path</th>
-            <th>Resolved</th>
-            <th>&nbsp;</th>
-          </tr>
+        <tr>
+          <th>Message</th>
+          <th>User</th>
+          <th>Path</th>
+          <th>Resolved</th>
+          <th>&nbsp;</th>
+        </tr>
         </thead>
         <tbody>
-          <% @feedback_messages.each do |feedback| %>
-            <tr>
-              <td><%= feedback.message %></td>
-              <td><%= feedback.user.email %></td>
-              <td><%= feedback.path %></td>
-              <td colspan="2" ><%= check_box_tag 'Resolved', feedback.resolved, feedback.resolved, data: {url: admin_feedback_message_resolve_path(feedback), remote: true, method: :get} %></td>
-            </tr>
-          <% end %>
+        <% @feedback_messages.each do |feedback| %>
+          <tr>
+            <td><%= feedback.message %></td>
+            <td><%= feedback.user.email %></td>
+            <td><%= feedback.path %></td>
+            <td colspan="2">
+              <%= check_box_tag 'Resolved', feedback.resolved, feedback.resolved, data: {url: admin_feedback_message_resolve_path(feedback), remote: true, method: :post}, "data-toggle" => "toggle",
+                                "data-on" => "Yes", "data-off" => "No", "data-offstyle" => "outline-secondary" %>
+            </td>
+          </tr>
+        <% end %>
         </tbody>
       </table>
     </div>
-  </div>  
+  </div>
 </div>

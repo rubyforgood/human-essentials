@@ -24,9 +24,9 @@
 //= require pace.min
 //= require jquery.slimscroll.min
 //= require moment
+//= require bootstrap-toggle.min
 //= require fullcalendar.min
 //= require_tree .
-
 
 window.setTimeout(function() {
     // When the user is given an error message, we should not auto-hide it so that
