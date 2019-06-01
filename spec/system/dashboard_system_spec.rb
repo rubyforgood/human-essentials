@@ -113,7 +113,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(page).to have_content("333")
             end
           end
-        end        
+        end
       end
 
       describe "Donations" do
@@ -150,7 +150,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         context "when constrained to date range" do
           before do
             @organization.donations.destroy_all
-            
+
             @this_years_donations = {
               today: create(:donation, :with_items, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:diaper_drive_donation, :with_items, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
@@ -348,7 +348,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
           item.update!(active: false)
           visit subject
 
-          skip "TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation"
+          skip "TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent purchase"
           within "#purchases" do
             expect(page).to have_no_content("100")
           end
@@ -1026,7 +1026,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
           item.update!(active: false)
           visit subject
 
-          skip "TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation"
+          skip "TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent distribution"
           within "#distributions" do
             expect(page).to have_no_content("100")
           end
