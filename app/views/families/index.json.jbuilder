@@ -1,1 +1,1 @@
-json.array! @families, partial: "families/family", as: :family
+json.array! families, partial: "families/family", as: :family
