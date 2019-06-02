@@ -1,1 +1,1 @@
-json.partial! "families/family", family: @family
+json.partial! "families/family", family: family
