@@ -66,7 +66,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
         other_barcode = create(:barcode_item, organization_id: other_org.id, global: false)
         delete :destroy, params: default_params.merge(id: other_barcode.to_param)
         expect(response).not_to be_successful
-        expect(flash[:error]).to match(/permission/)
+        expect(response).to have_error(/permission/)
       end
 
       it "disallows a non-superadmin to delete a global barcode" do
@@ -74,7 +74,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
         global_barcode = create(:global_barcode_item)
         delete :destroy, params: default_params.merge(id: global_barcode.to_param)
         expect(response).not_to be_successful
-        expect(flash[:error]).to match(/permission/)
+        expect(response).to have_error(/permission/)
       end
 
       it "redirects to the index" do

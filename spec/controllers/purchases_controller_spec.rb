@@ -43,7 +43,7 @@ RSpec.describe PurchasesController, type: :controller do
       it "renders GET#new with error on failure" do
         post :create, params: default_params.merge(purchase: { storage_location_id: nil, amount_spent_in_cents: nil })
         expect(response).to be_successful # Will render :new
-        expect(flash[:error]).to match(/error/i)
+        expect(response).to have_error(/error/i)
       end
     end
 

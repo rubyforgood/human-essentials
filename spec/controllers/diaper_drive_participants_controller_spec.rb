@@ -57,7 +57,7 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
       it "flash error" do
         post :create, xhr: true, params: default_params.merge(diaper_drive_participant: { name: "test" })
         expect(response).to be_successful
-        expect(flash[:error]).to match(/try again/i)
+        expect(response).to have_error(/try again/i)
       end
     end
 
@@ -66,13 +66,13 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
         post :create, params: default_params.merge(diaper_drive_participant: { business_name: "businesstest",
                                                                                contact_name: "test", email: "123@mail.ru" })
         expect(response).to redirect_to(diaper_drive_participants_path)
-        expect(flash[:notice]).to match(/added!/i)
+        expect(response).to have_notice(/added!/i)
       end
 
       it "flash error" do
         post :create, xhr: true, params: default_params.merge(diaper_drive_participant: { name: "test" })
         expect(response).to be_successful
-        expect(flash[:error]).to match(/try again/i)
+        expect(response).to have_error(/try again/i)
       end
     end
 

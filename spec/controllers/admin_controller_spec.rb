@@ -25,7 +25,7 @@ RSpec.describe AdminController, type: :controller do
         sign_in(u)
         get :dashboard
         expect(response).to redirect_to(dashboard_path)
-        expect(flash[:error].size).not_to be_zero
+        expect(response).to have_error
       end
     end
   end

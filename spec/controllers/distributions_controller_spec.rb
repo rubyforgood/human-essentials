@@ -54,7 +54,7 @@ RSpec.describe DistributionsController, type: :controller do
       it "renders #new again on failure, with notice" do
         post :create, params: default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil })
         expect(response).to be_successful
-        expect(flash[:error]).to match(/error/i)
+        expect(response).to have_error(/error/i)
       end
     end
 
