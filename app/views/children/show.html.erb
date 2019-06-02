@@ -25,37 +25,37 @@
             <div class="card-body">
               <dl>
                 <dt>First name</dt>
-                <dd><%= @child.first_name %></dd>
+                <dd><%= child.first_name %></dd>
 
                 <dt>Last name:</dt>
-                <dd><%= @child.last_name %></dd>
+                <dd><%= child.last_name %></dd>
 
                 <dt>Date of birth:</dt>
-                <dd><%= @child.date_of_birth %></dd>
+                <dd><%= child.date_of_birth %></dd>
 
                 <dt>Gender:</dt>
-                <dd><%= @child.gender %></dd>
+                <dd><%= child.gender %></dd>
 
                 <dt>Child lives with:</dt>
-                <dd><%= @child.child_lives_with %></dd>
+                <dd><%= child.child_lives_with %></dd>
 
                 <dt>Race:</dt>
-                <dd><%= @child.race %></dd>
+                <dd><%= child.race %></dd>
 
                 <dt>Agency child:</dt>
-                <dd><%= @child.agency_child_id %></dd>
+                <dd><%= child.agency_child_id %></dd>
 
                 <dt>Health insurance:</dt>
-                <dd><%= @child.health_insurance %></dd>
+                <dd><%= child.health_insurance %></dd>
 
                 <dt>Item needed:</dt>
-                <dd><%= item_id_to_display_string_map[@child.item_needed_diaperid] %></dd>
+                <dd><%= item_id_to_display_string_map[child.item_needed_diaperid] %></dd>
 
                 <dt>Comments:</dt>
-                <dd><%= @child.comments %></dd>
+                <dd><%= child.comments %></dd>
               </dl>
 
-              <%= link_to 'Edit', edit_child_path(@child) %> |
+              <%= link_to 'Edit', edit_child_path(child) %> |
               <%= link_to 'Back', children_path %>
             </div>
           </div>
