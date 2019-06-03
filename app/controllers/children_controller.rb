@@ -20,7 +20,7 @@ class ChildrenController < ApplicationController
   end
 
   def active
-    child = family.find(params[:child_id])
+    child = current_partner.children.find(params[:child_id])
     child.active = !child.active
     child.save
   end
