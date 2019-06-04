@@ -47,7 +47,7 @@ class DistributionsController < ApplicationController
     if @distribution.save
       @distribution.storage_location.decrease_inventory @distribution
       update_request(params[:distribution][:request_attributes], @distribution.id)
-      send_notification(current_organization.id, @distribution)
+      send_notification(current_organization.id, @distribution.id)
       flash[:notice] = "Distribution created!"
       session[:created_distribution_id] = @distribution.id
       redirect_to distributions_path
