@@ -93,7 +93,7 @@
           <div class="form-horizontal">
             <div class="form-group row">
               <%= form.label :family_id, class: "control-label col-md-3"%>
-              <%= form.label child.family.display_name, class: "col-md-8 control-label" %>
+              <%= form.label child.family.guardian_display_name, class: "col-md-8 control-label" %>
               <%= hidden_field_tag :family_id, child.family.id %>
             </div>
           </div>
