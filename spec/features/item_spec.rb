@@ -38,7 +38,7 @@ RSpec.feature "Item management", type: :feature do
     find("[data-item-id=#{item.id}] [href$=edit]").click
 
     expect(page).to have_selector("input#item_distribution_quantity[value='75']")
-    expect(page).to have_selector("input#package_size[value='50']")
+    expect(page).to have_selector("input#item_package_size[value='50']")
   end
 
   scenario "User updates an existing item with empty attributes" do
