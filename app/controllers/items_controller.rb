@@ -37,7 +37,6 @@ class ItemsController < ApplicationController
 
   def update
     @item = current_organization.items.find(params[:id])
-    binding.pry
     if @item.update(item_params)
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
