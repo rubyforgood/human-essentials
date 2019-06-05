@@ -174,4 +174,11 @@ RSpec.describe Item, type: :model do
       expect(create(:item, distribution_quantity: 75).default_quantity).to eq(75)
     end
   end
+
+  describe "distribution_quantity and package size" do
+    it "have nil values if an empty string is passed" do
+      expect(create(:item, distribution_quantity: '').distribution_quantity).to be_nil
+      expect(create(:item, package_size: '').package_size).to be_nil
+    end
+  end
 end
