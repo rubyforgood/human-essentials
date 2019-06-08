@@ -1,6 +1,6 @@
 <%= form_with(model: family, local: true) do |form| %>
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
       <% if family.errors.any? %>
           <div id="error_explanation">
             <h2><%= pluralize(family.errors.count, "error") %> prohibited this family from being saved:</h2>

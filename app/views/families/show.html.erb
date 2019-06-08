@@ -19,7 +19,7 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
          <div class="card mb-12">
             <h5 class="card-header bg-primary text-white">Family Information</h5>
             <div class="card-body">
@@ -70,9 +70,9 @@
                 <dd><%= family.comments %></dd>
               </dl>
 
-              <%= link_to 'Edit', edit_family_path(family) %> |
-              <%= link_to 'Back', families_path %> |
-              <%= link_to 'New Child', new_child_path(family_id: family.id) %>
+              <%= link_to 'Edit This Family', edit_family_path(family), class: "btn btn-sm btn-primary" %>
+              <%= link_to 'Back to Families', families_path, class: "btn btn-sm btn-info pull-right" %>
+              <%= link_to 'Add Child To This Family', new_child_path(family_id: family.id), class: "btn btn-sm btn-success" %>
             </div>
           </div>
         </div>
