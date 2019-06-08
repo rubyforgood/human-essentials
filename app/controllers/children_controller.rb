@@ -4,17 +4,12 @@ class ChildrenController < ApplicationController
   helper_method :child, :children, :family
   attr_reader :children, :child
 
-  # GET /children
-  # GET /children.json
   def index
     @children ||= current_partner.children.all
   end
 
-  # GET /children/1
-  # GET /children/1.json
   def show; end
 
-  # GET /children/new
   def new
     @child = family.children.new
   end
@@ -25,11 +20,8 @@ class ChildrenController < ApplicationController
     child.save
   end
 
-  # GET /children/1/edit
   def edit; end
 
-  # POST /children
-  # POST /children.json
   def create
     child = family.children.new(child_params)
 
@@ -44,8 +36,6 @@ class ChildrenController < ApplicationController
     end
   end
 
-  # PATCH/PUT /children/1
-  # PATCH/PUT /children/1.json
   def update
     respond_to do |format|
       if child.update(child_params)
@@ -58,8 +48,6 @@ class ChildrenController < ApplicationController
     end
   end
 
-  # DELETE /children/1
-  # DELETE /children/1.json
   def destroy
     child.destroy
     respond_to do |format|
@@ -70,7 +58,6 @@ class ChildrenController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def child
     @child ||= current_partner.children.find(params[:id])
   end
@@ -79,7 +66,6 @@ class ChildrenController < ApplicationController
     @family ||= current_partner.families.find_by(id: params[:family_id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
   def child_params
     params.require(:child).permit(
       :active,
