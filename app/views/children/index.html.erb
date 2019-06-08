@@ -28,6 +28,7 @@
           <th scope="col">Guardian</th>
           <th scope="col">Comments</th>
           <th scope="col"></th>
+          <th scope="col"></th>
         </tr>
         </thead>
         <tbody>
@@ -38,8 +39,8 @@
             <td><%= child.date_of_birth %></td>
             <td><%= "#{child.family.guardian_first_name} #{child.family.guardian_last_name}" %></td>
             <td><%= child.comments %></td>
-            <td><%= link_to 'View Child Details', child, class: "btn btn-sm btn-success" %>
-            <%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-sm btn-info pull-right" %>
+            <td><%= link_to 'View Child Details', child, class: "btn btn-sm btn-success" %></td>
+            <td><%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-sm btn-danger pull-right" %>
             </td>
         <% end %>
         </tbody>
@@ -59,7 +60,7 @@
 
       Children must be added from their individual families to prevent accidentally associating the child with the wrong family in the situation where there are may families with similar names. Visit the family list below to view and confirm the family you'd like to associate a new child with.
       <hr>
-      <%= link_to 'Visit Family List', families_path, class: "btn btn-sm btn-info" %>
+      <%= link_to 'Visit Family List', families_path, class: "btn btn-info" %>
     </div>
   </div>
 </div>
