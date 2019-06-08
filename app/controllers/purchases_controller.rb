@@ -26,7 +26,7 @@ class PurchasesController < ApplicationController
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
       flash[:error] = "There was an error starting this purchase, try again?"
-      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors}"
+      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render action: :new
     end
   end
@@ -70,6 +70,12 @@ class PurchasesController < ApplicationController
 
   private
 
+  def clean_purchase_amount
+    return nil unless params[:purchase][:amount_spent_in_cents]
+
+    params[:purchase][:amount_spent_in_cents] = params[:purchase][:amount_spent_in_cents].gsub(/[$,.]/, "")
+  end
+
   def load_form_collections
     @storage_locations = current_organization.storage_locations
     @items = current_organization.items.alphabetized
@@ -77,6 +83,7 @@ class PurchasesController < ApplicationController
   end
 
   def purchase_params
+    clean_purchase_amount
     params = compact_line_items
     params.require(:purchase).permit(:comment, :amount_spent_in_cents, :purchased_from, :storage_location_id, :issued_at, :vendor_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
