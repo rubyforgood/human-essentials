@@ -19,7 +19,7 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <div class="card mb-12">
             <h5 class="card-header bg-primary text-white">Child Information</h5>
             <div class="card-body">
@@ -55,8 +55,8 @@
                 <dd><%= child.comments %></dd>
               </dl>
 
-              <%= link_to 'Edit', edit_child_path(child) %> |
-              <%= link_to 'Back', children_path %>
+              <%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-success" %>
+              <%= link_to 'All Children', children_path, class: "btn btn-info pull-right" %>
             </div>
           </div>
         </div>

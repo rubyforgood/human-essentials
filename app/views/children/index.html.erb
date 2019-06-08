@@ -10,49 +10,41 @@
 <div class="row">
   <div class="col-md-12">
     <% if notice %>
-    <div class="alert alert-dismissible alert-success">
-      <button class="close" type="button" data-dismiss="alert">×</button>
-      <p><%= notice %><a class="alert-link" href="#"></p>
-      </a></p>
-    </div>
+      <div class="alert alert-dismissible alert-success">
+        <button class="close" type="button" data-dismiss="alert">×</button>
+        <p><%= notice %><a class="alert-link" href="#"></p>
+        </a></p>
+      </div>
     <% end %>
+    <div class="tile">
+      <h3><%= current_partner.name %> Children Served</h3>
 
-    <table class="table table-striped">
-      <thead>
+      <table class="table table-striped">
+        <thead>
         <tr>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Date of birth</th>
-          <th>Gender</th>
-          <th>Child lives with</th>
-          <th>Race</th>
-          <th>Agency child</th>
-          <th>Health insurance</th>
-          <th>Item needed</th>
-          <th>Comments</th>
-          <th colspan="3"></th>
+          <th scope="col">First name</th>
+          <th scope="col">Last name</th>
+          <th scope="col">Date of birth</th>
+          <th scope="col">Guardian</th>
+          <th scope="col">Comments</th>
+          <th scope="col"></th>
         </tr>
-      </thead>
-
-      <tbody>
+        </thead>
+        <tbody>
         <% children.each do |child| %>
           <tr>
             <td><%= child.first_name %></td>
             <td><%= child.last_name %></td>
             <td><%= child.date_of_birth %></td>
-            <td><%= child.gender %></td>
-            <td><%= child.child_lives_with %></td>
-            <td><%= child.race %></td>
-            <td><%= child.agency_child_id %></td>
-            <td><%= child.health_insurance %></td>
-            <td><%= item_id_to_display_string_map[child.item_needed_diaperid] %></td>
+            <td><%= "#{child.family.guardian_first_name} #{child.family.guardian_last_name}" %></td>
             <td><%= child.comments %></td>
-            <td><%= link_to 'Show', child %></td>
-            <td><%= link_to 'Edit', edit_child_path(child) %></td>
-            <td><%= link_to 'Destroy', child, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-          </tr>
+            <td><%= link_to 'View Child Details', child, class: "btn btn-sm btn-success" %>
+            <%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-sm btn-info pull-right" %>
+            </td>
         <% end %>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+      <hr>
+    </div>
   </div>
 </div>
