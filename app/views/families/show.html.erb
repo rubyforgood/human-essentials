@@ -21,7 +21,8 @@
       <div class="row">
         <div class="col-12">
          <div class="card mb-12">
-            <h5 class="card-header bg-primary text-white">Family Information</h5>
+            <h5 class="card-header bg-primary text-white">Family Information
+              <%= link_to 'Add Child To This Family', new_child_path(family_id: family.id), class: "btn btn-sm btn-warning pull-right" %></h5>
             <div class="card-body">
               <dl>
                 <dt>Guardian first name:</dt>
