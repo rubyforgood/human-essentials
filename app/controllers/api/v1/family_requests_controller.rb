@@ -11,11 +11,14 @@ class API::V1::FamilyRequestsController < ApplicationController
     return head :forbidden unless api_key_valid?
 
     partner_request = parse_request
+
     if partner_request.save
       render json: partner_request.family_request_reply, status: :created
     else
       render json: partner_request.errors, status: :bad_request
     end
+  rescue Request::MismatchedItemIdsError => error
+    render json: { message: error.message }, status: :bad_request
   end
 
   private
