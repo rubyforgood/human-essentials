@@ -52,7 +52,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
             'count' => item['person_count'] * 50,
             'item_name' => items.find { |i| i.id == item['item_id'] }.name
           }
-        end
+        end.sort_by { |item| item['item_id'] }
         expect(returned_body['requested_items']).to eq(expected_items)
       end
     end
@@ -69,7 +69,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
             organization_id: @organization.id,
             partner_id: @partner.id,
             comments: "please and thank you",
-            request_items: random_keys(3).collect { |k| [k, rand(3..10)] }.to_h
+            request_items: request_items
           }
         }
 
