@@ -7,67 +7,42 @@
     <li class="breadcrumb-item"><a href="#">Families</a></li>
   </ul>
 </div>
-
 <div class="row">
   <div class="col-md-12">
     <% if notice %>
-    <div class="alert alert-dismissible alert-success">
-      <button class="close" type="button" data-dismiss="alert">×</button>
-      <p><%= notice %><a class="alert-link" href="#"></p>
-      </a></p>
-    </div>
+      <div class="alert alert-dismissible alert-success">
+        <button class="close" type="button" data-dismiss="alert">×</button>
+        <p><%= notice %><a class="alert-link" href="#"></p>
+        </a></p>
+      </div>
     <% end %>
+    <div class="tile">
+      <h3><%= current_partner.name %> Families Served</h3>
 
-    <table class="table table-striped">
-      <thead>
+      <table class="table table-striped">
+        <thead>
         <tr>
-          <th>Guardian first name</th>
-          <th>Guardian last name</th>
-          <th>Guardian zip code</th>
-          <th>Guardian country</th>
-          <th>Guardian phone</th>
-          <th>Agency guardian</th>
-          <th>Home adult count</th>
-          <th>Home child count</th>
-          <th>Home young child count</th>
-          <th>Sources of income</th>
-          <th>Guardian employed</th>
-          <th>Guardian employment type</th>
-          <th>Guardian monthly pay</th>
-          <th>Guardian health insurance</th>
-          <th>Comments</th>
-          <th colspan="3"></th>
+          <th scope="col">Guardian first name</th>
+          <th scope="col">Guardian last name</th>
+          <th scope="col">Agency guardian</th>
+          <th scope="col">Comments</th>
+          <th scope="col"></th>
         </tr>
-      </thead>
-
-      <tbody>
+        </thead>
+        <tbody>
         <% families.each do |family| %>
           <tr>
             <td><%= family.guardian_first_name %></td>
             <td><%= family.guardian_last_name %></td>
-            <td><%= family.guardian_zip_code %></td>
-            <td><%= family.guardian_country %></td>
-            <td><%= family.guardian_phone %></td>
             <td><%= family.agency_guardian_id %></td>
-            <td><%= family.home_adult_count %></td>
-            <td><%= family.home_child_count %></td>
-            <td><%= family.home_young_child_count %></td>
-            <td><%= family.sources_of_income %></td>
-            <td><%= family.guardian_employed %></td>
-            <td><%= family.guardian_employment_type %></td>
-            <td><%= family.guardian_monthly_pay %></td>
-            <td><%= family.guardian_health_insurance %></td>
             <td><%= family.comments %></td>
-            <td><%= link_to 'Show', family %></td>
-            <td><%= link_to 'Edit', edit_family_path(family) %></td>
-            <td><%= link_to 'Destroy', family, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-          </tr>
+            <td><%= link_to 'View Family', family, class: "btn btn-sm btn-info pull-right" %></td>
+            <td><%= link_to 'Edit Family Details', edit_family_path(family), class: "btn btn-sm btn-success pull-right" %></td>
         <% end %>
-      </tbody>
-    </table>
-
-    <br>
-
-    <%= link_to 'New Family', new_family_path %>
+        </tbody>
+      </table>
+      <hr>
+      <%= link_to 'Add New Family', new_family_path, class: "btn btn-sm btn-info" %>
+    </div>
   </div>
 </div>
