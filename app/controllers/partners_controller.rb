@@ -20,9 +20,13 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    @partner.approved!
-    DiaperPartnerClient.put(@partner.attributes)
-    redirect_to partners_path
+    response = DiaperPartnerClient.put(@partner.attributes)
+    if response.is_a?(Net::HTTPSuccess)
+      @partner.approved!
+      redirect_to partners_path, notice: "Partner approved!"
+    else
+      redirect_to partners_path, error: "Failed to update Partner data!"
+    end
   end
 
   def show
@@ -33,7 +37,7 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.new
   end
 
-  # NOTE(chaserx): this could be renamed to review_application
+  # NOTE(chaserx): this is confusing and could be renamed to reflect what it's returning/showing review_application
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
 
@@ -76,9 +80,13 @@ class PartnersController < ApplicationController
 
   def recertify_partner
     @partner = current_organization.partners.find(params[:id])
-    @partner.recertification_required!
-    DiaperPartnerClient.put(@partner.attributes)
-    redirect_to partners_path, notice: "#{@partner.name} recertification successfully requested!"
+    response = DiaperPartnerClient.put(@partner.attributes)
+    if response.is_a?(Net::HTTPSuccess)
+      @partner.recertification_required!
+      redirect_to partners_path, notice: "#{@partner.name} recertification successfully requested!"
+    else
+      redirect_to partners_path, error: "#{@partner.name} failed to update partner records"
+    end
   end
 
   private
