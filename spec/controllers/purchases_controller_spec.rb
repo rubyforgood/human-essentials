@@ -29,21 +29,34 @@ RSpec.describe PurchasesController, type: :controller do
       let(:line_items) { [create(:line_item)] }
       let(:vendor) { create(:vendor, organization: @organization) }
 
-      it "redirects to GET#edit on success" do
-        post :create, params: default_params.merge(
-          purchase: { storage_location_id: storage_location.id,
-                      purchased_from: "Google",
-                      vendor_id: vendor.id,
-                      amount_spent_in_cents: 10,
-                      line_items: line_items }
-        )
-        expect(response).to redirect_to(purchases_path)
+      context "on success" do
+        let(:purchase) do
+          { storage_location_id: storage_location.id,
+            purchased_from: "Google",
+            vendor_id: vendor.id,
+            amount_spent_in_cents: 10,
+            line_items: line_items }
+        end
+
+        it "redirects to GET#edit" do
+          post :create, params: default_params.merge(purchase: purchase)
+          expect(response).to redirect_to(purchases_path)
+        end
+
+        it "accepts :amount_spent_in_cents with dollar signs, commas, and periods" do
+          formatted_purchase = purchase.merge(amount_spent_in_cents: "$1,000.54")
+          post :create, params: default_params.merge(purchase: formatted_purchase)
+
+          expect(Purchase.last.amount_spent_in_cents).to eq 100_054
+        end
       end
 
-      it "renders GET#new with error on failure" do
-        post :create, params: default_params.merge(purchase: { storage_location_id: nil, amount_spent_in_cents: nil })
-        expect(response).to be_successful # Will render :new
-        expect(response).to have_error(/error/i)
+      context "on failure" do
+        it "renders GET#new with error" do
+          post :create, params: default_params.merge(purchase: { storage_location_id: nil, amount_spent_in_cents: nil })
+          expect(response).to be_successful # Will render :new
+          expect(response).to have_error(/error/i)
+        end
       end
     end
 
