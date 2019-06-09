@@ -1,6 +1,6 @@
 <div class="app-title">
   <div>
-    <h1><i class="fa fa-new"></i> Show Child</h1>
+    <h1><i class="fa fa-new"></i> Child Details</h1>
   </div>
   <ul class="app-breadcrumb breadcrumb">
     <li class="breadcrumb-item"><i class="fa fa-child"></i></li>
@@ -17,47 +17,45 @@
       </div>
     <% end %>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <div class="card mb-12">
-            <h5 class="card-header bg-primary text-white">Child Information</h5>
-            <div class="card-body">
-              <dl>
-                <dt>First name</dt>
-                <dd><%= child.first_name %></dd>
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-12">
+          <h5 class="card-header bg-primary text-white">Child Information</h5>
+          <div class="card-body">
+            <dl>
+              <dt>First name</dt>
+              <dd><%= child.first_name %></dd>
 
-                <dt>Last name:</dt>
-                <dd><%= child.last_name %></dd>
+              <dt>Last name:</dt>
+              <dd><%= child.last_name %></dd>
 
-                <dt>Date of birth:</dt>
-                <dd><%= child.date_of_birth %></dd>
+              <dt>Date of birth:</dt>
+              <dd><%= child.date_of_birth %></dd>
 
-                <dt>Gender:</dt>
-                <dd><%= child.gender %></dd>
+              <dt>Gender:</dt>
+              <dd><%= child.gender %></dd>
 
-                <dt>Child lives with:</dt>
-                <dd><%= child.child_lives_with %></dd>
+              <dt>Child lives with:</dt>
+              <dd><%= child.child_lives_with %></dd>
 
-                <dt>Race:</dt>
-                <dd><%= child.race %></dd>
+              <dt>Race:</dt>
+              <dd><%= child.race %></dd>
 
-                <dt>Agency child:</dt>
-                <dd><%= child.agency_child_id %></dd>
+              <dt>Agency child:</dt>
+              <dd><%= child.agency_child_id %></dd>
 
-                <dt>Health insurance:</dt>
-                <dd><%= child.health_insurance %></dd>
+              <dt>Health insurance:</dt>
+              <dd><%= child.health_insurance %></dd>
 
-                <dt>Item needed:</dt>
-                <dd><%= item_id_to_display_string_map[child.item_needed_diaperid] %></dd>
+              <dt>Item needed:</dt>
+              <dd><%= item_id_to_display_string_map[child.item_needed_diaperid] %></dd>
 
-                <dt>Comments:</dt>
-                <dd><%= child.comments %></dd>
-              </dl>
+              <dt>Comments:</dt>
+              <dd><%= child.comments %></dd>
+            </dl>
 
-              <%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-success" %>
-              <%= link_to 'All Children', children_path, class: "btn btn-info pull-right" %>
-            </div>
+            <%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-success" %>
+            <%= link_to 'All Children', children_path, class: "btn btn-info pull-right" %>
           </div>
         </div>
       </div>
