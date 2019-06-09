@@ -13,10 +13,12 @@
 #  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
 #  money_raised                :integer
+#  manufacturer_id             :bigint(8)
 #
 
 class Donation < ApplicationRecord
   SOURCES = { diaper_drive: "Diaper Drive",
+              manufacturer: "Manufacturer",
               donation_site: "Donation Site",
               misc: "Misc. Donation" }.freeze
 
@@ -24,6 +26,7 @@ class Donation < ApplicationRecord
 
   belongs_to :donation_site, optional: true # Validation is conditionally handled below.
   belongs_to :diaper_drive_participant, optional: proc { |d| d.from_diaper_drive? } # Validation is conditionally handled below.
+  belongs_to :manufacturer, optional: proc { |d| d.from_manufacturer? } # Validation is conditionally handled below.
   belongs_to :storage_location
   include Itemizable
 
@@ -35,6 +38,9 @@ class Donation < ApplicationRecord
   scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
     where(diaper_drive_participant_id: diaper_drive_participant_id)
+  }
+  scope :from_manufacturer, ->(manufacturer_id) {
+    where(manufacturer_id: manufacturer_id)
   }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
@@ -50,6 +56,9 @@ class Donation < ApplicationRecord
   validates :diaper_drive_participant, presence:
     { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" },
                                        if: :from_diaper_drive?
+  validates :manufacturer, presence:
+    { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" },
+                           if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values,
                                                   message: "Must be a valid source." }
 
@@ -64,6 +73,10 @@ class Donation < ApplicationRecord
 
   def from_diaper_drive?
     source == SOURCES[:diaper_drive]
+  end
+
+  def from_manufacturer?
+    source == SOURCES[:manufacturer]
   end
 
   def from_donation_site?

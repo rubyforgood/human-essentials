@@ -53,7 +53,6 @@ User.create email: 'user_2@example.com', password: 'password', password_confirma
 User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: false, super_admin: true
 User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org, organization_admin: true
 
-
 DonationSite.find_or_create_by!(name: "Pawnee Hardware") do |location|
   location.address = "1234 SE Some Ave., Pawnee, OR 12345"
   location.organization = pdx_org
@@ -91,12 +90,12 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
 end
 
 def seed_quantity(item_name, organization_id, storage_location_id, quantity)
-  return if (quantity == 0)
+  return if quantity == 0
 
   item_id = Item.find_by(name: item_name, organization_id: organization_id).id
-  InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) {|h|
+  InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) do |h|
     h.quantity = quantity
-  }
+  end
 end
 
 # qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
@@ -182,6 +181,11 @@ DiaperDriveParticipant.create! business_name: "A Mediocre Place to Collect Diape
                                email: "ok@place.is",
                                organization: pdx_org
 
+Manufacturer.create! name: "Manufacturer 1",
+                     organization: pdx_org
+Manufacturer.create! name: "Manufacturer 2",
+                     organization: pdx_org
+
 def random_record(klass)
   # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
   klass.limit(1).order("random()").first
@@ -192,11 +196,13 @@ end
   # Depending on which source it uses, additional data may need to be provided.
   donation = case source
              when Donation::SOURCES[:diaper_drive]
-               Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.now
+               Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.zone.now
              when Donation::SOURCES[:donation_site]
-               Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.now
+               Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.zone.now
+             when Donation::SOURCES[:manufacturer]
+               Donation.create! source: source, manufacturer: random_record(Manufacturer), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.zone.now
              else
-               Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.now
+               Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.zone.now
              end
 
   rand(1..5).times.each do
@@ -208,8 +214,7 @@ end
   distribution = Distribution.create!(storage_location: random_record(StorageLocation),
                                       partner: random_record(Partner),
                                       organization: pdx_org,
-                                      issued_at: (Date.today + rand(15).days)
-                                      )
+                                      issued_at: (Date.today + rand(15).days))
 
   rand(1..5).times.each do
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: distribution
@@ -221,9 +226,8 @@ end
   Request.create(
     partner: random_record(Partner),
     organization: random_record(Organization),
-    request_items: [{ "item_id" => Item.all.pluck(:id).sample, "quantity" => 3},
-                    { "item_id" => Item.all.pluck(:id).sample, "quantity" => 2}
-                   ],
+    request_items: [{ "item_id" => Item.all.pluck(:id).sample, "quantity" => 3 },
+                    { "item_id" => Item.all.pluck(:id).sample, "quantity" => 2 }],
     comments: "Urgent",
     status: status
   )

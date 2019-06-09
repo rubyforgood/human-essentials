@@ -6,10 +6,9 @@
   </h1>
 
   <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
+    <li><%= link_to(dashboard_path) do %>
       <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
+    <% end %></li>
     <li><%= link_to "Requests", (requests_path) %></li>
     <li class="active"> Request from <%= @request.partner.name %> at <%= @request.created_at.to_s(:distribution_date) %></li>
   </ol>
@@ -22,7 +21,7 @@
         <p>This request was sent on <%= @request.created_at.to_s(:distribution_date) %>:</p>
         <ul class="list-group">
           <li class="list-group-item">It was sent by: <%= @request.partner.name %></li>
-          <li class="list-group-item">It has a status of: <%= @request.status %></li>
+          <li class="list-group-item">It has a status of: <%= render partial: "status", locals: {status: @request.status} %></li>
           <li class="list-group-item">Comments: <%= @request.comments || 'None' %></li>
         </ul>
 
@@ -57,8 +56,9 @@
 
     </div>
     <div class="box-footer">
-      <%= submit_button_to start_request_path(@request), { text: "New Distribution" } unless @request.distribution %>
+      <%= submit_button_to start_request_path(@request), { text: "Fulfill request" } unless @request.distribution %>
       <%= view_button_to(distribution_path(@request.distribution), { text: "View Associated Distribution", size: "lg" }) if @request.distribution %>
+      <%= delete_button_to :request, { text: 'Cancel request' , size: 'lg'}  unless @request.distribution %>
     </div>
   </div>
 </section>

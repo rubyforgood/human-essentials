@@ -172,6 +172,7 @@ RSpec.feature "Distributions", type: :feature do
     end
   end
 
+  # TODO: This should probably be in the Request resource specs, not Distribution
   context "When creating a distrubition from a request" do
     before do
       items = @storage_location.items.pluck(:id).sample(2)
@@ -179,7 +180,7 @@ RSpec.feature "Distributions", type: :feature do
       @request = create :request, organization: @organization, request_items: request_items
 
       visit @url_prefix + "/requests/#{@request.id}"
-      click_on "New Distribution"
+      click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
         click_on "Save"
@@ -201,12 +202,7 @@ RSpec.feature "Distributions", type: :feature do
     end
 
     scenario "a user can add items via scanning them in by barcode", js: true do
-      pending "The JS doesn't appear to be executing in this correctly"
-      # I tried (3 Feb) to get this working and it still doesn't execute.
-      # The data gets put into the field correctly, tho it doesn't show up on
-      # the browser snapshot -- but the Ajax doesn't execute. Not sure why this is broken.
-      # enter the barcode into the barcode field
-      page.fill_in "_barcode-lookup-0", with: @existing_barcode.value + 13.chr
+      Barcode.boop(@existing_barcode.value)
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
 

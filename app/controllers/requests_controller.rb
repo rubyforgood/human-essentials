@@ -37,4 +37,13 @@ class RequestsController < ApplicationController
   def sum_inventory(key)
     current_organization.inventory_items.where(item_id: key).sum(:quantity)
   end
+
+  # TODO: kick off job to send email
+  def destroy
+    ActiveRecord::Base.transaction do
+      Request.find(params[:id]).destroy!
+    end
+    flash[:notice] = "Request #{params[:id]} has been removed!"
+    redirect_to requests_path
+  end
 end
