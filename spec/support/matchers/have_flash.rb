@@ -18,6 +18,9 @@ end
 [:error, :notice, :alert, :success].each do |type|
   type_symbol = "have_#{type}".to_sym
 
+  # Default case checks the presence of any message of the given type,
+  # but if no message exists, flash[type] is `nil`, which causes
+  # the matcher to return `false`.
   RSpec::Matchers.define type_symbol do |expected = //|
     match do
       if expected.is_a? Regexp
