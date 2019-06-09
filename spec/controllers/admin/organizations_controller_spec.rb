@@ -16,9 +16,25 @@ RSpec.describe Admin::OrganizationsController, type: :controller do
     end
 
     describe "POST #create" do
-      it "redirects" do
-        post :create, params: { organization: attributes_for(:organization) }
-        expect(response).to be_redirect
+      let(:valid_organization_params) { attributes_for(:organization) }
+
+      context "with valid params" do
+        it "redirects to #index" do
+          post :create, params: { organization: valid_organization_params }
+
+          expect(response).to redirect_to(admin_organizations_path)
+        end
+      end
+
+      context "with invalid params" do
+        let(:invalid_params) { valid_organization_params.merge(name: nil) }
+
+        it "renders #create with an error message" do
+          post :create, params: { organization: invalid_params }
+
+          expect(subject).to render_template("new")
+          expect(flash[:error]).to be_present
+        end
       end
     end
 
