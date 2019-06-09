@@ -12,7 +12,7 @@ RSpec.shared_examples "csv import" do
     end
 
     it "presents a flash notice message" do
-      expect(subject.request.flash[:notice]).to eq "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
+      expect(subject).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.shared_examples "csv import" do
     end
 
     it "presents a flash error message" do
-      expect(subject.request.flash[:error]).to eq "No file was attached!"
+      expect(subject).to have_error "No file was attached!"
     end
   end
 
@@ -37,7 +37,7 @@ RSpec.shared_examples "csv import" do
     end
 
     it "presents a flash error message" do
-      expect(subject.request.flash[:error]).to eq "Check headers in file!"
+      expect(subject).to have_error "Check headers in file!"
     end
   end
 end

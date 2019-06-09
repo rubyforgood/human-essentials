@@ -12,7 +12,7 @@ RSpec.describe Admin::BarcodeItemsController, type: :controller do
         expect do
           delete :destroy, params: { id: other_barcode.to_param }
         end.to change { BarcodeItem.count }.by(-1)
-        expect(flash.to_h).not_to have_key("error")
+        expect(response).not_to have_error
       end
 
       it "allows deletion of a global barcode" do
@@ -21,7 +21,7 @@ RSpec.describe Admin::BarcodeItemsController, type: :controller do
         expect do
           delete :destroy, params: { id: other_barcode.to_param }
         end.to change { BarcodeItem.count }.by(-1)
-        expect(flash.to_h).not_to have_key("error")
+        expect(response).not_to have_error
       end
     end
   end
