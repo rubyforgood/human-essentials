@@ -61,6 +61,17 @@ RSpec.describe Admin::OrganizationsController, type: :controller do
         end
       end
     end
+
+    describe "DELETE #destroy" do
+      let(:organization) { create(:organization) }
+
+      context "with a valid organization id" do
+        it "redirects to #index" do
+          delete :destroy, params: { id: organization.id }
+          expect(response).to redirect_to(admin_organizations_path)
+        end
+      end
+    end
   end
 =begin
 
