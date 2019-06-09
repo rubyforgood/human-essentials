@@ -91,9 +91,18 @@ RSpec.describe Admin::OrganizationsController, type: :controller do
 
     describe "GET #edit" do
       let!(:organization) { create(:organization) }
-      
+
       it "returns http success" do
         get :edit, params: { id: organization.id }
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET #show" do
+      let!(:organization) { create(:organization) }
+
+      it "returns http success" do
+        get :show, params: { id: organization.id }
         expect(response).to be_successful
       end
     end
