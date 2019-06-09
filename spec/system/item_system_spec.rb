@@ -102,8 +102,6 @@ RSpec.describe "Item management", type: :system do
     let(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
     let(:donation_aux_tampons) { create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons) }
     before do
-      storage.increase_inventory(donation_tampons)
-      aux_storage.increase_inventory(donation_aux_tampons)
       visit url_prefix + "/items"
     end
     # Consolidated these into one to reduce the setup/teardown
