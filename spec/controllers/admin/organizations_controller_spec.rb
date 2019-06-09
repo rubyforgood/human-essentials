@@ -28,6 +28,39 @@ RSpec.describe Admin::OrganizationsController, type: :controller do
         expect(response).to be_successful
       end
     end
+
+    describe "PATCH #update" do
+      let(:organization) { create(:organization, name: "Original Name") }
+      subject do
+        patch :update,
+              params: default_params.merge(
+                id: organization.id,
+                organization: { name: updated_name }
+              )
+      end
+
+      context "with a valid update" do
+        let(:updated_name) { "Updated Name" }
+
+        it "redirects to #index" do
+          expect(subject).to have_http_status(:redirect)
+          expect(subject).to redirect_to(admin_organizations_path)
+        end
+      end
+
+      context "with an invalid update" do
+        let(:updated_name) { nil }
+
+        it "returns http success" do
+          expect(subject).to be_successful
+        end
+
+        it "redirects to #edit with an error message" do
+          expect(subject).to render_template("edit")
+          expect(flash[:error]).to be_present
+        end
+      end
+    end
   end
 =begin
 
