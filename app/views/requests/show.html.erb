@@ -22,7 +22,7 @@
         <p>This request was sent on <%= @request.created_at.to_s(:distribution_date) %>:</p>
         <ul class="list-group">
           <li class="list-group-item">It was sent by: <%= @request.partner.name %></li>
-          <li class="list-group-item">It has a status of: <%= @request.status %></li>
+          <li class="list-group-item">It has a status of: <%= render partial: "status", locals: {status: @request.status} %></li>
           <li class="list-group-item">Comments: <%= @request.comments || 'None' %></li>
         </ul>
 
