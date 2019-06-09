@@ -2,17 +2,12 @@ class ChildrenController < ApplicationController
   before_action :authenticate_partner!
 
   helper_method :child, :children, :family
-  attr_reader :children, :child
 
-  def index
-    @children ||= current_partner.children.all
-  end
+  def index; end
 
   def show; end
 
-  def new
-    @child = family.children.new
-  end
+  def new; end
 
   def active
     child = current_partner.children.find(params[:child_id])
@@ -58,8 +53,13 @@ class ChildrenController < ApplicationController
 
   private
 
+  def children
+    @children ||= current_partner.children.all
+  end
+
   def child
-    @child ||= current_partner.children.find(params[:id])
+    @child ||= current_partner.children.find_by(id: params[:id]) ||
+               family.children.new
   end
 
   def family
