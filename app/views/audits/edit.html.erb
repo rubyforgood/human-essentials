@@ -1,37 +1,48 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Edit - Audits - Inventory - #{current_organization.name}" %>
-  <h1>
-    Edit Inventory Audit
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><%= link_to "Inventory Audits", (audits_path) %></li>
-    <li class="active"> New Audit</li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h1>
+      Edit Inventory Audit
+      <small>for <%= current_organization.name %></small>
+    </h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(dashboard_path) do %>
+          <i class="fa fa-dashboard"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item">
+        <%= link_to "Inventory Audits", (audits_path) %>
+      </li>
+      <li class="breadcrumb-item active">
+        Edit Audit
+      </li>
+    </ol>
+  </div>
+</div>
 
-<!-- Main content -->
-<section class="content">
 
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <p class="box-title">Edit the <strong>Audit</strong> recording all the inventory present in a particular storage location.</p>
-    </div>
 
-    <div class="box-body">
-      <p class="help">Enter <em>all</em> the items with their corresponding <em>quantity</em> that are present in the storage location</p>
-      <p class="help">Click on <em>Save Progress</em> button to save the current progress of audit.</p>
-      <p class="help">You can <em>resume</em> the saved audit at a later time again.</p>
-      <%= render partial: "audits/form" %>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="ibox-title">
+          <h3>Edit the <strong>Audit</strong> recording all the inventory present in a particular storage location.</h3>
+        </div>
+
+        <div class="ibox-content">
+          <p class="help">Enter <em>all</em> the items with their corresponding <em>quantity</em> that are present in
+            the storage location</p>
+          <p class="help">Click on <em>Save Progress</em> button to save the current progress of audit.</p>
+          <p class="help">You can <em>resume</em> the saved audit at a later time again.</p>
+          <%= render partial: "audits/form" %>
+        </div>
+      </div>
+      <!-- /.box -->
+
+      <%= render partial: "donations/barcode_modal" %>
+
     </div>
   </div>
-  <!-- /.box -->
-
-  <%= render partial: "donations/barcode_modal" %>
-
-</section>
+</div>

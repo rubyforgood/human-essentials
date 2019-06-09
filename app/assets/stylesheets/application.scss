@@ -31,3 +31,11 @@
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';
+
+tr.positive {
+  background: #99eeef;
+}
+
+tr.negative {
+  background: #ef97b0;
+}
