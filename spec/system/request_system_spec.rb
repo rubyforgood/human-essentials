@@ -39,7 +39,7 @@ RSpec.describe "Requests", type: :system, js: true do
     context "change status request" do
       before do
         visit url_prefix + "/requests/#{@request.id}"
-        click_on "New Distribution"
+        click_on "Fulfill request"
       end
 
       it "should change to started" do
