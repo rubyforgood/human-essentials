@@ -87,6 +87,7 @@ group :test do
   gem "launchy"
   gem 'webdrivers', '~> 3.0'
   gem "rails-controller-testing"
+  gem 'simplecov'
   gem "webmock", "~> 3.5"
 end
 
