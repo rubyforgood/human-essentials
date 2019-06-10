@@ -22,4 +22,8 @@ class LineItem < ApplicationRecord
   def value_per_line_item
     item.value_in_cents * quantity
   end
+
+  def package_count
+    quantity / item.package_size.to_f if item.package_size
+  end
 end
