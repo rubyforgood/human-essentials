@@ -13,15 +13,11 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
     end
 
     context "with a valid API key" do
-      before do
-        allow_any_instance_of(API::V1::FamilyRequestsController).to receive(:api_key_valid?).and_return(true)
-      end
-
       subject do
         headers = {
           "ACCEPT" => "application/json",
           "Content-Type" => "application/json",
-          "X-Api-Key" => "some-fake-key"
+          "X-Api-Key" => ENV["PARTNER_KEY"]
         }
 
         params = {
