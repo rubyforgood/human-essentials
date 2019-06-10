@@ -180,7 +180,7 @@ RSpec.feature "Distributions", type: :feature do
       @request = create :request, organization: @organization, request_items: request_items
 
       visit @url_prefix + "/requests/#{@request.id}"
-      click_on "Fulfill request"
+      click_on "New Distribution"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
         click_on "Save"

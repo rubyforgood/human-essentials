@@ -39,11 +39,12 @@ RSpec.describe "Requests", type: :system, js: true do
     context "change status request" do
       before do
         visit url_prefix + "/requests/#{@request.id}"
-        click_on "Fulfill request"
+        click_on "New Distribution"
       end
 
       it "should change to started" do
-        visit url_prefix + "/requests"
+        visit url_prefix + "/requests/#{@request.id}"
+        visit url_prefix + "/requests/#{@request.id}"
         expect(page).to have_content "Started"
         expect(@request.reload).to be_status_started
       end

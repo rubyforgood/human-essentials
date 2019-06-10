@@ -57,8 +57,6 @@ RSpec.describe "Diaper Drive Participant", type: :system, js: true do
 
       expect(page.find(".alert")).to have_content "added"
     end
-    expect(page).to have_content(diaper_drive_participant_traits[:contact_name])
-  end
 
     it "does not allow a user to add a new diaper drive instance with empty attributes" do
       visit subject
