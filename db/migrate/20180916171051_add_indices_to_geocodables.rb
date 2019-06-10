@@ -1,3 +1,4 @@
+# Make Geocode lookups faster
 class AddIndicesToGeocodables < ActiveRecord::Migration[5.2]
   def change
     add_index :organizations, [:latitude, :longitude]

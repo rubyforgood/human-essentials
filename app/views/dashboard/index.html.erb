@@ -186,6 +186,40 @@
         </div>
         <div class="ibox ">
           <div class="ibox-title">
+            <h5>Manufacturer Donations</h5>
+            <div class="ibox-tools">
+              <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+              </a>
+              <a class="close-link">
+                <i class="fa fa-times"></i>
+              </a>
+            </div>
+          </div>
+          <div class="ibox-content">
+            <div class="box-body text-center float-center">
+              <span class="float-center text-center">
+          <div class="box-body text-center float-center">
+            <%= new_button_to new_purchase_path, {text: "New Purchases", type: "primary"} %>
+          </div>
+              </span>
+              <h3 class="text-center"><%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }) %> items donated <%= display_interval %> by <%= pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, 'Manufacturer') %></h3>
+              <div class="box-body">
+                <div class="box-body text-center float-center">
+                  <h4>Top Manufacturer Donations</h4>
+                  <%= render partial: "manufacturer", collection: @top_manufacturers, as: :manufacturer %>
+                </div>
+              </div>
+              <div class="box-footer text-center">
+                <%= link_to "See more...", donations_path(
+                    filters: {
+                        by_source: "Manufacturer"
+                    }) %>
+              </div>
+          </div>
+        </div>
+        <div class="ibox ">
+          <div class="ibox-title">
             <h5>Purchases</h5>
             <div class="ibox-tools">
               <a class="collapse-link">

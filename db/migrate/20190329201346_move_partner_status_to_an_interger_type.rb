@@ -1,3 +1,8 @@
+# Fix to ensure that the object is available in the migration
+class Partner < ApplicationRecord
+end
+
+# We're moving Partners to an Enum, so seeding them initially with integers
 class MovePartnerStatusToAnIntergerType < ActiveRecord::Migration[5.2]
   def up
     # 1. add_column that is an integer type where we can move our string to ints

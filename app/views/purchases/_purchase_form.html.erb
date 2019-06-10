@@ -9,7 +9,9 @@
                     label: "Storage Location",
                     error: "Where is it being stored?",
                     selected: current_organization.intake_location %>
-  <%= f.input :amount_spent %>
+  <%= f.input :amount_spent_in_cents,
+              label: "Purchase Total",
+              wrapper: :vertical_input_group %>
   <%= f.input :comment %>
   <%= f.input :issued_at,
               label: "Issued on",

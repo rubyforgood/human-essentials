@@ -49,14 +49,17 @@ gem "webpacker", "~> 3.5"
 
 group :development, :test do
   gem "awesome_print"
+  gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "pry-rails"
+  gem "pry-remote"
+  gem "pry-nav"
+  gem 'rb-readline', '~> 0.5.3'
   gem "rspec-rails", "~> 3.8"
+  gem "rubocop"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "timecop"
-  gem "rubocop"
-  gem "fakeredis", require: "fakeredis/rspec"
 end
 
 group :development do
@@ -84,6 +87,7 @@ group :test do
   gem "launchy"
   gem 'webdrivers', '~> 3.0'
   gem "rails-controller-testing"
+  gem 'simplecov'
   gem "webmock", "~> 3.5"
 end
 

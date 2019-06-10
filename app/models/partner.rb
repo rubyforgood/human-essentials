@@ -2,11 +2,11 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  email           :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  created_at      :datetime
+#  updated_at      :datetime
 #  organization_id :integer
 #  status          :string
 #
@@ -49,5 +49,12 @@ class Partner < ApplicationRecord
 
   def register_on_partnerbase
     UpdateDiaperPartnerJob.perform_async(id)
+  end
+
+  def quantity_year_to_date
+    distributions
+      .includes(:line_items)
+      .where("line_items.created_at > ?", Time.zone.today.beginning_of_year)
+      .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 end

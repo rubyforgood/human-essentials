@@ -2,7 +2,7 @@
 #
 # Table name: adjustments
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint(8)        not null, primary key
 #  organization_id     :integer
 #  storage_location_id :integer
 #  comment             :text
@@ -28,6 +28,14 @@ class Adjustment < ApplicationRecord
 
   def self.storage_locations_adjusted_for(organization)
     includes(:storage_location).where(organization_id: organization.id).collect(&:storage_location)
+  end
+
+  def split_difference
+    pre_adjustment = line_items.partition { |line_item| line_item.quantity.positive? }
+    increasing_adjustment, decreasing_adjustment = pre_adjustment.map { |adjustment| Adjustment.new(line_items: adjustment) }
+
+    decreasing_adjustment.line_items.each { |line_item| line_item.quantity *= -1 }
+    [increasing_adjustment, decreasing_adjustment]
   end
 
   def self.csv_export_headers

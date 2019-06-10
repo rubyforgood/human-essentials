@@ -7,7 +7,7 @@
 #  comment             :text
 #  organization_id     :integer
 #  storage_location_id :integer
-#  amount_spent        :integer
+#  amount_spent_in_cents        :integer
 #  issued_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -70,61 +70,14 @@ RSpec.describe Purchase, type: :model do
     describe "items >" do
       it "has_many" do
         purchase = create(:purchase)
-        item = create(:item)
-        # Using purchase.track because it marshalls the HMT
-        purchase.track(item, 1)
+        line_item = create(:line_item)
+        purchase.line_items << line_item
         expect(purchase.items.count).to eq(1)
       end
     end
   end
 
   context "Methods >" do
-    describe "track" do
-      let!(:purchase) { create(:purchase) }
-      let!(:item) { create(:item) }
-
-      it "does not add a new line_item unnecessarily, updating existing line_item instead" do
-        item = create :item
-        purchase.track(item, 5)
-        expect do
-          purchase.track(item, 10)
-          purchase.reload
-        end.not_to change { purchase.line_items.count }
-
-        expect(purchase.line_items.first.quantity).to eq(15)
-      end
-    end
-
-    describe "contains_item_id?" do
-      it "returns true if the item_id already exists" do
-        purchase = create(:purchase, :with_items)
-        expect(purchase.contains_item_id?(purchase.items.first.id)).to be_truthy
-      end
-    end
-
-    describe "update_quantity" do
-      let!(:purchase) { create(:purchase, :with_items) }
-      it "adds an additional quantity to the existing line_item" do
-        expect do
-          purchase.update_quantity(1, purchase.items.first)
-          purchase.reload
-        end.to change { purchase.line_items.first.quantity }.by(1)
-      end
-
-      it "can receive a negative quantity to subtract inventory" do
-        expect do
-          purchase.update_quantity(-1, purchase.items.first)
-        end.to change { purchase.total_quantity }.by(-1)
-      end
-
-      it "works whether you give it an item or an id" do
-        expect do
-          purchase.update_quantity(1, purchase.items.first.id)
-          purchase.reload
-        end.to change { purchase.line_items.first.quantity }.by(1)
-      end
-    end
-
     describe "remove" do
       let!(:purchase) { create(:purchase, :with_items) }
 
@@ -143,12 +96,37 @@ RSpec.describe Purchase, type: :model do
       end
     end
 
-    describe "remove_inventory" do
-      it "removes inventory from the right storage location when purchase deleted" do
-        purchase = create(:purchase, :with_items)
+    describe "replace_increase!" do
+      let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 5, organization: @organization) }
+      subject { create(:purchase, :with_items, item_quantity: 5, storage_location: storage_location, organization: @organization) }
+
+      it "updates the quantity of items" do
+        attributes = { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } }
         expect do
-          purchase.remove_inventory
-        end.to change { purchase.storage_location.size }.by(-purchase.total_quantity)
+          subject.replace_increase!(attributes)
+          storage_location.reload
+        end.to change { storage_location.size }.by(-3)
+      end
+
+      it "removes the inventory item if the item's removal results in a 0 count" do
+        attributes = { line_items_attributes: {} }
+        expect do
+          subject.replace_increase!(attributes)
+          storage_location.reload
+        end.to change { storage_location.inventory_items.size }.by(-1)
+                                                               .and change { InventoryItem.count }.by(-1)
+      end
+
+      context "when adding an item that has been previously deleted" do
+        let!(:inactive_item) { create(:item, active: false, organization: @organization) }
+        let(:attributes) { { line_items_attributes: { "0": { item_id: inactive_item.id, quantity: 10 } } } }
+        it "re-creates the item" do
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.size }.by(5)
+                                                 .and change { Item.count }.by(1)
+        end
       end
     end
   end

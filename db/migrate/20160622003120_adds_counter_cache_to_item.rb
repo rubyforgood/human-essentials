@@ -1,3 +1,4 @@
+# We wanted to know how many barcodes existed per item
 class AddsCounterCacheToItem < ActiveRecord::Migration[5.0]
   def up
     add_column :items, :barcode_count, :integer

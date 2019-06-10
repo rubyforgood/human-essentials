@@ -2,21 +2,23 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
+#  id                          :bigint(8)        not null, primary key
 #  source                      :string
 #  donation_site_id            :integer
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
+#  created_at                  :datetime
+#  updated_at                  :datetime
 #  storage_location_id         :integer
 #  comment                     :text
 #  organization_id             :integer
 #  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
 #  money_raised                :integer
+#  manufacturer_id             :bigint(8)
 #
 
 class Donation < ApplicationRecord
   SOURCES = { diaper_drive: "Diaper Drive",
+              manufacturer: "Manufacturer",
               donation_site: "Donation Site",
               misc: "Misc. Donation" }.freeze
 
@@ -24,6 +26,7 @@ class Donation < ApplicationRecord
 
   belongs_to :donation_site, optional: true # Validation is conditionally handled below.
   belongs_to :diaper_drive_participant, optional: proc { |d| d.from_diaper_drive? } # Validation is conditionally handled below.
+  belongs_to :manufacturer, optional: proc { |d| d.from_manufacturer? } # Validation is conditionally handled below.
   belongs_to :storage_location
   include Itemizable
 
@@ -36,6 +39,9 @@ class Donation < ApplicationRecord
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
     where(diaper_drive_participant_id: diaper_drive_participant_id)
   }
+  scope :from_manufacturer, ->(manufacturer_id) {
+    where(manufacturer_id: manufacturer_id)
+  }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
       .includes(:line_items, :storage_location, :donation_site)
@@ -43,7 +49,6 @@ class Donation < ApplicationRecord
   }
 
   before_create :combine_duplicates
-  before_destroy :remove_inventory
 
   validates :donation_site, presence:
     { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
@@ -51,6 +56,9 @@ class Donation < ApplicationRecord
   validates :diaper_drive_participant, presence:
     { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" },
                                        if: :from_diaper_drive?
+  validates :manufacturer, presence:
+    { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" },
+                           if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values,
                                                   message: "Must be a valid source." }
 
@@ -65,6 +73,10 @@ class Donation < ApplicationRecord
 
   def from_diaper_drive?
     source == SOURCES[:diaper_drive]
+  end
+
+  def from_manufacturer?
+    source == SOURCES[:manufacturer]
   end
 
   def from_donation_site?
@@ -91,16 +103,25 @@ class Donation < ApplicationRecord
                       .sum("line_items.quantity")
   end
 
-  # def self.total_received
-  #    self.includes(:line_items).map(&:total_quantity).reduce(0, :+)
-  #  end
+  def replace_increase!(new_donation_params)
+    old_data = to_a
+    item_ids = line_items_attributes(new_donation_params).map { |i| i[:item_id].to_i }
 
-  def track(item, quantity)
-    if contains_item_id?(item.id)
-      update_quantity(quantity, item)
-    else
-      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
+    ActiveRecord::Base.transaction do
+      line_items.map(&:destroy!)
+      reload
+      Item.reactivate(item_ids)
+      line_items_attributes(new_donation_params).map { |i| i.delete(:id) }
+      update! new_donation_params
+      # Roll back distribution output by increasing storage location
+      storage_location.increase_inventory(to_a)
+      # Apply the new changes to the storage location inventory
+      storage_location.decrease_inventory(old_data)
+      # TODO: Discuss this -- *should* we be removing InventoryItems when they hit 0 count?
+      storage_location.inventory_items.where(quantity: 0).destroy_all
     end
+  rescue ActiveRecord::RecordInvalid
+    false
   end
 
   def remove(item)
@@ -120,24 +141,6 @@ class Donation < ApplicationRecord
 
   def total_quantity
     line_items.sum(:quantity)
-  end
-
-  def contains_item_id?(id)
-    line_items.find_by(item_id: id).present?
-  end
-
-  # Use a negative quantity to subtract inventory
-  def update_quantity(quantity, item)
-    item_id = item.to_i
-    line_item = line_items.find_by(item_id: item_id)
-    line_item.quantity += quantity
-    # Inventory can never be negative
-    line_item.quantity = 0 if line_item.quantity.negative?
-    line_item.save
-  end
-
-  def remove_inventory
-    storage_location.remove!(self)
   end
 
   def self.csv_export_headers

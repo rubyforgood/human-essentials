@@ -1,3 +1,4 @@
+# Configures a Prawn PDF template for generating Distribution manifests
 class DistributionPdf
   include Prawn::View
   include ItemsHelper
@@ -12,7 +13,7 @@ class DistributionPdf
     end
     data = [["Items Received", "Value/item", "Total value", "Quantity"]]
     data += @distribution.line_items.sorted.map do |c|
-      [c.item.name, item_value(c.item.value), item_value(c.value_per_line_item), c.quantity]
+      [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity]
     end
     data += [["", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total]]
 
@@ -25,6 +26,10 @@ class DistributionPdf
 
     text "Issued on:", style: :bold
     text @distribution.distributed_at
+    move_down 10
+
+    text "Items Received Year-to-Date", style: :bold
+    text @distribution.partner.quantity_year_to_date.to_s
     move_down 10
 
     text "Comments:", style: :bold

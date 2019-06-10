@@ -1,3 +1,5 @@
+# [Super Admin] Manage the BaseItems -- this is the only place in the app where Base Items can be
+# added / modified. Base Items are both the template and common thread for regular Items
 class Admin::BaseItemsController < AdminController
   def edit
     @base_item = BaseItem.find(params[:id])

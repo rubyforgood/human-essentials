@@ -1,3 +1,5 @@
+# Provides full CRUD to Items. Every item is rooted in a BaseItem, but Diaperbanks have full control to do whatever
+# they like with their own Items.
 class ItemsController < ApplicationController
   def index
     @items = current_organization.items.includes(:base_item).alphabetized.class_filter(filter_params)
@@ -45,7 +47,12 @@ class ItemsController < ApplicationController
   end
 
   def destroy
-    current_organization.items.find(params[:id]).destroy
+    item = current_organization.items.find(params[:id])
+    ActiveRecord::Base.transaction do
+      item.destroy
+    end
+
+    flash[:notice] = "#{item.name} has been removed."
     redirect_to items_path
   end
 

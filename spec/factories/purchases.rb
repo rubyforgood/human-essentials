@@ -7,7 +7,7 @@
 #  comment             :text
 #  organization_id     :integer
 #  storage_location_id :integer
-#  amount_spent        :integer
+#  amount_spent_in_cents        :integer
 #  issued_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -21,7 +21,7 @@ FactoryBot.define do
     storage_location
     organization { Organization.try(:first) || create(:organization) }
     issued_at { nil }
-    amount_spent { 10 }
+    amount_spent_in_cents { 1000 }
     vendor { Vendor.try(:first) || create(:vendor) }
 
     transient do

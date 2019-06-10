@@ -2,11 +2,11 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  name            :string
 #  email           :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  created_at      :datetime
+#  updated_at      :datetime
 #  organization_id :integer
 #  status          :string
 #
@@ -80,6 +80,24 @@ RSpec.describe Partner, type: :model do
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       Partner.import_csv(csv, organization.id)
+    end
+  end
+
+  describe '#quantity_year_to_date' do
+    let(:partner) { create(:partner) }
+    before do
+      create(:distribution, :with_items, partner: partner)
+      create(:distribution, :with_items, partner: partner)
+      create(:distribution, :with_items, partner: partner)
+    end
+
+    it "includes all item quantities for the given year" do
+      expect(partner.quantity_year_to_date).to eq(300)
+    end
+
+    it "does not include quantities from last year" do
+      LineItem.last.update(created_at: Time.zone.today.beginning_of_year - 20)
+      expect(partner.quantity_year_to_date).to eq(200)
     end
   end
 end

@@ -2,23 +2,25 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
+#  id                          :bigint(8)        not null, primary key
 #  source                      :string
 #  donation_site_id            :integer
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
+#  created_at                  :datetime
+#  updated_at                  :datetime
 #  storage_location_id         :integer
 #  comment                     :text
 #  organization_id             :integer
 #  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
 #  money_raised                :integer
+#  manufacturer_id             :bigint(8)
 #
 
 FactoryBot.define do
   factory :donation do
     donation_site
     diaper_drive_participant
+    manufacturer
     source { Donation::SOURCES[:misc] }
     comment { "It's a fine day for diapers." }
     storage_location

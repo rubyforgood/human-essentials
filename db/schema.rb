@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_22_130439) do
+ActiveRecord::Schema.define(version: 2019_05_20_033128) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -146,7 +146,9 @@ ActiveRecord::Schema.define(version: 2019_04_22_130439) do
     t.integer "diaper_drive_participant_id"
     t.datetime "issued_at"
     t.integer "money_raised"
+    t.bigint "manufacturer_id"
     t.index ["donation_site_id"], name: "index_donations_on_donation_site_id"
+    t.index ["manufacturer_id"], name: "index_donations_on_manufacturer_id"
     t.index ["organization_id"], name: "index_donations_on_organization_id"
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
@@ -204,7 +206,7 @@ ActiveRecord::Schema.define(version: 2019_04_22_130439) do
     t.integer "organization_id"
     t.boolean "active", default: true
     t.string "partner_key"
-    t.decimal "value", precision: 5, scale: 2, default: "0.0"
+    t.integer "value_in_cents", default: 0
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
@@ -217,6 +219,14 @@ ActiveRecord::Schema.define(version: 2019_04_22_130439) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
+  end
+
+  create_table "manufacturers", force: :cascade do |t|
+    t.string "name"
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_manufacturers_on_organization_id"
   end
 
   create_table "organizations", id: :serial, force: :cascade do |t|
@@ -255,7 +265,7 @@ ActiveRecord::Schema.define(version: 2019_04_22_130439) do
     t.text "comment"
     t.integer "organization_id"
     t.integer "storage_location_id"
-    t.integer "amount_spent"
+    t.integer "amount_spent_in_cents"
     t.datetime "issued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -353,9 +363,11 @@ ActiveRecord::Schema.define(version: 2019_04_22_130439) do
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
+  add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "item_requests", "items"
   add_foreign_key "item_requests", "requests"
+  add_foreign_key "manufacturers", "organizations"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

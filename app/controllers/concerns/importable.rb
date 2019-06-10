@@ -1,23 +1,22 @@
+# Importable adds an `import_csv` action that that responds to routes like this:
+#
+#  resources :storage_locations do
+#    collection do
+#      post :import_csv
+#    end
+#  end
+#
+# If the model doing the import doesn't match the controller's name, you
+# should update the add a `resource_model` method and to override the default
+# class, e.g.
+#
+#  class Admin::LocationsController
+#    def resource_model
+#      Location
+#    end
+#  end
 module Importable
   extend ActiveSupport::Concern
-
-  # Importable adds an `import_csv` action that that responds to routes like this:
-  #
-  #  resources :storage_locations do
-  #    collection do
-  #      post :import_csv
-  #    end
-  #  end
-  #
-  # If the model doing the import doesn't match the controller's name, you
-  # should update the add a `resource_model` method and to override the default
-  # class, e.g.
-  #
-  #  class Admin::LocationsController
-  #    def resource_model
-  #      Location
-  #    end
-  #  end
 
   included do
     helper_method :current_organization, :current_user

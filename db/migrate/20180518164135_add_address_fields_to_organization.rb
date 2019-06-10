@@ -1,3 +1,4 @@
+# Adding more Organization data, this will eventually be used for Geocoding
 class AddAddressFieldsToOrganization < ActiveRecord::Migration[5.1]
   def change
     add_column :organizations, :street, :string

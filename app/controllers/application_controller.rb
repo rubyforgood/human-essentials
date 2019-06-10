@@ -1,3 +1,4 @@
+# Base Controller. There is some magic in here that handles organization-scoping for routes
 class ApplicationController < ActionController::Base
   include DateHelper
 
@@ -76,14 +77,6 @@ class ApplicationController < ActionController::Base
       format.json { render nothing: true, status: :internal_server_error }
     end
   end
-
-  # rescue_from CanCan::AccessDenied do |exception|
-  # respond_to do |format|
-  # format.json { head :forbidden, content_type: 'text/html' }
-  # format.html { redirect_to main_app.root_url, notice: exception.message }
-  # format.js   { head :forbidden, content_type: 'text/html' }
-  # end
-  # end
 
   def swaddled
     response.headers["swaddled-by"] = "rubyforgood"

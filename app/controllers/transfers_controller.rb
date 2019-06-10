@@ -1,3 +1,4 @@
+# Provides partial CRUD for managing Transfers, which move inventory from one storage location to another
 class TransfersController < ApplicationController
   def index
     @transfers = current_organization.transfers.includes(:line_items).includes(:from).includes(:to).class_filter(filter_params)
@@ -11,25 +12,22 @@ class TransfersController < ApplicationController
     @transfer = current_organization.transfers.new(transfer_params)
 
     if @transfer.valid?
-      @transfer.from.move_inventory!(@transfer)
-
-      if @transfer.save
-        redirect_to transfers_path, notice: "Transfer was successfully created."
-      else
-        flash[:error] = "There was an error, try again?"
-        render :new
+      ActiveRecord::Base.transaction do
+        @transfer.save
+        @transfer.from.decrease_inventory @transfer
+        @transfer.to.increase_inventory @transfer
       end
+
+      redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
     else
       flash[:error] = "There was an error creating the transfer"
-      @storage_locations = current_organization.storage_locations.alphabetized
-      @items = current_organization.items.alphabetized
+      load_form_collections
       @transfer.line_items.build if @transfer.line_items.empty?
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
     flash[:error] = ex.message
-    @storage_locations = current_organization.storage_locations.alphabetized
-    @items = current_organization.items.alphabetized
+    load_form_collections
     @transfer.line_items.build if @transfer.line_items.empty?
     render :new
   end
@@ -37,8 +35,7 @@ class TransfersController < ApplicationController
   def new
     @transfer = current_organization.transfers.new
     @transfer.line_items.build
-    @storage_locations = current_organization.storage_locations.alphabetized
-    @items = current_organization.items.alphabetized
+    load_form_collections
   end
 
   def show
@@ -48,6 +45,11 @@ class TransfersController < ApplicationController
   end
 
   private
+
+  def load_form_collections
+    @storage_locations = current_organization.storage_locations.alphabetized
+    @items = current_organization.items.alphabetized
+  end
 
   def transfer_params
     params.require(:transfer).permit(:from_id, :to_id, :comment,

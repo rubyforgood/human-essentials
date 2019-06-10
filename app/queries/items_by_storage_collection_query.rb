@@ -1,3 +1,6 @@
+# Creates a query object for retrieving the items, grouped by storage location
+# We're using query objects for some of these more complicated queries to get
+# the raw SQL out of the models and encapsulate it.
 class ItemsByStorageCollectionQuery
   attr_reader :organization
   attr_reader :filter_params
@@ -18,7 +21,7 @@ class ItemsByStorageCollectionQuery
                         items.name,
                         items.barcode_count,
                         items.partner_key,
-                        items.value,
+                        items.value_in_cents,
                         storage_locations.name as storage_name,
                         storage_locations.id as storage_id,
                         sum(inventory_items.quantity) as quantity

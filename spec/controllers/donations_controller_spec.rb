@@ -4,6 +4,7 @@ RSpec.describe DonationsController, type: :controller do
   end
 
   context "While signed in >" do
+    let(:donation) { create(:donation, organization: @organization) }
     before do
       sign_in(@user)
     end
@@ -105,21 +106,21 @@ RSpec.describe DonationsController, type: :controller do
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:donation)) }
+      subject { get :edit, params: default_params.merge(id: donation.id) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:donation, organization: @organization)) }
+      subject { get :show, params: default_params.merge(id: donation.id) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:donation, organization: @organization)) }
+      subject { delete :destroy, params: default_params.merge(id: donation.id) }
       it "redirects to the index" do
         expect(subject).to redirect_to(donations_path)
       end

@@ -1,3 +1,6 @@
+# Creates a query object for retrieving the items, grouped by storage location, also including quantities
+# We're using query objects for some of these more complicated queries to get
+# the raw SQL out of the models and encapsulate it.
 class ItemsByStorageCollectionAndQuantityQuery
   attr_reader :organization, :filter_params, :items_by_storage_collection_and_quantity
 
@@ -13,7 +16,7 @@ class ItemsByStorageCollectionAndQuantityQuery
       unless @items_by_storage_collection_and_quantity.key?(row.id)
         @items_by_storage_collection_and_quantity[row.id] = {
           item_name: row.name,
-          item_value: row.value,
+          item_value: row.value_in_cents,
           item_barcode_count: row.barcode_count
         }
       end

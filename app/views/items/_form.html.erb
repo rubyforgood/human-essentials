@@ -7,7 +7,7 @@
     <% end %>
     <%= f.input :name, label: "Value per item", wrapper: :vertical_input_group do %>
       <span class="input-group-addon"><i class="fa fa-money"></i></span>
-      <%= f.input_field :value, class: "form-control" %>
+      <%= f.input_field :value_in_cents, class: "form-control" %>
     <% end %>
 
     <%= submit_button %>

@@ -1,3 +1,4 @@
+# Enable Geocoding for resources with addresses
 class AddCoordinateFieldstoGeocodables < ActiveRecord::Migration[5.2]
   def change
     add_column :organizations, :latitude, :float

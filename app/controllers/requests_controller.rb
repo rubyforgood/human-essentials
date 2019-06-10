@@ -1,3 +1,4 @@
+# Provides Read-only access to Requests, which are created via an API. Requests are transformed into Distributions.
 class RequestsController < ApplicationController
   def index
     @requests = current_organization.ordered_requests
@@ -21,6 +22,7 @@ class RequestsController < ApplicationController
     redirect_to new_distribution_path(request_id: request.id)
   end
 
+  # TODO: This should probably be made private
   def get_items(request_items)
     # using Struct vs Hash so we can use dot notation in the view
     return unless request_items
@@ -31,7 +33,17 @@ class RequestsController < ApplicationController
     end
   end
 
+  # TODO: This should probably be made private
   def sum_inventory(key)
     current_organization.inventory_items.where(item_id: key).sum(:quantity)
+  end
+
+  # TODO: kick off job to send email
+  def destroy
+    ActiveRecord::Base.transaction do
+      Request.find(params[:id]).destroy!
+    end
+    flash[:notice] = "Request #{params[:id]} has been removed!"
+    redirect_to requests_path
   end
 end

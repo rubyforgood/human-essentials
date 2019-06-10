@@ -13,7 +13,7 @@
       </li>
       <li class="breadcrumb-item">
         <%= link_to "Requests", (requests_path) %></li>
-      <li class="breadcrumb-item active""> Request from 
+      <li class="breadcrumb-item active""> Request from
         <%= @request.partner.name %> at <%= @request.created_at.to_s(:distribution_date) %></li>
     </ol>
   </div>

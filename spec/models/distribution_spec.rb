@@ -2,10 +2,10 @@
 #
 # Table name: distributions
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint(8)        not null, primary key
 #  comment             :text
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
+#  created_at          :datetime
+#  updated_at          :datetime
 #  storage_location_id :integer
 #  partner_id          :integer
 #  organization_id     :integer
@@ -99,6 +99,17 @@ RSpec.describe Distribution, type: :model do
         distribution.combine_duplicates
         expect(distribution.line_items.size).to eq 1
         expect(distribution.line_items.first.quantity).to eq 15
+      end
+    end
+
+    describe "#replace_distribution!" do
+      subject { create(:distribution, :with_items, item_quantity: 10) }
+      let(:attributes) { { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } } }
+
+      it "replaces a big distribution with a smaller one, resulting in increased stored quantities" do
+        expect do
+          subject.replace_distribution!(attributes)
+        end.to change { subject.storage_location.size }.by(8)
       end
     end
   end

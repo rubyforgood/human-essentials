@@ -7,7 +7,7 @@
 #  comment             :text
 #  organization_id     :integer
 #  storage_location_id :integer
-#  amount_spent        :integer
+#  amount_spent_in_cents        :integer
 #  issued_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -39,9 +39,8 @@ class Purchase < ApplicationRecord
   }
 
   before_create :combine_duplicates
-  before_destroy :remove_inventory
 
-  validates :amount_spent, numericality: { greater_than: 0 }
+  validates :amount_spent_in_cents, numericality: { greater_than: 0 }
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
@@ -49,22 +48,6 @@ class Purchase < ApplicationRecord
 
   def purchased_from_view
     vendor.nil? ? purchased_from : vendor.business_name
-  end
-
-  def remove_inventory
-    storage_location.remove!(self)
-  end
-
-  def track(item, quantity)
-    if contains_item_id?(item.id)
-      update_quantity(quantity, item)
-    else
-      LineItem.create(itemizable: self, item_id: item.id, quantity: quantity)
-    end
-  end
-
-  def contains_item_id?(id)
-    line_items.find_by(item_id: id).present?
   end
 
   def total_quantity
@@ -78,18 +61,30 @@ class Purchase < ApplicationRecord
     line_item&.destroy
   end
 
-  # Use a negative quantity to subtract inventory
-  def update_quantity(quantity, item)
-    item_id = item.to_i
-    line_item = line_items.find_by(item_id: item_id)
-    line_item.quantity += quantity
-    # Inventory can never be negative
-    line_item.quantity = 0 if line_item.quantity.negative?
-    line_item.save
+  def replace_increase!(new_purchase_params)
+    old_data = to_a
+    item_ids = line_items_attributes(new_purchase_params).map { |i| i[:item_id].to_i }
+
+    ActiveRecord::Base.transaction do
+      line_items.map(&:destroy!)
+      reload
+      Item.reactivate(item_ids)
+      line_items_attributes(new_purchase_params).map { |i| i.delete(:id) }
+
+      update! new_purchase_params
+      # Roll back distribution output by increasing storage location
+      storage_location.increase_inventory(to_a)
+      # Apply the new changes to the storage location inventory
+      storage_location.decrease_inventory(old_data)
+      # TODO: Discuss this -- *should* we be removing InventoryItems when they hit 0 count?
+      storage_location.inventory_items.where(quantity: 0).destroy_all
+    end
+  rescue ActiveRecord::RecordInvalid
+    false
   end
 
   def self.csv_export_headers
-    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent"]
+    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent in Cents"]
   end
 
   def csv_export_attributes
@@ -98,14 +93,14 @@ class Purchase < ApplicationRecord
       storage_location.name,
       line_items.total,
       line_items.size,
-      amount_spent,
+      amount_spent_in_cents,
     ]
   end
 
   private
 
   def combine_duplicates
-    Rails.logger.info "Combining!"
+    Rails.logger.info "[!] Purchase.combine_duplicates: Combining!"
     line_items.combine!
   end
 end

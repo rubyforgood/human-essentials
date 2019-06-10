@@ -2,7 +2,7 @@
 #
 # Table name: line_items
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  quantity        :integer
 #  item_id         :integer
 #  itemizable_id   :integer
@@ -20,6 +20,6 @@ class LineItem < ApplicationRecord
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
   def value_per_line_item
-    item.value * quantity
+    item.value_in_cents * quantity
   end
 end

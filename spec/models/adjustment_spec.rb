@@ -2,7 +2,7 @@
 #
 # Table name: adjustments
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint(8)        not null, primary key
 #  organization_id     :integer
 #  storage_location_id :integer
 #  comment             :text
@@ -37,6 +37,58 @@ RSpec.describe Adjustment, type: :model do
       create(:adjustment, storage_location: storage_location2, organization: @organization)
       create(:adjustment, storage_location: storage_location4, organization: storage_location4.organization)
       expect(Adjustment.storage_locations_adjusted_for(@organization).to_a).to match_array([storage_location1, storage_location2])
+    end
+
+    describe "split_difference" do
+      it "returns two adjustment objects" do
+        item = create(:item)
+        storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+        storage_location.inventory_items << create(:inventory_item, item: create(:item), quantity: 10)
+        adjustment = create(:adjustment,
+                            storage_location: storage_location,
+                            line_items_attributes: [
+                              { item_id: storage_location.items.first.id, quantity: 10 },
+                              { item_id: storage_location.items.last.id, quantity: -5 }
+                            ])
+        pos, neg = adjustment.split_difference
+        expect(pos.line_items.size).to eq(1)
+        expect(neg.line_items.size).to eq(1)
+        expect(pos.line_items.first.quantity).to eq(10)
+        expect(neg.line_items.first.quantity).to eq(5)
+      end
+
+      it "gracefully handles adjustments with only positive" do
+        item = create(:item)
+        storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+        storage_location.inventory_items << create(:inventory_item, item: create(:item), quantity: 10)
+        adjustment = create(:adjustment,
+                            storage_location: storage_location,
+                            line_items_attributes: [
+                              { item_id: storage_location.items.first.id, quantity: 10 },
+                              { item_id: storage_location.items.last.id, quantity: 5 }
+                            ])
+        pos, neg = adjustment.split_difference
+        expect(pos.line_items.size).to eq(2)
+        expect(pos.line_items.first.quantity).to eq(10)
+        expect(pos.line_items.last.quantity).to eq(5)
+        expect(neg.line_items).to be_empty
+      end
+      it "gracefully handles adjustments with only negative" do
+        item = create(:item)
+        storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+        storage_location.inventory_items << create(:inventory_item, item: create(:item), quantity: 10)
+        adjustment = create(:adjustment,
+                            storage_location: storage_location,
+                            line_items_attributes: [
+                              { item_id: storage_location.items.first.id, quantity: -10 },
+                              { item_id: storage_location.items.last.id, quantity: -5 }
+                            ])
+        pos, neg = adjustment.split_difference
+        expect(neg.line_items.size).to eq(2)
+        expect(neg.line_items.first.quantity).to eq(10)
+        expect(neg.line_items.last.quantity).to eq(5)
+        expect(pos.line_items).to be_empty
+      end
     end
   end
 

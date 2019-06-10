@@ -69,9 +69,8 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :distributions, except: %i(destroy) do
+    resources :distributions do
       get :print, on: :member
-      post :reclaim, on: :member
       collection do
         get :pick_ups
       end
@@ -86,6 +85,11 @@ Rails.application.routes.draw do
       end
     end
     resources :diaper_drive_participants, except: [:destroy] do
+      collection do
+        post :import_csv
+      end
+    end
+    resources :manufacturers, except: [:destroy] do
       collection do
         post :import_csv
       end
@@ -117,9 +121,18 @@ Rails.application.routes.draw do
     end
 
     resources :purchases
-    resources :requests, only: %i(index new show) do
+    # MODIFIED route by adding destroy to
+    resources :requests, only: %i(index new show destroy) do
       member do
         post :start
+      end
+    end
+
+    resources :requests, except: %i(destroy) do
+      get :print, on: :member
+      post :cancel, on: :member
+      collection do
+        get :partner_requests
       end
     end
 
