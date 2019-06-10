@@ -13,17 +13,15 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
     end
 
     context "with a valid API key" do
-      before do
-        allow_any_instance_of(API::V1::FamilyRequestsController).to receive(:api_key_valid?).and_return(true)
+      let(:headers) do
+        {
+          "ACCEPT" => "application/json",
+          "Content-Type" => "application/json",
+          "X-Api-Key" => ENV["PARTNER_KEY"]
+        }
       end
 
       subject do
-        headers = {
-          "ACCEPT" => "application/json",
-          "Content-Type" => "application/json",
-          "X-Api-Key" => "some-fake-key"
-        }
-
         params = {
           organization_id: @organization.id,
           partner_id: @partner.id,
@@ -53,7 +51,22 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
             'item_name' => items.find { |i| i.id == item['item_id'] }.name
           }
         end
-        expect(returned_body['requested_items']).to eq(expected_items)
+        expect(returned_body['requested_items'])
+          .to eq(expected_items.sort_by { |item| item['item_id'] })
+      end
+
+      it "returns bad request if there is an item ids mismatch" do
+        params = {
+          organization_id: @organization.id,
+          partner_id: @partner.id,
+          comments: "please and thank you",
+          requested_items: request_items.unshift('item_id' => -1, person_count: 2)
+        }.to_json
+
+        post api_v1_family_requests_path, params: params, headers: headers
+        expect(response.status).to eq(400)
+        expect(JSON.parse(response.body)['message'])
+          .to eq('Item ids should match existing Diaper Base item ids.')
       end
     end
 
@@ -69,7 +82,7 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
             organization_id: @organization.id,
             partner_id: @partner.id,
             comments: "please and thank you",
-            request_items: random_keys(3).collect { |k| [k, rand(3..10)] }.to_h
+            request_items: request_items
           }
         }
 
