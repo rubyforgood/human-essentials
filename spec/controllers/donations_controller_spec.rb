@@ -41,7 +41,7 @@ RSpec.describe DonationsController, type: :controller do
       it "renders GET#new with error on failure" do
         post :create, params: default_params.merge(donation: { storage_location_id: nil, donation_site_id: nil, source: nil })
         expect(response).to be_successful # Will render :new
-        expect(flash[:error]).to match(/error/i)
+        expect(response).to have_error(/error/i)
       end
     end
 

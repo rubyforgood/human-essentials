@@ -9,6 +9,12 @@
       <span class="input-group-addon"><i class="fa fa-money"></i></span>
       <%= f.input_field :value_in_cents, class: "form-control" %>
     <% end %>
+    <%= f.input :name, label: "Distribution quantity", wrapper: :vertical_input_group do %>
+      <%= f.input_field :distribution_quantity, class: "form-control" %>
+    <% end %>
+    <%= f.input :name, label: "Package size", wrapper: :vertical_input_group do %>
+      <%= f.input_field :package_size, class: "form-control" %>
+    <% end %>
 
     <%= submit_button %>
   <% end %>

@@ -11,11 +11,11 @@ class DistributionPdf
       text organization.address, align: :right
       text organization.email, align: :right
     end
-    data = [["Items Received", "Value/item", "Total value", "Quantity"]]
+    data = [["Items Received", "Value/item", "Total value", "Quantity", "Packages"]]
     data += @distribution.line_items.sorted.map do |c|
-      [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity]
+      [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity, c.package_count]
     end
-    data += [["", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total]]
+    data += [["", "", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total, ""]]
 
     move_down 55
 
@@ -51,23 +51,24 @@ class DistributionPdf
       row(0).borders = [:bottom]
       row(0).border_width = 2
       row(0).font_style = :bold
+      row(0).size = 10
       row(0).column(1..-1).borders = %i(bottom left)
 
       # Total Items footer row
       row(-1).borders = [:top]
       row(-1).font_style = :bold
-      row(-1).column(2..-1).borders = %i(top left)
-      row(-1).column(2..-1).border_left_color = "aaaaaa"
+      row(-1).column(1..-1).borders = %i(top left)
+      row(-1).column(1..-1).border_left_color = "aaaaaa"
 
       # Footer spacing row
       row(-2).borders = [:top]
       row(-2).padding = [2, 0, 2, 0]
 
-      column(0).width = 250
+      column(0).width = 190
 
       # Quantity column
-      column(1..3).row(1..-3).borders = [:left]
-      column(1..3).row(1..-3).border_left_color = "aaaaaa"
+      column(1..-1).row(1..-3).borders = [:left]
+      column(1..-1).row(1..-3).border_left_color = "aaaaaa"
       column(1).style align: :right
     end
 
