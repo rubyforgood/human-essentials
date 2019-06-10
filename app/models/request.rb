@@ -44,10 +44,10 @@ class Request < ApplicationRecord
       Item.where(id: requested_items.map { |item| item['item_id'] })
           .order(:id).each.with_index.with_object([]) do |(item, index), request_items|
 
-            unless requested_items[index]['item_id'] == item.id
-              raise MismatchedItemIdsError,
-                "Item ids should match existing Diaper Base item ids."
-            end
+        unless requested_items[index]['item_id'] == item.id
+          raise MismatchedItemIdsError,
+                'Item ids should match existing Diaper Base item ids.'
+        end
         request_items << {
           item_id: item.id,
           quantity: item.default_quantity * requested_items[index]['person_count'],
