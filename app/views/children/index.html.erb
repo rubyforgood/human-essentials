@@ -37,7 +37,7 @@
             <td><%= child.first_name %></td>
             <td><%= child.last_name %></td>
             <td><%= child.date_of_birth %></td>
-            <td><%= "#{child.family.guardian_first_name} #{child.family.guardian_last_name}" %></td>
+            <td><%= child.family.guardian_display_name %></td>
             <td><%= child.comments %></td>
             <td><%= link_to 'View Child Details', child, class: "btn btn-sm btn-success" %></td>
             <td><%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-sm btn-danger pull-right" %>
