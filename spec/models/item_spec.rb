@@ -164,4 +164,21 @@ RSpec.describe Item, type: :model do
       end
     end
   end
+
+  describe "default_quantity" do
+    it "should return 50 if column is not set" do
+      expect(create(:item).default_quantity).to eq(50)
+    end
+
+    it "should return the value of distribution_quantity if it is set" do
+      expect(create(:item, distribution_quantity: 75).default_quantity).to eq(75)
+    end
+  end
+
+  describe "distribution_quantity and package size" do
+    it "have nil values if an empty string is passed" do
+      expect(create(:item, distribution_quantity: '').distribution_quantity).to be_nil
+      expect(create(:item, package_size: '').package_size).to be_nil
+    end
+  end
 end

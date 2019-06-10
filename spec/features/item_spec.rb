@@ -28,6 +28,19 @@ RSpec.feature "Item management", type: :feature do
     expect(page.find(".alert")).to have_content "updated"
   end
 
+  scenario "User sets a distribution quantity and package size" do
+    item = create(:item)
+    visit url_prefix + "/items/#{item.id}/edit"
+    fill_in "item_distribution_quantity", with: "75"
+    fill_in "item_package_size", with: "50"
+    click_button "Save"
+
+    find("[data-item-id=#{item.id}] [href$=edit]").click
+
+    expect(page).to have_selector("input#item_distribution_quantity[value='75']")
+    expect(page).to have_selector("input#item_package_size[value='50']")
+  end
+
   scenario "User updates an existing item with empty attributes" do
     item = create(:item)
     visit url_prefix + "/items/#{item.id}/edit"
