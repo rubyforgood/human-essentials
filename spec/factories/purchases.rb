@@ -38,8 +38,12 @@ FactoryBot.define do
       end
 
       after(:build) do |purchase, evaluator|
-        item = evaluator.item || purchase.storage_location.inventory_items.first.item
+        item = evaluator.item || purchase.storage_location.inventory_items.first&.item || create(:item)
         purchase.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: purchase)
+      end
+
+      after(:create) do |instance, evaluator|
+        evaluator.storage_location.increase_inventory(instance)
       end
     end
   end
