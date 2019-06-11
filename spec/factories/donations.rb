@@ -48,7 +48,7 @@ FactoryBot.define do
       end
 
       after(:build) do |donation, evaluator|
-        item = evaluator.item || donation.storage_location.inventory_items.first.item
+        item = evaluator.item || donation.storage_location.inventory_items.first&.item || create(:item)
         donation.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: donation)
       end
 

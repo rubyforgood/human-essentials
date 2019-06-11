@@ -8,8 +8,8 @@ RSpec.describe ItemsOutQuery do
     before do
       items = create_list(:inventory_item, 3, storage_location: storage_location, quantity: 10).collect(&:item)
       other_storage_location = create(:storage_location, organization: @organization)
-      create(:transfer, :with_items, item_quantity: 10, item: items[0], to: other_storage_location, from: storage_location)
-      create(:distribution, :with_items, item: items[1], item_quantity: 10, storage_location: storage_location)
+      create(:transfer, :with_items, item_quantity: 8, item: items[0], to: other_storage_location, from: storage_location)
+      create(:distribution, :with_items, item: items[1], item_quantity: 9, storage_location: storage_location)
       create(:adjustment, :with_items, item: items[2], item_quantity: -10, storage_location: storage_location)
     end
 
