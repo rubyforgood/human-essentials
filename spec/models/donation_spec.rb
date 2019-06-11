@@ -24,18 +24,18 @@ RSpec.describe Donation, type: :model do
       expect(build(:donation, organization_id: nil)).not_to be_valid
     end
     it "requires a donation_site if the source is 'Donation Site'" do
-      expect(build(:donation, source: "Donation Site", donation_site: nil)).not_to be_valid
+      expect(build_stubbed(:donation_site_donation, source: "Donation Site", donation_site: nil)).not_to be_valid
       expect(build(:donation, source: "Misc. Donation", donation_site: nil)).to be_valid
-      expect(build(:donation, source: "Manufacturer", donation_site: nil)).to be_valid
+      expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", donation_site: nil)).to be_valid
     end
     it "requires a diaper drive participant if the source is 'Diaper Drive'" do
-      expect(build(:donation, source: "Diaper Drive", diaper_drive_participant_id: nil)).not_to be_valid
-      expect(build(:donation, source: "Manufacturer", diaper_drive_participant_id: nil)).to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive", diaper_drive_participant_id: nil)).not_to be_valid
+      expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", diaper_drive_participant_id: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", diaper_drive_participant_id: nil)).to be_valid
     end
     it "requires a manufacturer if the source is 'Manufacturer'" do
-      expect(build(:donation, source: "Manufacturer", manufacturer: nil)).not_to be_valid
-      expect(build(:donation, source: "Diaper Drive", manufacturer: nil)).to be_valid
+      expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", manufacturer: nil)).not_to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive", manufacturer: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", manufacturer: nil)).to be_valid
     end
     it "requires a source from the list of available sources" do
@@ -88,7 +88,7 @@ RSpec.describe Donation, type: :model do
     describe "by_source >" do
       before(:each) do
         create(:donation, source: Donation::SOURCES[:misc])
-        create(:donation, source: Donation::SOURCES[:diaper_drive])
+        create(:diaper_drive_donation)
       end
 
       it "returns all donations with the provided source" do
@@ -105,8 +105,7 @@ RSpec.describe Donation, type: :model do
     describe "items >" do
       it "has_many" do
         donation = create(:donation)
-        line_item = create(:line_item)
-        donation.line_items << line_item
+        create(:line_item, :donation, itemizable: donation)
         expect(donation.items.count).to eq(1)
       end
     end

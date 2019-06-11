@@ -64,6 +64,7 @@ class Donation < ApplicationRecord
 
   include IssuedAt
 
+  # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   scope :by_source, ->(source) {
     source = SOURCES[source] if source.is_a?(Symbol)
