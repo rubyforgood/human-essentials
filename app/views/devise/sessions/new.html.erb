@@ -2,9 +2,9 @@
 	<h2>Sign In</h2>
 </div>
 <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <% flash.each do |key, value| %>
-      <div class="alert alert-error" role="alert"><%= value %></div>
-  <% end %>
+
+  <%= render 'shared/flash' %>
+
   <div class="form-inputs">
 			<%= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
           <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
@@ -16,15 +16,15 @@
         <% end %>
     <%= f.input :remember_me, label: " Remember me", as: :boolean if devise_mapping.rememberable? %>
   </div>
-<div class="medium-offset-3 medium-6">
+  <div class="medium-offset-3 medium-6">
 
-  <div class="form-actions">
-    <%= f.button :submit, "Log in" %>
+    <div class="form-actions">
+      <%= f.button :submit, "Log in" %>
+    </div>
+
+  <%= render "devise/shared/links" %>
   </div>
 <% end %>
-
-<%= render "devise/shared/links" %>
-</div>
 <script>
     $(document).ready(function() {
 
