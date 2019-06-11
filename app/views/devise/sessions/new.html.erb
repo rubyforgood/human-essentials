@@ -2,6 +2,9 @@
 	<h2>Sign In</h2>
 </div>
 <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <% flash.each do |key, value| %>
+      <div class="alert alert-error" role="alert"><%= value %></div>
+  <% end %>
   <div class="form-inputs">
 			<%= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
           <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
