@@ -26,7 +26,7 @@ RSpec.describe PurchasesController, type: :controller do
 
     describe "POST#create" do
       let!(:storage_location) { create(:storage_location, organization: @organization) }
-      let(:line_items) { [create(:line_item)] }
+      let(:line_items) { [attributes_for(:line_item)] }
       let(:vendor) { create(:vendor, organization: @organization) }
 
       context "on success" do

@@ -55,7 +55,7 @@ RSpec.describe Item, type: :model do
 
     it "->active shows items that are still active" do
       Item.delete_all
-      inactive_item = create(:line_item).item
+      inactive_item = create(:line_item, :purchase).item
       item = create(:item)
       inactive_item.destroy
       expect(Item.active.to_a).to match_array([item])
@@ -120,7 +120,7 @@ RSpec.describe Item, type: :model do
     describe "has_history?" do
       it "identifies items that have been used previously" do
         no_history_item = create(:item)
-        item_in_line_item = create(:line_item).item
+        item_in_line_item = create(:line_item, :purchase).item
         item_in_inventory_item = create(:inventory_item).item
         item_in_barcodes = create(:barcode_item).barcodeable
 
@@ -138,7 +138,7 @@ RSpec.describe Item, type: :model do
       end
 
       it "only hides an item that has history" do
-        item = create(:line_item).item
+        item = create(:line_item, :purchase).item
         expect { item.destroy }.to change { Item.unscoped.count }.by(0).and change { Item.count }.by(-1)
         expect(item).not_to be_active
       end

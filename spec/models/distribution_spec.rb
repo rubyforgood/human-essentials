@@ -86,16 +86,16 @@ RSpec.describe Distribution, type: :model do
 
     describe "#copy_line_items" do
       it "replicates line_items from a donation into a distribution" do
-        donation.line_items << create(:line_item, item: item, quantity: 5)
-        donation.line_items << create(:line_item, item: item, quantity: 10)
+        donation.line_items << create(:line_item, item: item, quantity: 5, itemizable: donation)
+        donation.line_items << create(:line_item, item: item, quantity: 10, itemizable: donation)
         expect(distribution.copy_line_items(donation.id).count).to eq 2
       end
     end
 
     describe "#combine_duplicates" do
       it "condenses duplicate line_items if the item_ids match" do
-        distribution.line_items << create(:line_item, item: item, quantity: 5)
-        distribution.line_items << create(:line_item, item: item, quantity: 10)
+        distribution.line_items << create(:line_item, item: item, quantity: 5, itemizable: distribution)
+        distribution.line_items << create(:line_item, item: item, quantity: 10, itemizable: distribution)
         distribution.combine_duplicates
         expect(distribution.line_items.size).to eq 1
         expect(distribution.line_items.first.quantity).to eq 15

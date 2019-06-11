@@ -6,8 +6,8 @@ RSpec.describe "Donations", type: :system, js: true do
 
   context "When visiting the index page" do
     before(:each) do
-      create(:donation, source: Donation::SOURCES[:misc])
-      create(:donation, source: Donation::SOURCES[:misc])
+      create(:donation)
+      create(:donation)
       visit @url_prefix + "/donations"
     end
 
@@ -26,8 +26,8 @@ RSpec.describe "Donations", type: :system, js: true do
   context "When filtering on the index page" do
     let!(:item) { create(:item) }
     it "Filters by the source" do
-      create(:donation, source: Donation::SOURCES[:misc])
-      create(:donation, source: Donation::SOURCES[:donation_site])
+      create(:donation)
+      create(:donation_site_donation)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
       select Donation::SOURCES[:misc], from: "filters_by_source"
@@ -37,8 +37,8 @@ RSpec.describe "Donations", type: :system, js: true do
     it "Filters by diaper drive" do
       a = create(:diaper_drive_participant, business_name: "A")
       b = create(:diaper_drive_participant, business_name: "B")
-      create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: a)
-      create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: b)
+      create(:diaper_drive_donation, diaper_drive_participant: a)
+      create(:diaper_drive_donation, diaper_drive_participant: b)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
       select a.business_name, from: "filters_by_diaper_drive_participant"
@@ -48,8 +48,8 @@ RSpec.describe "Donations", type: :system, js: true do
     it "Filters by manufacturer" do
       a = create(:manufacturer, name: "A")
       b = create(:manufacturer, name: "B")
-      create(:donation, source: Donation::SOURCES[:manufacturer], manufacturer: a)
-      create(:donation, source: Donation::SOURCES[:manufacturer], manufacturer: b)
+      create(:manufacturer_donation, manufacturer: a)
+      create(:manufacturer_donation, manufacturer: b)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
       select a.name, from: "filters_from_manufacturer"
@@ -79,9 +79,9 @@ RSpec.describe "Donations", type: :system, js: true do
     end
     it "Filters by date" do
       storage = create(:storage_location, name: "storage")
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1))
       visit @url_prefix + "/donations"
       select "March", from: "date_filters_issued_at_2i"
       select "2018", from: "date_filters_issued_at_1i"
@@ -94,9 +94,9 @@ RSpec.describe "Donations", type: :system, js: true do
     it "Filters by multiple attributes" do
       storage1 = create(:storage_location, name: "storage1")
       storage2 = create(:storage_location, name: "storage2")
-      create(:donation, storage_location: storage1, source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage2, source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage1, source: Donation::SOURCES[:donation_site])
+      create(:donation, storage_location: storage1)
+      create(:donation, storage_location: storage2)
+      create(:donation_site_donation, storage_location: storage1)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 4)
       select Donation::SOURCES[:misc], from: "filters_by_source"
@@ -387,9 +387,9 @@ RSpec.describe "Donations", type: :system, js: true do
       item1 = create(:item, value_in_cents: 125)
       item2 = create(:item)
       item3 = create(:item, value_in_cents: 200)
-      @donation1 = create(:donation, :with_items, item: item1, source: Donation::SOURCES[:misc])
-      create(:donation, :with_items, item: item2, source: Donation::SOURCES[:misc])
-      create(:donation, :with_items, item: item3, source: Donation::SOURCES[:misc])
+      @donation1 = create(:donation, :with_items, item: item1)
+      create(:donation, :with_items, item: item2)
+      create(:donation, :with_items, item: item3)
 
       visit @url_prefix + "/donations"
     end
