@@ -26,7 +26,7 @@ RSpec.describe DonationsController, type: :controller do
     describe "POST#create" do
       let!(:storage_location) { create(:storage_location) }
       let!(:donation_site) { create(:donation_site) }
-      let(:line_items) { [create(:line_item)] }
+      let(:line_items) { [attributes_for(:line_item)] }
 
       it "redirects to GET#edit on success" do
         post :create, params: default_params.merge(
@@ -47,8 +47,8 @@ RSpec.describe DonationsController, type: :controller do
 
     describe "PUT#update" do
       it "redirects to index after update" do
-        donation = create(:donation, source: "Donation Site")
-        put :update, params: default_params.merge(id: donation.id, donation: { source: "Donation Site" })
+        donation = create(:donation_site_donation)
+        put :update, params: default_params.merge(id: donation.id, donation: { source: "Donation Site", donation_site_id: donation.donation_site_id })
         expect(response).to redirect_to(donations_path)
       end
 
@@ -63,7 +63,7 @@ RSpec.describe DonationsController, type: :controller do
             id: line_item.id
           }
         }
-        donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+        donation_params = { source: donation.source, line_items_attributes: line_item_params }
         expect do
           put :update, params: default_params.merge(id: donation.id, donation: donation_params)
         end.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
@@ -80,7 +80,7 @@ RSpec.describe DonationsController, type: :controller do
               id: line_item.id
             }
           }
-          donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+          donation_params = { source: donation.source, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
           end.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
@@ -98,7 +98,7 @@ RSpec.describe DonationsController, type: :controller do
               id: line_item.id
             }
           }
-          donation_params = { source: "Donation Site", line_items_attributes: line_item_params }
+          donation_params = { source: donation.source, line_items_attributes: line_item_params }
           put :update, params: default_params.merge(id: donation.id, donation: donation_params)
           expect { inventory_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end

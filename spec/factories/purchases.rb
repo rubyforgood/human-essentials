@@ -21,7 +21,7 @@ FactoryBot.define do
     storage_location
     organization { Organization.try(:first) || create(:organization) }
     issued_at { nil }
-    amount_spent_in_cents { 1000 }
+    amount_spent_in_cents { 10_00 }
     vendor { Vendor.try(:first) || create(:vendor) }
 
     transient do
@@ -30,20 +30,16 @@ FactoryBot.define do
     end
 
     trait :with_items do
-      storage_location { create :storage_location, :with_items }
+      storage_location { create :storage_location, :with_items, item: item || create(:item), organization: organization }
 
       transient do
         item_quantity { 100 }
         item { nil }
       end
 
-      after(:build) do |instance, evaluator|
-        item = if evaluator.item.nil?
-                 instance.storage_location.inventory_items.first.item
-               else
-                 evaluator.item
-               end
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+      after(:build) do |purchase, evaluator|
+        item = evaluator.item || purchase.storage_location.inventory_items.first.item
+        purchase.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: purchase)
       end
     end
   end

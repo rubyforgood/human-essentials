@@ -70,8 +70,7 @@ RSpec.describe Purchase, type: :model do
     describe "items >" do
       it "has_many" do
         purchase = create(:purchase)
-        line_item = create(:line_item)
-        purchase.line_items << line_item
+        create(:line_item, :purchase, itemizable: purchase)
         expect(purchase.items.count).to eq(1)
       end
     end
