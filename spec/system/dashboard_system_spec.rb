@@ -208,7 +208,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
 
-            it "has a widget displaying the Donation totals from yesterday, only using donations from yesterday" do
+            fit "has a widget displaying the Donation totals from yesterday, only using donations from yesterday" do
               within "#donations" do
                 expect(page).to have_content(total_inventory)
               end
@@ -415,7 +415,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             let(:total_inventory) { @this_years_purchases[:yesterday].total_quantity }
 
-            it "has a widget displaying the Purchase totals from yesterday, only using purchases from yesterday" do
+            fit "has a widget displaying the Purchase totals from yesterday, only using purchases from yesterday" do
               within "#purchases" do
                 expect(page).to have_content(total_inventory)
               end

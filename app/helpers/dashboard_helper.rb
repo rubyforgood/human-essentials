@@ -27,7 +27,7 @@ module DashboardHelper
     when "today"
       now.beginning_of_day..now
     when "yesterday"
-      (now - 1).beginning_of_day..(now - 1).end_of_day
+      (now - 1.day).beginning_of_day..(now - 1.day).end_of_day
     when "this_week"
       now.beginning_of_week..now
     when "this_month"
