@@ -22,9 +22,9 @@ RSpec.describe LineItem, type: :model do
     end
 
     it "the quantity must be an integer and cannot be 0" do
-      expect(build(:line_item, quantity: "a")).not_to be_valid
-      expect(build(:line_item, quantity: "1.0")).not_to be_valid
-      expect(build(:line_item, quantity: 0)).not_to be_valid
+      expect(build(:line_item, :purchase, quantity: "a")).not_to be_valid
+      expect(build(:line_item, :purchase, quantity: "1.0")).not_to be_valid
+      expect(build(:line_item, :purchase, quantity: 0)).not_to be_valid
       expect(build_stubbed(:line_item, :purchase, quantity: -1)).to be_valid
       expect(build_stubbed(:line_item, :purchase, quantity: 1)).to be_valid
     end
@@ -33,13 +33,13 @@ RSpec.describe LineItem, type: :model do
   describe "package_count" do
     it "is equal to the quanity divided by the package_size" do
       item = create(:item, package_size: 10)
-      line_item = create(:line_item, quantity: 100, item_id: item.id)
+      line_item = create(:line_item, :purchase, quantity: 100, item_id: item.id)
       expect(line_item.package_count).to eq(10)
     end
 
     it "is nil if there is no package_size" do
       item = create(:item)
-      line_item = create(:line_item, quantity: 100, item_id: item.id)
+      line_item = create(:line_item, :purchase, quantity: 100, item_id: item.id)
       expect(line_item.package_count).to be_nil
     end
   end
