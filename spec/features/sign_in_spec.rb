@@ -3,11 +3,7 @@ RSpec.feature "User sign in form", type: :feature do
     visit new_user_session_path
   end
 
-  after do
-    Capybara.reset_sessions!
-  end
-
-  context "when user are invalid" do
+  context "when users are invalid" do
     scenario "shows invalid credentials alert" do
       fill_in "E-mail", with: 'invalid_username'
       fill_in "Password", with: 'invalid_password'
@@ -17,7 +13,7 @@ RSpec.feature "User sign in form", type: :feature do
     end
   end
 
-  context "when users are valid and has organization" do
+  context "when users are valid and belong to an organization" do
     scenario "redirects to user's dashboard" do
       fill_in "E-mail", with: @user.email
       fill_in "Password", with: @user.password
@@ -29,7 +25,7 @@ RSpec.feature "User sign in form", type: :feature do
     end
   end
 
-  context "when users are valid and do not has organization" do
+  context "when users are valid and don't belong to an organization" do
     scenario "redirects to home " do
       user_no_org = create(:user_no_org)
       fill_in "E-mail", with: user_no_org.email
