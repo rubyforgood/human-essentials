@@ -392,6 +392,8 @@ GEM
       childprocess (~> 0.5)
       rubyzip (~> 1.2, >= 1.2.2)
     shellany (0.0.1)
+    shoulda-matchers (4.1.0)
+      activesupport (>= 4.2.0)
     sidekiq (5.2.5)
       connection_pool (~> 2.2, >= 2.2.2)
       rack (>= 1.5.0)
@@ -533,6 +535,7 @@ DEPENDENCIES
   rspec-rails (~> 3.8)
   rubocop
   sass-rails
+  shoulda-matchers
   sidekiq
   simple_form
   simplecov
