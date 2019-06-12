@@ -31,13 +31,9 @@
 #
 
 RSpec.describe User, type: :model do
-  context "Validations >" do
-    it "requires a name" do
-      expect(build(:user, name: nil)).not_to be_valid
-    end
-    it "requires an email" do
-      expect(build(:user, email: nil)).not_to be_valid
-    end
+  describe "Validations >" do
+    it { is_expected.to validate_presence_of :name }
+    it { is_expected.to validate_presence_of :email }
   end
 
   context "Methods >" do
