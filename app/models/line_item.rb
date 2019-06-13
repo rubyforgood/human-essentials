@@ -23,7 +23,11 @@ class LineItem < ApplicationRecord
     item.value_in_cents * quantity
   end
 
-  def package_count
+  def has_packages
     quantity / item.package_size.to_f if item.package_size
+  end
+
+  def package_count
+    format("%g", has_packages) if has_packages
   end
 end
