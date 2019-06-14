@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_20_033128) do
+ActiveRecord::Schema.define(version: 2019_06_08_022706) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,16 +187,6 @@ ActiveRecord::Schema.define(version: 2019_05_20_033128) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "item_requests", force: :cascade do |t|
-    t.bigint "request_id"
-    t.bigint "item_id"
-    t.integer "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["item_id"], name: "index_item_requests_on_item_id"
-    t.index ["request_id"], name: "index_item_requests_on_request_id"
-  end
-
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "category"
@@ -207,6 +197,8 @@ ActiveRecord::Schema.define(version: 2019_05_20_033128) do
     t.boolean "active", default: true
     t.string "partner_key"
     t.integer "value_in_cents", default: 0
+    t.integer "package_size"
+    t.integer "distribution_quantity"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
@@ -365,8 +357,6 @@ ActiveRecord::Schema.define(version: 2019_05_20_033128) do
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "item_requests", "items"
-  add_foreign_key "item_requests", "requests"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"

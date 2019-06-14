@@ -28,6 +28,19 @@ RSpec.feature "Item management", type: :feature do
     expect(page.find(".alert")).to have_content "updated"
   end
 
+  scenario "User sets a distribution quantity and package size" do
+    item = create(:item)
+    visit url_prefix + "/items/#{item.id}/edit"
+    fill_in "item_distribution_quantity", with: "75"
+    fill_in "item_package_size", with: "50"
+    click_button "Save"
+
+    find("[data-item-id=#{item.id}] [href$=edit]").click
+
+    expect(page).to have_selector("input#item_distribution_quantity[value='75']")
+    expect(page).to have_selector("input#item_package_size[value='50']")
+  end
+
   scenario "User updates an existing item with empty attributes" do
     item = create(:item)
     visit url_prefix + "/items/#{item.id}/edit"
@@ -85,11 +98,9 @@ RSpec.feature "Item management", type: :feature do
     let(:num_pullups_second_donation) { 1 }
     let(:num_tampons_in_donation) { 42 }
     let(:num_tampons_second_donation) { 17 }
-    let(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
-    let(:donation_aux_tampons) { create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons) }
+    let!(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
+    let!(:donation_aux_tampons) { create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons) }
     before do
-      storage.increase_inventory(donation_tampons)
-      aux_storage.increase_inventory(donation_aux_tampons)
       visit url_prefix + "/items"
     end
     # Consolidated these into one to reduce the setup/teardown

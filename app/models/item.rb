@@ -103,7 +103,6 @@ class Item < ApplicationRecord
   end
 
   def default_quantity
-    # TODO: actual logic for calculating and letting users configure this calculation
-    50
+    distribution_quantity || 50
   end
 end

@@ -55,7 +55,7 @@ RSpec.describe Item, type: :model do
 
     it "->active shows items that are still active" do
       Item.delete_all
-      inactive_item = create(:line_item).item
+      inactive_item = create(:line_item, :purchase).item
       item = create(:item)
       inactive_item.destroy
       expect(Item.active.to_a).to match_array([item])
@@ -120,7 +120,7 @@ RSpec.describe Item, type: :model do
     describe "has_history?" do
       it "identifies items that have been used previously" do
         no_history_item = create(:item)
-        item_in_line_item = create(:line_item).item
+        item_in_line_item = create(:line_item, :purchase).item
         item_in_inventory_item = create(:inventory_item).item
         item_in_barcodes = create(:barcode_item).barcodeable
 
@@ -138,7 +138,7 @@ RSpec.describe Item, type: :model do
       end
 
       it "only hides an item that has history" do
-        item = create(:line_item).item
+        item = create(:line_item, :purchase).item
         expect { item.destroy }.to change { Item.unscoped.count }.by(0).and change { Item.count }.by(-1)
         expect(item).not_to be_active
       end
@@ -162,6 +162,23 @@ RSpec.describe Item, type: :model do
           end.to change { Item.active.size }.by(1)
         end
       end
+    end
+  end
+
+  describe "default_quantity" do
+    it "should return 50 if column is not set" do
+      expect(create(:item).default_quantity).to eq(50)
+    end
+
+    it "should return the value of distribution_quantity if it is set" do
+      expect(create(:item, distribution_quantity: 75).default_quantity).to eq(75)
+    end
+  end
+
+  describe "distribution_quantity and package size" do
+    it "have nil values if an empty string is passed" do
+      expect(create(:item, distribution_quantity: '').distribution_quantity).to be_nil
+      expect(create(:item, package_size: '').package_size).to be_nil
     end
   end
 end

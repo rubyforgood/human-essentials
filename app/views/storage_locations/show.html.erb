@@ -40,15 +40,21 @@
           <!-- /.box-header -->
           <div class="box-body table-responsive no-padding">
             <table id="sectionA" class="table table-hover">
-              <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-              </tr>
-              <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
-              <tr>
-                <td>Total</td>
-                <td><%= @storage_location.size %></td>
-              </tr>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td><%= @storage_location.size %></td>
+                </tr>
+              </tfoot>
             </table>
             <!-- /.box-body -->
           </div>
@@ -58,15 +64,21 @@
           <!-- /.box-header -->
           <div class="box-body table-responsive no-padding">
             <table id="sectionB" class="table table-hover">
-              <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-              </tr>
-              <%= render partial: "line_item_row", collection: @items_in %>
-              <tr>
-                <td>Total</td>
-                <td><%= @items_in_total %></td>
-              </tr>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "line_item_row", collection: @items_in %>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td><%= @items_in_total %></td>
+                </tr>
+              </tfoot>
             </table>
             <!-- /.box-body -->
           </div>
@@ -76,15 +88,21 @@
           <!-- /.box-header -->
           <div class="box-body table-responsive no-padding">
             <table id="sectionC" class="table table-hover">
-              <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-              </tr>
-              <%= render partial: "line_item_row", collection: @items_out %>
-              <tr>
-                <td>Total</td>
-                <td><%= @items_out_total %></td>
-              </tr>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "line_item_row", collection: @items_out %>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td><%= @items_out_total %></td>
+                </tr>
+              </tfoot>
             </table>
             <!-- /.box-body -->
           </div>
