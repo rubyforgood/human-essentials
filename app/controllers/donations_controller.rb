@@ -101,10 +101,10 @@ class DonationsController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations
-    @donation_sites = current_organization.donation_sites
-    @diaper_drive_participants = current_organization.diaper_drive_participants
-    @manufacturers = current_organization.manufacturers
+    @storage_locations = current_organization.storage_locations.alphabetized
+    @donation_sites = current_organization.donation_sites.alphabetized
+    @diaper_drive_participants = current_organization.diaper_drive_participants.alphabetized
+    @manufacturers = current_organization.manufacturers.alphabetized
     @items = current_organization.items.alphabetized
   end
 

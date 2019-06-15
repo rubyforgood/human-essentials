@@ -52,7 +52,7 @@
       <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
     <% end %>
 
-    <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
+    <%= f.input :intake_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
 
     <%= f.input :default_email_text, wrapper: :vertical_input_group do %>
       <%= f.rich_text_area :default_email_text %>

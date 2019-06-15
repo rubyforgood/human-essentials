@@ -42,6 +42,8 @@ class User < ApplicationRecord
 
   validates :name, :email, presence: true
 
+  scope :alphabetized, -> { order(:name) }
+
   def most_recent_sign_in
     [current_sign_in_at.to_s, last_sign_in_at.to_s].max
   end

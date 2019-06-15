@@ -59,6 +59,8 @@ class Organization < ApplicationRecord
 
   include Geocodable
 
+  scope :alphabetized, -> { order(:name) }
+
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name

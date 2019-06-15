@@ -18,6 +18,8 @@ class Manufacturer < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :organization, message: 'Manufacturer already exists' }
 
+  scope :alphabetized, -> { order(:name) }
+
   def volume
     # returns 0 instead of nil when Manufacturer exists without any donations
     donations.map { |d| d.line_items.total }.reduce(:+) || 0

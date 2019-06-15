@@ -27,6 +27,7 @@ class DonationSite < ApplicationRecord
     where(organization: organization)
       .order(:name)
   }
+  scope :alphabetized, -> { order(:name) }
 
   def self.import_csv(csv, organization)
     csv.each do |row|
