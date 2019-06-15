@@ -58,8 +58,15 @@ class ItemsController < ApplicationController
 
   private
 
+  def clean_purchase_amount
+    return nil unless params[:item][:value_in_cents]
+
+    params[:item][:value_in_cents] = params[:item][:value_in_cents].gsub(/[$,.]/, "")
+  end
+
   def item_params
-    params.require(:item).permit(:name, :partner_key, :value, :package_size, :distribution_quantity)
+    clean_purchase_amount
+    params.require(:item).permit(:name, :partner_key, :value_in_cents, :package_size, :distribution_quantity)
   end
 
   def filter_params(parameters = nil)
