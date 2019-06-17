@@ -5,7 +5,7 @@
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <%= link_to(admin_dashboard_path) do %>
-          <i class="fa fa-lock"></i> Admin
+          <i class="fa fa-lock"></i> Home
         <% end %>
       </li>
       <li class="breadcrumb-item active">Barcode Items</li>
@@ -76,37 +76,31 @@
 <div class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header">
+      <h3 class="modal-title">Add New Barcode</h3>
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h2 class="modal-title">Add New Barcode</h4>
     </div>
     <div class="modal-body">
-    <%= simple_form_for BarcodeItem.new, url: admin_barcode_items_path, html: { method: :post } do |f| %>
       <div class="box-body ">
-        <div class="row">
-          <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
-            <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
-            <%= f.input_field :quantity, class: "form-control" %>
+        <%= simple_form_for BarcodeItem.new, url: admin_barcode_items_path,
+          html: { method: :post } do |f| %>
+            <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
+              <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+              <%= f.input_field :quantity, class: "form-control" %>
             <% end %>
-        </div><!-- /.row -->
-        <div class="row">
-          <%= f.association :barcodeable, collection: @items, label: "Item" %>
-        </div>
-        <div class="row">
-          <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
-            <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-            <%= f.input_field :value, class: "form-control" %>
-          <% end %>
-        </div><!-- /.row -->
-        <% # TODO: Revisit this. I *think* globals should only be done in admin area but... %>
-        <% if current_user.super_admin? %>
-          <div class="row">
+            <%= f.association :barcodeable, collection: @items, label: "Item" %>
+            <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
+              <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+              <%= f.input_field :value, class: "form-control" %>
+            <% end %>
+          <% # TODO: Revisit this. I *think* globals should only be done in admin area but... %>
+          <% if current_user.super_admin? %>
             <%= f.input :global,
-                  as: :radio_buttons,
-                  label: "Make this barcode available to everyone?" %>
-            <% end %>
-            <%= submit_button(id: "awesomebutton") %>
-          </div>
-        <% end %>
+                as: :radio_buttons,
+                label: "Make this barcode available to everyone?" %>
+          <% end %>
+          <%= submit_button({ id: "awesomebutton" }) %>
+        <% end #form %>
+      </div><!-- /.box-body -->
       <input type="hidden" value="" id="trigger-field-id" />
     </div>
   </div>
