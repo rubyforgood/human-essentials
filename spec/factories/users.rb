@@ -38,12 +38,6 @@ FactoryBot.define do
     password_confirmation { "password" }
     organization { Organization.try(:first) || create(:organization) }
 
-    factory :user_no_org do
-      name { "User No Org" }
-      sequence(:email, 100) { |n| "person_no_org#{n}@example.com" }
-      organization_id { nil }
-    end
-
     factory :organization_admin do
       name { "Very Organized Admin" }
       organization_admin { true }

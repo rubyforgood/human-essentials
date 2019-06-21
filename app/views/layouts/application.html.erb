@@ -76,12 +76,7 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div id="flash-message-container">
-      <% flash.each do |key, value| %>
-        <div class="<%= flash_class(key) %> alert-dismissible">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-          <%= value %>
-        </div>
-      <% end %>
+      <%= render partial: "shared/flash"  %>
     </div>
     <%= yield %>
     <!-- /.content -->

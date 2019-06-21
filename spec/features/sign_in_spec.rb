@@ -27,7 +27,7 @@ RSpec.feature "User sign in form", type: :feature do
 
   context "when users are valid and don't belong to an organization" do
     scenario "redirects to home " do
-      user_no_org = create(:user_no_org)
+      user_no_org = create(:user, organization: nil)
       fill_in "E-mail", with: user_no_org.email
       fill_in "Password", with: user_no_org.password
       click_button "Log in"
