@@ -1,31 +1,20 @@
-<%= simple_form_for form, html: { role: "form" } do |f| %>
-  <div class="box-body ">
-
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
-          <%= f.input_field :quantity, class: "form-control" %>
-        <% end %>
-      </div><!-- ./col-xs-8 -->
-    </div><!-- /.row -->
-
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.association :barcodeable, collection: @base_items, label: "Item" %>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-          <%= f.input_field :value, class: "form-control" %>
-        <% end %>
-      </div><!-- ./col-xs-8 -->
-    </div><!-- /.row -->
-
-
-    <%= f.button :submit, class:"btn btn-primary btn-lg"%>
-  </div><!-- /.box-body -->
-<% end #form %>
+<div class="box-body">
+  <%= simple_form_for form, html: { role: "form" } do |f| %>
+    <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+      <%= f.input_field :quantity, class: "form-control" %>
+    <% end %>
+    <%= f.association :barcodeable, collection: @items, label: "Item" %>
+    <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+      <%= f.input_field :value, class: "form-control" %>
+    <% end %>
+<% # TODO: Revisit this. I *think* globals should only be done in admin area but... %>
+<% if current_user.super_admin? %>
+          <%= f.input :global,
+                as: :radio_buttons,
+                label: "Make this barcode available to everyone?" %>
+<% end %>
+        <%= submit_button({ id: "awesomebutton" }) %>
+  <% end #form %>
+</div><!-- /.box-body -->

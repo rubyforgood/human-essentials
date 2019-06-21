@@ -1,24 +1,35 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Admin - Inventory - Barcode Items - New" %>
-  <h1>
-    New Barcode Item
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-lock"></i> Admin
-    <% end %>
-    </li>
-    <li><%= link_to "Barcode Items", (admin_barcode_items_path) %></li>
-    <li class="active"> New Barcode</li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h1>New Barcode Item</h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(admin_dashboard_path) do %>
+        <i class="fa fa-lock"></i> Home
+      <% end %>
+      </li>
+      <li class="breadcrumb-item">
+        <%= link_to(admin_barcode_items_path) do %>
+          All Barcodes
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active">New Barcode</li>
+    </ol>
+  </div>
+</div>
 
 <!-- Main content -->
-<section class="content">
-
-  <!-- Default box -->
-  <div class="box">
-    <%= render partial: "form", object: [:admin, @barcode_item] %>
-  </div><!-- /.box -->
-
-</section>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content animated fadeInRight">
+      <div class="ibox-content p-xl">
+        <div class="ibox-title">
+          <h3>Add New Barcode Item</h3>
+        </div>
+        <div class="ibox-content">
+          <%= render partial: "form", object: [:admin, @barcode_item] %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

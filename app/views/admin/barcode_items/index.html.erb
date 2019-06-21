@@ -1,106 +1,106 @@
-<section class="content-header">
+<div class="row wrapper border-bottom white-bg page-heading">
   <% content_for :title, "Admin - Barcode Items" %>
-  <h1>
-    Barcode Items - Global
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-lock"></i> Admin
-    <% end %>
-    </li>
-    <li><a href="#">Barcode Items</a></li>
-  </ol>
-</section>
+  <div class="col-lg-8">
+    <h2>Barcode Items - Global</h2>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to(admin_dashboard_path) do %>
+          <i class="fa fa-lock"></i> Home
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active">Barcode Items</li>
+    </ol>
+  </div>
+  <div class="col-lg-4">
+    <div class="title-action">
+      <%= modal_button_to("#newBarcode", { text: "Add New Barcode", icon: "check-circle", size: "lg", type: "success" }) %>
+    </div>
+  </div>
+</div>
 
 <!-- Main content -->
 <section class="content">
   <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
-          <div class="row">
-            <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter By Base Item Category" %>
-              <%= collection_select(:filters, :barcodeable_id, @base_items.order('name'), :id, :name, { include_blank: true }, class: "form-control") %>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInRight">
+          <div class="ibox-content p-xl">
+            <div class="box-header with-border bg-gray">
+              <section id="filters">
+                <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
+                  <div class="row">
+                    <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                      <%= label_tag "Filter By Base Item Category" %>
+                      <%= collection_select(:filters, :barcodeable_id, @base_items.order('name'), :id, :name, { include_blank: true }, class: "form-control") %>
+                    </div>
+                    <div class="col-xs-12" style="margin-top:27px">
+                      <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+                        <i class="fa fa-filter"></i> Filter
+                      <% end %>
+                      <%= link_to admin_barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
+                        <i class="fa fa-ban"></i> Clear Filters
+                      <% end %>
+                      <div class="pull-right"></div>
+                    </div>
+                  </div>
+                <% end %>
+                <br>
+              </section>
             </div>
-          </div><!-- /.row -->
-          <div class="row">
-            <div class="col-xs-12">
-              <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
-                <i class="fa fa-filter"></i> Filter
-              <% end %>
-              <%= link_to admin_barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
-                <i class="fa fa-ban"></i> Clear Filters
-              <% end %>
-              <div class="btn-group pull-right">
-                <%= modal_button_to("#newBarcode", { text: "Add New Barcode", icon: "check-circle", size: "lg", type: "success" }) %>
+            <div class="row">
+              <div class="table-responsive">
+                <table id="tbl_barcode_items" class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Global</th>
+                      <th>Item Type</th>
+                      <th>Quantity in the Box</th>
+                      <th>Barcode</th>
+                      <th>&nbsp;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= render partial: "barcode_item_row", collection: @barcode_items %>
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div><!-- /.row -->
-        <% end #form %>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table id="tbl_barcode_items" class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Global</th>
-                  <th>Item Type</th>
-                  <th>Quantity in the Box</th>
-                  <th>Barcode</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "barcode_item_row", collection: @barcode_items %>
-              </tbody>
-            </table>
-          </div><!-- /.box-body -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <div id="newBarcode" class="modal fade">
 <div class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header">
+      <h3 class="modal-title">Add New Barcode</h3>
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h2 class="modal-title">Add New Barcode</h4>
     </div>
     <div class="modal-body">
-    <%= simple_form_for BarcodeItem.new, url: admin_barcode_items_path, html: { method: :post } do |f| %>
       <div class="box-body ">
-        <div class="row">
-          <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
-            <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
-            <%= f.input_field :quantity, class: "form-control" %>
+        <%= simple_form_for BarcodeItem.new, url: admin_barcode_items_path,
+          html: { method: :post } do |f| %>
+            <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
+              <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+              <%= f.input_field :quantity, class: "form-control" %>
             <% end %>
-        </div><!-- /.row -->
-        <div class="row">
-          <%= f.association :barcodeable, collection: @items, label: "Item" %>
-        </div>
-        <div class="row">
-          <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
-            <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-            <%= f.input_field :value, class: "form-control" %>
-          <% end %>
-        </div><!-- /.row -->
-<% # TODO: Revisit this. I *think* globals should only be done in admin area but... %>
-<% if current_user.super_admin? %>
-        <div class="row">
-          <%= f.input :global,
+            <%= f.association :barcodeable, collection: @items, label: "Item" %>
+            <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
+              <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+              <%= f.input_field :value, class: "form-control" %>
+            <% end %>
+          <% # TODO: Revisit this. I *think* globals should only be done in admin area but... %>
+          <% if current_user.super_admin? %>
+            <%= f.input :global,
                 as: :radio_buttons,
                 label: "Make this barcode available to everyone?" %>
-        </div><!-- /.row -->
-<% end %>
-        <%= submit_button({ id: "awesomebutton" }) %>
+          <% end %>
+          <%= submit_button({ id: "awesomebutton" }) %>
+        <% end #form %>
       </div><!-- /.box-body -->
-      <% end #form %>
       <input type="hidden" value="" id="trigger-field-id" />
     </div>
   </div>
