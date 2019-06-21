@@ -80,6 +80,6 @@ class PartnersController < ApplicationController
   end
 
   def partner_params
-    params.require(:partner).permit(:name, :email)
+    params.require(:partner).permit(:name, :email, :send_reminders)
   end
 end

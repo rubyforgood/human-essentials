@@ -9,7 +9,7 @@
 #  updated_at      :datetime
 #  organization_id :integer
 #  status          :string
-#
+#  send_remiders   :boolean
 
 RSpec.describe Partner, type: :model do
   context "Validations >" do

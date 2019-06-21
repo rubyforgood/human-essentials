@@ -32,6 +32,7 @@ RSpec.describe "Partner management", type: :system, js: true do
       visit subject
       fill_in "Name", with: "Frank"
       fill_in "E-mail", with: "frank@frank.com"
+      check 'send_reminders'
       click_button "Add Partner Agency"
 
       expect(page.find(".alert")).to have_content "added"
@@ -65,6 +66,16 @@ RSpec.describe "Partner management", type: :system, js: true do
       click_button "Update Partner"
 
       expect(page.find(".alert")).to have_content "didn't work"
+    end
+
+    it "User can uncheck send_reminders" do
+      visit subject
+      uncheck 'send_reminders'
+      click_button "Update Partner"
+
+      expect(page.find(".alert")).to have_content "updated"
+      partner.reload
+      expect(partner.send_reminders).to be false
     end
   end
 
