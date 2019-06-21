@@ -214,5 +214,15 @@ RSpec.feature "Audit management", type: :feature do
       expect(page).not_to have_content("Delete Audit")
       # Actual Deletion(`delete :destroy`) Check is done in audits_controller_spec
     end
+
+    scenario "When creating an audit users can not see items quantity", js: true do
+      item = create(:item)
+      create(:storage_location, :with_items, item: item, item_quantity: 10)
+      visit url_prefix + "/audits/new"
+      first('.storage-location-source', minimum: 1).select_option
+      first('#audit_line_items_attributes_0_item_id', minimum: 1).select_option
+      first_item = find('#audit_line_items_attributes_0_item_id  > option:nth-child(2)').text
+      expect(first_item).to eq(item.name)
+    end
   end
 end

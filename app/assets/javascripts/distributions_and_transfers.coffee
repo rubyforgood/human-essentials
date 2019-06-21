@@ -6,7 +6,9 @@ new_option = (item, selected = false) ->
   content = "<option value=\"" + item.item_id + "\""
   content += " selected" if selected
   content += ">"
-  content += item.item_name + " (#{item.quantity})"
+  content += item.item_name
+  if( $('select.storage-location-source').attr('id') != 'audit_storage_location_id')
+    content += " (#{item.quantity})"
   content += "</option>\n"
   content
 
