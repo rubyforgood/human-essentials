@@ -100,6 +100,57 @@ RSpec.describe DistributionsController, type: :controller do
 
       it { expect(subject).to have_http_status(:ok) }
 
+      describe "when changing storage location" do
+        it "updates storage quantity correctly" do
+          distribution = create(:distribution, :with_items, item_quantity: 10)
+          original_storage_location = distribution.storage_location
+          line_item = distribution.line_items.first
+          new_storage_location = create(:storage_location)
+          create(:donation, :with_items, item: line_item.item, item_quantity: 30, storage_location: new_storage_location)
+          line_item_params = {
+            "0" => {
+              "_destroy" => "false",
+              item_id: line_item.item_id,
+              quantity: "5",
+              id: line_item.id
+            }
+          }
+          distribution_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
+          expect do
+            put :update, params: default_params.merge(id: distribution.id, distribution: distribution_params)
+          end.to change { original_storage_location.size }.by(10) # removes the whole distribution of 10 - increasing inventory
+          expect(new_storage_location.size).to eq 25
+        end
+
+        it "rollsback updates if quantity would go below 0" do
+          distribution = create(:distribution, :with_items, item_quantity: 10)
+          original_storage_location = distribution.storage_location
+
+          # adjust inventory so that updating will set quantity below 0
+          inventory_item = original_storage_location.inventory_items.last
+          inventory_item.quantity = 5
+          inventory_item.save!
+
+          new_storage_location = create(:storage_location)
+          line_item = distribution.line_items.first
+          line_item_params = {
+            "0" => {
+              "_destroy" => "false",
+              item_id: line_item.item_id,
+              quantity: "20",
+              id: line_item.id
+            }
+          }
+          distribution_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
+          expect do
+            put :update, params: default_params.merge(id: donation.id, distribution: distribution_params)
+          end.to raise_error
+          expect(original_storage_location.size).to eq 5
+          expect(new_storage_location.size).to eq 0
+          expect(distribution.reload.line_items.first.quantity).to eq 10
+        end
+      end
+
       context "mail follow up" do
         before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 

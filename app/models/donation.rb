@@ -107,6 +107,7 @@ class Donation < ApplicationRecord
   def replace_increase!(new_donation_params)
     old_data = to_a
     item_ids = line_items_attributes(new_donation_params).map { |i| i[:item_id].to_i }
+    original_storage_location = storage_location
 
     ActiveRecord::Base.transaction do
       line_items.map(&:destroy!)
@@ -117,9 +118,9 @@ class Donation < ApplicationRecord
       # Roll back distribution output by increasing storage location
       storage_location.increase_inventory(to_a)
       # Apply the new changes to the storage location inventory
-      storage_location.decrease_inventory(old_data)
+      original_storage_location.decrease_inventory(old_data)
       # TODO: Discuss this -- *should* we be removing InventoryItems when they hit 0 count?
-      storage_location.inventory_items.where(quantity: 0).destroy_all
+      original_storage_location.inventory_items.where(quantity: 0).destroy_all
     end
   rescue ActiveRecord::RecordInvalid
     false
