@@ -89,5 +89,4 @@ class PartnersController < ApplicationController
 
     params.require(:filters).slice(:by_status)
   end
-
 end
