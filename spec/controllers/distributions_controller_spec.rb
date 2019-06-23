@@ -143,7 +143,7 @@ RSpec.describe DistributionsController, type: :controller do
           }
           distribution_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
-            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+            put :update, params: default_params.merge(id: donation.id, distribution: distribution_params)
           end.to raise_error
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
