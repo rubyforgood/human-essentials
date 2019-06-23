@@ -22,5 +22,4 @@ class BaseItem < ApplicationRecord
 
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
   scope :alphabetized, -> { order(:name) }
-
 end
