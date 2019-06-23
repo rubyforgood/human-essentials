@@ -159,7 +159,7 @@ RSpec.describe PurchasesController, type: :controller do
               id: line_item.id
             }
           }
-          purchase_params = { source: purchase.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
+          purchase_params = { storage_location: new_storage_location, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
           end.to raise_error

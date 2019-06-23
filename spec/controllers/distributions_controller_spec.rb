@@ -132,7 +132,7 @@ RSpec.describe DistributionsController, type: :controller do
           inventory_item.save!
 
           new_storage_location = create(:storage_location)
-          line_item = donation.line_items.first
+          line_item = distribution.line_items.first
           line_item_params = {
             "0" => {
               "_destroy" => "false",
@@ -141,7 +141,7 @@ RSpec.describe DistributionsController, type: :controller do
               id: line_item.id
             }
           }
-          donation_params = { source: donation.source, storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
+          distribution_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
           end.to raise_error
