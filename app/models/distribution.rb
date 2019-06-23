@@ -61,7 +61,7 @@ class Distribution < ApplicationRecord
 
       # Replace the current distribution with the new parameters
       update! new_distribution_params
-
+      reload
       # Apply the new changes to the storage location inventory
       storage_location.decrease_inventory(to_a)
     end

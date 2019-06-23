@@ -104,8 +104,9 @@ RSpec.describe DistributionsController, type: :controller do
         it "updates storage quantity correctly" do
           distribution = create(:distribution, :with_items, item_quantity: 10)
           original_storage_location = distribution.storage_location
-          new_storage_location = create(:storage_location)
           line_item = distribution.line_items.first
+          new_storage_location = create(:storage_location)
+          create(:donation, :with_items, item: line_item.item, item_quantity: 30, storage_location: new_storage_location)
           line_item_params = {
             "0" => {
               "_destroy" => "false",
@@ -114,11 +115,11 @@ RSpec.describe DistributionsController, type: :controller do
               id: line_item.id
             }
           }
-          distribution_params = { storage_location: new_storage_location, line_items_attributes: line_item_params }
+          distribution_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: distribution.id, distribution: distribution_params)
-          end.to change { original_storage_location.size }.by(-10) # removes the whole donation of 10
-          expect(new_storage_location.size).to eq 5
+          end.to change { original_storage_location.size }.by(10) # removes the whole distribution of 10 - increasing inventory
+          expect(new_storage_location.size).to eq 25
         end
 
         it "rollsback updates if quantity would go below 0" do
@@ -140,7 +141,7 @@ RSpec.describe DistributionsController, type: :controller do
               id: line_item.id
             }
           }
-          donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
+          donation_params = { source: donation.source, storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
           end.to raise_error

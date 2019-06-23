@@ -83,7 +83,7 @@ RSpec.describe DonationsController, type: :controller do
               id: line_item.id
             }
           }
-          donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
+          donation_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
           end.to change { original_storage_location.size }.by(-10) # removes the whole donation of 10
