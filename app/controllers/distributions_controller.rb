@@ -72,7 +72,7 @@ class DistributionsController < ApplicationController
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
     @items = current_organization.items.alphabetized
-    @storage_locations = current_organization.storage_locations
+    @storage_locations = current_organization.storage_locations.alphabetized
   end
 
   def show
@@ -84,7 +84,7 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @distribution.line_items.build
     @items = current_organization.items.alphabetized
-    @storage_locations = current_organization.storage_locations
+    @storage_locations = current_organization.storage_locations.alphabetized
   end
 
   def update

@@ -13,17 +13,17 @@ class DonationsController < ApplicationController
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum
     @total_value_all_donations = total_value(@donations)
-    @storage_locations = @donations.collect(&:storage_location).compact.uniq
+    @storage_locations = @donations.collect(&:storage_location).compact.uniq.sort
     @selected_storage_location = filter_params[:at_storage_location]
-    @sources = @donations.collect(&:source).uniq
+    @sources = @donations.collect(&:source).uniq.sort
     @selected_source = filter_params[:by_source]
-    @donation_sites = @donations.collect(&:donation_site).compact.uniq
+    @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
     @selected_donation_site = filter_params[:from_donation_site]
     @diaper_drives = @donations.collect do |d|
       d.source == Donation::SOURCES[:diaper_drive] ? d.diaper_drive_participant : nil
-    end.compact.uniq
+    end.compact.uniq.sort
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
-    @manufacturers = @donations.collect(&:manufacturer).compact.uniq
+    @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
 
     @selected_date = date_filter

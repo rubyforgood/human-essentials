@@ -5,7 +5,7 @@ class PartnersController < ApplicationController
   include Importable
 
   def index
-    @partners = current_organization.partners.order(:name)
+    @partners = current_organization.partners.alphabetized
   end
 
   def create

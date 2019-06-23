@@ -4,7 +4,7 @@ class DonationSitesController < ApplicationController
   include Importable
 
   def index
-    @donation_sites = current_organization.donation_sites.all.order(:name)
+    @donation_sites = current_organization.donation_sites.all.alphabetized
     @donation_site = current_organization.donation_sites.new
   end
 

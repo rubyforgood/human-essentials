@@ -16,7 +16,7 @@ class Admin::BaseItemsController < AdminController
   end
 
   def index
-    @base_items = BaseItem.order(:name).all
+    @base_items = BaseItem.alphabetized.all
   end
 
   def new
