@@ -151,8 +151,6 @@ RSpec.describe DistributionsController, type: :controller do
         end
       end
 
-
-
       context "mail follow up" do
         before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 

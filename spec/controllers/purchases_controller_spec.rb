@@ -133,7 +133,7 @@ RSpec.describe PurchasesController, type: :controller do
               id: line_item.id
             }
           }
-          purchase_params = {  storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
+          purchase_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
           end.to change { original_storage_location.size }.by(-10) # removes the whole purchase of 10
