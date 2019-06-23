@@ -28,6 +28,11 @@ class Partner < ApplicationRecord
     where(organization: organization)
       .order(:name)
   }
+  
+  include Filterable
+  scope :by_status, ->(status) {
+    where(status: status.to_sym)
+  }
 
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)

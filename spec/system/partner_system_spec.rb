@@ -6,22 +6,37 @@ RSpec.describe "Partner management", type: :system, js: true do
 
   context "When a user views the index page" do
     before(:each) do
-      @second = create(:partner, name: "Bcd")
-      @first = create(:partner, name: "Abc")
-      @third = create(:partner, :approved, name: "Cde")
+      @uninvited = create(:partner, name: "Bcd", status: :uninvited)
+      @invited = create(:partner, name: "Abc", status: :invited)
+      @approved = create(:partner, :approved, name: "Cde", status: :approved)
       visit url_prefix + "/partners"
     end
 
     it "the partner agency names are in alphabetical order" do
       expect(page).to have_css("table tr", count: 5)
-      expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
-      expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
+      expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@invited.name)
+      expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@approved.name)
     end
 
     it "shows invite button only for unapproved partners" do
-      expect(page.find(:xpath, "//table/tbody/tr[1]/td[4]")).to have_content('Invite')
+      expect(page.find(:xpath, "//table/tbody/tr[1]/td[4]")).to have_no_content('Invite')
       expect(page.find(:xpath, "//table/tbody/tr[2]/td[4]")).to have_content('Invite')
-      expect(page.find(:xpath, "//table/tbody/tr[3]/td[4]")).not_to have_content('Invite')
+      expect(page.find(:xpath, "//table/tbody/tr[3]/td[4]")).to have_no_content('Invite')
+    end
+
+    context "when filtering" do
+      it "allows the user to click on one of the statuses at the top to filter the results" do
+        approved_count = Partner.approved.count
+        within "table tbody" do
+          expect(page).to have_css("tr", count: Partner.count)
+        end
+        within "#partner-status" do
+          click_on "Approved"
+        end
+        within "table tbody" do
+          expect(page).to have_css("tr", count: approved_count)
+        end
+      end
     end
   end
 

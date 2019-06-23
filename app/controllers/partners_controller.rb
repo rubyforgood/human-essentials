@@ -5,7 +5,8 @@ class PartnersController < ApplicationController
   include Importable
 
   def index
-    @partners = current_organization.partners.order(:name)
+    @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
+    @partners = Partner.where(organization: current_organization).class_filter(filter_params).order(:name)
   end
 
   def create
@@ -82,4 +83,11 @@ class PartnersController < ApplicationController
   def partner_params
     params.require(:partner).permit(:name, :email)
   end
+
+  def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).slice(:by_status)
+  end
+
 end
