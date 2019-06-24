@@ -37,7 +37,7 @@ class Distribution < ApplicationRecord
 
   include AASM
 
-  # States to track the status of a Distribution about whether or not it has been picked up.
+  # States to track the status of a Distribution about whether it has been picked up or not.
   aasm do
     state :started, initial: true
     state :scheduled
