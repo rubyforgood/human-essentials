@@ -110,6 +110,16 @@ class DistributionsController < ApplicationController
     end
   end
 
+  def picked_up
+    if Distribution.find(params["id"]).picked_up!
+      flash[:notice] = "Distribution status updated!"
+    else
+      flash[:error] = "The status couldn't be updated"
+    end
+
+    redirect_to distribution_path
+  end
+
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def pick_ups
     @pick_ups = current_organization.distributions
