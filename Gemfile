@@ -7,6 +7,7 @@ end
 
 ruby "2.6.2"
 
+gem 'aasm'
 gem "api-auth", "~> 2.3"
 gem "bootstrap-sass"
 gem "bugsnag"
