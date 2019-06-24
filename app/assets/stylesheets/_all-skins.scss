@@ -1498,7 +1498,7 @@
  * ------------
  */
 .skin-purple .main-header .navbar {
-  background-color: $diaper-color-purple-51;
+  background-color: lighten($purple, 1%);
 }
 .skin-purple .main-header .navbar .nav > li > a {
   color: $white;
@@ -1524,7 +1524,7 @@
   color: $white;
 }
 .skin-purple .main-header .navbar .sidebar-toggle:hover {
-  background-color: $diaper-color-purple-46;
+  background-color: darken($purple, 5%);
 }
 @media (max-width: 767px) {
   .skin-purple .main-header .navbar .dropdown-menu li.divider {
@@ -1534,19 +1534,19 @@
     color: $white;
   }
   .skin-purple .main-header .navbar .dropdown-menu li a:hover {
-    background: $diaper-color-purple-46;
+    background: darken($purple, 5%);
   }
 }
 .skin-purple .main-header .logo {
-  background-color: $diaper-color-purple-46;
+  background-color: darken($purple, 5%);
   color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-purple .main-header .logo:hover {
-  background-color: $diaper-color-purple-45;
+  background-color: darken($purple, 5%);
 }
 .skin-purple .main-header li.user-header {
-  background-color: $diaper-color-purple-51;
+  background-color: lighten($purple, 1%);
 }
 .skin-purple .content-header {
   background: transparent;
@@ -1574,7 +1574,7 @@
   background: $diaper-color-neutral-15;
 }
 .skin-purple .sidebar-menu > li.active > a {
-  border-left-color: $diaper-color-purple-51;
+  border-left-color: lighten($purple, 1%);
 }
 .skin-purple .sidebar-menu > li > .treeview-menu {
   margin: 0 1px;
@@ -1632,7 +1632,7 @@
  * ------------
  */
 .skin-purple-light .main-header .navbar {
-  background-color: $diaper-color-purple-51;
+  background-color: lighten($purple, 1%);
 }
 .skin-purple-light .main-header .navbar .nav > li > a {
   color: $white;
@@ -1658,7 +1658,7 @@
   color: $white;
 }
 .skin-purple-light .main-header .navbar .sidebar-toggle:hover {
-  background-color: $diaper-color-purple-46;
+  background-color: darken($purple, 5%);
 }
 @media (max-width: 767px) {
   .skin-purple-light .main-header .navbar .dropdown-menu li.divider {
@@ -1668,19 +1668,19 @@
     color: $white;
   }
   .skin-purple-light .main-header .navbar .dropdown-menu li a:hover {
-    background: $diaper-color-purple-46;
+    background: darken($purple, 5%);
   }
 }
 .skin-purple-light .main-header .logo {
-  background-color: $diaper-color-purple-51;
+  background-color: lighten($purple, 1%);
   color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-purple-light .main-header .logo:hover {
-  background-color: $diaper-color-purple-50;
+  background-color: $purple;
 }
 .skin-purple-light .main-header li.user-header {
-  background-color: $diaper-color-purple-51;
+  background-color: lighten($purple, 1%);
 }
 .skin-purple-light .content-header {
   background: transparent;
@@ -1716,7 +1716,7 @@
   background: $diaper-color-neutral-96;
 }
 .skin-purple-light .sidebar-menu > li.active {
-  border-left-color: $diaper-color-purple-51;
+  border-left-color: lighten($purple, 1%);
 }
 .skin-purple-light .sidebar-menu > li.active > a {
   font-weight: 600;

@@ -4517,7 +4517,7 @@ table.text-center th {
   background-color: lighten($fuschia, 5%) !important;
 }
 .bg-purple {
-  background-color: $diaper-color-purple-51 !important;
+  background-color: lighten($purple, 1%) !important;
 }
 .bg-maroon {
   background-color: darken($magenta, 10%) !important;
@@ -4576,7 +4576,7 @@ table.text-center th {
   background-color: $fuschia !important;
 }
 .bg-purple-active {
-  background-color: $diaper-color-purple-46 !important;
+  background-color: darken($purple, 5%) !important;
 }
 .bg-maroon-active {
   background-color: darken($magenta, 13%) !important;
@@ -4741,11 +4741,11 @@ table.text-center th {
 }
 .bg-purple-gradient {
   background: lighten($fuschia, 5%) !important;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, lighten($fuschia, 5%)), color-stop(1, $diaper-color-purple-67)) !important;
-  background: -ms-linear-gradient(bottom, lighten($fuschia, 5%), $diaper-color-purple-67) !important;
-  background: -moz-linear-gradient(center bottom, lighten($fuschia, 5%) 0%, $diaper-color-purple-67 100%) !important;
-  background: -o-linear-gradient($diaper-color-purple-67, lighten($fuschia, 5%)) !important;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$diaper-color-purple-67', endColorstr='lighten($fuschia, 5%)', GradientType=0) !important;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, lighten($fuschia, 5%)), color-stop(1, lighten($purple, 17%))) !important;
+  background: -ms-linear-gradient(bottom, lighten($fuschia, 5%), lighten($purple, 17%)) !important;
+  background: -moz-linear-gradient(center bottom, lighten($fuschia, 5%) 0%, lighten($purple, 17%) 100%) !important;
+  background: -o-linear-gradient(lighten($purple, 17%), lighten($fuschia, 5%)) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='lighten($purple, 17%)', endColorstr='lighten($fuschia, 5%)', GradientType=0) !important;
   color: $white;
 }
 .bg-green-gradient {
