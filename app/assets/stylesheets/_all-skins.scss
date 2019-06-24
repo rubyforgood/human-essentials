@@ -926,7 +926,7 @@
  * ---------
  */
 .skin-red .main-header .navbar {
-  background-color: $diaper-color-red-55;
+  background-color: lighten($red, 1%);
 }
 .skin-red .main-header .navbar .nav > li > a {
   color: $white;
@@ -952,7 +952,7 @@
   color: $white;
 }
 .skin-red .main-header .navbar .sidebar-toggle:hover {
-  background-color: $diaper-color-red-49;
+  background-color: darken($red, 4%);
 }
 @media (max-width: 767px) {
   .skin-red .main-header .navbar .dropdown-menu li.divider {
@@ -962,19 +962,19 @@
     color: $white;
   }
   .skin-red .main-header .navbar .dropdown-menu li a:hover {
-    background: $diaper-color-red-49;
+    background: darken($red, 4%);
   }
 }
 .skin-red .main-header .logo {
-  background-color: $diaper-color-red-49;
+  background-color: darken($red, 4%);
   color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-red .main-header .logo:hover {
-  background-color: $diaper-color-red-48;
+  background-color: darken($red, 5%);
 }
 .skin-red .main-header li.user-header {
-  background-color: $diaper-color-red-55;
+  background-color: lighten($red, 1%);
 }
 .skin-red .content-header {
   background: transparent;
@@ -1002,7 +1002,7 @@
   background: $diaper-color-neutral-15;
 }
 .skin-red .sidebar-menu > li.active > a {
-  border-left-color: $diaper-color-red-55;
+  border-left-color: lighten($red, 1%);
 }
 .skin-red .sidebar-menu > li > .treeview-menu {
   margin: 0 1px;
@@ -1060,7 +1060,7 @@
  * ---------
  */
 .skin-red-light .main-header .navbar {
-  background-color: $diaper-color-red-55;
+  background-color: lighten($red, 1%);
 }
 .skin-red-light .main-header .navbar .nav > li > a {
   color: $white;
@@ -1086,7 +1086,7 @@
   color: $white;
 }
 .skin-red-light .main-header .navbar .sidebar-toggle:hover {
-  background-color: $diaper-color-red-49;
+  background-color: darken($red, 4%);
 }
 @media (max-width: 767px) {
   .skin-red-light .main-header .navbar .dropdown-menu li.divider {
@@ -1096,19 +1096,19 @@
     color: $white;
   }
   .skin-red-light .main-header .navbar .dropdown-menu li a:hover {
-    background: $diaper-color-red-49;
+    background: darken($red, 4%);
   }
 }
 .skin-red-light .main-header .logo {
-  background-color: $diaper-color-red-55;
+  background-color: lighten($red, 1%);
   color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-red-light .main-header .logo:hover {
-  background-color: $diaper-color-red-54;
+  background-color: $red;
 }
 .skin-red-light .main-header li.user-header {
-  background-color: $diaper-color-red-55;
+  background-color: lighten($red, 1%);
 }
 .skin-red-light .content-header {
   background: transparent;
@@ -1144,7 +1144,7 @@
   background: $diaper-color-neutral-96;
 }
 .skin-red-light .sidebar-menu > li.active {
-  border-left-color: $diaper-color-red-55;
+  border-left-color: lighten($red, 1%);
 }
 .skin-red-light .sidebar-menu > li.active > a {
   font-weight: 600;
@@ -1257,7 +1257,7 @@
   border-bottom: 0 solid transparent;
 }
 .skin-yellow .main-header .logo:hover {
-  background-color: $diaper-color-orange-45;
+  background-color: darken($ochre, 5%);
 }
 .skin-yellow .main-header li.user-header {
   background-color: lighten($ochre, 1%);

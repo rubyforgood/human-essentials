@@ -69,15 +69,6 @@ $diaper-color-blue-93: #e8ecf4;
 $diaper-color-blue-94: #ecf0f5;
 $diaper-color-blue-95: #e6f7ff;
 
-// reds
-$diaper-color-red-45: #c23321;
-$diaper-color-red-48: #d33724;
-$diaper-color-red-49: #d73925;
-$diaper-color-red-54: #dc4735;
-$diaper-color-red-55: #dd4b39;
-$diaper-color-red-65: #e47365;
-$diaper-color-red-93: #ffdddd;
-
 // greens
 $diaper-color-green-23: #00733e;
 $diaper-color-green-26: #008749;
@@ -99,7 +90,7 @@ $diaper-text-color-interactive-default: $diaper-color-blue-49;
 $diaper-text-color-interactive-hover: $diaper-color-blue-64;
 
 // notifcations
-$diaper-notifcation-color-error-default: $diaper-color-red-55;
+$diaper-notifcation-color-error-default: lighten($red, 1%);
 $diaper-notifcation-color-warning-default: lighten($ochre, 1%);
 $diaper-notifcation-color-success-default: $diaper-color-green-33;
 //Fonts

@@ -2258,12 +2258,12 @@ a:focus {
 }
 .btn-danger {
   background-color: $diaper-notifcation-color-error-default;
-  border-color: $diaper-color-red-49;
+  border-color: darken($red, 4%);
 }
 .btn-danger:hover,
 .btn-danger:active,
 .btn-danger.hover {
-  background-color: $diaper-color-red-49;
+  background-color: darken($red, 4%);
 }
 .btn-warning {
   background-color: $diaper-notifcation-color-warning-default;
@@ -2359,7 +2359,7 @@ a:focus {
   background-color: $white;
 }
 .callout.callout-danger {
-  border-color: $diaper-color-red-45;
+  border-color: darken($red, 9%);
 }
 .callout.callout-warning {
   border-color: darken($ochre, 9%);
@@ -2401,7 +2401,7 @@ a:focus {
 }
 .alert-danger,
 .alert-error {
-  border-color: $diaper-color-red-49;
+  border-color: darken($red, 4%);
 }
 .alert-warning {
   border-color: darken($ochre, 4%);
@@ -3006,7 +3006,7 @@ table.text-center th {
 }
 .modal-danger .modal-header,
 .modal-danger .modal-footer {
-  border-color: $diaper-color-red-45;
+  border-color: darken($red, 9%);
 }
 /*
  * Component: Social Widgets
@@ -3720,19 +3720,19 @@ table.text-center th {
 .btn-google:focus,
 .btn-google.focus {
   color: $white;
-  background-color: $diaper-color-red-45;
+  background-color: darken($red, 9%);
   border-color: rgba($black, 0.2);
 }
 .btn-google:hover {
   color: $white;
-  background-color: $diaper-color-red-45;
+  background-color: darken($red, 9%);
   border-color: rgba($black, 0.2);
 }
 .btn-google:active,
 .btn-google.active,
 .open > .dropdown-toggle.btn-google {
   color: $white;
-  background-color: $diaper-color-red-45;
+  background-color: darken($red, 9%);
   border-color: rgba($black, 0.2);
 }
 .btn-google:active,
@@ -4532,12 +4532,12 @@ table.text-center th {
 .bg-red-active,
 .modal-danger .modal-header,
 .modal-danger .modal-footer {
-  background-color: $diaper-color-red-48 !important;
+  background-color: darken($red, 5%) !important;
 }
 .bg-yellow-active,
 .modal-warning .modal-header,
 .modal-warning .modal-footer {
-  background-color: $diaper-color-orange-45 !important;
+  background-color: darken($ochre, 5%) !important;
 }
 .bg-aqua-active,
 .modal-info .modal-header,
@@ -4570,7 +4570,7 @@ table.text-center th {
   background-color: $diaper-color-green-45 !important;
 }
 .bg-orange-active {
-  background-color: $diaper-color-orange-50 !important;
+  background-color: $orange !important;
 }
 .bg-fuchsia-active {
   background-color: $fuschia !important;
@@ -4759,11 +4759,11 @@ table.text-center th {
 }
 .bg-red-gradient {
   background: $diaper-notifcation-color-error-default !important;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, $diaper-notifcation-color-error-default), color-stop(1, $diaper-color-red-65)) !important;
-  background: -ms-linear-gradient(bottom, $diaper-notifcation-color-error-default, $diaper-color-red-65) !important;
-  background: -moz-linear-gradient(center bottom, $diaper-notifcation-color-error-default 0%, $diaper-color-red-65 100%) !important;
-  background: -o-linear-gradient($diaper-color-red-65, $diaper-notifcation-color-error-default) !important;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$diaper-color-red-65', endColorstr='$diaper-notifcation-color-error-default', GradientType=0) !important;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, $diaper-notifcation-color-error-default), color-stop(1, lighten($red, 11%))) !important;
+  background: -ms-linear-gradient(bottom, $diaper-notifcation-color-error-default, lighten($red, 11%)) !important;
+  background: -moz-linear-gradient(center bottom, $diaper-notifcation-color-error-default 0%, lighten($red, 11%) 100%) !important;
+  background: -o-linear-gradient(lighten($red, 11%), $diaper-notifcation-color-error-default) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='lighten($red, 11%)', endColorstr='$diaper-notifcation-color-error-default', GradientType=0) !important;
   color: $white;
 }
 .bg-black-gradient {

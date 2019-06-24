@@ -28,7 +28,7 @@ img#logo {
 }
 
 tr.negative {
-  background-color: $diaper-color-red-93;
+  background-color: lighten($red, 38%);
 }
 tr.positive {
   background-color: $diaper-color-green-93;
