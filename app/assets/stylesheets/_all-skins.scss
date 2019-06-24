@@ -6,7 +6,7 @@
   background-color: $diaper-color-blue-49;
 }
 .skin-blue .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-blue .main-header .navbar .nav > li > a:hover,
 .skin-blue .main-header .navbar .nav > li > a:active,
@@ -15,28 +15,28 @@
 .skin-blue .main-header .navbar .nav .open > a:hover,
 .skin-blue .main-header .navbar .nav .open > a:focus,
 .skin-blue .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-blue .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-blue .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-blue .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-blue .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-blue-44;
 }
 @media (max-width: 767px) {
   .skin-blue .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-blue .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-blue .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-blue-44;
@@ -44,7 +44,7 @@
 }
 .skin-blue .main-header .logo {
   background-color: $diaper-color-blue-44;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-blue .main-header .logo:hover {
@@ -63,7 +63,7 @@
 }
 .skin-blue .user-panel > .info,
 .skin-blue .user-panel > .info > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-blue .sidebar-menu > li.header {
   color: $diaper-color-neutral-36;
@@ -75,7 +75,7 @@
 .skin-blue .sidebar-menu > li:hover > a,
 .skin-blue .sidebar-menu > li.active > a,
 .skin-blue .sidebar-menu > li.menu-open > a {
-  color: $diaper-color-white;
+  color: $white;
   background: $diaper-color-neutral-15;
 }
 .skin-blue .sidebar-menu > li.active > a {
@@ -96,7 +96,7 @@
 }
 .skin-blue .sidebar-menu .treeview-menu > li.active > a,
 .skin-blue .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-blue .sidebar-form {
   border-radius: 3px;
@@ -119,11 +119,11 @@
 }
 .skin-blue .sidebar-form input[type="text"]:focus,
 .skin-blue .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-blue .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-blue .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -134,7 +134,7 @@
 }
 .skin-blue.layout-top-nav .main-header > .logo {
   background-color: $diaper-color-blue-49;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-blue.layout-top-nav .main-header > .logo:hover {
@@ -148,7 +148,7 @@
   background-color: $diaper-color-blue-49;
 }
 .skin-blue-light .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-blue-light .main-header .navbar .nav > li > a:hover,
 .skin-blue-light .main-header .navbar .nav > li > a:active,
@@ -157,28 +157,28 @@
 .skin-blue-light .main-header .navbar .nav .open > a:hover,
 .skin-blue-light .main-header .navbar .nav .open > a:focus,
 .skin-blue-light .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-blue-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-blue-light .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-blue-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-blue-light .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-blue-44;
 }
 @media (max-width: 767px) {
   .skin-blue-light .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-blue-light .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-blue-light .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-blue-44;
@@ -186,7 +186,7 @@
 }
 .skin-blue-light .main-header .logo {
   background-color: $diaper-color-blue-49;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-blue-light .main-header .logo:hover {
@@ -225,7 +225,7 @@
 }
 .skin-blue-light .sidebar-menu > li:hover > a,
 .skin-blue-light .sidebar-menu > li.active > a {
-  color: $diaper-color-black;
+  color: $black;
   background: $diaper-color-neutral-96;
 }
 .skin-blue-light .sidebar-menu > li.active {
@@ -248,7 +248,7 @@
 }
 .skin-blue-light .sidebar-menu .treeview-menu > li.active > a,
 .skin-blue-light .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-black;
+  color: $black;
 }
 .skin-blue-light .sidebar-menu .treeview-menu > li.active > a {
   font-weight: 600;
@@ -261,7 +261,7 @@
 .skin-blue-light .sidebar-form input[type="text"],
 .skin-blue-light .sidebar-form .btn {
   box-shadow: none;
-  background-color: $diaper-color-white;
+  background-color: $white;
   border: 1px solid transparent;
   height: 35px;
 }
@@ -274,11 +274,11 @@
 }
 .skin-blue-light .sidebar-form input[type="text"]:focus,
 .skin-blue-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-blue-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-blue-light .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -297,7 +297,7 @@
 }
 .skin-blue.layout-top-nav .main-header > .logo {
   background-color: $diaper-color-blue-49;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-blue.layout-top-nav .main-header > .logo:hover {
@@ -309,8 +309,8 @@
  */
 /* skin-black navbar */
 .skin-black .main-header {
-  -webkit-box-shadow: 0px 1px 1px rgba($diaper-color-black, 0.05);
-  box-shadow: 0px 1px 1px rgba($diaper-color-black, 0.05);
+  -webkit-box-shadow: 0px 1px 1px rgba($black, 0.05);
+  box-shadow: 0px 1px 1px rgba($black, 0.05);
 }
 .skin-black .main-header .navbar-toggle {
   color: $diaper-color-neutral-20;
@@ -320,7 +320,7 @@
   border-right: 1px solid $diaper-color-neutral-93;
 }
 .skin-black .main-header .navbar {
-  background-color: $diaper-color-white;
+  background-color: $white;
 }
 .skin-black .main-header .navbar .nav > li > a {
   color: $diaper-color-neutral-20;
@@ -332,7 +332,7 @@
 .skin-black .main-header .navbar .nav .open > a:hover,
 .skin-black .main-header .navbar .nav .open > a:focus,
 .skin-black .main-header .navbar .nav > .active > a {
-  background: $diaper-color-white;
+  background: $white;
   color: $diaper-color-neutral-60;
 }
 .skin-black .main-header .navbar .sidebar-toggle {
@@ -340,7 +340,7 @@
 }
 .skin-black .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-60;
-  background: $diaper-color-white;
+  background: $white;
 }
 .skin-black .main-header .navbar > .sidebar-toggle {
   color: $diaper-color-neutral-20;
@@ -355,7 +355,7 @@
   border-right-width: 0;
 }
 .skin-black .main-header > .logo {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-20;
   border-bottom: 0 solid transparent;
   border-right: 1px solid $diaper-color-neutral-93;
@@ -366,7 +366,7 @@
 @media (max-width: 767px) {
   .skin-black .main-header > .logo {
     background-color: $diaper-color-neutral-13;
-    color: $diaper-color-white;
+    color: $white;
     border-bottom: 0 solid transparent;
     border-right: none;
   }
@@ -388,7 +388,7 @@
 }
 .skin-black .user-panel > .info,
 .skin-black .user-panel > .info > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-black .sidebar-menu > li.header {
   color: $diaper-color-neutral-36;
@@ -400,11 +400,11 @@
 .skin-black .sidebar-menu > li:hover > a,
 .skin-black .sidebar-menu > li.active > a,
 .skin-black .sidebar-menu > li.menu-open > a {
-  color: $diaper-color-white;
+  color: $white;
   background: $diaper-color-neutral-15;
 }
 .skin-black .sidebar-menu > li.active > a {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-black .sidebar-menu > li > .treeview-menu {
   margin: 0 1px;
@@ -421,7 +421,7 @@
 }
 .skin-black .sidebar-menu .treeview-menu > li.active > a,
 .skin-black .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-black .sidebar-form {
   border-radius: 3px;
@@ -444,11 +444,11 @@
 }
 .skin-black .sidebar-form input[type="text"]:focus,
 .skin-black .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-black .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-black .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -480,7 +480,7 @@
   border-right: 1px solid $diaper-color-neutral-85;
 }
 .skin-black-light .main-header .navbar {
-  background-color: $diaper-color-white;
+  background-color: $white;
 }
 .skin-black-light .main-header .navbar .nav > li > a {
   color: $diaper-color-neutral-20;
@@ -492,7 +492,7 @@
 .skin-black-light .main-header .navbar .nav .open > a:hover,
 .skin-black-light .main-header .navbar .nav .open > a:focus,
 .skin-black-light .main-header .navbar .nav > .active > a {
-  background: $diaper-color-white;
+  background: $white;
   color: $diaper-color-neutral-60;
 }
 .skin-black-light .main-header .navbar .sidebar-toggle {
@@ -500,7 +500,7 @@
 }
 .skin-black-light .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-60;
-  background: $diaper-color-white;
+  background: $white;
 }
 .skin-black-light .main-header .navbar > .sidebar-toggle {
   color: $diaper-color-neutral-20;
@@ -515,7 +515,7 @@
   border-right-width: 0;
 }
 .skin-black-light .main-header > .logo {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-20;
   border-bottom: 0 solid transparent;
   border-right: 1px solid $diaper-color-neutral-85;
@@ -526,7 +526,7 @@
 @media (max-width: 767px) {
   .skin-black-light .main-header > .logo {
     background-color: $diaper-color-neutral-13;
-    color: $diaper-color-white;
+    color: $white;
     border-bottom: 0 solid transparent;
     border-right: none;
   }
@@ -568,11 +568,11 @@
 }
 .skin-black-light .sidebar-menu > li:hover > a,
 .skin-black-light .sidebar-menu > li.active > a {
-  color: $diaper-color-black;
+  color: $black;
   background: $diaper-color-neutral-96;
 }
 .skin-black-light .sidebar-menu > li.active {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-black-light .sidebar-menu > li.active > a {
   font-weight: 600;
@@ -591,7 +591,7 @@
 }
 .skin-black-light .sidebar-menu .treeview-menu > li.active > a,
 .skin-black-light .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-black;
+  color: $black;
 }
 .skin-black-light .sidebar-menu .treeview-menu > li.active > a {
   font-weight: 600;
@@ -604,7 +604,7 @@
 .skin-black-light .sidebar-form input[type="text"],
 .skin-black-light .sidebar-form .btn {
   box-shadow: none;
-  background-color: $diaper-color-white;
+  background-color: $white;
   border: 1px solid transparent;
   height: 35px;
 }
@@ -617,11 +617,11 @@
 }
 .skin-black-light .sidebar-form input[type="text"]:focus,
 .skin-black-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-black-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-black-light .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -643,7 +643,7 @@
   background-color: $diaper-color-green-33;
 }
 .skin-green .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-green .main-header .navbar .nav > li > a:hover,
 .skin-green .main-header .navbar .nav > li > a:active,
@@ -652,28 +652,28 @@
 .skin-green .main-header .navbar .nav .open > a:hover,
 .skin-green .main-header .navbar .nav .open > a:focus,
 .skin-green .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-green .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-green .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-green .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-green .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-green-28;
 }
 @media (max-width: 767px) {
   .skin-green .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-green .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-green .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-green-28;
@@ -681,7 +681,7 @@
 }
 .skin-green .main-header .logo {
   background-color: $diaper-color-green-28;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-green .main-header .logo:hover {
@@ -700,7 +700,7 @@
 }
 .skin-green .user-panel > .info,
 .skin-green .user-panel > .info > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-green .sidebar-menu > li.header {
   color: $diaper-color-neutral-36;
@@ -712,7 +712,7 @@
 .skin-green .sidebar-menu > li:hover > a,
 .skin-green .sidebar-menu > li.active > a,
 .skin-green .sidebar-menu > li.menu-open > a {
-  color: $diaper-color-white;
+  color: $white;
   background: $diaper-color-neutral-15;
 }
 .skin-green .sidebar-menu > li.active > a {
@@ -733,7 +733,7 @@
 }
 .skin-green .sidebar-menu .treeview-menu > li.active > a,
 .skin-green .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-green .sidebar-form {
   border-radius: 3px;
@@ -756,11 +756,11 @@
 }
 .skin-green .sidebar-form input[type="text"]:focus,
 .skin-green .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-green .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-green .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -777,7 +777,7 @@
   background-color: $diaper-color-green-33;
 }
 .skin-green-light .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-green-light .main-header .navbar .nav > li > a:hover,
 .skin-green-light .main-header .navbar .nav > li > a:active,
@@ -786,28 +786,28 @@
 .skin-green-light .main-header .navbar .nav .open > a:hover,
 .skin-green-light .main-header .navbar .nav .open > a:focus,
 .skin-green-light .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-green-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-green-light .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-green-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-green-light .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-green-28;
 }
 @media (max-width: 767px) {
   .skin-green-light .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-green-light .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-green-light .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-green-28;
@@ -815,7 +815,7 @@
 }
 .skin-green-light .main-header .logo {
   background-color: $diaper-color-green-33;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-green-light .main-header .logo:hover {
@@ -854,7 +854,7 @@
 }
 .skin-green-light .sidebar-menu > li:hover > a,
 .skin-green-light .sidebar-menu > li.active > a {
-  color: $diaper-color-black;
+  color: $black;
   background: $diaper-color-neutral-96;
 }
 .skin-green-light .sidebar-menu > li.active {
@@ -877,7 +877,7 @@
 }
 .skin-green-light .sidebar-menu .treeview-menu > li.active > a,
 .skin-green-light .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-black;
+  color: $black;
 }
 .skin-green-light .sidebar-menu .treeview-menu > li.active > a {
   font-weight: 600;
@@ -890,7 +890,7 @@
 .skin-green-light .sidebar-form input[type="text"],
 .skin-green-light .sidebar-form .btn {
   box-shadow: none;
-  background-color: $diaper-color-white;
+  background-color: $white;
   border: 1px solid transparent;
   height: 35px;
 }
@@ -903,11 +903,11 @@
 }
 .skin-green-light .sidebar-form input[type="text"]:focus,
 .skin-green-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-green-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-green-light .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -929,7 +929,7 @@
   background-color: $diaper-color-red-55;
 }
 .skin-red .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-red .main-header .navbar .nav > li > a:hover,
 .skin-red .main-header .navbar .nav > li > a:active,
@@ -938,28 +938,28 @@
 .skin-red .main-header .navbar .nav .open > a:hover,
 .skin-red .main-header .navbar .nav .open > a:focus,
 .skin-red .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-red .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-red .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-red .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-red .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-red-49;
 }
 @media (max-width: 767px) {
   .skin-red .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-red .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-red .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-red-49;
@@ -967,7 +967,7 @@
 }
 .skin-red .main-header .logo {
   background-color: $diaper-color-red-49;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-red .main-header .logo:hover {
@@ -986,7 +986,7 @@
 }
 .skin-red .user-panel > .info,
 .skin-red .user-panel > .info > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-red .sidebar-menu > li.header {
   color: $diaper-color-neutral-36;
@@ -998,7 +998,7 @@
 .skin-red .sidebar-menu > li:hover > a,
 .skin-red .sidebar-menu > li.active > a,
 .skin-red .sidebar-menu > li.menu-open > a {
-  color: $diaper-color-white;
+  color: $white;
   background: $diaper-color-neutral-15;
 }
 .skin-red .sidebar-menu > li.active > a {
@@ -1019,7 +1019,7 @@
 }
 .skin-red .sidebar-menu .treeview-menu > li.active > a,
 .skin-red .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-red .sidebar-form {
   border-radius: 3px;
@@ -1042,11 +1042,11 @@
 }
 .skin-red .sidebar-form input[type="text"]:focus,
 .skin-red .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-red .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-red .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -1063,7 +1063,7 @@
   background-color: $diaper-color-red-55;
 }
 .skin-red-light .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-red-light .main-header .navbar .nav > li > a:hover,
 .skin-red-light .main-header .navbar .nav > li > a:active,
@@ -1072,28 +1072,28 @@
 .skin-red-light .main-header .navbar .nav .open > a:hover,
 .skin-red-light .main-header .navbar .nav .open > a:focus,
 .skin-red-light .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-red-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-red-light .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-red-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-red-light .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-red-49;
 }
 @media (max-width: 767px) {
   .skin-red-light .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-red-light .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-red-light .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-red-49;
@@ -1101,7 +1101,7 @@
 }
 .skin-red-light .main-header .logo {
   background-color: $diaper-color-red-55;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-red-light .main-header .logo:hover {
@@ -1140,7 +1140,7 @@
 }
 .skin-red-light .sidebar-menu > li:hover > a,
 .skin-red-light .sidebar-menu > li.active > a {
-  color: $diaper-color-black;
+  color: $black;
   background: $diaper-color-neutral-96;
 }
 .skin-red-light .sidebar-menu > li.active {
@@ -1163,7 +1163,7 @@
 }
 .skin-red-light .sidebar-menu .treeview-menu > li.active > a,
 .skin-red-light .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-black;
+  color: $black;
 }
 .skin-red-light .sidebar-menu .treeview-menu > li.active > a {
   font-weight: 600;
@@ -1176,7 +1176,7 @@
 .skin-red-light .sidebar-form input[type="text"],
 .skin-red-light .sidebar-form .btn {
   box-shadow: none;
-  background-color: $diaper-color-white;
+  background-color: $white;
   border: 1px solid transparent;
   height: 35px;
 }
@@ -1189,11 +1189,11 @@
 }
 .skin-red-light .sidebar-form input[type="text"]:focus,
 .skin-red-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-red-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-red-light .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -1215,7 +1215,7 @@
   background-color: $diaper-color-orange-51;
 }
 .skin-yellow .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-yellow .main-header .navbar .nav > li > a:hover,
 .skin-yellow .main-header .navbar .nav > li > a:active,
@@ -1224,28 +1224,28 @@
 .skin-yellow .main-header .navbar .nav .open > a:hover,
 .skin-yellow .main-header .navbar .nav .open > a:focus,
 .skin-yellow .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-yellow .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-yellow .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-yellow .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-yellow .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-orange-46;
 }
 @media (max-width: 767px) {
   .skin-yellow .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-yellow .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-yellow .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-orange-46;
@@ -1253,7 +1253,7 @@
 }
 .skin-yellow .main-header .logo {
   background-color: $diaper-color-orange-46;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-yellow .main-header .logo:hover {
@@ -1272,7 +1272,7 @@
 }
 .skin-yellow .user-panel > .info,
 .skin-yellow .user-panel > .info > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-yellow .sidebar-menu > li.header {
   color: $diaper-color-neutral-36;
@@ -1284,7 +1284,7 @@
 .skin-yellow .sidebar-menu > li:hover > a,
 .skin-yellow .sidebar-menu > li.active > a,
 .skin-yellow .sidebar-menu > li.menu-open > a {
-  color: $diaper-color-white;
+  color: $white;
   background: $diaper-color-neutral-15;
 }
 .skin-yellow .sidebar-menu > li.active > a {
@@ -1305,7 +1305,7 @@
 }
 .skin-yellow .sidebar-menu .treeview-menu > li.active > a,
 .skin-yellow .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-yellow .sidebar-form {
   border-radius: 3px;
@@ -1328,11 +1328,11 @@
 }
 .skin-yellow .sidebar-form input[type="text"]:focus,
 .skin-yellow .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-yellow .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-yellow .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -1349,7 +1349,7 @@
   background-color: $diaper-color-orange-51;
 }
 .skin-yellow-light .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-yellow-light .main-header .navbar .nav > li > a:hover,
 .skin-yellow-light .main-header .navbar .nav > li > a:active,
@@ -1358,28 +1358,28 @@
 .skin-yellow-light .main-header .navbar .nav .open > a:hover,
 .skin-yellow-light .main-header .navbar .nav .open > a:focus,
 .skin-yellow-light .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-yellow-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-yellow-light .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-yellow-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-yellow-light .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-orange-46;
 }
 @media (max-width: 767px) {
   .skin-yellow-light .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-yellow-light .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-yellow-light .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-orange-46;
@@ -1387,7 +1387,7 @@
 }
 .skin-yellow-light .main-header .logo {
   background-color: $diaper-color-orange-51;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-yellow-light .main-header .logo:hover {
@@ -1426,7 +1426,7 @@
 }
 .skin-yellow-light .sidebar-menu > li:hover > a,
 .skin-yellow-light .sidebar-menu > li.active > a {
-  color: $diaper-color-black;
+  color: $black;
   background: $diaper-color-neutral-96;
 }
 .skin-yellow-light .sidebar-menu > li.active {
@@ -1449,7 +1449,7 @@
 }
 .skin-yellow-light .sidebar-menu .treeview-menu > li.active > a,
 .skin-yellow-light .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-black;
+  color: $black;
 }
 .skin-yellow-light .sidebar-menu .treeview-menu > li.active > a {
   font-weight: 600;
@@ -1462,7 +1462,7 @@
 .skin-yellow-light .sidebar-form input[type="text"],
 .skin-yellow-light .sidebar-form .btn {
   box-shadow: none;
-  background-color: $diaper-color-white;
+  background-color: $white;
   border: 1px solid transparent;
   height: 35px;
 }
@@ -1475,11 +1475,11 @@
 }
 .skin-yellow-light .sidebar-form input[type="text"]:focus,
 .skin-yellow-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-yellow-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-yellow-light .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -1501,7 +1501,7 @@
   background-color: $diaper-color-purple-51;
 }
 .skin-purple .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-purple .main-header .navbar .nav > li > a:hover,
 .skin-purple .main-header .navbar .nav > li > a:active,
@@ -1510,28 +1510,28 @@
 .skin-purple .main-header .navbar .nav .open > a:hover,
 .skin-purple .main-header .navbar .nav .open > a:focus,
 .skin-purple .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-purple .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-purple .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-purple .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-purple .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-purple-46;
 }
 @media (max-width: 767px) {
   .skin-purple .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-purple .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-purple .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-purple-46;
@@ -1539,7 +1539,7 @@
 }
 .skin-purple .main-header .logo {
   background-color: $diaper-color-purple-46;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-purple .main-header .logo:hover {
@@ -1558,7 +1558,7 @@
 }
 .skin-purple .user-panel > .info,
 .skin-purple .user-panel > .info > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-purple .sidebar-menu > li.header {
   color: $diaper-color-neutral-36;
@@ -1570,7 +1570,7 @@
 .skin-purple .sidebar-menu > li:hover > a,
 .skin-purple .sidebar-menu > li.active > a,
 .skin-purple .sidebar-menu > li.menu-open > a {
-  color: $diaper-color-white;
+  color: $white;
   background: $diaper-color-neutral-15;
 }
 .skin-purple .sidebar-menu > li.active > a {
@@ -1591,7 +1591,7 @@
 }
 .skin-purple .sidebar-menu .treeview-menu > li.active > a,
 .skin-purple .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-purple .sidebar-form {
   border-radius: 3px;
@@ -1614,11 +1614,11 @@
 }
 .skin-purple .sidebar-form input[type="text"]:focus,
 .skin-purple .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-purple .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-purple .sidebar-form .btn {
   color: $diaper-color-neutral-60;
@@ -1635,7 +1635,7 @@
   background-color: $diaper-color-purple-51;
 }
 .skin-purple-light .main-header .navbar .nav > li > a {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-purple-light .main-header .navbar .nav > li > a:hover,
 .skin-purple-light .main-header .navbar .nav > li > a:active,
@@ -1644,28 +1644,28 @@
 .skin-purple-light .main-header .navbar .nav .open > a:hover,
 .skin-purple-light .main-header .navbar .nav .open > a:focus,
 .skin-purple-light .main-header .navbar .nav > .active > a {
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
   color: $diaper-color-neutral-96;
 }
 .skin-purple-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-purple-light .main-header .navbar .sidebar-toggle:hover {
   color: $diaper-color-neutral-96;
-  background: rgba($diaper-color-black, 0.1);
+  background: rgba($black, 0.1);
 }
 .skin-purple-light .main-header .navbar .sidebar-toggle {
-  color: $diaper-color-white;
+  color: $white;
 }
 .skin-purple-light .main-header .navbar .sidebar-toggle:hover {
   background-color: $diaper-color-purple-46;
 }
 @media (max-width: 767px) {
   .skin-purple-light .main-header .navbar .dropdown-menu li.divider {
-    background-color: rgba($diaper-color-white, 0.1);
+    background-color: rgba($white, 0.1);
   }
   .skin-purple-light .main-header .navbar .dropdown-menu li a {
-    color: $diaper-color-white;
+    color: $white;
   }
   .skin-purple-light .main-header .navbar .dropdown-menu li a:hover {
     background: $diaper-color-purple-46;
@@ -1673,7 +1673,7 @@
 }
 .skin-purple-light .main-header .logo {
   background-color: $diaper-color-purple-51;
-  color: $diaper-color-white;
+  color: $white;
   border-bottom: 0 solid transparent;
 }
 .skin-purple-light .main-header .logo:hover {
@@ -1712,7 +1712,7 @@
 }
 .skin-purple-light .sidebar-menu > li:hover > a,
 .skin-purple-light .sidebar-menu > li.active > a {
-  color: $diaper-color-black;
+  color: $black;
   background: $diaper-color-neutral-96;
 }
 .skin-purple-light .sidebar-menu > li.active {
@@ -1735,7 +1735,7 @@
 }
 .skin-purple-light .sidebar-menu .treeview-menu > li.active > a,
 .skin-purple-light .sidebar-menu .treeview-menu > li > a:hover {
-  color: $diaper-color-black;
+  color: $black;
 }
 .skin-purple-light .sidebar-menu .treeview-menu > li.active > a {
   font-weight: 600;
@@ -1748,7 +1748,7 @@
 .skin-purple-light .sidebar-form input[type="text"],
 .skin-purple-light .sidebar-form .btn {
   box-shadow: none;
-  background-color: $diaper-color-white;
+  background-color: $white;
   border: 1px solid transparent;
   height: 35px;
 }
@@ -1761,11 +1761,11 @@
 }
 .skin-purple-light .sidebar-form input[type="text"]:focus,
 .skin-purple-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  background-color: $diaper-color-white;
+  background-color: $white;
   color: $diaper-color-neutral-40;
 }
 .skin-purple-light .sidebar-form input[type="text"]:focus + .input-group-btn .btn {
-  border-left-color: $diaper-color-white;
+  border-left-color: $white;
 }
 .skin-purple-light .sidebar-form .btn {
   color: $diaper-color-neutral-60;

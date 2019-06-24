@@ -17,7 +17,7 @@ $neutral-color: $diaper-color-blue-94;
       .step-number {
         background: $done-color;
         border: 1px solid $done-color;
-        color: $diaper-color-white;
+        color: $white;
         opacity: 1;
       }
     }
@@ -29,7 +29,7 @@ $neutral-color: $diaper-color-blue-94;
 
       .step-number {
         border: 1px solid $active-color;
-        background: $diaper-color-white;
+        background: $white;
         opacity: 1;
       }
     }
