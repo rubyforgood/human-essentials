@@ -4514,7 +4514,7 @@ table.text-center th {
   background-color: $diaper-color-green-55 !important;
 }
 .bg-fuchsia {
-  background-color: $diaper-color-pink-51 !important;
+  background-color: lighten($fuschia, 5%) !important;
 }
 .bg-purple {
   background-color: $diaper-color-purple-51 !important;
@@ -4573,7 +4573,7 @@ table.text-center th {
   background-color: $diaper-color-orange-50 !important;
 }
 .bg-fuchsia-active {
-  background-color: $diaper-color-pink-46 !important;
+  background-color: $fuschia !important;
 }
 .bg-purple-active {
   background-color: $diaper-color-purple-46 !important;
@@ -4625,10 +4625,10 @@ table.text-center th {
   color: $diaper-color-green-55 !important;
 }
 .text-fuchsia {
-  color: $diaper-color-pink-51 !important;
+  color: lighten($fuschia, 5%) !important;
 }
 .text-purple {
-  color: $diaper-color-pink-51 !important;
+  color: lighten($fuschia, 5%) !important;
 }
 .text-maroon {
   color: darken($magenta, 10%) !important;
@@ -4740,12 +4740,12 @@ table.text-center th {
   color: $white;
 }
 .bg-purple-gradient {
-  background: $diaper-color-pink-51 !important;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, $diaper-color-pink-51), color-stop(1, $diaper-color-purple-67)) !important;
-  background: -ms-linear-gradient(bottom, $diaper-color-pink-51, $diaper-color-purple-67) !important;
-  background: -moz-linear-gradient(center bottom, $diaper-color-pink-51 0%, $diaper-color-purple-67 100%) !important;
-  background: -o-linear-gradient($diaper-color-purple-67, $diaper-color-pink-51) !important;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$diaper-color-purple-67', endColorstr='$diaper-color-pink-51', GradientType=0) !important;
+  background: lighten($fuschia, 5%) !important;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, lighten($fuschia, 5%)), color-stop(1, $diaper-color-purple-67)) !important;
+  background: -ms-linear-gradient(bottom, lighten($fuschia, 5%), $diaper-color-purple-67) !important;
+  background: -moz-linear-gradient(center bottom, lighten($fuschia, 5%) 0%, $diaper-color-purple-67 100%) !important;
+  background: -o-linear-gradient($diaper-color-purple-67, lighten($fuschia, 5%)) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$diaper-color-purple-67', endColorstr='lighten($fuschia, 5%)', GradientType=0) !important;
   color: $white;
 }
 .bg-green-gradient {
