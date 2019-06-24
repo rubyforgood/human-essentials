@@ -21,7 +21,7 @@
         <div class="pull-right">
           <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "lg" }) if @partners.empty? %>
           <%= download_button_to(csv_path(format: :csv, type: "Partner"), { text: "Export Partner Agencies", size: "lg" }) if @partners.any? %>
-          <%= new_button_to new_partner_path(organization_id: current_organization), { text: "New Partner Agency" } %>     
+          <%= new_button_to new_partner_path(organization_id: current_organization), { text: "New Partner Agency" } %>
         </div>
       </section><!-- /#filters -->
     </div><!-- /.box-header -->
@@ -35,6 +35,7 @@
                   <th>Partner</th>
                   <th>E-mail</th>
                   <th>Status</th>
+                  <th>Action</th>
                   <!-- <th title="This field is currently mock data">Approved?</th> -->
                   <th>&nbsp;</th>
                 </tr>

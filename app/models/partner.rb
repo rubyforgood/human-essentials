@@ -14,7 +14,7 @@
 class Partner < ApplicationRecord
   require "csv"
 
-  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error]
+  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error, :recertification_required]
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy

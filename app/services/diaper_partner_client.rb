@@ -34,7 +34,8 @@ module DiaperPartnerClient
   def self.put(attributes)
     partner = { partner:
                     {
-                      diaper_partner_id: attributes["id"]
+                      diaper_partner_id: attributes["id"],
+                      status: attributes["status"]
                     } }
 
     uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{attributes["id"]}")
@@ -45,7 +46,11 @@ module DiaperPartnerClient
 
     response = https(uri).request(req)
 
-    response.body
+    # NOTE(chaserx): after some research it appears that we don't actually
+    #  use the body of the response anywhere. I am diverting from the pattern
+    #  of repsonses here so that we can use the response status to trap errors
+    #  with a check on the response being a Net::HTTPSuccess type.
+    response
   end
 
   def self.https(uri)

@@ -21,6 +21,9 @@
 <div class="box">
   <div class="box-header with-border">
     <h3 class="box-title"><%= @partner.name %></h3>
+    <%= view_button_to approve_partner_partner_path(@partner) %>
+    <%= edit_button_to edit_partner_path(@partner) %>
+    <%= delete_button_to partner_path(@partner), { confirm: confirm_delete_msg(@partner.name) } %>
   </div>
   <div class="box-body">
 
