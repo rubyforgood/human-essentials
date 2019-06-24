@@ -35,7 +35,7 @@ module DiaperPartnerClient
     partner = { partner:
                     {
                       diaper_partner_id: attributes["id"],
-                      status: attributes["status"]
+                      status: "recertification_required"
                     } }
 
     uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{attributes["id"]}")
