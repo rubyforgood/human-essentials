@@ -1212,7 +1212,7 @@
  * ------------
  */
 .skin-yellow .main-header .navbar {
-  background-color: $diaper-color-orange-51;
+  background-color: lighten($ochre, 1%);
 }
 .skin-yellow .main-header .navbar .nav > li > a {
   color: $white;
@@ -1238,7 +1238,7 @@
   color: $white;
 }
 .skin-yellow .main-header .navbar .sidebar-toggle:hover {
-  background-color: $diaper-color-orange-46;
+  background-color: darken($ochre, 4%);
 }
 @media (max-width: 767px) {
   .skin-yellow .main-header .navbar .dropdown-menu li.divider {
@@ -1248,11 +1248,11 @@
     color: $white;
   }
   .skin-yellow .main-header .navbar .dropdown-menu li a:hover {
-    background: $diaper-color-orange-46;
+    background: darken($ochre, 4%);
   }
 }
 .skin-yellow .main-header .logo {
-  background-color: $diaper-color-orange-46;
+  background-color: darken($ochre, 4%);
   color: $white;
   border-bottom: 0 solid transparent;
 }
@@ -1260,7 +1260,7 @@
   background-color: $diaper-color-orange-45;
 }
 .skin-yellow .main-header li.user-header {
-  background-color: $diaper-color-orange-51;
+  background-color: lighten($ochre, 1%);
 }
 .skin-yellow .content-header {
   background: transparent;
@@ -1288,7 +1288,7 @@
   background: $diaper-color-neutral-15;
 }
 .skin-yellow .sidebar-menu > li.active > a {
-  border-left-color: $diaper-color-orange-51;
+  border-left-color: lighten($ochre, 1%);
 }
 .skin-yellow .sidebar-menu > li > .treeview-menu {
   margin: 0 1px;
@@ -1346,7 +1346,7 @@
  * ------------
  */
 .skin-yellow-light .main-header .navbar {
-  background-color: $diaper-color-orange-51;
+  background-color: lighten($ochre, 1%);
 }
 .skin-yellow-light .main-header .navbar .nav > li > a {
   color: $white;
@@ -1372,7 +1372,7 @@
   color: $white;
 }
 .skin-yellow-light .main-header .navbar .sidebar-toggle:hover {
-  background-color: $diaper-color-orange-46;
+  background-color: darken($ochre, 4%);
 }
 @media (max-width: 767px) {
   .skin-yellow-light .main-header .navbar .dropdown-menu li.divider {
@@ -1382,11 +1382,11 @@
     color: $white;
   }
   .skin-yellow-light .main-header .navbar .dropdown-menu li a:hover {
-    background: $diaper-color-orange-46;
+    background: darken($ochre, 4%);
   }
 }
 .skin-yellow-light .main-header .logo {
-  background-color: $diaper-color-orange-51;
+  background-color: lighten($ochre, 1%);
   color: $white;
   border-bottom: 0 solid transparent;
 }
@@ -1394,7 +1394,7 @@
   background-color: $ochre;
 }
 .skin-yellow-light .main-header li.user-header {
-  background-color: $diaper-color-orange-51;
+  background-color: lighten($ochre, 1%);
 }
 .skin-yellow-light .content-header {
   background: transparent;
@@ -1430,7 +1430,7 @@
   background: $diaper-color-neutral-96;
 }
 .skin-yellow-light .sidebar-menu > li.active {
-  border-left-color: $diaper-color-orange-51;
+  border-left-color: lighten($ochre, 1%);
 }
 .skin-yellow-light .sidebar-menu > li.active > a {
   font-weight: 600;

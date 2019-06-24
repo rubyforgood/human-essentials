@@ -2267,12 +2267,12 @@ a:focus {
 }
 .btn-warning {
   background-color: $diaper-notifcation-color-warning-default;
-  border-color: $diaper-color-orange-46;
+  border-color: darken($ochre, 4%);
 }
 .btn-warning:hover,
 .btn-warning:active,
 .btn-warning.hover {
-  background-color: $diaper-color-orange-46;
+  background-color: darken($ochre, 4%);
 }
 .btn-outline {
   border: 1px solid $white;
@@ -2362,7 +2362,7 @@ a:focus {
   border-color: $diaper-color-red-45;
 }
 .callout.callout-warning {
-  border-color: $diaper-color-orange-41;
+  border-color: darken($ochre, 9%);
 }
 .callout.callout-info {
   border-color: $diaper-color-blue-37;
@@ -2404,7 +2404,7 @@ a:focus {
   border-color: $diaper-color-red-49;
 }
 .alert-warning {
-  border-color: $diaper-color-orange-46;
+  border-color: darken($ochre, 4%);
 }
 .alert-info {
   border-color: $diaper-color-blue-42;
@@ -2994,7 +2994,7 @@ table.text-center th {
 }
 .modal-warning .modal-header,
 .modal-warning .modal-footer {
-  border-color: $diaper-color-orange-41;
+  border-color: darken($ochre, 9%);
 }
 .modal-info .modal-header,
 .modal-info .modal-footer {
@@ -4732,11 +4732,11 @@ table.text-center th {
 }
 .bg-yellow-gradient {
   background: $diaper-notifcation-color-warning-default !important;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, $diaper-notifcation-color-warning-default), color-stop(1, $diaper-color-orange-67)) !important;
-  background: -ms-linear-gradient(bottom, $diaper-notifcation-color-warning-default, $diaper-color-orange-67) !important;
-  background: -moz-linear-gradient(center bottom, $diaper-notifcation-color-warning-default 0%, $diaper-color-orange-67 100%) !important;
-  background: -o-linear-gradient($diaper-color-orange-67, $diaper-notifcation-color-warning-default) !important;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$diaper-color-orange-67', endColorstr='$diaper-notifcation-color-warning-default', GradientType=0) !important;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, $diaper-notifcation-color-warning-default), color-stop(1, lighten($ochre, 17%))) !important;
+  background: -ms-linear-gradient(bottom, $diaper-notifcation-color-warning-default, lighten($ochre, 17%)) !important;
+  background: -moz-linear-gradient(center bottom, $diaper-notifcation-color-warning-default 0%, lighten($ochre, 17%) 100%) !important;
+  background: -o-linear-gradient(lighten($ochre, 17%), $diaper-notifcation-color-warning-default) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='lighten($ochre, 17%)', endColorstr='$diaper-notifcation-color-warning-default', GradientType=0) !important;
   color: $white;
 }
 .bg-purple-gradient {
