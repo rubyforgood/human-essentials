@@ -4520,7 +4520,7 @@ table.text-center th {
   background-color: $diaper-color-purple-51 !important;
 }
 .bg-maroon {
-  background-color: $diaper-color-pink-48 !important;
+  background-color: darken($magenta, 10%) !important;
 }
 .bg-gray-active {
   color: $black;
@@ -4579,7 +4579,7 @@ table.text-center th {
   background-color: $diaper-color-purple-46 !important;
 }
 .bg-maroon-active {
-  background-color: $diaper-color-pink-45 !important;
+  background-color: darken($magenta, 13%) !important;
 }
 [class^="bg-"].disabled {
   opacity: 0.65;
@@ -4631,7 +4631,7 @@ table.text-center th {
   color: $diaper-color-pink-51 !important;
 }
 .text-maroon {
-  color: $diaper-color-pink-48 !important;
+  color: darken($magenta, 10%) !important;
 }
 .link-muted {
   color: $diaper-color-neutral-55;
@@ -4776,12 +4776,12 @@ table.text-center th {
   color: $white;
 }
 .bg-maroon-gradient {
-  background: $diaper-color-pink-48 !important;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, $diaper-color-pink-48), color-stop(1, $diaper-color-pink-58)) !important;
-  background: -ms-linear-gradient(bottom, $diaper-color-pink-48, $diaper-color-pink-58) !important;
-  background: -moz-linear-gradient(center bottom, $diaper-color-pink-48 0%, $diaper-color-pink-58 100%) !important;
-  background: -o-linear-gradient($diaper-color-pink-58, $diaper-color-pink-48) !important;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$diaper-color-pink-58', endColorstr='$diaper-color-pink-48', GradientType=0) !important;
+  background: darken($magenta, 10%) !important;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, darken($magenta, 10%)), color-stop(1, $magenta)) !important;
+  background: -ms-linear-gradient(bottom, darken($magenta, 10%), $magenta) !important;
+  background: -moz-linear-gradient(center bottom, darken($magenta, 10%) 0%, $magenta 100%) !important;
+  background: -o-linear-gradient($magenta, darken($magenta, 10%)) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$magenta', endColorstr='darken($magenta, 10%)', GradientType=0) !important;
   color: $white;
 }
 .description-block .description-icon {
