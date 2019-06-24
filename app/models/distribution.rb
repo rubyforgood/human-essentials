@@ -9,6 +9,7 @@ require 'time_util'
 #  updated_at          :datetime
 #  storage_location_id :integer
 #  partner_id          :integer
+#  aasm_state          :string
 #  organization_id     :integer
 #  issued_at           :datetime
 #  agency_rep          :string
@@ -33,6 +34,23 @@ class Distribution < ApplicationRecord
   validate :line_item_items_exist_in_inventory
 
   include IssuedAt
+
+  include AASM
+
+  # States to track the status of a Distribution about whether or not it has been picked up.
+  aasm do
+    state :started, initial: true
+    state :scheduled
+    state :complete
+
+    event :notify_partner do
+      transitions from: :started, to: :scheduled
+    end
+
+    event :picked_up do
+      transitions from: :scheduled, to: :complete
+    end
+  end
 
   before_save :combine_distribution
 
