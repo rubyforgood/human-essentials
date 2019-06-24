@@ -4502,7 +4502,7 @@ table.text-center th {
   background-color: $diaper-color-blue-12 !important;
 }
 .bg-teal {
-  background-color: $diaper-color-teal-51 !important;
+  background-color: $teal !important;
 }
 .bg-olive {
   background-color: $diaper-color-green-42 !important;
@@ -4561,7 +4561,7 @@ table.text-center th {
   background-color: $diaper-color-blue-10 !important;
 }
 .bg-teal-active {
-  background-color: $diaper-color-teal-46 !important;
+  background-color: darken($teal, 5%) !important;
 }
 .bg-olive-active {
   background-color: $diaper-color-green-37 !important;
@@ -4613,7 +4613,7 @@ table.text-center th {
   color: $diaper-color-blue-12 !important;
 }
 .text-teal {
-  color: $diaper-color-teal-51 !important;
+  color: $teal !important;
 }
 .text-olive {
   color: $diaper-color-green-42 !important;
@@ -4695,12 +4695,12 @@ table.text-center th {
   height: auto !important;
 }
 .bg-teal-gradient {
-  background: $diaper-color-teal-51 !important;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, $diaper-color-teal-51), color-stop(1, $diaper-color-teal-67)) !important;
-  background: -ms-linear-gradient(bottom, $diaper-color-teal-51, $diaper-color-teal-67) !important;
-  background: -moz-linear-gradient(center bottom, $diaper-color-teal-51 0%, $diaper-color-teal-67 100%) !important;
-  background: -o-linear-gradient($diaper-color-teal-67, $diaper-color-teal-51) !important;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$diaper-color-teal-67', endColorstr='$diaper-color-teal-51', GradientType=0) !important;
+  background: $teal !important;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, $teal), color-stop(1, lighten($teal, 16%))) !important;
+  background: -ms-linear-gradient(bottom, $teal, lighten($teal, 16%)) !important;
+  background: -moz-linear-gradient(center bottom, $teal 0%, lighten($teal, 16%) 100%) !important;
+  background: -o-linear-gradient(lighten($teal, 16%), $teal) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='lighten($teal, 16%)', endColorstr='$teal', GradientType=0) !important;
   color: $white;
 }
 .bg-light-blue-gradient {
