@@ -26,8 +26,9 @@ class Organization < ApplicationRecord
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: /[^@]+@[^@]+/, allow_blank: true
   validate :correct_logo_mime_type
-  validates :deadline_date, numericality: { only_integer: true, less_than_or_equal_to: 28, greater_than_or_equal_to: 1, allow_nil: true }
-  validates :reminder_days_before_deadline, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
+  validates :deadline_day, numericality: { only_integer: true, less_than_or_equal_to: 28, greater_than_or_equal_to: 1, allow_nil: true }
+  validates :reminder_day, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
+  validate :deadline_after_reminder
 
   has_many :adjustments, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
@@ -144,5 +145,11 @@ class Organization < ApplicationRecord
       logo.purge
       errors.add(:logo, "Must be a JPG or a PNG file")
     end
+  end
+
+  def deadline_after_reminder
+    return if deadline_day.blank? || reminder_day.blank?
+
+    errors.add(:deadline_day, "must be after the reminder date") if deadline_day < reminder_day
   end
 end
