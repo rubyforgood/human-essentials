@@ -38,7 +38,7 @@ module DiaperPartnerClient
                       status: attributes[:status]
                     } }
 
-    uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{attributes["id"]}")
+    uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{attributes[:partner_id]}")
     req = Net::HTTP::Put.new(uri, "Content-Type" => "application/json")
     req.body = partner.to_json
     req["Content-Type"] = "application/json"
