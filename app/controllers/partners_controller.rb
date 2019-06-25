@@ -20,7 +20,7 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "recertification_required")
+    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "approved")
     if response.is_a?(Net::HTTPSuccess)
       @partner.approved!
       redirect_to partners_path, notice: "Partner approved!"
