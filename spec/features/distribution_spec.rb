@@ -167,7 +167,7 @@ RSpec.feature "Distributions", type: :feature do
 
         expect(page).to have_css "td"
         item_row = find("td", text: diaper_type).find(:xpath, '..')
-        expect(item_row).to have_content("4 " + diaper_type)
+        expect(item_row).to have_content("#{diaper_type} 4")
       end
     end
   end
