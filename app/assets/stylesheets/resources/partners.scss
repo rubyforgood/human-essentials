@@ -1,0 +1,46 @@
+ul#partner-status {
+  list-style: none;
+  display: inline;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    margin-right: 2rem;
+
+    a.filtering {
+      font-weight: bold;
+      border-bottom: 1px dotted;
+    }
+    &:first-of-type {
+      margin-left: 0.5rem;
+    }
+
+    &:last-of-type {
+      border-left: 3px double gray;
+      padding-left: 1rem;
+    }
+  }
+}
+
+i.fa {
+  &.bg-partner {
+    &-uninvited {
+      color: $dark-grey;
+    }
+    &-invited {
+      color: $action;
+    }
+    &-awaiting_review {
+      color: $caution;
+    }
+    &-approved {
+      color: $success;
+    }
+    &-error {
+      color: $error;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<% icon_mapping = { 
+    "uninvited": 'ban',
+    "invited": 'envelope',
+    "awaiting_review": 'question-circle',
+    "approved": 'check-circle',
+    "error": 'exclamation-circle'
+  }.with_indifferent_access
+  current_filtered_status = params.dig(:filters, :by_status)
+%>
+
+<ul id="partner-status">
+  <% partners.statuses.each do |status, _| 
+    selector = (status + "?").to_sym
+    partner_count = partners.select(&selector).size %>
+  <li>
+    <%= fa_icon icon_mapping[status] || '', class: "bg-partner-#{status}  " %>
+    <%= link_to_unless partner_count.zero?, "#{partner_count} #{status.humanize}", partners_path(filters: { by_status: status }), class: ("filtering" if status == current_filtered_status) %>
+  </li>
+  <% end %>
+  <li>
+    <%= fa_icon 'list-alt' %>
+    <%= link_to "#{partners.size} Total", partners_path, class: ("filtering" if current_filtered_status.nil?) %>
+  </li>
+</ul>

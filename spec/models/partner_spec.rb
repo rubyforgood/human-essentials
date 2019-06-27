@@ -28,6 +28,16 @@ RSpec.describe Partner, type: :model do
       expect(build(:partner, email: "boooooooooo")).not_to be_valid
     end
   end
+
+  describe "Filters" do
+    describe "by_status" do
+      it "yields partners with the provided status" do
+        create(:partner, status: :invited)
+        create(:partner, status: :approved)
+        expect(Partner.by_status('invited').count).to eq(1)
+      end
+    end
+  end
   # context "Callbacks >" do
   #   describe "when DIAPER_PARTNER_URL is present" do
   #     let(:diaper_partner_url) { "http://diaper.partner.io" }
