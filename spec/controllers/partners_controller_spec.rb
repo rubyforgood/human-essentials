@@ -42,7 +42,7 @@ RSpec.describe PartnersController, type: :controller do
 
   describe "POST #create" do
     context "successful save" do
-      partner_params = { partner: { name: "A Partner", email: "partner@example.com" } }
+      partner_params = { partner: { name: "A Partner", email: "partner@example.com", send_reminders: "false" } }
       subject { post :create, params: default_params.merge(partner_params) }
 
       it "creates a new partner" do

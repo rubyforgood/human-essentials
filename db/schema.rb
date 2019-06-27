@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_08_022706) do
+ActiveRecord::Schema.define(version: 2019_06_21_140938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,6 +187,16 @@ ActiveRecord::Schema.define(version: 2019_06_08_022706) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "item_requests", force: :cascade do |t|
+    t.bigint "request_id"
+    t.bigint "item_id"
+    t.integer "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_requests_on_item_id"
+    t.index ["request_id"], name: "index_item_requests_on_request_id"
+  end
+
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "category"
@@ -235,8 +245,8 @@ ActiveRecord::Schema.define(version: 2019_06_08_022706) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
-    t.integer "reminder_days_before_deadline"
-    t.integer "deadline_date"
+    t.integer "reminder_day"
+    t.integer "deadline_day"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
