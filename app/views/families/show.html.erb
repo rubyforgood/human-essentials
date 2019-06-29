@@ -12,8 +12,7 @@
     <% if notice %>
       <div class="alert alert-dismissible alert-success">
         <button class="close" type="button" data-dismiss="alert">×</button>
-        <p><%= notice %><a class="alert-link" href="#"></p>
-        </a></p>
+        <p><%= notice %><a class="alert-link" href="#"></a></p>
       </div>
     <% end %>
 
@@ -65,6 +64,9 @@
 
               <dt>Guardian health insurance:</dt>
               <dd><%= family.guardian_health_insurance %></dd>
+
+              <dt>Military family:</dt>
+              <dd><%= family.military %></dd>
 
               <dt>Comments:</dt>
               <dd><%= family.comments %></dd>
