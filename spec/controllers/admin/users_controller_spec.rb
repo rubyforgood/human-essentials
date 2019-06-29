@@ -16,7 +16,7 @@ RSpec.describe Admin::UsersController, type: :controller do
 
       it "preloads organizations" do
         get :new
-        expect(assigns(:organizations)).to eq(Organization.all)
+        expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
       end
     end
 
@@ -28,7 +28,7 @@ RSpec.describe Admin::UsersController, type: :controller do
 
       it "preloads organizations" do
         post :create, params: { user: { organization_id: 1 } }
-        expect(assigns(:organizations)).to eq(Organization.all)
+        expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
       end
     end
   end
