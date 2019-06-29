@@ -29,7 +29,7 @@ class BarcodeItemsController < ApplicationController
 
   def edit
     @barcode_item = current_organization.barcode_items.includes(:barcodeable).find(params[:id])
-    @items = current_organization.items.alphabetized 
+    @items = current_organization.items.alphabetized
   end
 
   def show
