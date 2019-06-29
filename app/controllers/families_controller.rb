@@ -72,7 +72,8 @@ class FamiliesController < ApplicationController
       :home_adult_count,
       :home_child_count,
       :home_young_child_count,
-      :sources_of_income
+      :sources_of_income,
+      :military
     )
   end
 end
