@@ -69,6 +69,56 @@ RSpec.describe DonationsController, type: :controller do
         end.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
       end
 
+      describe "when changing storage location" do
+        it "updates storage quantity correctly" do
+          donation = create(:donation, :with_items, item_quantity: 10)
+          original_storage_location = donation.storage_location
+          new_storage_location = create(:storage_location)
+          line_item = donation.line_items.first
+          line_item_params = {
+            "0" => {
+              "_destroy" => "false",
+              item_id: line_item.item_id,
+              quantity: "8",
+              id: line_item.id
+            }
+          }
+          donation_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
+          expect do
+            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          end.to change { original_storage_location.size }.by(-10) # removes the whole donation of 10
+          expect(new_storage_location.size).to eq 8
+        end
+
+        it "rollsback updates if quantity would go below 0" do
+          donation = create(:donation, :with_items, item_quantity: 10)
+          original_storage_location = donation.storage_location
+
+          # adjust inventory so that updating will set quantity below 0
+          inventory_item = original_storage_location.inventory_items.last
+          inventory_item.quantity = 5
+          inventory_item.save!
+
+          new_storage_location = create(:storage_location)
+          line_item = donation.line_items.first
+          line_item_params = {
+            "0" => {
+              "_destroy" => "false",
+              item_id: line_item.item_id,
+              quantity: "1",
+              id: line_item.id
+            }
+          }
+          donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
+          expect do
+            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          end.to raise_error
+          expect(original_storage_location.size).to eq 5
+          expect(new_storage_location.size).to eq 0
+          expect(donation.reload.line_items.first.quantity).to eq 10
+        end
+      end
+
       describe "when removing a line item" do
         it "updates storage invetory item quantity correctly" do
           donation = create(:donation, :with_items, item_quantity: 10)

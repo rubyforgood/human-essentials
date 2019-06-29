@@ -14,7 +14,7 @@
 class Partner < ApplicationRecord
   require "csv"
 
-  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error]
+  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error, :recertification_required]
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy
@@ -30,6 +30,11 @@ class Partner < ApplicationRecord
   }
 
   scope :alphabetized, -> { order(:name) }
+
+  include Filterable
+  scope :by_status, ->(status) {
+    where(status: status.to_sym)
+  }
 
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)

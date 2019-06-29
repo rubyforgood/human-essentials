@@ -9,7 +9,7 @@
 #  updated_at      :datetime
 #  organization_id :integer
 #  status          :string
-#
+#  send_remiders   :boolean
 
 RSpec.describe Partner, type: :model do
   context "Validations >" do
@@ -26,6 +26,16 @@ RSpec.describe Partner, type: :model do
       create(:partner, email: "foo@bar.com")
       expect(build(:partner, email: "foo@bar.com")).not_to be_valid
       expect(build(:partner, email: "boooooooooo")).not_to be_valid
+    end
+  end
+
+  describe "Filters" do
+    describe "by_status" do
+      it "yields partners with the provided status" do
+        create(:partner, status: :invited)
+        create(:partner, status: :approved)
+        expect(Partner.by_status('invited').count).to eq(1)
+      end
     end
   end
   # context "Callbacks >" do

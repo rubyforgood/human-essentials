@@ -11,7 +11,7 @@
 #  organization_id :integer
 #  active          :boolean          default(TRUE)
 #  partner_key     :string
-#  value           :integer    default(0)
+#  value_in_cents  :integer          default(0)
 #
 
 FactoryBot.define do
