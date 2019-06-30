@@ -117,7 +117,11 @@
           <div class="form-horizontal">
             <div class="form-group row">
               <%= form.label :military, "Military Family", class: "control-label col-md-3" %>
-              <%= form.check_box :military, class: "col-md-8 form-control" %>
+              <div class="form-control col-md-8">
+                <%= form.radio_button :military, true %> Yes
+                &nbsp;
+                <%= form.radio_button :military, false %> No
+              </div>
             </div>
           </div>
 
