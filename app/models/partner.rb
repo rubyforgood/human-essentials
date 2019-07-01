@@ -29,6 +29,8 @@ class Partner < ApplicationRecord
       .order(:name)
   }
 
+  scope :alphabetized, -> { order(:name) }
+
   include Filterable
   scope :by_status, ->(status) {
     where(status: status.to_sym)

@@ -15,7 +15,7 @@ class Admin::OrganizationsController < AdminController
   end
 
   def index
-    @organizations = Organization.order(:name).all
+    @organizations = Organization.alphabetized.all
   end
 
   def new

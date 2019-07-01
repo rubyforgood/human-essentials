@@ -3,7 +3,7 @@
 class BarcodeItemsController < ApplicationController
   def index
     @items = Item.gather_items(current_organization, @global)
-    @base_items = BaseItem.all
+    @base_items = BaseItem.alphabetized
     @barcode_items = current_organization.barcode_items.include_global(false).class_filter(filter_params)
   end
 
@@ -24,12 +24,12 @@ class BarcodeItemsController < ApplicationController
 
   def new
     @barcode_item = current_organization.barcode_items.new
-    @items = current_organization.items
+    @items = current_organization.items.alphabetized
   end
 
   def edit
     @barcode_item = current_organization.barcode_items.includes(:barcodeable).find(params[:id])
-    @items = current_organization.items
+    @items = current_organization.items.alphabetized
   end
 
   def show

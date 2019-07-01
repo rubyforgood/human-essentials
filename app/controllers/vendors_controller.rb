@@ -3,7 +3,7 @@ class VendorsController < ApplicationController
   include Importable
 
   def index
-    @vendors = current_organization.vendors.includes(:purchases).all.order(:business_name)
+    @vendors = current_organization.vendors.includes(:purchases).all.alphabetized
   end
 
   def create

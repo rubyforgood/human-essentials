@@ -6,7 +6,7 @@ class PartnersController < ApplicationController
 
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
-    @partners = Partner.where(organization: current_organization).class_filter(filter_params).order(:name)
+    @partners = Partner.where(organization: current_organization).class_filter(filter_params).alphabetized
   end
 
   def create
