@@ -24,7 +24,7 @@
   <%= simple_form_for @distribution, html: { class: "storage-location-required" } do |f| %>
 
     <%= f.association :partner,
-      collection: current_organization.partners,
+      collection: current_organization.partners.alphabetized,
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
 

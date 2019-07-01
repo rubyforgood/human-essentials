@@ -77,9 +77,9 @@ class PurchasesController < ApplicationController
   end
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations
+    @storage_locations = current_organization.storage_locations.alphabetized
     @items = current_organization.items.alphabetized
-    @vendors = current_organization.vendors.order(:business_name)
+    @vendors = current_organization.vendors.alphabetized
   end
 
   def purchase_params

@@ -17,7 +17,7 @@ class Admin::BarcodeItemsController < AdminController
 
   def index
     @barcode_items = BarcodeItem.global
-    @items = BaseItem.all
+    @items = BaseItem.alphabetized.all
   end
 
   def new
@@ -51,7 +51,7 @@ class Admin::BarcodeItemsController < AdminController
   private
 
   def load_base_items
-    @base_items = BaseItem.order(:name).all
+    @base_items = BaseItem.alphabetized.all
   end
 
   def barcode_item_params

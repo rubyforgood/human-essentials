@@ -22,6 +22,8 @@ class Vendor < ApplicationRecord
 
   has_many :purchases, inverse_of: :vendor, dependent: :destroy
 
+  scope :alphabetized, -> { order(:business_name) }
+
   def volume
     purchases.map { |d| d.line_items.total }.reduce(:+)
   end

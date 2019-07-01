@@ -3,7 +3,7 @@ class Admin::UsersController < AdminController
   before_action :load_organizations, only: %i[new create edit update]
 
   def index
-    @users = User.order(:name).all
+    @users = User.alphabetized.all
   end
 
   def update
@@ -53,6 +53,6 @@ class Admin::UsersController < AdminController
   end
 
   def load_organizations
-    @organizations = Organization.all
+    @organizations = Organization.all.alphabetized
   end
 end
