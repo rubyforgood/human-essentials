@@ -113,4 +113,24 @@ RSpec.describe Distribution, type: :model do
       end
     end
   end
+
+  context 'Aasm States' do
+    describe '#notify_partner' do
+      subject { create(:distribution) }
+
+      it 'transitions from :started to :scheduled' do
+        expect(subject).to transition_from(:started).to(:scheduled).on_event(:notify_partner)
+        expect(subject).to have_state(:scheduled)
+      end
+    end
+
+    describe '#picked_up' do
+      subject { create(:distribution) }
+
+      it 'transitions from :scheduled to :complete' do
+        expect(subject).to transition_from(:scheduled).to(:complete).on_event(:picked_up)
+        expect(subject).to have_state(:complete)
+      end
+    end
+  end
 end

@@ -111,8 +111,8 @@ class DistributionsController < ApplicationController
   end
 
   def picked_up
-    if Distribution.find(params["id"]).picked_up!
-      flash[:notice] = "Distribution status updated!"
+    if Distribution.find(params['id']).picked_up!
+      flash[:notice] = 'Distribution status updated!'
     else
       flash[:error] = "The status couldn't be updated"
     end
