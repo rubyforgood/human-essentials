@@ -53,6 +53,28 @@ RSpec.feature "Distributions", type: :feature do
       end.to change { distribution.agency_rep }.to("SOMETHING DIFFERENT")
     end
 
+    scenario "the user can change the issued_at date" do
+      click_on "Edit", match: :first
+      expect do
+        select('2018', from: 'distribution_issued_at_1i')
+        select('May', from: 'distribution_issued_at_2i')
+        select('7', from: 'distribution_issued_at_3i')
+        select('02 PM', from: 'distribution_issued_at_4i')
+        select('15', from: 'distribution_issued_at_5i')
+        click_on "Save", match: :first
+        distribution.reload
+      end.to change { distribution.issued_at }.to(Time.zone.parse("2018-05-07 14:15:00"))
+    end
+
+    scenario "the user cannot change the quantity above the inventory quantity" do
+      click_on "Edit", match: :first
+      expect do
+        fill_in 'distribution_line_items_attributes_0_quantity', with: distribution.line_items.first.quantity + 300
+        click_on "Save", match: :first
+      end.not_to change { distribution.line_items.first.quantity }
+      expect(page).to have_content "Insufficient Supply"
+    end
+
     scenario "the user can reclaim it" do
       expect do
         click_on "Reclaim"
