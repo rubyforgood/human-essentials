@@ -18,7 +18,7 @@ RSpec.describe DiaperPartnerClient, type: :service do
           email: attributes["email"]
         }
       }.to_json
-      stub_request(:post, "https://partner-register.com/")
+      stub_request(:post, 'https://partner-register.com/')
         .with(
           body: expected_body,
           headers: {
@@ -52,6 +52,33 @@ RSpec.describe DiaperPartnerClient, type: :service do
         .to_return(status: 200, body: 'success', headers: {})
       result = DiaperPartnerClient.get(id: 123)
       expect(result).to eq 'success'
+    end
+  end
+
+  describe '::put' do
+    it 'performs a PUT request' do
+      attributes = { partner_id: 123, status: 'status' }
+      expected_body = {
+        partner: {
+          diaper_partner_id: attributes[:partner_id],
+          status: attributes[:status]
+        }
+      }.to_json
+      stub_request(:put, 'https://partner-register.com/123')
+        .with(
+          body: expected_body,
+          headers: {
+            'Accept' => '*/*',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Content-Type' => 'application/json',
+            'Host' => 'partner-register.com',
+            'User-Agent' => 'Ruby',
+            'X-Api-Key' => 'partner-key'
+          }
+        )
+        .to_return(status: 200, body: 'success', headers: {})
+      result = DiaperPartnerClient.put(attributes)
+      expect(result.body).to eq 'success'
     end
   end
 end
