@@ -1,0 +1,49 @@
+<div class="app-title">
+  <div>
+    <h1><i class="fa fa-new"></i> Authorized Family Member Details</h1>
+  </div>
+  <ul class="app-breadcrumb breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-user"></i></li>
+    <li class="breadcrumb-item"><a href="#">Show Authorized Family Member</a></li>
+  </ul>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <% if notice %>
+      <div class="alert alert-dismissible alert-success">
+        <button class="close" type="button" data-dismiss="alert">×</button>
+        <p><%= notice %><a class="alert-link" href="#"></p>
+        </a></p>
+      </div>
+    <% end %>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-12">
+          <h5 class="card-header bg-primary text-white">Authorized Family Member Information</h5>
+          <div class="card-body">
+            <dl>
+              <dt>First name</dt>
+              <dd><%= authorized_family_member.first_name %></dd>
+
+              <dt>Last name:</dt>
+              <dd><%= authorized_family_member.last_name %></dd>
+
+              <dt>Date of birth:</dt>
+              <dd><%= authorized_family_member.date_of_birth %></dd>
+
+              <dt>Gender:</dt>
+              <dd><%= authorized_family_member.gender %></dd>
+
+              <dt>Comments:</dt>
+              <dd><%= authorized_family_member.comments %></dd>
+            </dl>
+
+            <%= link_to 'Edit Authorized Family Member Details', edit_authorized_family_member_path(authorized_family_member), class: "btn btn-success" %>
+            <%= link_to 'All Authorized Family Members', authorized_family_members_path, class: "btn btn-info pull-right" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
