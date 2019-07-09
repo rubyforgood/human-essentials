@@ -1,0 +1,70 @@
+<%= form_with(model: authorized_family_member, local: true) do |form| %>
+  <div class="row">
+    <div class="col-md-12">
+        <% if authorized_family_member.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(authorized_family_member.errors.count, "error") %> prohibited this authorized_family_member from being saved:</h2>
+
+            <ul>
+            <% authorized_family_member.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+      <div class="tile">
+        <h3 class="tile-title">Authorized Family Member Information</h3>
+
+        <div class="tile-body">
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :first_name, class: "control-label col-md-3"%>
+              <%= form.text_field :first_name, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :last_name, class: "control-label col-md-3"%>
+              <%= form.text_field :last_name, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :date_of_birth, class: "control-label col-md-3"%>
+              <%= form.date_select :date_of_birth, end_year: Date.today.year, start_year: Date.today.year - 10, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :gender, class: "control-label col-md-3"%>
+              <%= form.select :gender, ["Male", "Female"], class: "col-md-8 form-control" %>
+            </div>
+          </div>
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :comments, class: "control-label col-md-3"%>
+              <%= form.text_area :comments, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :family_id, class: "control-label col-md-3"%>
+              <%= form.label authorized_family_member.family.guardian_display_name, class: "col-md-8 control-label" %>
+              <%= hidden_field_tag :family_id, authorized_family_member.family.id %>
+            </div>
+          </div>
+
+          <div class="actions">
+            <%= form.submit(class: 'btn btn-primary') %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
