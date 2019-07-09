@@ -187,10 +187,10 @@ DiaperDriveParticipant.create! business_name: "A Mediocre Place to Collect Diape
                                email: "ok@place.is",
                                organization: pdx_org
 
-Manufacturer.create! name: "Manufacturer 1",
-                     organization: pdx_org
-Manufacturer.create! name: "Manufacturer 2",
-                     organization: pdx_org
+Manufacturer.find_or_create_by! name: "Manufacturer 1",
+                                organization: pdx_org
+Manufacturer.find_or_create_by! name: "Manufacturer 2",
+                                organization: pdx_org
 
 def random_record(klass)
   # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
