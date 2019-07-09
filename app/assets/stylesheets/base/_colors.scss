@@ -17,6 +17,7 @@ $success: #256600;
 
 
 $black: #000000;
+$middle-gray: #888888;
 $white: #ffffff;
 $ochre: #f39a0d;
 $magenta: #e73f7c;
@@ -25,3 +26,20 @@ $teal: #39cccc;
 $purple: #5d59a6;
 $orange: #ff7701;
 $red: #dc4735;
+$spring-green: #01ff70;
+$spruce: #368763;
+$mint: #ddffdd;
+$spruce: #368763;
+$green: #008749;
+$blue: #005384;
+$peacock: #367fa9;
+
+//Abstract color values to meaningful, semantic names
+// interactive
+$diaper-text-color-interactive-default: lighten($peacock, 5%);
+$diaper-text-color-interactive-hover: lighten($peacock, 20%);
+
+// notifcations
+$diaper-notifcation-color-error-default: lighten($red, 1%);
+$diaper-notifcation-color-warning-default: lighten($ochre, 1%);
+$diaper-notifcation-color-success-default: lighten($green, 6.08);

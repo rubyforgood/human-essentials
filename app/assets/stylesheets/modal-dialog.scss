@@ -22,7 +22,7 @@
 .modal-dialog.onboarding_steps .modal-body li {
   line-height: 1.25em;
   margin-bottom: 15px;
-  color: $diaper-color-neutral-33;
+  color: darken($middle-gray, 20.00);
 }
 
 @media (min-width: 768px) {

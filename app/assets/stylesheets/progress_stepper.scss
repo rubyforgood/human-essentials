@@ -1,5 +1,5 @@
-$active-color: $diaper-color-blue-49;
-$done-color: $diaper-color-green-33;
+$active-color: lighten($peacock, 5%);
+$done-color: lighten($green, 6.08);
 $neutral-color: $diaper-color-blue-94;
 
 .step-progression-container {
