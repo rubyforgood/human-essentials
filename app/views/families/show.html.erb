@@ -20,7 +20,9 @@
       <div class="col-12">
         <div class="card mb-12">
           <h5 class="card-header bg-primary text-white">Family Information
-            <%= link_to 'Add Child To This Family', new_child_path(family_id: family.id), class: "btn btn-sm btn-warning pull-right" %></h5>
+            <%= link_to 'Add An Authorized Member To This Family', new_authorized_family_member_path(family_id: family.id), class: "btn btn-sm btn-warning pull-right", style: "margin-left:10px;" %>
+            <%= link_to 'Add Child To This Family', new_child_path(family_id: family.id), class: "btn btn-sm btn-warning pull-right" %>
+          </h5>
           <div class="card-body">
             <dl>
               <dt>Guardian first name:</dt>
@@ -75,6 +77,33 @@
             <%= link_to 'Edit This Family', edit_family_path(family), class: "btn btn-sm btn-primary" %>
             <%= link_to 'Back to Families', families_path, class: "btn btn-sm btn-info pull-right" %>
             <%= link_to 'Add Child To This Family', new_child_path(family_id: family.id), class: "btn btn-sm btn-success" %>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card mb-12">
+            <h5 class="card-header bg-primary text-white">Authorized Members for Pick Up</h5>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Date of birth</th>
+                    <th scope="col">Comments</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% family.authorized_family_members.each do |member| %>
+                    <tr>
+                      <td><%= member.first_name %></td>
+                      <td><%= member.last_name %></td>
+                      <td><%= member.date_of_birth %></td>
+                      <td><%= member.comments %></td>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
