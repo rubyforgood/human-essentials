@@ -3,7 +3,21 @@
   <td><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
   <td>
-    <%= partner_row.status.humanize %>
+    <% case status %>
+    <% when "uninvited" %>
+      <button class="btn btn-xs bg-teal">Uninvited</button>
+    <% when "invited" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check" } %>
+
+    <% when "awaiting_review" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "warning" } %>
+    <% when "approved" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "success" } %>
+    <% when "recertification_required" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "minus", type: "danger" } %>
+    <% else %>
+      <span class="label label-teal">Errored</span>
+    <% end %>
   </td>
   <td>
     <% case status %>
