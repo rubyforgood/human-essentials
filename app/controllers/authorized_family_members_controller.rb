@@ -1,8 +1,5 @@
 class AuthorizedFamilyMembersController < ApplicationController
-
   helper_method :authorized_family_member, :authorized_family_members, :family
-
-  def index; end
 
   def new; end
 
@@ -44,7 +41,7 @@ class AuthorizedFamilyMembersController < ApplicationController
   end
 
   def authorized_family_members
-    @authorized_family_member ||= current_partner.authorized_family_members.all
+    @authorized_family_members ||= current_partner.authorized_family_members.all
   end
 
   def family
