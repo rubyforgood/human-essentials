@@ -46,6 +46,7 @@ gem "toastr-rails"
 gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
 gem "image_processing"
 gem "webpacker", "~> 3.5"
+gem 'sidekiq-scheduler'
 
 group :development, :test do
   gem "awesome_print"
