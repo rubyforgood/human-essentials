@@ -49,14 +49,17 @@
           <div class="form-horizontal">
             <div class="form-group row">
               <%= form.label :child_lives_with, class: "control-label col-md-3"%>
-              <%= form.text_field :child_lives_with, class: "col-md-8 form-control" %>
+              <% Child::CAN_LIVE_WITH.each do |a_value| %>
+                <%= form.check_box(:child_lives_with, { :multiple => true }, a_value, nil) %>
+                <%= form.label "#{a_value}" %>
+            <% end %>
             </div>
           </div>
 
           <div class="form-horizontal">
             <div class="form-group row">
               <%= form.label :race, class: "control-label col-md-3" %>
-              <%= form.select :race, ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: "col-md-8 form-control" %>
+              <%= form.select :race, ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: "col-md-8 form-control", :include_blank => true %>
             </div>
           </div>
 
@@ -70,7 +73,12 @@
           <div class="form-horizontal">
             <div class="form-group row">
               <%= form.label :health_insurance, class: "control-label col-md-3"%>
-              <%= form.text_field :health_insurance, class: "col-md-8 form-control" %>
+              <%= form.radio_button :health_insurance, 'Private Insurance' %>
+              <%= label :health_insurance, 'Private Insurance' %>
+              <%= form.radio_button :health_insurance, 'Medicaid' %>
+              <%= label :health_insurance, 'Medicaid' %>
+              <%= form.radio_button :health_insurance, 'Uninsured' %>
+              <%= label :health_insurance, 'Uninsured' %>
             </div>
           </div>
 
@@ -102,6 +110,13 @@
             <div class="form-group row">
               <%= form.label :active, class: "control-label col-md-3"%>
               <%= form.check_box :active, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label "Archived?", class: "control-label col-md-3"%>
+              <%= form.check_box :archived, class: "col-md-8 form-control" %>
             </div>
           </div>
 
