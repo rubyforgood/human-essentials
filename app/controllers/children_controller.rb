@@ -70,7 +70,6 @@ class ChildrenController < ApplicationController
     params.require(:child).permit(
       :active,
       :agency_child_id,
-      :child_lives_with,
       :comments,
       :date_of_birth,
       :first_name,
@@ -78,7 +77,9 @@ class ChildrenController < ApplicationController
       :health_insurance,
       :item_needed_diaperid,
       :last_name,
-      :race
+      :race,
+      :archived,
+      child_lives_with: []
     )
   end
 end
