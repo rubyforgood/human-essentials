@@ -34,7 +34,7 @@
               <dt>Guardian zip code:</dt>
               <dd><%= family.guardian_zip_code %></dd>
 
-              <dt>Guardian country:</dt>
+              <dt>Guardian county:</dt>
               <dd><%= family.guardian_country %></dd>
 
               <dt>Guardian phone:</dt>
@@ -53,7 +53,7 @@
               <dd><%= family.home_young_child_count %></dd>
 
               <dt>Sources of income:</dt>
-              <dd><%= family.sources_of_income %></dd>
+              <dd><%= family.sources_of_income.join(', ') %></dd>
 
               <dt>Guardian employed:</dt>
               <dd><%= family.guardian_employed %></dd>
