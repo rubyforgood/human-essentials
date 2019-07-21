@@ -39,7 +39,7 @@
 
           <div class="form-horizontal">
             <div class="form-group row">
-              <%= form.label :guardian_country, class: "control-label col-md-3" %>
+              <%= form.label :guardian_country, "Guardian County", class: "control-label col-md-3" %>
               <%= form.text_field :guardian_country, class: "col-md-8 form-control" %>
             </div>
           </div>
@@ -60,43 +60,54 @@
 
           <div class="form-horizontal">
             <div class="form-group row">
-              <%= form.label :home_adult_count, class: "control-label col-md-3" %>
+              <%= form.label :home_adult_count, "Number of Adults Living In The Home", class: "control-label col-md-3" %>
               <%= form.number_field :home_adult_count, class: "col-md-8 form-control" %>
             </div>
           </div>
 
           <div class="form-horizontal">
             <div class="form-group row">
-              <%= form.label :home_child_count, class: "control-label col-md-3" %>
+              <%= form.label :home_child_count, 'How Many Children (5-17) Live In the Home?', class: "control-label col-md-3" %>
               <%= form.number_field :home_child_count, class: "col-md-8 form-control" %>
             </div>
           </div>
 
           <div class="form-horizontal">
             <div class="form-group row">
-              <%= form.label :home_young_child_count, class: "control-label col-md-3" %>
+              <%= form.label :home_young_child_count, 'How Many Children (under 5) Live in the Home?', class: "control-label col-md-3" %>
               <%= form.number_field :home_young_child_count, class: "col-md-8 form-control" %>
             </div>
           </div>
 
           <div class="form-horizontal">
             <div class="form-group row">
-              <%= form.label :sources_of_income, class: "control-label col-md-3" %>
-              <%= form.text_field :sources_of_income, class: "col-md-8 form-control" %>
+              <%= form.label :sources_of_income, class: "control-label col-md-3"%>
+              <% Family::INCOME_TYPES.each do |a_value| %>
+                <%= form.check_box(:sources_of_income, { :multiple => true }, a_value, nil) %>
+                <%= form.label "#{a_value}" %>
+              <% end %>
             </div>
           </div>
 
           <div class="form-horizontal">
             <div class="form-group row">
-              <%= form.label :guardian_employed, class: "control-label col-md-3" %>
-              <%= form.check_box :guardian_employed, class: "col-md-8 form-control" %>
+              <%= form.label :guardian_employed, "Is The Parent/Guardian Employed?", class: "control-label col-md-3" %>
+              <%= form.radio_button :guardian_employed, 'Yes' %>
+              <%= label :guardian_employed, 'Yes' %>
+              <%= form.radio_button :guardian_employed, 'No' %>
+              <%= label :guardian_employed, 'No' %>
             </div>
           </div>
 
           <div class="form-horizontal">
             <div class="form-group row">
-              <%= form.label :guardian_employment_type, class: "control-label col-md-3" %>
-              <%= form.text_field :guardian_employment_type, class: "col-md-8 form-control" %>
+              <%= form.label :guardian_employment_type, "Full-Time or Part-Time", class: "control-label col-md-3" %>
+              <%= form.radio_button :guardian_employment_type, 'Full-Time' %>
+              <%= label :guardian_employment_type, 'Full-Time' %>
+              <%= form.radio_button :guardian_employment_type, 'Part-Time' %>
+              <%= label :guardian_employment_type, 'Part-Time' %>
+              <%= form.radio_button :guardian_employment_type, 'N/A' %>
+              <%= label :guardian_employment_type, 'N/A' %>
             </div>
           </div>
 
@@ -109,19 +120,22 @@
 
           <div class="form-horizontal">
             <div class="form-group row">
-              <%= form.label :guardian_health_insurance, class: "control-label col-md-3" %>
-              <%= form.text_field :guardian_health_insurance, class: "col-md-8 form-control" %>
+              <%= form.label :guardian_health_insurance, class: "control-label col-md-3"%>
+              <%= form.radio_button :guardian_health_insurance, 'Private Insurance' %>
+              <%= label :guardian_health_insurance, 'Private Insurance' %>
+              <%= form.radio_button :guardian_health_insurance, 'Medicaid' %>
+              <%= label :guardian_health_insurance, 'Medicaid' %>
+              <%= form.radio_button :guardian_health_insurance, 'Uninsured' %>
+              <%= label :guardian_health_insurance, 'Uninsured' %>
             </div>
           </div>
 
           <div class="form-horizontal">
             <div class="form-group row">
               <%= form.label :military, "Military Family", class: "control-label col-md-3" %>
-              <div class="form-control col-md-8">
                 <%= form.radio_button :military, true %> Yes
                 &nbsp;
                 <%= form.radio_button :military, false %> No
-              </div>
             </div>
           </div>
 
