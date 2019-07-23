@@ -60,7 +60,6 @@ RSpec.feature "Distributions", type: :system do
         end
         expect(page).to have_content "reclaimed"
       end.to change { Distribution.count }.by(-1)
-      
     end
 
     context "when one of the items has been 'deleted'" do
