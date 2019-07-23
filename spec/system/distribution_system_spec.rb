@@ -1,4 +1,4 @@
-RSpec.feature "Distributions", type: :feature do
+RSpec.feature "Distributions", type: :system do
   before do
     sign_in(@user)
     @url_prefix = "/#{@organization.to_param}"
@@ -9,7 +9,7 @@ RSpec.feature "Distributions", type: :feature do
     setup_storage_location(@storage_location)
   end
 
-  scenario "User creates a new distribution" do
+  it "User creates a new distribution" do
     with_features email_active: true do
       visit @url_prefix + "/distributions/new"
 
@@ -27,7 +27,7 @@ RSpec.feature "Distributions", type: :feature do
     end
   end
 
-  scenario "User doesn't fill storage_location" do
+  it "User doesn't fill storage_location" do
     visit @url_prefix + "/distributions/new"
 
     select @partner.name, from: "Partner"
@@ -44,7 +44,7 @@ RSpec.feature "Distributions", type: :feature do
       visit @url_prefix + "/distributions"
     end
 
-    scenario "the user can make changes to it" do
+    it "the user can make changes to it" do
       click_on "Edit", match: :first
       expect do
         fill_in "Agency representative", with: "SOMETHING DIFFERENT"
@@ -53,15 +53,17 @@ RSpec.feature "Distributions", type: :feature do
       end.to change { distribution.agency_rep }.to("SOMETHING DIFFERENT")
     end
 
-    scenario "the user can reclaim it" do
+    it "the user can reclaim it" do
       expect do
-        click_on "Reclaim"
+        accept_confirm do
+          click_on "Reclaim"
+        end
+        expect(page).to have_content "reclaimed"
       end.to change { Distribution.count }.by(-1)
-      expect(page).to have_content "reclaimed"
     end
 
     context "when one of the items has been 'deleted'" do
-      scenario "the user can still reclaim it and it reactivates the item", js: true do
+      it "the user can still reclaim it and it reactivates the item", js: true do
         item = distribution.line_items.first.item
         item.destroy
         expect do
@@ -86,23 +88,23 @@ RSpec.feature "Distributions", type: :feature do
       visit @url_prefix + "/distributions"
     end
 
-    scenario 'the user sees value in row on index page' do
+    it 'the user sees value in row on index page' do
       # row: 100 items * 1$
       expect(page).to have_content "$100"
     end
 
-    scenario 'the user sees total value on index page' do
+    it 'the user sees total value on index page' do
       # 100 items * 10.5 + 100 items * 1
       expect(page).to have_content "$1,150"
     end
 
-    scenario 'the user sees value per item on show page' do
+    it 'the user sees value per item on show page' do
       # item value 10.50
       visit @url_prefix + "/distributions/#{@distribution1.id}"
       expect(page).to have_content "$10.50"
     end
 
-    scenario 'the user sees total value on show page' do
+    it 'the user sees total value on show page' do
       # 100 items * 10.5
       visit @url_prefix + "/distributions/#{@distribution1.id}"
       expect(page).to have_content "$1,050"
@@ -120,7 +122,7 @@ RSpec.feature "Distributions", type: :feature do
       end
     end
 
-    scenario "it completes successfully" do
+    it "it completes successfully" do
       expect(page).to have_content "Distributions"
       expect(page.find(".alert-info")).to have_content "reated"
       expect(Distribution.first.line_items.count).to eq 1
@@ -132,7 +134,7 @@ RSpec.feature "Distributions", type: :feature do
         @distribution = Distribution.last
       end
 
-      scenario "User creates a distribution from a donation then edits it" do
+      it "User creates a distribution from a donation then edits it" do
         within "#edit_distribution_#{@distribution.to_param}" do
           first(".numeric").set 13
           click_on "Save"
@@ -141,7 +143,7 @@ RSpec.feature "Distributions", type: :feature do
         expect(page).to have_content 13
       end
 
-      scenario "User creates a distribution from a donation then tries to make the quantity too big", js: true do
+      it "User creates a distribution from a donation then tries to make the quantity too big", js: true do
         within "#edit_distribution_#{@distribution.to_param}" do
           first(".numeric").set 999_999
           click_on "Save"
@@ -153,8 +155,8 @@ RSpec.feature "Distributions", type: :feature do
         expect(Distribution.first.line_items.count).to eq 1
       end
 
-      scenario "User creates duplicate line items" do
-        diaper_type = find('#distribution_line_items_attributes_0_item_id').all('option')[3].text
+      it "User creates duplicate line items" do
+        diaper_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
         select(diaper_type, from: first_item_name_field)
         find_all(".numeric")[0].set 1
@@ -189,7 +191,7 @@ RSpec.feature "Distributions", type: :feature do
       @distribution = Distribution.last
     end
 
-    scenario "it sets the distribution id and fulfilled status on the request" do
+    it "it sets the distribution id and fulfilled status on the request" do
       expect(@request.reload.distribution_id).to eq @distribution.id
       expect(@request.reload).to be_status_fulfilled
     end
@@ -201,7 +203,7 @@ RSpec.feature "Distributions", type: :feature do
       visit @url_prefix + "/distributions/new"
     end
 
-    scenario "a user can add items via scanning them in by barcode", js: true do
+    it "a user can add items via scanning them in by barcode", js: true do
       Barcode.boop(@existing_barcode.value)
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
@@ -209,7 +211,7 @@ RSpec.feature "Distributions", type: :feature do
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
 
-    scenario "a user can add items that do not yet have a barcode" do
+    it "a user can add items that do not yet have a barcode" do
       # enter a new barcode
       # page.fill_in "_barcode-lookup-0", with: "123123123321\n"
       # find('#_barcode-lookup-0').set("123123123321\n")
