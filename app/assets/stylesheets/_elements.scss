@@ -637,7 +637,7 @@ table.dataTable thead .sorting_desc_disabled {
 .html5buttons a {
   border: 1px solid #e7eaec;
   background: #fff;
-  color: #676a6c;
+  color: #000;
   box-shadow: none;
   padding: 6px 8px;
   font-size: 12px;
@@ -974,7 +974,7 @@ select.form-control:not([size]):not([multiple]) {
   border-radius: 1px;
   color: inherit;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1;
   padding: 9px 12px 4px 12px;
   text-align: center;
@@ -1118,7 +1118,7 @@ select.form-control:not([size]):not([multiple]) {
 .ui-jqgrid-titlebar {
   height: 40px;
   line-height: 15px;
-  color: #676a6c;
+  color: #000;
   background-color: #F9F9F9;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -1165,7 +1165,7 @@ select.form-control:not([size]):not([multiple]) {
   border: 1px solid #DDDDDD;
   line-height: 15px;
   font-weight: bold;
-  color: #676a6c;
+  color: #000;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -1685,7 +1685,7 @@ label.error {
 }
 
 .author-info {
-  color: #676a6c;
+  color: #000;
   font-size: 11px;
   margin-top: 5px;
   text-align: center;
@@ -1736,7 +1736,7 @@ label.error {
 .views-number {
   font-size: 24px;
   line-height: 18px;
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .forum-container, .forum-post-container {
@@ -1981,7 +1981,7 @@ a.forum-item-title:hover {
 }
 
 .vertical-timeline-content h2 {
-  font-weight: 400;
+  font-weight: 700;
   margin-top: 4px;
 }
 
@@ -1997,7 +1997,7 @@ a.forum-item-title:hover {
 
 .vertical-date small {
   color: $navy;
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .vertical-timeline-content::before {
