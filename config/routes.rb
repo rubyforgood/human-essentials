@@ -73,6 +73,7 @@ Rails.application.routes.draw do
       get :print, on: :member
       collection do
         get :pick_ups
+        get ':id/picked_up', to: 'distributions#picked_up', as: :picked_up
       end
     end
 

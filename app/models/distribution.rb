@@ -12,7 +12,7 @@ require 'time_util'
 #  organization_id     :integer
 #  issued_at           :datetime
 #  agency_rep          :string
-#
+#  state               :integer
 
 class Distribution < ApplicationRecord
   # Distributions are issued from a single storage location, so we associate
@@ -35,6 +35,8 @@ class Distribution < ApplicationRecord
   include IssuedAt
 
   before_save :combine_distribution
+
+  enum state: { scheduled: 0, complete: 1 }
 
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
@@ -117,6 +119,14 @@ class Distribution < ApplicationRecord
 
   def combine_distribution
     line_items.combine!
+  end
+
+  def notify_partner!
+    self.scheduled!
+  end
+
+  def picked_up!
+    self.complete!
   end
 
   def csv_export_attributes

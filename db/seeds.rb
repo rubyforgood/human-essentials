@@ -66,7 +66,7 @@ DonationSite.find_or_create_by!(name: "Waffle House") do |location|
   location.organization = pdx_org
 end
 DonationSite.find_or_create_by!(name: "Eagleton Country Club") do |location|
-  location.address = "4567 Some Blvd., Pawnee, OR 12345"
+  location.address = "4567 Some Blvd., Eagleton, OR 12345"
   location.organization = pdx_org
 end
 
@@ -214,7 +214,8 @@ end
   distribution = Distribution.create!(storage_location: random_record(StorageLocation),
                                       partner: random_record(Partner),
                                       organization: pdx_org,
-                                      issued_at: (Date.today + rand(15).days))
+                                      issued_at: (Date.today + rand(15).days),
+                                      state: 0)
 
   rand(1..5).times.each do
     LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: distribution

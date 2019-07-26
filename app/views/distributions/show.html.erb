@@ -30,6 +30,7 @@
 
       <p>Source location: <%= @distribution.storage_location.name %></p>
       <p>Agency representative: <%= @distribution.agency_rep %></p>
+      <p>Status: <%= @distribution.state.humanize %>
       <h4>Total Items Distributed</h4>
       <div class="row">
         <div class="col-xs-12">
@@ -53,9 +54,9 @@
       </div>
     </div>
     <div class="box-footer with-border">
+      <%= edit_button_to picked_up_distributions_path(@distribution), {text: "Complete pickup", size: "lg"} if @distribution.scheduled? %>
       <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "lg"} %>
       <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "lg"} %>
     </div>
   </div>
-
 </section>
