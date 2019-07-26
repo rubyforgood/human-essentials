@@ -11,7 +11,7 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
     let(:item) { create(:item) }
 
     it "should create a new global barcode" do
-      barcode_value = BarcodeItem.count > 0 ? Barcode.last.value + 1 : 66666
+      barcode_value = BarcodeItem.count > 0 ? Barcode.last.value + 1 : 66_666
       click_on "Add New Barcode"
       fill_in "Quantity", with: 100
       select item.base_item.name, from: "barcode_item_barcodeable_id"
