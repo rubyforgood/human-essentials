@@ -18,11 +18,11 @@ RSpec.describe "Purchases", type: :system, js: true do
 
     it "User sees purchased date column" do
       storage1 = create(:storage_location, name: "storage1")
-      purchase_date = Time.new(1970, 12, 8, 10, 19)
+      purchase_date = Time.zone.parse("Dec 8 1971 10:19")
       create(:purchase, storage_location: storage1, created_at: purchase_date)
       page.refresh
       expect(page).to have_text("Purchased Date")
-      expect(page).to have_text("1970-12-08")
+      expect(page).to have_text("1971-12-08")
     end
   end
 
