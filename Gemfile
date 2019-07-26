@@ -93,4 +93,9 @@ group :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
+
+# This 'if' may seem redundant but for some reason it is necessary to suppress
+# a warning on non (Windows or JRuby) platforms.
+if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
+  gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
+end
