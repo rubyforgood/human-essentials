@@ -47,9 +47,9 @@
 
 
       <div class="box-header with-border bg-gray">
-        <section id="filters">
+        <section id="filters" class="submit-on-change">
           <div class="box-body">
-              <%= simple_form_for :dashboard_filter, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
+              <%= simple_form_for :filters, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
                 <div class="form-group col-md-offset-10 col-md-2 col-sm-offset-6 col-sm-6 col-xs-12">
                   <label for="interval">Date Range</label>
                   <%= f.select :interval, filter_intervals, { selected: selected_interval }, class: "form-control" %>
