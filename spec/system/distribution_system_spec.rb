@@ -235,7 +235,7 @@ RSpec.feature "Distributions", type: :system do
     let!(:dist1) { create(:distribution, :with_items, item: item1) }
     let!(:dist2) { create(:distribution, :with_items, item: item2) }
 
-    fit "filters by item id" do
+    it "filters by item id" do
       visit @url_prefix + "/distributions"
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 3)
