@@ -2,6 +2,6 @@
   <%= render partial: "barcode_items/barcode_item_lookup", locals: {index: f.options[:child_index]} %>
   <label>OR</label>
   <%= f.input_field :item_id, collection: @items, prompt: "Choose an item", class: 'form-control' %>
-  <%= f.input_field :quantity, placeholder: "Quantity", class: 'form-control' %>
+  <%= f.input_field :quantity, placeholder: "Quantity", class: 'quantity form-control' %>
   <%= delete_line_item_button f %>
 </div>
