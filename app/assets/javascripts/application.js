@@ -48,29 +48,29 @@ $( document ).ready(function() {
 // $(document).on("click", '#barcode-scanner-btn', function(e) {
 //     console.log("the barcode btn was clicked")
 // })
-$(document).on("click", '#awesomebutton', function(e){
-    $('#newBarcode').modal('hide');
-    source_field = $('#trigger-field-id').val();
+// $(document).on("click", '#awesomebutton', function(e){
+//     $('#newBarcode').modal('hide');
+//     source_field = $('#trigger-field-id').val();
 
-    // Clear out the fields, capturing the quantity and item_id
-    item_id = $('#barcode_item_barcodeable_id').val();
-    quantity = $('#barcode_item_quantity').val();
-    $('#barcode_item_quantity').val('');
-    $('#barcode_item_barcodeable_id').val('');
-    $('#barcode_item_value').val('');
-    $('#trigger-field-id').val('');
+//     // Clear out the fields, capturing the quantity and item_id
+//     item_id = $('#barcode_item_barcodeable_id').val();
+//     quantity = $('#barcode_item_quantity').val();
+//     $('#barcode_item_quantity').val('');
+//     $('#barcode_item_barcodeable_id').val('');
+//     $('#barcode_item_value').val('');
+//     $('#trigger-field-id').val('');
 
-    // Notify the user
-    toastr.success("Barcode Added to Inventory");
+//     // Notify the user
+//     toastr.success("Barcode Added to Inventory");
 
-    // Locate the row where the barcode was entered from
-    line_item = $('#' + source_field).closest('.nested-fields');
-    // Set the values in the form. This is replicating some logic from barcode_items.js.erb
-    $(line_item).find('input[type=number]').val(quantity);
-    $(line_item).find('[value="' + item_id + '"]').attr("selected", true);
-    $(line_item).parent().find('.nested-fields:last-child input.__barcode_item_lookup').focus();
+//     // Locate the row where the barcode was entered from
+//     line_item = $('#' + source_field).closest('.nested-fields');
+//     // Set the values in the form. This is replicating some logic from barcode_items.js.erb
+//     $(line_item).find('input[type=number]').val(quantity);
+//     $(line_item).find('[value="' + item_id + '"]').attr("selected", true);
+//     $(line_item).parent().find('.nested-fields:last-child input.__barcode_item_lookup').focus();
 
-});
+// });
 
 function order_by_occurrence(arr) {
     var counts = {};
