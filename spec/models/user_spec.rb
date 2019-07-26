@@ -29,14 +29,32 @@
 #  super_admin            :boolean          default(FALSE)
 #  last_request_at        :datetime
 #
+require "rails_helper"
 
 RSpec.describe User, type: :model do
+  it "has a valid factory" do
+    expect(build(:user)).to be_valid
+  end
+
+  context "Associations" do
+    it {
+      expect(described_class.reflect_on_association(:organization).macro)
+        .to eq(:belongs_to)
+    }
+    it {
+      expect(described_class.reflect_on_association(:feedback_messages).macro)
+        .to eq(:has_many)
+    }
+  end
+
   context "Validations >" do
     it "requires a name" do
       expect(build(:user, name: nil)).not_to be_valid
+      expect(build(:user, name: "foo")).to be_valid
     end
     it "requires an email" do
       expect(build(:user, email: nil)).not_to be_valid
+      expect(build(:user, email: "foo@bar.com")).to be_valid
     end
   end
 

@@ -3,5 +3,5 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $ ->
-  $("select#dashboard_filter_interval").on "change", (e) ->
+  $("#filters.submit-on-change select#filters_interval").on "change", (e) ->
     this.form.submit()

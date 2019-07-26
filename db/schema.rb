@@ -187,16 +187,6 @@ ActiveRecord::Schema.define(version: 2019_06_21_140938) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "item_requests", force: :cascade do |t|
-    t.bigint "request_id"
-    t.bigint "item_id"
-    t.integer "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["item_id"], name: "index_item_requests_on_item_id"
-    t.index ["request_id"], name: "index_item_requests_on_request_id"
-  end
-
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "category"
@@ -257,8 +247,8 @@ ActiveRecord::Schema.define(version: 2019_06_21_140938) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
-    t.integer "status", default: 0
     t.boolean "send_reminders", default: false, null: false
+    t.integer "status", default: 0
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 

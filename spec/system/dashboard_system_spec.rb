@@ -107,7 +107,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(page).to have_content("333")
             end
 
-            page.select "Last Year", from: "dashboard_filter_interval"
+            page.select "Last Year", from: "filters_interval"
 
             within "#summary" do
               expect(page).to have_content("333")
@@ -163,7 +163,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Year" do
             before do
-              page.select "This Year", from: "dashboard_filter_interval"
+              page.select "This Year", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
@@ -183,7 +183,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Today" do
             before do
-              page.select "Today", from: "dashboard_filter_interval"
+              page.select "Today", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -203,7 +203,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Yesterday" do
             before do
-              page.select "Yesterday", from: "dashboard_filter_interval"
+              page.select "Yesterday", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
@@ -223,7 +223,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Week" do
             before do
-              page.select "This Week", from: "dashboard_filter_interval"
+              page.select "This Week", from: "filters_interval"
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -243,7 +243,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Month" do
             before do
-              page.select "This Month", from: "dashboard_filter_interval"
+              page.select "This Month", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -263,7 +263,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Last Month" do
             before do
-              page.select "Last Month", from: "dashboard_filter_interval"
+              page.select "Last Month", from: "filters_interval"
             end
 
             let(:total_inventory) { [@this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -283,7 +283,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Last Year" do
             before do
-              page.select "Last Year", from: "dashboard_filter_interval"
+              page.select "Last Year", from: "filters_interval"
             end
 
             let(:total_inventory) { @last_years_donations.map(&:total_quantity).sum }
@@ -303,7 +303,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "All Time" do
             before do
-              page.select "All Time", from: "dashboard_filter_interval"
+              page.select "All Time", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
@@ -370,7 +370,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Year" do
             before do
-              page.select "This Year", from: "dashboard_filter_interval"
+              page.select "This Year", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum }
@@ -390,7 +390,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Today" do
             before do
-              page.select "Today", from: "dashboard_filter_interval"
+              page.select "Today", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_purchases[:today].total_quantity }
@@ -410,7 +410,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Yesterday" do
             before do
-              page.select "Yesterday", from: "dashboard_filter_interval"
+              page.select "Yesterday", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_purchases[:yesterday].total_quantity }
@@ -430,7 +430,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Week" do
             before do
-              page.select "This Week", from: "dashboard_filter_interval"
+              page.select "This Week", from: "filters_interval"
             end
 
             let(:total_inventory) { [@this_years_purchases[:today], @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week]].map(&:total_quantity).sum }
@@ -450,7 +450,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Month" do
             before do
-              page.select "This Month", from: "dashboard_filter_interval"
+              page.select "This Month", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_purchases[:today].total_quantity }
@@ -470,7 +470,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Last Month" do
             before do
-              page.select "Last Month", from: "dashboard_filter_interval"
+              page.select "Last Month", from: "filters_interval"
             end
 
             let(:total_inventory) { [@this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week]].map(&:total_quantity).sum }
@@ -490,7 +490,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Last Year" do
             before do
-              page.select "Last Year", from: "dashboard_filter_interval"
+              page.select "Last Year", from: "filters_interval"
             end
 
             let(:total_inventory) { @last_years_purchases.map(&:total_quantity).sum }
@@ -510,7 +510,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "All Time" do
             before do
-              page.select "All Time", from: "dashboard_filter_interval"
+              page.select "All Time", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum + @last_years_purchases.map(&:total_quantity).sum }
@@ -562,7 +562,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Year" do
             before do
-              page.select "This Year", from: "dashboard_filter_interval"
+              page.select "This Year", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
@@ -583,7 +583,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Today" do
             before do
-              page.select "Today", from: "dashboard_filter_interval"
+              page.select "Today", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -604,7 +604,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Yesterday" do
             before do
-              page.select "Yesterday", from: "dashboard_filter_interval"
+              page.select "Yesterday", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
@@ -625,7 +625,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Week" do
             before do
-              page.select "This Week", from: "dashboard_filter_interval"
+              page.select "This Week", from: "filters_interval"
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -646,7 +646,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Month" do
             before do
-              page.select "This Month", from: "dashboard_filter_interval"
+              page.select "This Month", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -667,7 +667,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Last Month" do
             before do
-              page.select "Last Month", from: "dashboard_filter_interval"
+              page.select "Last Month", from: "filters_interval"
             end
 
             let(:total_inventory) { [@this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -688,7 +688,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Last Year" do
             before do
-              page.select "Last Year", from: "dashboard_filter_interval"
+              page.select "Last Year", from: "filters_interval"
             end
 
             let(:total_inventory) { @last_years_donations.map(&:total_quantity).sum }
@@ -709,7 +709,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "All Time" do
             before do
-              page.select "All Time", from: "dashboard_filter_interval"
+              page.select "All Time", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
@@ -803,7 +803,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Year" do
             before do
-              page.select "This Year", from: "dashboard_filter_interval"
+              page.select "This Year", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
@@ -827,7 +827,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Today" do
             before do
-              page.select "Today", from: "dashboard_filter_interval"
+              page.select "Today", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -848,7 +848,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Yesterday" do
             before do
-              page.select "Yesterday", from: "dashboard_filter_interval"
+              page.select "Yesterday", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
@@ -869,7 +869,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Week" do
             before do
-              page.select "This Week", from: "dashboard_filter_interval"
+              page.select "This Week", from: "filters_interval"
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -892,7 +892,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Month" do
             before do
-              page.select "This Month", from: "dashboard_filter_interval"
+              page.select "This Month", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -913,7 +913,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Last Month" do
             before do
-              page.select "Last Month", from: "dashboard_filter_interval"
+              page.select "Last Month", from: "filters_interval"
             end
 
             let(:total_inventory) { [@this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -936,7 +936,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Last Year" do
             before do
-              page.select "Last Year", from: "dashboard_filter_interval"
+              page.select "Last Year", from: "filters_interval"
             end
 
             let(:total_inventory) { @last_years_donations.map(&:total_quantity).sum }
@@ -959,7 +959,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "All Time" do
             before do
-              page.select "All Time", from: "dashboard_filter_interval"
+              page.select "All Time", from: "filters_interval"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
@@ -1042,7 +1042,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with year-to-date selected" do
           before do
-            page.select "This Year", from: "dashboard_filter_interval"
+            page.select "This Year", from: "filters_interval"
           end
 
           let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum }
@@ -1063,7 +1063,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with today selected" do
           before do
-            page.select "Today", from: "dashboard_filter_interval"
+            page.select "Today", from: "filters_interval"
           end
 
           let(:total_inventory) { @this_years_distributions[:today].line_items.total }
@@ -1084,7 +1084,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with yesterday selected" do
           before do
-            page.select "Yesterday", from: "dashboard_filter_interval"
+            page.select "Yesterday", from: "filters_interval"
           end
 
           let(:total_inventory) { @this_years_distributions[:yesterday].line_items.total }
@@ -1105,7 +1105,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with this week selected" do
           before do
-            page.select "This Week", from: "dashboard_filter_interval"
+            page.select "This Week", from: "filters_interval"
           end
 
           let(:total_inventory) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:line_items).flatten.map(&:quantity).sum }
@@ -1128,7 +1128,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with this month selected" do
           before do
-            page.select "This Month", from: "dashboard_filter_interval"
+            page.select "This Month", from: "filters_interval"
           end
 
           let(:total_inventory) { @this_years_distributions[:today].line_items.total }
@@ -1149,7 +1149,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with last month selected" do
           before do
-            page.select "Last Month", from: "dashboard_filter_interval"
+            page.select "Last Month", from: "filters_interval"
           end
 
           let(:total_inventory) { [@this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:line_items).flatten.map(&:quantity).sum }
@@ -1172,7 +1172,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with last year selected" do
           before do
-            page.select "Last Year", from: "dashboard_filter_interval"
+            page.select "Last Year", from: "filters_interval"
           end
 
           let(:total_inventory) { @last_years_distributions.map(&:line_items).flatten.map(&:quantity).sum }
@@ -1193,7 +1193,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with All Time selected" do
           before do
-            page.select "All Time", from: "dashboard_filter_interval"
+            page.select "All Time", from: "filters_interval"
           end
 
           let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum + @last_years_distributions.map(&:line_items).flatten.map(&:quantity).sum }
