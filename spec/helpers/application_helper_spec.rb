@@ -1,6 +1,95 @@
 require "rails_helper"
 
 RSpec.describe ApplicationHelper, type: :helper do
+  describe "dashboard_path_from_user" do
+    before(:each) do
+      allow(helper).to receive(:current_user).and_return(user)
+    end
+
+    context "As a super admin" do
+      let(:user) { create :super_admin }
+
+      it "links to the admin dashboard" do
+        expect(helper.dashboard_path_from_user).to eq "/admin/dashboard"
+      end
+    end
+
+    context "As a user without super admin status" do
+      let(:user) { create :organization_admin }
+
+      it "links to the general dashboard" do
+        pending("TODO - dashboard_path_from_user needs to receive user org to generate path")
+        org_name = user.organization.short_name
+        expect(helper.dashboard_path_from_user).to eq "/#{org_name}/dashboard"
+      end
+    end
+  end
+
+  describe "default_title_content" do
+    helper do
+      def current_organization; end
+    end
+
+    before(:each) do
+      allow(helper).to receive(:current_organization).and_return(organization)
+    end
+
+    context "Organization exists" do
+      let(:organization) { create :organization }
+
+      it "returns the organization's name" do
+        expect(helper.default_title_content).to eq organization.name
+      end
+    end
+
+    context "Organization does not exist" do
+      let(:organization) { nil }
+
+      it "returns a default name" do
+        expect(helper.default_title_content).to eq "DiaperBank"
+      end
+    end
+  end
+
+  describe "active_class" do
+    it "Returns the controller name" do
+      expect(helper.active_class("foo")).to eq "test"
+    end
+  end
+
+  describe "can_administrate?" do
+    let(:org_1) { @organization }
+    let(:org_2) { create :organization }
+
+    before(:each) do
+      allow(helper).to receive(:current_user).and_return(user)
+    end
+
+    context "User is org admin and part of org" do
+      let(:user) { create :user, organization_admin: true, organization: org_1 }
+
+      it "can administrate" do
+        expect(helper.can_administrate?).to be_truthy
+      end
+    end
+
+    context "User is org admin and not part of org" do
+      let(:user) { create :user, organization_admin: true, organization: org_2 }
+
+      it "cannot administrate" do
+        expect(helper.can_administrate?).to be_falsy
+      end
+    end
+
+    context "User is part of org but not org admin" do
+      let(:user) { create :user, organization: org_1 }
+
+      it "cannot administrate" do
+        expect(helper.can_administrate?).to be_falsy
+      end
+    end
+  end
+
   describe "confirm_delete_msg" do
     let(:item) { "Adult Briefs (Medium/Large)" }
 

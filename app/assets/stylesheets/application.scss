@@ -32,3 +32,12 @@
 @import 'admin_layout';
 @import 'audits';
 @import 'modal-dialog';
+
+  // TODO: this should be added to a separate file
+.striped {
+  tbody{
+    tr:nth-child(odd) {background: $white}
+    tr:nth-child(even) {background: $light-grey}
+  }
+  thead {background: $light-grey}
+}
