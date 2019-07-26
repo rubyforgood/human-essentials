@@ -1,8 +1,7 @@
 {
   "dependencies": {
     "@rails/webpacker": "3.5",
-    "actiontext": "https://github.com/kobaltz/actiontext",
-    "yarn": "^1.17.3"
+    "actiontext": "https://github.com/kobaltz/actiontext"
   },
   "devDependencies": {
     "webpack-dev-server": "2.11.2"
