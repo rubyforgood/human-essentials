@@ -34,7 +34,6 @@ class Donation < ApplicationRecord
   scope :at_storage_location, ->(storage_location_id) {
     where(storage_location_id: storage_location_id)
   }
-  scope :by_source, ->(source) { where(source: source) }
   scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
     where(diaper_drive_participant_id: diaper_drive_participant_id)
