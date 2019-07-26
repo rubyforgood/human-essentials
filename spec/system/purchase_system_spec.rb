@@ -100,9 +100,9 @@ RSpec.describe "Purchases", type: :system, js: true do
         select Vendor.first.business_name, from: "purchase_vendor_id"
         fill_in "purchase_line_items_attributes_0_quantity", with: "5"
         page.find(:css, "#__add_line_item").click
-        select_id = page.find(:xpath, '//*[@id="purchase_line_items"]/div[2]/select')[:id]
+        select_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/select')[:id]
         select Item.alphabetized.first.name, from: select_id
-        text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/div[2]/input[2]')[:id]
+        text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/input[@type="number"]')[:id]
         fill_in text_id, with: "10"
         fill_in "purchase_amount_spent_in_cents", with: "10"
 

@@ -143,9 +143,9 @@ RSpec.describe "Donations", type: :system, js: true do
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
         page.find(:css, "#__add_line_item").click
-        select_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/select')[:id]
+        select_id = page.find(:xpath, '//*[@id="donation_line_items"]/section[2]//select')[:id]
         select Item.alphabetized.first.name, from: select_id
-        text_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/input[2]')[:id]
+        text_id = page.find(:css, '#donation_line_items > section:nth-child(2) > div > div.col-md-3.col-12 > input')[:id]
         fill_in text_id, with: "10"
 
         expect do
