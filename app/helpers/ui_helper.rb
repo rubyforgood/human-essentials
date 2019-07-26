@@ -76,7 +76,9 @@ module UiHelper
   def print_button_to(link, options = {})
     _link_to link, { icon: "print", type: "default", text: "Print", size: "xs" }.merge(options)
   end
-
+  def fulfill_button_to(link, options = {})
+    _link_to link, { icon: "barcode", type: "default", text: "Fulfill", size: "xs" }.merge(options)
+  end
   # Generic Submit button for a form
   def submit_button(options = {}, data = {})
     disable_text = options[:disable_text] || "Saving"
