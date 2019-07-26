@@ -19,9 +19,8 @@ FLIPPER_USERNAME="admin"
 FLIPPER_PASSWORD="password"
 SIDEKIQ_USERNAME="admin"
 SIDEKIQ_PASSWORD="password"
-DIAPERBANK_APPROVAL_URL="https://diaper.test/api/v1/partner_approvals"
-DIAPERBANK_PARTNER_REQUEST_URL="https://diaper.test/api/v1/partner_requests"
 DIAPERBANK_KEY="secretpassword"
+DIAPERBANK_ENDPOINT="https://diaper.test/api/v1"
 ```
 
 In your development configuration files `development.rb` you may want to set the action_mailer config `config.action_mailer.default_url_options = { 'diaper.test' }` (or `partner.test`)
