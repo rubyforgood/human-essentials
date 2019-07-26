@@ -55,6 +55,18 @@ RSpec.describe Distribution, type: :model do
         expect(Distribution.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end
+
+    describe "by_item_id >" do
+      it "only returns distributions with given item id" do
+        item1 = create(:item)
+        item2 = create(:item)
+
+        create(:distribution, :with_items, item: item1)
+        create(:distribution, :with_items, item: item2)
+        # binding.pry
+        expect(Distribution.by_item_id(item1.id).size).to eq(1)
+      end
+    end
   end
 
   context "Callbacks >" do

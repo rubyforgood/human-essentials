@@ -36,6 +36,8 @@ class Distribution < ApplicationRecord
 
   before_save :combine_distribution
 
+  include Filterable
+  scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
   scope :for_csv_export, ->(organization) {
