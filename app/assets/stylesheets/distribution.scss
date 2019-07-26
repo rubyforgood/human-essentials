@@ -1,4 +1,4 @@
-.barcode_scanner {
+.barcode-scanner {
   padding: 5px;
   border: solid 1px gray;
   border-radius: 5px;
@@ -9,7 +9,7 @@
   font-weight: bold;
 }
 @media only screen and (max-width: 1000px) {
-  .barcode_scanner {
+  .barcode-scanner {
     width: 50%;
     padding: 5px;
     background-color: lightgreen;

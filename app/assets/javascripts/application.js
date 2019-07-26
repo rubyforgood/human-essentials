@@ -45,8 +45,10 @@ $( document ).ready(function() {
         events: 'pick_ups.json'
     });
 });
+// $(document).on("click", '#barcode-scanner-btn', function(e) {
+//     console.log("the barcode btn was clicked")
+// })
 $(document).on("click", '#awesomebutton', function(e){
-    /*
     $('#newBarcode').modal('hide');
     source_field = $('#trigger-field-id').val();
 
@@ -67,7 +69,7 @@ $(document).on("click", '#awesomebutton', function(e){
     $(line_item).find('input[type=number]').val(quantity);
     $(line_item).find('[value="' + item_id + '"]').attr("selected", true);
     $(line_item).parent().find('.nested-fields:last-child input.__barcode_item_lookup').focus();
-    */
+
 });
 
 function order_by_occurrence(arr) {

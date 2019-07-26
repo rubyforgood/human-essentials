@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $(document).on('click', '.barcode_scanner',function(e) {
+  $(document).on('click', '.barcode-scanner',function(e) {
     var target = $(e.target)
     load_quagga(target);
     
@@ -26,7 +26,7 @@ $(document).ready(function () {
         // last_result = [];
         Quagga.stop();
         Quagga.offDetected(startScan);
-        $("#the-one-true-barcode-scanner").empty()
+        $("#barcode-scanner-btn").empty()
         last_target.prev().val(upc_code)
         }
       
@@ -42,7 +42,7 @@ $(document).ready(function () {
           name : "Live",
           type : "LiveStream",
           numOfWorkers: navigator.hardwareConcurrency,
-          target: "#the-one-true-barcode-scanner"
+          target: "#barcode-scanner-btn"
         },
         decoder: {
             readers : ['ean_reader','ean_8_reader','code_39_reader','code_39_vin_reader','codabar_reader','upc_reader','upc_e_reader']
