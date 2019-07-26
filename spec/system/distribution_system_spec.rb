@@ -228,4 +228,22 @@ RSpec.feature "Distributions", type: :system do
       # expect(page).to have_text("50")
     end
   end
+
+  context "when filtering on the index page" do
+    let!(:item1) { create(:item, name: "Good item") }
+    let!(:item2) { create(:item, name: "Crap item") }
+    let!(:dist1) { create(:distribution, :with_items, item: item1) }
+    let!(:dist2) { create(:distribution, :with_items, item: item2) }
+
+    fit "filters by item id" do
+      visit @url_prefix + "/distributions"
+      # check for all distributions
+      expect(page).to have_css("table tbody tr", count: 3)
+      # filter
+      select(item1.name, from: "filters_by_item_id")
+      click_button("Filter")
+      # check for filtered distributions
+      expect(page).to have_css("table tbody tr", count: 2)
+    end
+  end
 end

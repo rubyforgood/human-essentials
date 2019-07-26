@@ -19,6 +19,22 @@
     <div class="box-header with-border bg-gray">
       <section id="filters">
         <!-- TBA -- style after other #index views -->
+        <%= form_tag(distributions_path, method: :get) do |f| %>
+          <div class="row">
+            <% if @items.present? %>
+              <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <%= label_tag "by Item" %>
+                <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, class: "form-control") %>
+              </div>
+            <% end %>
+          </div><!-- /.row -->
+          <div class="row">
+            <div class="col-xs-12">
+              <%= filter_button %>
+              <%= cancel_button_to distributions_path %>
+            </div>
+          </div><!-- /.row -->
+        <% end %>
       </section><!-- /#filters -->
         <div class="btn-group pull-right">
           <p>
@@ -28,28 +44,28 @@
           <p>
       </div>
     </div><!-- /.box-header -->
-  <div class="box-body">
-    <div class="row">
-      <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Partner</th>
-                  <th>Date of Distribution</th>
-                  <th>Source Inventory</th>
-                  <th>Total items</th>
-                  <th>Total value</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "distribution_row", collection: @distributions %>
-                <%= render partial: "distribution_total" %>
-              </tbody>
-            </table>
-          </div><!-- /.box-body.table-responsive -->
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Partner</th>
+                    <th>Date of Distribution</th>
+                    <th>Source Inventory</th>
+                    <th>Total items</th>
+                    <th>Total value</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%= render partial: "distribution_row", collection: @distributions %>
+                  <%= render partial: "distribution_total" %>
+                </tbody>
+              </table>
+            </div><!-- /.box-body.table-responsive -->
         </div><!-- /.col-xs-12 -->
       </div><!-- /.row -->
     </div><!-- /.box-body -->
