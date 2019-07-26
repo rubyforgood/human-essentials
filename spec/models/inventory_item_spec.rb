@@ -25,6 +25,10 @@ RSpec.describe InventoryItem, type: :model do
         expect(build(:inventory_item, quantity: -1)).not_to be_valid
         expect(build(:inventory_item, quantity: 0)).to be_valid
       end
+
+      it "is less than the max integer" do
+        expect(build(:inventory_item, quantity: 2**31)).not_to be_valid
+      end
     end
     it "requires an inventory association" do
       expect(build(:inventory_item, storage_location_id: nil)).not_to be_valid
