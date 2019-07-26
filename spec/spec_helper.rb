@@ -16,9 +16,7 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-require 'simplecov'
 require 'active_support/testing/time_helpers'
-SimpleCov.start 'rails'
 
 RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
