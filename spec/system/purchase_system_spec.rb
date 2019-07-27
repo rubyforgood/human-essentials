@@ -178,7 +178,6 @@ RSpec.describe "Purchases", type: :system, js: true do
       end
 
       it "User scan same barcode 2 times" do
-        pending "The JS doesn't appear to be executing in this correctly"
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
           Barcode.boop(@existing_barcode.value)
@@ -186,11 +185,9 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
-        page.find(:css, "#__add_line_item").click
-
         within "#purchase_line_items" do
-          expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-          Barcode.boop(@existing_barcode.value)
+          expect(page).to have_css('.__barcode_item_lookup', count: 2)
+          Barcode.boop(@existing_barcode.value, "new_line_items")
         end
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
