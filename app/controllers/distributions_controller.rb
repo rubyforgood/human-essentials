@@ -57,6 +57,9 @@ class DistributionsController < ApplicationController
     else
       flash[:error] = "An error occurred, try again?"
       logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
+      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @items = current_organization.items.alphabetized
+      @storage_locations = current_organization.storage_locations.alphabetized
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
