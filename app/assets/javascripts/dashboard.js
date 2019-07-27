@@ -3,7 +3,9 @@
 // You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(() =>
-  $("#filters.submit-on-change select#filters_interval").on("change", function(e) {
+  $("#filters.submit-on-change select#filters_interval").on("change", function(
+    e
+  ) {
     this.form.submit();
   })
 );

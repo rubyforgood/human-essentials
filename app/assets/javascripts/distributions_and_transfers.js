@@ -3,12 +3,19 @@
 // You can use CoffeeScript in this file: http://coffeescript.org/
 
 const new_option = function(item, selected) {
-  if (selected == null) { selected = false; }
+  if (selected == null) {
+    selected = false;
+  }
   let content = `<option value="${item.item_id}"`;
-  if (selected) { content += " selected"; }
+  if (selected) {
+    content += " selected";
+  }
   content += ">";
   content += item.item_name;
-  if( $('select.storage-location-source').attr('id') !== 'audit_storage_location_id') {
+  if (
+    $("select.storage-location-source").attr("id") !==
+    "audit_storage_location_id"
+  ) {
     content += ` (${item.quantity})`;
   }
   content += "</option>\n";
@@ -17,21 +24,29 @@ const new_option = function(item, selected) {
 
 const populate_dropdowns = (objects, inventory) =>
   objects.each(function(index, element) {
-    const selected = Number($(element).find(":selected").val());
+    const selected = Number(
+      $(element)
+        .find(":selected")
+        .val()
+    );
     let options = "";
     $.each(inventory, function(index) {
       const item_id = Number(inventory[index].item_id);
       options += new_option(inventory[index], selected === item_id);
     });
-    $(element).find("option").remove().end().append(options);
-  })
-;
-
+    $(element)
+      .find("option")
+      .remove()
+      .end()
+      .append(options);
+  });
 const request_storage_location_and_populate_item = function(item_to_populate) {
   const control = $("select.storage-location-source");
-  if((control.length > 0) && (control.val() !== "")) {
+  if (control.length > 0 && control.val() !== "") {
     return $.ajax({
-      url: control.data("storage-location-inventory-path").replace(":id", control.val()),
+      url: control
+        .data("storage-location-inventory-path")
+        .replace(":id", control.val()),
       dataType: "json",
       success(data) {
         return populate_dropdowns(item_to_populate, data);
@@ -42,31 +57,46 @@ const request_storage_location_and_populate_item = function(item_to_populate) {
 
 $(function() {
   let control = $("select.storage-location-source");
-  const storage_location_required = $("form.storage-location-required").length > 0;
+  const storage_location_required =
+    $("form.storage-location-required").length > 0;
   const default_item = $(".line-item-fields select");
 
   $(document).on("change", "select.storage-location-source", function() {
-    if (storage_location_required && !control.val()) { $('#__add_line_item').addClass('disabled'); }
-    if (storage_location_required && control.val()) { $('#__add_line_item').removeClass('disabled'); }
+    if (storage_location_required && !control.val()) {
+      $("#__add_line_item").addClass("disabled");
+    }
+    if (storage_location_required && control.val()) {
+      $("#__add_line_item").removeClass("disabled");
+    }
 
     request_storage_location_and_populate_item(default_item);
   });
 
-  $(document).on("cocoon:after-insert", "form.storage-location-required", function(e, insertedItem) {
-    request_storage_location_and_populate_item($("select", insertedItem));
-    insertedItem.find('#_barcode-lookup-new_line_items').attr('id', `_barcode-lookup-${$('.nested-fields').size() - 1}`);
-    control = $("select.storage-location-source");
-    $.ajax({
-      url: control.data("storage-location-inventory-path").replace(":id", control.val()),
-      dataType: "json",
-      success(data) {
-        return populate_dropdowns($("select", insertedItem), data);
-      }
-    });
-  });
+  $(document).on(
+    "cocoon:after-insert",
+    "form.storage-location-required",
+    function(e, insertedItem) {
+      request_storage_location_and_populate_item($("select", insertedItem));
+      insertedItem
+        .find("#_barcode-lookup-new_line_items")
+        .attr("id", `_barcode-lookup-${$(".nested-fields").size() - 1}`);
+      control = $("select.storage-location-source");
+      $.ajax({
+        url: control
+          .data("storage-location-inventory-path")
+          .replace(":id", control.val()),
+        dataType: "json",
+        success(data) {
+          return populate_dropdowns($("select", insertedItem), data);
+        }
+      });
+    }
+  );
 
   $(function() {
-    if (storage_location_required && !control.val()) { $('#__add_line_item').addClass('disabled'); }
+    if (storage_location_required && !control.val()) {
+      $("#__add_line_item").addClass("disabled");
+    }
 
     request_storage_location_and_populate_item(default_item);
   });
