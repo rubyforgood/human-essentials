@@ -4,6 +4,7 @@
 # Distributions to them, though it would lack some of the additional featuers and failsafes that a Diaperbank
 # might want if they were doing direct services.
 class DistributionsController < ApplicationController
+  include DateRangeHelper
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
@@ -160,13 +161,6 @@ class DistributionsController < ApplicationController
   end
 
   def date_filter
-    return nil unless params.key?(:date_filters)
-
-    date_params = params.require(:date_filters)
-    if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
-      return nil
-    end
-
-    Date.new(date_params["issued_at(1i)"].to_i, date_params["issued_at(2i)"].to_i, date_params["issued_at(3i)"].to_i)
+    Distribution.where(issued_at: selected_interval)
   end
 end
