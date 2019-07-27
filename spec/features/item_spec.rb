@@ -1,3 +1,4 @@
+# TODO: Can this be deleted?
 RSpec.feature "Item management", type: :feature do
   before do
     sign_in(@user)
@@ -81,7 +82,7 @@ RSpec.feature "Item management", type: :feature do
       within "tr[data-item-id='#{item.id}']" do
         click_on "Delete", match: :first
       end
-    end.not_to change { Item.unscoped.count }
+    end.not_to change { Item.count }
     item.reload
     expect(item).not_to be_active
     visit url_prefix + "/items"

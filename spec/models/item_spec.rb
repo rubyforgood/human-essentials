@@ -85,7 +85,7 @@ RSpec.describe Item, type: :model do
         create(:item, base_item: c1, partner_key: "foo", organization: @organization)
         create(:item, base_item: c2, partner_key: "bar", organization: @organization)
         expect(Item.by_partner_key("foo").size).to eq(1)
-        expect(Item.all.size).to be > 1
+        expect(Item.active.size).to be > 1
       end
     end
   end
