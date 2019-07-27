@@ -22,8 +22,9 @@ class LineItem < ApplicationRecord
   validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT }, exclusion: { in: [0] }
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
+  # FIXME: This is a temporary hack to stop a 500 from showing up. We need to remove the default_scope from Item
   def value_per_line_item
-    item.value_in_cents * quantity
+    (item&.value_in_cents || 0) * quantity
   end
 
   def has_packages
