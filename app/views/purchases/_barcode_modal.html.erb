@@ -20,10 +20,9 @@
         <div class="row">
           <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
             <%= f.input_field :value, class: "form-control" %>
-            <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner input-group-addon"> </div>
           <% end %>
         </div><!-- /.row -->
-
+        <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner input-group-addon"> </div>
       <% # TODO: Revisit this. I *think* globals should only be done in admin area but... %>
 <% if current_user.super_admin? %>
         <div class="row">
