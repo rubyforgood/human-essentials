@@ -44,7 +44,7 @@ RSpec.describe Distribution, type: :model do
 
   context "Scopes >" do
     describe "during >" do
-      it "returns all distrbutions created between two dates" do
+      it "returns all distributions created between two dates" do
         Distribution.destroy_all
         # The models should default to assigning the created_at time to the issued_at
         create(:distribution, created_at: Time.zone.today)
@@ -66,6 +66,18 @@ RSpec.describe Distribution, type: :model do
         create(:distribution, :with_items, item: item2)
         # filter should only return 1 distribution
         expect(Distribution.by_item_id(item1.id).size).to eq(1)
+      end
+    end
+
+    describe "by_partner >" do
+      let!(:partner1) { create(:partner, name: "Howdy Doody", email: "howdood@example.com") }
+      let!(:partner2) { create(:partner, name: "Doug E Doug", email: "ded@example.com") }
+      let!(:dist1)    { create(:distribution, partner: partner1) }
+      let!(:dist2)    { create(:distribution, partner: partner2) }
+
+      it "only returns distributions with given partner id" do
+        # filter should only return 1 distribution
+        expect(Distribution.by_partner(partner1.id).size).to eq(1)
       end
     end
   end
