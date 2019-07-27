@@ -286,6 +286,21 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
         expect(page).to have_xpath("//input[@id='_barcode-lookup-2']")
       end
+
+      it "Verifies unusually large donation quantities", js: true do
+        select Donation::SOURCES[:misc], from: "donation_source"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
+
+        expect do
+          accept_confirm do
+            click_button "Save"
+          end
+          # wait for the next page to load
+          expect(page).not_to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
+        end.to change { Donation.count }.by(1)
+      end
     end
 
     context "Via barcode entry" do
