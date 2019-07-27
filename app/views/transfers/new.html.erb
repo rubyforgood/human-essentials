@@ -39,13 +39,13 @@
     <fieldset style="margin-bottom: 2rem;" class="form-inline">
       <legend>Items in this donation</legend>
       <%= f.simple_fields_for :line_items do |item| %>
-        <div id="donation_line_items" class="line-item-fields" data-capture-barcode="true">
+        <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
           <%= render 'line_items/line_item_fields', f: item %>
         </div>
       <% end %>
       <div class="row links">
         <div class="col-xs-12">
-          <%= add_line_item_button f, "#donation_line_items" %>
+          <%= add_line_item_button f, "#transfer_line_items" %>
         </div>
       </div>
 
