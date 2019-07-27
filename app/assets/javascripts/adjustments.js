@@ -2,10 +2,12 @@
 // All this logic will automatically be available in application.js.
 // You can use CoffeeScript in this file: http://coffeescript.org/
 
-const item_option = item =>
-  `<option value='${item.item_id}'> \
-${item.item_name} -- ${item.quantity} \
-</option>`;
+const item_option = item => {
+  return `<option value='${item.item_id}'> \
+          ${item.item_name} -- ${item.quantity} \
+          </option>`;
+}
+
 $(function() {
   const control_id = "#adjustment_storage_location_id";
 
