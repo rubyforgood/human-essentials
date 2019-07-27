@@ -105,7 +105,7 @@ class DonationsController < ApplicationController
     @donation_sites = current_organization.donation_sites.alphabetized
     @diaper_drive_participants = current_organization.diaper_drive_participants.alphabetized
     @manufacturers = current_organization.manufacturers.alphabetized
-    @items = current_organization.items.alphabetized
+    @items = current_organization.items.active.alphabetized
   end
 
   def donation_params

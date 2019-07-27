@@ -139,7 +139,7 @@ RSpec.describe Item, type: :model do
 
       it "only hides an item that has history" do
         item = create(:line_item, :purchase).item
-        expect { item.destroy }.to change { Item.unscoped.count }.by(0).and change { Item.count }.by(-1)
+        expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
         expect(item).not_to be_active
       end
     end
