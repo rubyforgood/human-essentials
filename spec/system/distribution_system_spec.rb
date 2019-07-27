@@ -91,7 +91,7 @@ RSpec.feature "Distributions", type: :system do
             click_on "Reclaim"
           end
           page.find ".alert"
-        end.to change { Distribution.count }.by(-1).and change { Item.count }.by(1)
+        end.to change { Distribution.count }.by(-1).and change { Item.active.count }.by(1)
         expect(page).to have_content "reclaimed"
       end
     end
