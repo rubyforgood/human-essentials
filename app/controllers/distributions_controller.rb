@@ -40,6 +40,7 @@ class DistributionsController < ApplicationController
                      .class_filter(filter_params)
     @total_value_all_distributions = total_value(@distributions)
     @items = current_organization.items.alphabetized
+    @partners = @distributions.collect(&:partner).uniq.sort
   end
 
   def create
@@ -154,6 +155,6 @@ class DistributionsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_item_id)
+    params.require(:filters).slice(:by_item_id, :by_partner)
   end
 end
