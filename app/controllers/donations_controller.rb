@@ -154,8 +154,8 @@ class DonationsController < ApplicationController
 
   def total_value(donations)
     total_value_all_donations = 0
-    donations.each do |distribution|
-      total_value_all_donations += distribution.value_per_itemizable
+    donations.each do |donation|
+      total_value_all_donations += donation.value_per_itemizable
     end
     total_value_all_donations
   end
