@@ -20,35 +20,25 @@ class ChildrenController < ApplicationController
   def create
     child = family.children.new(child_params)
 
-    respond_to do |format|
-      if child.save
-        format.html { redirect_to child, notice: "Child was successfully created." }
-        format.json { render :show, status: :created, location: child }
-      else
-        format.html { render :new }
-        format.json { render json: child.errors, status: :unprocessable_entity }
-      end
+    if child.save
+      redirect_to child, notice: "Child was successfully created."
+    else
+      render :new
     end
   end
 
   def update
-    respond_to do |format|
-      if child.update(child_params)
-        format.html { redirect_to child, notice: "Child was successfully updated." }
-        format.json { render :show, status: :ok, location: child }
-      else
-        format.html { render :edit }
-        format.json { render json: child.errors, status: :unprocessable_entity }
-      end
+    if child.update(child_params)
+      redirect_to child, notice: "Child was successfully updated."
+      render :show, status: :ok, location: child
+    else
+      render :edit
     end
   end
 
   def destroy
     child.destroy
-    respond_to do |format|
-      format.html { redirect_to children_url, notice: "Child was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to children_url, notice: "Child was successfully destroyed."
   end
 
   private
