@@ -33,6 +33,10 @@
                 <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, class: "form-control", include_blank: true) %>
               </div>
             <% end %>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+            <%= label_tag "by Date" %>
+            <%= select(:filters, :interval, filter_intervals || [], class: "form-control", include_blank: true) %>
+          </div>
           </div><!-- /.row -->
           <div class="row">
             <div class="col-xs-12">
