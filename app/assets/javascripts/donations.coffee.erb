@@ -65,3 +65,10 @@ $ ->
 
   $(document).on "cocoon:after-insert", "form#new_donation", (e, insertedItem) ->
     insertedItem.find('#_barcode-lookup-new_line_items').attr('id', '_barcode-lookup-' + ($('.nested-fields').size() - 1))
+
+  large_donation_boundary = 100000
+  $(document).on "submit", "form#new_donation", (e, _) ->
+    $(".quantity").each (_, q) ->
+      quantity = q.valueAsNumber
+      if quantity > large_donation_boundary
+        confirm("#{quantity} items is a large donation! Are you sure you want to submit?")
