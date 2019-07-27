@@ -9,21 +9,41 @@ RSpec.feature "Distributions", type: :system do
     setup_storage_location(@storage_location)
   end
 
-  it "User creates a new distribution" do
-    with_features email_active: true do
-      visit @url_prefix + "/distributions/new"
+  context "When creating a new distribution manually" do
+    it "Allows a distribution to be created" do
+      with_features email_active: true do
+        visit @url_prefix + "/distributions/new"
 
-      select @partner.name, from: "Partner"
-      select @storage_location.name, from: "From storage location"
+        select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
 
-      fill_in "Comment", with: "Take my wipes... please"
+        fill_in "Comment", with: "Take my wipes... please"
 
-      expect do
-        click_button "Save", match: :first
-      end.to change { PartnerMailerJob.jobs.size }.by(1)
+        expect do
+          click_button "Save", match: :first
+        end.to change { PartnerMailerJob.jobs.size }.by(1)
 
-      expect(page).to have_content "Distributions"
-      expect(page.find(".alert-info")).to have_content "reated"
+        expect(page).to have_content "Distributions"
+        expect(page.find(".alert-info")).to have_content "reated"
+      end
+    end
+
+    it "Displays a complete form after validation errors" do
+      with_features email_active: true do
+        visit @url_prefix + "/distributions/new"
+
+        # verify line items appear on initial load
+        expect(page).to have_selector "#distribution_line_items"
+
+        select @partner.name, from: "Partner"
+        expect do
+          click_button "Save"
+        end.not_to change { PartnerMailerJob.jobs.size }
+
+        # verify line items appear on reload
+        expect(page).to have_content "New Distribution"
+        expect(page).to have_selector "#distribution_line_items"
+      end
     end
   end
 
