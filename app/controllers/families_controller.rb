@@ -1,5 +1,5 @@
 class FamiliesController < ApplicationController
-  before_action :authenticate_partner!
+  before_action :authenticate_user!
 
   helper_method :family, :families
   attr_reader :families
