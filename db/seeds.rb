@@ -7,7 +7,12 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 # Creates Seed Data for the organization
 
-# qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
+def random_record(klass)
+  # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
+  klass.limit(1).order("random()").first
+end
+
+# Initial starting qty for our test organizations
 base_items = File.read(Rails.root.join("db", "base_items.json"))
 items_by_category = JSON.parse(base_items)
 
@@ -95,20 +100,42 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
   inventory.organization = pdx_org
 end
 
-def seed_quantity(item_name, organization_id, storage_location_id, quantity)
+DiaperDriveParticipant.create! business_name: "A Good Place to Collect Diapers",
+                               contact_name: "fred",
+                               email: "good@place.is",
+                               organization: pdx_org
+DiaperDriveParticipant.create! business_name: "A Mediocre Place to Collect Diapers",
+                               contact_name: "wilma",
+                               email: "ok@place.is",
+                               organization: pdx_org
+
+Manufacturer.find_or_create_by! name: "Manufacturer 1",
+                                organization: pdx_org
+Manufacturer.find_or_create_by! name: "Manufacturer 2",
+                                organization: pdx_org
+
+def seed_quantity(item_name, organization, storage_location, quantity)
   return if quantity == 0
 
-  item_id = Item.find_by(name: item_name, organization_id: organization_id).id
-  InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) do |h|
-    h.quantity = quantity
-  end
+  item = Item.find_by(name: item_name, organization: organization)
+
+  adjustment = organization.adjustments.create!(
+    comment: "Starting inventory",
+    storage_location: storage_location
+  )
+
+  LineItem.create!(quantity: quantity, item: item, itemizable: adjustment)
+
+  adjustment.reload
+  increasing_adjustment, decreasing_adjustment = adjustment.split_difference
+  adjustment.storage_location.increase_inventory increasing_adjustment
+  adjustment.storage_location.decrease_inventory decreasing_adjustment
 end
 
-# qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
 items_by_category.each do |_category, entries|
   entries.each do |entry|
-    seed_quantity(entry['name'], pdx_org, inv_arbor.id, entry['qty'][0])
-    seed_quantity(entry['name'], pdx_org, inv_pdxdb.id, entry['qty'][2])
+    seed_quantity(entry['name'], pdx_org, inv_arbor, entry['qty']['arbor'])
+    seed_quantity(entry['name'], pdx_org, inv_pdxdb, entry['qty']['pdxdb'])
   end
 end
 
@@ -178,25 +205,7 @@ BarcodeItem.find_or_create_by!(value: "311917152226") do |barcode|
   barcode.organization = pdx_org
 end
 
-DiaperDriveParticipant.create! business_name: "A Good Place to Collect Diapers",
-                               contact_name: "fred",
-                               email: "good@place.is",
-                               organization: pdx_org
-DiaperDriveParticipant.create! business_name: "A Mediocre Place to Collect Diapers",
-                               contact_name: "wilma",
-                               email: "ok@place.is",
-                               organization: pdx_org
-
-Manufacturer.find_or_create_by! name: "Manufacturer 1",
-                                organization: pdx_org
-Manufacturer.find_or_create_by! name: "Manufacturer 2",
-                                organization: pdx_org
-
-def random_record(klass)
-  # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
-  klass.limit(1).order("random()").first
-end
-
+# Make some donations of all sorts
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
@@ -212,19 +221,28 @@ end
              end
 
   rand(1..5).times.each do
-    LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: donation
+    LineItem.create! quantity: rand(250..500), item: random_record(Item), itemizable: donation
   end
+  donation.reload
+  donation.storage_location.increase_inventory(donation)
 end
 
+# Make some distributions, but don't use up all the inventory
 20.times.each do
-  distribution = Distribution.create!(storage_location: random_record(StorageLocation),
+  storage_location = random_record(StorageLocation)
+  stored_inventory_items_sample = storage_location.inventory_items.sample(20)
+
+  distribution = Distribution.create!(storage_location: storage_location,
                                       partner: random_record(Partner),
                                       organization: pdx_org,
                                       issued_at: (Date.today + rand(15).days))
 
-  rand(1..5).times.each do
-    LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: distribution
+  stored_inventory_items_sample.each do |stored_inventory_item|
+    distribution_qty = rand(stored_inventory_item.quantity / 2)
+    LineItem.create! quantity: distribution_qty, item: stored_inventory_item.item, itemizable: distribution if distribution_qty >= 1
   end
+  distribution.reload
+  distribution.storage_location.decrease_inventory(distribution)
 end
 
 20.times.each do |count|
