@@ -1,5 +1,5 @@
 class ChildrenController < ApplicationController
-  before_action :authenticate_partner!
+  before_action :authenticate_user!
 
   helper_method :child, :children, :family
 
