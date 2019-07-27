@@ -19,35 +19,24 @@ class FamiliesController < ApplicationController
   def create
     @family = current_partner.families.new(family_params)
 
-    respond_to do |format|
-      if @family.save
-        format.html { redirect_to @family, notice: "Family was successfully created." }
-        format.json { render :show, status: :created, location: @family }
-      else
-        format.html { render :new }
-        format.json { render json: @family.errors, status: :unprocessable_entity }
-      end
+    if @family.save
+      redirect_to @family, notice: "Family was successfully created."
+    else
+      render :new
     end
   end
 
   def update
-    respond_to do |format|
-      if family.update(family_params)
-        format.html { redirect_to family, notice: "Family was successfully updated." }
-        format.json { render :show, status: :ok, location: family }
-      else
-        format.html { render :edit }
-        format.json { render json: family.errors, status: :unprocessable_entity }
-      end
+    if family.update(family_params)
+      redirect_to family, notice: "Family was successfully updated."
+    else
+      render :edit
     end
   end
 
   def destroy
     family.destroy
-    respond_to do |format|
-      format.html { redirect_to families_url, notice: "Family was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to families_url, notice: "Family was successfully destroyed."
   end
 
   private
