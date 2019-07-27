@@ -51,7 +51,7 @@
           <div class="box-body">
               <%= simple_form_for :filters, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
                 <div class="form-group col-md-offset-10 col-md-2 col-sm-offset-6 col-sm-6 col-xs-12">
-                  <label for="interval">Date Range</label>
+                  <label for="interval">Filter By Date Range</label>
                   <%= f.select :interval, filter_intervals, { selected: selected_interval }, class: "form-control" %>
                 </div>
               <% end %>
@@ -73,6 +73,7 @@
             <div class="box-body text-center float-center">
               <%= new_button_to new_distribution_path, { text: "New Distribution" } %>
               <h3 class="text-center"><%= total_distributed %> items distributed <%= display_interval %></h3>
+              <h4 class="text-center">(<%= future_distributed %> items scheduled for future distribution)</h4>
               <div class="box-body">
                 <h4>Recent distributions</h4>
                 <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
@@ -209,7 +210,7 @@
                     </ul>
                 </div>
               </span>
-              <h3 class="text-center"><%= total_purchased %> items received <%= display_interval %></h3>
+              <h3 class="text-center"><%= total_purchased %> items purchased <%= display_interval %></h3>
               <div class="box-body">
                 <h4>Recent purchases</h4>
                 <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>
