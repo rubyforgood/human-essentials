@@ -24,7 +24,7 @@ RSpec.describe LineItem, type: :model do
     it "the quantity must be a valid integer and cannot be 0" do
       expect(build(:line_item, :purchase, quantity: "a")).not_to be_valid
       expect(build(:line_item, :purchase, quantity: "1.0")).not_to be_valid
-      expect(build(:line_item, :purchase, quantity: 0)).not_to be_valid
+      expect(build(:line_item, :purchase, quantity: 0)).to be_valid
       expect(build(:line_item, :purchase, quantity: 2**31)).not_to be_valid
       expect(build(:line_item, :purchase, quantity: -2**32)).not_to be_valid
       expect(build_stubbed(:line_item, :purchase, quantity: -1)).to be_valid
