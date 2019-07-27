@@ -47,6 +47,23 @@ RSpec.feature "Distributions", type: :system do
     end
   end
 
+  it "Does not include inactive items in the line item fields" do
+    visit @url_prefix + "/distributions/new"
+
+    item = Item.alphabetized.first
+
+    select @storage_location.name, from: "From storage location"
+    expect(page).to have_content(item.name)
+    select item.name, from: "distribution_line_items_attributes_0_item_id"
+
+    item.update(active: false)
+
+    page.refresh
+    select @storage_location.name, from: "From storage location"
+    expect(page).to have_no_content(item.name)
+  end
+
+
   it "User doesn't fill storage_location" do
     visit @url_prefix + "/distributions/new"
 

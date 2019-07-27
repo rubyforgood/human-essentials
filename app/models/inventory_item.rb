@@ -22,6 +22,7 @@ class InventoryItem < ApplicationRecord
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: MAX_INT }
 
   scope :by_partner_key, ->(partner_key) { joins(:item).merge(Item.by_partner_key(partner_key)) }
+  scope :active, -> { joins(:item).where(items: { active: true }) }
 
   delegate :name, to: :item, prefix: true
 end

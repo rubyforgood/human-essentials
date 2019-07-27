@@ -69,7 +69,11 @@ class StorageLocationsController < ApplicationController
   end
 
   def inventory
-    @storage_location = current_organization.storage_locations.includes(inventory_items: :item).find(params[:id])
+    @inventory_items = current_organization.storage_locations
+                                           .includes(inventory_items: :item)
+                                           .find(params[:id])
+                                           .inventory_items
+                                           .active
     respond_to :json
   end
 
