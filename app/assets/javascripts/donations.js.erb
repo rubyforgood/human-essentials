@@ -22,30 +22,38 @@ $(function() {
   const create_new_diaper_drive_text = "---Create new diaper drive---";
   const create_new_manufacturer_text = "---Create new Manufacturer---";
 
-  $(diaper_drive_participant_id).
-  append(`<option value="">${create_new_diaper_drive_text}</option>`);
+  $(diaper_drive_participant_id).append(
+    `<option value="">${create_new_diaper_drive_text}</option>`
+  );
 
-  $(manufacturer_id).
-  append(`<option value="">${create_new_manufacturer_text}</option>`);
+  $(manufacturer_id).append(
+    `<option value="">${create_new_manufacturer_text}</option>`
+  );
 
   $(document).on("change", diaper_drive_participant_id, function(evt) {
-    const selection = $(diaper_drive_participant_id + " option").
-    filter(':selected').text();
+    const selection = $(diaper_drive_participant_id + " option")
+      .filter(":selected")
+      .text();
+
     if (selection === create_new_diaper_drive_text) {
       $("#new_diaper_drive").click();
     }
   });
 
   $(document).on("change", manufacturer_id, function(evt) {
-    const selection = $(manufacturer_id + " option").
-    filter(':selected').text();
+    const selection = $(manufacturer_id + " option")
+      .filter(":selected")
+      .text();
+
     if (selection === create_new_manufacturer_text) {
       $("#new_manufacturer").click();
     }
   });
 
   $(document).on("change", control_id, function(evt) {
-    const selection = $(control_id + " option").filter(':selected').text();
+    const selection = $(control_id + " option")
+      .filter(":selected")
+      .text();
 
     if (selection === diaper_drive_participant_text) {
       $(diaper_drive_participant_container_id).show();
@@ -68,14 +76,23 @@ $(function() {
 
   $(control_id).change();
 
-  $(document).on("cocoon:after-insert", "form#new_donation", (e, insertedItem) => insertedItem.find('#_barcode-lookup-new_line_items').attr('id', `_barcode-lookup-${$('.nested-fields').size() - 1}`));
+  $(document).on(
+    "cocoon:after-insert",
+    "form#new_donation",
+    (e, insertedItem) =>
+      insertedItem
+        .find("#_barcode-lookup-new_line_items")
+        .attr("id", `_barcode-lookup-${$(".nested-fields").size() - 1}`)
+  );
 
   const large_donation_boundary = 100000;
   $(document).on("submit", "form#new_donation", (e, _) =>
     $(".quantity").each(function(_, q) {
       const quantity = q.valueAsNumber;
       if (quantity > large_donation_boundary) {
-        confirm(`${quantity} items is a large donation! Are you sure you want to submit?`);
+        confirm(
+          `${quantity} items is a large donation! Are you sure you want to submit?`
+        );
       }
     })
   );
