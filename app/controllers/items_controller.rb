@@ -13,19 +13,19 @@ class ItemsController < ApplicationController
     if @item.save
       redirect_to items_path, notice: "#{@item.name} added!"
     else
-      @base_items = BaseItem.all
+      @base_items = BaseItem.alphabetized
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
 
   def new
-    @base_items = BaseItem.all
+    @base_items = BaseItem.alphabetized
     @item = current_organization.items.new
   end
 
   def edit
-    @base_items = BaseItem.all
+    @base_items = BaseItem.alphabetized
     @item = current_organization.items.find(params[:id])
   end
 
@@ -40,7 +40,7 @@ class ItemsController < ApplicationController
     if @item.update(item_params)
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      @base_items = BaseItem.all
+      @base_items = BaseItem.alphabetized
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
