@@ -230,17 +230,34 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "when filtering on the index page" do
-    let!(:item1) { create(:item, name: "Good item") }
-    let!(:item2) { create(:item, name: "Crap item") }
-    let!(:dist1) { create(:distribution, :with_items, item: item1) }
-    let!(:dist2) { create(:distribution, :with_items, item: item2) }
+    let(:item1)    { create(:item, name: "Good item") }
+    let(:item2)    { create(:item, name: "Crap item") }
+    let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
+    let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com") }
 
     it "filters by item id" do
+      create(:distribution, :with_items, item: item1)
+      create(:distribution, :with_items, item: item2)
+
       visit @url_prefix + "/distributions"
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 3)
       # filter
       select(item1.name, from: "filters_by_item_id")
+      click_button("Filter")
+      # check for filtered distributions
+      expect(page).to have_css("table tbody tr", count: 2)
+    end
+
+    it "filters by partner" do
+      create(:distribution, partner: partner1)
+      create(:distribution, partner: partner2)
+
+      visit @url_prefix + "/distributions"
+      # check for all distributions
+      expect(page).to have_css("table tbody tr", count: 3)
+      # filter
+      select(partner1.name, from: "filters_by_partner")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 2)
