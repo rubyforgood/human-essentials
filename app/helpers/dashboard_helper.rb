@@ -32,6 +32,10 @@ module DashboardHelper
     number_with_delimiter total_distributed_unformatted(range)
   end
 
+  def future_distributed
+    number_with_delimiter future_distributed_unformatted
+  end
+
   private
 
   def total_received_donations_unformatted(range = selected_range)
@@ -48,5 +52,9 @@ module DashboardHelper
 
   def total_distributed_unformatted(range = selected_range)
     LineItem.active.where(itemizable: current_organization.distributions.during(range)).sum(:quantity)
+  end
+
+  def future_distributed_unformatted
+    LineItem.active.where(itemizable: current_organization.distributions.future).sum(:quantity)
   end
 end
