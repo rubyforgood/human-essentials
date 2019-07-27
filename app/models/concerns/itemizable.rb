@@ -23,6 +23,7 @@ module Itemizable
         parent_id = first.itemizable_id
         each do |line_item|
           next unless line_item.valid?
+          next unless line_item.quantity != 0
 
           combined[line_item.item_id] ||= 0
           combined[line_item.item_id] += line_item.quantity

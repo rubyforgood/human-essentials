@@ -19,7 +19,7 @@ class LineItem < ApplicationRecord
   belongs_to :item
 
   validates :item_id, presence: true
-  validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT }, exclusion: { in: [0] }
+  validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT }
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
   def value_per_line_item
