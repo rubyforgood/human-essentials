@@ -37,7 +37,9 @@ class DistributionsController < ApplicationController
                      .distributions
                      .includes(:partner, :storage_location, :line_items, :items)
                      .order(created_at: :desc)
+                     .class_filter(filter_params)
     @total_value_all_distributions = total_value(@distributions)
+    @items = current_organization.items.alphabetized
   end
 
   def create
@@ -147,5 +149,11 @@ class DistributionsController < ApplicationController
       total_value_all_distributions += distribution.value_per_itemizable
     end
     total_value_all_distributions
+  end
+
+  def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).slice(:by_item_id)
   end
 end
