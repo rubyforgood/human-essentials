@@ -262,5 +262,19 @@ RSpec.feature "Distributions", type: :system do
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 2)
     end
+
+    fit "Filters by date" do
+      create(:distribution, issued_at: Date.new(2018, 3, 1))
+      create(:distribution, issued_at: Date.new(2018, 3, 1))
+      create(:distribution, issued_at: Date.new(2018, 2, 1))
+      visit @url_prefix + "/donations"
+      select "March", from: "date_filters_issued_at_2i"
+      select "2018", from: "date_filters_issued_at_1i"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+      select "February", from: "date_filters_issued_at_2i"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
+    end
   end
 end

@@ -155,6 +155,18 @@ class DistributionsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_item_id, :by_partner)
+    fp = params.require(:filters).slice(:by_item_id, :by_partner)
+    fp.merge(by_issued_at: date_filter)
+  end
+
+  def date_filter
+    return nil unless params.key?(:date_filters)
+
+    date_params = params.require(:date_filters)
+    if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
+      return nil
+    end
+
+    Date.new(date_params["issued_at(1i)"].to_i, date_params["issued_at(2i)"].to_i, date_params["issued_at(3i)"].to_i)
   end
 end
