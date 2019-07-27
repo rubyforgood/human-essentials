@@ -42,15 +42,17 @@ RSpec.describe "Adjustment management", type: :system, js: true do
 
       item = Item.alphabetized.first
 
-      select @storage_location.name, from: "From storage location"
+      select storage_location.name, from: "From storage location"
       expect(page).to have_content(item.name)
       select item.name, from: "adjustment_line_items_attributes_0_item_id"
 
       item.update(active: false)
 
       page.refresh
-      select @storage_location.name, from: "From storage location"
-      expect(page).to have_no_content(item.name)
+      within "#new_adjustment" do
+        select storage_location.name, from: "From storage location"
+        expect(page).to have_no_content(item.name)
+      end
     end
   end
 
