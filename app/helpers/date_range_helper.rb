@@ -13,7 +13,6 @@ module DateRangeHelper
       ["Last Month", "last_month"],
       ["This Year to date", "this_year"],
       ["Last Year", "last_year"],
-      ["All Time", "all_time"],
     ]
   end
 
@@ -35,11 +34,11 @@ module DateRangeHelper
     when "last_month"
       (now - 1.month).beginning_of_month..(now - 1.month).end_of_month
     when "this_year"
-      now.beginning_of_year..now
+      now.beginning_of_year..now.end_of_year
     when "last_year"
       (now - 1.year).beginning_of_year..(now - 1.year).end_of_year
     else
-      Time.zone.local(2017, 1, 1, 0, 0, 0)..now
+      Time.zone.local(2017, 1, 1, 0, 0, 0)..Time.zone.local(2030, 1, 1, 0, 0, 0)
     end
   end
 end

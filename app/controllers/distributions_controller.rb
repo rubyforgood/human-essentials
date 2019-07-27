@@ -4,6 +4,7 @@
 # Distributions to them, though it would lack some of the additional featuers and failsafes that a Diaperbank
 # might want if they were doing direct services.
 class DistributionsController < ApplicationController
+  include DateRangeHelper
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
@@ -35,7 +36,9 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
+                     .where(issued_at: selected_range)
                      .includes(:partner, :storage_location, :line_items, :items)
+                     .where(issued_at: selected_range)
                      .order(created_at: :desc)
                      .class_filter(filter_params)
     @total_value_all_distributions = total_value(@distributions)

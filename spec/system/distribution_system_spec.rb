@@ -298,5 +298,17 @@ RSpec.feature "Distributions", type: :system do
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 2)
     end
+
+    it "Filters by date" do
+      create(:distribution, issued_at: Time.zone.today)
+      create(:distribution, issued_at: Time.zone.today)
+      create(:distribution, issued_at: Time.zone.today + 2.weeks)
+      visit @url_prefix + "/distributions"
+
+      expect(page).to have_css("table tbody tr", count: 4)
+      select("This Week", from: "filters_interval")
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+    end
   end
 end
