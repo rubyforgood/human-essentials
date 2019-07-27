@@ -39,6 +39,7 @@ class DistributionsController < ApplicationController
                      .order(created_at: :desc)
                      .class_filter(filter_params)
     @total_value_all_distributions = total_value(@distributions)
+    @total_items_all_distributions = total_items(@distributions)
     @items = current_organization.items.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort
   end
@@ -144,12 +145,12 @@ class DistributionsController < ApplicationController
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))
   end
 
+  def total_items(distributions)
+    distributions.includes(:line_items).sum('line_items.quantity')
+  end
+
   def total_value(distributions)
-    total_value_all_distributions = 0
-    distributions.each do |distribution|
-      total_value_all_distributions += distribution.value_per_itemizable
-    end
-    total_value_all_distributions
+    distributions.sum(&:value_per_itemizable)
   end
 
   def filter_params
