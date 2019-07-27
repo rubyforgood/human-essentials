@@ -1,9 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 // You can use CoffeeScript in this file: http://coffeescript.org/
@@ -27,9 +21,9 @@ const populate_dropdowns = (objects, inventory) =>
     let options = "";
     $.each(inventory, function(index) {
       const item_id = Number(inventory[index].item_id);
-      return options += new_option(inventory[index], selected === item_id);
+      options += new_option(inventory[index], selected === item_id);
     });
-    return $(element).find("option").remove().end().append(options);
+    $(element).find("option").remove().end().append(options);
   })
 ;
 
@@ -55,14 +49,14 @@ $(function() {
     if (storage_location_required && !control.val()) { $('#__add_line_item').addClass('disabled'); }
     if (storage_location_required && control.val()) { $('#__add_line_item').removeClass('disabled'); }
 
-    return request_storage_location_and_populate_item(default_item);
+    request_storage_location_and_populate_item(default_item);
   });
 
   $(document).on("cocoon:after-insert", "form.storage-location-required", function(e, insertedItem) {
     request_storage_location_and_populate_item($("select", insertedItem));
     insertedItem.find('#_barcode-lookup-new_line_items').attr('id', `_barcode-lookup-${$('.nested-fields').size() - 1}`);
     control = $("select.storage-location-source");
-    return $.ajax({
+    $.ajax({
       url: control.data("storage-location-inventory-path").replace(":id", control.val()),
       dataType: "json",
       success(data) {
@@ -71,9 +65,9 @@ $(function() {
     });
   });
 
-  return $(function() {
+  $(function() {
     if (storage_location_required && !control.val()) { $('#__add_line_item').addClass('disabled'); }
 
-    return request_storage_location_and_populate_item(default_item);
+    request_storage_location_and_populate_item(default_item);
   });
 });
