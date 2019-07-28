@@ -37,7 +37,6 @@ RSpec.describe "Transfer management", type: :system do
     end
   end
 
-
   it "can transfer an inventory from a storage location to another as a user" do
     from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
     to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)

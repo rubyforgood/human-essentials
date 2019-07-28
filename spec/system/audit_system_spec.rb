@@ -39,7 +39,7 @@ RSpec.describe "Audit management", type: :system, js: true do
       visit url_prefix + "/audits/new"
 
       item = Item.alphabetized.first
-      
+
       select storage_location.name, from: "From storage location"
       expect(page).to have_content(item.name)
       select item.name, from: "audit_line_items_attributes_0_item_id"

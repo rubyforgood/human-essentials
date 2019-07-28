@@ -63,7 +63,6 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_no_content(item.name)
   end
 
-
   it "User doesn't fill storage_location" do
     visit @url_prefix + "/distributions/new"
 
