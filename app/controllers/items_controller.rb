@@ -2,10 +2,19 @@
 # they like with their own Items.
 class ItemsController < ApplicationController
   def index
-    @items = current_organization.items.active.includes(:base_item).alphabetized.class_filter(filter_params)
+    # binding.pry
+    @items = current_organization.items.includes(:base_item).alphabetized.class_filter(filter_params)
+
     @storages = current_organization.storage_locations.order(id: :asc)
+    @include_inactive_items = filter_params[:include_inactive_items]
+    @selected_base_item = filter_params[:by_base_item]
     @items_with_counts = ItemsByStorageCollectionQuery.new(organization: current_organization, filter_params: filter_params).call
     @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.new(organization: current_organization, filter_params: filter_params).call
+    unless filter_params[:include_inactive_items]
+      @items = @items.active
+      @items_with_counts = @items_with_counts.active
+      # @items_by_storage_collection_and_quantity = @items_by_storage_collection_and_quantity.active
+    end
   end
 
   def create
@@ -69,10 +78,9 @@ class ItemsController < ApplicationController
     params.require(:item).permit(:name, :partner_key, :value_in_cents, :package_size, :distribution_quantity)
   end
 
-  def filter_params(parameters = nil)
-    parameters = (%i(by_base_item) + [parameters]).flatten.uniq
+  def filter_params(_parameters = nil)
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(*parameters)
+    params.require(:filters).slice(:by_base_item, :include_inactive_items)
   end
 end
