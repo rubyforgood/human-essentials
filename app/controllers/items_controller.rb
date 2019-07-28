@@ -2,18 +2,15 @@
 # they like with their own Items.
 class ItemsController < ApplicationController
   def index
-    # binding.pry
     @items = current_organization.items.includes(:base_item).alphabetized.class_filter(filter_params)
-
     @storages = current_organization.storage_locations.order(id: :asc)
-    @include_inactive_items = filter_params[:include_inactive_items]
+    @include_inactive_items = params[:include_inactive_items]
     @selected_base_item = filter_params[:by_base_item]
     @items_with_counts = ItemsByStorageCollectionQuery.new(organization: current_organization, filter_params: filter_params).call
     @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.new(organization: current_organization, filter_params: filter_params).call
-    unless filter_params[:include_inactive_items]
+    unless params[:include_inactive_items]
       @items = @items.active
       @items_with_counts = @items_with_counts.active
-      # @items_by_storage_collection_and_quantity = @items_by_storage_collection_and_quantity.active
     end
   end
 
