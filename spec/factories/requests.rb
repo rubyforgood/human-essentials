@@ -14,7 +14,7 @@
 #
 
 def random_request_items
-  keys = Item.all.pluck(:id).sample(3)
+  keys = Item.active.pluck(:id).sample(3)
   keys.map { |k| { "item_id" => k, "quantity" => rand(3..10) } }
 end
 

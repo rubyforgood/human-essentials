@@ -164,6 +164,20 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(Donation.last.line_items.first.quantity).to eq(15)
       end
 
+      it "Does not include inactive items in the line item fields" do
+        item = Item.alphabetized.first
+
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        expect(page).to have_content(item.name)
+        select item.name, from: "donation_line_items_attributes_0_item_id"
+
+        item.update(active: false)
+
+        page.refresh
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        expect(page).to have_no_content(item.name)
+      end
+
       it "Allows User to create a donation for a Diaper Drive source" do
         select Donation::SOURCES[:diaper_drive], from: "donation_source"
         expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")

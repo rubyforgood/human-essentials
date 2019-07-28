@@ -127,7 +127,7 @@ RSpec.describe Purchase, type: :model do
             subject.replace_increase!(attributes)
             storage_location.reload
           end.to change { storage_location.size }.by(5)
-                                                 .and change { Item.count }.by(1)
+                                                 .and change { Item.active.count }.by(1)
         end
       end
     end
