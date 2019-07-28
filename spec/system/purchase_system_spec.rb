@@ -94,6 +94,22 @@ RSpec.describe "Purchases", type: :system, js: true do
         expect(Purchase.last.issued_at).to eq(Date.parse("01/01/2001"))
       end
 
+      it "Does not include inactive items in the line item fields" do
+        visit url_prefix + "/purchases/new"
+
+        item = Item.alphabetized.first
+
+        select StorageLocation.first.name, from: "purchase_storage_location_id"
+        expect(page).to have_content(item.name)
+        select item.name, from: "purchase_line_items_attributes_0_item_id"
+
+        item.update(active: false)
+
+        page.refresh
+        select StorageLocation.first.name, from: "purchase_storage_location_id"
+        expect(page).to have_no_content(item.name)
+      end
+
       it "multiple line items for the same item type are accepted and combined on the backend" do
         select StorageLocation.first.name, from: "purchase_storage_location_id"
         select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"

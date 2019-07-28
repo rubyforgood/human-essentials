@@ -65,7 +65,7 @@ RSpec.describe "Item management", type: :system do
             end
           end
           page.find(".alert-info")
-        end.to change { Item.unscoped.count }.by(0).and change { Item.count }.by(-1)
+        end.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
         subject.reload
         expect(subject).not_to be_active
       end
@@ -83,7 +83,7 @@ RSpec.describe "Item management", type: :system do
             end
           end
           page.find(".alert-info")
-        end.to change { Item.unscoped.count }.by(-1).and change { Item.count }.by(-1)
+        end.to change { Item.count }.by(-1).and change { Item.active.count }.by(-1)
         expect { subject.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

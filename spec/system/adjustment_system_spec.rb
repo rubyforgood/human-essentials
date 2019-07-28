@@ -36,6 +36,24 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       end.to change { storage_location.size }.by(sub_quantity)
       expect(page).to have_content(/Adjustment was successful/i)
     end
+
+    it "Does not include inactive items in the line item fields" do
+      visit url_prefix + "/adjustments/new"
+
+      item = Item.alphabetized.first
+
+      select storage_location.name, from: "From storage location"
+      expect(page).to have_content(item.name)
+      select item.name, from: "adjustment_line_items_attributes_0_item_id"
+
+      item.update(active: false)
+
+      page.refresh
+      within "#new_adjustment" do
+        select storage_location.name, from: "From storage location"
+        expect(page).to have_no_content(item.name)
+      end
+    end
   end
 
   it "can filter the #index by storage location" do
