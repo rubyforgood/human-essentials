@@ -13,7 +13,6 @@ module DateRangeHelper
       ["Last Month", "last_month"],
       ["This Year", "this_year"],
       ["Last Year", "last_year"],
-      ["All Time", "all_time"],
     ]
   end
 
@@ -21,7 +20,7 @@ module DateRangeHelper
     params.dig(:filters, :interval) || "this_year"
   end
 
-  def selected_range
+  def selected_range(selected_interval)
     now = Time.zone.now
     case selected_interval
     when "today"

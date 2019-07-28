@@ -37,6 +37,7 @@ class DistributionsController < ApplicationController
     @distributions = current_organization
                      .distributions
                      .includes(:partner, :storage_location, :line_items, :items)
+                     .where(issued_at: selected_range)
                      .order(created_at: :desc)
                      .class_filter(filter_params)
     @total_value_all_distributions = total_value(@distributions)
@@ -157,10 +158,5 @@ class DistributionsController < ApplicationController
     return {} unless params.key?(:filters)
 
     fp = params.require(:filters).slice(:by_item_id, :by_partner)
-    fp.merge(by_issued_at: date_filter)
-  end
-
-  def date_filter
-    Distribution.where(issued_at: selected_interval)
   end
 end
