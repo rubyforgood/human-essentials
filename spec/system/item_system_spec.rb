@@ -56,7 +56,7 @@ RSpec.describe "Item management", type: :system do
     visit url_prefix + "/items"
     expect(page).to have_text("Active Item")
     expect(page).to have_no_text("Inactive Item")
-    page.check('filters_include_inactive_items')
+    page.check('include_inactive_items')
     click_button "Filter"
     expect(page).to have_text("Inactive Item")
     expect(page).to have_text("Active Item")
