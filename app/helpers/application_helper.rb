@@ -6,7 +6,7 @@ module ApplicationHelper
     if current_user.super_admin?
       admin_dashboard_path
     else
-      dashboard_path
+      dashboard_path(current_user.organization)
     end
   end
 

@@ -132,7 +132,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "doesn't count inactive items" do
+          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
           item = create(:donation, :with_items, item_quantity: 100, storage_location: storage_location).items.first
+
           visit subject
           within "#donations" do
             expect(page).to have_content("100")
@@ -140,8 +142,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           item.update!(active: false)
           visit subject
-
-          skip "TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation"
           within "#donations" do
             expect(page).to have_no_content("100")
           end
@@ -339,7 +339,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it 'does not count inactive items' do
+          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
           item = create(:purchase, :with_items, item_quantity: 100, storage_location: storage_location).items.first
+
           visit subject
           within "#purchases" do
             expect(page).to have_content("100")
@@ -347,8 +349,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           item.update!(active: false)
           visit subject
-
-          skip "TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent purchase"
           within "#purchases" do
             expect(page).to have_no_content("100")
           end
@@ -767,7 +767,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "doesn't count inactive items" do
+          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
           item = create(:manufacturer_donation, :with_items, item_quantity: 100, storage_location: storage_location).items.first
+
           visit subject
           within "#manufacturers" do
             expect(page).to have_content("100")
@@ -775,8 +777,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           item.update!(active: false)
           visit subject
-
-          skip "TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation"
           within "#donations" do
             expect(page).to have_no_content("100")
           end
@@ -1016,8 +1016,10 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "doesn't count inactive items" do
+          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
           item = create(:inventory_item, quantity: 100, storage_location: storage_location).item
           create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: storage_location)
+
           visit subject
           within "#distributions" do
             expect(page).to have_content("100")
@@ -1025,8 +1027,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           item.update!(active: false)
           visit subject
-
-          skip "TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent distribution"
           within "#distributions" do
             expect(page).to have_no_content("100")
           end
