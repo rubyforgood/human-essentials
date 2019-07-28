@@ -34,6 +34,7 @@ class Item < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
+  scope :include_inactive_items, ->(_) { where(active: [true, false]) }
 
   scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
   scope :for_csv_export, ->(organization) {
