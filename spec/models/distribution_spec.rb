@@ -52,7 +52,7 @@ RSpec.describe Distribution, type: :model do
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
         create(:distribution, issued_at: 1.year.ago)
-        expect(Distribution.during(1.month.ago..Date.tomorrow).size).to eq(2)
+        expect(Distribution.during(Time.zone.now-1.week..Time.zone.now).size).to eq(2)
       end
     end
 

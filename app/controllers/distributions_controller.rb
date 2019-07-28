@@ -38,6 +38,7 @@ class DistributionsController < ApplicationController
                      .distributions
                      .where(issued_at: selected_range)
                      .includes(:partner, :storage_location, :line_items, :items)
+                     .where(issued_at: selected_range)
                      .order(created_at: :desc)
                      .class_filter(filter_params)
     @total_value_all_distributions = total_value(@distributions)
