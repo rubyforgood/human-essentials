@@ -56,6 +56,16 @@ class ItemsController < ApplicationController
     redirect_to items_path
   end
 
+  def restore
+    item = current_organization.items.find(params[:id])
+    ActiveRecord::Base.transaction do
+      Item.reactivate([item.id])
+    end
+
+    flash[:notice] = "#{item.name} has been restored."
+    redirect_to items_path
+  end
+
   private
 
   def clean_purchase_amount
