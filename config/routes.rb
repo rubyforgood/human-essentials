@@ -100,7 +100,9 @@ Rails.application.routes.draw do
         post :import_csv
       end
     end
-    resources :items
+    resources :items do
+      get :restore, on: :member
+    end
     resources :partners do
       collection do
         post :import_csv
