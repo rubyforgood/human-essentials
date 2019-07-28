@@ -2,16 +2,16 @@
 #
 # Table name: purchases
 #
-#  id                  :bigint(8)        not null, primary key
-#  purchased_from      :string
-#  comment             :text
-#  organization_id     :integer
-#  storage_location_id :integer
-#  amount_spent_in_cents        :integer
-#  issued_at           :datetime
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  vendor_id           :integer
+#  id                    :bigint(8)        not null, primary key
+#  purchased_from        :string
+#  comment               :text
+#  organization_id       :integer
+#  storage_location_id   :integer
+#  amount_spent_in_cents :integer
+#  issued_at             :datetime
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  vendor_id             :integer
 #
 
 FactoryBot.define do
