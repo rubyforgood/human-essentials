@@ -13,6 +13,7 @@ module DateRangeHelper
       ["Last Month", "last_month"],
       ["This Year to date", "this_year"],
       ["Last Year", "last_year"],
+      ["All Time", "all_time"],
     ]
   end
 
