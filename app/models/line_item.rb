@@ -2,7 +2,7 @@
 #
 # Table name: line_items
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  quantity        :integer
 #  item_id         :integer
 #  itemizable_id   :integer

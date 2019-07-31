@@ -5,12 +5,12 @@
 #  id              :bigint(8)        not null, primary key
 #  partner_id      :bigint(8)
 #  organization_id :bigint(8)
-#  status          :string           default(NULL)
 #  request_items   :jsonb
 #  comments        :text
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  distribution_id :integer
+#  status          :integer          default("pending")
 #
 
 class Request < ApplicationRecord
