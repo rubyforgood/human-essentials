@@ -2,7 +2,7 @@
 #
 # Table name: transfers
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  from_id         :integer
 #  to_id           :integer
 #  comment         :string

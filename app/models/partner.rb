@@ -2,13 +2,14 @@
 #
 # Table name: partners
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  email           :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  organization_id :integer
-#  status          :string
+#  send_reminders  :boolean          default(FALSE), not null
+#  status          :integer          default("uninvited")
 #
 
 class Partner < ApplicationRecord
