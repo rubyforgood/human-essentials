@@ -42,7 +42,7 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
-  default_scope { active }
+  # default_scope { active }
 
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
@@ -58,7 +58,7 @@ class Item < ApplicationRecord
 
   def self.reactivate(item_ids)
     item_ids = Array.wrap(item_ids)
-    Item.unscoped.where(id: item_ids).find_each { |item| item.update(active: true) }
+    Item.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
   # Override `destroy` to ensure Item isn't accidentally destroyed

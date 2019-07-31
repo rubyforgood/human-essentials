@@ -47,6 +47,22 @@ RSpec.feature "Distributions", type: :system do
     end
   end
 
+  it "Does not include inactive items in the line item fields" do
+    visit @url_prefix + "/distributions/new"
+
+    item = Item.alphabetized.first
+
+    select @storage_location.name, from: "From storage location"
+    expect(page).to have_content(item.name)
+    select item.name, from: "distribution_line_items_attributes_0_item_id"
+
+    item.update(active: false)
+
+    page.refresh
+    select @storage_location.name, from: "From storage location"
+    expect(page).to have_no_content(item.name)
+  end
+
   it "User doesn't fill storage_location" do
     visit @url_prefix + "/distributions/new"
 
@@ -91,7 +107,7 @@ RSpec.feature "Distributions", type: :system do
             click_on "Reclaim"
           end
           page.find ".alert"
-        end.to change { Distribution.count }.by(-1).and change { Item.count }.by(1)
+        end.to change { Distribution.count }.by(-1).and change { Item.active.count }.by(1)
         expect(page).to have_content "reclaimed"
       end
     end
@@ -281,6 +297,18 @@ RSpec.feature "Distributions", type: :system do
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 2)
+    end
+
+    it "Filters by date" do
+      create(:distribution, issued_at: Time.zone.today)
+      create(:distribution, issued_at: Time.zone.today)
+      create(:distribution, issued_at: Time.zone.today + 2.weeks)
+      visit @url_prefix + "/distributions"
+
+      expect(page).to have_css("table tbody tr", count: 4)
+      select("This Week", from: "filters_interval")
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
     end
   end
 end

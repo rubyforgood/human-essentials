@@ -94,15 +94,31 @@ RSpec.describe "Purchases", type: :system, js: true do
         expect(Purchase.last.issued_at).to eq(Date.parse("01/01/2001"))
       end
 
+      it "Does not include inactive items in the line item fields" do
+        visit url_prefix + "/purchases/new"
+
+        item = Item.alphabetized.first
+
+        select StorageLocation.first.name, from: "purchase_storage_location_id"
+        expect(page).to have_content(item.name)
+        select item.name, from: "purchase_line_items_attributes_0_item_id"
+
+        item.update(active: false)
+
+        page.refresh
+        select StorageLocation.first.name, from: "purchase_storage_location_id"
+        expect(page).to have_no_content(item.name)
+      end
+
       it "multiple line items for the same item type are accepted and combined on the backend" do
         select StorageLocation.first.name, from: "purchase_storage_location_id"
         select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
         select Vendor.first.business_name, from: "purchase_vendor_id"
         fill_in "purchase_line_items_attributes_0_quantity", with: "5"
         page.find(:css, "#__add_line_item").click
-        select_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/select')[:id]
+        select_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/div/select')[:id]
         select Item.alphabetized.first.name, from: select_id
-        text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/input[@type="number"]')[:id]
+        text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/div/input[@type="number"]')[:id]
         fill_in text_id, with: "10"
         fill_in "purchase_amount_spent_in_cents", with: "10"
 
@@ -162,7 +178,6 @@ RSpec.describe "Purchases", type: :system, js: true do
       end
 
       it "User scan same barcode 2 times" do
-        pending "The JS doesn't appear to be executing in this correctly"
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
           Barcode.boop(@existing_barcode.value)
@@ -170,11 +185,9 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
-        page.find(:css, "#__add_line_item").click
-
         within "#purchase_line_items" do
-          expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-          Barcode.boop(@existing_barcode.value)
+          expect(page).to have_css('.__barcode_item_lookup', count: 2)
+          Barcode.boop(@existing_barcode.value, "new_line_items")
         end
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s
