@@ -18,7 +18,6 @@ RSpec.describe ApplicationHelper, type: :helper do
       let(:user) { create :organization_admin }
 
       it "links to the general dashboard" do
-        pending("TODO - dashboard_path_from_user needs to receive user org to generate path")
         org_name = user.organization.short_name
         expect(helper.dashboard_path_from_user).to eq "/#{org_name}/dashboard"
       end

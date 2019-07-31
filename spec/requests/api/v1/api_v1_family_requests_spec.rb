@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "API::V1::FamilyRequests", type: :request do
   describe "POST /api/v1/family_requests" do
-    let(:items) { Item.all.sample(3) }
+    let(:items) { Item.active.sample(3) }
     let(:request_items) do
       items.collect do |item|
         {
@@ -110,7 +110,8 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
           expect(response).to be_successful
         end
 
-        xit "returns a body with valid items" do
+        it "returns a body with valid items" do
+          pending("TODO - Resolve inconsistencies")
           expect(JSON.parse(response.body)).to match_array(@organization.valid_items)
         end
       end

@@ -35,6 +35,22 @@ RSpec.describe "Audit management", type: :system, js: true do
       sign_in(@organization_admin)
     end
 
+    it "*Does* include inactive items in the line item fields" do
+      visit url_prefix + "/audits/new"
+
+      item = Item.alphabetized.first
+
+      select storage_location.name, from: "From storage location"
+      expect(page).to have_content(item.name)
+      select item.name, from: "audit_line_items_attributes_0_item_id"
+
+      item.update(active: false)
+
+      page.refresh
+      select storage_location.name, from: "From storage location"
+      expect(page).to have_content(item.name)
+    end
+
     context "when viewing the audits index" do
       subject { url_prefix + "/audits" }
 

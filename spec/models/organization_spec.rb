@@ -106,7 +106,7 @@ RSpec.describe Organization, type: :model do
       expect(org.logo_path).to include("/img/diaperbase-logo-full.png")
     end
 
-    xit "returns the logo path attached for the organization" do
+    it "returns the logo path attached for the organization" do
       org = build(:organization,
                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"),
                                                      "image/jpeg"))
@@ -116,8 +116,8 @@ RSpec.describe Organization, type: :model do
   end
 
   describe "geocode" do
-    # TODO: This spec is failing but the fix is out of scope for the PR
-    xit "adds coordinates to the database" do
+    it "adds coordinates to the database" do
+      pending("TODO: This spec is failing but the fix is out of scope for the PR")
       organization = build(:organization,
                            "street" => "1500 Remount Road",
                            "city" => "Front Royal",

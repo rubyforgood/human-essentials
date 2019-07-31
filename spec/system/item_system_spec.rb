@@ -49,6 +49,19 @@ RSpec.describe "Item management", type: :system do
     end
   end
 
+  it "can include inactive items in the results" do
+    Item.delete_all
+    create(:item, :inactive, name: "Inactive Item")
+    create(:item, :active, name: "Active Item")
+    visit url_prefix + "/items"
+    expect(page).to have_text("Active Item")
+    expect(page).to have_no_text("Inactive Item")
+    page.check('include_inactive_items')
+    click_button "Filter"
+    expect(page).to have_text("Inactive Item")
+    expect(page).to have_text("Active Item")
+  end
+
   describe "destroying items" do
     subject { create(:item, name: "DELETEME", organization: @user.organization) }
     context "when an item has history" do
@@ -65,7 +78,7 @@ RSpec.describe "Item management", type: :system do
             end
           end
           page.find(".alert-info")
-        end.to change { Item.unscoped.count }.by(0).and change { Item.count }.by(-1)
+        end.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
         subject.reload
         expect(subject).not_to be_active
       end
@@ -83,7 +96,7 @@ RSpec.describe "Item management", type: :system do
             end
           end
           page.find(".alert-info")
-        end.to change { Item.unscoped.count }.by(-1).and change { Item.count }.by(-1)
+        end.to change { Item.count }.by(-1).and change { Item.active.count }.by(-1)
         expect { subject.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

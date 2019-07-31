@@ -78,7 +78,7 @@ class PurchasesController < ApplicationController
 
   def load_form_collections
     @storage_locations = current_organization.storage_locations.alphabetized
-    @items = current_organization.items.alphabetized
+    @items = current_organization.items.active.alphabetized
     @vendors = current_organization.vendors.alphabetized
   end
 
