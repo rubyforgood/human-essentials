@@ -34,6 +34,12 @@ module UiHelper
     _link_to link, { icon: "trash", type: "danger", text: "Delete", size: "xs" }.merge(options), properties
   end
 
+  def restore_button_to(link, options = {})
+    data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
+    properties = { rel: "nofollow" }.merge(data)
+    _link_to link, { icon: "repeat", type: "warning", text: "Restore", size: "xs" }.merge(options), properties
+  end
+
   def dropdown_button(id, options = {})
     options[:type] = (options[:type] || "primary").prepend("btn-dropdown btn-")
     options[:id] = id
