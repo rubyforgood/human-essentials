@@ -89,6 +89,28 @@ RSpec.feature "Distributions", type: :system do
       end.to change { distribution.agency_rep }.to("SOMETHING DIFFERENT")
     end
 
+    it "allows the user can change the issued_at date" do
+      click_on "Edit", match: :first
+      expect do
+        select('2018', from: 'distribution_issued_at_1i')
+        select('May', from: 'distribution_issued_at_2i')
+        select('7', from: 'distribution_issued_at_3i')
+        select('02 PM', from: 'distribution_issued_at_4i')
+        select('15', from: 'distribution_issued_at_5i')
+        click_on "Save", match: :first
+        distribution.reload
+      end.to change { distribution.issued_at }.to(Time.zone.parse("2018-05-07 14:15:00"))
+    end
+
+    it "disallows the user from changing the quantity above the inventory quantity" do
+      click_on "Edit", match: :first
+      expect do
+        fill_in 'distribution_line_items_attributes_0_quantity', with: distribution.line_items.first.quantity + 300
+        click_on "Save", match: :first
+      end.not_to change { distribution.line_items.first.quantity }
+      expect(page).to have_content "Insufficient Supply"
+    end
+
     it "the user can reclaim it" do
       expect do
         accept_confirm do
@@ -248,20 +270,20 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "a user can add items that do not yet have a barcode" do
-      # enter a new barcode
-      # page.fill_in "_barcode-lookup-0", with: "123123123321\n"
-      # find('#_barcode-lookup-0').set("123123123321\n")
-      #
-      # page.fill_in "Quantity", with: "50"
-      # select "Adult Briefs (Large/X-Large)", from: "Item"
-      # page.fill_in "Barcode", with: "123123123321"
-      #
-      # find("#awesomebutton").click
-      #
-      # visit @url_prefix + "/distributions/new"
-      # page.fill_in "_barcode-lookup-0", with: "123123123321\n"
-      #
-      # expect(page).to have_text("50")
+      pending("fix this test")
+      page.fill_in "_barcode-lookup-0", with: "123123123321\n"
+      find('#_barcode-lookup-0').set("123123123321\n")
+
+      page.fill_in "Quantity", with: "50"
+      select "Adult Briefs (Large/X-Large)", from: "Item"
+      page.fill_in "Barcode", with: "123123123321"
+
+      find("#awesomebutton").click
+
+      visit @url_prefix + "/distributions/new"
+      page.fill_in "_barcode-lookup-0", with: "123123123321\n"
+
+      expect(page).to have_text("50")
     end
   end
 
