@@ -54,7 +54,9 @@
       </div>
     </div>
     <div class="box-footer with-border">
-      <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "lg"} %>
+      <% if @distribution.future? || current_user.organization_admin? %>
+        <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "lg"} %>
+      <% end %>
       <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "lg"} %>
     </div>
   </div>
