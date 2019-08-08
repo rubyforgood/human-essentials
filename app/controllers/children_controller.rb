@@ -30,7 +30,6 @@ class ChildrenController < ApplicationController
   def update
     if child.update(child_params)
       redirect_to child, notice: "Child was successfully updated."
-      render :show, status: :ok, location: child
     else
       render :edit
     end
