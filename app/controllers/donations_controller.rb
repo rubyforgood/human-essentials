@@ -25,7 +25,6 @@ class DonationsController < ApplicationController
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
-
     @selected_date = date_filter
   end
 
@@ -122,13 +121,27 @@ class DonationsController < ApplicationController
     return {} unless params.key?(:filters)
 
     fp = params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
-    fp.merge(by_issued_at: date_filter)
+    
+    if (params.key?(:date_to_filter))
+      # fp.merge(by_issued_at_to: date_filter(params[:date_to_filter])).merge(by_issued_at_from: date_filter(params[:date_from_filter]))
+      date_range = { from_date: date_filter(params[:date_from_filter]), to_date:date_filter(params[:date_to_filter])}
+      fp.merge(issued_at_by_date_range: date_range)
+    else
+      fp.merge(by_issued_at: date_filter)
+    end
   end
 
-  def date_filter
-    return nil unless params.key?(:date_filters)
-
-    date_params = params.require(:date_filters)
+  def date_filter (date = nil)
+    if !params.key?(:date_filters) && date == nil
+      return nil
+    end
+    
+    if date
+      date_params = date
+    else
+      date_params = params.require(:date_filters)
+    end
+    
     if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
       return nil
     end
