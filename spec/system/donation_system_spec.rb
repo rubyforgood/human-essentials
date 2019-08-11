@@ -295,11 +295,11 @@ RSpec.describe "Donations", type: :system, js: true do
       # dropdown is not populated on the return trip.
       it "Repopulates items dropdown even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
         click_button "Save"
 
         expect(page).to have_content("error")
-        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
       end
 
       # Bug fix -- Issue #526
@@ -469,7 +469,7 @@ RSpec.describe "Donations", type: :system, js: true do
       create(:donation_site, organization: @organization)
       create(:diaper_drive_participant, organization: @organization)
       create(:manufacturer, organization: @organization)
-      create(:donation, :with_items, item: item, organization: @organization, )
+      create(:donation, :with_items, item: item, organization: @organization)
       @organization.reload
       visit @url_prefix + "/donations/"
     end
