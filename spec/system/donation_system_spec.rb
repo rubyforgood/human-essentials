@@ -461,4 +461,37 @@ RSpec.describe "Donations", type: :system, js: true do
       expect(page).to have_content "$125"
     end
   end
+
+  context "When editing an existing donation" do
+    before(:each) do
+      item = create(:item, organization: @organization, name: "Rare Candy")
+      create(:storage_location, organization: @organization)
+      create(:donation_site, organization: @organization)
+      create(:diaper_drive_participant, organization: @organization)
+      create(:manufacturer, organization: @organization)
+      create(:donation, :with_items, item: item, organization: @organization, )
+      @organization.reload
+      visit @url_prefix + "/donations/"
+    end
+
+    xit "Allows the user to edit a donation" do
+      pending("TODO - write this!")
+    end
+
+    it "Does not default a selection if item lookup fails" do
+      click_on "View"
+      expect(page).to have_content "Rare Candy"
+
+      click_on "Make a correction"
+
+      item_select = "#donation_line_items_attributes_0_item_id"
+      selected_option_text = find(item_select).find("option[selected]").text
+      expect(selected_option_text).to eq "Rare Candy"
+
+      Item.find_by(name: "Rare Candy").delete
+      page.refresh
+
+      expect(find(item_select)).to have_no_css "option[selected]"
+    end
+  end
 end
