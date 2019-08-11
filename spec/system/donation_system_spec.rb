@@ -479,6 +479,9 @@ RSpec.describe "Donations", type: :system, js: true do
     end
 
     it "Does not default a selection if item lookup fails" do
+      total_quantity = find("#donation_quantity").text
+      expect(total_quantity).to_not eq "0"
+
       click_on "View"
       expect(page).to have_content "Rare Candy"
 
@@ -488,10 +491,21 @@ RSpec.describe "Donations", type: :system, js: true do
       selected_option_text = find(item_select).find("option[selected]").text
       expect(selected_option_text).to eq "Rare Candy"
 
-      Item.find_by(name: "Rare Candy").delete
+      # move the item to another org
+      rare_candy = Item.find_by(name: "Rare Candy")
+      rare_candy.organization = FactoryBot.create(:organization)
+      rare_candy.save!
       page.refresh
 
+      # ensure nothing is pre-selected
       expect(find(item_select)).to have_no_css "option[selected]"
+      click_on "Save"
+
+      # TODO: I'm not sure if this is the correct behavior, but
+      # removing the line item is a lot more benign than randomly
+      # switching the item on it to a different item
+      total_quantity = find("#donation_quantity").text
+      expect(total_quantity).to eq "0"
     end
   end
 end
