@@ -219,10 +219,10 @@ RSpec.feature "Audit management", type: :feature do
       item = create(:item)
       create(:storage_location, :with_items, item: item, item_quantity: 10)
       visit url_prefix + "/audits/new"
-      first('.storage-location-source', minimum: 1).select_option
-      first('#audit_line_items_attributes_0_item_id', minimum: 1).select_option
-      first_item = find('#audit_line_items_attributes_0_item_id  > option:nth-child(2)').text
-      expect(first_item).to eq(item.name)
+      first('.storage-location-source').all("option").last.select_option
+      item_css = "option[value='#{item.id}']"
+      item_text = find(item_css).text
+      expect(item_text).to eq(item.name)
     end
   end
 end
