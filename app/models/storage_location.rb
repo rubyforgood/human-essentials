@@ -56,6 +56,10 @@ class StorageLocation < ApplicationRecord
     inventory_items.select(:quantity).find_by(item_id: item_id).try(:quantity)
   end
 
+  def total_inventory_fair_market_value
+    items.sum(:value_in_cents)
+  end
+
   def size
     inventory_items.sum(:quantity)
   end
