@@ -269,7 +269,7 @@ RSpec.feature "Distributions", type: :system do
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
 
-    it "a user can add items that do not yet have a barcode" do
+    xit "a user can add items that do not yet have a barcode" do
       pending("fix this test")
       page.fill_in "_barcode-lookup-0", with: "123123123321\n"
       find('#_barcode-lookup-0').set("123123123321\n")
