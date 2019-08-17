@@ -43,6 +43,36 @@ RSpec.describe ItemsController, type: :controller do
       end
     end
 
+    describe "PATCH #restore" do
+      context "with a soft-deleted item" do
+        let!(:item) { create(:item, :inactive) }
+
+        it "re-activates the item" do
+          expect do
+            patch :restore, params: default_params.merge(id: item.id)
+          end.to change{Item.active.size}.by(1)
+        end
+      end
+
+      context "with an active item" do
+        let!(:item) { create(:item, :active) }
+        it "does nothing" do
+          expect do
+            patch :restore, params: default_params.merge(id: item.id)
+          end.to change{Item.active.size}.by(0)
+        end
+      end
+
+      context "with another organizations item" do
+        let!(:external_item) { create(:item, :inactive, organization: create(:organization))}
+        it "does nothing" do
+          expect do
+            patch :restore, params: default_params.merge(id: external_item.id)
+          end.to change{Item.active.size}.by(0)
+        end
+      end
+    end
+
     describe "POST #create" do
       let(:item_params) do
         {
