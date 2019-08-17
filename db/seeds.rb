@@ -12,6 +12,11 @@ def random_record(klass)
   klass.limit(1).order("random()").first
 end
 
+def random_record_for_org(org, klass)
+  # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
+  klass.where(organization: org).limit(1).order("random()").first
+end
+
 # Initial starting qty for our test organizations
 base_items = File.read(Rails.root.join("db", "base_items.json"))
 items_by_category = JSON.parse(base_items)
@@ -211,17 +216,17 @@ end
   # Depending on which source it uses, additional data may need to be provided.
   donation = case source
              when Donation::SOURCES[:diaper_drive]
-               Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.zone.now
+               Donation.create! source: source, diaper_drive_participant: random_record_for_org(pdx_org, DiaperDriveParticipant), storage_location: random_record_for_org(pdx_org, StorageLocation), organization: pdx_org, issued_at: Time.zone.now
              when Donation::SOURCES[:donation_site]
-               Donation.create! source: source, donation_site: random_record(DonationSite), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.zone.now
+               Donation.create! source: source, donation_site: random_record_for_org(pdx_org, DonationSite), storage_location: random_record_for_org(pdx_org, StorageLocation), organization: pdx_org, issued_at: Time.zone.now
              when Donation::SOURCES[:manufacturer]
-               Donation.create! source: source, manufacturer: random_record(Manufacturer), storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.zone.now
+               Donation.create! source: source, manufacturer: random_record_for_org(pdx_org, Manufacturer), storage_location: random_record_for_org(pdx_org, StorageLocation), organization: pdx_org, issued_at: Time.zone.now
              else
-               Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org, issued_at: Time.zone.now
+               Donation.create! source: source, storage_location: random_record_for_org(pdx_org, StorageLocation), organization: pdx_org, issued_at: Time.zone.now
              end
 
   rand(1..5).times.each do
-    LineItem.create! quantity: rand(250..500), item: random_record(Item), itemizable: donation
+    LineItem.create! quantity: rand(250..500), item: random_record_for_org(pdx_org, Item), itemizable: donation
   end
   donation.reload
   donation.storage_location.increase_inventory(donation)
@@ -229,11 +234,11 @@ end
 
 # Make some distributions, but don't use up all the inventory
 20.times.each do
-  storage_location = random_record(StorageLocation)
+  storage_location = random_record_for_org(pdx_org, StorageLocation)
   stored_inventory_items_sample = storage_location.inventory_items.sample(20)
 
   distribution = Distribution.create!(storage_location: storage_location,
-                                      partner: random_record(Partner),
+                                      partner: random_record_for_org(pdx_org, Partner),
                                       organization: pdx_org,
                                       issued_at: (Date.today + rand(15).days))
 
@@ -248,8 +253,8 @@ end
 20.times.each do |count|
   status = count > 15 ? 'fulfilled' : 'pending'
   Request.create(
-    partner: random_record(Partner),
-    organization: random_record(Organization),
+    partner: random_record_for_org(pdx_org, Partner),
+    organization: pdx_org,
     request_items: [{ "item_id" => Item.all.pluck(:id).sample, "quantity" => 3 },
                     { "item_id" => Item.all.pluck(:id).sample, "quantity" => 2 }],
     comments: "Urgent",
