@@ -4,6 +4,8 @@ class DonationsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i(scale_intake scale)
   skip_before_action :authorize_user, only: %i(scale_intake scale)
 
+  include Dateable
+
   def index
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
@@ -123,24 +125,6 @@ class DonationsController < ApplicationController
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
-  end
-
-  def date_params
-    return {} unless params.key?(:dates)
-
-    params.require(:dates).slice(:date_from, :date_to)
-  end
-
-  def date_range
-    start_date = date_params[:date_from]&.to_date || "Jan, 1, 2010".to_date
-    end_date = date_params[:date_to]&.to_date || "Jan, 1, 2037".to_date
-
-    # Rails does a time-sensitive comparison, and the date is treated as 12:00 am that day
-    # this means that timestamps for that day itself would be counted out
-    # calling end_of_day present this from happening
-    end_date.end_of_day
-
-    start_date..end_date
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source

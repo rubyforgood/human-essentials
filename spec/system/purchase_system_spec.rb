@@ -28,6 +28,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
   context "When filtering on the index page" do
     let!(:item) { create(:item) }
+    let(:storage) { create(:storage_location) }
     subject { url_prefix + "/purchases" }
 
     it "User can filter the #index by storage location" do
@@ -52,6 +53,30 @@ RSpec.describe "Purchases", type: :system, js: true do
       select vendor1.business_name, from: "filters_from_vendor"
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
+    end
+
+    it "Filters by date" do
+      storage = create(:storage_location, name: "storage")
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 2, 1))
+
+      visit subject
+      fill_in "dates_date_from", with: "02/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+
+      fill_in "dates_date_from", with: "03/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
+
+      fill_in "dates_date_to", with: "03/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
+
+      fill_in "dates_date_to", with: "02/28/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 0)
     end
   end
 
