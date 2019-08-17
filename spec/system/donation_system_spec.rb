@@ -306,11 +306,11 @@ RSpec.describe "Donations", type: :system, js: true do
       # dropdown is not populated on the return trip.
       it "Repopulates items dropdown even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
         click_button "Save"
 
         expect(page).to have_content("error")
-        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
       end
 
       # Bug fix -- Issue #526
@@ -470,6 +470,53 @@ RSpec.describe "Donations", type: :system, js: true do
     it 'Displays the total value on the show page' do
       visit @url_prefix + "/donations/#{@donation1.id}"
       expect(page).to have_content "$125"
+    end
+  end
+
+  context "When editing an existing donation" do
+    before(:each) do
+      item = create(:item, organization: @organization, name: "Rare Candy")
+      create(:storage_location, organization: @organization)
+      create(:donation_site, organization: @organization)
+      create(:diaper_drive_participant, organization: @organization)
+      create(:manufacturer, organization: @organization)
+      create(:donation, :with_items, item: item, organization: @organization)
+      @organization.reload
+      visit @url_prefix + "/donations/"
+    end
+
+    xit "Allows the user to edit a donation" do
+      pending("TODO - write this!")
+    end
+
+    it "Does not default a selection if item lookup fails" do
+      total_quantity = find("#donation_quantity").text
+      expect(total_quantity).to_not eq "0"
+
+      click_on "View"
+      expect(page).to have_content "Rare Candy"
+
+      click_on "Make a correction"
+
+      item_select = "#donation_line_items_attributes_0_item_id"
+      selected_option_text = find(item_select).find("option[selected]").text
+      expect(selected_option_text).to eq "Rare Candy"
+
+      # move the item to another org
+      rare_candy = Item.find_by(name: "Rare Candy")
+      rare_candy.organization = FactoryBot.create(:organization)
+      rare_candy.save!
+      page.refresh
+
+      # ensure nothing is pre-selected
+      expect(find(item_select)).to have_no_css "option[selected]"
+      click_on "Save"
+
+      # TODO: I'm not sure if this is the correct behavior, but
+      # removing the line item is a lot more benign than randomly
+      # switching the item on it to a different item
+      total_quantity = find("#donation_quantity").text
+      expect(total_quantity).to eq "0"
     end
   end
 end
