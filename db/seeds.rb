@@ -9,12 +9,12 @@
 
 def random_record(klass)
   # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
-  klass.limit(1).order("random()").first
+  klass.limit(1).order(Arel.sql('random()')).first
 end
 
 def random_record_for_org(org, klass)
   # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
-  klass.where(organization: org).limit(1).order("random()").first
+  klass.where(organization: org).limit(1).order(Arel.sql('random()')).first
 end
 
 # Initial starting qty for our test organizations
