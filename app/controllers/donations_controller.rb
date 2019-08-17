@@ -8,6 +8,7 @@ class DonationsController < ApplicationController
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
+                                     .where(issued_at: date_range)
                                      .class_filter(filter_params)
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
@@ -25,7 +26,8 @@ class DonationsController < ApplicationController
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
-    @selected_date = date_filter
+    @date_from = date_params[:date_from]
+    @date_to = date_params[:date_to]
   end
 
   def scale
@@ -120,35 +122,25 @@ class DonationsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    fp = params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
-
-    if params.key?(:date_to_filter)
-      date_range = { from_date: date_filter(params[:date_from_filter]), to_date: date_filter(params[:date_to_filter]) }
-
-      if !date_range[:from_date].nil? && !date_range[:to_date].nil?
-        fp.merge(issued_at_by_date_range: date_range)
-      elsif date_range[:from_date].nil? && date_range[:to_date].nil?
-        fp.merge(by_issued_at: nil)
-      else
-        fp.merge(by_issued_at: date_range[:to_date].nil? ? date_range[:from_date] : date_range[:to_date])
-      end
-    else
-      fp.merge(by_issued_at: date_filter)
-    end
+    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
   end
 
-  def date_filter(date = nil)
-    if !params.key?(:date_filters) && date.nil?
-      return nil
-    end
+  def date_params
+    return {} unless params.key?(:dates)
 
-    date_params = date || params.require(:date_filters)
+    params.require(:dates).slice(:date_from, :date_to)
+  end
 
-    if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
-      return nil
-    end
+  def date_range
+    start_date = date_params[:date_from]&.to_date || "Jan, 1, 2010".to_date
+    end_date = date_params[:date_to]&.to_date || "Jan, 1, 2037".to_date
 
-    Date.new(date_params["issued_at(1i)"].to_i, date_params["issued_at(2i)"].to_i, date_params["issued_at(3i)"].to_i)
+    # Rails does a time-sensitive comparison, and the date is treated as 12:00 am that day
+    # this means that timestamps for that day itself would be counted out
+    # calling end_of_day present this from happening
+    end_date.end_of_day
+
+    start_date..end_date
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source

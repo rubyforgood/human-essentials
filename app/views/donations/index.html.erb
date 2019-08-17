@@ -52,12 +52,12 @@
           <% end %>
           <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <%= label_tag "from Date" %>
-            <%= date_select :date_from_filter, :issued_at, order: [:month, :day, :year], include_blank: true, selected: @selected_date %>
+            <%= date_field :dates, :date_from, class: "form-control", value: @date_from %>
           </div>
 
           <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <%= label_tag "to Date" %>
-            <%= date_select :date_to_filter, :issued_at, order: [:month, :day,  :year], include_blank: true, selected: @selected_to_date %>
+            <%= date_field :dates, :date_to, class: "form-control", value: @date_to %>
           </div>
         </div><!-- /.row -->
         <div class="row">
