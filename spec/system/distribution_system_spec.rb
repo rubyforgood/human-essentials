@@ -278,7 +278,7 @@ RSpec.feature "Distributions", type: :system do
       select "Adult Briefs (Large/X-Large)", from: "Item"
       page.fill_in "Barcode", with: "123123123321"
 
-      find("#awesomebutton").click # NB: id awesome button has been removed
+      click_on "Submit"
 
       visit @url_prefix + "/distributions/new"
       page.fill_in "_barcode-lookup-0", with: "123123123321\n"
