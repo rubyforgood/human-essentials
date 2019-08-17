@@ -101,7 +101,7 @@ Rails.application.routes.draw do
       end
     end
     resources :items do
-      get :restore, on: :member
+      patch :restore, on: :member
     end
     resources :partners do
       collection do
