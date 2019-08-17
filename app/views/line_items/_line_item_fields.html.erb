@@ -6,7 +6,7 @@
   </span>
   <span class="col-md-4 col-sm-12">
     <label>OR</label>
-    <%= f.input :item_id, collection: @items, prompt: "Choose an item", label: false %>
+    <%= f.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false %>
   </span>
   <div class='col-md-3 col-12'>
     <%= f.input :quantity, placeholder: "Quantity", label: false, input_html: { class: "quantity" } %>

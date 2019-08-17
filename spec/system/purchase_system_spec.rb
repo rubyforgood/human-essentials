@@ -159,11 +159,11 @@ RSpec.describe "Purchases", type: :system, js: true do
       # dropdown is not populated on the return trip.
       it "items dropdown is still repopulated even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count + 1)
         click_button "Save"
 
         expect(page).to have_content("error")
-        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count + 1)
       end
     end
 
