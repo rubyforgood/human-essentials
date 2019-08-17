@@ -27,7 +27,7 @@ RSpec.describe "Donations", type: :system, js: true do
       create(:donation, :with_items, item: item)
       item.update(active: false)
       item.reload
-      expect(visit @url_prefix + "/donations").to_not raise_error
+      expect(visit(@url_prefix + "/donations")).to_not raise_error
     end
   end
 
