@@ -86,34 +86,31 @@ RSpec.describe "Donations", type: :system, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
+
     it "Filters by date" do
       storage = create(:storage_location, name: "storage")
       create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1))
       create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1))
       create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1))
       visit @url_prefix + "/donations"
-      find("#date_from_filter_issued_at_2i").find("option", text: "February").select_option
-      find("#date_from_filter_issued_at_1i").find("option", text: "2018").select_option
-      find("#date_from_filter_issued_at_3i").find("option", text: "1", exact_text: true).select_option
 
-      find("#date_to_filter_issued_at_2i").find("option", text: "April").select_option
-      find("#date_to_filter_issued_at_1i").find("option", text: "2018").select_option
-      find("#date_to_filter_issued_at_3i").find("option", text: "1", exact_text: true).select_option
+      fill_in "dates_date_from", with: "02/01/2018"
       click_button "Filter"
-
       expect(page).to have_css("table tbody tr", count: 4)
 
-      find("#date_from_filter_issued_at_2i").find("option", text: "March").select_option
-      find("#date_from_filter_issued_at_1i").find("option", text: "2018").select_option
-      find("#date_from_filter_issued_at_3i").find("option", text: "1", exact_text: true).select_option
-
-      find("#date_to_filter_issued_at_2i").find("option", text: "April").select_option
-      find("#date_to_filter_issued_at_1i").find("option", text: "2018").select_option
-      find("#date_to_filter_issued_at_3i").find("option", text: "1", exact_text: true).select_option
+      fill_in "dates_date_from", with: "03/01/2018"
       click_button "Filter"
-
       expect(page).to have_css("table tbody tr", count: 3)
+
+      fill_in "dates_date_to", with: "03/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+
+      fill_in "dates_date_to", with: "02/28/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
     end
+
     it "Filters by multiple attributes" do
       storage1 = create(:storage_location, name: "storage1")
       storage2 = create(:storage_location, name: "storage2")
