@@ -50,7 +50,7 @@ RSpec.describe ItemsController, type: :controller do
         it "re-activates the item" do
           expect do
             patch :restore, params: default_params.merge(id: item.id)
-          end.to change{Item.active.size}.by(1)
+          end.to change { Item.active.size }.by(1)
         end
       end
 
@@ -59,16 +59,16 @@ RSpec.describe ItemsController, type: :controller do
         it "does nothing" do
           expect do
             patch :restore, params: default_params.merge(id: item.id)
-          end.to change{Item.active.size}.by(0)
+          end.to change { Item.active.size }.by(0)
         end
       end
 
       context "with another organizations item" do
-        let!(:external_item) { create(:item, :inactive, organization: create(:organization))}
+        let!(:external_item) { create(:item, :inactive, organization: create(:organization)) }
         it "does nothing" do
           expect do
             patch :restore, params: default_params.merge(id: external_item.id)
-          end.to change{Item.active.size}.by(0)
+          end.to change { Item.active.size }.by(0)
         end
       end
     end
