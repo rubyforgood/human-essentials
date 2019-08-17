@@ -84,23 +84,6 @@ RSpec.describe Donation, type: :model do
         expect(Donation.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end
-    describe "by_issued_at <" do
-      it "returns the month range when only one date is given" do
-        create(:donation, issued_at: 1.month.ago)
-        create(:donation, issued_at: 2.months.ago)
-        expect(Donation.by_issued_at(1.month.ago).size).to eq(1)
-      end
-    end
-    describe "issued_at_by_date_range <" do
-      it "returns the specified date range of donations" do
-        create(:donation, issued_at: 10.days.ago)
-        create(:donation, issued_at: 11.days.ago)
-        create(:donation, issued_at: 12.days.ago)
-        create(:donation, issued_at: 5.days.ago)
-        expect(Donation.issued_at_by_date_range(from_date: 13.days.ago, to_date: 9.days.ago).size).to eq(3)
-        expect(Donation.issued_at_by_date_range(from_date: 6.days.ago, to_date: 2.days.ago).size).to eq(1)
-      end
-    end
     describe "by_source >" do
       before(:each) do
         create(:donation, source: Donation::SOURCES[:misc])

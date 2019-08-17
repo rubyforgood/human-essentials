@@ -8,7 +8,6 @@ module IssuedAt
     before_create :initialize_issued_at
     before_save :initialize_issued_at
     scope :by_issued_at, ->(issued_at) { where(issued_at: issued_at.beginning_of_month..issued_at.end_of_month) }
-    scope :issued_at_by_date_range, ->(date_range) { where(issued_at: date_range[:from_date]..date_range[:to_date]) }
   end
 
   private
