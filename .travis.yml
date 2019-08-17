@@ -19,6 +19,7 @@ install:
 - yarn install
 script:
 - bundle exec rubocop
+- bundle exec rake factory_bot:lint
 - export RAILS_ENV=test
 - bundle exec rake db:create db:schema:load
 - bundle exec rspec
