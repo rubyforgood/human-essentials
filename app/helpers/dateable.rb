@@ -6,7 +6,7 @@ module Dateable
   end
 
   def date_range
-    start_date = date_params[:date_from]&.to_date || "Jan, 1, 2010".to_date
+    start_date = date_params[:date_from]&.to_date || "Jan, 2, 1970".to_date
     end_date = date_params[:date_to]&.to_date || "Jan, 1, 2037".to_date
 
     # Rails does a time-sensitive comparison, and the date is treated as 12:00 am that day
