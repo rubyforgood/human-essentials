@@ -44,8 +44,6 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
-  # default_scope { active }
-
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
   end
