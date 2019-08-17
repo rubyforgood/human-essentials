@@ -39,7 +39,7 @@ module DateRangeHelper
     when "last_year"
       (now - 1.year).beginning_of_year..(now - 1.year).end_of_year
     else
-      Time.zone.local(2017, 1, 1, 0, 0, 0)..Time.zone.local(2030, 1, 1, 0, 0, 0)
+      Time.zone.local(2017, 1, 1, 0, 0, 0)..Time.zone.local(2037, 1, 1, 0, 0, 0)
     end
   end
 end
