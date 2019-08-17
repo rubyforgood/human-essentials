@@ -84,6 +84,7 @@ RSpec.describe Donation, type: :model do
         expect(Donation.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end
+
     describe "by_source >" do
       before(:each) do
         create(:donation, source: Donation::SOURCES[:misc])
