@@ -23,6 +23,7 @@ gem "font-ionicons-rails"
 gem "fullcalendar-rails"
 gem "geocoder"
 gem "groupdate", "~> 4.1"
+gem "image_processing"
 gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
@@ -43,7 +44,6 @@ gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
-gem "image_processing"
 gem "webpacker", "~> 3.5"
 gem 'sidekiq-scheduler'
 
