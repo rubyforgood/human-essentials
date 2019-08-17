@@ -22,13 +22,12 @@ RSpec.describe "Donations", type: :system, js: true do
       expect(page.find(:css, "table.table-hover", visible: true)).to have_content("20")
     end
 
-    # FIXME: We can remove this after unscoping items, I think.
     it "doesn't die when an inactive item is in a donation" do
       item = create(:item, :active, name: "INACTIVE ITEM")
       create(:donation, :with_items, item: item)
       item.update(active: false)
       item.reload
-      visit @url_prefix + "/donations"
+      expect(visit @url_prefix + "/donations").to_not raise_error
     end
   end
 
