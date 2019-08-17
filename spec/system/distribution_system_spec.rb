@@ -63,7 +63,7 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_no_content(item.name)
   end
 
-  it "User doesn't fill storage_location" do
+  it "errors if user does not fill storage_location" do
     visit @url_prefix + "/distributions/new"
 
     select @partner.name, from: "Partner"
@@ -80,7 +80,7 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/distributions"
     end
 
-    it "the user can make changes to it" do
+    it "the user can make changes" do
       click_on "Edit", match: :first
       expect do
         fill_in "Agency representative", with: "SOMETHING DIFFERENT"
@@ -278,7 +278,7 @@ RSpec.feature "Distributions", type: :system do
       select "Adult Briefs (Large/X-Large)", from: "Item"
       page.fill_in "Barcode", with: "123123123321"
 
-      find("#awesomebutton").click
+      find("#awesomebutton").click # NB: id awesome button has been removed
 
       visit @url_prefix + "/distributions/new"
       page.fill_in "_barcode-lookup-0", with: "123123123321\n"

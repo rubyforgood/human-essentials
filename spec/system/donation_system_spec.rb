@@ -22,13 +22,12 @@ RSpec.describe "Donations", type: :system, js: true do
       expect(page.find(:css, "table.table-hover", visible: true)).to have_content("20")
     end
 
-    # FIXME: We can remove this after unscoping items, I think.
     it "doesn't die when an inactive item is in a donation" do
       item = create(:item, :active, name: "INACTIVE ITEM")
       create(:donation, :with_items, item: item)
       item.update(active: false)
       item.reload
-      visit @url_prefix + "/donations"
+      expect { visit(@url_prefix + "/donations") }.to_not raise_error
     end
   end
 
@@ -86,20 +85,31 @@ RSpec.describe "Donations", type: :system, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
+
     it "Filters by date" do
       storage = create(:storage_location, name: "storage")
       create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1))
       create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1))
       create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1))
       visit @url_prefix + "/donations"
-      select "March", from: "date_filters_issued_at_2i"
-      select "2018", from: "date_filters_issued_at_1i"
+
+      fill_in "dates_date_from", with: "02/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 4)
+
+      fill_in "dates_date_from", with: "03/01/2018"
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 3)
-      select "February", from: "date_filters_issued_at_2i"
+
+      fill_in "dates_date_to", with: "03/01/2018"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
+
+      fill_in "dates_date_to", with: "02/28/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
     end
+
     it "Filters by multiple attributes" do
       storage1 = create(:storage_location, name: "storage1")
       storage2 = create(:storage_location, name: "storage2")
