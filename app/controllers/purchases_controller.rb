@@ -4,9 +4,12 @@ class PurchasesController < ApplicationController
   skip_before_action :authenticate_user!, only: %i(scale_intake scale)
   skip_before_action :authorize_user, only: %i(scale_intake scale)
 
+  include Dateable
+
   def index
     @purchases = current_organization.purchases
                                      .includes(:line_items, :storage_location)
+                                     .where(issued_at: date_range)
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
     # Are these going to be inefficient with large datasets?
@@ -15,6 +18,8 @@ class PurchasesController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
+    @date_from = date_params[:date_from]
+    @date_to = date_params[:date_to]
   end
 
   def create
