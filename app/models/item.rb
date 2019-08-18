@@ -75,12 +75,11 @@ class Item < ApplicationRecord
     !(line_items.empty? && inventory_items.empty? && barcode_items.empty?)
   end
 
-  def self.gather_items(current_organization, global)
+  def self.gather_items(current_organization, global = false)
     if global
-      where(id: current_organization.barcode_items.include_global(false).pluck(:barcodeable_id))
-        .merge(where(id: BarcodeItem.where(global: true)))
+      where(id: current_organization.barcode_items.all.pluck(:barcodeable_id))
     else
-      where(id: current_organization.barcode_items.include_global(false).pluck(:barcodeable_id))
+      where(id: current_organization.barcode_items.pluck(:barcodeable_id))
     end
   end
   # Convenience method so that other methods can be simplified to

@@ -35,7 +35,7 @@ class Organization < ApplicationRecord
   has_many :adjustments, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
     def all
-      unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.global = ?", proxy_association.owner.id, true)
+      unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
     end
   end
   has_many :distributions, dependent: :destroy

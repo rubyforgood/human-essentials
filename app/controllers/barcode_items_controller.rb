@@ -4,7 +4,7 @@ class BarcodeItemsController < ApplicationController
   def index
     @items = Item.gather_items(current_organization, @global)
     @base_items = BaseItem.alphabetized
-    @barcode_items = current_organization.barcode_items.include_global(false).class_filter(filter_params)
+    @barcode_items = current_organization.barcode_items.class_filter(filter_params)
   end
 
   def create

@@ -42,7 +42,7 @@ RSpec.shared_examples "common barcode tests" do |barcode_item_factory|
 end
 
 RSpec.describe BarcodeItem, type: :model do
-  context "Global barcodes" do
+  context "Barcodes of BaseItems ('Global')" do
     let(:base_item) { create(:base_item) }
     let(:global_barcode_item) { create(:global_barcode_item, barcodeable: base_item) }
 
@@ -76,11 +76,18 @@ RSpec.describe BarcodeItem, type: :model do
     end
 
     context "scopes >" do
-      it "->include_global indicates if it should include the global barcodes as well" do
-        global_barcode_item   # initial creation
-        create(:barcode_item) # create a null case
-        expect(BarcodeItem.include_global(false).length).to eq(1)
-        expect(BarcodeItem.include_global(true).length).to eq(2)
+      describe "barcodeable_id" # TODO: Write test
+      describe "by_item_partner_key" # TODO: Write test
+      describe "by_base_item_partner_key" # TODO: Write test
+      describe "by_value" # TODO: Write test
+      describe "for_csv_export" # TODO: Write test
+      describe "global" do
+        it "includes all barcodes, for both base items and regular items" do
+          create(:global_barcode_item)
+          expect do
+            create(:barcode_item)
+          end.not_to change { BarcodeItem.global.length }
+        end
       end
     end
 
@@ -133,13 +140,15 @@ RSpec.describe BarcodeItem, type: :model do
         expect(results.length).to eq(1)
         expect(results.first).to eq(barcode_item)
       end
+
       it "#by_item_partner_key returns barcodes that match the partner key" do
         i1 = create(:item, base_item: BaseItem.first)
         i2 = create(:item, base_item: BaseItem.last)
         b1 = create(:barcode_item, barcodeable: i1)
-        create(:global_barcode_item, barcodeable: i2)
+        create(:barcode_item, barcodeable: i2)
         expect(BarcodeItem.by_item_partner_key(i1.partner_key).first).to eq(b1)
       end
+
       it "->by_value returns the barcode with that value" do
         b1 = create(:global_barcode_item, value: "DEADBEEF")
         create(:global_barcode_item, value: "IDDQD")
