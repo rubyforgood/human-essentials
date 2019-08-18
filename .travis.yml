@@ -8,8 +8,6 @@ cache:
   yarn: true
   directories:
     - node_modules
-env:
-  - PARTNER_BASE_URL="partner.test"
 before_install:
 - gem update --system
 - gem install bundler
@@ -19,6 +17,9 @@ install:
 - node -v
 - npm i -g yarn
 - yarn install
+env:
+  global:
+    - PARTNER_BASE_URL="partner.test"
 script:
 - bundle exec rubocop
 - export RAILS_ENV=test
