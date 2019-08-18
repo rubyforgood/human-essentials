@@ -40,15 +40,22 @@ RSpec.describe BarcodeItemsController, type: :controller do
       let!(:global_barcode) { create(:global_barcode_item) }
       let!(:organization_barcode) { create(:barcode_item, organization: @organization) }
       let!(:other_barcode) { create(:barcode_item, organization: create(:organization)) }
+
       context "via ajax" do
         subject { get :find, params: default_params.merge(barcode_item: { value: organization_barcode.value }, format: :json) }
         it "can find a barcode that is scoped to just this organization" do
           expect(subject).to be_successful
+          result = JSON.parse(response.body)
+          expect(result["barcode_item"]["barcodeable_type"]).to eq("Item")
+          expect(result["barcode_item"]["id"].to_i).to eq(organization_barcode.id)
         end
 
         it "can find a barcode that's universally available" do
           get :find, params: default_params.merge(barcode_item: { value: global_barcode.value }, format: :json)
           expect(response).to be_successful
+          result = JSON.parse(response.body)
+          expect(result["barcode_item"]["barcodeable_type"]).to eq("BaseItem")
+          expect(result["barcode_item"]["id"].to_i).to eq(global_barcode.id)
         end
 
         context "when it's missing" do

@@ -31,7 +31,6 @@ class BarcodeItem < ApplicationRecord
   scope :by_item_partner_key, ->(partner_key) { joins("INNER JOIN items ON items.id = barcode_items.barcodeable_id").where(barcodeable_type: "Item", items: { partner_key: partner_key }) }
   scope :by_base_item_partner_key, ->(partner_key) { joins("INNER JOIN base_items ON base_items.id = barcode_items.barcodeable_id").where(barcodeable_type: "BaseItem", base_items: { partner_key: partner_key }) }
   scope :by_value, ->(value) { where(value: value) }
-  scope :organization_barcodes_with_globals, ->(_) { all }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
       .includes(:barcodeable)
