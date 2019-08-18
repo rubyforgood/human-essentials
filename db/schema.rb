@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_21_140938) do
+ActiveRecord::Schema.define(version: 2019_08_18_003929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,14 +70,13 @@ ActiveRecord::Schema.define(version: 2019_06_21_140938) do
     t.index ["user_id"], name: "index_audits_on_user_id"
   end
 
-  create_table "barcode_items", id: :serial, force: :cascade do |t|
+  create_table "barcode_items", force: :cascade do |t|
     t.string "value"
     t.integer "barcodeable_id"
     t.integer "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
-    t.boolean "global", default: false
     t.string "barcodeable_type", default: "Item"
     t.index ["barcodeable_type", "barcodeable_id"], name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
