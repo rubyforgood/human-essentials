@@ -46,9 +46,9 @@ ActiveRecord::Schema.define(version: 2019_08_18_003929) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "adjustments", force: :cascade do |t|
-    t.bigint "organization_id"
-    t.bigint "storage_location_id"
+  create_table "adjustments", id: :serial, force: :cascade do |t|
+    t.integer "organization_id"
+    t.integer "storage_location_id"
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -70,13 +70,14 @@ ActiveRecord::Schema.define(version: 2019_08_18_003929) do
     t.index ["user_id"], name: "index_audits_on_user_id"
   end
 
-  create_table "barcode_items", force: :cascade do |t|
+  create_table "barcode_items", id: :serial, force: :cascade do |t|
     t.string "value"
     t.integer "barcodeable_id"
     t.integer "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
+    t.boolean "global", default: false
     t.string "barcodeable_type", default: "Item"
     t.index ["barcodeable_type", "barcodeable_id"], name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
@@ -236,6 +237,7 @@ ActiveRecord::Schema.define(version: 2019_08_18_003929) do
     t.float "longitude"
     t.integer "reminder_day"
     t.integer "deadline_day"
+    t.text "invitation_text"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
