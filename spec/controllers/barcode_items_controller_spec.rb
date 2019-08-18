@@ -23,21 +23,21 @@ RSpec.describe BarcodeItemsController, type: :controller do
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:barcode_item, global: true)) }
+      subject { get :edit, params: default_params.merge(id: create(:global_barcode_item)) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:barcode_item, global: true)) }
+      subject { get :show, params: default_params.merge(id: create(:global_barcode_item)) }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #find" do
-      let!(:global_barcode) { create(:barcode_item, global: true) }
+      let!(:global_barcode) { create(:global_barcode_item) }
       let!(:organization_barcode) { create(:barcode_item, organization: @organization) }
       let!(:other_barcode) { create(:barcode_item, organization: create(:organization)) }
       context "via ajax" do
@@ -63,7 +63,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
     describe "DELETE #destroy" do
       it "disallows a user to delete someone else's barcode" do
         other_org = create(:organization)
-        other_barcode = create(:barcode_item, organization_id: other_org.id, global: false)
+        other_barcode = create(:barcode_item, organization_id: other_org.id)
         delete :destroy, params: default_params.merge(id: other_barcode.to_param)
         expect(response).not_to be_successful
         expect(response).to have_error(/permission/)
@@ -78,7 +78,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
       end
 
       it "redirects to the index" do
-        delete :destroy, params: default_params.merge(id: create(:barcode_item, global: false, organization_id: @organization.id))
+        delete :destroy, params: default_params.merge(id: create(:barcode_item, organization_id: @organization.id))
         expect(subject).to redirect_to(barcode_items_path)
       end
     end

@@ -96,7 +96,7 @@ RSpec.describe Admin::BarcodeItemsController, type: :controller do
       it "can delete anyone's barcode" do
         allow_any_instance_of(User).to receive(:super_admin?).and_return(true)
         other_org = create(:organization)
-        other_barcode = create(:barcode_item, organization_id: other_org.id, global: false)
+        other_barcode = create(:barcode_item, organization_id: other_org.id)
         expect do
           delete :destroy, params: { id: other_barcode.to_param }
         end.to change { BarcodeItem.count }.by(-1)
@@ -105,7 +105,7 @@ RSpec.describe Admin::BarcodeItemsController, type: :controller do
 
       it 'allows deletion of a global barcode' do
         allow_any_instance_of(User).to receive(:super_admin?).and_return(true)
-        other_barcode = create(:barcode_item, global: true)
+        other_barcode = create(:global_barcode_item)
         expect do
           delete :destroy, params: { id: other_barcode.to_param }
         end.to change { BarcodeItem.count }.by(-1)
