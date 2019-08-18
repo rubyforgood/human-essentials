@@ -38,7 +38,7 @@ class BarcodeItemsController < ApplicationController
 
   def find
     # First, we do a naive lookup
-    @barcode_item = BarcodeItem.includes(:barcodeable).organization_barcodes_with_globals(@organization).find_by!(value: barcode_item_params[:value])
+    @barcode_item = current_organization.barcode_items.all.find_by!(value: barcode_item_params[:value])
     # Depending on whether or not the result is solely a global barcode, we may need additional queries
     # Global barcodes don't explicitly map to organization items, so we can do a lookup to clarify that
     if @barcode_item.global?
