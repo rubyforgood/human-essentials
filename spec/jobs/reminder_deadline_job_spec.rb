@@ -21,10 +21,12 @@ RSpec.describe ReminderDeadlineJob, type: :job do
     end
 
     it 'sends an email' do
-      Sidekiq::Testing.inline! do
-        expect do
-          ReminderDeadlineJob.perform_async
-        end .to change { ActionMailer::Base.deliveries.count }.by(1)
+      with_features reminders_active: true do
+        Sidekiq::Testing.inline! do
+          expect do
+            ReminderDeadlineJob.perform_async
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
       end
     end
 
