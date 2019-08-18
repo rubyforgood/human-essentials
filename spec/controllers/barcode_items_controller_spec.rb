@@ -22,17 +22,42 @@ RSpec.describe BarcodeItemsController, type: :controller do
       end
     end
 
-    describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:global_barcode_item)) }
-      it "returns http success" do
-        expect(subject).to be_successful
+    fdescribe "GET #edit" do
+      context "with a normal barcode item" do
+        subject { get :edit, params: default_params.merge(id: create(:barcode_item)) }
+
+        it "returns http success" do
+          expect(subject).to be_successful
+        end
       end
+
+      context "with a global barcode item" do
+        subject { get :edit, params: default_params.merge(id: create(:global_barcode_item)) }
+
+        it "returns a 404" do
+          subject
+          expect(response.status).to eq(404)
+        end
+      end
+      
     end
 
-    describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:global_barcode_item)) }
-      it "returns http success" do
-        expect(subject).to be_successful
+    fdescribe "GET #show" do
+      context "with a normal barcode item" do
+        subject { get :show, params: default_params.merge(id: create(:barcode_item)) }
+
+        it "returns http success" do
+          expect(subject).to be_successful
+        end
+      end
+
+      context "with a global barcode item" do
+        subject { get :show, params: default_params.merge(id: create(:global_barcode_item)) }
+
+        it "returns http success" do
+          subject
+          expect(response.status).to eq(404)
+        end
       end
     end
 
