@@ -17,9 +17,6 @@ install:
 - node -v
 - npm i -g yarn
 - yarn install
-env:
-  global:
-    - PARTNER_BASE_URL="partner.test"
 script:
 - bundle exec rubocop
 - export RAILS_ENV=test
