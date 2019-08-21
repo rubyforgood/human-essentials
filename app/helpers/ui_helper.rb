@@ -36,7 +36,7 @@ module UiHelper
 
   def restore_button_to(link, options = {})
     data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
-    properties = { rel: "nofollow" }.merge(data)
+    properties = { rel: "nofollow", method: :patch }.merge(data)
     _link_to link, { icon: "repeat", type: "warning", text: "Restore", size: "xs" }.merge(options), properties
   end
 

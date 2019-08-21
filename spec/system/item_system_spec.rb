@@ -102,6 +102,30 @@ RSpec.describe "Item management", type: :system do
     end
   end
 
+  describe "restoring items" do
+    let!(:item) { create(:item, :inactive, name: "DELETED") }
+
+    it "allows a user to restore the item" do
+      expect do
+        visit url_prefix + "/items"
+        check "include_inactive_items"
+        click_on "Filter"
+        within "#tbl_items" do
+          expect(page).to have_content(item.name)
+        end
+
+        within "tr[data-item-id='#{item.id}']" do
+          accept_confirm do
+            click_on "Restore", match: :first
+          end
+        end
+        page.find(".alert-info")
+      end.to change { Item.count }.by(0).and change { Item.active.count }.by(1)
+      item.reload
+      expect(item).to be_active
+    end
+  end
+
   describe "Item Table Tabs >" do
     let(:item_pullups) { create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers") }
     let(:item_tampons) { create(:item, name: "blackbeard's rugged tampons", category: "Menstrual Products") }

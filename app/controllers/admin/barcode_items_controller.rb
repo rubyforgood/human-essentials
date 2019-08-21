@@ -25,7 +25,7 @@ class Admin::BarcodeItemsController < AdminController
   end
 
   def create
-    @barcode_item = BarcodeItem.create(barcode_item_params.merge(global: true, barcodeable_type: "BaseItem"))
+    @barcode_item = BarcodeItem.create(barcode_item_params.merge(barcodeable_type: "BaseItem"))
     if @barcode_item.save
       respond_to do |format|
         format.html { redirect_to admin_barcode_items_path, notice: "Barcode Item added!" }
@@ -61,10 +61,10 @@ class Admin::BarcodeItemsController < AdminController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :include_global, :base_item_id)
+    params.require(:filters).slice(:barcodeable_id, :less_than_quantity, :greater_than_quantity, :equal_to_quantity, :base_item_id)
   end
 
   def load_barcode_item
-    @barcode_item = BarcodeItem.include_global(true).find(params[:id])
+    @barcode_item = BarcodeItem.find(params[:id])
   end
 end
