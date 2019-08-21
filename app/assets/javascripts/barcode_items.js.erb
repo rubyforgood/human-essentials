@@ -30,7 +30,7 @@ $(document).ready(function() {
          data['src'] = src;
          data['value'] = value;
          // We're setting this here because if it's looked up as a global, we need to find the first local
-         // item that matches. 
+         // item that matches.
          data['item_id'] = data['item']['id'];
          data['quantity'] = data['barcode_item']['quantity'];
          console.log(data);
@@ -83,7 +83,7 @@ $(document).ready(function() {
     // First trigger the "add new line item"
     $('#__add_line_item').trigger('click');
     // Now focus on the barcode field
-    $(line_item).parent().find('.nested-fields:last-child input.__barcode_item_lookup').focus();
+    $("input.__barcode_item_lookup").last().focus();
   }
 
   function prompt_for_new_barcode_item(data, value, src) {
