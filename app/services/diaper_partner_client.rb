@@ -2,10 +2,11 @@
 # The Diaper and Partner apps must communicate as if by magic, over a bi-directional
 # API.
 module DiaperPartnerClient
-  def self.post(attributes)
+  def self.post(attributes, invitation_message)
     partner = { partner:
       { diaper_bank_id: attributes["organization_id"],
         diaper_partner_id: attributes["id"],
+        invitation_text: invitation_message,
         email: attributes["email"] } }
 
     uri = URI(ENV["PARTNER_REGISTER_URL"])
