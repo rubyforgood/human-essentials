@@ -115,13 +115,17 @@ class Organization < ApplicationRecord
     }
   end
 
-  def self.seed_items(org)
+  def self.seed_items(org = nil)
     Rails.logger.info "Seeding #{org.name}'s items..."
-    org_id = org.id
-    base_items = BaseItem.pluck(:partner_key, :name).collect { |c| { partner_key: c[0], name: c[1], organization_id: org_id } }
-    Item.create(base_items)
+    base_items = BaseItem.all.map(&:to_h)
+    org.seed_items(base_items)
     org.reload
   end
+
+  def seed_items(item_collection)
+    items.create(Array.wrap(item_collection))
+  end
+
 
   def logo_path
     if logo.attached?
