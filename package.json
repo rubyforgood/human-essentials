@@ -1,9 +1,19 @@
 {
   "dependencies": {
     "@rails/webpacker": "3.5",
-    "actiontext": "https://github.com/kobaltz/actiontext"
+    "actiontext": "https://github.com/kobaltz/actiontext",
+    "caniuse-lite": "^1.0.30000989",
+    "fstream": "^1.0.12",
+    "js-yaml": "^3.13.1",
+    "lodash": "^4.17.15",
+    "lodash.mergewith": "^4.6.2",
+    "lodash.template": "^4.5.0",
+    "mem": "^5.1.1",
+    "mixin-deep": "^2.0.1",
+    "set-value": "^3.0.1",
+    "webpack": "^4.39.3"
   },
   "devDependencies": {
-    "webpack-dev-server": "2.11.2"
+    "webpack-dev-server": "^3.8.0"
   }
 }
