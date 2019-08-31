@@ -50,10 +50,24 @@ RSpec.describe Organization, type: :model do
   end
 
   describe ".seed_items" do
-    it "loads the base items into Item records" do
-      base_items_count = BaseItem.count
-      Organization.seed_items(organization)
-      expect(organization.items.count).to eq(base_items_count)
+    context "when provided with an organization to seed" do
+      it "loads the base items into Item records" do
+        base_items_count = BaseItem.count
+        Organization.seed_items(organization)
+        expect(organization.items.count).to eq(base_items_count)
+      end
+    end
+
+    context "when no organization is provided" do
+      it "updates all organizations" do
+        second_organization = create(:organization)
+        organization_item_count = @organization.items.size
+        second_organization_item_count = second_organization.items.size
+        base_item = create(:base_item, name: "Foo", partner_key: "foo")
+        Organization.seed_items
+        expect(@organization.items.size).to eq(organization_item_count + 1)
+        expect(second_organization.items.size).to eq(second_organization_item_count + 1)
+      end
     end
   end
 

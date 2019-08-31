@@ -119,11 +119,13 @@ class Organization < ApplicationRecord
     }
   end
 
-  def self.seed_items(org = nil)
-    Rails.logger.info "Seeding #{org.name}'s items..."
+  def self.seed_items(org = Organization.all)
     base_items = BaseItem.all.map(&:to_h)
-    org.seed_items(base_items)
-    org.reload
+    Array.wrap(org).each do |org|
+      Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"
+      org.seed_items(base_items)
+      org.reload
+    end
   end
 
   def seed_items(item_collection)
@@ -132,11 +134,14 @@ class Organization < ApplicationRecord
     Array.wrap(item_collection).each do |item|
       items.create!(item)
     rescue ActiveRecord::RecordInvalid => invalid
+      Rails.logger.info "[SEED] Duplicate item! #{invalid.record.name}"
       existing_item = items.find_by(name: invalid.record.name)
       if invalid.to_s.match(/been taken/).present? && existing_item.other?
         Rails.logger.info "Changing Item##{existing_item.id} from Other to #{invalid.record.partner_key}"
         existing_item.update(partner_key: invalid.record.partner_key)
         existing_item.reload
+      else
+        next
       end
     end
     reload
