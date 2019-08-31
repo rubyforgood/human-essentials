@@ -38,6 +38,15 @@ RSpec.describe Organization, type: :model do
         end
       end
     end
+
+    describe "items" do
+      describe "other" do
+        it "returns all items for this organization designated 'other'" do
+          create(:item, name: "SOMETHING", partner_key: "other", organization: organization)
+          expect(organization.items.other.size).to eq(2)
+        end
+      end
+    end
   end
 
   describe ".seed_items" do
@@ -54,7 +63,7 @@ RSpec.describe Organization, type: :model do
       base_item = create(:base_item, name: "Foo", partner_key: "foo").to_h
       expect do
         organization.seed_items(base_item)
-      end.to change{organization.items.size}.by(1)
+      end.to change { organization.items.size }.by(1)
     end
 
     it "allows a collection of items to be seeded" do
@@ -62,7 +71,7 @@ RSpec.describe Organization, type: :model do
       base_items = [create(:base_item, name: "Foo", partner_key: "foo").to_h, create(:base_item, name: "Bar", partner_key: "bar").to_h]
       expect do
         organization.seed_items(base_items)
-      end.to change{organization.items.size}.by(2)
+      end.to change { organization.items.size }.by(2)
     end
 
     context "when given an item that already exists" do
@@ -72,7 +81,20 @@ RSpec.describe Organization, type: :model do
         base_items = [base_item.to_h, BaseItem.first.to_h]
         expect do
           organization.seed_items(base_items)
-        end.to change{organization.items.size}.by(1)
+        end.to change { organization.items.size }.by(1)
+      end
+    end
+
+    context "when given an item name that already exists, but with an 'other' partner key" do
+      it "updates the old item to use the new base item as its base" do
+        organization # will auto-seed existing base items
+        item = organization.items.create(name: "Foo", partner_key: "other")
+        base_item = create(:base_item, name: "Foo", partner_key: "foo")
+        base_items = [base_item.to_h, BaseItem.first.to_h]
+        expect do
+          organization.seed_items(base_items)
+          item.reload
+        end.to change { organization.items.size }.by(0).and change { item.partner_key }.to("foo")
       end
     end
   end

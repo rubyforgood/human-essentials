@@ -47,7 +47,11 @@ class Organization < ApplicationRecord
   has_many :vendors, dependent: :destroy
   has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
-  has_many :items, dependent: :destroy
+  has_many :items, dependent: :destroy do
+    def other
+      where(partner_key: "other")
+    end
+  end
   has_many :partners, dependent: :destroy
   has_many :transfers, dependent: :destroy
   has_many :users, dependent: :destroy
@@ -123,12 +127,20 @@ class Organization < ApplicationRecord
   end
 
   def seed_items(item_collection)
+    other_items = items.other.map(&:to_h)
+
     Array.wrap(item_collection).each do |item|
-      items.create(item)
+      items.create!(item)
+    rescue ActiveRecord::RecordInvalid => invalid
+      existing_item = items.find_by(name: invalid.record.name)
+      if invalid.to_s.match(/been taken/).present? && existing_item.other?
+        Rails.logger.info "Changing Item##{existing_item.id} from Other to #{invalid.record.partner_key}"
+        existing_item.update(partner_key: invalid.record.partner_key)
+        existing_item.reload
+      end
     end
     reload
   end
-
 
   def logo_path
     if logo.attached?
