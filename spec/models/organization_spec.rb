@@ -40,11 +40,40 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe "seed_items" do
+  describe ".seed_items" do
     it "loads the base items into Item records" do
       base_items_count = BaseItem.count
       Organization.seed_items(organization)
       expect(organization.items.count).to eq(base_items_count)
+    end
+  end
+
+  describe "#seed_items" do
+    it "allows a single base item to be seeded" do
+      organization # will auto-seed existing base items
+      base_item = create(:base_item, name: "Foo", partner_key: "foo").to_h
+      expect do
+        organization.seed_items(base_item)
+      end.to change{organization.items.size}.by(1)
+    end
+
+    it "allows a collection of items to be seeded" do
+      organization # will auto-seed existing base items
+      base_items = [create(:base_item, name: "Foo", partner_key: "foo").to_h, create(:base_item, name: "Bar", partner_key: "bar").to_h]
+      expect do
+        organization.seed_items(base_items)
+      end.to change{organization.items.size}.by(2)
+    end
+
+    context "when given an item that already exists" do
+      it "gracefully skips the item" do
+        organization # will auto-seed existing base items
+        base_item = create(:base_item, name: "Foo", partner_key: "foo")
+        base_items = [base_item.to_h, BaseItem.first.to_h]
+        expect do
+          organization.seed_items(base_items)
+        end.to change{organization.items.size}.by(1)
+      end
     end
   end
 

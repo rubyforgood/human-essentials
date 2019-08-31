@@ -123,7 +123,10 @@ class Organization < ApplicationRecord
   end
 
   def seed_items(item_collection)
-    items.create(Array.wrap(item_collection))
+    Array.wrap(item_collection).each do |item|
+      items.create(item)
+    end
+    reload
   end
 
 
