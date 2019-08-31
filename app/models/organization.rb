@@ -119,9 +119,9 @@ class Organization < ApplicationRecord
     }
   end
 
-  def self.seed_items(org = Organization.all)
+  def self.seed_items(organization = Organization.all)
     base_items = BaseItem.all.map(&:to_h)
-    Array.wrap(org).each do |org|
+    Array.wrap(organization).each do |org|
       Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"
       org.seed_items(base_items)
       org.reload
@@ -129,8 +129,6 @@ class Organization < ApplicationRecord
   end
 
   def seed_items(item_collection)
-    other_items = items.other.map(&:to_h)
-
     Array.wrap(item_collection).each do |item|
       items.create!(item)
     rescue ActiveRecord::RecordInvalid => invalid

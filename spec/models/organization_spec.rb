@@ -63,7 +63,7 @@ RSpec.describe Organization, type: :model do
         second_organization = create(:organization)
         organization_item_count = @organization.items.size
         second_organization_item_count = second_organization.items.size
-        base_item = create(:base_item, name: "Foo", partner_key: "foo")
+        create(:base_item, name: "Foo", partner_key: "foo")
         Organization.seed_items
         expect(@organization.items.size).to eq(organization_item_count + 1)
         expect(second_organization.items.size).to eq(second_organization_item_count + 1)
