@@ -17,10 +17,10 @@
     "mem": "^5.1.1",
     "mixin-deep": "^2.0.1",
     "set-value": "^3.0.1",
+    "webpack-cli": "^3.3.7",
     "webpack": "^4.39.3"
   },
   "devDependencies": {
-    "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.0"
   }
 }
