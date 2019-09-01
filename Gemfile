@@ -15,8 +15,7 @@ gem "cocoon"
 gem "devise"
 gem "devise_invitable"
 gem "dotenv-rails"
-gem "flipper"
-gem "flipper-active_record"
+gem "flipper", git: "https://github.com/jnunemaker/flipper.git", tag: "v0.16.2"
 gem "flipper-ui"
 gem "font-awesome-rails"
 gem "font-ionicons-rails"
@@ -45,7 +44,8 @@ gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "webpacker", "> 4.0"
-gem 'sidekiq-scheduler'
+gem "sidekiq-scheduler"
+gem "multi_json"
 
 group :development, :test do
   gem "awesome_print"
@@ -54,7 +54,7 @@ group :development, :test do
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
-  gem 'rb-readline', '~> 0.5.3'
+  gem "rb-readline", "~> 0.5.3"
   gem "rspec-rails", "~> 3.8"
   gem "rubocop"
   gem "terminal-notifier-guard"
@@ -71,7 +71,7 @@ group :development do
   gem "capistrano-bundler"
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
-  gem 'capistrano-sidekiq'
+  gem "capistrano-sidekiq"
   gem "listen", "~> 3.1.5"
   gem "rails-erd"
   gem "spring"
@@ -85,15 +85,15 @@ group :test do
   gem "database_cleaner"
   gem "factory_bot_rails"
   gem "launchy"
-  gem 'webdrivers', '~> 3.0'
+  gem "webdrivers", "~> 3.0"
   gem "rails-controller-testing"
-  gem 'simplecov'
+  gem "simplecov"
   gem "webmock", "~> 3.5"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 
-# This 'if' may seem redundant but for some reason it is necessary to suppress
+# This "if" may seem redundant but for some reason it is necessary to suppress
 # a warning on non (Windows or JRuby) platforms.
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
