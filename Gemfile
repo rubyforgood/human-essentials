@@ -45,7 +45,7 @@ gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
-gem "webpacker", "~> 3.5"
+gem "webpacker", "> 4.0"
 gem 'sidekiq-scheduler'
 
 group :development, :test do

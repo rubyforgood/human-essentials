@@ -1,7 +1,13 @@
 {
   "dependencies": {
-    "@rails/webpacker": "3.5",
+    "@babel/core": "^7.5.5",
+    "@rails/webpacker": "^4.0.7",
     "actiontext": "https://github.com/kobaltz/actiontext",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "caniuse-lite": "^1.0.30000989",
     "fstream": "^1.0.12",
     "js-yaml": "^3.13.1",
@@ -14,6 +20,7 @@
     "webpack": "^4.39.3"
   },
   "devDependencies": {
+    "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.0"
   }
 }
