@@ -37,6 +37,12 @@ RSpec.describe Organization, type: :model do
           expect(organization.barcode_items.all.count).to eq(2)
         end
       end
+      describe "during" do
+        it "return empty ranking" do
+          ranking_items = organization.items.during('1950-01-01')
+          expect(ranking_items.length).to eq(0)
+        end
+      end
     end
   end
 
