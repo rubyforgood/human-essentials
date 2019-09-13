@@ -54,6 +54,16 @@ class Organization < ApplicationRecord
         .where("line_items.created_at BETWEEN '#{date_start}' and '#{date_end}'")
         .group(:name)
     end
+    
+    def top(limit = 5)
+      order('count(line_items.id) DESC')
+      .limit(limit)
+    end
+
+    def bottom(limit = 5)
+      order('count(line_items.id) ASC')
+      .limit(limit)
+    end
   end
   has_many :partners, dependent: :destroy
   has_many :transfers, dependent: :destroy
