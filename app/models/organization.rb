@@ -47,7 +47,14 @@ class Organization < ApplicationRecord
   has_many :vendors, dependent: :destroy
   has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
-  has_many :items, dependent: :destroy
+  has_many :items, dependent: :destroy do
+    def during(date_start, date_end = Time.now.strftime("%Y-%m-%d"))
+      select("COUNT(line_items.id) as amount, name")
+        .joins(:line_items)
+        .where("line_items.created_at BETWEEN '#{date_start}' and '#{date_end}'")
+        .group(:name)
+    end
+  end
   has_many :partners, dependent: :destroy
   has_many :transfers, dependent: :destroy
   has_many :users, dependent: :destroy
