@@ -225,8 +225,8 @@
                 <%= total_purchased %> items purchased <%= display_interval %>
               </h3>
               <h3>
-                <%= item_value(@recent_purchases.sum(&:amount_spent_in_cents))%>
-                 spent 
+                <%= item_value(@purchases.sum(&:amount_spent_in_cents))%>
+                 spent
                 <%= display_interval %>
               </h3>
               <div class="box-body">
