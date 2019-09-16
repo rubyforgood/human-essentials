@@ -262,6 +262,7 @@ end
   )
 end
 
+# Create some Vendors so Purchases can have vendor_ids
 5.times do
   Vendor.create(
     contact_name: Faker::FunnyName.two_word_name,
@@ -277,6 +278,8 @@ end
     updated_at: (Date.today - rand(15).days),
   )
 end
+
+# Create purchases
 
 suppliers = ["Target", "Wegmans", "Walmart", "Walgreens"]
 comments = ["Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.", "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.", "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."]
