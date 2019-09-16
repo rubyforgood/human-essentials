@@ -37,10 +37,54 @@ RSpec.describe Organization, type: :model do
           expect(organization.barcode_items.all.count).to eq(2)
         end
       end
-      describe "during" do
-        it "return empty ranking" do
-          ranking_items = organization.items.during('1950-01-01')
-          expect(ranking_items.length).to eq(0)
+    end
+
+    describe "items" do
+      before do
+        organization.items.each_with_index do |item, index|
+          (index + 1).times { LineItem.create!(quantity: rand(250..500), item: item, itemizable: Distribution.new) }
+        end
+      end
+      describe ".during" do
+        it "return ranking of all items" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01')
+          expect(ranking_items.length).to eq(organization.items.length)
+        end
+      end
+      describe ".during.top" do
+        it "return just 3 elements" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01').top(3)
+          expect(ranking_items.length).to eq(3)
+        end
+        it "return 3 most used items" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01').top(3)
+
+          expect(ranking_items[0].amount).to eq(organization.items.length)
+          expect(ranking_items[0].name).to eq(organization.items[organization.items.length - 1].name)
+
+          expect(ranking_items[1].amount).to eq(organization.items.length - 1)
+          expect(ranking_items[1].name).to eq(organization.items[organization.items.length - 2].name)
+
+          expect(ranking_items[2].amount).to eq(organization.items.length - 2)
+          expect(ranking_items[2].name).to eq(organization.items[organization.items.length - 3].name)
+        end
+      end
+      describe ".during.bottom" do
+        it "return just 3 elements" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01').bottom(3)
+          expect(ranking_items.length).to eq(3)
+        end
+        it "return 3 least used items" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01').bottom(3)
+
+          expect(ranking_items[0].amount).to eq(1)
+          expect(ranking_items[0].name).to eq(organization.items[0].name)
+
+          expect(ranking_items[1].amount).to eq(2)
+          expect(ranking_items[1].name).to eq(organization.items[1].name)
+
+          expect(ranking_items[2].amount).to eq(3)
+          expect(ranking_items[2].name).to eq(organization.items[2].name)
         end
       end
     end
