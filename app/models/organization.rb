@@ -48,21 +48,21 @@ class Organization < ApplicationRecord
   has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
   has_many :items, dependent: :destroy do
-    def during(date_start, date_end = Time.now.strftime("%Y-%m-%d"))
+    def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
       select("COUNT(line_items.id) as amount, name")
         .joins(:line_items)
         .where("line_items.created_at BETWEEN '#{date_start}' and '#{date_end}'")
         .group(:name)
     end
-    
+
     def top(limit = 5)
       order('count(line_items.id) DESC')
-      .limit(limit)
+        .limit(limit)
     end
 
     def bottom(limit = 5)
       order('count(line_items.id) ASC')
-      .limit(limit)
+        .limit(limit)
     end
   end
   has_many :partners, dependent: :destroy
