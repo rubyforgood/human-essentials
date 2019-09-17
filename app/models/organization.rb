@@ -51,7 +51,7 @@ class Organization < ApplicationRecord
     def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
       select("COUNT(line_items.id) as amount, name")
         .joins(:line_items)
-        .where("line_items.created_at BETWEEN '#{date_start}' and '#{date_end}'")
+        .where("line_items.created_at BETWEEN ? and ?", date_start, date_end)
         .group(:name)
     end
 
