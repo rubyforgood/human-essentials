@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_26_142438) do
+ActiveRecord::Schema.define(version: 2019_08_18_003929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.string "partner_key"
   end
 
-  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
+  create_table "diaper_drive_participants", force: :cascade do |t|
     t.string "contact_name"
     t.string "email"
     t.string "phone"
@@ -109,12 +109,12 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
   end
 
-  create_table "distributions", id: :serial, force: :cascade do |t|
+  create_table "distributions", force: :cascade do |t|
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "storage_location_id"
-    t.integer "partner_id"
+    t.bigint "storage_location_id"
+    t.bigint "partner_id"
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
@@ -125,7 +125,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
   end
 
-  create_table "donation_sites", id: :serial, force: :cascade do |t|
+  create_table "donation_sites", force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.datetime "created_at", null: false
@@ -137,12 +137,12 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
 
-  create_table "donations", id: :serial, force: :cascade do |t|
+  create_table "donations", force: :cascade do |t|
     t.string "source"
-    t.integer "donation_site_id"
+    t.bigint "donation_site_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "storage_location_id"
+    t.bigint "storage_location_id"
     t.text "comment"
     t.integer "organization_id"
     t.integer "diaper_drive_participant_id"
@@ -181,7 +181,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
-  create_table "inventory_items", id: :serial, force: :cascade do |t|
+  create_table "inventory_items", force: :cascade do |t|
     t.integer "storage_location_id"
     t.integer "item_id"
     t.integer "quantity", default: 0
@@ -189,17 +189,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "item_requests", force: :cascade do |t|
-    t.bigint "request_id"
-    t.bigint "item_id"
-    t.integer "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["item_id"], name: "index_item_requests_on_item_id"
-    t.index ["request_id"], name: "index_item_requests_on_request_id"
-  end
-
-  create_table "items", id: :serial, force: :cascade do |t|
+  create_table "items", force: :cascade do |t|
     t.string "name"
     t.string "category"
     t.datetime "created_at", null: false
@@ -209,11 +199,13 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.boolean "active", default: true
     t.string "partner_key"
     t.integer "value_in_cents", default: 0
+    t.integer "package_size"
+    t.integer "distribution_quantity"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
 
-  create_table "line_items", id: :serial, force: :cascade do |t|
+  create_table "line_items", force: :cascade do |t|
     t.integer "quantity"
     t.integer "item_id"
     t.integer "itemizable_id"
@@ -231,7 +223,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.index ["organization_id"], name: "index_manufacturers_on_organization_id"
   end
 
-  create_table "organizations", id: :serial, force: :cascade do |t|
+  create_table "organizations", force: :cascade do |t|
     t.string "name"
     t.string "short_name"
     t.string "email"
@@ -245,13 +237,14 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
-    t.integer "reminder_days_before_deadline"
-    t.integer "deadline_date"
+    t.integer "reminder_day"
+    t.integer "deadline_day"
+    t.text "invitation_text"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
-  create_table "partners", id: :serial, force: :cascade do |t|
+  create_table "partners", force: :cascade do |t|
     t.string "name"
     t.string "email"
     t.datetime "created_at", null: false
@@ -290,7 +283,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.index ["status"], name: "index_requests_on_status"
   end
 
-  create_table "storage_locations", id: :serial, force: :cascade do |t|
+  create_table "storage_locations", force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.datetime "created_at", null: false
@@ -302,7 +295,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end
 
-  create_table "transfers", id: :serial, force: :cascade do |t|
+  create_table "transfers", force: :cascade do |t|
     t.integer "from_id"
     t.integer "to_id"
     t.string "comment"
@@ -312,7 +305,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -332,7 +325,7 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
     t.datetime "invitation_accepted_at"
     t.integer "invitation_limit"
     t.string "invited_by_type"
-    t.integer "invited_by_id"
+    t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
     t.string "name", default: "CHANGEME", null: false
@@ -367,8 +360,6 @@ ActiveRecord::Schema.define(version: 2019_07_26_142438) do
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "item_requests", "items"
-  add_foreign_key "item_requests", "requests"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"

@@ -3,8 +3,8 @@
 class BarcodeItemsController < ApplicationController
   def index
     @items = Item.gather_items(current_organization, @global)
-    @base_items = BaseItem.all
-    @barcode_items = current_organization.barcode_items.include_global(false).class_filter(filter_params)
+    @base_items = BaseItem.alphabetized
+    @barcode_items = current_organization.barcode_items.class_filter(filter_params)
   end
 
   def create
@@ -24,12 +24,12 @@ class BarcodeItemsController < ApplicationController
 
   def new
     @barcode_item = current_organization.barcode_items.new
-    @items = current_organization.items
+    @items = current_organization.items.alphabetized
   end
 
   def edit
     @barcode_item = current_organization.barcode_items.includes(:barcodeable).find(params[:id])
-    @items = current_organization.items
+    @items = current_organization.items.alphabetized
   end
 
   def show
@@ -38,7 +38,7 @@ class BarcodeItemsController < ApplicationController
 
   def find
     # First, we do a naive lookup
-    @barcode_item = BarcodeItem.includes(:barcodeable).organization_barcodes_with_globals(@organization).find_by!(value: barcode_item_params[:value])
+    @barcode_item = current_organization.barcode_items.all.find_by!(value: barcode_item_params[:value])
     # Depending on whether or not the result is solely a global barcode, we may need additional queries
     # Global barcodes don't explicitly map to organization items, so we can do a lookup to clarify that
     if @barcode_item.global?

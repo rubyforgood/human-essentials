@@ -2,7 +2,7 @@
 #
 # Table name: adjustments
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  organization_id     :integer
 #  storage_location_id :integer
 #  comment             :text
@@ -24,9 +24,9 @@ FactoryBot.define do
         item { nil }
       end
 
-      after(:build) do |instance, evaluator|
-        item = evaluator.item || instance.storage_location.inventory_items.first.item
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+      after(:build) do |adjustment, evaluator|
+        item = evaluator.item || adjustment.storage_location.inventory_items.first.item
+        adjustment.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: adjustment)
       end
     end
   end

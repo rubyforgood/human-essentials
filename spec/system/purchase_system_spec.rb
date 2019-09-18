@@ -15,10 +15,20 @@ RSpec.describe "Purchases", type: :system, js: true do
       expect(current_path).to eq(new_purchase_path(@organization))
       expect(page).to have_content "Start a new purchase"
     end
+
+    it "User sees purchased date column" do
+      storage1 = create(:storage_location, name: "storage1")
+      purchase_date = Time.zone.parse("Dec 8 1971 10:19")
+      create(:purchase, storage_location: storage1, created_at: purchase_date)
+      page.refresh
+      expect(page).to have_text("Purchased Date")
+      expect(page).to have_text("1971-12-08")
+    end
   end
 
   context "When filtering on the index page" do
     let!(:item) { create(:item) }
+    let(:storage) { create(:storage_location) }
     subject { url_prefix + "/purchases" }
 
     it "User can filter the #index by storage location" do
@@ -43,6 +53,30 @@ RSpec.describe "Purchases", type: :system, js: true do
       select vendor1.business_name, from: "filters_from_vendor"
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
+    end
+
+    it "Filters by date" do
+      storage = create(:storage_location, name: "storage")
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 2, 1))
+
+      visit subject
+      fill_in "dates_date_from", with: "02/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+
+      fill_in "dates_date_from", with: "03/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
+
+      fill_in "dates_date_to", with: "03/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
+
+      fill_in "dates_date_to", with: "02/28/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 0)
     end
   end
 
@@ -85,15 +119,31 @@ RSpec.describe "Purchases", type: :system, js: true do
         expect(Purchase.last.issued_at).to eq(Date.parse("01/01/2001"))
       end
 
+      it "Does not include inactive items in the line item fields" do
+        visit url_prefix + "/purchases/new"
+
+        item = Item.alphabetized.first
+
+        select StorageLocation.first.name, from: "purchase_storage_location_id"
+        expect(page).to have_content(item.name)
+        select item.name, from: "purchase_line_items_attributes_0_item_id"
+
+        item.update(active: false)
+
+        page.refresh
+        select StorageLocation.first.name, from: "purchase_storage_location_id"
+        expect(page).to have_no_content(item.name)
+      end
+
       it "multiple line items for the same item type are accepted and combined on the backend" do
         select StorageLocation.first.name, from: "purchase_storage_location_id"
         select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
         select Vendor.first.business_name, from: "purchase_vendor_id"
         fill_in "purchase_line_items_attributes_0_quantity", with: "5"
         page.find(:css, "#__add_line_item").click
-        select_id = page.find(:xpath, '//*[@id="purchase_line_items"]/div[2]/select')[:id]
+        select_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/div/select')[:id]
         select Item.alphabetized.first.name, from: select_id
-        text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/div[2]/input[2]')[:id]
+        text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/div/input[@type="number"]')[:id]
         fill_in text_id, with: "10"
         fill_in "purchase_amount_spent_in_cents", with: "10"
 
@@ -109,11 +159,11 @@ RSpec.describe "Purchases", type: :system, js: true do
       # dropdown is not populated on the return trip.
       it "items dropdown is still repopulated even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count + 1)
         click_button "Save"
 
         expect(page).to have_content("error")
-        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count + 1)
       end
     end
 
@@ -153,7 +203,6 @@ RSpec.describe "Purchases", type: :system, js: true do
       end
 
       it "User scan same barcode 2 times" do
-        pending "The JS doesn't appear to be executing in this correctly"
         within "#purchase_line_items" do
           expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
           Barcode.boop(@existing_barcode.value)
@@ -161,11 +210,9 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
-        page.find(:css, "#__add_line_item").click
-
         within "#purchase_line_items" do
-          expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
-          Barcode.boop(@existing_barcode.value)
+          expect(page).to have_css('.__barcode_item_lookup', count: 2)
+          Barcode.boop(@existing_barcode.value, "new_line_items")
         end
 
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: (@existing_barcode.quantity * 2).to_s

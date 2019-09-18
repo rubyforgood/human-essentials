@@ -4,7 +4,7 @@ class StorageLocationsController < ApplicationController
 
   def index
     @items = current_organization.storage_locations.items_inventoried
-    @storage_locations = current_organization.storage_locations.includes(:inventory_items).class_filter(filter_params)
+    @storage_locations = current_organization.storage_locations.alphabetized.includes(:inventory_items).class_filter(filter_params)
   end
 
   def create
@@ -25,49 +25,15 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
   end
 
-  # TODO: Move these queries to Query Objects
+  # TODO: Move these queries to Query Object
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
     # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
-    @items_out = LineItem
-                 .joins("
-LEFT OUTER JOIN distributions ON distributions.id = line_items.itemizable_id AND line_items.itemizable_type = 'Distribution'
-LEFT OUTER JOIN items ON items.id = line_items.item_id
-LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
-LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-                 .where("(distributions.storage_location_id = :id or (adjustments.storage_location_id= :id and line_items.quantity < 0) or transfers.from_id = :id) and items.organization_id= :organisation_id", id: params[:id],
-                                                                                                                                                                                                                  organisation_id: current_organization.id)
-                 .select("sum( case when line_items.quantity < 0 then -1*line_items.quantity else line_items.quantity END ) as quantity, items.id, items.name")
-                 .group("items.name, items.id")
-                 .order("items.name")
-    @items_out_total = LineItem
-                       .joins("
-LEFT OUTER JOIN distributions ON distributions.id = line_items.itemizable_id AND line_items.itemizable_type = 'Distribution'
-LEFT OUTER JOIN items ON items.id = line_items.item_id
-LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
-LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-                       .where("(distributions.storage_location_id = :id or (adjustments.storage_location_id= :id and line_items.quantity < 0) or transfers.from_id = :id) and items.organization_id= :organisation_id", id: params[:id], organisation_id: current_organization.id)
-                       .sum("case when line_items.quantity < 0 then -1*line_items.quantity else line_items.quantity END")
-    @items_in = LineItem
-                .joins("
-LEFT OUTER JOIN donations ON donations.id = line_items.itemizable_id AND line_items.itemizable_type = 'Donation'
-LEFT OUTER JOIN purchases ON purchases.id = line_items.itemizable_id AND line_items.itemizable_type = 'Purchase'
-LEFT OUTER JOIN items ON items.id = line_items.item_id
-LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
-LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-                .where("(donations.storage_location_id = :id or purchases.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organisation_id", id: params[:id], organisation_id: current_organization.id)
-                .select("sum(line_items.quantity) as quantity, items.id, items.name")
-                .group("items.name, items.id")
-                .order("items.name")
-    @items_in_total = LineItem
-                      .joins("
-LEFT OUTER JOIN donations ON donations.id = line_items.itemizable_id AND line_items.itemizable_type = 'Donation'
-LEFT OUTER JOIN purchases ON purchases.id = line_items.itemizable_id AND line_items.itemizable_type = 'Purchase'
-LEFT OUTER JOIN items ON items.id = line_items.item_id
-LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
-LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-                      .where("(donations.storage_location_id = :id or purchases.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organisation_id", id: params[:id], organisation_id: current_organization.id)
-                      .sum("line_items.quantity")
+    @items_out = ItemsOutQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
+
     respond_to do |format|
       format.html
       format.csv { send_data @storage_location.to_csv }
@@ -103,7 +69,12 @@ LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_it
   end
 
   def inventory
-    @storage_location = current_organization.storage_locations.includes(inventory_items: :item).find(params[:id])
+    @inventory_items = current_organization.storage_locations
+                                           .includes(inventory_items: :item)
+                                           .find(params[:id])
+                                           .inventory_items
+
+    @inventory_items = @inventory_items.active unless params[:include_inactive_items] == "true"
     respond_to :json
   end
 

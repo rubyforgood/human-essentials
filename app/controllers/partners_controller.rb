@@ -5,7 +5,8 @@ class PartnersController < ApplicationController
   include Importable
 
   def index
-    @partners = current_organization.partners.order(:name)
+    @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
+    @partners = Partner.where(organization: current_organization).class_filter(filter_params).alphabetized
   end
 
   def create
@@ -20,9 +21,13 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    @partner.approved!
-    DiaperPartnerClient.put(@partner.attributes)
-    redirect_to partners_path
+    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "approved")
+    if response.is_a?(Net::HTTPSuccess)
+      @partner.approved!
+      redirect_to partners_path, notice: "Partner approved!"
+    else
+      redirect_to partners_path, error: "Failed to update Partner data!"
+    end
   end
 
   def show
@@ -33,6 +38,7 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.new
   end
 
+  # NOTE(chaserx): this is confusing and could be renamed to reflect what it's returning/showing review_application
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
 
@@ -73,6 +79,17 @@ class PartnersController < ApplicationController
     redirect_to partners_path, notice: "#{partner.name} invited!"
   end
 
+  def recertify_partner
+    @partner = current_organization.partners.find(params[:id])
+    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "recertification_required")
+    if response.is_a?(Net::HTTPSuccess)
+      @partner.recertification_required!
+      redirect_to partners_path, notice: "#{@partner.name} recertification successfully requested!"
+    else
+      redirect_to partners_path, error: "#{@partner.name} failed to update partner records"
+    end
+  end
+
   private
 
   def autovivifying_hash
@@ -80,6 +97,14 @@ class PartnersController < ApplicationController
   end
 
   def partner_params
-    params.require(:partner).permit(:name, :email)
+    params.require(:partner).permit(:name, :email, :send_reminders)
+  end
+
+  def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).slice(:by_status)
   end
 end
+
+

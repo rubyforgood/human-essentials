@@ -6,8 +6,8 @@ RSpec.describe "Donations", type: :system, js: true do
 
   context "When visiting the index page" do
     before(:each) do
-      create(:donation, source: Donation::SOURCES[:misc])
-      create(:donation, source: Donation::SOURCES[:misc])
+      create(:donation)
+      create(:donation)
       visit @url_prefix + "/donations"
     end
 
@@ -21,13 +21,21 @@ RSpec.describe "Donations", type: :system, js: true do
     it "Displays Total quantity on the index page" do
       expect(page.find(:css, "table.table-hover", visible: true)).to have_content("20")
     end
+
+    it "doesn't die when an inactive item is in a donation" do
+      item = create(:item, :active, name: "INACTIVE ITEM")
+      create(:donation, :with_items, item: item)
+      item.update(active: false)
+      item.reload
+      expect { visit(@url_prefix + "/donations") }.to_not raise_error
+    end
   end
 
   context "When filtering on the index page" do
     let!(:item) { create(:item) }
     it "Filters by the source" do
-      create(:donation, source: Donation::SOURCES[:misc])
-      create(:donation, source: Donation::SOURCES[:donation_site])
+      create(:donation)
+      create(:donation_site_donation)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
       select Donation::SOURCES[:misc], from: "filters_by_source"
@@ -37,8 +45,8 @@ RSpec.describe "Donations", type: :system, js: true do
     it "Filters by diaper drive" do
       a = create(:diaper_drive_participant, business_name: "A")
       b = create(:diaper_drive_participant, business_name: "B")
-      create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: a)
-      create(:donation, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: b)
+      create(:diaper_drive_donation, diaper_drive_participant: a)
+      create(:diaper_drive_donation, diaper_drive_participant: b)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
       select a.business_name, from: "filters_by_diaper_drive_participant"
@@ -48,8 +56,8 @@ RSpec.describe "Donations", type: :system, js: true do
     it "Filters by manufacturer" do
       a = create(:manufacturer, name: "A")
       b = create(:manufacturer, name: "B")
-      create(:donation, source: Donation::SOURCES[:manufacturer], manufacturer: a)
-      create(:donation, source: Donation::SOURCES[:manufacturer], manufacturer: b)
+      create(:manufacturer_donation, manufacturer: a)
+      create(:manufacturer_donation, manufacturer: b)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 3)
       select a.name, from: "filters_from_manufacturer"
@@ -77,26 +85,37 @@ RSpec.describe "Donations", type: :system, js: true do
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)
     end
+
     it "Filters by date" do
       storage = create(:storage_location, name: "storage")
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1), source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1), source: Donation::SOURCES[:misc])
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:donation, storage_location: storage, issued_at: Date.new(2018, 2, 1))
       visit @url_prefix + "/donations"
-      select "March", from: "date_filters_issued_at_2i"
-      select "2018", from: "date_filters_issued_at_1i"
+
+      fill_in "dates_date_from", with: "02/01/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 4)
+
+      fill_in "dates_date_from", with: "03/01/2018"
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 3)
-      select "February", from: "date_filters_issued_at_2i"
+
+      fill_in "dates_date_to", with: "03/01/2018"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
+
+      fill_in "dates_date_to", with: "02/28/2018"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 1)
     end
+
     it "Filters by multiple attributes" do
       storage1 = create(:storage_location, name: "storage1")
       storage2 = create(:storage_location, name: "storage2")
-      create(:donation, storage_location: storage1, source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage2, source: Donation::SOURCES[:misc])
-      create(:donation, storage_location: storage1, source: Donation::SOURCES[:donation_site])
+      create(:donation, storage_location: storage1)
+      create(:donation, storage_location: storage2)
+      create(:donation_site_donation, storage_location: storage1)
       visit @url_prefix + "/donations"
       expect(page).to have_css("table tbody tr", count: 4)
       select Donation::SOURCES[:misc], from: "filters_by_source"
@@ -143,9 +162,9 @@ RSpec.describe "Donations", type: :system, js: true do
         select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
         fill_in "donation_line_items_attributes_0_quantity", with: "5"
         page.find(:css, "#__add_line_item").click
-        select_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/select')[:id]
+        select_id = page.find(:xpath, '//*[@id="donation_line_items"]/section[2]//select')[:id]
         select Item.alphabetized.first.name, from: select_id
-        text_id = page.find(:xpath, '//*[@id="donation_line_items"]/div[2]/input[2]')[:id]
+        text_id = page.find(:css, '#donation_line_items > section:nth-child(2) > div > div.col-md-3.col-12 > div.donation_line_items_quantity > input')[:id]
         fill_in text_id, with: "10"
 
         expect do
@@ -153,6 +172,20 @@ RSpec.describe "Donations", type: :system, js: true do
         end.to change { Donation.count }.by(1)
 
         expect(Donation.last.line_items.first.quantity).to eq(15)
+      end
+
+      it "Does not include inactive items in the line item fields" do
+        item = Item.alphabetized.first
+
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        expect(page).to have_content(item.name)
+        select item.name, from: "donation_line_items_attributes_0_item_id"
+
+        item.update(active: false)
+
+        page.refresh
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        expect(page).to have_no_content(item.name)
       end
 
       it "Allows User to create a donation for a Diaper Drive source" do
@@ -272,11 +305,11 @@ RSpec.describe "Donations", type: :system, js: true do
       # dropdown is not populated on the return trip.
       it "Repopulates items dropdown even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
         click_button "Save"
 
         expect(page).to have_content("error")
-        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
       end
 
       # Bug fix -- Issue #526
@@ -285,6 +318,37 @@ RSpec.describe "Donations", type: :system, js: true do
         page.find(:css, "#__add_line_item").click
         expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
         expect(page).to have_xpath("//input[@id='_barcode-lookup-2']")
+      end
+
+      it "Verifies unusually large donation quantities", js: true do
+        select Donation::SOURCES[:misc], from: "donation_source"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
+
+        expect do
+          accept_confirm do
+            click_button "Save"
+          end
+          # wait for the next page to load
+          expect(page).not_to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
+        end.to change { Donation.count }.by(1)
+      end
+
+      it "Displays nested errors" do
+        select Donation::SOURCES[:misc], from: "donation_source"
+        select StorageLocation.first.name, from: "donation_storage_location_id"
+        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "10000000000000000000000"
+
+        expect do
+          accept_confirm do
+            click_button "Save"
+          end
+          expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
+        end.not_to change { Donation.count }
+        expect(page).to have_content("Start a new donation")
+        expect(page).to have_content("must be less than")
       end
     end
 
@@ -387,9 +451,9 @@ RSpec.describe "Donations", type: :system, js: true do
       item1 = create(:item, value_in_cents: 125)
       item2 = create(:item)
       item3 = create(:item, value_in_cents: 200)
-      @donation1 = create(:donation, :with_items, item: item1, source: Donation::SOURCES[:misc])
-      create(:donation, :with_items, item: item2, source: Donation::SOURCES[:misc])
-      create(:donation, :with_items, item: item3, source: Donation::SOURCES[:misc])
+      @donation1 = create(:donation, :with_items, item: item1)
+      create(:donation, :with_items, item: item2)
+      create(:donation, :with_items, item: item3)
 
       visit @url_prefix + "/donations"
     end
@@ -405,6 +469,53 @@ RSpec.describe "Donations", type: :system, js: true do
     it 'Displays the total value on the show page' do
       visit @url_prefix + "/donations/#{@donation1.id}"
       expect(page).to have_content "$125"
+    end
+  end
+
+  context "When editing an existing donation" do
+    before(:each) do
+      item = create(:item, organization: @organization, name: "Rare Candy")
+      create(:storage_location, organization: @organization)
+      create(:donation_site, organization: @organization)
+      create(:diaper_drive_participant, organization: @organization)
+      create(:manufacturer, organization: @organization)
+      create(:donation, :with_items, item: item, organization: @organization)
+      @organization.reload
+      visit @url_prefix + "/donations/"
+    end
+
+    xit "Allows the user to edit a donation" do
+      pending("TODO - write this!")
+    end
+
+    it "Does not default a selection if item lookup fails" do
+      total_quantity = find("#donation_quantity").text
+      expect(total_quantity).to_not eq "0"
+
+      click_on "View"
+      expect(page).to have_content "Rare Candy"
+
+      click_on "Make a correction"
+
+      item_select = "#donation_line_items_attributes_0_item_id"
+      selected_option_text = find(item_select).find("option[selected]").text
+      expect(selected_option_text).to eq "Rare Candy"
+
+      # move the item to another org
+      rare_candy = Item.find_by(name: "Rare Candy")
+      rare_candy.organization = FactoryBot.create(:organization)
+      rare_candy.save!
+      page.refresh
+
+      # ensure nothing is pre-selected
+      expect(find(item_select)).to have_no_css "option[selected]"
+      click_on "Save"
+
+      # TODO: I'm not sure if this is the correct behavior, but
+      # removing the line item is a lot more benign than randomly
+      # switching the item on it to a different item
+      total_quantity = find("#donation_quantity").text
+      expect(total_quantity).to eq "0"
     end
   end
 end

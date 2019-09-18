@@ -12,7 +12,6 @@ gem "bootstrap-sass"
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
-gem "coffee-rails"
 gem "devise"
 gem "devise_invitable"
 gem "dotenv-rails"
@@ -24,11 +23,13 @@ gem "font-ionicons-rails"
 gem "fullcalendar-rails"
 gem "geocoder"
 gem "groupdate", "~> 4.1"
+gem "image_processing"
 gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "momentjs-rails"
 gem "newrelic_rpm"
+gem "nokogiri", ">= 1.10.4"
 gem "paperclip"
 gem "pg", "~> 1.1.3"
 gem "prawn-rails"
@@ -44,8 +45,8 @@ gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
-gem "image_processing"
-gem "webpacker", "~> 3.5"
+gem "webpacker", "> 4.0"
+gem 'sidekiq-scheduler'
 
 group :development, :test do
   gem "awesome_print"
@@ -87,8 +88,14 @@ group :test do
   gem "launchy"
   gem 'webdrivers', '~> 3.0'
   gem "rails-controller-testing"
+  gem 'simplecov'
   gem "webmock", "~> 3.5"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
+
+# This 'if' may seem redundant but for some reason it is necessary to suppress
+# a warning on non (Windows or JRuby) platforms.
+if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
+  gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
+end

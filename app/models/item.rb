@@ -2,16 +2,18 @@
 #
 # Table name: items
 #
-#  id              :bigint(8)        not null, primary key
-#  name            :string
-#  category        :string
-#  created_at      :datetime
-#  updated_at      :datetime
-#  barcode_count   :integer
-#  organization_id :integer
-#  active          :boolean          default(TRUE)
-#  partner_key     :string
-#  value_in_cents  :integer   default(0)
+#  id                    :integer          not null, primary key
+#  name                  :string
+#  category              :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  barcode_count         :integer
+#  organization_id       :integer
+#  active                :boolean          default(TRUE)
+#  partner_key           :string
+#  value_in_cents        :integer          default(0)
+#  package_size          :integer
+#  distribution_quantity :integer
 #
 
 class Item < ApplicationRecord
@@ -42,8 +44,6 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
-  default_scope { active }
-
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
   end
@@ -58,7 +58,7 @@ class Item < ApplicationRecord
 
   def self.reactivate(item_ids)
     item_ids = Array.wrap(item_ids)
-    Item.unscoped.where(id: item_ids).find_each { |item| item.update(active: true) }
+    Item.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
   # Override `destroy` to ensure Item isn't accidentally destroyed
@@ -75,12 +75,11 @@ class Item < ApplicationRecord
     !(line_items.empty? && inventory_items.empty? && barcode_items.empty?)
   end
 
-  def self.gather_items(current_organization, global)
+  def self.gather_items(current_organization, global = false)
     if global
-      where(id: current_organization.barcode_items.include_global(false).pluck(:barcodeable_id))
-        .merge(where(id: BarcodeItem.where(global: true)))
+      where(id: current_organization.barcode_items.all.pluck(:barcodeable_id))
     else
-      where(id: current_organization.barcode_items.include_global(false).pluck(:barcodeable_id))
+      where(id: current_organization.barcode_items.pluck(:barcodeable_id))
     end
   end
   # Convenience method so that other methods can be simplified to
@@ -103,7 +102,6 @@ class Item < ApplicationRecord
   end
 
   def default_quantity
-    # TODO: actual logic for calculating and letting users configure this calculation
-    50
+    distribution_quantity || 50
   end
 end

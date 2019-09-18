@@ -22,33 +22,64 @@ RSpec.describe BarcodeItemsController, type: :controller do
       end
     end
 
-    describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:barcode_item, global: true)) }
-      it "returns http success" do
-        expect(subject).to be_successful
+    fdescribe "GET #edit" do
+      context "with a normal barcode item" do
+        subject { get :edit, params: default_params.merge(id: create(:barcode_item)) }
+
+        it "returns http success" do
+          expect(subject).to be_successful
+        end
+      end
+
+      context "with a global barcode item" do
+        subject { get :edit, params: default_params.merge(id: create(:global_barcode_item)) }
+
+        it "returns a 404" do
+          subject
+          expect(response.status).to eq(404)
+        end
       end
     end
 
-    describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:barcode_item, global: true)) }
-      it "returns http success" do
-        expect(subject).to be_successful
+    fdescribe "GET #show" do
+      context "with a normal barcode item" do
+        subject { get :show, params: default_params.merge(id: create(:barcode_item)) }
+
+        it "returns http success" do
+          expect(subject).to be_successful
+        end
+      end
+
+      context "with a global barcode item" do
+        subject { get :show, params: default_params.merge(id: create(:global_barcode_item)) }
+
+        it "returns http success" do
+          subject
+          expect(response.status).to eq(404)
+        end
       end
     end
 
     describe "GET #find" do
-      let!(:global_barcode) { create(:barcode_item, global: true) }
+      let!(:global_barcode) { create(:global_barcode_item) }
       let!(:organization_barcode) { create(:barcode_item, organization: @organization) }
       let!(:other_barcode) { create(:barcode_item, organization: create(:organization)) }
+
       context "via ajax" do
         subject { get :find, params: default_params.merge(barcode_item: { value: organization_barcode.value }, format: :json) }
         it "can find a barcode that is scoped to just this organization" do
           expect(subject).to be_successful
+          result = JSON.parse(response.body)
+          expect(result["barcode_item"]["barcodeable_type"]).to eq("Item")
+          expect(result["barcode_item"]["id"].to_i).to eq(organization_barcode.id)
         end
 
         it "can find a barcode that's universally available" do
           get :find, params: default_params.merge(barcode_item: { value: global_barcode.value }, format: :json)
           expect(response).to be_successful
+          result = JSON.parse(response.body)
+          expect(result["barcode_item"]["barcodeable_type"]).to eq("BaseItem")
+          expect(result["barcode_item"]["id"].to_i).to eq(global_barcode.id)
         end
 
         context "when it's missing" do
@@ -63,10 +94,10 @@ RSpec.describe BarcodeItemsController, type: :controller do
     describe "DELETE #destroy" do
       it "disallows a user to delete someone else's barcode" do
         other_org = create(:organization)
-        other_barcode = create(:barcode_item, organization_id: other_org.id, global: false)
+        other_barcode = create(:barcode_item, organization_id: other_org.id)
         delete :destroy, params: default_params.merge(id: other_barcode.to_param)
         expect(response).not_to be_successful
-        expect(flash[:error]).to match(/permission/)
+        expect(response).to have_error(/permission/)
       end
 
       it "disallows a non-superadmin to delete a global barcode" do
@@ -74,11 +105,11 @@ RSpec.describe BarcodeItemsController, type: :controller do
         global_barcode = create(:global_barcode_item)
         delete :destroy, params: default_params.merge(id: global_barcode.to_param)
         expect(response).not_to be_successful
-        expect(flash[:error]).to match(/permission/)
+        expect(response).to have_error(/permission/)
       end
 
       it "redirects to the index" do
-        delete :destroy, params: default_params.merge(id: create(:barcode_item, global: false, organization_id: @organization.id))
+        delete :destroy, params: default_params.merge(id: create(:barcode_item, organization_id: @organization.id))
         expect(subject).to redirect_to(barcode_items_path)
       end
     end

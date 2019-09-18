@@ -6,7 +6,7 @@ module ApplicationHelper
     if current_user.super_admin?
       admin_dashboard_path
     else
-      dashboard_path
+      dashboard_path(current_user.organization)
     end
   end
 
@@ -54,11 +54,12 @@ module ApplicationHelper
     end
   end
 
-  # def after_sign_out_path_for(resource)
-  # end
-
   def confirm_delete_msg(resource)
     "Are you sure you want to delete #{resource}?"
+  end
+
+  def confirm_restore_msg(resource)
+    "Are you sure you want to restore #{resource}?"
   end
 
   def step_container_helper(index, active_index)

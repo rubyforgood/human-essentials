@@ -19,7 +19,8 @@ class AdjustmentsController < ApplicationController
   def new
     @adjustment = current_organization.adjustments.new
     @adjustment.line_items.build
-    load_form_collections
+    @storage_locations = current_organization.storage_locations
+    @items = current_organization.items.active.alphabetized
   end
 
   # POST /adjustments

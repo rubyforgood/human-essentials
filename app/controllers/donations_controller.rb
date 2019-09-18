@@ -4,29 +4,32 @@ class DonationsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i(scale_intake scale)
   skip_before_action :authorize_user, only: %i(scale_intake scale)
 
+  include Dateable
+
   def index
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
+                                     .where(issued_at: date_range)
                                      .class_filter(filter_params)
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum
     @total_value_all_donations = total_value(@donations)
-    @storage_locations = @donations.collect(&:storage_location).compact.uniq
+    @storage_locations = @donations.collect(&:storage_location).compact.uniq.sort
     @selected_storage_location = filter_params[:at_storage_location]
-    @sources = @donations.collect(&:source).uniq
+    @sources = @donations.collect(&:source).uniq.sort
     @selected_source = filter_params[:by_source]
-    @donation_sites = @donations.collect(&:donation_site).compact.uniq
+    @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
     @selected_donation_site = filter_params[:from_donation_site]
     @diaper_drives = @donations.collect do |d|
       d.source == Donation::SOURCES[:diaper_drive] ? d.diaper_drive_participant : nil
-    end.compact.uniq
+    end.compact.uniq.sort
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
-    @manufacturers = @donations.collect(&:manufacturer).compact.uniq
+    @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
-
-    @selected_date = date_filter
+    @date_from = date_params[:date_from]
+    @date_to = date_params[:date_to]
   end
 
   def scale
@@ -101,11 +104,11 @@ class DonationsController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations
-    @donation_sites = current_organization.donation_sites
-    @diaper_drive_participants = current_organization.diaper_drive_participants
-    @manufacturers = current_organization.manufacturers
-    @items = current_organization.items.alphabetized
+    @storage_locations = current_organization.storage_locations.alphabetized
+    @donation_sites = current_organization.donation_sites.alphabetized
+    @diaper_drive_participants = current_organization.diaper_drive_participants.alphabetized
+    @manufacturers = current_organization.manufacturers.alphabetized
+    @items = current_organization.items.active.alphabetized
   end
 
   def donation_params
@@ -121,19 +124,7 @@ class DonationsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    fp = params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
-    fp.merge(by_issued_at: date_filter)
-  end
-
-  def date_filter
-    return nil unless params.key?(:date_filters)
-
-    date_params = params.require(:date_filters)
-    if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
-      return nil
-    end
-
-    Date.new(date_params["issued_at(1i)"].to_i, date_params["issued_at(2i)"].to_i, date_params["issued_at(3i)"].to_i)
+    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source
@@ -154,8 +145,8 @@ class DonationsController < ApplicationController
 
   def total_value(donations)
     total_value_all_donations = 0
-    donations.each do |distribution|
-      total_value_all_donations += distribution.value_per_itemizable
+    donations.each do |donation|
+      total_value_all_donations += donation.value_per_itemizable
     end
     total_value_all_donations
   end

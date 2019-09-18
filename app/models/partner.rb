@@ -2,19 +2,20 @@
 #
 # Table name: partners
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  email           :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  organization_id :integer
-#  status          :string
+#  send_reminders  :boolean          default(FALSE), not null
+#  status          :integer          default("uninvited")
 #
 
 class Partner < ApplicationRecord
   require "csv"
 
-  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error]
+  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error, :recertification_required]
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy
@@ -27,6 +28,13 @@ class Partner < ApplicationRecord
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
       .order(:name)
+  }
+
+  scope :alphabetized, -> { order(:name) }
+
+  include Filterable
+  scope :by_status, ->(status) {
+    where(status: status.to_sym)
   }
 
   # better to extract this outside of the model

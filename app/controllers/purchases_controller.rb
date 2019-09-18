@@ -4,9 +4,12 @@ class PurchasesController < ApplicationController
   skip_before_action :authenticate_user!, only: %i(scale_intake scale)
   skip_before_action :authorize_user, only: %i(scale_intake scale)
 
+  include Dateable
+
   def index
     @purchases = current_organization.purchases
                                      .includes(:line_items, :storage_location)
+                                     .where(issued_at: date_range)
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
     # Are these going to be inefficient with large datasets?
@@ -15,6 +18,8 @@ class PurchasesController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
+    @date_from = date_params[:date_from]
+    @date_to = date_params[:date_to]
   end
 
   def create
@@ -26,7 +31,7 @@ class PurchasesController < ApplicationController
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
       flash[:error] = "There was an error starting this purchase, try again?"
-      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors}"
+      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render action: :new
     end
   end
@@ -70,13 +75,20 @@ class PurchasesController < ApplicationController
 
   private
 
+  def clean_purchase_amount
+    return nil unless params[:purchase][:amount_spent_in_cents]
+
+    params[:purchase][:amount_spent_in_cents] = params[:purchase][:amount_spent_in_cents].gsub(/[$,.]/, "")
+  end
+
   def load_form_collections
-    @storage_locations = current_organization.storage_locations
-    @items = current_organization.items.alphabetized
-    @vendors = current_organization.vendors.order(:business_name)
+    @storage_locations = current_organization.storage_locations.alphabetized
+    @items = current_organization.items.active.alphabetized
+    @vendors = current_organization.vendors.alphabetized
   end
 
   def purchase_params
+    clean_purchase_amount
     params = compact_line_items
     params.require(:purchase).permit(:comment, :amount_spent_in_cents, :purchased_from, :storage_location_id, :issued_at, :vendor_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end

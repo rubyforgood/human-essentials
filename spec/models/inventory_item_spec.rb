@@ -2,12 +2,12 @@
 #
 # Table name: inventory_items
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  storage_location_id :integer
 #  item_id             :integer
 #  quantity            :integer          default(0)
-#  created_at          :datetime
-#  updated_at          :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #
 
 RSpec.describe InventoryItem, type: :model do
@@ -24,6 +24,10 @@ RSpec.describe InventoryItem, type: :model do
       it "is gte 0" do
         expect(build(:inventory_item, quantity: -1)).not_to be_valid
         expect(build(:inventory_item, quantity: 0)).to be_valid
+      end
+
+      it "is less than the max integer" do
+        expect(build(:inventory_item, quantity: 2**31)).not_to be_valid
       end
     end
     it "requires an inventory association" do

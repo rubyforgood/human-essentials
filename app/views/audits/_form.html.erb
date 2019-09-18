@@ -1,5 +1,5 @@
 <%= simple_form_for @audit, html: { class: "storage-location-required" } do |f| %>
-  <%= render partial: "storage_locations/source", object: f%>
+  <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: true } %>
   <fieldset style="margin-bottom: 2rem;" class="form-inline">
     <legend>Items in this audit</legend>
     <%= f.simple_fields_for :line_items do |item| %>

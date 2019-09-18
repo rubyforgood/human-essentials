@@ -1,26 +1,38 @@
 <% status = partner_row.status%>
 <tr>
-  <td><%= partner_row.name %></td>
+  <td><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
   <td>
     <% case status %>
     <% when "uninvited" %>
       <button class="btn btn-xs bg-teal">Uninvited</button>
-      <% when "invited" %>
-      <%= view_button_to approve_partner_partner_path(partner_row), { text: "#{status.humanize}", icon: "check" } %>
+    <% when "invited" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check" } %>
 
-      <% when "awaiting_review" %>
-      <%= view_button_to approve_partner_partner_path(partner_row), { text: "#{status.humanize}", icon: "check", type: "warning" } %>
-      <% when "approved" %>
-      <%= view_button_to approve_partner_partner_path(partner_row), { text: "#{status.humanize}", icon: "check", type: "success" } %>
+    <% when "awaiting_review" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "warning" } %>
+    <% when "approved" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "success" } %>
+    <% when "recertification_required" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "minus", type: "danger" } %>
     <% else %>
       <span class="label label-teal">Errored</span>
     <% end %>
   </td>
-  <td class="text-right">
-    <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") unless !partner_row.uninvited? %>
-    <%= view_button_to partner_path(partner_row) %>
-    <%= edit_button_to edit_partner_path(partner_row) %>
-    <%= delete_button_to partner_path(partner_row), { confirm: confirm_delete_msg(partner_row.name) } %>
+  <td>
+    <% case status %>
+     <% when "uninvited" %>
+      <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+    <% when "invited" %>
+      <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
+    <% when "awaiting_review" %>
+      <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
+    <% when "approved" %>
+      <%= button_to recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" do %>
+        <i class="fa fa-refresh"></i> Request Recertification
+      <% end %>
+    <% else %>
+      &nbsp;
+    <% end %>
   </td>
 </tr>

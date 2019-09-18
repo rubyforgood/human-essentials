@@ -2,9 +2,7 @@
 <tr>
 <td><%= row_item[:item_name] %></td>
 <% @storages.each do |storage| %>
-  <td><%= row_item[storage.id] %></td>
+  <td><%= row_item[storage.id] || "0" %></td>
 <% end %>
-<td><%= row_item[:quantity] == 0? '': row_item[:quantity] %></td>
-  <td><%= item_value(row_item[:item_value]) %></td>
-<td>
+<td><%= row_item[:quantity] %></td>
 </tr>

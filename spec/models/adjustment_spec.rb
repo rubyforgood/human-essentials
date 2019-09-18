@@ -2,7 +2,7 @@
 #
 # Table name: adjustments
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  organization_id     :integer
 #  storage_location_id :integer
 #  comment             :text
@@ -16,6 +16,14 @@ RSpec.describe Adjustment, type: :model do
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:adjustment, storage_location: create(:storage_location), organization_id: nil)).not_to be_valid
+    end
+
+    it "allows you to add inventory that doesn't yet exist in the storage location" do
+      expect(build(:adjustment, :with_items, item_quantity: 10, item: create(:item), storage_location: create(:storage_location))).to be_valid
+    end
+
+    it "disallows you from removing inventory that doesn't exist in the storage location" do
+      expect(build(:adjustment, :with_items, item_quantity: -10, item: create(:item), storage_location: create(:storage_location))).not_to be_valid
     end
   end
 

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
 
   require 'sidekiq/web'
+  require 'sidekiq-scheduler/web'
   if Rails.env.production?
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
       ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])) &
@@ -100,7 +101,9 @@ Rails.application.routes.draw do
         post :import_csv
       end
     end
-    resources :items
+    resources :items do
+      patch :restore, on: :member
+    end
     resources :partners do
       collection do
         post :import_csv
@@ -109,6 +112,7 @@ Rails.application.routes.draw do
         get :approve_application
         get :approve_partner
         post :invite
+        post :recertify_partner
       end
     end
 

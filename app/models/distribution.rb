@@ -3,10 +3,10 @@ require 'time_util'
 #
 # Table name: distributions
 #
-#  id                  :bigint(8)        not null, primary key
+#  id                  :integer          not null, primary key
 #  comment             :text
-#  created_at          :datetime
-#  updated_at          :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #  storage_location_id :integer
 #  partner_id          :integer
 #  organization_id     :integer
@@ -35,10 +35,16 @@ class Distribution < ApplicationRecord
   include IssuedAt
 
   before_save :combine_distribution
-
+  
   enum state: { scheduled: 0, complete: 1 }
 
+  include Filterable
+  # add item_id scope to allow filtering distributions by item
+  scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
+  # partner scope to allow filtering by partner
+  scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
+  scope :future, -> { where("issued_at >= :tomorrow", tomorrow: Time.zone.tomorrow) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
@@ -63,7 +69,7 @@ class Distribution < ApplicationRecord
 
       # Replace the current distribution with the new parameters
       update! new_distribution_params
-
+      reload
       # Apply the new changes to the storage location inventory
       storage_location.decrease_inventory(to_a)
     end

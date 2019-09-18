@@ -2,11 +2,11 @@
 #
 # Table name: donations
 #
-#  id                          :bigint(8)        not null, primary key
+#  id                          :integer          not null, primary key
 #  source                      :string
 #  donation_site_id            :integer
-#  created_at                  :datetime
-#  updated_at                  :datetime
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
 #  storage_location_id         :integer
 #  comment                     :text
 #  organization_id             :integer
@@ -34,7 +34,6 @@ class Donation < ApplicationRecord
   scope :at_storage_location, ->(storage_location_id) {
     where(storage_location_id: storage_location_id)
   }
-  scope :by_source, ->(source) { where(source: source) }
   scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
     where(diaper_drive_participant_id: diaper_drive_participant_id)
@@ -64,6 +63,7 @@ class Donation < ApplicationRecord
 
   include IssuedAt
 
+  # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   scope :by_source, ->(source) {
     source = SOURCES[source] if source.is_a?(Symbol)
@@ -106,6 +106,7 @@ class Donation < ApplicationRecord
   def replace_increase!(new_donation_params)
     old_data = to_a
     item_ids = line_items_attributes(new_donation_params).map { |i| i[:item_id].to_i }
+    original_storage_location = storage_location
 
     ActiveRecord::Base.transaction do
       line_items.map(&:destroy!)
@@ -116,9 +117,9 @@ class Donation < ApplicationRecord
       # Roll back distribution output by increasing storage location
       storage_location.increase_inventory(to_a)
       # Apply the new changes to the storage location inventory
-      storage_location.decrease_inventory(old_data)
+      original_storage_location.decrease_inventory(old_data)
       # TODO: Discuss this -- *should* we be removing InventoryItems when they hit 0 count?
-      storage_location.inventory_items.where(quantity: 0).destroy_all
+      original_storage_location.inventory_items.where(quantity: 0).destroy_all
     end
   rescue ActiveRecord::RecordInvalid
     false

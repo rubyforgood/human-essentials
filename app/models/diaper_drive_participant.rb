@@ -2,7 +2,7 @@
 #
 # Table name: diaper_drive_participants
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  contact_name    :string
 #  email           :string
 #  phone           :string
@@ -24,6 +24,8 @@ class DiaperDriveParticipant < ApplicationRecord
 
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
+
+  scope :alphabetized, -> { order(:contact_name) }
 
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)

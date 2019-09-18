@@ -1,9 +1,9 @@
 <tr>
-  <td><strong>Total:</strong></td>
+  <td class="overall-total-label"><strong>Total:</strong></td>
   <td></td>
   <td></td>
-  <td></td>
-  <td><strong><%= item_value(@total_value_all_distributions) %></strong></td>
+  <td class="overall-total-items"><%= number_with_delimiter(@total_items_all_distributions, :delimiter => ',') %></td>
+  <td class="overall-total-value"><strong><%= item_value(@total_value_all_distributions) %></strong></td>
   <td>
   </td>
 </tr>

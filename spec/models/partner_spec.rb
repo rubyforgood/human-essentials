@@ -2,13 +2,14 @@
 #
 # Table name: partners
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  email           :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  organization_id :integer
-#  status          :string
+#  send_reminders  :boolean          default(FALSE), not null
+#  status          :integer          default("uninvited")
 #
 
 RSpec.describe Partner, type: :model do
@@ -26,6 +27,16 @@ RSpec.describe Partner, type: :model do
       create(:partner, email: "foo@bar.com")
       expect(build(:partner, email: "foo@bar.com")).not_to be_valid
       expect(build(:partner, email: "boooooooooo")).not_to be_valid
+    end
+  end
+
+  describe "Filters" do
+    describe "by_status" do
+      it "yields partners with the provided status" do
+        create(:partner, status: :invited)
+        create(:partner, status: :approved)
+        expect(Partner.by_status('invited').count).to eq(1)
+      end
     end
   end
   # context "Callbacks >" do

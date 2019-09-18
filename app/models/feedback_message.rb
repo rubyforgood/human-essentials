@@ -8,6 +8,7 @@
 #  path       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  resolved   :boolean
 #
 
 class FeedbackMessage < ApplicationRecord

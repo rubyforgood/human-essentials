@@ -23,6 +23,7 @@ module Itemizable
         parent_id = first.itemizable_id
         each do |line_item|
           next unless line_item.valid?
+          next unless line_item.quantity != 0
 
           combined[line_item.item_id] ||= 0
           combined[line_item.item_id] += line_item.quantity
@@ -74,7 +75,7 @@ module Itemizable
   def to_a
     line_items.map do |l|
       # When the item isn't found, it's probably just inactive. This ensures it's available.
-      item = Item.unscoped.find(l.item_id)
+      item = Item.find(l.item_id)
       { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
     end
   end

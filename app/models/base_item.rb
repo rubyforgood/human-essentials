@@ -15,10 +15,11 @@
 
 class BaseItem < ApplicationRecord
   has_many :items, dependent: :destroy, inverse_of: :base_item, foreign_key: :partner_key, primary_key: :partner_key
-  has_many :barcode_items, as: :barcodeable, dependent: :destroy, inverse_of: :base_items
+  has_many :barcode_items, as: :barcodeable, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
   validates :partner_key, presence: true, uniqueness: true
 
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
+  scope :alphabetized, -> { order(:name) }
 end

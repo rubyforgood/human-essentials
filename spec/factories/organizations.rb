@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  name            :string
 #  short_name      :string
 #  email           :string
@@ -16,6 +16,8 @@
 #  zipcode         :string
 #  latitude        :float
 #  longitude       :float
+#  reminder_day    :integer
+#  deadline_day    :integer
 #
 
 FactoryBot.define do
@@ -32,6 +34,8 @@ FactoryBot.define do
     city { 'Front Royal' }
     state { 'VA' }
     zipcode { '22630' }
+    reminder_day { 10 }
+    deadline_day { 20 }
 
     logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"), "image/jpeg") }
 

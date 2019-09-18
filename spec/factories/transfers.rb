@@ -2,7 +2,7 @@
 #
 # Table name: transfers
 #
-#  id              :bigint(8)        not null, primary key
+#  id              :integer          not null, primary key
 #  from_id         :integer
 #  to_id           :integer
 #  comment         :string
@@ -33,14 +33,9 @@ FactoryBot.define do
         item { nil }
       end
 
-      after(:build) do |instance, evaluator|
-        instance.from = create(:storage_location, :with_items, item: evaluator.item, organization: evaluator.organization)
-        item = if evaluator.item.nil?
-                 instance.from.inventory_items.first.item
-               else
-                 evaluator.item
-               end
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+      after(:build) do |transfer, evaluator|
+        item = evaluator.item || transfer.storage_location.inventory_items.first.item
+        transfer.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: transfer)
       end
     end
   end

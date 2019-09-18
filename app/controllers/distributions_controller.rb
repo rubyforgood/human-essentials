@@ -4,6 +4,7 @@
 # Distributions to them, though it would lack some of the additional featuers and failsafes that a Diaperbank
 # might want if they were doing direct services.
 class DistributionsController < ApplicationController
+  include DateRangeHelper
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
@@ -35,9 +36,14 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
+                     .where(issued_at: selected_range)
                      .includes(:partner, :storage_location, :line_items, :items)
                      .order(created_at: :desc)
+                     .class_filter(filter_params)
     @total_value_all_distributions = total_value(@distributions)
+    @total_items_all_distributions = total_items(@distributions)
+    @items = current_organization.items.alphabetized
+    @partners = @distributions.collect(&:partner).uniq.sort
   end
 
   def create
@@ -54,6 +60,9 @@ class DistributionsController < ApplicationController
     else
       flash[:error] = "An error occurred, try again?"
       logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
+      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @items = current_organization.items.alphabetized
+      @storage_locations = current_organization.storage_locations.alphabetized
       render :new
     end
   rescue Errors::InsufficientAllotment => ex
@@ -71,8 +80,8 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
-    @items = current_organization.items.alphabetized
-    @storage_locations = current_organization.storage_locations
+    @items = current_organization.items.active.alphabetized
+    @storage_locations = current_organization.storage_locations.alphabetized
   end
 
   def show
@@ -84,7 +93,7 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @distribution.line_items.build
     @items = current_organization.items.alphabetized
-    @storage_locations = current_organization.storage_locations
+    @storage_locations = current_organization.storage_locations.alphabetized
   end
 
   def update
@@ -151,11 +160,17 @@ class DistributionsController < ApplicationController
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))
   end
 
+  def total_items(distributions)
+    distributions.includes(:line_items).sum('line_items.quantity')
+  end
+
   def total_value(distributions)
-    total_value_all_distributions = 0
-    distributions.each do |distribution|
-      total_value_all_distributions += distribution.value_per_itemizable
-    end
-    total_value_all_distributions
+    distributions.sum(&:value_per_itemizable)
+  end
+
+  def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).slice(:by_item_id, :by_partner)
   end
 end

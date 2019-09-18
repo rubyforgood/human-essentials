@@ -2,7 +2,7 @@
 #
 # Table name: users
 #
-#  id                     :bigint(8)        not null, primary key
+#  id                     :integer          not null, primary key
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  reset_password_token   :string
@@ -41,6 +41,8 @@ class User < ApplicationRecord
          :timeoutable
 
   validates :name, :email, presence: true
+
+  scope :alphabetized, -> { order(:name) }
 
   def most_recent_sign_in
     [current_sign_in_at.to_s, last_sign_in_at.to_s].max

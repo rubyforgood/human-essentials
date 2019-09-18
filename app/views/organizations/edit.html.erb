@@ -52,11 +52,26 @@
       <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
     <% end %>
 
-    <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
+    <%= f.input :reminder_day, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+      <%= f.input_field :reminder_day, class: "form-control", placeholder: "Reminder day" %>
+    <% end %>
 
-    <%= f.input :default_email_text, wrapper: :vertical_input_group do %>
+    <%= f.input :deadline_day, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+      <%= f.input_field :deadline_day, class: "form-control", placeholder: "Deadline day" %>
+    <% end %>
+
+    <%= f.input :intake_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
+
+    <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :vertical_input_group do %>
+      <%= f.text_area :invitation_text, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails", wrapper: :vertical_input_group do %>
       <%= f.rich_text_area :default_email_text %>
     <% end %>
+
 
     <%= f.input :logo, wrapper: :vertical_input_group do %>
 

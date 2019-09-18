@@ -8,24 +8,21 @@ This application is an inventory management system that is built to address the 
 
 For a general overview of the application, please see the [Application Overview](https://github.com/rubyforgood/diaper/wiki/Application-Overview) wiki article.
 
-### Closed Beta
-
-There are currently 5 Diaper Banks, across America, that are working with our organization to use and provide critical feedback about the functionality of the application. We are grateful for their involvement, and value their input as key stakeholders.
-
 ### Origins
 
 This project took what we built for the [Portland Diaper Bank in 2016](https://github.com/rubyforgood/pdx_diaper) and turned it into a multitenant application, something that all diaper banks can use. We re-used models, code and other documentation where applicable as well as implemented new features and functionality requested by the prime stakeholder (PDXDB). We're super excited to have had Rachel Alston, the director of the Portland Diaper Bank, attending our event in 2017, providing guidance and giving us the best chance of success!
 
 ## Development
 
+### Installation Instructions
+
+The `ubuntu_installation.md` file ([https://github.com/rubyforgood/diaper/blob/master/ubuntu-installation.md](https://github.com/rubyforgood/diaper/blob/master/ubuntu-installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
+
 ### Ruby Version
-This app uses Ruby version 2.6.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm` or `rbenv`.
+This app uses Ruby version 2.6.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
 
 ### Yarn Installation
-If you don't have Yarn installed, you can install with Homebrew on macOS `brew install yarn` or visit [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install). Be sure to run `yarn install` after installing Yarn. NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine. 
-
-### Database Configuration
-This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_development` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.
+If you don't have Yarn installed, you can install with Homebrew on macOS `brew install yarn` or visit [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install). Be sure to run `yarn install` after installing Yarn. NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.
 
 ### Create your .env with database credentials
 Be sure to create a `.env` file in the root of the app that includes the following lines (change to whatever is appropriate for your system):
@@ -35,11 +32,17 @@ PG_PASSWORD=password
 ```
 If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplied`, it's because you have probably not done this.
 
+### Database Configuration
+This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.
+
 ## Seed the database
 From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
+## Start the app
+Run `bundle exec rails s` and browse to http://localhost:3000/
+
 ## Login
-To login, use these default credentials:
+To login to the web application, use these default credentials:
 
     Organization Admin
       Email: org_admin1@example.com
@@ -91,6 +94,16 @@ This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests r
 
 The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
+Tip: If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
+
+example:
+```ruby
+  it "works!" do
+    pending("Need to implement this")
+    expect(my_code).to be_valid
+  end
+```
+
 ### In-flight Pull Requests
 
 Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
@@ -99,10 +112,8 @@ Sometimes we want to get a PR up there and going so that other people can review
 
 * The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
 * If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
- 
- ```rvm install 2.6.2 --with-openssl-dir=`brew --prefix openssl` ```.
 
-* If you have not already done so, you will need to install Yarn, the Javascript package manager. [See here](https://github.com/rubyforgood/diaper/wiki/Installing-Yarn) for installation instructions suitable for your operating system.
+ ```rvm install 2.6.2 --with-openssl-dir=`brew --prefix openssl` ```.
 
 ### Becoming a Repo Contributor
 
@@ -111,4 +122,3 @@ Users that are frequent contributors and are involved in discussion (join the sl
 # Acknowledgements
 
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
-

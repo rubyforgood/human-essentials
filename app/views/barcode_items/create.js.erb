@@ -18,4 +18,4 @@ line_item = $('#' + source_field).closest('.nested-fields');
 $(line_item).find('input[type=number]').val(quantity);
 $(line_item).find('[value="' + item_id + '"]').attr("selected", true);
 $('#__add_line_item').trigger('click');
-$(line_item).parent().find('.nested-fields:last-child input.__barcode_item_lookup').focus();
+$("input.__barcode_item_lookup").last().focus();

@@ -21,7 +21,7 @@ RSpec.describe OrganizationsController, type: :controller do
 
       it "denies access and redirects with an error" do
         expect(subject).to have_http_status(:redirect)
-        expect(flash[:error]).to be_present
+        expect(subject).to have_error
       end
     end
 
@@ -30,7 +30,7 @@ RSpec.describe OrganizationsController, type: :controller do
 
       it "denies access" do
         expect(subject).to have_http_status(:redirect)
-        expect(flash[:error]).to be_present
+        expect(subject).to have_error
       end
     end
   end
