@@ -138,6 +138,7 @@ RSpec.describe Distribution, type: :model do
       end
     end
 
+
     context 'states' do
       let(:distribution) { create(:distribution) }
 
@@ -151,6 +152,23 @@ RSpec.describe Distribution, type: :model do
         distribution.picked_up!
 
         expect(distribution.state).to eq('complete')
+      end
+    end
+
+    describe "#future?" do
+      let(:dist1)    { create(:distribution, issued_at: Time.zone.tomorrow) }
+      let(:dist2)    { create(:distribution, issued_at: Time.zone.yesterday) }
+
+      context "when issued_at has not passed" do
+        it "returns true" do
+          expect(dist1.future?).to be true
+        end
+      end
+
+      context "when issued_at has passed" do
+        it "returns false" do
+          expect(dist2.future?).to be false
+        end
       end
     end
   end

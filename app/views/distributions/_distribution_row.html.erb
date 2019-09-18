@@ -7,12 +7,14 @@
   <td><%= distribution_row.state.humanize %>
   <td class="text-right">
     <%= view_button_to distribution_path(distribution_row) %>
-    <%= edit_button_to edit_distribution_path(distribution_row) %>
+    <% if distribution_row.future? || current_user.organization_admin? %>
+      <%= edit_button_to edit_distribution_path(distribution_row) %>
+    <% end %>
     <%= print_button_to print_distribution_path(distribution_row, format: :pdf) %>
     <%= delete_button_to distribution_path(distribution_row),
           { confirm: "Are you sure you want to reclaim this distribution to #{distribution_row.partner.name}?",
             text: "Reclaim",
-            icon: "undo" } 
+            icon: "undo" }
     %>
   </td>
 </tr>
