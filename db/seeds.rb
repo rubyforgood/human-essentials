@@ -284,17 +284,19 @@ end
 suppliers = ["Target", "Wegmans", "Walmart", "Walgreens"]
 comments = ["Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.", "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.", "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."]
 
-100.times do
+20.times do
+  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  vendor = random_record_for_org(pdx_org, Vendor)
   Purchase.create(
     purchased_from: suppliers.sample,
     comment: comments.sample,
-    organization_id: Organization.all.pluck(:id).sample,
-    storage_location_id: StorageLocation.all.pluck(:id).sample,
+    organization_id: pdx_org.id,
+    storage_location_id: storage_location.id,
     amount_spent_in_cents: rand(200..10000),
     issued_at: (Date.today - rand(15).days),
     created_at: (Date.today - rand(15).days),
     updated_at: (Date.today - rand(15).days),
-    vendor_id: Vendor.all.pluck(:id).sample
+    vendor_id: vendor.id
   )
 end
 
