@@ -11,6 +11,7 @@
 #  organization_id     :integer
 #  issued_at           :datetime
 #  agency_rep          :string
+#  state               :integer
 #
 
 RSpec.describe Distribution, type: :model do
@@ -135,6 +136,22 @@ RSpec.describe Distribution, type: :model do
         expect do
           subject.replace_distribution!(attributes)
         end.to change { subject.storage_location.size }.by(8)
+      end
+    end
+
+    context 'states' do
+      let(:distribution) { create(:distribution) }
+
+      it '#notify_partner!' do
+        distribution.notify_partner!
+
+        expect(distribution.state).to eq('scheduled')
+      end
+
+      it '#picked_up!' do
+        distribution.picked_up!
+
+        expect(distribution.state).to eq('complete')
       end
     end
 

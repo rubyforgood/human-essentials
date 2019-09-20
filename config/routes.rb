@@ -75,6 +75,7 @@ Rails.application.routes.draw do
       collection do
         get :pick_ups
       end
+      patch :picked_up, on: :member
     end
 
     resources :barcode_items do

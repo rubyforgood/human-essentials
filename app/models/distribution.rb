@@ -12,7 +12,7 @@ require 'time_util'
 #  organization_id     :integer
 #  issued_at           :datetime
 #  agency_rep          :string
-#
+#  state               :integer
 
 class Distribution < ApplicationRecord
   # Distributions are issued from a single storage location, so we associate
@@ -35,6 +35,8 @@ class Distribution < ApplicationRecord
   include IssuedAt
 
   before_save :combine_distribution
+
+  enum state: { started: 0, scheduled: 1, complete: 2 }
 
   include Filterable
   # add item_id scope to allow filtering distributions by item
@@ -123,6 +125,14 @@ class Distribution < ApplicationRecord
 
   def combine_distribution
     line_items.combine!
+  end
+
+  def notify_partner!
+    self.scheduled!
+  end
+
+  def picked_up!
+    self.complete!
   end
 
   def csv_export_attributes
