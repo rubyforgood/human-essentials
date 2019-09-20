@@ -27,7 +27,14 @@ class Admin::OrganizationsController < AdminController
     @organization = Organization.create(organization_params)
     if @organization.save
       Organization.seed_items(@organization)
-      @organization.users.try(:last).try(:invite!)
+      # @organization.users.try(:last).try(:invite!)
+      # binding.pry
+      User.invite!(params[:organization][:users_attributes]['0'], organization_id: @organization.id)
+      # User.invite!(name: params[:organization][:users_attributes]['0'][:name],
+      #              email: params[:organization][:users_attributes]['0'][:email],
+      #              organization_admin: params[:organization][:users_attributes]['0'][:organization_admin],
+      #              organization_id: @organization.id)
+      # binding.pry
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
@@ -52,7 +59,14 @@ class Admin::OrganizationsController < AdminController
 
   def organization_params
     params.require(:organization)
-          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text,
-                  users_attributes: %i(name email password password_confirmation organization_admin))
+          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text)
+                  # users_attributes: %i(name email organization_admin))
+  end
+
+  def user_params
+    params.require(:organization)
+      .permit(users_attributes: %i(name email organization_admin))
+
+    # params.require(:user).permit(:name, :organization_id, :email)
   end
 end
