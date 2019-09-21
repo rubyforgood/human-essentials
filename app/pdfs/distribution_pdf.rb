@@ -20,7 +20,7 @@ class DistributionPdf
       [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity, c.package_count]
     end
     data += [["", "", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total, ""]]
-    
+
     move_down 35
 
     text "Issued to:", style: :bold
@@ -34,7 +34,6 @@ class DistributionPdf
     text "Items Received Year-to-Date", style: :bold
     text @distribution.partner.quantity_year_to_date.to_s
     move_down 10
-
 
     text "Comments:", style: :bold
     text @distribution.comment
