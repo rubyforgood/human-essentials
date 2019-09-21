@@ -151,6 +151,8 @@ GEM
     factory_bot_rails (4.11.1)
       factory_bot (~> 4.11.1)
       railties (>= 3.0.0)
+    faker (2.3.0)
+      i18n (~> 1.6.0)
     fakeredis (0.7.0)
       redis (>= 3.2, < 5.0)
     ffi (1.11.1)
@@ -506,6 +508,7 @@ DEPENDENCIES
   devise_invitable
   dotenv-rails
   factory_bot_rails
+  faker
   fakeredis
   flipper
   flipper-active_record
