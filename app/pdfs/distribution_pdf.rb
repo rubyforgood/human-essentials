@@ -17,9 +17,10 @@ class DistributionPdf
     end
     data += [["", "", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total, ""]]
 
+    font_families["OpenSans"] = PrawnRails.config["font_families"][:OpenSans]
     move_down 55
 
-    font "Helvetica"
+    font "OpenSans"
     text "Issued to:", style: :bold
     text @distribution.partner.name
     move_down 10

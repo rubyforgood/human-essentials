@@ -13,6 +13,15 @@ RSpec.describe DistributionsController, type: :controller do
       it "returns http success" do
         expect(subject).to be_successful
       end
+
+      context "with non-UTF8 characters" do
+        let(:non_utf8_partner) { create(:partner, name: "KOKA Keiki O Ka ‘Āina") }
+        subject { get :print, params: default_params.merge(id: create(:distribution, partner: non_utf8_partner).id) }
+
+        it "returns http success" do
+          expect(subject).to be_successful
+        end
+      end
     end
 
     describe "GET #reclaim" do
@@ -144,7 +153,7 @@ RSpec.describe DistributionsController, type: :controller do
           distribution_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: donation.id, distribution: distribution_params)
-          end.to raise_error
+          end.to raise_error(NameError)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
           expect(distribution.reload.line_items.first.quantity).to eq 10
