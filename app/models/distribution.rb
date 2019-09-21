@@ -133,4 +133,8 @@ class Distribution < ApplicationRecord
       line_items.total
     ]
   end
+
+  def future?
+    issued_at > Time.zone.today
+  end
 end

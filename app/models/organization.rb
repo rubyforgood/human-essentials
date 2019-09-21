@@ -50,6 +50,22 @@ class Organization < ApplicationRecord
   has_many :items, dependent: :destroy do
     def other
       where(partner_key: "other")
+
+    def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
+      select("COUNT(line_items.id) as amount, name")
+        .joins(:line_items)
+        .where("line_items.created_at BETWEEN ? and ?", date_start, date_end)
+        .group(:name)
+    end
+
+    def top(limit = 5)
+      order('count(line_items.id) DESC')
+        .limit(limit)
+    end
+
+    def bottom(limit = 5)
+      order('count(line_items.id) ASC')
+        .limit(limit)
     end
   end
   has_many :partners, dependent: :destroy

@@ -29,6 +29,7 @@ gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "momentjs-rails"
 gem "newrelic_rpm"
+gem "nokogiri", ">= 1.10.4"
 gem "paperclip"
 gem "pg", "~> 1.1.3"
 gem "prawn-rails"
@@ -44,7 +45,7 @@ gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
-gem "webpacker", "~> 3.5"
+gem "webpacker", "> 4.0"
 gem 'sidekiq-scheduler'
 
 group :development, :test do
