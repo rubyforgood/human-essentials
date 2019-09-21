@@ -50,6 +50,7 @@ class Organization < ApplicationRecord
   has_many :items, dependent: :destroy do
     def other
       where(partner_key: "other")
+    end
 
     def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
       select("COUNT(line_items.id) as amount, name")
