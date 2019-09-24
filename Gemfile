@@ -61,6 +61,7 @@ group :development, :test do
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "timecop"
+  gem "faker"
 end
 
 group :development do

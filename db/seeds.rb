@@ -262,4 +262,42 @@ end
   )
 end
 
+# Create some Vendors so Purchases can have vendor_ids
+5.times do
+  Vendor.create(
+    contact_name: Faker::FunnyName.two_word_name,
+    email: Faker::Internet.email,
+    phone: Faker::PhoneNumber.cell_phone,
+    comment: Faker::Lorem.paragraph(sentence_count: 2),
+    organization_id: Organization.all.pluck(:id).sample,
+    address: "#{Faker::Address.street_address} #{Faker::Address.city}, #{Faker::Address.state_abbr} #{Faker::Address.zip_code}",
+    business_name: Faker::Company.name,
+    latitude: rand(-90.000000000...90.000000000),
+    longitude: rand(-180.000000000...180.000000000),
+    created_at: (Date.today - rand(15).days),
+    updated_at: (Date.today - rand(15).days),
+  )
+end
+
+# Create purchases
+
+suppliers = ["Target", "Wegmans", "Walmart", "Walgreens"]
+comments = ["Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.", "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.", "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."]
+
+20.times do
+  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  vendor = random_record_for_org(pdx_org, Vendor)
+  Purchase.create(
+    purchased_from: suppliers.sample,
+    comment: comments.sample,
+    organization_id: pdx_org.id,
+    storage_location_id: storage_location.id,
+    amount_spent_in_cents: rand(200..10000),
+    issued_at: (Date.today - rand(15).days),
+    created_at: (Date.today - rand(15).days),
+    updated_at: (Date.today - rand(15).days),
+    vendor_id: vendor.id
+  )
+end
+
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
