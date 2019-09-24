@@ -15,8 +15,9 @@ class DistributionMailer < ApplicationMailer
     mail(to: @partner.email, from: @from_email, subject: subject)
   end
 
-  def distribution_reminder_email(distribution)
+  def reminder_email(distribution)
     @partner = distribution.partner
     @distribution = distribution
+    mail(to: @partner.email, from: @from_email, subject: "Diaper Distribution Reminder")
   end
 end
