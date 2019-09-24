@@ -14,4 +14,9 @@ class DistributionMailer < ApplicationMailer
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = DistributionPdf.new(current_organization, @distribution).render
     mail(to: @partner.email, from: @from_email, subject: subject)
   end
+
+  def distribution_reminder_email(distribution)
+    @partner = distribution.partner
+    @distribution = distribution
+  end
 end
