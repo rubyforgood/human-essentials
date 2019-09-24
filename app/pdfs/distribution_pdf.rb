@@ -5,6 +5,10 @@ class DistributionPdf
 
   def initialize(organization, distribution)
     @distribution = distribution
+    font_families["OpenSans"] = PrawnRails.config["font_families"][:OpenSans]
+    font "OpenSans"
+    font_size 9
+
     image organization.logo_path, fit: [325, 110]
     bounding_box [bounds.right - 225, bounds.top - 20], width: 225 do
       text organization.name, align: :right
@@ -17,9 +21,8 @@ class DistributionPdf
     end
     data += [["", "", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total, ""]]
 
-    move_down 55
+    move_down 35
 
-    font "Helvetica"
     text "Issued to:", style: :bold
     text @distribution.partner.name
     move_down 10
@@ -37,6 +40,7 @@ class DistributionPdf
 
     move_down 20
 
+    font_size 9
     # Line item table
     table(data) do
       self.header = true
@@ -51,7 +55,7 @@ class DistributionPdf
       row(0).borders = [:bottom]
       row(0).border_width = 2
       row(0).font_style = :bold
-      row(0).size = 10
+      row(0).size = 9
       row(0).column(1..-1).borders = %i(bottom left)
 
       # Total Items footer row
@@ -81,7 +85,8 @@ class DistributionPdf
       # Page footer
       bounding_box [bounds.left, bounds.bottom + 35], width: bounds.width do
         stroke_bounds
-        font "Helvetica"
+        font "OpenSans"
+        font_size 9
         stroke_horizontal_rule
         move_down(5)
         # table([
