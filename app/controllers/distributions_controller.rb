@@ -115,8 +115,9 @@ class DistributionsController < ApplicationController
 
       if distribution.issued_at.to_date != old_issued_at.to_date
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{distribution.issued_at}")
-        schedule_reminder_email(@distribution.id)
       end
+
+      schedule_reminder_email(@distribution.id)
 
       flash[:notice] = "Distribution updated!"
       render :show
@@ -154,7 +155,7 @@ class DistributionsController < ApplicationController
   end
 
   def schedule_reminder_email(dist)
-    DistributionReminderJob.perform_async(dist) if Flipper.enabled?(:email_active)
+    DistributionReminderJob.perform_async(dist)
   end
 
   def distribution_params
