@@ -139,22 +139,6 @@ RSpec.describe Distribution, type: :model do
       end
     end
 
-    context 'states' do
-      let(:distribution) { create(:distribution) }
-
-      it '#notify_partner!' do
-        distribution.notify_partner!
-
-        expect(distribution.state).to eq('scheduled')
-      end
-
-      it '#picked_up!' do
-        distribution.picked_up!
-
-        expect(distribution.state).to eq('complete')
-      end
-    end
-
     describe "#future?" do
       let(:dist1)    { create(:distribution, issued_at: Time.zone.tomorrow) }
       let(:dist2)    { create(:distribution, issued_at: Time.zone.yesterday) }

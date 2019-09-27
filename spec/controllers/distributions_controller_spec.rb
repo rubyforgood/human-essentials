@@ -72,6 +72,35 @@ RSpec.describe DistributionsController, type: :controller do
       end
     end
 
+    describe 'PATCH #picked_up' do
+      subject { patch :picked_up, params: default_params.merge(id: distribution.id) }
+
+      context 'when the distribution is successfully updated' do
+        let(:distribution) { create(:distribution, state: 'scheduled') }
+
+        it "updates the state to 'complete'" do
+          subject
+          expect(distribution.reload.state).to eq 'complete'
+        end
+
+        it 'redirects the user back to the distributions page' do
+          expect(subject).to redirect_to distribution_path
+        end
+      end
+
+      context 'when the distribution update fails' do
+        let(:distribution) { create(:distribution, state: 'started') }
+
+        it 'raises a warning' do
+          expect(subject.request.flash[:error]).to_not be_nil
+        end
+
+        it 'redirects the user back to the distributions page' do
+          expect(subject).to redirect_to distribution_path
+        end
+      end
+    end
+
     context "Looking at a different organization" do
       let(:object) { create(:distribution, organization: create(:organization)) }
       include_examples "requiring authorization"
