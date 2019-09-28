@@ -1,23 +1,40 @@
-Rails.application.routes.draw do
-  devise_for :users
+def set_up_sidekiq
 
   require 'sidekiq/web'
   require 'sidekiq-scheduler/web'
+
   if Rails.env.production?
-    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-      ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])) &
-        ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_PASSWORD"]))
+
+    digest = ->(string) { ::Digest::SHA256.hexdigest(string) }
+
+    compare = ->(string1, string2) do
+      ActiveSupport::SecurityUtils.secure_compare(digest.(string1), digest.(string2))
     end
+
+    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+      compare.(username, ENV["SIDEKIQ_USERNAME"]) && compare.(password, ENV["SIDEKIQ_PASSWORD"])
   end
+
   mount Sidekiq::Web => '/sidekiq'
   Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
+end
 
+
+def set_up_flipper
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
       username == ENV["FLIPPER_USERNAME"] && password == ENV["FLIPPER_PASSWORD"]
     end
   end
   mount flipper_app, at: "/flipper"
+end
+
+
+Rails.application.routes.draw do
+  devise_for :users
+
+  set_up_sidekiq
+  set_up_flipper
 
   # This is where a superadmin CRUDs all the things
   get :admin, to: "admin#dashboard"
