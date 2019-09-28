@@ -5,7 +5,7 @@ def set_up_sidekiq
   if Rails.env.production?
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
       compare = ->(s1, s2) { ActiveSupport::SecurityUtils.secure_compare(s1, s2) }
-      compare.(username, ENV["SIDEKIQ_USERNAME"]) && compare.(password, ENV["SIDEKIQ_PASSWORD"])
+      compare.call(username, ENV["SIDEKIQ_USERNAME"]) && compare.call(password, ENV["SIDEKIQ_PASSWORD"])
     end
   end
 
