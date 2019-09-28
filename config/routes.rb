@@ -1,20 +1,17 @@
 def set_up_sidekiq
-
   require 'sidekiq/web'
   require 'sidekiq-scheduler/web'
 
   if Rails.env.production?
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-      ActiveSupport::SecurityUtils.secure_compare(username, ENV["SIDEKIQ_USERNAME"]) \
-          && \
-          ActiveSupport::SecurityUtils.secure_compare(password, ENV["SIDEKIQ_PASSWORD"])
+      compare = ->(s1, s2) { ActiveSupport::SecurityUtils.secure_compare(s1, s2) }
+      compare.(username, ENV["SIDEKIQ_USERNAME"]) && compare.(password, ENV["SIDEKIQ_PASSWORD"])
     end
   end
 
   mount Sidekiq::Web => '/sidekiq'
   Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
 end
-
 
 def set_up_flipper
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
@@ -24,7 +21,6 @@ def set_up_flipper
   end
   mount flipper_app, at: "/flipper"
 end
-
 
 Rails.application.routes.draw do
   devise_for :users
