@@ -13,6 +13,7 @@ def set_up_sidekiq
 
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
       compare.(username, ENV["SIDEKIQ_USERNAME"]) && compare.(password, ENV["SIDEKIQ_PASSWORD"])
+    end
   end
 
   mount Sidekiq::Web => '/sidekiq'
