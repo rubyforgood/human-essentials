@@ -43,7 +43,7 @@ class ChildrenController < ApplicationController
   private
 
   def children
-    @children ||= current_partner.children.all
+    @children ||= current_partner.children.order(active: :desc, last_name: :asc)
   end
 
   def child
