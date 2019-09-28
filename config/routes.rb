@@ -4,15 +4,10 @@ def set_up_sidekiq
   require 'sidekiq-scheduler/web'
 
   if Rails.env.production?
-
-    digest = ->(string) { ::Digest::SHA256.hexdigest(string) }
-
-    compare = ->(string1, string2) do
-      ActiveSupport::SecurityUtils.secure_compare(digest.(string1), digest.(string2))
-    end
-
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-      compare.(username, ENV["SIDEKIQ_USERNAME"]) && compare.(password, ENV["SIDEKIQ_PASSWORD"])
+      ActiveSupport::SecurityUtils.secure_compare(username, ENV["SIDEKIQ_USERNAME"]) \
+      && \
+      ActiveSupport::SecurityUtils.secure_compare(password, ENV["SIDEKIQ_PASSWORD"])
     end
   end
 
