@@ -21,8 +21,8 @@
       <table class="table table-striped">
         <thead>
         <tr>
-          <th scope="col">Guardian first name</th>
           <th scope="col">Guardian last name</th>
+          <th scope="col">Guardian first name</th>
           <th scope="col">Agency guardian</th>
           <th scope="col">Comments</th>
           <th scope="col"></th>
@@ -32,8 +32,8 @@
         <tbody>
         <% families.each do |family| %>
           <tr>
-            <td><%= family.guardian_first_name %></td>
             <td><%= family.guardian_last_name %></td>
+            <td><%= family.guardian_first_name %></td>
             <td><%= family.agency_guardian_id %></td>
             <td><%= family.comments %></td>
             <td><%= link_to 'View Family', family, class: "btn btn-sm btn-info pull-right" %></td>
