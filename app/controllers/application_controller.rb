@@ -40,6 +40,10 @@ class ApplicationController < ActionController::Base
     verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
   end
 
+  def authorize_admin
+    verboten! unless current_user.super_admin? || (current_user.organization_admin? && current_organization.id == current_user.organization_id)
+  end
+
   def log_active_user
     if current_user && should_update_last_request_at?
       # rubocop:disable Rails/SkipsModelValidations
