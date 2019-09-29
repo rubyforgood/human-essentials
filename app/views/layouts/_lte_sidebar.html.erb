@@ -16,7 +16,7 @@
           <span>Donations</span>
           <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
-            </span>
+          </span>
         </a>
         <ul class="treeview-menu">
           <li class="<%= 'active' if current_page?(donations_path(organization_id: current_user.organization)) %>">
@@ -44,7 +44,7 @@
           <span>Purchases</span>
           <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
-            </span>
+          </span>
         </a>
         <ul class="treeview-menu">
           <li class="<%= 'active' if current_page?(purchases_path(organization_id: current_user.organization)) %>">
@@ -59,14 +59,13 @@
           </li>
         </ul>
       </li>
-      <li>
       <li class="<%= 'active' if current_page?(requests_path) %>">
         <%= link_to(requests_path) do %>
           <i class="fa fa-file-text"></i> <span>Requests</span>
         <% end %>
       </li>
-      <li class="<%= active_class(['distributions']) %>">
-        <%= link_to(distributions_path(organization_id: current_user.organization)) do %>
+      <li class="<%= 'active' if current_page?(distributions_path) %>">
+        <%= link_to(distributions_path) do %>
           <i class="fa fa-circle-o"></i> <span>Distributions</span>
         <% end %>
       </li>
@@ -75,14 +74,13 @@
           <i class="fa fa-calendar-o"></i> <span>Pick Ups</span>
         <% end %>
       </li>
-      </li>
       <li class="<%= active_class(['items','barcode_items','storage_locations','adjustments','transfers']) %> treeview">
         <a href="#">
           <i class="fa fa-pie-chart"></i>
           <span>Inventory</span>
           <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
-            </span>
+          </span>
         </a>
         <ul class="treeview-menu">
           <li class="<%= active_class(['items']) %>">
@@ -112,7 +110,7 @@
           </li>
         </ul>
       </li>
-      <li class="<%= active_class(['partners','donation_sites','diaper_drive_participants']) %> treeview">
+      <li class="<%= active_class(['partners','donation_sites','diaper_drive_participants','manufacturers','vendors']) %> treeview">
         <a href="#">
           <i class="fa fa-laptop"></i>
           <span>Community</span>
