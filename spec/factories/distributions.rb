@@ -11,6 +11,7 @@
 #  organization_id     :integer
 #  issued_at           :datetime
 #  agency_rep          :string
+#  state               :integer
 #
 
 FactoryBot.define do
@@ -19,6 +20,7 @@ FactoryBot.define do
     partner
     organization { Organization.try(:first) || create(:organization) }
     issued_at { nil }
+    state { 0 }
 
     trait :with_items do
       transient do
