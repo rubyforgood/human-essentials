@@ -12,7 +12,7 @@ gem "bootstrap-sass"
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
-gem "devise"
+gem "devise", '>= 4.7.1'
 gem "devise_invitable"
 gem "dotenv-rails"
 gem "flipper"
