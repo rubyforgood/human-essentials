@@ -19,7 +19,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 The `ubuntu_installation.md` file ([https://github.com/rubyforgood/diaper/blob/master/ubuntu-installation.md](https://github.com/rubyforgood/diaper/blob/master/ubuntu-installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
 
 ### Ruby Version
-This app uses Ruby version 2.6.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
+This app uses Ruby version 2.6.4, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
 
 ### Yarn Installation
 If you don't have Yarn installed, you can install with Homebrew on macOS `brew install yarn` or visit [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install). Be sure to run `yarn install` after installing Yarn. NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.
@@ -113,7 +113,7 @@ Sometimes we want to get a PR up there and going so that other people can review
 * The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
 * If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
 
- ```rvm install 2.6.2 --with-openssl-dir=`brew --prefix openssl` ```.
+ ```rvm install 2.6.4 --with-openssl-dir=`brew --prefix openssl` ```.
 
 ### Becoming a Repo Contributor
 
