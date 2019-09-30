@@ -2,9 +2,9 @@ RSpec.describe DonationsController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
+  let(:donation) { create(:donation, organization: @organization) }
 
-  context "While signed in >" do
-    let(:donation) { create(:donation, organization: @organization) }
+  context "While signed in as a normal user >" do
     before do
       sign_in(@user)
     end
@@ -171,8 +171,10 @@ RSpec.describe DonationsController, type: :controller do
 
     describe "DELETE #destroy" do
       subject { delete :destroy, params: default_params.merge(id: donation.id) }
-      it "redirects to the index" do
-        expect(subject).to redirect_to(donations_path)
+
+      # normal users are not authorized
+      it "redirects to the dashbaord path" do
+        expect(subject).to redirect_to(dashboard_path)
       end
     end
 
@@ -189,6 +191,19 @@ RSpec.describe DonationsController, type: :controller do
 
         patch :remove_item, params: single_params
         expect(response).to be_redirect
+      end
+    end
+  end
+
+  context "While signed in as an organization admin >" do
+    before do
+      sign_in(@organization_admin)
+    end
+
+    describe "DELETE #destroy" do
+      subject { delete :destroy, params: default_params.merge(id: donation.id) }
+      it "redirects to the index" do
+        expect(subject).to redirect_to(donations_path)
       end
     end
   end
