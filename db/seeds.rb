@@ -76,7 +76,7 @@ DonationSite.find_or_create_by!(name: "Waffle House") do |location|
   location.organization = pdx_org
 end
 DonationSite.find_or_create_by!(name: "Eagleton Country Club") do |location|
-  location.address = "4567 Some Blvd., Pawnee, OR 12345"
+  location.address = "4567 Some Blvd., Eagleton, OR 12345"
   location.organization = pdx_org
 end
 
