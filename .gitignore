@@ -6,7 +6,6 @@
 
 # Ignore bundler config.
 /.bundle
-.tool-versions
 
 # Ignore floo files
 .floo
@@ -40,6 +39,9 @@ dump.rdb
 
 # Ignore Rubymine
 .idea
+
+# Ignore asdf file
+.tool-versions
 
 .rails_routes*
 .rake_tasks~
