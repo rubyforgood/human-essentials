@@ -11,6 +11,7 @@
 #  organization_id     :integer
 #  issued_at           :datetime
 #  agency_rep          :string
+#  state               :integer
 #
 
 RSpec.describe Distribution, type: :model do
