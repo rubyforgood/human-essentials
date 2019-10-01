@@ -263,7 +263,7 @@ end
 end
 
 # Assign a value to all items so we can verify that totals are working
-Item.where(value_in_cends: 0).update_all(value_in_cents: 100)
+Item.where(value_in_cents: 0).update_all(value_in_cents: 100)
 
 # Create some Vendors so Purchases can have vendor_ids
 5.times do
