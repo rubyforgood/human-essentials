@@ -301,3 +301,6 @@ comments = ["Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend la
 end
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
+
+# Add default value for all Items (100)
+Item.where(value_in_cents: 0).update(value_in_cents: 100)
