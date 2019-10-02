@@ -47,6 +47,7 @@ gem "toastr-rails"
 gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
 gem "webpacker", "> 4.0"
 gem 'sidekiq-scheduler'
+gem 'bootstrap-datepicker-rails'
 
 group :development, :test do
   gem "awesome_print"
