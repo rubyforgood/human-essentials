@@ -35,7 +35,7 @@
             <% end %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <%= label_tag "by Date" %>
-            <%= select(:filters, :interval, filter_intervals || [], {include_blank: true}, {class: "form-control"}) %>
+            <%= text_field_tag 'dates[date_interval]', @date_interval, { id: 'dates_date_interval', placeholder: 'mm/dd/YYY', class: 'form-control', 'data-provide': 'datepicker' } %>
           </div>
           </div><!-- /.row -->
           <div class="row">

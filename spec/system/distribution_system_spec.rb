@@ -361,11 +361,11 @@ RSpec.feature "Distributions", type: :system do
     it "Filters by date" do
       create(:distribution, issued_at: Time.zone.today)
       create(:distribution, issued_at: Time.zone.today)
-      create(:distribution, issued_at: Time.zone.today + 2.weeks)
+      create(:distribution, issued_at: Time.zone.today - 2.weeks)
       visit @url_prefix + "/distributions"
 
       expect(page).to have_css("table tbody tr", count: 4)
-      select("This Week", from: "filters_interval")
+      page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_week)
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 3)
     end

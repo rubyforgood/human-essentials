@@ -42,13 +42,21 @@
 
             </div>
           </div>
-          <div id="filters" class="submit-on-change box-body col-xlg-3 col-xlg-offset-2 col-md-2 col-sm-12 filter-select">
-            <%= simple_form_for :filters, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
-              <label for="interval">Filter By</label>
-              <%= f.select :interval, filter_intervals, { selected: selected_interval }, class: "form-control" %>
-            <% end %>
-          </div>
         </div>
+      </div>
+
+
+      <div class="box-header with-border bg-gray">
+        <section id="filters" class="submit-on-change">
+          <div class="box-body">
+              <%= simple_form_for :filters, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
+                <div class="form-group col-md-offset-10 col-md-2 col-sm-offset-6 col-sm-6 col-xs-12">
+                  <label for="interval">Filter By Date Range</label>
+                  <%= text_field_tag 'dates[date_interval]', @date_interval, { id: 'dates_date_interval', placeholder: 'mm/dd/YYY', class: 'form-control', 'data-provide': 'datepicker' } %>
+                </div>
+              <% end %>
+            </div>
+        </section><!-- /#filters -->
       </div>
 
       <div class="row">
