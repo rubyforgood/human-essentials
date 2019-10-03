@@ -25,10 +25,10 @@ class Admin::OrganizationsController < AdminController
 
   def create
     @organization = Organization.create(organization_params)
-    @organization.users.try(:last).try { |user| user.password = SecureRandom.uuid }
+    @organization.users.last.update(password: SecureRandom.uuid)
     if @organization.save
       Organization.seed_items(@organization)
-      @organization.users.try(:last).try(:invite!)
+      @organization.users.last.invite!
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
