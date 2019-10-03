@@ -9,7 +9,7 @@ class PurchasesController < ApplicationController
   def index
     @purchases = current_organization.purchases
                                      .includes(:line_items, :storage_location)
-                                     .where(issued_at: date_range_picker)
+                                     .where(issued_at: date_range)
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
     # Are these going to be inefficient with large datasets?
