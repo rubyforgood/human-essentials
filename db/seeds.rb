@@ -126,7 +126,8 @@ def seed_quantity(item_name, organization, storage_location, quantity)
 
   adjustment = organization.adjustments.create!(
     comment: "Starting inventory",
-    storage_location: storage_location
+    storage_location: storage_location,
+    user: organization.users.find_by(organization_admin: true)
   )
 
   LineItem.create!(quantity: quantity, item: item, itemizable: adjustment)
