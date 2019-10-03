@@ -11,7 +11,7 @@ class DonationsController < ApplicationController
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
-                                     .where(issued_at: date_range_picker)
+                                     .where(issued_at: date_range)
                                      .class_filter(filter_params)
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
