@@ -145,6 +145,14 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
+    describe "#total_inventory_fair_market_value" do
+      it 'returns the total value of the items in it' do
+        item = create(:item, value_in_cents: 10)
+        storage_location = create(:storage_location, :with_items, item: item)
+        expect(storage_location.total_inventory_fair_market_value).to eq(10)
+      end
+    end
+
     describe "import_csv" do
       it "imports storage locations from a csv file" do
         before_import = StorageLocation.count
