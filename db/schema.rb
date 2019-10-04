@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_18_003929) do
+ActiveRecord::Schema.define(version: 2019_09_27_193927) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 2019_08_18_003929) do
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
+    t.integer "state", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -199,6 +200,8 @@ ActiveRecord::Schema.define(version: 2019_08_18_003929) do
     t.integer "value_in_cents", default: 0
     t.integer "package_size"
     t.integer "distribution_quantity"
+    t.integer "on_hand_minimum_quantity", default: 0, null: false
+    t.integer "on_hand_recommended_quantity"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
