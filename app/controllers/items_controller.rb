@@ -90,7 +90,7 @@ class ItemsController < ApplicationController
       :value_in_cents,
       :package_size,
       :on_hand_minimum_quantity,
-      :on_hand_recommended_quantity, 
+      :on_hand_recommended_quantity,
       :distribution_quantity
     )
   end

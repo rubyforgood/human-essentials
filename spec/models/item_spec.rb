@@ -191,7 +191,7 @@ RSpec.describe Item, type: :model do
       expect(create(:item).on_hand_minimum_quantity).to eq(0)
     end
 
-    it "should return the value of on_hand_minimum_quanitty if it is set" do
+    it "should return the value of on_hand_minimum_quantity if it is set" do
       expect(create(:item, on_hand_minimum_quantity: 42).on_hand_minimum_quantity).to eq(42)
     end
   end
