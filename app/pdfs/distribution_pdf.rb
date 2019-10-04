@@ -5,38 +5,49 @@ class DistributionPdf
 
   def initialize(organization, distribution)
     @distribution = distribution
+    font_families["OpenSans"] = PrawnRails.config["font_families"][:OpenSans]
+    font "OpenSans"
+    font_size 10
+
     image organization.logo_path, fit: [325, 110]
-    bounding_box [bounds.right - 225, bounds.top - 20], width: 225 do
+
+    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
       text organization.name, align: :right
       text organization.address, align: :right
       text organization.email, align: :right
     end
+
+    text "Issued to:", style: :bold, align: :right
+    font_size 12
+    text @distribution.partner.name, align: :right
+    font_size 10
+    move_down 10
+
+    text "Issued on:", style: :bold, align: :right
+    font_size 12
+    text @distribution.distributed_at, align: :right
+    font_size 10
+    move_down 10
+
+    text "Items Received Year-to-Date:", style: :bold, align: :right
+    font_size 12
+    text @distribution.partner.quantity_year_to_date.to_s, align: :right
+    font_size 10
+    move_up 10
+
+    text "Comments:", style: :bold
+    font_size 12
+    text @distribution.comment
+
+    move_down 20
+
     data = [["Items Received", "Value/item", "Total value", "Quantity", "Packages"]]
     data += @distribution.line_items.sorted.map do |c|
       [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity, c.package_count]
     end
     data += [["", "", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total, ""]]
 
-    move_down 55
-
-    font "Helvetica"
-    text "Issued to:", style: :bold
-    text @distribution.partner.name
-    move_down 10
-
-    text "Issued on:", style: :bold
-    text @distribution.distributed_at
-    move_down 10
-
-    text "Items Received Year-to-Date", style: :bold
-    text @distribution.partner.quantity_year_to_date.to_s
-    move_down 10
-
-    text "Comments:", style: :bold
-    text @distribution.comment
-
-    move_down 20
-
+    font_size 11
     # Line item table
     table(data) do
       self.header = true
@@ -51,7 +62,7 @@ class DistributionPdf
       row(0).borders = [:bottom]
       row(0).border_width = 2
       row(0).font_style = :bold
-      row(0).size = 10
+      row(0).size = 9
       row(0).column(1..-1).borders = %i(bottom left)
 
       # Total Items footer row
@@ -81,19 +92,11 @@ class DistributionPdf
       # Page footer
       bounding_box [bounds.left, bounds.bottom + 35], width: bounds.width do
         stroke_bounds
-        font "Helvetica"
+        font "OpenSans"
+        font_size 9
         stroke_horizontal_rule
         move_down(5)
-        # table([
-        #   [organization.name, organization.address_inline, ""],
-        # ]) do
-        #   self.width = bounds.width
-        #   cells.borders = []
-        #   column(0).width = 125
-        #   column(2).width = 125
-        #   column(1).style align: :center
-        #   column(2).style align: :right
-        # end
+
         logo_offset = (bounds.width - 190) / 2
         bounding_box([logo_offset, 0], width: 190, height: 33) do
           text "Lovingly created with", valign: :center

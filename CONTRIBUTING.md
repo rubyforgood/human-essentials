@@ -1,44 +1,50 @@
 # Contributing
 
 We ♥ contributors! By participating in this project, you agree to abide by the
-Ruby for Good [code of conduct].
+Ruby for Good [code of conduct](https://github.com/rubyforgood/code-of-conduct).
 
 **First:** if you're unsure or afraid of *anything*, just ask or submit the issue or pull request anyways. You won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely asked to change something. We appreciate any sort of contributions, and don't want a wall of rules to get in the way of that.
 
+## Onboarding the App
+ 1. Fork the repo.
+ 2. Clone your fork
+ 3. Run `bin/setup` - we've expanded this to check for some additional setup things, including some dependencies
+ 4. Run `bundle exec rake db:seed` - This will set you up with a bunch of realistic data
+ 5. Run the specs (tests). We only take pull requests with passing tests, and it's great to know that you have a clean  slate: `bundle exec rake`.
+ 
+## Working on an Issue
+ 1. Choose an issue from our [Issues List](https://github.com/rubyforgood/diaper/issues). Make sure that you're working on is an [open issue]–if the relevant issue doesn't exist, open it! Check the comment thread and see if anyone else has claimed it already, and if not, go ahead and let us know in the comments!
+ 2. The issues (the Hacktoberfest issues, at least) should be written in a way that it's pretty clear what needs to be done and what's expected. If there's anything confusing, please comment and we'll get back to you ASAP.
+ 3. Check out a branch
+ 4. Do the thing!
+ 5. If it makes sense to, or if the issue asks for it, please write tests as appropriate. We use RSpec.
+ 6. Be sure to run `rubocop -a` and make sure it runs clean (this will block merging if it doesn't)
+ 7. It would be wise to run the spec suite locally (`bundle exec rspec`) -- it takes 5-10 mins to run completely; Travis will run the specs regardless, but this way you don't have to wait for Travis.
+ 
+ The seeds will create some default users in your dev environment:
+ 
+ |      Username          | Password | Role               |
+ | ---------------------- | -------- | ------------------ |
+ | user_1@example.com     | password | Regular user       |
+ | user_2@example.com     | password | Regular user       |
+ | org_admin1@example.com | password | Organization Admin |
+ | org_admin2@example.com | password | Organization Admin |
+ | superadmin@example.com | password | Super Admin        |
+ 
+ When you start up `rails s`, you'll be able to sign in with these at whatever role-level you need to. The "1" and "2" represent different organizations. 
+ 
+ Some things that will increase the chance that your pull request is accepted:
 
-[code of conduct]: https://github.com/rubyforgood/code-of-conduct
+ - Use Rails idioms and helpers
+ - Include tests that fail without your code, and pass with it (most issues require this, but not all)
+ - Attention to detail with any changes to documentation that would be obviously necessary
 
-Here are the basic steps to submit a pull request. Make sure that you're working
-on an [open issue]–if the relevant issue doesn't exist, open it!
+We try to stick with "Rails Way" philosophies as much as possible, and also keep dependencies to a minimum. When in doubt, ask questions in the Issue (or better yet, in the #diaper Slack channel on the RubyForGood Slack!), and we'll answer them as soon as possible.
 
-[open issue]: https://github.com/rubyforgood/diaper/issues
+## Submitting a Pull Request
+ 1. Push to your fork and open a Pull Request
+ 2. Your PR subject should briefly describe what the PR does. Mentioning the issue number is fine, but include some words too (Good: "[12345] Donation recipient name fix", Less good: "Donations", "Donations recipients", or "12345")
+ 3. In the description, be sure that somewhere in the description it says "Fixes #12345", "Closes #12345" or "Resolves #12345" (where "12345" is the issue number) -- this ensures the Issue is auto-closed
+ 4. The PR description should describe what you're doing in it. If there's any noteworthy decisions you made or things you weren't expecting, note those in the description. We have a PR template, but you can free-form your description as long as it's thorough enough. The description should let us know what to focus on in the review.
+ 5. At this point you're waiting on us–we'll try to respond to your PR quickly. We may suggest some changes or improvements or alternatives.
 
-1. Claim an issue on [our issue tracker][open issue] by assigning it to yourself
-   (core team member) or commenting. If the issue doesn't exist yet, open it.
-
-2. Fork the repo.
-
-3. `cd` into the repo. Install the correct version of ruby if prompted. Install ImageMagick if you don't have it installed already: `brew install imagemagick`
-
-4. Run `./bin/setup`.
-
-5. Run the tests. We only take pull requests with passing tests, and it's great
-   to know that you have a clean slate: `bundle exec rake`
-
-6. Add a test for your change. If you are adding functionality or fixing a
-   bug, you should add a test!
-
-7. Make the test pass.
-
-8. Push to your fork and submit a pull request. Include the issue number
-   (ex. `Resolves #1`) in the PR description.
-
-At this point you're waiting on us–we'll try to respond to your PR quickly.
-We may suggest some changes or improvements or alternatives.
-
-Some things that will increase the chance that your pull request is accepted:
-
-* Use Rails idioms and helpers
-* Include tests that fail without your code, and pass with it
-* Update the documentation, the surrounding one, examples elsewhere, guides,
-  whatever is affected by your contribution

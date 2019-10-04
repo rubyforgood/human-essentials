@@ -22,7 +22,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
       end
     end
 
-    fdescribe "GET #edit" do
+    describe "GET #edit" do
       context "with a normal barcode item" do
         subject { get :edit, params: default_params.merge(id: create(:barcode_item)) }
 
@@ -41,7 +41,7 @@ RSpec.describe BarcodeItemsController, type: :controller do
       end
     end
 
-    fdescribe "GET #show" do
+    describe "GET #show" do
       context "with a normal barcode item" do
         subject { get :show, params: default_params.merge(id: create(:barcode_item)) }
 

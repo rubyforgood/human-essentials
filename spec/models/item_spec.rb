@@ -135,6 +135,15 @@ RSpec.describe Item, type: :model do
       end
     end
 
+    describe "other?" do
+      it "is true for items that are partner_key 'other'" do
+        item = create(:item, base_item: BaseItem.first)
+        other_item = create(:item, partner_key: "other")
+        expect(item).not_to be_other
+        expect(other_item).to be_other
+      end
+    end
+
     describe "destroy" do
       it "actually destroys an item that doesn't have history" do
         item = create(:item)

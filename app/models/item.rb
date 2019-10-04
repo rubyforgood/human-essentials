@@ -63,6 +63,10 @@ class Item < ApplicationRecord
     Item.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
+  def other?
+    partner_key == "other"
+  end
+
   # Override `destroy` to ensure Item isn't accidentally destroyed
   # without first being disassociated with its historical presence
   def destroy
@@ -89,6 +93,10 @@ class Item < ApplicationRecord
 
   def to_i
     id
+  end
+
+  def to_h
+    { name: name, partner_key: partner_key }
   end
 
   def self.csv_export_headers

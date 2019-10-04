@@ -5,14 +5,14 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "2.6.2"
+ruby "2.6.4"
 
 gem "api-auth", "~> 2.3"
 gem "bootstrap-sass"
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
-gem "devise"
+gem "devise", '>= 4.7.1'
 gem "devise_invitable"
 gem "dotenv-rails"
 gem "flipper"
@@ -61,6 +61,7 @@ group :development, :test do
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "timecop"
+  gem "faker"
 end
 
 group :development do
