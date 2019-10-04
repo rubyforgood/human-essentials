@@ -48,6 +48,11 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
+# Assign a value to some organization items to verify totals are working
+Organization.all.each do |org|
+  org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
+end
+
 # super admin
 user = User.create email: 'superadmin@example.com', password: 'password', password_confirmation: 'password', organization_admin: false, super_admin: true
 
@@ -261,9 +266,6 @@ end
     status: status
   )
 end
-
-# Assign a value to all items so we can verify that totals are working
-Item.where(value_in_cents: 0).update_all(value_in_cents: 100)
 
 # Create some Vendors so Purchases can have vendor_ids
 5.times do
