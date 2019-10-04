@@ -2,7 +2,7 @@
 // All this logic will automatically be available in application.js.
 
 $(() =>
-  $("#filters.submit-on-change select#filters_interval").on("change", function(
+  $("#filters.submit-on-change select, #filters.submit-on-change input[type=checkbox]").on("change", function(
     e
   ) {
     this.form.submit();
