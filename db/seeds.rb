@@ -1,11 +1,10 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-# Creates Seed Data for the organization
+# This file should contain all the record creation needed to seed the database with demo values.
+# The data can then be loaded with `rails db:seed` (or along with the creation of the db with `rails db:setup`).
+
+unless Rails.env.development?
+  puts "Database seeding has been configured to work only in development mode."
+  return 
+end
 
 def random_record(klass)
   # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
