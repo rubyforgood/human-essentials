@@ -16,7 +16,7 @@ RSpec.describe Admin::OrganizationsController, type: :controller do
     end
 
     describe "POST #create" do
-      let(:valid_organization_params) { attributes_for(:organization) }
+      let(:valid_organization_params) { attributes_for(:organization, users_attributes: [attributes_for(:organization_admin)]) }
 
       context "with valid params" do
         it "redirects to #index" do
