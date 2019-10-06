@@ -1,11 +1,10 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-# Creates Seed Data for the organization
+# This file should contain all the record creation needed to seed the database with demo values.
+# The data can then be loaded with `rails db:seed` (or along with the creation of the db with `rails db:setup`).
+
+unless Rails.env.development?
+  puts "Database seeding has been configured to work only in development mode."
+  return 
+end
 
 def random_record(klass)
   # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
@@ -47,6 +46,11 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
   organization.email = "info@sfdiaperbank.org"
 end
 Organization.seed_items(sf_org)
+
+# Assign a value to some organization items to verify totals are working
+Organization.all.each do |org|
+  org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
+end
 
 # super admin
 user = User.create email: 'superadmin@example.com', password: 'password', password_confirmation: 'password', organization_admin: false, super_admin: true
@@ -126,7 +130,8 @@ def seed_quantity(item_name, organization, storage_location, quantity)
 
   adjustment = organization.adjustments.create!(
     comment: "Starting inventory",
-    storage_location: storage_location
+    storage_location: storage_location,
+    user: organization.users.find_by(organization_admin: true)
   )
 
   LineItem.create!(quantity: quantity, item: item, itemizable: adjustment)

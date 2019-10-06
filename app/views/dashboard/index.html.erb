@@ -109,28 +109,12 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-              <span class="float-center text-center">
-                  <div class="dropdown">
-                    <%= dropdown_button "dropdownMenu1", { text: "New Inventory", size: "lg" } %>
-                    <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu1">
-                     <li class="center-block">
-                      <%= view_button_to donations_path, { text: "All Donations", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%= new_button_to new_donation_path, { text: "New Donation", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%#= new_button_to scale_donations_path, { text: "Repackaged Donation", type: '', size: "md" } %>
-                    </li>
-                    </ul>
-                </div>
-              </span>
+              <%= new_button_to new_donation_path, { text: "New Donation" } %>
               <h3 class="text-center"><%= total_received_donations %> items received <%= display_interval %></h3>
               <h3 class="text-center">$<%= total_received_money_donations %> raised  <%= display_interval %></h3>
               <div class="box-body">
                 <h4>Recent donations</h4>
                 <%= render partial: "donation", collection: @recent_donations, as: :donation %>
-
               </div>
             </div>
             <div class="box-footer text-center">
@@ -206,21 +190,7 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-              <span class="float-center text-center">
-                <div class="dropdown">
-                    <%= dropdown_button "dropdownMenu2", { text: "New Inventory", size: "lg" } %>
-                    <ul class="dropdown-menu float-center"
-                      style="text-align:center;margin-left: 190px;"
-                      aria-labelledby="dropdownMenu2">
-                     <li class="center-block">
-                      <%= view_button_to purchases_path, { text: "All Purchases", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%= new_button_to new_purchase_path, { text: "New Purchase", type: '', size: "md" } %>
-                    </li>
-                    </ul>
-                </div>
-              </span>
+              <%= new_button_to new_purchase_path, { text: "New Purchase" } %>
               <h3 class="text-center">
                 <%= total_purchased %> items purchased <%= display_interval %>
               </h3>
