@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_18_003929) do
+ActiveRecord::Schema.define(version: 2019_10_02_232744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,8 +52,10 @@ ActiveRecord::Schema.define(version: 2019_08_18_003929) do
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["organization_id"], name: "index_adjustments_on_organization_id"
     t.index ["storage_location_id"], name: "index_adjustments_on_storage_location_id"
+    t.index ["user_id"], name: "index_adjustments_on_user_id"
   end
 
   create_table "audits", force: :cascade do |t|
@@ -118,6 +120,7 @@ ActiveRecord::Schema.define(version: 2019_08_18_003929) do
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
+    t.integer "state", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -354,6 +357,7 @@ ActiveRecord::Schema.define(version: 2019_08_18_003929) do
 
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
+  add_foreign_key "adjustments", "users"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "manufacturers"

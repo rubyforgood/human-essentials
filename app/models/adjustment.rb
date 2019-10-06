@@ -8,11 +8,13 @@
 #  comment             :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  user_id             :integer
 #
 
 class Adjustment < ApplicationRecord
   belongs_to :organization
   belongs_to :storage_location
+  belongs_to :user
 
   include Itemizable
   include Filterable

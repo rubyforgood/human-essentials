@@ -18,6 +18,7 @@
 #  longitude       :float
 #  reminder_day    :integer
 #  deadline_day    :integer
+#  invitation_text :text
 #
 
 class Organization < ApplicationRecord
@@ -48,6 +49,10 @@ class Organization < ApplicationRecord
   has_many :storage_locations, dependent: :destroy
   has_many :inventory_items, through: :storage_locations
   has_many :items, dependent: :destroy do
+    def other
+      where(partner_key: "other")
+    end
+
     def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
       select("COUNT(line_items.id) as amount, name")
         .joins(:line_items)
@@ -132,12 +137,30 @@ class Organization < ApplicationRecord
     }
   end
 
-  def self.seed_items(org)
-    Rails.logger.info "Seeding #{org.name}'s items..."
-    org_id = org.id
-    base_items = BaseItem.pluck(:partner_key, :name).collect { |c| { partner_key: c[0], name: c[1], organization_id: org_id } }
-    Item.create(base_items)
-    org.reload
+  def self.seed_items(organization = Organization.all)
+    base_items = BaseItem.all.map(&:to_h)
+    Array.wrap(organization).each do |org|
+      Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"
+      org.seed_items(base_items)
+      org.reload
+    end
+  end
+
+  def seed_items(item_collection)
+    Array.wrap(item_collection).each do |item|
+      items.create!(item)
+    rescue ActiveRecord::RecordInvalid => invalid
+      Rails.logger.info "[SEED] Duplicate item! #{invalid.record.name}"
+      existing_item = items.find_by(name: invalid.record.name)
+      if invalid.to_s.match(/been taken/).present? && existing_item.other?
+        Rails.logger.info "Changing Item##{existing_item.id} from Other to #{invalid.record.partner_key}"
+        existing_item.update(partner_key: invalid.record.partner_key)
+        existing_item.reload
+      else
+        next
+      end
+    end
+    reload
   end
 
   def logo_path

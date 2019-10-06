@@ -24,18 +24,18 @@
             <% if @items.present? %>
               <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                 <%= label_tag "by Item" %>
-                <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, class: "form-control", include_blank: true) %>
+                <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
               </div>
             <% end %>
             <% if @partners.present? %>
               <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                 <%= label_tag "by Partner" %>
-                <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, class: "form-control", include_blank: true) %>
+                <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
               </div>
             <% end %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <%= label_tag "by Date" %>
-            <%= select(:filters, :interval, filter_intervals || [], class: "form-control", include_blank: true) %>
+            <%= select(:filters, :interval, filter_intervals || [], {include_blank: true}, {class: "form-control"}) %>
           </div>
           </div><!-- /.row -->
           <div class="row">
@@ -67,7 +67,8 @@
                     <th>Source Inventory</th>
                     <th>Total items</th>
                     <th>Total value</th>
-                    <th>&nbsp;</th>
+                    <th>State</th>
+                    <th class="pull-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>

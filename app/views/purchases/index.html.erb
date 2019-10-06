@@ -33,13 +33,15 @@
             </div>
           <% end %>
         </div><!-- /.row -->
-        <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-          <%= label_tag "from Date" %>
-          <%= date_field :dates, :date_from, class: "form-control", value: @date_from %>
-        </div>
-        <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-          <%= label_tag "to Date" %>
-          <%= date_field :dates, :date_to, class: "form-control", value: @date_to %>
+        <div class="row">
+          <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+            <%= label_tag "from Date" %>
+            <%= date_field :dates, :date_from, class: "form-control", value: @date_from %>
+          </div>
+          <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+            <%= label_tag "to Date" %>
+            <%= date_field :dates, :date_to, class: "form-control", value: @date_to %>
+          </div>
         </div>
         <div class="row">
           <div class="col-xs-12">
@@ -48,9 +50,9 @@
 
             <div class="pull-right">
               <%= download_button_to(csv_path(format: :csv, type: "Purchase"), { text: "Export Purchases", size: "lg" }) if @purchases.any? %>
-              <%= new_button_to new_purchase_path(organization_id: current_organization), { text: "New Purchase" } %>              
+              <%= new_button_to new_purchase_path(organization_id: current_organization), { text: "New Purchase" } %>
             </div>
-        
+
           </div>
         </div><!-- /.row -->
         <% end # form %>
@@ -70,7 +72,7 @@
                   <th>Variety of Items</th>
                   <th>Amount spent</th>
                   <th>Purchased Date</th>
-                  <th>&nbsp;</th>
+                  <th class="pull-right">Actions</th>
                 </tr>
               </thead>
               <tbody>

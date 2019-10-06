@@ -1,11 +1,10 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-# Creates Seed Data for the organization
+# This file should contain all the record creation needed to seed the database with demo values.
+# The data can then be loaded with `rails db:seed` (or along with the creation of the db with `rails db:setup`).
+
+unless Rails.env.development?
+  puts "Database seeding has been configured to work only in development mode."
+  return 
+end
 
 def random_record(klass)
   # FIXME: This produces a deprecation warning. Could replace it with: .order(Arel.sql('random()'))
@@ -48,6 +47,11 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
+# Assign a value to some organization items to verify totals are working
+Organization.all.each do |org|
+  org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
+end
+
 # super admin
 user = User.create email: 'superadmin@example.com', password: 'password', password_confirmation: 'password', organization_admin: false, super_admin: true
 
@@ -76,7 +80,7 @@ DonationSite.find_or_create_by!(name: "Waffle House") do |location|
   location.organization = pdx_org
 end
 DonationSite.find_or_create_by!(name: "Eagleton Country Club") do |location|
-  location.address = "4567 Some Blvd., Pawnee, OR 12345"
+  location.address = "4567 Some Blvd., Eagleton, OR 12345"
   location.organization = pdx_org
 end
 
@@ -126,7 +130,8 @@ def seed_quantity(item_name, organization, storage_location, quantity)
 
   adjustment = organization.adjustments.create!(
     comment: "Starting inventory",
-    storage_location: storage_location
+    storage_location: storage_location,
+    user: organization.users.find_by(organization_admin: true)
   )
 
   LineItem.create!(quantity: quantity, item: item, itemizable: adjustment)
@@ -259,6 +264,44 @@ end
                     { "item_id" => Item.all.pluck(:id).sample, "quantity" => 2 }],
     comments: "Urgent",
     status: status
+  )
+end
+
+# Create some Vendors so Purchases can have vendor_ids
+5.times do
+  Vendor.create(
+    contact_name: Faker::FunnyName.two_word_name,
+    email: Faker::Internet.email,
+    phone: Faker::PhoneNumber.cell_phone,
+    comment: Faker::Lorem.paragraph(sentence_count: 2),
+    organization_id: Organization.all.pluck(:id).sample,
+    address: "#{Faker::Address.street_address} #{Faker::Address.city}, #{Faker::Address.state_abbr} #{Faker::Address.zip_code}",
+    business_name: Faker::Company.name,
+    latitude: rand(-90.000000000...90.000000000),
+    longitude: rand(-180.000000000...180.000000000),
+    created_at: (Date.today - rand(15).days),
+    updated_at: (Date.today - rand(15).days),
+  )
+end
+
+# Create purchases
+
+suppliers = ["Target", "Wegmans", "Walmart", "Walgreens"]
+comments = ["Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.", "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.", "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."]
+
+20.times do
+  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  vendor = random_record_for_org(pdx_org, Vendor)
+  Purchase.create(
+    purchased_from: suppliers.sample,
+    comment: comments.sample,
+    organization_id: pdx_org.id,
+    storage_location_id: storage_location.id,
+    amount_spent_in_cents: rand(200..10000),
+    issued_at: (Date.today - rand(15).days),
+    created_at: (Date.today - rand(15).days),
+    updated_at: (Date.today - rand(15).days),
+    vendor_id: vendor.id
   )
 end
 

@@ -40,6 +40,11 @@ module UiHelper
     _link_to link, { icon: "repeat", type: "warning", text: "Restore", size: "xs" }.merge(options), properties
   end
 
+  def update_button_to(link, options = {})
+    properties = { rel: "nofollow", method: :patch }
+    _link_to link, { icon: "check", type: "success", text: "Restore", size: "xs" }.merge(options), properties
+  end
+
   def dropdown_button(id, options = {})
     options[:type] = (options[:type] || "primary").prepend("btn-dropdown btn-")
     options[:id] = id

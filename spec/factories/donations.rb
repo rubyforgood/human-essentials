@@ -40,8 +40,11 @@ FactoryBot.define do
     end
 
     trait :with_items do
-      storage_location { create :storage_location, :with_items, item: item || create(:item), organization: organization }
-
+      storage_location do
+        create :storage_location, :with_items,
+               item: item || create(:item, value_in_cents: 100),
+               organization: organization
+      end
       transient do
         item_quantity { 100 }
         item { nil }
