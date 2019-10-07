@@ -8,13 +8,13 @@ module Dateable
   end
 
   def date_range
-    if date_params[:date_from]&.include?'/'
+    if date_params[:date_from]&.include? '/'
       start_date = Date.strptime(date_params[:date_from], '%m/%d/%Y') || "Jan, 2, 1970".to_date
     else
       start_date = date_params[:date_from]&.to_date || "Jan, 2, 1970".to_date
     end
     
-    if date_params[:date_to]&.include?'/'
+    if date_params[:date_to]&.include? '/'
       end_date = Date.strptime(date_params[:date_to], '%m/%d/%Y') || "Jan, 1, 2037".to_date
     else
       end_date = date_params[:date_to]&.to_date || "Jan, 1, 2037".to_date
