@@ -89,6 +89,7 @@ Rails.application.routes.draw do
 
     resources :barcode_items do
       get :find, on: :collection
+      get :font, on: :collection
     end
     resources :donation_sites do
       collection do
