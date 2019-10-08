@@ -42,3 +42,11 @@
   }
   thead {background: $light-grey}
 }
+
+.td-numeric,.th-numeric {
+  text-align: right;
+}
+
+.td-date,.th-date {
+  text-align: center;
+}
