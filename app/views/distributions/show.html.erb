@@ -22,15 +22,28 @@
 
   <!-- Default box -->
   <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title">Distribution Manifest for <%= @distribution.distributed_at %>
-        to <%= @distribution.partner.name %></h3>
-    </div>
-    <div class="box-body">
+        <div class="box-body table-responsive no-padding large-table" style="margin-bottom: 4rem;">
+            <table class="table table-bordered striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Source</th>
+                  <th>Agency Representative</th>
+                  <th>State</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><%= @distribution.distributed_at %></td>
+                  <td><%= @distribution.storage_location.name %></td>
+                  <td><%= @distribution.agency_rep %></td>
+                  <td><%= @distribution.state&.humanize %></td>
+                </tr>
+              </tbody>
+            </table>
+         </div>
 
-      <p>Source location: <%= @distribution.storage_location.name %></p>
-      <p>Agency representative: <%= @distribution.agency_rep %></p>
-      <p>State: <%= @distribution.state&.humanize %>
+      <div class="box-body">
       <h4>Total Items Distributed</h4>
       <div class="row">
         <div class="col-xs-12">
