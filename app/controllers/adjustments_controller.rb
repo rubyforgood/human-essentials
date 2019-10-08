@@ -5,6 +5,7 @@ class AdjustmentsController < ApplicationController
   def index
     @selected_location = filter_params[:at_location]
     @adjustments = current_organization.adjustments.class_filter(filter_params)
+    @paginated_adjustments = @adjustments.page(params[:page])
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
   end

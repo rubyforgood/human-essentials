@@ -58,7 +58,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% @adjustments.each do |adjustment| %>
+                <% @paginated_adjustments.each do |adjustment| %>
                   <tr>
                     <td><time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y") %></time></td>
                     <td><%= adjustment.organization.name %></td>
@@ -75,4 +75,5 @@
       </div><!-- /.row -->
     </div><!-- /.box-body -->
   </div><!-- /.box -->
+  <%= paginate @paginated_adjustments %>
 </section><!-- /.content -->
