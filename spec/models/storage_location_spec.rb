@@ -145,6 +145,22 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
+    describe "inventory_total_value_in_dollars" do
+      it "returns total value of all items in this storage location" do
+        storage_location = create(:storage_location)
+        item1 = create(:item, value_in_cents: 100)
+        item2 = create(:item, value_in_cents: 200)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 10)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 10)
+        expect(storage_location.inventory_total_value_in_dollars).to eq(30)
+      end
+
+      it "returns 0 when there are no items in this storage location" do
+        storage_location = create(:storage_location)
+        expect(storage_location.inventory_total_value_in_dollars).to eq(0)
+      end
+    end
+
     describe "import_csv" do
       it "imports storage locations from a csv file" do
         before_import = StorageLocation.count

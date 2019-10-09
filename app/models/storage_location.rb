@@ -60,6 +60,14 @@ class StorageLocation < ApplicationRecord
     inventory_items.sum(:quantity)
   end
 
+  def inventory_total_value_in_dollars
+    inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
+      value_in_cents = inventory_item.item.try(:value_in_cents)
+      value_in_cents * inventory_item.quantity
+    end.reduce(:+)
+    inventory_total_value.present? ? (inventory_total_value / 100) : 0
+  end
+
   def to_csv
     org = organization
 
