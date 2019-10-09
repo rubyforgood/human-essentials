@@ -14,6 +14,8 @@ class ItemsController < ApplicationController
       @items = @items.active
       @items_with_counts = @items_with_counts.active
     end
+
+    @paginated_items = @items.page(params[:page]).per(5)
   end
 
   def create
