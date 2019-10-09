@@ -34,6 +34,12 @@ RSpec.describe Adjustment, type: :model do
       create(:adjustment)
       expect(Adjustment.at_location(adj1.storage_location_id).size).to eq(1)
     end
+
+    it "`by_user` can filter out adjustments to a specific user" do
+      adj1 = create(:adjustment, user_id: @user.id)
+      create(:adjustment, user_id: @organization_admin.id)
+      expect(Adjustment.by_user(adj1.user_id).size).to eq(1)
+    end
   end
 
   context "Methods >" do
