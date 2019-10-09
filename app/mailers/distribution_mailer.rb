@@ -18,6 +18,6 @@ class DistributionMailer < ApplicationMailer
   def reminder_email(distribution)
     @partner = distribution.partner
     @distribution = distribution
-    mail(to: @partner.email, from: "me@diaper.com", subject: "Diaper Distribution Reminder")
+    mail(to: @partner.email, from: @distribution.organization.email, subject: "#{@partner.name} Distribution Reminder")
   end
 end
