@@ -26,6 +26,7 @@ class AdjustmentsController < ApplicationController
   # POST /adjustments
   def create
     @adjustment = current_organization.adjustments.new(adjustment_params)
+    @adjustment.user_id = current_user.id
 
     if @adjustment.valid? && @adjustment.save
       increasing_adjustment, decreasing_adjustment = @adjustment.split_difference

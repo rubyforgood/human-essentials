@@ -132,6 +132,16 @@ class DistributionsController < ApplicationController
     @pick_ups = current_organization.distributions
   end
 
+  def picked_up
+    if Distribution.find_by(id: params['id'])&.scheduled? && Distribution.find_by(id: params['id'])&.complete!
+      flash[:notice] = 'This distribution has been marked as being picked up!'
+    else
+      flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being picked up'
+    end
+
+    redirect_to distribution_path
+  end
+
   # TODO: This shouldl probably be private
   def insufficient_amount!
     respond_to do |format|

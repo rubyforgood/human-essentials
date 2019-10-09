@@ -3,6 +3,7 @@ class DonationsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: %i(scale_intake scale)
   skip_before_action :authenticate_user!, only: %i(scale_intake scale)
   skip_before_action :authorize_user, only: %i(scale_intake scale)
+  before_action :authorize_admin, only: [:destroy]
 
   include Dateable
 
@@ -12,9 +13,11 @@ class DonationsController < ApplicationController
                                      .order(created_at: :desc)
                                      .where(issued_at: date_range)
                                      .class_filter(filter_params)
+    @paginated_donations = @donations.page(params[:page])
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum
+    @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
     @total_value_all_donations = total_value(@donations)
     @storage_locations = @donations.collect(&:storage_location).compact.uniq.sort
     @selected_storage_location = filter_params[:at_storage_location]

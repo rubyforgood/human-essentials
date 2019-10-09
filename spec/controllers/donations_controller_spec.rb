@@ -2,9 +2,9 @@ RSpec.describe DonationsController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
+  let(:donation) { create(:donation, organization: @organization) }
 
-  context "While signed in >" do
-    let(:donation) { create(:donation, organization: @organization) }
+  context "While signed in as a normal user >" do
     before do
       sign_in(@user)
     end
@@ -171,8 +171,10 @@ RSpec.describe DonationsController, type: :controller do
 
     describe "DELETE #destroy" do
       subject { delete :destroy, params: default_params.merge(id: donation.id) }
-      it "redirects to the index" do
-        expect(subject).to redirect_to(donations_path)
+
+      # normal users are not authorized
+      it "redirects to the dashboard path" do
+        expect(subject).to redirect_to(dashboard_path)
       end
     end
 
@@ -193,6 +195,19 @@ RSpec.describe DonationsController, type: :controller do
     end
   end
 
+  context "While signed in as an organization admin >" do
+    before do
+      sign_in(@organization_admin)
+    end
+
+    describe "DELETE #destroy" do
+      subject { delete :destroy, params: default_params.merge(id: donation.id) }
+      it "redirects to the index" do
+        expect(subject).to redirect_to(donations_path)
+      end
+    end
+  end
+
   context "While not signed in" do
     let(:object) { create(:donation) }
 
@@ -205,6 +220,21 @@ RSpec.describe DonationsController, type: :controller do
 
       patch :remove_item, params: single_params
       expect(response).to be_redirect
+    end
+  end
+
+  context 'calculating total value of multiple donations' do
+    it 'works correctly for multiple line items per donation' do
+      donations = [
+        create(:donation, :with_items, item_quantity: 1),
+        create(:donation, :with_items, item_quantity: 2)
+      ]
+      value = subject.send(:total_value, donations) # private method, need to use `send`
+      expect(value).to eq(300)
+    end
+
+    it 'returns zero for an empty array of donations' do
+      expect(subject.send(:total_value, [])).to be_zero # private method, need to use `send`
     end
   end
 end
