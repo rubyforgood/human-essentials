@@ -40,8 +40,11 @@ class DistributionsController < ApplicationController
                      .includes(:partner, :storage_location, :line_items, :items)
                      .order(created_at: :desc)
                      .class_filter(filter_params)
+    @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
+    @total_value_paginated_distributions = total_value(@paginated_distributions)
     @total_items_all_distributions = total_items(@distributions)
+    @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort
   end

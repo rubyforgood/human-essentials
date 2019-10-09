@@ -19,12 +19,25 @@
   <div class="box">
     <div class="box-header with-border">
       <fieldset>
-        <p>This donation was started on <%= @donation.created_at.to_s(:distribution_date) %>:</p>
-        <ul class="list-group">
-          <li class="list-group-item">It was collected through: <%= @donation.source %></li>
-          <li class="list-group-item">It was dropped off at: <%= @donation.donation_site_view %></li>
-          <li class="list-group-item">It will be stored at: <%= @donation.storage_view %></li>
-        </ul>
+        <div class="box-body table-responsive no-padding large-table" style="margin-bottom: 4rem;">
+          <table class="table table-bordered striped">
+            <thead>
+              <th>Date</th>
+              <th>Source</th>
+              <th>Donation Site</th>
+              <th>Storage Location</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td><%= @donation.created_at.to_s(:distribution_date) %></td>
+                <td><%= @donation.source %></td>
+                <td><%= @donation.donation_site_view %></td>
+                <td><%= @donation.storage_view %></td>
+              </tr>
+            </tbody>
+          </table>
+       </div>
+
 
         <section id="line_items">
           <!-- /.box-header -->
