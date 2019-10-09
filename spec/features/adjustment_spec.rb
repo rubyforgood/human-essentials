@@ -64,4 +64,17 @@ RSpec.feature "Adjustment management", type: :feature do
 
     expect(page).to have_css("table tr", count: 2)
   end
+
+  scenario "User can filter the #index by user" do
+    storage_location = create(:storage_location, name: "here", organization: @organization)
+    storage_location2 = create(:storage_location, name: "there", organization: @organization)
+    create(:adjustment, organization: @organization, storage_location: storage_location, user_id: @user.id)
+    create(:adjustment, organization: @organization, storage_location: storage_location2, user_id: @organization_admin.id)
+
+    visit url_prefix + "/adjustments"
+    select @user.name, from: "filters_by_user"
+    click_button "Filter"
+
+    expect(page).to have_css("table tr", count: 2)
+  end
 end

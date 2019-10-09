@@ -24,6 +24,10 @@
               <%= label_tag "Filter by Storage Location" %>
               <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }, class: "form-control") %>
             </div>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter by User" %>
+              <%= collection_select(:filters, :by_user, @users || {}, :id, :name, { include_blank: true, selected: @selected_user }, class: "form-control") %>
+            </div>
           </div>
           <div class="row">
             <div class="col-xs-12">
