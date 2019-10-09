@@ -6,6 +6,7 @@ class AdjustmentsController < ApplicationController
     @selected_location = filter_params[:at_location]
     @selected_user = filter_params[:by_user]
     @adjustments = current_organization.adjustments.order(created_at: :desc).class_filter(filter_params)
+    @paginated_adjustments = @adjustments.page(params[:page])
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
     @users = current_organization.users
