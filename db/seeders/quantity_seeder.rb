@@ -28,7 +28,7 @@ class QuantitySeeder
   end
 
   def seed_quantity(item_name, storage_location, quantity)
-    return if quantity == 0
+    return if quantity.zero?
 
     item = Item.find_by(name: item_name, organization: organization)
     adjustment = organization.adjustments.create!(

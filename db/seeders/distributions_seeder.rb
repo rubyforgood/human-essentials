@@ -30,15 +30,17 @@ class DistributionsSeeder
     Distribution.create!(storage_location: storage_location,
                          partner: random_record_for_org(organization, Partner),
                          organization: organization,
-                         issued_at: (Date.today + rand(15).days))
+                         issued_at: (Time.zone.today + rand(15).days))
   end
 
   def create_line_item(stored_inventory_item, distribution)
     distribution_qty = rand(stored_inventory_item.quantity / 2)
-    LineItem.create!(
-      quantity: distribution_qty,
-      item: stored_inventory_item.item,
-      itemizable: distribution
-    ) if distribution_qty >= 1
+    if distribution_qty >= 1
+      LineItem.create!(
+        quantity: distribution_qty,
+        item: stored_inventory_item.item,
+        itemizable: distribution
+      )
+    end
   end
 end

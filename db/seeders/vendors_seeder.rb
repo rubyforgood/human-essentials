@@ -1,5 +1,4 @@
 class VendorsSeeder
-
   def self.seed
     5.times do
       Vendor.create(
@@ -12,8 +11,8 @@ class VendorsSeeder
         business_name: Faker::Company.name,
         latitude: rand(-90.000000000...90.000000000),
         longitude: rand(-180.000000000...180.000000000),
-        created_at: (Date.today - rand(15).days),
-        updated_at: (Date.today - rand(15).days),
+        created_at: (Time.zone.today - rand(15).days),
+        updated_at: (Time.zone.today - rand(15).days),
       )
     end
   end

@@ -1,12 +1,12 @@
 class OrganizationsSeeder
   ORGANIZATIONS = [
     { name: "Pawnee Diaper Bank", street: "P.O. Box 22613", city: "Pawnee",
-      state: "Indiana", zipcode: "12345",email: "info@pawneediaper.org",
+      state: "Indiana", zipcode: "12345", email: "info@pawneediaper.org",
       short_by: 'diaper_bank' },
     { name: "SF Diaper Bank", street: "P.O. Box 12345", city: "San Francisco",
       state: "CA", zipcode: "90210", email: "info@sfdiaperbank.org",
       short_by: "sf_bank" }
-  ]
+  ].freeze
 
   def self.seed
     ORGANIZATIONS.each { |org| seed_items(find_or_create(org)) }

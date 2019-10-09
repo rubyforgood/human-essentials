@@ -1,5 +1,4 @@
 class RequestsSeeder
-
   def self.seed(organization)
     20.times.each do |count|
       status = count > 15 ? 'fulfilled' : 'pending'

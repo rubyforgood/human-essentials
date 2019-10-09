@@ -35,25 +35,25 @@ class DonationsSeeder
     when Donation::SOURCES[:manufacturer]
       create_manufacter(source)
     else
-      donation_create(source, { })
+      donation_create(source, {})
     end
   end
 
   def create_drive_participant(source)
     donation_create(
-      source, { diaper_drive_participant: random_record_for_org(organization, DiaperDriveParticipant) }
+      source, diaper_drive_participant: random_record_for_org(organization, DiaperDriveParticipant)
     )
   end
 
   def create_dontation_site(source)
     donation_create(
-      source, { donation_site: random_record_for_org(organization, DonationSite) }
+      source, donation_site: random_record_for_org(organization, DonationSite)
     )
   end
 
   def create_manufacter(source)
     donation_create(
-      source, { manufacturer: random_record_for_org(organization, Manufacturer) }
+      source, manufacturer: random_record_for_org(organization, Manufacturer)
     )
   end
 
