@@ -3,7 +3,6 @@ class DistributionReminderJob
   include Sidekiq::Worker
 
   def perform(dist_id)
-#   current_organization = Organization.find(org_id)
     distribution = Distribution.find(dist_id)
     DistributionMailer.delay_until(distribution.issued_at - 1.day).reminder_email(distribution)
   end
