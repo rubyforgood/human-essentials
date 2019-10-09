@@ -32,11 +32,11 @@
                                     <th>Date</th>
                                     <th>Requester</th>
                                     <th>Status</th>
-                                    <th>&nbsp;</th>
+                                    <th class="pull-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <%= render partial: "request_row", collection: @requests %>
+                                <%= render partial: "request_row", collection: @paginated_requests %>
                             </tbody>
                         </table>
                     </div><!-- /.box-body.table-responsive -->
@@ -44,9 +44,5 @@
             </div><!-- /.row -->
         </div><!-- /.box-body -->
     </div><!-- /.box -->
+    <%= paginate @paginated_requests %>
 </section><!-- /.content -->
-
-
-
-
-

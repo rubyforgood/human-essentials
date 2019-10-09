@@ -4,9 +4,11 @@ class AdjustmentsController < ApplicationController
   # GET /adjustments.json
   def index
     @selected_location = filter_params[:at_location]
-    @adjustments = current_organization.adjustments.class_filter(filter_params)
+    @selected_user = filter_params[:by_user]
+    @adjustments = current_organization.adjustments.order(created_at: :desc).class_filter(filter_params)
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
+    @users = current_organization.users
   end
 
   # GET /adjustments/1
@@ -26,6 +28,7 @@ class AdjustmentsController < ApplicationController
   # POST /adjustments
   def create
     @adjustment = current_organization.adjustments.new(adjustment_params)
+    @adjustment.user_id = current_user.id
 
     if @adjustment.valid? && @adjustment.save
       increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
@@ -61,6 +64,6 @@ class AdjustmentsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:at_location)
+    params.require(:filters).slice(:at_location, :by_user)
   end
 end

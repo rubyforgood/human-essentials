@@ -519,7 +519,7 @@ RSpec.describe "Donations", type: :system, js: true do
         # removing the line item is a lot more benign than randomly
         # switching the item on it to a different item
         total_quantity = find("#donation_quantity").text
-        expect(total_quantity).to eq "0"
+        expect(total_quantity).to eq "0 (Total)"
       end
     end
 

@@ -21,8 +21,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       admin_user_params = attributes_for(:organization_admin)
       fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
       fill_in "organization_users_attributes_0_email", with: admin_user_params[:email]
-      fill_in "organization_users_attributes_0_password", with: "123password"
-      fill_in "organization_users_attributes_0_password_confirmation", with: "123password"
       check "organization_users_attributes_0_organization_admin"
 
       click_on "Save"
@@ -44,7 +42,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       expect(page).to have_content("invited")
     end
   end
-  context "While signd in as an Administrative User with no organization (super admin no org)" do
+  context "While signed in as an Administrative User with no organization (super admin no org)" do
     before :each do
       sign_in(@super_admin_no_org)
     end
@@ -66,8 +64,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       admin_user_params = attributes_for(:organization_admin)
       fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
       fill_in "organization_users_attributes_0_email", with: admin_user_params[:email]
-      fill_in "organization_users_attributes_0_password", with: "543password"
-      fill_in "organization_users_attributes_0_password_confirmation", with: "543password"
       check "organization_users_attributes_0_organization_admin"
 
       click_on "Save"

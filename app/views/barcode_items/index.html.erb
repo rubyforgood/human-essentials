@@ -45,7 +45,8 @@
               <div class="btn-group pull-right">
                 <p>
                   <%= download_button_to(csv_path(format: :csv, type: "BarcodeItem"), { text: "Export Barcode Items", size: "lg" }) if @barcode_items.length > 0 %>
-                  <%= new_button_to new_barcode_item_path(organization_id: current_organization), { text: "Add another barcode" } %>
+                  <%= download_button_to(font_barcode_items_path, { text: "Download Barcode Font", size: "lg" }) %>
+                  <%= new_button_to new_barcode_item_path(organization_id: current_organization), { text: "New Barcode" } %>
                 </p>
               </div>
 
@@ -64,7 +65,7 @@
                   <th>Item Type</th>
                   <th>Quantity in the Box</th>
                   <th>Barcode</th>
-                  <th>&nbsp;</th>
+                  <th class="pull-right">Actions</th>
                 </tr>
               </thead>
               <tbody>

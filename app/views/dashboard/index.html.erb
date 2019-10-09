@@ -26,12 +26,12 @@
           </div>
         </div>
         <div class="box-body">
-          <div class="col-xlg 7 col-md-7 col-sm-12">
+          <div class="col-xlg 7 col-md-6 col-sm-12">
             <div class="logo">
               <%== display_logo_or_name %>
             </div>
           </div>
-          <div class="col-xlg-3 col-xlg-offset-2 col-md-5 col-sm-12">
+          <div class="col-xlg-3 col-xlg-offset-2 col-md-4 col-sm-12">
             <div class="text-center">
               <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
 
@@ -42,21 +42,13 @@
 
             </div>
           </div>
+          <div id="filters" class="submit-on-change box-body col-xlg-3 col-xlg-offset-2 col-md-2 col-sm-12 filter-select">
+            <%= simple_form_for :filters, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
+              <label for="interval">Filter By</label>
+              <%= f.select :interval, filter_intervals, { selected: selected_interval }, class: "form-control" %>
+            <% end %>
+          </div>
         </div>
-      </div>
-
-
-      <div class="box-header with-border bg-gray">
-        <section id="filters" class="submit-on-change">
-          <div class="box-body">
-              <%= simple_form_for :filters, url: dashboard_path(current_organization), remote: true, method: :get do |f| %>
-                <div class="form-group col-md-offset-10 col-md-2 col-sm-offset-6 col-sm-6 col-xs-12">
-                  <label for="interval">Filter By Date Range</label>
-                  <%= f.select :interval, filter_intervals, { selected: selected_interval }, class: "form-control" %>
-                </div>
-              <% end %>
-            </div>
-        </section><!-- /#filters -->
       </div>
 
       <div class="row">
@@ -109,28 +101,12 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-              <span class="float-center text-center">
-                  <div class="dropdown">
-                    <%= dropdown_button "dropdownMenu1", { text: "New Inventory", size: "lg" } %>
-                    <ul class="dropdown-menu float-center" style="text-align:center;margin-left: 190px;" aria-labelledby="dropdownMenu1">
-                     <li class="center-block">
-                      <%= view_button_to donations_path, { text: "All Donations", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%= new_button_to new_donation_path, { text: "New Donation", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%#= new_button_to scale_donations_path, { text: "Repackaged Donation", type: '', size: "md" } %>
-                    </li>
-                    </ul>
-                </div>
-              </span>
+              <%= new_button_to new_donation_path, { text: "New Donation" } %>
               <h3 class="text-center"><%= total_received_donations %> items received <%= display_interval %></h3>
               <h3 class="text-center">$<%= total_received_money_donations %> raised  <%= display_interval %></h3>
               <div class="box-body">
                 <h4>Recent donations</h4>
                 <%= render partial: "donation", collection: @recent_donations, as: :donation %>
-
               </div>
             </div>
             <div class="box-footer text-center">
@@ -206,21 +182,7 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-              <span class="float-center text-center">
-                <div class="dropdown">
-                    <%= dropdown_button "dropdownMenu2", { text: "New Inventory", size: "lg" } %>
-                    <ul class="dropdown-menu float-center"
-                      style="text-align:center;margin-left: 190px;"
-                      aria-labelledby="dropdownMenu2">
-                     <li class="center-block">
-                      <%= view_button_to purchases_path, { text: "All Purchases", type: '', size: "md" } %>
-                    </li>
-                     <li class="center-block">
-                      <%= new_button_to new_purchase_path, { text: "New Purchase", type: '', size: "md" } %>
-                    </li>
-                    </ul>
-                </div>
-              </span>
+              <%= new_button_to new_purchase_path, { text: "New Purchase" } %>
               <h3 class="text-center">
                 <%= total_purchased %> items purchased <%= display_interval %>
               </h3>

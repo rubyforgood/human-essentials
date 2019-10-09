@@ -89,17 +89,23 @@
                   <th>Quantity of Items</th>
                   <th>Variety of Items</th>
                   <th>In Kind Value</th>
-                  <th>&nbsp;</th>
+                  <th class="pull-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <%= render partial: "donation_row", collection: @donations %>
+                <%= render partial: "donation_row", collection: @paginated_donations %>
                 <tr>
                   <td><strong>Total</strong></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td><strong id="donation_quantity"><%= @donations_quantity %></strong></td>
+                  <td>
+		    <strong id="donation_quantity">
+		      <%= @donations_quantity %> (Total)
+		    </strong>
+		    <br />
+		    <%= @paginated_donations_quantity %> (This page)
+		  </td>
                   <td></td>
                   <td><strong><%= item_value(@total_value_all_donations) %></strong></td>
                   <td></td>
@@ -111,4 +117,5 @@
       </div><!-- /.row -->
     </div><!-- /.box-body -->
   </div><!-- /.box -->
+  <%= paginate @paginated_donations %>
 </section>

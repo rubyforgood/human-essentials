@@ -8,6 +8,7 @@
 #  comment             :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  user_id             :integer
 #
 
 RSpec.describe Adjustment, type: :model do
@@ -32,6 +33,12 @@ RSpec.describe Adjustment, type: :model do
       adj1 = create(:adjustment)
       create(:adjustment)
       expect(Adjustment.at_location(adj1.storage_location_id).size).to eq(1)
+    end
+
+    it "`by_user` can filter out adjustments to a specific user" do
+      adj1 = create(:adjustment, user_id: @user.id)
+      create(:adjustment, user_id: @organization_admin.id)
+      expect(Adjustment.by_user(adj1.user_id).size).to eq(1)
     end
   end
 
