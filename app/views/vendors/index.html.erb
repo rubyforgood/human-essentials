@@ -25,27 +25,29 @@
         </div>
       </section>
     </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="box-body table-responsive no-padding">
-          <table class="table table-hover striped">
-            <thead>
-              <tr>
-                <th>Business Name</th>
-                <th>Contact Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Total Diapers</th>
-                <th>&nbsp;</th>
-              </tr>
-            </thead>
-            <tbody>
-              <%= render partial: "vendor_row", collection: @vendors %>
-            </tbody>
-          </table>
-        </div><!-- /.box-body -->
-      </div><!-- /.col-xs-12 -->
-    </div><!-- /.row -->
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover striped">
+              <thead>
+                <tr>
+                  <th>Business Name</th>
+                  <th>Contact Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Total Diapers</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "vendor_row", collection: @vendors %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
   </div><!-- /.box -->
 </section><!-- /.content -->
 
