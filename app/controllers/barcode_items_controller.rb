@@ -36,6 +36,14 @@ class BarcodeItemsController < ApplicationController
     @barcode_item = current_organization.barcode_items.includes(:barcodeable).find(params[:id])
   end
 
+  def font
+    send_file(
+      "#{Rails.root}/public/fonts/LibreBarcode128-Regular.ttf",
+      filename: "LibreBarcode128-Regular.ttf",
+      type: "application/ttf"
+    )
+  end
+
   def find
     # First, we do a naive lookup
     @barcode_item = current_organization.barcode_items.all.find_by!(value: barcode_item_params[:value])
