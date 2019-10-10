@@ -14,10 +14,12 @@
             </tr>
           </thead>
           <tbody>
-            <%= render partial: "item_row", collection: @items, as: :item_row %>
+            <%= render partial: "item_row", collection: @paginated_items, as: :item_row %>
           </tbody>
         </table>
       </div><!-- /.box-body.table-responsive -->
     </div><!-- /.col-xs-12 -->
   </div><!-- /.row -->
+  <%= paginate @paginated_items %>
 </div><!-- /#sectionA -->
+
