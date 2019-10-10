@@ -3,6 +3,10 @@ class Admin::PartnersController < AdminController
     @partners = Partner.all
   end
 
+  def show
+    @partner = Partner.find(params[:id])
+  end
+
   def edit
     @partner = Partner.find(params[:id])
   end

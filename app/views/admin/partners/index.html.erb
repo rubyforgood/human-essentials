@@ -37,6 +37,7 @@
                 <td><%= partner.name %></td>
                 <td><%= partner.organization&.name %></td>
                 <td class="text-right">
+                  <%= view_button_to admin_partner_path(partner) %>
                   <%= edit_button_to edit_admin_partner_path(partner) %>
                 </td>
               <% end %>
