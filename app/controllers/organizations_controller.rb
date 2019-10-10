@@ -32,6 +32,12 @@ class OrganizationsController < ApplicationController
     redirect_to organization_path, notice: "User re-invited to organization!"
   end
 
+  def promote_to_org_admin
+    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user.update(organization_admin: true)
+    redirect_to organization_path, notice: "User has been promoted!"
+  end
+
   private
 
   def authorize_user
