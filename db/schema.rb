@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(version: 2019_10_02_232744) do
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
+    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
