@@ -65,7 +65,7 @@ RSpec.describe "Purchases", type: :system, js: true do
       fill_in("dates[date_from]", with: "01/01/2018").send_keys(:escape)
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 3)
-      
+
       fill_in("dates_date_from", with: "03/01/2018").send_keys(:escape)
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 2)

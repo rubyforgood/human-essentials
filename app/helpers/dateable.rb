@@ -8,17 +8,19 @@ module Dateable
   end
 
   def date_range
-    if date_params[:date_from]&.include? '/'
-      start_date = Date.strptime(date_params[:date_from], '%m/%d/%Y') || "Jan, 2, 1970".to_date
-    else
-      start_date = date_params[:date_from]&.to_date || "Jan, 2, 1970".to_date
-    end
-    
-    if date_params[:date_to]&.include? '/'
-      end_date = Date.strptime(date_params[:date_to], '%m/%d/%Y') || "Jan, 1, 2037".to_date
-    else
-      end_date = date_params[:date_to]&.to_date || "Jan, 1, 2037".to_date
-    end
+    start_date =
+      if date_params[:date_from]&.include? '/'
+        Date.strptime(date_params[:date_from], '%m/%d/%Y') || "Jan, 2, 1970".to_date
+      else
+        date_params[:date_from]&.to_date || "Jan, 2, 1970".to_date
+      end
+
+    end_date =
+      if date_params[:date_to]&.include? '/'
+        Date.strptime(date_params[:date_to], '%m/%d/%Y') || "Jan, 1, 2037".to_date
+      else
+        date_params[:date_to]&.to_date || "Jan, 1, 2037".to_date
+      end
 
     # Rails does a time-sensitive comparison, and the date is treated as 12:00 am that day
     # this means that timestamps for that day itself would be counted out
