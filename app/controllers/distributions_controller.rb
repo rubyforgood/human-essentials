@@ -120,6 +120,8 @@ class DistributionsController < ApplicationController
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{distribution.issued_at}")
       end
 
+      schedule_reminder_email(@distribution.id)
+
       flash[:notice] = "Distribution updated!"
       render :show
     else
@@ -165,8 +167,12 @@ class DistributionsController < ApplicationController
     PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
+  def schedule_reminder_email(dist)
+    DistributionReminderJob.perform_async(dist)
+  end
+
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, line_items_attributes: %i(item_id quantity _destroy))
   end
 
   def total_items(distributions)
