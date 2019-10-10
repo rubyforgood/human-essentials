@@ -61,6 +61,7 @@ Rails.application.routes.draw do
       collection do
         post :invite_user
         post :resend_user_invitation
+        post :promote_to_org_admin
       end
     end
 
