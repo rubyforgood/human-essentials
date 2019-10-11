@@ -67,8 +67,8 @@ module UiHelper
     _link_to link, { icon: "download", type: "default", text: "Download", size: "md" }.merge(options)
   end
 
-  def edit_button_to(link, options = {})
-    _link_to link, { icon: "pencil-square-o", type: "primary", text: "Edit", size: "xs" }.merge(options)
+  def edit_button_to(link, options = {}, properties = {})
+    _link_to link, { icon: "pencil-square-o", type: "primary", text: "Edit", size: "xs" }.merge(options), properties
   end
 
   def filter_button(options = {})
