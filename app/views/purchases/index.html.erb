@@ -77,6 +77,22 @@
               </thead>
               <tbody>
                 <%= render partial: "purchase_row", collection: @purchases %>
+                <tr>
+                  <td><strong>Total</strong></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+		                <strong id="purchase_quantity">
+		                  <%= @purchases_quantity %> (Total)
+		                </strong>
+		                <br />
+		                <%= @paginated_purchases_quantity %> (This page)
+		              </td>
+                  <td></td>
+                  <td><strong><%= item_value(@total_value_all_purchases) %></strong></td>
+                  <td></td>
+                </tr>
               </tbody>
             </table>
           </div><!-- /.box-body.table-responsive -->

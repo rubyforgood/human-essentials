@@ -24,6 +24,11 @@ RSpec.describe "Purchases", type: :system, js: true do
       expect(page).to have_text("Purchased Date")
       expect(page).to have_text("1971-12-08")
     end
+
+    it "Have a pagination at page end" do
+      expect(page).to have_text("0 (Total)")
+      expect(page).to have_text("0 (This page)")
+    end
   end
 
   context "When filtering on the index page" do

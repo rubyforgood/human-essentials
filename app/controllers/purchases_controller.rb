@@ -12,8 +12,12 @@ class PurchasesController < ApplicationController
                                      .where(issued_at: date_range)
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
+    @paginated_purchases = @purchases.page(params[:page])
     # Are these going to be inefficient with large datasets?
     # Using the @purchases allows drilling down instead of always starting with the total dataset
+    @purchases_quantity = @purchases.collect(&:total_quantity).sum
+    @paginated_purchases_quantity = @paginated_purchases.collect(&:total_quantity).sum
+    @total_value_all_purchases = total_value(@purchases)
     @storage_locations = @purchases.collect(&:storage_location).compact.uniq
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
@@ -105,5 +109,13 @@ class PurchasesController < ApplicationController
 
     params[:purchase][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
+  end
+
+  def total_value(purchases)
+    total_value_all_purchases = 0
+    purchases.each do |purchase|
+      total_value_all_purchases += purchase.value_per_itemizable
+    end
+    total_value_all_purchases
   end
 end
