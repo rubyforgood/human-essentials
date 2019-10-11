@@ -2,7 +2,7 @@
   <td><%= transfer_row.from.name %></td>
   <td><%= transfer_row.to.name %></td>
   <td><%= transfer_row.comment || "none" %></td>
-  <td><%= transfer_row.line_items.total %></td>
+  <td class="numeric"><%= transfer_row.line_items.total %></td>
   <td class="text-right">
     <%= view_button_to transfer_row %>
   </td>

@@ -43,10 +43,10 @@
   thead {background: $light-grey}
 }
 
-.td-numeric,.th-numeric {
+table .numeric {
   text-align: right;
 }
 
-.td-date,.th-date {
+table .date {
   text-align: center;
 }

@@ -35,16 +35,16 @@
         <table class="table table-hover striped">
         <tr>
 	      <th>Storage Location</th>
-	      <th>Quantity of Items</th>
-	      <th>Variety of Items</th>
+	      <th class="numeric">Quantity of Items</th>
+	      <th class="numeric">Variety of Items</th>
 	      <th>Source</th>
         </tr>
 
         <% @donation_site.donations.each do |donation| %>  
             <tr>
 					  <td><%= donation.storage_location&.name %></td>
-  					<td><%= donation.line_items.total %></td>
-  					<td><%= donation.line_items.size %></td>
+  					<td class="numeric"><%= donation.line_items.total %></td>
+  					<td class="numeric"><%= donation.line_items.size %></td>
   					<td><%= link_to "View donation details", donation %></td>
           </tr>
           <% end %>        
