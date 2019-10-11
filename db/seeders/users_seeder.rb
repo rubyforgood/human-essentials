@@ -11,14 +11,14 @@ class UsersSeeder
   end
 
   def seed
-    users.map {|user| create_user(user) }
+    users.map { |user| create_user(user) }
   end
 
   private
 
   def users
     [
-      { email: 'superadmin@example.com', organization_admin: false, super_admin: true},
+      { email: 'superadmin@example.com', organization_admin: false, super_admin: true },
       { email: 'org_admin1@example.com', organization_admin: true, organization: pdx_org },
       { email: 'org_admin2@example.com', organization_admin: true, organization: sf_org },
       { email: 'user_1@example.com', organization_admin: false, organization: pdx_org },

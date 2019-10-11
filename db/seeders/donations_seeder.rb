@@ -62,7 +62,7 @@ class DonationsSeeder
       source: source,
       storage_location: random_record_for_org(organization, StorageLocation),
       organization: organization,
-      issued_at: Faker::Date.between(from: 4.days.ago, to: Date.today)
+      issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today)
     }.merge(source_params)
 
     Donation.create!(params)
