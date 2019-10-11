@@ -29,29 +29,29 @@ class DonationsSeeder
   def donate(source)
     case source
     when Donation::SOURCES[:diaper_drive]
-      create_drive_participant(source)
+      create_donation_with_drive_participant(source)
     when Donation::SOURCES[:donation_site]
-      create_dontation_site(source)
+      create_donation_with_site(source)
     when Donation::SOURCES[:manufacturer]
-      create_manufacter(source)
+      create_donation_with_manufacter(source)
     else
       donation_create(source, {})
     end
   end
 
-  def create_drive_participant(source)
+  def create_donation_with_drive_participant(source)
     donation_create(
       source, diaper_drive_participant: random_record_for_org(organization, DiaperDriveParticipant)
     )
   end
 
-  def create_dontation_site(source)
+  def create_donation_with_site(source)
     donation_create(
       source, donation_site: random_record_for_org(organization, DonationSite)
     )
   end
 
-  def create_manufacter(source)
+  def create_donation_with_manufacter(source)
     donation_create(
       source, manufacturer: random_record_for_org(organization, Manufacturer)
     )
@@ -62,7 +62,7 @@ class DonationsSeeder
       source: source,
       storage_location: random_record_for_org(organization, StorageLocation),
       organization: organization,
-      issued_at: Time.zone.now
+      issued_at: Faker::Date.between(from: 4.days.ago, to: Date.today)
     }.merge(source_params)
 
     Donation.create!(params)

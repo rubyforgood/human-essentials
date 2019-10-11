@@ -6,11 +6,11 @@ unless Rails.env.development?
 end
 
 Dir[
-  File.join(Rails.root, 'db', 'seeders', '**/', '*.rb')
+  File.join(Rails.root, 'db', 'seeders', '*.rb')
 ].each { |seeder| require seeder }
 
 def random_record_for_org(org, klass)
-  Helpers::SqlHelper.random_record_for_org(klass, org)
+  SqlHelper.random_record_for_org(klass, org)
 end
 
 # Initial starting qty for our test organizations
@@ -25,22 +25,7 @@ Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
 end
 
-# super admin
-UserSeeder.seed({ email: 'superadmin@example.com', organization_admin: false, super_admin: true})
-
-# org admins
-UserSeeder.seed({ email: 'org_admin1@example.com', organization_admin: true }, pdx_org)
-UserSeeder.seed({ email: 'org_admin2@example.com', organization_admin: true }, sf_org)
-
-# regular users
-UserSeeder.seed({ email: 'user_1@example.com', organization_admin: false }, pdx_org)
-UserSeeder.seed({ email: 'user_2@example.com', organization_admin: false }, sf_org)
-
-# test users
-UserSeeder.seed({ email: 'test@example.com',
-                  organization_admin: false,
-                  super_admin: true }, pdx_org)
-UserSeeder.seed({ email: 'test2@example.com', organization_admin: true }, sf_org)
+UsersSeeder.seed(pdx_org, sf_org)
 
 DonationSitesSeeder.seed(pdx_org)
 
