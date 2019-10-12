@@ -51,27 +51,22 @@ class DistributionsController < ApplicationController
 
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
-    @storage_locations = current_organization.storage_locations
 
-    if @distribution.save
+    @distribution.transaction do 
+      @distribution.save
       @distribution.storage_location.decrease_inventory @distribution
       update_request(params[:distribution][:request_attributes], @distribution.id)
       send_notification(current_organization.id, @distribution.id)
       flash[:notice] = "Distribution created!"
       session[:created_distribution_id] = @distribution.id
-      redirect_to distributions_path
-    else
-      flash[:error] = "An error occurred, try again?"
-      logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
-      @distribution.line_items.build if @distribution.line_items.count.zero?
-      @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.alphabetized
-      render :new
+      redirect_to distributions_path and return
     end
-  rescue Errors::InsufficientAllotment => ex
-    @storage_locations = current_organization.storage_locations
+  rescue Exception => e
+    flash[:error] = e.message
+    logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
+    @distribution.line_items.build if @distribution.line_items.count.zero?
     @items = current_organization.items.alphabetized
-    flash[:error] = ex.message
+    @storage_locations = current_organization.storage_locations.alphabetized
     render :new
   end
 

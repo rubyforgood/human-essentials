@@ -46,7 +46,7 @@ RSpec.feature "Distributions", type: :system do
       end
     end
 
-    fcontext "when there is insufficient inventory to fulfill the Distribution" do
+    context "when there is insufficient inventory to fulfill the Distribution" do
       it "gracefully handles the error" do
         visit @url_prefix + "/distributions/new"
 
@@ -64,8 +64,9 @@ RSpec.feature "Distributions", type: :system do
           click_button "Save", match: :first
           page.find('.alert')
         end.not_to change{Distribution.count}
-
-        expect(page.find(".alert-info")).to have_content "reated"
+        
+        expect(page).to have_content("New Distribution")
+        expect(page.find(".alert")).to have_content "exceed"
       end
     end
   end
