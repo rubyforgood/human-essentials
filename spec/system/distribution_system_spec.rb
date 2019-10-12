@@ -45,6 +45,29 @@ RSpec.feature "Distributions", type: :system do
         expect(page).to have_selector "#distribution_line_items"
       end
     end
+
+    fcontext "when there is insufficient inventory to fulfill the Distribution" do
+      it "gracefully handles the error" do
+        visit @url_prefix + "/distributions/new"
+
+        select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
+
+        fill_in "Comment", with: "Take my wipes... please"
+
+        item = @storage_location.inventory_items.first.item
+        quantity = @storage_location.inventory_items.first.quantity
+        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        fill_in "distribution_line_items_attributes_0_quantity", with: quantity * 2
+
+        expect do
+          click_button "Save", match: :first
+          page.find('.alert')
+        end.not_to change{Distribution.count}
+
+        expect(page.find(".alert-info")).to have_content "reated"
+      end
+    end
   end
 
   it "Does not include inactive items in the line item fields" do
