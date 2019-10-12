@@ -52,16 +52,16 @@ class DistributionsController < ApplicationController
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
 
-    @distribution.transaction do 
+    @distribution.transaction do
       @distribution.save
       @distribution.storage_location.decrease_inventory @distribution
       update_request(params[:distribution][:request_attributes], @distribution.id)
       send_notification(current_organization.id, @distribution.id)
       flash[:notice] = "Distribution created!"
       session[:created_distribution_id] = @distribution.id
-      redirect_to distributions_path and return
+      redirect_to(distributions_path) && return
     end
-  rescue Exception => e
+  rescue StandardError => e
     flash[:error] = e.message
     logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
     @distribution.line_items.build if @distribution.line_items.count.zero?

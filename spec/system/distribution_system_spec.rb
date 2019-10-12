@@ -63,8 +63,8 @@ RSpec.feature "Distributions", type: :system do
         expect do
           click_button "Save", match: :first
           page.find('.alert')
-        end.not_to change{Distribution.count}
-        
+        end.not_to change { Distribution.count }
+
         expect(page).to have_content("New Distribution")
         expect(page.find(".alert")).to have_content "exceed"
       end
