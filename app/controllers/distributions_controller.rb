@@ -62,7 +62,8 @@ class DistributionsController < ApplicationController
       redirect_to(distributions_path) && return
     end
   rescue StandardError => e
-    flash[:error] = "Sorry, we weren't able to save the distribution. #{@distribution.errors.full_messages.join(', ')}."
+    insufficient_message = e.message if e.is_a?(Errors::InsufficientAllotment)
+    flash[:error] = "Sorry, we weren't able to save the distribution. #{@distribution.errors.full_messages.join(', ')} #{insufficient_message}"
     logger.error "[!] DistributionsController#create failed to save distribution for #{current_organization.short_name}: #{@distribution.errors.full_messages} [#{e.inspect}]"
     @distribution.line_items.build if @distribution.line_items.count.zero?
     @items = current_organization.items.alphabetized
