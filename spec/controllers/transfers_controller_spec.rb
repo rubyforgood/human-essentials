@@ -16,7 +16,7 @@ RSpec.describe TransfersController, type: :controller do
 
         context 'when date parameters are supplied' do
           it 'only returns the correct obejects' do
-            get :index, params: { organization_id: @organization.short_name, dates: { date_from: 3.days.ago, date_to: Date.today } }
+            get :index, params: { organization_id: @organization.short_name, dates: { date_from: 3.days.ago, date_to: Time.zone.today } }
             expect(assigns(:transfers)).to eq([new_transfer])
           end
         end
