@@ -62,8 +62,8 @@ class DistributionsController < ApplicationController
       redirect_to(distributions_path) && return
     end
   rescue StandardError => e
-    flash[:error] = e.message
-    logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
+    flash[:error] = "Sorry, we weren't able to save the distribution. #{@distribution.errors.full_messages.join(', ')}."
+    logger.error "[!] DistributionsController#create failed to save distribution for #{current_organization.short_name}: #{@distribution.errors.full_messages}"
     @distribution.line_items.build if @distribution.line_items.count.zero?
     @items = current_organization.items.alphabetized
     @storage_locations = current_organization.storage_locations.alphabetized

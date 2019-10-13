@@ -94,7 +94,8 @@ RSpec.feature "Distributions", type: :system do
     select "", from: "From storage location"
 
     click_button "Save", match: :first
-    expect(page).to have_content "An error occurred, try again?"
+    page.find('.alert')
+    expect(page).to have_css('.alert.error', text: /storage location/i)
   end
 
   context "With an existing distribution" do
