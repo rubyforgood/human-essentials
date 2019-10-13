@@ -11,7 +11,7 @@ RSpec.describe TransfersController, type: :controller do
       end
 
       context 'when filtering by date' do
-        let!(:old_transfter) { create(:transfer, created_at: 7.days.ago) }
+        let!(:old_transfer) { create(:transfer, created_at: 7.days.ago) }
         let!(:new_transfer) { create(:transfer, created_at: 1.day.ago) }
 
         context 'when date parameters are supplied' do
@@ -24,7 +24,7 @@ RSpec.describe TransfersController, type: :controller do
         context 'when date parameters are not supplied' do
           it 'returns all objects' do
             get :index, params: { organization_id: @organization.short_name }
-            expect(assigns(:transfers)).to eq([old_transfter, new_transfer])
+            expect(assigns(:transfers)).to eq([old_transfer, new_transfer])
           end
         end
       end
