@@ -136,4 +136,3 @@ Users that are frequent contributors and are involved in discussion (join the sl
 
 # Acknowledgements
 
-Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
