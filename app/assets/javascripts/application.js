@@ -41,7 +41,8 @@ toastr.options = {
 $( document ).ready(function() {
     $('#calendar').fullCalendar({
         firstDay: 1,
-        displayEventTime : false,
+        displayEventTime : true,
+        eventLimit: true,
         events: 'pick_ups.json'
     });
 });

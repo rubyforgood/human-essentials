@@ -100,7 +100,7 @@ class Organization < ApplicationRecord
   end
 
   def upcoming_distributions
-    distributions&.this_week&.count || 0
+    distributions&.this_week&.scheduled.count || 0
   end
 
   # Computes full address string based on street, city, state, and zip, adding ', ' and ' ' separators

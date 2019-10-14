@@ -33,7 +33,12 @@ tr.negative {
 tr.positive {
   background-color: $diaper-color-green-93;
 }
-
 tr.highlight {
   background-color: $diaper-color-blue-95;
+}
+
+.fc-dist-complete {
+  background-color: $diaper-color-green-32;
+  border-color: $diaper-color-green-32;
+  text-decoration: line-through;
 }
