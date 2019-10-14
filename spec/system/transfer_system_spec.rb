@@ -72,4 +72,23 @@ RSpec.describe "Transfer management", type: :system do
 
     expect(page).to have_css("table tr", count: 2)
   end
+
+  it "can filter the #index by date" do
+    create(:transfer, created_at: Date.new(2018, 2, 1))
+    create(:transfer, created_at: Date.new(2018, 3, 1))
+    create(:transfer, created_at: Date.new(2018, 4, 1))
+    visit url_prefix + "/transfers"
+
+    fill_in "dates_date_from", with: "02/01/2018"
+    click_button "Filter"
+    expect(page).to have_css("table tbody tr", count: 3)
+
+    fill_in "dates_date_from", with: "03/02/2018"
+    click_button "Filter"
+    expect(page).to have_css("table tbody tr", count: 2)
+
+    fill_in "dates_date_to", with: "03/30/2018"
+    click_button "Filter"
+    expect(page).to have_css("table tbody tr", count: 1)
+  end
 end
