@@ -1,11 +1,13 @@
 <section class="row">
 <div class="nested-fields list-line-items">
-  <span class='col-md-3 col-sm-12'>
+  <span class='col-md-3 col-10'>
     <%= render partial: "barcode_items/barcode_item_lookup", locals: {index: f.options[:child_index]} %>
     <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner"> </div>
   </span>
-  <span class="col-md-4 col-sm-12">
+  <span class="col-xs-6 col-md-12 col-sm-12">
     <label>OR</label>
+  </span>
+  <span class="col-md-3 col-10">
     <%= f.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false %>
   </span>
   <div class='col-md-3 col-12'>
