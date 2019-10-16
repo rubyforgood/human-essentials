@@ -32,16 +32,16 @@
                 <table class="table table-hover striped">
                   <thead>
                     <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Estimated on-hand</th>
+                    <th class="numeric">Quantity</th>
+                    <th class="numeric">Estimated on-hand</th>
                   </thead>
 
                   <tbody>
                     <% @request_items.each do |item| %>
                       <tr>
                         <td><%= item.name %></td>
-                        <td><%= item.quantity %></td>
-                        <td><%= item.on_hand %></td>
+                        <td class="numeric"><%= item.quantity %></td>
+                        <td class="numeric"><%= item.on_hand %></td>
                       </tr>
                     <% end %>
                   </tbody>

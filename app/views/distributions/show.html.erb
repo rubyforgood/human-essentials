@@ -39,10 +39,10 @@
             <table class="table table-hover striped">
               <tr>
                 <th><b>Item</b></th>
-                <th><b>Value per item</b></th>
-                <th><b>Total value</b></th>
-                <th><b>Quantity</b></th>
-                <th><b>Package count</b></th>
+                <th class="numeric"><b>Value per item</b></th>
+                <th class="numeric"><b>Total value</b></th>
+                <th class="numeric"><b>Quantity</b></th>
+                <th class="numeric"><b>Package count</b></th>
               </tr>
               <%= render partial: "distribution_item_row", collection: @line_items %>
               <%= render partial: "distribution_item_total" %>

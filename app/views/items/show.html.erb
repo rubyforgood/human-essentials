@@ -40,18 +40,18 @@
         <table class="table table-hover striped">
         <tr>
           <th>Storage location</th>
-          <th>Quantity</th>
+          <th class="numeric">Quantity</th>
         </tr>
           <% total = 0; @storage_locations_containing.each do |storage|
             total += storage.item_total(@item) %>
           <tr>
             <td><%= link_to storage.name, storage_location_path(storage) %></td>
-            <td><%= storage.item_total(@item) %></td>
+            <td class="numeric"><%= storage.item_total(@item) %></td>
           </tr>
           <% end %>
         <tr>
           <td>Total</td>
-          <td><%= total %></td>
+          <td class="numeric"><%= total %></td>
         </tr>               
         </table>
       <!-- /.box-body -->
