@@ -33,17 +33,17 @@
       <table class="table table-hover striped">
       <tr>
         <th>Item</th>
-        <th>Quantity</th>
+        <th class="numeric">Quantity</th>
       </tr>
     <% @line_items.each do |line_item| %>
       <tr>
         <td><%= line_item.item.name %></td>
-        <td><%= line_item.quantity %></td>
+        <td class="numeric"><%= line_item.quantity %></td>
       </tr>
     <% end %>
         <tr>
         <td>Total:</td>
-        <td><%= @total %></td>
+        <td class="numeric"><%= @total %></td>
       </tr>
       </table>
     <!-- /.box-body -->

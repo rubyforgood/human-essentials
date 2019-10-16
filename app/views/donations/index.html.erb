@@ -83,12 +83,12 @@
               <thead>
                 <tr>
                   <th>Source</th>
-                  <th>Date</th>
+                  <th class="date">Date</th>
                   <th>Donation Site</th>
                   <th>Storage Location</th>
-                  <th>Quantity of Items</th>
-                  <th>Variety of Items</th>
-                  <th>In Kind Value</th>
+                  <th class="numeric">Quantity of Items</th>
+                  <th class="numeric">Variety of Items</th>
+                  <th class="numeric">In Kind Value</th>
                   <th class="pull-right">Actions</th>
                 </tr>
               </thead>
@@ -99,15 +99,15 @@
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td>
-		    <strong id="donation_quantity">
-		      <%= @donations_quantity %> (Total)
-		    </strong>
-		    <br />
-		    <%= @paginated_donations_quantity %> (This page)
-		  </td>
+                  <td class="numeric">
+                  <strong id="donation_quantity">
+                    <%= @donations_quantity %> (Total)
+                  </strong>
+                  <br />
+                    <%= @paginated_donations_quantity %> (This page)
+                  </td>
                   <td></td>
-                  <td><strong><%= item_value(@total_value_all_donations) %></strong></td>
+                  <td class="numeric"><strong><%= item_value(@total_value_all_donations) %></strong></td>
                   <td></td>
                 </tr>
               </tbody>

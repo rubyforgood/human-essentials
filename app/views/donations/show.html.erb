@@ -22,14 +22,14 @@
         <div class="box-body table-responsive no-padding large-table" style="margin-bottom: 4rem;">
           <table class="table table-bordered striped">
             <thead>
-              <th>Date</th>
+              <th class="date">Date</th>
               <th>Source</th>
               <th>Donation Site</th>
               <th>Storage Location</th>
             </thead>
             <tbody>
               <tr>
-                <td><%= @donation.created_at.to_s(:distribution_date) %></td>
+                <td class="date"><%= @donation.created_at.to_s(:distribution_date) %></td>
                 <td><%= @donation.source %></td>
                 <td><%= @donation.donation_site_view %></td>
                 <td><%= @donation.storage_view %></td>
@@ -47,14 +47,14 @@
                 <table class="table table-hover striped">
                   <thead>
                     <th>Item</th>
-                    <th>Quantity</th>
-                    <th>In Kind Value</th>
+                    <th class="numeric">Quantity</th>
+                    <th class="numeric">In Kind Value</th>
                   </thead>
                   <tbody>
                     <%= render partial: "donation_item_row", collection: @line_items %>
                     <tr>
-                      <td></td>
                       <td><strong>Total</strong></td>
+                      <td></td>
                       <td><strong><%= item_value(@donation.value_per_itemizable) %></strong></td>
                     </tr>
                   </tbody>
