@@ -1,7 +1,7 @@
 <tr>
   <td><%= distribution_item_row.item.name %></td>
-  <td><%= item_value(distribution_item_row.item.value_in_cents) %></td>
-  <td><%= item_value(distribution_item_row.value_per_line_item) %></td>
-  <td><%= distribution_item_row.quantity %></td>
-  <td><%= distribution_item_row.package_count %></td>
+  <td class="numeric"><%= item_value(distribution_item_row.item.value_in_cents) %></td>
+  <td class="numeric"><%= item_value(distribution_item_row.value_per_line_item) %></td>
+  <td class="numeric"><%= distribution_item_row.quantity %></td>
+  <td class="numeric"><%= distribution_item_row.package_count %></td>
 </tr>

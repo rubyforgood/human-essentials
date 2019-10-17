@@ -91,19 +91,19 @@ RSpec.describe ApplicationHelper, type: :helper do
 
   describe "flash_class" do
     it "returns appropriate class for notice" do
-      expect(helper.flash_class("notice")).to eq "alert alert-info"
+      expect(helper.flash_class("notice")).to match(/alert|alert-info/)
     end
 
     it "returns appropriate class for success" do
-      expect(helper.flash_class("success")).to eq "alert alert-success"
+      expect(helper.flash_class("success")).to match(/alert|alert-success/)
     end
 
     it "returns appropriate class for error" do
-      expect(helper.flash_class("error")).to eq "alert alert-danger"
+      expect(helper.flash_class("error")).to match(/alert|alert-danger/)
     end
 
     it "returns appropriate class for alert" do
-      expect(helper.flash_class("alert")).to eq "alert alert-warning"
+      expect(helper.flash_class("alert")).to match(/alert|alert-warning/)
     end
   end
 

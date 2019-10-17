@@ -1,7 +1,7 @@
 <tr>
   <td><%= storage_location.name %></td>
   <td><%= storage_location.address %></td>
-  <td><%= storage_location.size %></td>
+  <td class="numeric"><%= storage_location.size %></td>
   <td><%= item_value(storage_location.total_inventory_fair_market_value) %></td>
   <td class="text-right">
     <%= view_button_to storage_location %>
