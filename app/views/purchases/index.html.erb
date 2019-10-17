@@ -50,9 +50,9 @@
 
             <div class="pull-right">
               <%= download_button_to(csv_path(format: :csv, type: "Purchase"), { text: "Export Purchases", size: "lg" }) if @purchases.any? %>
-              <%= new_button_to new_purchase_path(organization_id: current_organization), { text: "New Purchase" } %>              
+              <%= new_button_to new_purchase_path(organization_id: current_organization), { text: "New Purchase" } %>
             </div>
-        
+
           </div>
         </div><!-- /.row -->
         <% end # form %>
@@ -68,11 +68,11 @@
                 <tr>
                   <th>Purchases from</th>
                   <th>Storage Location</th>
-                  <th>Quantity of Items</th>
-                  <th>Variety of Items</th>
-                  <th>Amount spent</th>
-                  <th>Purchased Date</th>
-                  <th>&nbsp;</th>
+                  <th class="numeric">Quantity of Items</th>
+                  <th class="numeric">Variety of Items</th>
+                  <th class="numeric">Amount Spent</th>
+                  <th class="date">Purchased Date</th>
+                  <th class="pull-right">Actions</th>
                 </tr>
               </thead>
               <tbody>

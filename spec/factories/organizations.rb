@@ -18,6 +18,7 @@
 #  longitude       :float
 #  reminder_day    :integer
 #  deadline_day    :integer
+#  invitation_text :text
 #
 
 FactoryBot.define do

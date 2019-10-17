@@ -1,9 +1,9 @@
 <tr <%= 'class=highlight' if distribution_row.id == @highlight_id %>>
   <td><%= distribution_row.partner.name %></td>
-  <td><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %> </td>
+  <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %> </td>
   <td><%= distribution_row.storage_location.name %></td>
-  <td><%= distribution_row.line_items.total %></td>
-  <td><%= item_value(distribution_row.value_per_itemizable) %></td>
+  <td class="numeric"><%= distribution_row.line_items.total %></td>
+  <td class="numeric"><%= item_value(distribution_row.value_per_itemizable) %></td>
   <td><%= distribution_row.state&.humanize %>
 
   <td class="text-right">

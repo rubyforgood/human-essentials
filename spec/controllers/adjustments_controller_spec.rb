@@ -31,7 +31,7 @@ RSpec.describe AdjustmentsController, type: :controller do
 
     describe "GET #index" do
       it "is successful" do
-        Adjustment.create! valid_attributes
+        Adjustment.create! valid_attributes.merge(user_id: @user.id)
         get :index, params: default_params, session: valid_session
         expect(response).to be_successful
       end
@@ -64,6 +64,11 @@ RSpec.describe AdjustmentsController, type: :controller do
           post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
           expect(assigns(:adjustment)).to be_a(Adjustment)
           expect(assigns(:adjustment)).to be_persisted
+        end
+
+        it "assigns a user id from the current user" do
+          post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
+          expect(assigns(:adjustment).user_id).to eq(@user.id)
         end
 
         it "redirects to the #show after created adjustment" do

@@ -74,6 +74,22 @@
           </li>
         </ul>
       </li>
+      <li class="<%= active_class(['partners']) %> treeview">
+        <a href="#">
+          <i class="fa fa-people-carry"></i>
+          <span>Partners</span>
+          <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class="<%= 'active' if current_page?(admin_partners_path) %>">
+            <%= link_to(admin_partners_path) do %>
+              <i class="fa fa-circle-o"></i> <span>All Partners</span>
+            <% end %>
+          </li>
+        </ul>
+      </li>
       <li class="<%= active_class(['users']) %> treeview">
         <a href="#">
           <i class="fa fa-users"></i>

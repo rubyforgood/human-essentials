@@ -40,6 +40,9 @@ dump.rdb
 # Ignore Rubymine
 .idea
 
+# Ignore asdf file
+.tool-versions
+
 .rails_routes*
 .rake_tasks~
 .DS_Store

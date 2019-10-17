@@ -34,6 +34,7 @@ Rails.application.routes.draw do
     get :dashboard
     resources :base_items
     resources :organizations
+    resources :partners, except: %i[new create destroy]
     resources :users
     resources :barcode_items
     resources :feedback_messages do
@@ -61,6 +62,7 @@ Rails.application.routes.draw do
       collection do
         post :invite_user
         post :resend_user_invitation
+        post :promote_to_org_admin
       end
     end
 
@@ -89,6 +91,7 @@ Rails.application.routes.draw do
 
     resources :barcode_items do
       get :find, on: :collection
+      get :font, on: :collection
     end
     resources :donation_sites do
       collection do
