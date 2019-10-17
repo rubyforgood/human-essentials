@@ -203,6 +203,8 @@ ActiveRecord::Schema.define(version: 2019_10_02_232744) do
     t.integer "value_in_cents", default: 0
     t.integer "package_size"
     t.integer "distribution_quantity"
+    t.integer "on_hand_minimum_quantity", default: 0, null: false
+    t.integer "on_hand_recommended_quantity"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
