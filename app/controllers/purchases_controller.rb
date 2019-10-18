@@ -25,18 +25,6 @@ class PurchasesController < ApplicationController
   end
 
   def create
-    # @purchase = current_organization.purchases.new(purchase_params)
-    # if @purchase.save
-    #   @purchase.storage_location.increase_inventory @purchase
-    #   redirect_to purchases_path
-    # else
-    #   load_form_collections
-    #   @purchase.line_items.build if @purchase.line_items.count.zero?
-    #   flash[:error] = "There was an error starting this purchase, try again?"
-    #   Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
-    #   render action: :new
-    # end
-
     @purchase = current_organization.purchases.new(purchase_params)
     @purchase.transaction do
       @purchase.save
@@ -50,7 +38,6 @@ class PurchasesController < ApplicationController
       logger.error "[!] PurchasesController#create failed to save purchase for #{@purchase.errors.full_messages}"
       @purchase.line_items.build if @purchase.line_items.count.zero?
       render action: :new
-
   end
 
   def new
