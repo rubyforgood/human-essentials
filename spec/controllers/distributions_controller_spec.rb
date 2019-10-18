@@ -36,6 +36,15 @@ RSpec.describe DistributionsController, type: :controller do
       it "returns http success" do
         expect(subject).to be_successful
       end
+
+      it "sums distribution totals accurately" do
+        distribution = create(:distribution, :with_items, item_quantity: 10)
+        create(:distribution, :with_items, item_quantity: 5)
+        create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
+        subject
+        expect(assigns(:total_items_all_distributions)).to eq(22)
+        expect(assigns(:total_items_paginated_distributions)).to eq(22)
+      end
     end
 
     describe "POST #create" do
