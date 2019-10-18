@@ -85,7 +85,7 @@ RSpec.describe PurchasesController, type: :controller do
       end
 
       describe "when removing a line item" do
-        it "updates storage invetory item quantity correctly" do
+        it "updates storage inventory item quantity correctly" do
           purchase = create(:purchase, :with_items, item_quantity: 10)
           line_item = purchase.line_items.first
           line_item_params = {
@@ -141,6 +141,7 @@ RSpec.describe PurchasesController, type: :controller do
         end
 
         it "rollsback updates if quantity would go below 0" do
+          RSpec::Expectations.configuration.on_potential_false_positives = :nothing
           purchase = create(:purchase, :with_items, item_quantity: 10)
           original_storage_location = purchase.storage_location
 
