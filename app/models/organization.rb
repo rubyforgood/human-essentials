@@ -186,7 +186,7 @@ class Organization < ApplicationRecord
   def correct_logo_mime_type
     if logo.attached? && !logo.content_type
                               .in?(%w(image/jpeg image/jpg image/pjpeg image/png image/x-png))
-      logo = nil
+      self.logo = nil
       errors.add(:logo, "Must be a JPG or a PNG file")
     end
   end
