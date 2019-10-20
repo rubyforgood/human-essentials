@@ -18,7 +18,24 @@ The Github project page is at [https://github.com/rubyforgood/diaper](https://gi
 
 You'll need to add some packages to those that are included in the installation by default:
 
+#### Ubuntu
+
 `sudo apt install curl  git  nodejs  npm  postgresql  libpq-dev`
+
+#### OS X
+
+Install [Homebrew](https://brew.sh/) if you don't already have it
+
+```
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+Then install these packages
+
+```
+brew install node
+brew install postgresql
+```
 
 
 ### Installing the Diaper Software
@@ -37,12 +54,22 @@ curl -o diaper.zip https://codeload.github.com/rubyforgood/diaper/zip/master \
 
 
 ### Installing Yarn
- 
+
 Go to your diaper project directory and do this:
+
+#### Ubuntu
 
 ```
 sudo npm -g install yarn
 yarn install
+```
+
+### OS X
+
+```
+brew install yarn
+yarn install
+brew install imagemagick
 ```
 
 
@@ -75,11 +102,20 @@ Then, from your project directory, install the gems required for the project:
 
 ### Configuring Postgres
 
-By default, Postgres has no password for the admin user. You'll need to set one. Run `psql` as the Unix user `postgres` that was added by the Postgres installation:
+By default, Postgres has no password for the admin user. You'll need to set one. Run `psql` as the Unix user `postgres` that was added by the Postgres installation (Ubuntu only):
+
+#### Ubuntu
 
 `sudo -u postgres psql`
 
-In `psql`, the following command would add a password whose value is `password`:
+#### OS X
+
+```
+brew services start postgresql
+psql postgres
+```
+
+In `psql`, the following command would add a password whose value is `password`. For the default OS X / HomeBrew setup, the postgres user is not created but you view the user list using `\du` in psql. Replace `postgres`, below, with the user name.
 
 `alter user postgres password 'password';`
 
@@ -88,9 +124,11 @@ Don't forget that semicolon!
 You can now exit `psql`, by pressing `<Ctrl-D>` or typing `\q<Enter>`.
 
 
-### Making the Postgres Credentials Available in Your Environment 
+### Making the Postgres Credentials Available in Your Environment
 
 You will see in `config/database.yml` that the Postgres username and password are fetched from the environment variables `PG_USERNAME` and `PG_PASSWORD`, respectively. (The production environment password is an exception, coming from `DIAPER_DATABASE_PASSWORD`.) You'll need to make this happen, for example by putting them in a startup script, or (quick and dirty) typing `export` commands in the terminal:
+
+For OS X users, remember to replace `postgres`, below, with the user name you used in psql.
 
 ```
 export PG_USERNAME=postgres
@@ -101,7 +139,7 @@ export PG_PASSWORD=password
 
 From your project directory, initialize the data base:
 
-`bundle exec rake db:setup`
+`rails db:setup`
 
 
 ### Testing the Application
