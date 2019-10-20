@@ -5,7 +5,6 @@
 # might want if they were doing direct services.
 class DistributionsController < ApplicationController
   include DateRangeHelper
-  include InventoryManager::DistributionManager
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
@@ -53,7 +52,7 @@ class DistributionsController < ApplicationController
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
 
-    result = InventoryManager::DistributionManager::DistributionCreator.new(@distribution).call
+    result = DistributionCreator.new(@distribution).call
     
     if result.success?
       update_request(params[:distribution][:request_attributes], @distribution.id)
