@@ -1,3 +1,18 @@
+# Welcome Hacktoberfest Contributors!
+Thanks for checking us out!
+
+If you're new here, here are some things you should know:
+ - We actively curate issues and try to make them as self-contained as possible for people new to the application; those ones are tagged "Hacktoberfest" + "Help Wanted"
+ - We're actively watching for Pull Requests and you shouldn't have to wait very long for a review. Try to make sure your build passes (`rubocop -a` is a frequent need) and that you've addressed the requirements in the issue
+ - There is a wiki article called [Application Overview](https://github.com/rubyforgood/diaper/wiki/Application-Overview). It needs a tiny bit of updating, but is mostly still accurate. It will introduce you to some vocabulary and general concepts, if you find something confusing and want to find the answer on your own.
+ - Check the `CONTRIBUTING.md` file for a guide on how to get started
+ - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during October, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
+
+Please feel free to join us on Slack! You can sign up at https://rubyforgood.org -- click on the Slack icon at the top to get an invite. We're in #diaper
+ 
+The core team leads are: @armahillo @seanmarcia @mdworken @benreyn
+There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
+
 # README
 
 [![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=master)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
@@ -19,7 +34,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 The `ubuntu_installation.md` file ([https://github.com/rubyforgood/diaper/blob/master/ubuntu-installation.md](https://github.com/rubyforgood/diaper/blob/master/ubuntu-installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
 
 ### Ruby Version
-This app uses Ruby version 2.6.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
+This app uses Ruby version 2.6.4, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
 
 ### Yarn Installation
 If you don't have Yarn installed, you can install with Homebrew on macOS `brew install yarn` or visit [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install). Be sure to run `yarn install` after installing Yarn. NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.
@@ -113,7 +128,7 @@ Sometimes we want to get a PR up there and going so that other people can review
 * The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
 * If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
 
- ```rvm install 2.6.2 --with-openssl-dir=`brew --prefix openssl` ```.
+ ```rvm install 2.6.4 --with-openssl-dir=`brew --prefix openssl` ```.
 
 ### Becoming a Repo Contributor
 

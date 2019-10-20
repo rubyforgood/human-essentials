@@ -5,14 +5,14 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "2.6.2"
+ruby "2.6.4"
 
 gem "api-auth", "~> 2.3"
 gem "bootstrap-sass"
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
-gem "devise"
+gem "devise", '>= 4.7.1'
 gem "devise_invitable"
 gem "dotenv-rails"
 gem "flipper"
@@ -23,16 +23,19 @@ gem "font-ionicons-rails"
 gem "fullcalendar-rails"
 gem "geocoder"
 gem "groupdate", "~> 4.1"
+gem "image_processing"
 gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
+gem "kaminari"
 gem "momentjs-rails"
 gem "newrelic_rpm"
+gem "nokogiri", ">= 1.10.4"
 gem "paperclip"
 gem "pg", "~> 1.1.3"
 gem "prawn-rails"
 gem "puma"
-gem "rails", "~> 5.2.2"
+gem "rails", "~> 6.0.0"
 gem "sass-rails"
 gem "sidekiq"
 gem "simple_form"
@@ -42,10 +45,9 @@ gem "uglifier", ">= 1.3.0"
 gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
-gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
-gem "image_processing"
-gem "webpacker", "~> 3.5"
+gem "webpacker", "> 4.0"
 gem 'sidekiq-scheduler'
+gem 'bootstrap-datepicker-rails'
 
 group :development, :test do
   gem "awesome_print"
@@ -55,11 +57,12 @@ group :development, :test do
   gem "pry-remote"
   gem "pry-nav"
   gem 'rb-readline', '~> 0.5.3'
-  gem "rspec-rails", "~> 3.8"
+  gem "rspec-rails", "~> 4.0.0.beta3"
   gem "rubocop"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "timecop"
+  gem "faker"
 end
 
 group :development do

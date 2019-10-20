@@ -2,7 +2,9 @@
 <tr>
 <td><%= row_item[:item_name] %></td>
 <% @storages.each do |storage| %>
-  <td><%= row_item[storage.id] || "0" %></td>
+  <td class="numeric"><%= row_item[storage.id] || "0" %></td>
 <% end %>
-<td><%= row_item[:quantity] %></td>
+<td class="numeric"><%= row_item[:item_on_hand_minimum_quantity] %></td>
+<td class="numeric"><%= row_item[:item_on_hand_recommended_quantity] %></td>
+<td class="numeric"><%= row_item[:quantity] %></td>
 </tr>

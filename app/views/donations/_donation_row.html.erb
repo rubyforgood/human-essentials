@@ -1,11 +1,11 @@
 <tr>
   <td><%= donation_row.source_view %></td>
-  <td><%= donation_row.issued_at.strftime("%F") %>
+  <td class="date"><%= donation_row.issued_at.strftime("%F") %>
   <td><%= donation_row.donation_site.try(:name) %></td>
   <td><%= donation_row.storage_location.name %></td>
-  <td><%= donation_row.line_items.total %></td>
-  <td><%= donation_row.line_items.size %></td>
-  <td><%= item_value(donation_row.value_per_itemizable) %></td>
+  <td class="numeric"><%= donation_row.line_items.total %></td>
+  <td class="numeric"><%= donation_row.line_items.size %></td>
+  <td class="numeric"><%= item_value(donation_row.value_per_itemizable) %></td>
   <td class="text-right">
     <%= view_button_to donation_path(donation_row) %>
   </td>

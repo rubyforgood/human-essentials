@@ -36,8 +36,13 @@ module UiHelper
 
   def restore_button_to(link, options = {})
     data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
-    properties = { rel: "nofollow" }.merge(data)
+    properties = { rel: "nofollow", method: :patch }.merge(data)
     _link_to link, { icon: "repeat", type: "warning", text: "Restore", size: "xs" }.merge(options), properties
+  end
+
+  def update_button_to(link, options = {})
+    properties = { rel: "nofollow", method: :patch }
+    _link_to link, { icon: "check", type: "success", text: "Restore", size: "xs" }.merge(options), properties
   end
 
   def dropdown_button(id, options = {})
@@ -62,8 +67,8 @@ module UiHelper
     _link_to link, { icon: "download", type: "default", text: "Download", size: "md" }.merge(options)
   end
 
-  def edit_button_to(link, options = {})
-    _link_to link, { icon: "pencil-square-o", type: "primary", text: "Edit", size: "xs" }.merge(options)
+  def edit_button_to(link, options = {}, properties = {})
+    _link_to link, { icon: "pencil-square-o", type: "primary", text: "Edit", size: "xs" }.merge(options), properties
   end
 
   def filter_button(options = {})

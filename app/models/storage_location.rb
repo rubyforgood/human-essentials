@@ -60,6 +60,14 @@ class StorageLocation < ApplicationRecord
     inventory_items.sum(:quantity)
   end
 
+  def inventory_total_value_in_dollars
+    inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
+      value_in_cents = inventory_item.item.try(:value_in_cents)
+      value_in_cents * inventory_item.quantity
+    end.reduce(:+)
+    inventory_total_value.present? ? (inventory_total_value / 100) : 0
+  end
+
   def to_csv
     org = organization
 
@@ -83,7 +91,7 @@ class StorageLocation < ApplicationRecord
   # NOTE: We should generalize this elsewhere -- Importable concern?
   def self.import_inventory(filename, org, loc)
     current_org = Organization.find(org)
-    adjustment = current_org.adjustments.create(storage_location_id: loc.to_i, comment: "Starting Inventory")
+    adjustment = current_org.adjustments.create(storage_location_id: loc.to_i, user_id: current_org.users.find_by(organization_admin: true)&.id, comment: "Starting Inventory")
     # NOTE: this was originally headers: false; it may create buggy behavior
     CSV.parse(filename, headers: true) do |row|
       adjustment.line_items

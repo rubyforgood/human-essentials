@@ -2,18 +2,20 @@
 #
 # Table name: items
 #
-#  id                    :integer          not null, primary key
-#  name                  :string
-#  category              :string
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  barcode_count         :integer
-#  organization_id       :integer
-#  active                :boolean          default(TRUE)
-#  partner_key           :string
-#  value_in_cents        :integer          default(0)
-#  package_size          :integer
-#  distribution_quantity :integer
+#  id                             :integer          not null, primary key
+#  name                           :string
+#  category                       :string
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  barcode_count                  :integer
+#  organization_id                :integer
+#  active                         :boolean          default(TRUE)
+#  partner_key                    :string
+#  value_in_cents                 :integer          default(0)
+#  on_hand_minimum_quantity       :integer          default(0)
+#  on_hand_recommended_quantity   :integer
+#  package_size                   :integer
+#  distribution_quantity          :integer
 #
 
 RSpec.describe Item, type: :model do
@@ -133,6 +135,15 @@ RSpec.describe Item, type: :model do
       end
     end
 
+    describe "other?" do
+      it "is true for items that are partner_key 'other'" do
+        item = create(:item, base_item: BaseItem.first)
+        other_item = create(:item, partner_key: "other")
+        expect(item).not_to be_other
+        expect(other_item).to be_other
+      end
+    end
+
     describe "destroy" do
       it "actually destroys an item that doesn't have history" do
         item = create(:item)
@@ -174,6 +185,14 @@ RSpec.describe Item, type: :model do
 
     it "should return the value of distribution_quantity if it is set" do
       expect(create(:item, distribution_quantity: 75).default_quantity).to eq(75)
+    end
+
+    it "should return 0 if on_hand_minimum_quantity is not set" do
+      expect(create(:item).on_hand_minimum_quantity).to eq(0)
+    end
+
+    it "should return the value of on_hand_minimum_quantity if it is set" do
+      expect(create(:item, on_hand_minimum_quantity: 42).on_hand_minimum_quantity).to eq(42)
     end
   end
 

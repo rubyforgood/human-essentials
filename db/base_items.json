@@ -4,7 +4,9 @@
     { "key": "adult_ml", "name": "Adult Briefs (Medium/Large)", "qty": { "arbor": 0, "pdxdb": 108 } },
     { "key": "adult_sm", "name": "Adult Briefs (Small/Medium)", "qty": { "arbor": 0, "pdxdb": 2742 } },
     { "key": "adult_xxl", "name": "Adult Briefs (XXL)", "qty": { "arbor": 0, "pdxdb": 24 } },
-    { "key": "adult_xs", "name": "Adult Briefs (XS/Small)", "qty": { "arbor": 0, "pdxdb": 0 } }
+    { "key": "adult_xxxl", "name": "Adult Briefs (XXXL)", "qty": { "arbor": 0, "pdxdb": 0 } },
+    { "key": "adult_xs", "name": "Adult Briefs (XS/Small)", "qty": { "arbor": 0, "pdxdb": 0 } },
+    { "key": "adult_xxs", "name": "Adult Briefs (XXS)", "qty": { "arbor": 0, "pdxdb": 0 } }
   ],
   "Diapers - Childrens": [
     { "key": "cloth", "name": "Cloth Diapers (Plastic Cover Pants)", "qty": { "arbor": 0, "pdxdb": 75 } },
@@ -17,6 +19,7 @@
     { "key": "k_size4", "name": "Kids (Size 4)", "qty": { "arbor": 25472, "pdxdb": 3616 } },
     { "key": "k_size5", "name": "Kids (Size 5)", "qty": { "arbor": 13634, "pdxdb": 3616 } },
     { "key": "k_size6", "name": "Kids (Size 6)", "qty": { "arbor": 3216, "pdxdb": 211 } },
+    { "key": "k_size7", "name": "Kids (Size 7)", "qty": { "arbor": 0, "pdxdb": 0 } },
     { "key": "k_lxl", "name": "Kids L/XL (60-125 lbs)", "qty": { "arbor": 0, "pdxdb": 0 } },
     { "key": "pullup_23t", "name": "Kids Pull-Ups (2T-3T)", "qty": { "arbor": 0, "pdxdb": 1532 } },
     { "key": "pullup_34t", "name": "Kids Pull-Ups (3T-4T)", "qty": { "arbor": 0, "pdxdb": 787 } },

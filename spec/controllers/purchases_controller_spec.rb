@@ -162,7 +162,7 @@ RSpec.describe PurchasesController, type: :controller do
           purchase_params = { storage_location: new_storage_location, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
-          end.to raise_error
+          end.to raise_error(Errors::InsufficientAllotment)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
           expect(purchase.reload.line_items.first.quantity).to eq 10

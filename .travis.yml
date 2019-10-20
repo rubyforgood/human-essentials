@@ -21,6 +21,8 @@ script:
 - bundle exec rubocop
 - export RAILS_ENV=test
 - bundle exec rake db:create db:schema:load
+- bin/webpack
+- bundle exec rake factory_bot:lint
 - bundle exec rspec
 after_success:
 - if [ $TRAVIS_PULL_REQUEST == false ] && [ $TRAVIS_BRANCH == "master" ]; then

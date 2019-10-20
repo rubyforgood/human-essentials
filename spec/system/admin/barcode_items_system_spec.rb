@@ -9,7 +9,7 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
     end
 
     let(:item) { create(:item) }
-    let!(:barcode_item) { FactoryBot.create :global_barcode_item }
+    let!(:barcode_item) { create(:global_barcode_item) }
     it "should create a new global barcode" do
       barcode_value = 66_666
       click_on "Add New Barcode"
@@ -24,6 +24,7 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
 
     it "should edit an existing global barcode"
     it "should delete a global barcode" do
+      visit admin_barcode_items_path
       page.refresh
       expect(page).to have_content barcode_item.base_item.name
       expect(

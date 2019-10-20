@@ -11,6 +11,7 @@
 #  organization_id     :integer
 #  issued_at           :datetime
 #  agency_rep          :string
+#  state               :integer
 #
 
 RSpec.describe Distribution, type: :model do
@@ -135,6 +136,23 @@ RSpec.describe Distribution, type: :model do
         expect do
           subject.replace_distribution!(attributes)
         end.to change { subject.storage_location.size }.by(8)
+      end
+    end
+
+    describe "#future?" do
+      let(:dist1)    { create(:distribution, issued_at: Time.zone.tomorrow) }
+      let(:dist2)    { create(:distribution, issued_at: Time.zone.yesterday) }
+
+      context "when issued_at has not passed" do
+        it "returns true" do
+          expect(dist1.future?).to be true
+        end
+      end
+
+      context "when issued_at has passed" do
+        it "returns false" do
+          expect(dist2.future?).to be false
+        end
       end
     end
   end

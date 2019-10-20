@@ -28,6 +28,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
   context "When filtering on the index page" do
     let!(:item) { create(:item) }
+    let(:storage) { create(:storage_location) }
     subject { url_prefix + "/purchases" }
 
     it "User can filter the #index by storage location" do
@@ -36,10 +37,10 @@ RSpec.describe "Purchases", type: :system, js: true do
       create(:purchase, storage_location: storage1)
       create(:purchase, storage_location: storage2)
       visit subject
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
       select storage1.name, from: "filters_at_storage_location"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 2)
     end
 
     it "User can filter the #index by vendor" do
@@ -48,8 +49,32 @@ RSpec.describe "Purchases", type: :system, js: true do
       create(:purchase, vendor: vendor1)
       create(:purchase, vendor: vendor2)
       visit subject
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
       select vendor1.business_name, from: "filters_from_vendor"
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 2)
+    end
+
+    it "Filters by date" do
+      storage = create(:storage_location, name: "storage")
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 3, 1))
+      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 2, 1))
+
+      visit subject
+      fill_in("dates[date_from]", with: "01/01/2018").send_keys(:escape)
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 4)
+
+      fill_in("dates_date_from", with: "03/01/2018").send_keys(:escape)
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+
+      fill_in("dates_date_to", with: "03/01/2018").send_keys(:escape)
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 3)
+
+      fill_in("dates_date_to", with: "02/28/2018").send_keys(:escape)
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
     end
@@ -134,11 +159,11 @@ RSpec.describe "Purchases", type: :system, js: true do
       # dropdown is not populated on the return trip.
       it "items dropdown is still repopulated even if initial submission doesn't validate" do
         item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count + 1)
         click_button "Save"
 
         expect(page).to have_content("error")
-        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count)
+        expect(page).to have_xpath("//select[@id='purchase_line_items_attributes_0_item_id']/option", count: item_count + 1)
       end
     end
 

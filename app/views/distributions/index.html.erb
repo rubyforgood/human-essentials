@@ -24,18 +24,18 @@
             <% if @items.present? %>
               <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                 <%= label_tag "by Item" %>
-                <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, class: "form-control", include_blank: true) %>
+                <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
               </div>
             <% end %>
             <% if @partners.present? %>
               <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                 <%= label_tag "by Partner" %>
-                <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, class: "form-control", include_blank: true) %>
+                <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
               </div>
             <% end %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <%= label_tag "by Date" %>
-            <%= select(:filters, :interval, filter_intervals || [], class: "form-control", include_blank: true) %>
+            <%= select(:filters, :interval, filter_intervals || [], {include_blank: true}, {class: "form-control"}) %>
           </div>
           </div><!-- /.row -->
           <div class="row">
@@ -63,15 +63,16 @@
                 <thead>
                   <tr>
                     <th>Partner</th>
-                    <th>Date of Distribution</th>
+                    <th class="date">Date of Distribution</th>
                     <th>Source Inventory</th>
-                    <th>Total items</th>
-                    <th>Total value</th>
-                    <th>&nbsp;</th>
+                    <th class="numeric">Total items</th>
+                    <th class="numeric">Total value</th>
+                    <th>State</th>
+                    <th class="pull-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <%= render partial: "distribution_row", collection: @distributions %>
+                  <%= render partial: "distribution_row", collection: @paginated_distributions %>
                   <%= render partial: "distribution_total" %>
                 </tbody>
               </table>
@@ -80,4 +81,5 @@
       </div><!-- /.row -->
     </div><!-- /.box-body -->
   </div><!-- /.box -->
+  <%= paginate @paginated_distributions %>
 </section><!-- /.content -->
