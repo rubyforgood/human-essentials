@@ -1,13 +1,17 @@
 class ChildrenController < ApplicationController
   before_action :authenticate_user!
 
-  helper_method :child, :children, :family
+  def index
+    @children = current_partner.children.order(active: :desc, last_name: :asc)
+  end
 
-  def index; end
+  def show
+    @child = current_partner.children.find_by(id: params[:id])
+  end
 
-  def show; end
-
-  def new; end
+  def new
+    @child = family.children.new
+  end
 
   def active
     child = current_partner.children.find(params[:child_id])
@@ -15,7 +19,9 @@ class ChildrenController < ApplicationController
     child.save
   end
 
-  def edit; end
+  def edit
+    @child = current_partner.children.find_by(id: params[:id])
+  end
 
   def create
     child = family.children.new(child_params)
@@ -28,6 +34,8 @@ class ChildrenController < ApplicationController
   end
 
   def update
+    child = current_partner.children.find_by(id: params[:id])
+
     if child.update(child_params)
       redirect_to child, notice: "Child was successfully updated."
     else
@@ -36,23 +44,15 @@ class ChildrenController < ApplicationController
   end
 
   def destroy
+    child = current_partner.children.find_by(id: params[:id])
     child.destroy
     redirect_to children_url, notice: "Child was successfully destroyed."
   end
 
   private
 
-  def children
-    @children ||= current_partner.children.order(active: :desc, last_name: :asc)
-  end
-
-  def child
-    @child ||= current_partner.children.find_by(id: params[:id]) ||
-               family.children.new
-  end
-
   def family
-    @family ||= current_partner.families.find_by(id: params[:family_id])
+    @_family ||= current_partner.families.find_by(id: params[:family_id])
   end
 
   def child_params
