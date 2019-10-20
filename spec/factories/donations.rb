@@ -14,6 +14,7 @@
 #  issued_at                   :datetime
 #  money_raised                :integer
 #  manufacturer_id             :bigint(8)
+#  diaper_drive_id             :bigint(8)
 #
 
 FactoryBot.define do
