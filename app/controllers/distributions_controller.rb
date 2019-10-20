@@ -50,17 +50,14 @@ class DistributionsController < ApplicationController
   end
 
   def create
-    @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
-
-    result = DistributionCreator.new(@distribution).call
+    result = DistributionCreator.new(distribution_params.merge(organization: current_organization), request_id).call
     
     if result.success?
-      update_request(params[:distribution][:request_attributes], @distribution.id)
-      send_notification(current_organization.id, @distribution.id)
       flash[:notice] = "Distribution created!"
-      session[:created_distribution_id] = @distribution.id
+      session[:created_distribution_id] = result.distribution.id
       redirect_to(distributions_path) && return
     else
+      @distribution = result.distribution
       flash[:error] = "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{result.error}"
       @distribution.line_items.build if @distribution.line_items.count.zero?
       @items = current_organization.items.alphabetized
@@ -167,6 +164,10 @@ class DistributionsController < ApplicationController
 
   def distribution_params
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, line_items_attributes: %i(item_id quantity _destroy))
+  end
+
+  def request_id
+    params.dig(:distribution, :request_attributes, :id)
   end
 
   def total_items(distributions)
