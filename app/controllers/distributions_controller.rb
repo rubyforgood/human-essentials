@@ -53,15 +53,16 @@ class DistributionsController < ApplicationController
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
 
-    response = InventoryManager::DistributionManager::DistributionCreator.new(@distribution).call
-    if response.success?
+    result = InventoryManager::DistributionManager::DistributionCreator.new(@distribution).call
+    
+    if result.success?
       update_request(params[:distribution][:request_attributes], @distribution.id)
       send_notification(current_organization.id, @distribution.id)
       flash[:notice] = "Distribution created!"
       session[:created_distribution_id] = @distribution.id
       redirect_to(distributions_path) && return
     else
-      flash[:error] = "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{response.error}"
+      flash[:error] = "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{result.error}"
       @distribution.line_items.build if @distribution.line_items.count.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
