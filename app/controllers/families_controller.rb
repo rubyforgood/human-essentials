@@ -1,20 +1,21 @@
 class FamiliesController < ApplicationController
   before_action :authenticate_user!
 
-  helper_method :family, :families
-  attr_reader :families
-
   def index
     @families = current_partner.families.order(:guardian_last_name)
   end
 
-  def show; end
+  def show
+    @family = current_partner.families.find(params[:id])
+  end
 
   def new
     @family = current_partner.families.new
   end
 
-  def edit; end
+  def edit
+    @family = current_partner.families.find(params[:id])
+  end
 
   def create
     @family = current_partner.families.new(family_params)
@@ -27,23 +28,25 @@ class FamiliesController < ApplicationController
   end
 
   def update
-    if family.update(family_params)
-      redirect_to family, notice: "Family was successfully updated."
+    @family = current_partner.families.find(params[:id])
+
+    if @family.update(family_params)
+      redirect_to @family, notice: "Family was successfully updated."
     else
       render :edit
     end
   end
 
   def destroy
-    family.destroy
-    redirect_to families_url, notice: "Family was successfully destroyed."
+    family = current_partner.families.find_by(id: params[:id])
+
+    if family.present?
+      family.destroy
+      redirect_to families_url, notice: "Family was successfully destroyed."
+    end
   end
 
   private
-
-  def family
-    @family ||= current_partner.families.find(params[:id])
-  end
 
   def family_params
     params.require(:family).permit(
