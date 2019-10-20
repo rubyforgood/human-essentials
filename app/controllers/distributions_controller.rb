@@ -172,7 +172,7 @@ class DistributionsController < ApplicationController
   end
 
   def total_items(distributions)
-    distributions.includes(:line_items).sum('line_items.quantity')
+    LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id)).sum('quantity')
   end
 
   def total_value(distributions)
