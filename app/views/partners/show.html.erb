@@ -45,9 +45,9 @@
 
         <% @partner.distributions.each do |dist| %>  
             <tr>
-            <td><%= dist.created_at.strftime("%m/%d/%Y") %></td>
+            <td class="date"><%= dist.created_at.strftime("%m/%d/%Y") %></td>
             <td><%= dist.storage_location.name %></td>
-            <td><%= dist.line_items.total %></td>
+            <td class="date"><%= dist.line_items.total %></td>
             <td class="text-right">
               <%= view_button_to distribution_path(dist) %>
               <%= print_button_to print_distribution_path(dist, format: :pdf) %>

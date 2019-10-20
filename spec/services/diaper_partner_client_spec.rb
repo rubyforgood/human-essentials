@@ -10,16 +10,18 @@ RSpec.describe DiaperPartnerClient, type: :service do
   describe '::post' do
     it 'performs a POST request' do
       attributes = { 'id' => 123, 'organization_id' => 456, 'email' => 'foo@bar.com' }
+      invitation_text = 'invitation'
       expected_body = {
         partner:
         {
           diaper_bank_id: attributes["organization_id"],
           diaper_partner_id: attributes["id"],
+          invitation_text: invitation_text,
           email: attributes["email"]
         }
       }.to_json
       stub_partner_request(:post, 'https://partner-register.com/', body: expected_body)
-      result = DiaperPartnerClient.post(attributes)
+      result = DiaperPartnerClient.post(attributes, invitation_text)
       expect(result).to eq 'success'
     end
   end

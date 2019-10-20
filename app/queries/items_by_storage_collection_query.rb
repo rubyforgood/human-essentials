@@ -22,6 +22,8 @@ class ItemsByStorageCollectionQuery
                         items.barcode_count,
                         items.partner_key,
                         items.value_in_cents,
+                        items.on_hand_minimum_quantity,
+                        items.on_hand_recommended_quantity,
                         storage_locations.name as storage_name,
                         storage_locations.id as storage_id,
                         sum(inventory_items.quantity) as quantity

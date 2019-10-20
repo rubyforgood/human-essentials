@@ -21,6 +21,11 @@
 <div class="box">
   <div class="box-header with-border">
     <h3 class="box-title"><%= @item.name %>  <%= item_value(@item.value_in_cents, ', value per Item (in cents): ') %></h3>
+    <small class="box-subtitle">
+      Value per item: <%= @item.value_in_cents ? @item.value_in_cents : 0 %> | 
+      Distribution quantity: <%= @item.distribution_quantity ? @item.distribution_quantity : 0 %> |
+      Package size: <%= @item.package_size ? @item.package_size : 0 %>
+    </small>
   </div>
   <div class="box-body">
 
@@ -35,18 +40,18 @@
         <table class="table table-hover striped">
         <tr>
           <th>Storage location</th>
-          <th>Quantity</th>
+          <th class="numeric">Quantity</th>
         </tr>
           <% total = 0; @storage_locations_containing.each do |storage|
             total += storage.item_total(@item) %>
           <tr>
             <td><%= link_to storage.name, storage_location_path(storage) %></td>
-            <td><%= storage.item_total(@item) %></td>
+            <td class="numeric"><%= storage.item_total(@item) %></td>
           </tr>
           <% end %>
         <tr>
           <td>Total</td>
-          <td><%= total %></td>
+          <td class="numeric"><%= total %></td>
         </tr>               
         </table>
       <!-- /.box-body -->

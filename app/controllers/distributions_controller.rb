@@ -38,38 +38,36 @@ class DistributionsController < ApplicationController
                      .distributions
                      .where(issued_at: selected_range)
                      .includes(:partner, :storage_location, :line_items, :items)
-                     .where(issued_at: selected_range)
                      .order(created_at: :desc)
                      .class_filter(filter_params)
+    @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
+    @total_value_paginated_distributions = total_value(@paginated_distributions)
     @total_items_all_distributions = total_items(@distributions)
+    @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort
   end
 
   def create
     @distribution = Distribution.new(distribution_params.merge(organization: current_organization))
-    @storage_locations = current_organization.storage_locations
 
-    if @distribution.save
+    @distribution.transaction do
+      @distribution.save
       @distribution.storage_location.decrease_inventory @distribution
       update_request(params[:distribution][:request_attributes], @distribution.id)
       send_notification(current_organization.id, @distribution.id)
       flash[:notice] = "Distribution created!"
       session[:created_distribution_id] = @distribution.id
-      redirect_to distributions_path
-    else
-      flash[:error] = "An error occurred, try again?"
-      logger.error "[!] DistributionsController#create failed to save distribution: #{@distribution.errors.full_messages}"
-      @distribution.line_items.build if @distribution.line_items.count.zero?
-      @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.alphabetized
-      render :new
+      redirect_to(distributions_path) && return
     end
-  rescue Errors::InsufficientAllotment => ex
-    @storage_locations = current_organization.storage_locations
+  rescue StandardError => e
+    insufficient_message = e.message if e.is_a?(Errors::InsufficientAllotment)
+    flash[:error] = "Sorry, we weren't able to save the distribution. #{@distribution.errors.full_messages.join(', ')} #{insufficient_message}"
+    logger.error "[!] DistributionsController#create failed to save distribution for #{current_organization.short_name}: #{@distribution.errors.full_messages} [#{e.inspect}]"
+    @distribution.line_items.build if @distribution.line_items.count.zero?
     @items = current_organization.items.alphabetized
-    flash[:error] = ex.message
+    @storage_locations = current_organization.storage_locations.alphabetized
     render :new
   end
 
@@ -92,9 +90,15 @@ class DistributionsController < ApplicationController
 
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-    @distribution.line_items.build
-    @items = current_organization.items.alphabetized
-    @storage_locations = current_organization.storage_locations.alphabetized
+    if @distribution.future? || current_user.organization_admin?
+      @distribution.line_items.build
+      @items = current_organization.items.alphabetized
+      @storage_locations = current_organization.storage_locations.alphabetized
+    else
+      flash[:error] = 'To edit a distribution,
+      you must be an organization admin or the current date must be major then today.'
+      redirect_to distributions_path
+    end
   end
 
   def update
@@ -112,6 +116,8 @@ class DistributionsController < ApplicationController
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{distribution.issued_at}")
       end
 
+      schedule_reminder_email(@distribution.id)
+
       flash[:notice] = "Distribution updated!"
       render :show
     else
@@ -123,6 +129,16 @@ class DistributionsController < ApplicationController
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def pick_ups
     @pick_ups = current_organization.distributions
+  end
+
+  def picked_up
+    if Distribution.find_by(id: params['id'])&.scheduled? && Distribution.find_by(id: params['id'])&.complete!
+      flash[:notice] = 'This distribution has been marked as being picked up!'
+    else
+      flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being picked up'
+    end
+
+    redirect_to distribution_path
   end
 
   # TODO: This shouldl probably be private
@@ -147,12 +163,16 @@ class DistributionsController < ApplicationController
     PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
+  def schedule_reminder_email(dist)
+    DistributionReminderJob.perform_async(dist)
+  end
+
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, line_items_attributes: %i(item_id quantity _destroy))
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, line_items_attributes: %i(item_id quantity _destroy))
   end
 
   def total_items(distributions)
-    distributions.includes(:line_items).sum('line_items.quantity')
+    LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id)).sum('quantity')
   end
 
   def total_value(distributions)

@@ -1,5 +1,5 @@
 <tr>
-  <td><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
+  <td class="date"><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
   <td><%= request_row.partner.name %> </td>
   <td>
     <%= render partial: "status", locals: {status: request_row.status} %>

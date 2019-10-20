@@ -3,7 +3,7 @@
   <td><%= vendor_row&.contact_name %></td>
   <td><%= vendor_row&.phone %></td>
   <td><%= vendor_row&.email %></td>
-  <td><%= vendor_row&.volume %></td>
+  <td class="numeric"><%= vendor_row&.volume %></td>
   <td class="text-right">
     <%= view_button_to vendor_row %>
     <%= edit_button_to edit_vendor_path(vendor_row) %>

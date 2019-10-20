@@ -1738,6 +1738,11 @@ a:focus {
   margin: 0;
   line-height: 1;
 }
+.box-header > .box-subtitle {
+  font-size: 12px;
+  margin-left: 9px;
+  color: #676565;
+}
 .box-header > .fa,
 .box-header > .glyphicon,
 .box-header > .ion {
@@ -2664,6 +2669,7 @@ a:focus {
 .table-bordered > tbody > tr > td,
 .table-bordered > tfoot > tr > td {
   border: 1px solid $diaper-color-neutral-96;
+  font-size: 17px;
 }
 .table-bordered > thead > tr > th,
 .table-bordered > thead > tr > td {
@@ -2673,6 +2679,10 @@ a:focus {
 .table.no-border td,
 .table.no-border th {
   border: 0;
+}
+
+.large-table {
+  font-size: 17px;
 }
 /* .text-center in tables */
 table.text-center,
@@ -4920,6 +4930,9 @@ table.text-center th {
   padding: 0;
   position: absolute;
   width: 1px;
+}
+.filter-select {
+  padding-top: 18px;
 }
 .sort-highlight {
   background: $diaper-color-neutral-96;

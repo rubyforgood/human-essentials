@@ -19,6 +19,8 @@ class ItemsByStorageCollectionAndQuantityQuery
       unless @items_by_storage_collection_and_quantity.key?(row.id)
         @items_by_storage_collection_and_quantity[row.id] = {
           item_name: row.name,
+          item_on_hand_minimum_quantity: row.on_hand_minimum_quantity,
+          item_on_hand_recommended_quantity: row.on_hand_recommended_quantity,
           item_value: row.value_in_cents,
           item_barcode_count: row.barcode_count
         }

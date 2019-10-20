@@ -30,6 +30,7 @@
 
       <p>Source location: <%= @distribution.storage_location.name %></p>
       <p>Agency representative: <%= @distribution.agency_rep %></p>
+      <p>State: <%= @distribution.state&.humanize %>
       <h4>Total Items Distributed</h4>
       <div class="row">
         <div class="col-xs-12">
@@ -38,10 +39,10 @@
             <table class="table table-hover striped">
               <tr>
                 <th><b>Item</b></th>
-                <th><b>Value per item</b></th>
-                <th><b>Total value</b></th>
-                <th><b>Quantity</b></th>
-                <th><b>Package count</b></th>
+                <th class="numeric"><b>Value per item</b></th>
+                <th class="numeric"><b>Total value</b></th>
+                <th class="numeric"><b>Quantity</b></th>
+                <th class="numeric"><b>Package count</b></th>
               </tr>
               <%= render partial: "distribution_item_row", collection: @line_items %>
               <%= render partial: "distribution_item_total" %>
@@ -54,7 +55,10 @@
       </div>
     </div>
     <div class="box-footer with-border">
-      <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "lg"} %>
+      <%= update_button_to picked_up_distribution_path(@distribution), {text: "Complete pickup", size: "lg"} if @distribution.scheduled? %>
+      <% if @distribution.future? || current_user.organization_admin? %>
+        <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "lg"} %>
+      <% end %>
       <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "lg"} %>
     </div>
   </div>

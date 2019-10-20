@@ -1,0 +1,26 @@
+<div class="box">
+  <div class="box-body">
+
+
+  <% content_for :title, "Edit - Partners" %>
+
+  <h1> Edit partner <%= @partner.name %></h1>
+
+  <%= simple_form_for @partner, url: admin_partner_path do |f| %>
+    <%= f.error_notification %>
+    <div class="form-inputs">
+      <%= f.input :name, label: "Name", wrapper: :vertical_input_group, required: true, autofocus: true do %>
+        <span class="input-group-addon"><%= fa_icon "building" %></span>
+        <%= f.input_field :name, class: "form-control" %>
+      <% end %>
+      <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group, required: true do %>
+        <span class="input-group-addon"><%= fa_icon "envelope" %></span>
+        <%= f.input_field :email, class: "form-control" %>
+      <% end %>
+    </div>
+    <div class="form-actions">
+      <%= submit_button %>
+    </div>
+  <% end %>
+  </div>
+</div>

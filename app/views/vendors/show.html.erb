@@ -43,15 +43,15 @@
       <div class="box-body table-responsive no-padding">
         <table class="table table-hover striped">
         <tr>
-          <th>Date</th>
-          <th>Volume</th>
+          <th class="date">Date</th>
+          <th class="numeric">Volume</th>
           <th>Details</th>
         </tr>
 
         <% @vendor.purchases.each do |purchase| %>
             <tr>
-              <td><%= purchase.created_at.strftime("%m/%d/%Y") %></td>
-              <td><%= purchase.line_items.total %></td>
+              <td class="date"><%= purchase.created_at.strftime("%m/%d/%Y") %></td>
+              <td class="numeric"><%= purchase.line_items.total %></td>
               <td><%= view_button_to purchase, { text: "View purchase details" } %></td>
           </tr>
           <% end %>

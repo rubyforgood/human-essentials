@@ -32,4 +32,17 @@ RSpec.describe StaticController, type: :controller do
       end
     end
   end
+
+  describe "Super user without org signed in" do
+    before do
+      sign_in(@super_admin_no_org)
+    end
+
+    describe "GET #index" do
+      subject { get :index }
+      it "redirects to admin dashboard" do
+        expect(subject).to redirect_to(admin_dashboard_url)
+      end
+    end
+  end
 end

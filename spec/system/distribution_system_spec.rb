@@ -45,6 +45,30 @@ RSpec.feature "Distributions", type: :system do
         expect(page).to have_selector "#distribution_line_items"
       end
     end
+
+    context "when there is insufficient inventory to fulfill the Distribution" do
+      it "gracefully handles the error" do
+        visit @url_prefix + "/distributions/new"
+
+        select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
+
+        fill_in "Comment", with: "Take my wipes... please"
+
+        item = @storage_location.inventory_items.first.item
+        quantity = @storage_location.inventory_items.first.quantity
+        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        fill_in "distribution_line_items_attributes_0_quantity", with: quantity * 2
+
+        expect do
+          click_button "Save", match: :first
+          page.find('.alert')
+        end.not_to change { Distribution.count }
+
+        expect(page).to have_content("New Distribution")
+        expect(page.find(".alert")).to have_content "exceed"
+      end
+    end
   end
 
   it "Does not include inactive items in the line item fields" do
@@ -63,14 +87,15 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_no_content(item.name)
   end
 
-  it "User doesn't fill storage_location" do
+  it "errors if user does not fill storage_location" do
     visit @url_prefix + "/distributions/new"
 
     select @partner.name, from: "Partner"
     select "", from: "From storage location"
 
     click_button "Save", match: :first
-    expect(page).to have_content "An error occurred, try again?"
+    page.find('.alert')
+    expect(page).to have_css('.alert.error', text: /storage location/i)
   end
 
   context "With an existing distribution" do
@@ -80,7 +105,7 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/distributions"
     end
 
-    it "the user can make changes to it" do
+    it "the user can make changes" do
       click_on "Edit", match: :first
       expect do
         fill_in "Agency representative", with: "SOMETHING DIFFERENT"
@@ -131,6 +156,43 @@ RSpec.feature "Distributions", type: :system do
           page.find ".alert"
         end.to change { Distribution.count }.by(-1).and change { Item.active.count }.by(1)
         expect(page).to have_content "reclaimed"
+      end
+    end
+  end
+
+  context "With an existing distribution after the issued date" do
+    context "on the Distribution index" do
+      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day) }
+
+      before do
+        visit @url_prefix + "/distributions"
+      end
+
+      it "not contain a Edit button" do
+        expect(page).not_to have_button("Edit")
+      end
+    end
+
+    context "accesing through URL" do
+      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day) }
+
+      it "cannot access directly" do
+        visit @url_prefix + "/distributions/#{distribution.id}/edit"
+        expect(page.find(".alert-danger")).to have_content "you must be an organization admin"
+      end
+    end
+
+    context "logged as Admin" do
+      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day) }
+
+      before do
+        sign_in(@organization_admin)
+        visit @url_prefix + "/distributions"
+      end
+
+      it "can click on Edit button and a warning appears " do
+        click_on "Edit", match: :first
+        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
       end
     end
   end
@@ -227,7 +289,9 @@ RSpec.feature "Distributions", type: :system do
 
         expect(page).to have_css "td"
         item_row = find("td", text: diaper_type).find(:xpath, '..')
-        expect(item_row).to have_content("#{diaper_type} 4")
+
+        # TODO: Find out how to test for diaper type and 4 without the dollar amounts.
+        expect(item_row).to have_content("#{diaper_type} $1.00 $4.00 4")
       end
     end
   end
@@ -269,7 +333,7 @@ RSpec.feature "Distributions", type: :system do
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
 
-    it "a user can add items that do not yet have a barcode" do
+    xit "a user can add items that do not yet have a barcode" do
       pending("fix this test")
       page.fill_in "_barcode-lookup-0", with: "123123123321\n"
       find('#_barcode-lookup-0').set("123123123321\n")
@@ -278,7 +342,7 @@ RSpec.feature "Distributions", type: :system do
       select "Adult Briefs (Large/X-Large)", from: "Item"
       page.fill_in "Barcode", with: "123123123321"
 
-      find("#awesomebutton").click
+      click_on "Submit"
 
       visit @url_prefix + "/distributions/new"
       page.fill_in "_barcode-lookup-0", with: "123123123321\n"

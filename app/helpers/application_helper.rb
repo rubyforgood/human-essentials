@@ -35,9 +35,9 @@ module ApplicationHelper
 
   def flash_class(level)
     case level
-    when "notice" then "alert alert-info"
-    when "success" then "alert alert-success"
-    when "error" then "alert alert-danger"
+    when "notice" then "alert notice alert-info"
+    when "success" then "alert success alert-success"
+    when "error" then "alert error alert-danger"
     when "alert" then "alert alert-warning"
     end
   end
@@ -53,9 +53,6 @@ module ApplicationHelper
       # send new users to organization creation page
     end
   end
-
-  # def after_sign_out_path_for(resource)
-  # end
 
   def confirm_delete_msg(resource)
     "Are you sure you want to delete #{resource}?"

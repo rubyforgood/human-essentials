@@ -21,7 +21,7 @@ class AuditsController < ApplicationController
   end
 
   def finalize
-    @audit.adjustment = Adjustment.new(organization_id: @audit.organization_id, storage_location_id: @audit.storage_location_id, comment: 'Created Automatically through the Auditing Process')
+    @audit.adjustment = Adjustment.new(organization_id: @audit.organization_id, storage_location_id: @audit.storage_location_id, user_id: current_user.id, comment: 'Created Automatically through the Auditing Process')
     @audit.save
 
     inventory_items = @audit.storage_location.inventory_items
@@ -115,9 +115,5 @@ class AuditsController < ApplicationController
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:at_location)
-  end
-
-  def authorize_admin
-    verboten! unless current_user.super_admin? || (current_user.organization_admin? && current_organization.id == current_user.organization_id)
   end
 end

@@ -32,17 +32,19 @@ class OrganizationsController < ApplicationController
     redirect_to organization_path, notice: "User re-invited to organization!"
   end
 
-  private
-
-  def authorize_admin
-    verboten! unless current_user.super_admin? || (current_user.organization_admin? && current_organization.id == current_user.organization_id)
+  def promote_to_org_admin
+    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user.update(organization_admin: true)
+    redirect_to organization_path, notice: "User has been promoted!"
   end
+
+  private
 
   def authorize_user
     verboten! unless current_user.super_admin? || (current_organization.id == current_user.organization_id)
   end
 
   def organization_params
-    params.require(:organization).permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :reminder_day, :deadline_day)
+    params.require(:organization).permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :invitation_text, :reminder_day, :deadline_day)
   end
 end

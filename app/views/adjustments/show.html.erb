@@ -40,13 +40,13 @@
     <tr>
       <th>&nbsp;</th>
       <th>Item</th>
-      <th>Quantity</th>
+      <th class="numeric">Quantity</th>
     </tr>
   <% @adjustment.line_items.each do |line_item|  %>
     <tr class="<%= line_item.quantity > 0 ? "positive" : "negative" %>">
       <td><%= (line_item.quantity > 0) ? "Added " : "Removed " %></td>
       <td><%= line_item.item.name %></td>
-      <td><%= line_item.quantity.abs %></td>
+      <td class="numeric"><%= line_item.quantity.abs %></td>
     </tr>
   <% end %>
     </table>

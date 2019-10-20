@@ -12,6 +12,16 @@
     <%= f.input :name, label: "Distribution quantity", wrapper: :vertical_input_group do %>
       <%= f.input_field :distribution_quantity, class: "form-control" %>
     <% end %>
+
+    <% if current_user.organization_admin? %>
+      <%= f.input :name, label: "On hand minimum quantity", wrapper: :vertical_input_group do %>
+        <%= f.input_field :on_hand_minimum_quantity, input_html: { value: 0 }, class: "form-control" %>
+      <% end %>
+      <%= f.input :name, label: "On hand recommended quantity", wrapper: :vertical_input_group do %>
+        <%= f.input_field :on_hand_recommended_quantity, class: "form-control" %>
+      <% end %>
+    <% end %>
+
     <%= f.input :name, label: "Package size", wrapper: :vertical_input_group do %>
       <%= f.input_field :package_size, class: "form-control" %>
     <% end %>

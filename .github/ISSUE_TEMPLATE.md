@@ -1,27 +1,26 @@
-*Be clear, concise and precise in your description of the problem.
-Open an issue with a descriptive title and a summary in grammatically correct,
-complete sentences.*
-
-*Use the template below when reporting bugs.*
-
-*Before filing the ticket you should replace all text above the horizontal
-rule with your own words.*
+*Before filing the ticket you should replace all text between the horizontal rules with your own words. We recommend keeping the headings (optional headings can be left off if you don't need them)*
 
 --------
 
-## Expected behavior
+# Summary
 
-Describe here how you expected Diaperbase to behave in this particular situation.
+Describe an overview of the problem. Provide a general description of the problem it's solving or why this issue should be addressed.
 
-## Actual behavior
+## Things to Consider
+> **OPTIONAL** If you happen to know that this particular issue will touch other parts of the application in non-obvious ways (maybe there are side effects, or there are other parts of the application that depend on the thing that needs to be changed), you can list them out here. This is an opportunity to share *domain knowledge* that you might have about the problemset.
 
-Describe here what actually happened.
+# Criteria for Completion
+> This should be a bulleted list of items that, if satisfied, would result in an acceptably complete Pull Request. Be as specific as you need to be. For example:
+ 
+ - [ ] When a user clicks on {this} it should now do {that}
+ - [ ] This feature should only be available to organization admins
+ - [ ] Add a test proving that it works
 
-## Steps to reproduce the problem
+# Bonus Round
+> **OPTIONAL** This can be additional work that is related to the work performed but might be more challenging or require a little extra effort to resolve. It's NOT required for the PR to be accepted and merged. Usually if this work isn't performed it would be created in a separate issue later. For example: 
 
-This is extremely important! Providing us with a reliable way to reproduce
-a problem will expedite its solution.
+ - [ ] Get the action to work as an Ajax action instead of a normal one
 
-## Computer Information (Only fill this out if you are a diaper bank)
+-------
 
-Please tell us the version of windows/mac/linux you are running, what browser (firefox, chrome, IE, safari, etc) you were using and anything else that may be relevant. *note: You should be using Chrome for your browser*
+The goal here is to minimize the amount of clarification that a user needs in order to get started on the work, as well as reducing the likelihood that a lengthy PR discsussion about the scope of work ensues. This whole project is volunteer-driven, on both sides, so we want to communicate expectations and needs as clearly as possible up front.

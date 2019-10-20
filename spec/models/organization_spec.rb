@@ -38,13 +38,129 @@ RSpec.describe Organization, type: :model do
         end
       end
     end
+
+    describe "items" do
+      before do
+        organization.items.each_with_index do |item, index|
+          (index + 1).times { LineItem.create!(quantity: rand(250..500), item: item, itemizable: Distribution.new) }
+        end
+      end
+
+      describe ".other" do
+        it "returns all items for this organization designated 'other'" do
+          create(:item, name: "SOMETHING", partner_key: "other", organization: organization)
+          expect(organization.items.other.size).to eq(2)
+        end
+      end
+
+      describe ".during" do
+        it "return ranking of all items" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01')
+          expect(ranking_items.length).to eq(organization.items.length)
+        end
+      end
+
+      describe ".during.top" do
+        it "return just 3 elements" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01').top(3)
+          expect(ranking_items.length).to eq(3)
+        end
+        it "return 3 most used items" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01').top(3)
+
+          expect(ranking_items[0].amount).to eq(organization.items.length)
+          expect(ranking_items[0].name).to eq(organization.items[organization.items.length - 1].name)
+
+          expect(ranking_items[1].amount).to eq(organization.items.length - 1)
+          expect(ranking_items[1].name).to eq(organization.items[organization.items.length - 2].name)
+
+          expect(ranking_items[2].amount).to eq(organization.items.length - 2)
+          expect(ranking_items[2].name).to eq(organization.items[organization.items.length - 3].name)
+        end
+      end
+
+      describe ".during.bottom" do
+        it "return just 3 elements" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01').bottom(3)
+          expect(ranking_items.length).to eq(3)
+        end
+        it "return 3 least used items" do
+          ranking_items = organization.items.during('1950-01-01', '3000-01-01').bottom(3)
+
+          expect(ranking_items[0].amount).to eq(1)
+          expect(ranking_items[0].name).to eq(organization.items[0].name)
+
+          expect(ranking_items[1].amount).to eq(2)
+          expect(ranking_items[1].name).to eq(organization.items[1].name)
+
+          expect(ranking_items[2].amount).to eq(3)
+          expect(ranking_items[2].name).to eq(organization.items[2].name)
+        end
+      end
+    end
   end
 
-  describe "seed_items" do
-    it "loads the base items into Item records" do
-      base_items_count = BaseItem.count
-      Organization.seed_items(organization)
-      expect(organization.items.count).to eq(base_items_count)
+  describe ".seed_items" do
+    context "when provided with an organization to seed" do
+      it "loads the base items into Item records" do
+        base_items_count = BaseItem.count
+        Organization.seed_items(organization)
+        expect(organization.items.count).to eq(base_items_count)
+      end
+    end
+
+    context "when no organization is provided" do
+      it "updates all organizations" do
+        second_organization = create(:organization)
+        organization_item_count = @organization.items.size
+        second_organization_item_count = second_organization.items.size
+        create(:base_item, name: "Foo", partner_key: "foo")
+        Organization.seed_items
+        expect(@organization.items.size).to eq(organization_item_count + 1)
+        expect(second_organization.items.size).to eq(second_organization_item_count + 1)
+      end
+    end
+  end
+
+  describe "#seed_items" do
+    it "allows a single base item to be seeded" do
+      organization # will auto-seed existing base items
+      base_item = create(:base_item, name: "Foo", partner_key: "foo").to_h
+      expect do
+        organization.seed_items(base_item)
+      end.to change { organization.items.size }.by(1)
+    end
+
+    it "allows a collection of items to be seeded" do
+      organization # will auto-seed existing base items
+      base_items = [create(:base_item, name: "Foo", partner_key: "foo").to_h, create(:base_item, name: "Bar", partner_key: "bar").to_h]
+      expect do
+        organization.seed_items(base_items)
+      end.to change { organization.items.size }.by(2)
+    end
+
+    context "when given an item that already exists" do
+      it "gracefully skips the item" do
+        organization # will auto-seed existing base items
+        base_item = create(:base_item, name: "Foo", partner_key: "foo")
+        base_items = [base_item.to_h, BaseItem.first.to_h]
+        expect do
+          organization.seed_items(base_items)
+        end.to change { organization.items.size }.by(1)
+      end
+    end
+
+    context "when given an item name that already exists, but with an 'other' partner key" do
+      it "updates the old item to use the new base item as its base" do
+        organization # will auto-seed existing base items
+        item = organization.items.create(name: "Foo", partner_key: "other")
+        base_item = create(:base_item, name: "Foo", partner_key: "foo")
+        base_items = [base_item.to_h, BaseItem.first.to_h]
+        expect do
+          organization.seed_items(base_items)
+          item.reload
+        end.to change { organization.items.size }.by(0).and change { item.partner_key }.to("foo")
+      end
     end
   end
 

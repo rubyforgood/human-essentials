@@ -14,6 +14,8 @@ class ItemsController < ApplicationController
       @items = @items.active
       @items_with_counts = @items_with_counts.active
     end
+
+    @paginated_items = @items.page(params[:page])
   end
 
   def create
@@ -84,7 +86,15 @@ class ItemsController < ApplicationController
 
   def item_params
     clean_purchase_amount
-    params.require(:item).permit(:name, :partner_key, :value_in_cents, :package_size, :distribution_quantity)
+    params.require(:item).permit(
+      :name,
+      :partner_key,
+      :value_in_cents,
+      :package_size,
+      :on_hand_minimum_quantity,
+      :on_hand_recommended_quantity,
+      :distribution_quantity
+    )
   end
 
   def filter_params(_parameters = nil)

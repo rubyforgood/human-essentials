@@ -8,15 +8,18 @@
 #  comment             :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  user_id             :integer
 #
 
 class Adjustment < ApplicationRecord
   belongs_to :organization
   belongs_to :storage_location
+  belongs_to :user
 
   include Itemizable
   include Filterable
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
+  scope :by_user, ->(user_id) { where(user_id: user_id) }
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
       .includes(:storage_location, :line_items)

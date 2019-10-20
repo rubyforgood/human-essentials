@@ -1,6 +1,6 @@
 <tr>
   <td><%= manufacturer_row&.name %></td>
-  <td><%= manufacturer_row&.volume %></td>
+  <td class="numeric"><%= manufacturer_row&.volume %></td>
   <td class="text-right">
     <%= view_button_to manufacturer_row %>
     <%= edit_button_to edit_manufacturer_path(manufacturer_row) %>

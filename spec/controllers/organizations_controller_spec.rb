@@ -58,6 +58,17 @@ RSpec.describe OrganizationsController, type: :controller do
       end
     end
 
+    describe "POST #promote_to_org_admin" do
+      subject { post :promote_to_org_admin, params: default_params.merge(user_id: @user.id) }
+
+      it "promotes the user to organization admin" do
+        expect(subject).to have_http_status(:redirect)
+
+        @user.reload
+        expect(@user.kind).to eq("admin")
+      end
+    end
+
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do
@@ -77,6 +88,19 @@ RSpec.describe OrganizationsController, type: :controller do
 
         it "redirects to dashboard" do
           expect(subject).to redirect_to(dashboard_path)
+        end
+      end
+
+      describe "POST #promote_to_org_admin" do
+        let(:other_user) { create(:user, organization: other_organization) }
+
+        subject { post :promote_to_org_admin, params: default_params.merge(user_id: other_user.id) }
+
+        it "does not promote user" do
+          expect(subject).to have_http_status(:not_found)
+
+          other_user.reload
+          expect(other_user.kind).to eq("normal")
         end
       end
     end

@@ -2,18 +2,20 @@
 #
 # Table name: items
 #
-#  id                    :integer          not null, primary key
-#  name                  :string
-#  category              :string
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  barcode_count         :integer
-#  organization_id       :integer
-#  active                :boolean          default(TRUE)
-#  partner_key           :string
-#  value_in_cents        :integer          default(0)
-#  package_size          :integer
-#  distribution_quantity :integer
+#  id                             :integer          not null, primary key
+#  name                           :string
+#  category                       :string
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  barcode_count                  :integer
+#  organization_id                :integer
+#  active                         :boolean          default(TRUE)
+#  partner_key                    :string
+#  value_in_cents                 :integer          default(0)
+#  on_hand_minimum_quantity       :integer          default(0)
+#  on_hand_recommended_quantity   :integer
+#  package_size                   :integer
+#  distribution_quantity          :integer
 #
 
 class Item < ApplicationRecord
@@ -44,8 +46,6 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
-  # default_scope { active }
-
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
   end
@@ -63,6 +63,10 @@ class Item < ApplicationRecord
     Item.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
+  def other?
+    partner_key == "other"
+  end
+
   # Override `destroy` to ensure Item isn't accidentally destroyed
   # without first being disassociated with its historical presence
   def destroy
@@ -77,12 +81,11 @@ class Item < ApplicationRecord
     !(line_items.empty? && inventory_items.empty? && barcode_items.empty?)
   end
 
-  def self.gather_items(current_organization, global)
+  def self.gather_items(current_organization, global = false)
     if global
-      where(id: current_organization.barcode_items.include_global(false).pluck(:barcodeable_id))
-        .merge(where(id: BarcodeItem.where(global: true)))
+      where(id: current_organization.barcode_items.all.pluck(:barcodeable_id))
     else
-      where(id: current_organization.barcode_items.include_global(false).pluck(:barcodeable_id))
+      where(id: current_organization.barcode_items.pluck(:barcodeable_id))
     end
   end
   # Convenience method so that other methods can be simplified to
@@ -90,6 +93,10 @@ class Item < ApplicationRecord
 
   def to_i
     id
+  end
+
+  def to_h
+    { name: name, partner_key: partner_key }
   end
 
   def self.csv_export_headers

@@ -3,15 +3,21 @@ class DonationsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: %i(scale_intake scale)
   skip_before_action :authenticate_user!, only: %i(scale_intake scale)
   skip_before_action :authorize_user, only: %i(scale_intake scale)
+  before_action :authorize_admin, only: [:destroy]
+
+  include Dateable
 
   def index
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
+                                     .where(issued_at: date_range)
                                      .class_filter(filter_params)
+    @paginated_donations = @donations.page(params[:page])
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum
+    @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
     @total_value_all_donations = total_value(@donations)
     @storage_locations = @donations.collect(&:storage_location).compact.uniq.sort
     @selected_storage_location = filter_params[:at_storage_location]
@@ -25,8 +31,8 @@ class DonationsController < ApplicationController
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
-
-    @selected_date = date_filter
+    @date_from = date_params[:date_from]
+    @date_to = date_params[:date_to]
   end
 
   def scale
@@ -121,19 +127,7 @@ class DonationsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    fp = params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
-    fp.merge(by_issued_at: date_filter)
-  end
-
-  def date_filter
-    return nil unless params.key?(:date_filters)
-
-    date_params = params.require(:date_filters)
-    if date_params["issued_at(1i)"] == "" || date_params["issued_at(2i)"].to_i == ""
-      return nil
-    end
-
-    Date.new(date_params["issued_at(1i)"].to_i, date_params["issued_at(2i)"].to_i, date_params["issued_at(3i)"].to_i)
+    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source
