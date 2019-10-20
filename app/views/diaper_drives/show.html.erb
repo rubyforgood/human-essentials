@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @diaper_drive.name %>
+</p>
+
+<p>
+  <strong>Start date:</strong>
+  <%= @diaper_drive.start_date %>
+</p>
+
+<p>
+  <strong>End date:</strong>
+  <%= @diaper_drive.end_date %>
+</p>
+
+<%= link_to 'Edit', edit_diaper_drive_path(@diaper_drive) %> |
+<%= link_to 'Back', diaper_drives_path %>
