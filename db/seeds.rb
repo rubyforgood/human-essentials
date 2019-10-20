@@ -75,13 +75,13 @@ end
 # ----------------------------------------------------------------------------
 
 [
-  { email: 'superadmin@example.com', organization_admin: false, super_admin: true },
-  { email: 'org_admin1@example.com', organization_admin: true,                     organization: pdx_org },
-  { email: 'org_admin2@example.com', organization_admin: true,                     organization: sf_org },
-  { email: 'user_1@example.com',     organization_admin: false,                    organization: pdx_org },
-  { email: 'user_2@example.com',     organization_admin: false,                    organization: sf_org },
-  { email: 'test@example.com',       organization_admin: false, super_admin: true, organization: pdx_org },
-  { email: 'test2@example.com',      organization_admin: true,                     organization: pdx_org }
+  { email: 'superadmin@example.com', organization_admin: false,                        super_admin: true },
+  { email: 'org_admin1@example.com', organization_admin: true,  organization: pdx_org },
+  { email: 'org_admin2@example.com', organization_admin: true,  organization: sf_org },
+  { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
+  { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
+  { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
+  { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org }
 ].each do |user|
   User.create(
     email:                 user[:email],
