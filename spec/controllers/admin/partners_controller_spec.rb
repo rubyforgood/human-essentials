@@ -28,14 +28,25 @@ RSpec.describe Admin::PartnersController, type: :controller do
     end
 
     describe "PUT #update" do
-      subject { put :update, params: { id: partner.id, partner: { name: "Bar" } } }
+      context "successful save" do
+        subject { put :update, params: { id: partner.id, partner: { name: "Bar" } } }
 
-      it "updates parter" do
-        expect { subject }.to change { partner.reload.name }.to "Bar"
+        it "updates partner" do
+          expect { subject }.to change { partner.reload.name }.to "Bar"
+        end
+
+        it "redirects" do
+          expect(subject).to be_redirect
+        end
       end
 
-      it "redirects" do
-        expect(subject).to be_redirect
+      context "unsuccessful save due to empty params" do
+        subject { put :update, params: { id: partner.id, partner: { name: "" } } }
+
+        it "renders #edit template with error message" do
+          expect(subject).to render_template(:edit)
+          expect(flash[:error]).to be_present
+        end
       end
     end
   end
