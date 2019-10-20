@@ -20,63 +20,63 @@
       <div class="col-12">
         <div class="card mb-12">
           <h5 class="card-header bg-primary text-white">Family Information
-            <%= link_to 'Add An Authorized Member To This Family', new_authorized_family_member_path(family_id: family.id), class: "btn btn-sm btn-warning pull-right", style: "margin-left:10px;" %>
-            <%= link_to 'Add Child To This Family', new_child_path(family_id: family.id), class: "btn btn-sm btn-warning pull-right" %>
+            <%= link_to 'Add An Authorized Member To This Family', new_authorized_family_member_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right", style: "margin-left:10px;" %>
+            <%= link_to 'Add Child To This Family', new_child_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right" %>
           </h5>
           <div class="card-body">
             <dl>
               <dt>Guardian first name:</dt>
-              <dd><%= family.guardian_first_name %></dd>
+              <dd><%= @family.guardian_first_name %></dd>
 
               <dt>Guardian last name:</dt>
-              <dd><%= family.guardian_last_name %></dd>
+              <dd><%= @family.guardian_last_name %></dd>
 
               <dt>Guardian zip code:</dt>
-              <dd><%= family.guardian_zip_code %></dd>
+              <dd><%= @family.guardian_zip_code %></dd>
 
               <dt>Guardian county:</dt>
-              <dd><%= family.guardian_country %></dd>
+              <dd><%= @family.guardian_country %></dd>
 
               <dt>Guardian phone:</dt>
-              <dd><%= family.guardian_phone %></dd>
+              <dd><%= @family.guardian_phone %></dd>
 
               <dt>Agency guardian:</dt>
-              <dd><%= family.agency_guardian_id %></dd>
+              <dd><%= @family.agency_guardian_id %></dd>
 
               <dt>Home adult count:</dt>
-              <dd><%= family.home_adult_count %></dd>
+              <dd><%= @family.home_adult_count %></dd>
 
               <dt>Home child count:</dt>
-              <dd><%= family.home_child_count %></dd>
+              <dd><%= @family.home_child_count %></dd>
 
               <dt>Home young child count:</dt>
-              <dd><%= family.home_young_child_count %></dd>
+              <dd><%= @family.home_young_child_count %></dd>
 
               <dt>Sources of income:</dt>
-              <dd><%= family.sources_of_income.join(', ') %></dd>
+              <dd><%= @family.sources_of_income.join(', ') %></dd>
 
               <dt>Guardian employed:</dt>
-              <dd><%= family.guardian_employed %></dd>
+              <dd><%= @family.guardian_employed %></dd>
 
               <dt>Guardian employment type:</dt>
-              <dd><%= family.guardian_employment_type %></dd>
+              <dd><%= @family.guardian_employment_type %></dd>
 
               <dt>Guardian monthly pay:</dt>
-              <dd><%= family.guardian_monthly_pay %></dd>
+              <dd><%= @family.guardian_monthly_pay %></dd>
 
               <dt>Guardian health insurance:</dt>
-              <dd><%= family.guardian_health_insurance %></dd>
+              <dd><%= @family.guardian_health_insurance %></dd>
 
               <dt>Military family:</dt>
-              <dd><%= family.military %></dd>
+              <dd><%= @family.military %></dd>
 
               <dt>Comments:</dt>
-              <dd><%= family.comments %></dd>
+              <dd><%= @family.comments %></dd>
             </dl>
 
-            <%= link_to 'Edit This Family', edit_family_path(family), class: "btn btn-sm btn-primary" %>
+            <%= link_to 'Edit This Family', edit_family_path(@family), class: "btn btn-sm btn-primary" %>
             <%= link_to 'Back to Families', families_path, class: "btn btn-sm btn-info pull-right" %>
-            <%= link_to 'Add Child To This Family', new_child_path(family_id: family.id), class: "btn btn-sm btn-success" %>
+            <%= link_to 'Add Child To This Family', new_child_path(family_id: @family.id), class: "btn btn-sm btn-success" %>
           </div>
         </div>
 
@@ -94,7 +94,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% family.authorized_family_members.each do |member| %>
+                  <% @family.authorized_family_members.each do |member| %>
                     <tr>
                       <td><%= member.first_name %></td>
                       <td><%= member.last_name %></td>
