@@ -95,6 +95,13 @@ RSpec.describe Purchase, type: :model do
       end
     end
 
+    describe "storage_view" do
+      let!(:purchase) { create(:purchase, :with_items) }
+      it "returns name of storage location" do
+        expect(purchase.storage_view).to eq("Smithsonian Conservation Center")
+      end
+    end
+
     describe "replace_increase!" do
       let!(:storage_location) { create(:storage_location, organization: @organization) }
       subject { create(:purchase, :with_items, item_quantity: 5, storage_location: storage_location, organization: @organization) }
