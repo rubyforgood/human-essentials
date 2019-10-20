@@ -12,11 +12,11 @@ class DistributionCreator
       @distribution.reload
       @request.update!(distribution_id: @distribution.id, status: 'fulfilled')
       PartnerMailerJob.perform_async(@organization, @distribution, subject: 'Your Distribution') if Flipper.enabled?(:email_active)
-  
+
       OpenStruct.new(success?: true, distribution: @distribution)
     end
-    rescue StandardError => e
-      Rails.logger.error "[!] DistributionsController#create failed to save distribution for #{@distribution.organization.short_name}: #{@distribution.errors.full_messages} [#{e.inspect}]"
-      OpenStruct.new(success: false, distribution: @distribution, error: e)
+  rescue StandardError => e
+    Rails.logger.error "[!] DistributionsController#create failed to save distribution for #{@distribution.organization.short_name}: #{@distribution.errors.full_messages} [#{e.inspect}]"
+    OpenStruct.new(success: false, distribution: @distribution, error: e)
   end
 end

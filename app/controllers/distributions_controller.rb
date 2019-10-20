@@ -51,7 +51,7 @@ class DistributionsController < ApplicationController
 
   def create
     result = DistributionCreator.new(distribution_params.merge(organization: current_organization), request_id).call
-    
+
     if result.success?
       flash[:notice] = "Distribution created!"
       session[:created_distribution_id] = result.distribution.id
