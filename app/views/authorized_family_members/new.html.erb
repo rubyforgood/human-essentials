@@ -8,6 +8,6 @@
   </ul>
 </div>
 
-<%= render 'form', authorized_family_member: authorized_family_member %>
+<%= render 'form', authorized_family_member: @authorized_family_member %>
 
-<%= link_to 'Back', family_path(family) %>
+<%= link_to 'Back', family_path(@authorized_family_member.family) %>
