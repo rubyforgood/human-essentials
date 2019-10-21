@@ -41,7 +41,7 @@ class DistributionPdf
 
     move_down 20
 
-    data = [["Items Received", "Value/item", "Total value", "Quantity", "Packages"]]
+    data = [["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"]]
     data += @distribution.line_items.sorted.map do |c|
       [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity, c.package_count]
     end
