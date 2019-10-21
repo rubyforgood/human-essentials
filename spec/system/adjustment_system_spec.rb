@@ -91,7 +91,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
     click_button "Filter"
     expect(page).to have_css("table tbody tr", count: 3)
 
-    fill_in "dates_date_from", with: "03/02/2040"
+    fill_in "dates_date_from", with: "03/01/2040"
     click_button "Filter"
     expect(page).to have_css("table tbody tr", count: 2)
 
