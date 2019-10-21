@@ -29,7 +29,7 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
       page.refresh
 
       within(:xpath, table_xpath) do
-        expect(page).to have_content barcode_item.base_item.name
+        expect(page).to have_content barcode_item.base_item.name, exact: true
       end
 
       expect(
@@ -39,7 +39,7 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
       ).to include "Are you sure you want to delete"
 
       within(:xpath, table_xpath) do
-        expect(page).not_to have_content barcode_item.base_item.name
+        expect(page).not_to have_content barcode_item.base_item.name, exact: true
       end
     end
 
