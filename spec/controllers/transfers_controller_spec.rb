@@ -9,6 +9,25 @@ RSpec.describe TransfersController, type: :controller do
       it "returns http success" do
         expect(subject).to be_successful
       end
+
+      context 'when filtering by date' do
+        let!(:old_transfer) { create(:transfer, created_at: 7.days.ago) }
+        let!(:new_transfer) { create(:transfer, created_at: 1.day.ago) }
+
+        context 'when date parameters are supplied' do
+          it 'only returns the correct obejects' do
+            get :index, params: { organization_id: @organization.short_name, dates: { date_from: 3.days.ago, date_to: Time.zone.today } }
+            expect(assigns(:transfers)).to eq([new_transfer])
+          end
+        end
+
+        context 'when date parameters are not supplied' do
+          it 'returns all objects' do
+            get :index, params: { organization_id: @organization.short_name }
+            expect(assigns(:transfers)).to eq([old_transfer, new_transfer])
+          end
+        end
+      end
     end
 
     describe "POST #create" do
