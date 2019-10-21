@@ -37,10 +37,10 @@ RSpec.describe "Purchases", type: :system, js: true do
       create(:purchase, storage_location: storage1)
       create(:purchase, storage_location: storage2)
       visit subject
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
       select storage1.name, from: "filters_at_storage_location"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 2)
     end
 
     it "User can filter the #index by vendor" do
@@ -49,10 +49,10 @@ RSpec.describe "Purchases", type: :system, js: true do
       create(:purchase, vendor: vendor1)
       create(:purchase, vendor: vendor2)
       visit subject
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
       select vendor1.business_name, from: "filters_from_vendor"
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 2)
     end
 
     it "Filters by date" do
@@ -62,21 +62,21 @@ RSpec.describe "Purchases", type: :system, js: true do
       create(:purchase, storage_location: storage, issued_at: Date.new(2018, 2, 1))
 
       visit subject
-      fill_in "dates_date_from", with: "02/01/2018"
+      fill_in("dates[date_from]", with: "01/01/2018").send_keys(:escape)
+      click_button "Filter"
+      expect(page).to have_css("table tbody tr", count: 4)
+
+      fill_in("dates_date_from", with: "03/01/2018").send_keys(:escape)
       click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 3)
 
-      fill_in "dates_date_from", with: "03/01/2018"
+      fill_in("dates_date_to", with: "03/01/2018").send_keys(:escape)
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 3)
 
-      fill_in "dates_date_to", with: "03/01/2018"
+      fill_in("dates_date_to", with: "02/28/2018").send_keys(:escape)
       click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 2)
-
-      fill_in "dates_date_to", with: "02/28/2018"
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 0)
+      expect(page).to have_css("table tbody tr", count: 1)
     end
   end
 

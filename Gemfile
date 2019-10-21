@@ -35,7 +35,7 @@ gem "paperclip"
 gem "pg", "~> 1.1.3"
 gem "prawn-rails"
 gem "puma"
-gem "rails", "~> 5.2.2"
+gem "rails", "~> 6.0.0"
 gem "sass-rails"
 gem "sidekiq"
 gem "simple_form"
@@ -45,9 +45,9 @@ gem "uglifier", ">= 1.3.0"
 gem "therubyracer", "~> 0.12", platforms: :ruby
 gem "yajl-ruby"
 gem "toastr-rails"
-gem "actiontext", github: "kobaltz/actiontext", branch: "archive", require: "action_text"
 gem "webpacker", "> 4.0"
 gem 'sidekiq-scheduler'
+gem 'bootstrap-datepicker-rails'
 
 group :development, :test do
   gem "awesome_print"
@@ -57,7 +57,7 @@ group :development, :test do
   gem "pry-remote"
   gem "pry-nav"
   gem 'rb-readline', '~> 0.5.3'
-  gem "rspec-rails", "~> 3.8"
+  gem "rspec-rails", "~> 4.0.0.beta3"
   gem "rubocop"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"

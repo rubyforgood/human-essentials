@@ -35,7 +35,12 @@ Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].each { |f| require
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
-ActiveRecord::Migration.maintain_test_schema!
+
+# As of Raild 6 upgrade, this causes an error:
+# PG::ConnectionBad:
+#  connection is closed
+# Likely due to some changed order of operations
+# ActiveRecord::Migration.maintain_test_schema!
 
 # If an element is hidden, Capybara should ignore it
 Capybara.ignore_hidden_elements = true
