@@ -10,7 +10,7 @@ class DistributionCreator
       @distribution.save!
       @distribution.storage_location.decrease_inventory @distribution
       @distribution.reload
-      @request.update!(distribution_id: @distribution.id, status: 'fulfilled') if @request
+      @request&.update!(distribution_id: @distribution.id, status: 'fulfilled')
       PartnerMailerJob.perform_async(@organization, @distribution, subject: 'Your Distribution') if Flipper.enabled?(:email_active)
 
       OpenStruct.new(success?: true, distribution: @distribution)
