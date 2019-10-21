@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "adjustments", force: :cascade do |t|
+  create_table "adjustments", id: :serial, force: :cascade do |t|
     t.integer "organization_id"
     t.integer "storage_location_id"
     t.text "comment"
@@ -72,7 +72,7 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
     t.index ["user_id"], name: "index_audits_on_user_id"
   end
 
-  create_table "barcode_items", force: :cascade do |t|
+  create_table "barcode_items", id: :serial, force: :cascade do |t|
     t.string "value"
     t.integer "barcodeable_id"
     t.integer "quantity"
@@ -122,8 +122,8 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "storage_location_id"
-    t.integer "partner_id"
+    t.bigint "storage_location_id"
+    t.bigint "partner_id"
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
@@ -148,10 +148,10 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
 
   create_table "donations", force: :cascade do |t|
     t.string "source"
-    t.integer "donation_site_id"
+    t.bigint "donation_site_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "storage_location_id"
+    t.bigint "storage_location_id"
     t.text "comment"
     t.integer "organization_id"
     t.integer "diaper_drive_participant_id"
@@ -263,8 +263,8 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
-    t.boolean "send_reminders", default: false, null: false
     t.integer "status", default: 0
+    t.boolean "send_reminders", default: false, null: false
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 
