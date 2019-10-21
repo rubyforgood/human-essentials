@@ -50,7 +50,7 @@ class DistributionsController < ApplicationController
   end
 
   def create
-    result = DistributionCreator.new(distribution_params.merge(organization: current_organization), request_id).call
+    result = DistributionCreateService.new(distribution_params.merge(organization: current_organization), request_id).call
 
     if result.success?
       flash[:notice] = "Distribution created!"
