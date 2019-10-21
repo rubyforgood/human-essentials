@@ -24,15 +24,23 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
 
     it "should edit an existing global barcode"
     it "should delete a global barcode" do
+      table_xpath = '//table[@id="tbl_barcode_items"]'
       visit admin_barcode_items_path
       page.refresh
-      expect(page).to have_content barcode_item.base_item.name
+
+      within(:xpath, table_xpath) do
+        expect(page).to have_content barcode_item.base_item.name
+      end
+
       expect(
         accept_confirm do
           click_on "Delete"
         end
       ).to include "Are you sure you want to delete"
-      expect(page).to have_no_content barcode_item.base_item.name
+
+      within(:xpath, table_xpath) do
+        expect(page).not_to have_content barcode_item.base_item.name
+      end
     end
 
     it "should view a barcode shows details about it"
