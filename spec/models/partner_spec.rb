@@ -18,14 +18,12 @@ RSpec.describe Partner, type: :model do
       expect(build(:partner, organization_id: nil)).not_to be_valid
     end
 
-    it "requires a unique name" do
-      pending('a way to test this scoped to the organization')
+    it "requires a unique name", focus: true do
       expect(build(:partner, name: nil)).not_to be_valid
       create(:partner, name: "Foo")
       expect(build(:partner, name: "Foo")).not_to be_valid
     end
-    it "requires a unique email" do
-      pending('a way to test this scoped to the organization')
+    it "requires a unique email", focus: true do
       expect(build(:partner, email: nil)).not_to be_valid
       create(:partner, email: "foo@bar.com")
       expect(build(:partner, email: "foo@bar.com")).not_to be_valid
