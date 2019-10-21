@@ -14,6 +14,7 @@
 #  issued_at                   :datetime
 #  money_raised                :integer
 #  manufacturer_id             :bigint(8)
+#  diaper_drive_id             :bigint(8)
 #
 
 class Donation < ApplicationRecord
@@ -26,6 +27,7 @@ class Donation < ApplicationRecord
 
   belongs_to :donation_site, optional: true # Validation is conditionally handled below.
   belongs_to :diaper_drive_participant, optional: proc { |d| d.from_diaper_drive? } # Validation is conditionally handled below.
+  belongs_to :diaper_drive, optional: true
   belongs_to :manufacturer, optional: proc { |d| d.from_manufacturer? } # Validation is conditionally handled below.
   belongs_to :storage_location
   include Itemizable

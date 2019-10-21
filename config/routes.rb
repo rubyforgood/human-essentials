@@ -128,6 +128,7 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :diaper_drives
     resources :donations do
       # collection do
       #   get :scale

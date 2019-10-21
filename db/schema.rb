@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_02_232744) do
+ActiveRecord::Schema.define(version: 2019_10_20_165853) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,7 +79,6 @@ ActiveRecord::Schema.define(version: 2019_10_02_232744) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
-    t.boolean "global", default: false
     t.string "barcodeable_type", default: "Item"
     t.index ["barcodeable_type", "barcodeable_id"], name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
@@ -109,6 +108,14 @@ ActiveRecord::Schema.define(version: 2019_10_02_232744) do
     t.float "latitude"
     t.float "longitude"
     t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
+  end
+
+  create_table "diaper_drives", force: :cascade do |t|
+    t.string "name"
+    t.date "start_date"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -151,6 +158,8 @@ ActiveRecord::Schema.define(version: 2019_10_02_232744) do
     t.datetime "issued_at"
     t.integer "money_raised"
     t.bigint "manufacturer_id"
+    t.bigint "diaper_drive_id"
+    t.index ["diaper_drive_id"], name: "index_donations_on_diaper_drive_id"
     t.index ["donation_site_id"], name: "index_donations_on_donation_site_id"
     t.index ["manufacturer_id"], name: "index_donations_on_manufacturer_id"
     t.index ["organization_id"], name: "index_donations_on_organization_id"
@@ -363,6 +372,7 @@ ActiveRecord::Schema.define(version: 2019_10_02_232744) do
   add_foreign_key "adjustments", "users"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
+  add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "manufacturers", "organizations"
