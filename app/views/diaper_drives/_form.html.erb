@@ -1,0 +1,26 @@
+<%= simple_form_for(@diaper_drive) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :name %>
+    <div class="row">
+    <div class="col-xs-8 col-md-6 col-lg-3">
+      <%= f.input :start_date,
+        label: "Start Date",
+        as: :date,
+        html5: true,
+        wrapper: :vertical_input_group %>
+    </div>
+    <div class="col-xs-8 col-md-6 col-lg-3">
+      <%= f.input :end_date,
+        label: "End Date",
+        as: :date,
+        html5: true,
+        wrapper: :vertical_input_group %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
