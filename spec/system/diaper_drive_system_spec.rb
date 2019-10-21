@@ -6,7 +6,6 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
   context "When visiting the index page" do
     before(:each) do
       create(:diaper_drive)
-
     end
   end
 end

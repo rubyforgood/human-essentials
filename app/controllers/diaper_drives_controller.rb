@@ -9,8 +9,7 @@ class DiaperDrivesController < ApplicationController
 
   # GET /diaper_drives/1
   # GET /diaper_drives/1.json
-  def show
-  end
+  def show; end
 
   # GET /diaper_drives/new
   def new
@@ -18,8 +17,7 @@ class DiaperDrivesController < ApplicationController
   end
 
   # GET /diaper_drives/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /diaper_drives
   # POST /diaper_drives.json
@@ -62,13 +60,14 @@ class DiaperDrivesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_diaper_drive
-      @diaper_drive = DiaperDrive.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def diaper_drive_params
-      params.require(:diaper_drive).permit(:name, :start_date, :end_date)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_diaper_drive
+    @diaper_drive = DiaperDrive.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def diaper_drive_params
+    params.require(:diaper_drive).permit(:name, :start_date, :end_date)
+  end
 end

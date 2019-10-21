@@ -36,7 +36,7 @@ RSpec.describe DiaperDrivesController, type: :controller do
         # expect(response).to redirect_to(diaper_drives_path)
       end
     end
-      
+
     describe "GET #edit" do
       subject { get :edit, params: default_params.merge(id: diaper_drive.id) }
       it "returns http success" do
@@ -56,6 +56,6 @@ RSpec.describe DiaperDrivesController, type: :controller do
       it "redirects to the index" do
         expect(subject).to redirect_to(diaper_drives_path)
       end
-    end 
+    end
   end
 end
