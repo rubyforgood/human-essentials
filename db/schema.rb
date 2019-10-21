@@ -338,7 +338,7 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
     t.datetime "invitation_accepted_at"
     t.integer "invitation_limit"
     t.string "invited_by_type"
-    t.integer "invited_by_id"
+    t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
     t.string "name", default: "CHANGEME", null: false
