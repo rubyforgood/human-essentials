@@ -22,7 +22,7 @@ class Partner < ApplicationRecord
   has_many :requests, dependent: :destroy
 
   validates :organization, presence: true
-  validates :name, :email, presence: true
+  validates :name, :email, presence: true, uniqueness: { scope: :organization }
   validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, on: :create }
 
   scope :for_csv_export, ->(organization) {
