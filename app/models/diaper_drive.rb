@@ -11,9 +11,11 @@
 #
 
 class DiaperDrive < ApplicationRecord
+  belongs_to :organization, optional: true
   has_many :donations, dependent: :nullify
   validates :name, presence:
     { message: "A name must be chosen." }
   validates :start_date, presence:
     { message: "Please enter a start date." }
+  scope :alphabetized, -> { order(:name) }
 end

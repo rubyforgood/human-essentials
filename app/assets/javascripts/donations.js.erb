@@ -5,6 +5,7 @@ $(function() {
   const control_id = "#donation_source";
 
   const diaper_drive_participant_id = "#donation_diaper_drive_participant_id";
+  const diaper_drive_id = "#donation_diaper_drive_id"
   const manufacturer_id = "#donation_manufacturer_id";
 
   const donation_site_container_id = "div.donation_donation_site";
@@ -19,24 +20,39 @@ $(function() {
   $(manufacturer_container_id).hide();
   $(donation_site_container_id).hide();
 
-  const create_new_diaper_drive_text = "---Create new diaper drive---";
+  const create_new_diaper_drive_text = "---Create new Diaper Drive---";
+  const create_new_participant_text = "---Create new Participant---";
   const create_new_manufacturer_text = "---Create new Manufacturer---";
 
-  $(diaper_drive_participant_id).append(
+  $(diaper_drive_id).append(
     `<option value="">${create_new_diaper_drive_text}</option>`
+  );
+  $(diaper_drive_participant_id).append(
+    `<option value="">${create_new_participant_text}</option>`
   );
 
   $(manufacturer_id).append(
     `<option value="">${create_new_manufacturer_text}</option>`
   );
 
+$(document).on("change", diaper_drive_id, function(evt) {
+    const selection = $(diaper_drive_id + " option")
+      .filter(":selected")
+      .text();
+    console.log('changed the diaper drive id')
+    console.log(selection === create_new_diaper_drive_text)
+    if (selection === create_new_diaper_drive_text) {
+      $("#new_diaper_drive").click();
+    }
+  });
+
   $(document).on("change", diaper_drive_participant_id, function(evt) {
     const selection = $(diaper_drive_participant_id + " option")
       .filter(":selected")
       .text();
 
-    if (selection === create_new_diaper_drive_text) {
-      $("#new_diaper_drive").click();
+    if (selection === create_new_participant_text) {
+      $("#new_participant").click();
     }
   });
 
