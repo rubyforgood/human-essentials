@@ -40,11 +40,10 @@ base_items = File.read(Rails.root.join("db", "base_items.json"))
 end
 
 
-# ----------------------------------------------------------------------------
-# Organizations
-# ----------------------------------------------------------------------------
+# Only pdx_org and dc_org will be seeded with data.
+# sf_org will get only a minimal amount with which to start populating manually
 
-@pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
+pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
   organization.name    = "Pawnee Diaper Bank"
   organization.street  = "P.O. Box 22613"
   organization.city    = "Pawnee"
@@ -52,8 +51,9 @@ end
   organization.zipcode = "12345"
   organization.email   = "info@pawneediaper.org"
 end
+Organization.seed_items(pdx_org)
 
-@sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
+sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
   organization.name    = "SF Diaper Bank"
   organization.street  = "P.O. Box 12345"
   organization.city    = "San Francisco"
@@ -61,11 +61,22 @@ end
   organization.zipcode = "90210"
   organization.email   = "info@sfdiaperbank.org"
 end
+Organization.seed_items(sf_org)
 
+dc_org = Organization.find_or_create_by!(short_name: "dc_bank") do |organization|
+  organization.name    = "DC Diaper Bank"
+  organization.street  = "P.O. Box 12345"
+  organization.city    = "Washington"
+  organization.state   = "DC"
+  organization.zipcode = "20003"
+  organization.email   = "info@dcdiaperbank.org"
+end
+Organization.seed_items(dc_org)
+
+ORGS_TO_SEED = [pdx_org, dc_org]
 
 # Assign a value to some organization items to verify totals are working
-Organization.all.each do |org|
-  Organization.seed_items(org)
+ORGS_TO_SEED.each do |org|
   org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
 end
 
@@ -75,21 +86,28 @@ end
 # ----------------------------------------------------------------------------
 
 [
-  { email: 'superadmin@example.com', organization_admin: false,                        super_admin: true },
-  { email: 'org_admin1@example.com', organization_admin: true,  organization: @pdx_org },
-  { email: 'org_admin2@example.com', organization_admin: true,  organization: @sf_org },
-  { email: 'user_1@example.com',     organization_admin: false, organization: @pdx_org },
-  { email: 'user_2@example.com',     organization_admin: false, organization: @sf_org },
-  { email: 'test@example.com',       organization_admin: false, organization: @pdx_org, super_admin: true },
-  { email: 'test2@example.com',      organization_admin: true,  organization: @pdx_org }
+    { email: 'superadmin@example.com', organization_admin: false,                        super_admin: true },
+
+    { email: 'org_admin1@example.com', organization_admin: true,  organization: pdx_org },
+    { email: 'org_admin2@example.com', organization_admin: true,  organization: sf_org },
+    { email: 'org_admin3@example.com', organization_admin: true,  organization: dc_org },
+
+    { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
+    { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
+    { email: 'user_3@example.com',     organization_admin: false, organization: dc_org },
+
+    { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
+    { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org },
+    { email: 'test_dc@example.com',    organization_admin: false, organization: dc_org, super_admin: true },
+    { email: 'test_dc2@example.com',   organization_admin: true,  organization: dc_org },
 ].each do |user|
   User.create(
-    email:                 user[:email],
-    password:              'password',
-    password_confirmation: 'password',
-    organization_admin:    user[:organization_admin],
-    super_admin:           user[:super_admin],
-    organization:          user[:organization]
+      email:                 user[:email],
+      password:              'password',
+      password_confirmation: 'password',
+      organization_admin:    user[:organization_admin],
+      super_admin:           user[:super_admin],
+      organization:          user[:organization]
   )
 end
 
@@ -113,7 +131,7 @@ def create_donation_sites(organization)
   end
 end
 
-Organization.all.each { |org| create_donation_sites(org) }
+ORGS_TO_SEED.each { |org| create_donation_sites(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -134,7 +152,7 @@ def create_partners(organization)
   end
 end
 
-Organization.all.each { |org| create_partners(org) }
+ORGS_TO_SEED.each { |org| create_partners(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -159,7 +177,7 @@ def create_storage_locations(organization)
   @storage_locations[organization] = { arbor: inv_arbor, pdxdb: inv_pdxdb }
 end
 
-Organization.all.each { |org| create_storage_locations(org) }
+ORGS_TO_SEED.each { |org| create_storage_locations(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -179,7 +197,7 @@ def create_participants(organization)
   ].each { |participant| DiaperDriveParticipant.create! participant }
 end
 
-Organization.all.each { |org| create_participants(org) }
+ORGS_TO_SEED.each { |org| create_participants(org) }
 
 
 
@@ -194,7 +212,7 @@ def create_manufacturers(organization)
   ].each { |search_values| Manufacturer.find_or_create_by! search_values }
 end
 
-Organization.all.each { |org| create_manufacturers(org) }
+ORGS_TO_SEED.each { |org| create_manufacturers(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -229,7 +247,7 @@ def seed_item_quantities(organization)
   end
 end
 
-  Organization.all.each { |org| seed_item_quantities(org) }
+  ORGS_TO_SEED.each { |org| seed_item_quantities(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -261,7 +279,7 @@ def create_barcode_items(organization)
   end
 end
 
-Organization.all.each { |org| create_barcode_items(org) }
+ORGS_TO_SEED.each { |org| create_barcode_items(org) }
 
 
 
@@ -298,7 +316,7 @@ def create_donations(organization)
   donation.storage_location.increase_inventory(donation)
 end
 
-Organization.all.each do |organization|
+ORGS_TO_SEED.each do |organization|
   20.times.each { create_donations(organization) }
 end
 
@@ -327,7 +345,7 @@ def create_distributions(organization)
   end
 end
 
-Organization.all.each { |org| create_distributions(org) }
+ORGS_TO_SEED.each { |org| create_distributions(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -348,7 +366,7 @@ def create_requests(organization)
   end
 end
 
-Organization.all.each { |org| create_requests(org) }
+ORGS_TO_SEED.each { |org| create_requests(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -374,7 +392,7 @@ def create_vendors(organization)
   end
 end
 
-Organization.all.each { |org| create_vendors(org) }
+ORGS_TO_SEED.each { |org| create_vendors(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -405,7 +423,7 @@ def create_purchases(organization)
   end
 end
 
-Organization.all.each { |org| create_purchases(org) }
+ORGS_TO_SEED.each { |org| create_purchases(org) }
 
 
 # ----------------------------------------------------------------------------
