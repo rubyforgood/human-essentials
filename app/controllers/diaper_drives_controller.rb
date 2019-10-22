@@ -1,19 +1,27 @@
 class DiaperDrivesController < ApplicationController
+  include Importable
   before_action :set_diaper_drive, only: [:show, :edit, :update, :destroy]
 
-  # GET /diaper_drives
-  # GET /diaper_drives.json
   def index
-    @diaper_drives = DiaperDrive.all
+    @diaper_drives = current_organization.diaper_drives.includes(:donations).all.order(:name)
   end
 
-  # GET /diaper_drives/1
-  # GET /diaper_drives/1.json
-  def show; end
+  def create
+    @diaper_drive = current_organization.diaper_drives.new(diaper_drive_params.merge(organization: current_organization))
+    respond_to do |format|
+      if @diaper_drive.save
+        format.html { redirect_to diaper_drives_path, notice: "New diaper drive added!" }
+        format.js
+      else
+        flash[:error] = "Something didn't work quite right -- try again?"
+        format.html { render action: :new }
+        format.js { render template: "diaper_drives/new_modal.js.erb" }
+      end
+    end
+  end
 
-  # GET /diaper_drives/new
   def new
-    @diaper_drive = DiaperDrive.new
+    @diaper_drive = current_organization.diaper_drives.new
     if request.xhr?
       respond_to do |format|
         format.js { render template: "diaper_drives/new_modal.js.erb" }
@@ -21,41 +29,25 @@ class DiaperDrivesController < ApplicationController
     end
   end
 
-  # GET /diaper_drives/1/edit
-  def edit; end
-
-  # POST /diaper_drives
-  # POST /diaper_drives.json
-  def create
-    @diaper_drive = DiaperDrive.new(diaper_drive_params)
-
-    respond_to do |format|
-      if @diaper_drive.save
-        format.html { redirect_to @diaper_drive, notice: 'Diaper drive was successfully created.' }
-        format.json { render :show, status: :created, location: @diaper_drive }
-      else
-        format.html { render :new }
-        format.json { render json: @diaper_drive.errors, status: :unprocessable_entity }
-      end
-    end
+  def edit
+    @diaper_drive = current_organization.diaper_drives.find(params[:id])
   end
 
-  # PATCH/PUT /diaper_drives/1
-  # PATCH/PUT /diaper_drives/1.json
+  def show
+    @diaper_drive = current_organization.diaper_drives.includes(:donations).find(params[:id])
+  end
+
   def update
-    respond_to do |format|
-      if @diaper_drive.update(diaper_drive_params)
-        format.html { redirect_to @diaper_drive, notice: 'Diaper drive was successfully updated.' }
-        format.json { render :show, status: :ok, location: @diaper_drive }
-      else
-        format.html { render :edit }
-        format.json { render json: @diaper_drive.errors, status: :unprocessable_entity }
-      end
+    @diaper_drive = current_organization.diaper_drives.find(params[:id])
+    if @diaper_drive.update(diaper_drive_params)
+      redirect_to diaper_drives_path, notice: "#{@diaper_drive.contact_name} updated!"
+
+    else
+      flash[:error] = "Something didn't work quite right -- try again?"
+      render action: :edit
     end
   end
 
-  # DELETE /diaper_drives/1
-  # DELETE /diaper_drives/1.json
   def destroy
     @diaper_drive.destroy
     respond_to do |format|
@@ -71,8 +63,8 @@ class DiaperDrivesController < ApplicationController
     @diaper_drive = DiaperDrive.find(params[:id])
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
   def diaper_drive_params
-    params.require(:diaper_drive).permit(:name, :start_date, :end_date)
+    params.require(:diaper_drive)
+          .permit(:name, :start_date, :end_date)
   end
 end

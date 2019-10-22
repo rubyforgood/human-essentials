@@ -14,6 +14,10 @@ class DonationsController < ApplicationController
                                      .where(issued_at: date_range)
                                      .class_filter(filter_params)
     @paginated_donations = @donations.page(params[:page])
+
+    @diaper_drives = current_organization.diaper_drives.alphabetized
+    @diaper_drive_participants = current_organization.diaper_drive_participants.alphabetized
+    
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum
@@ -25,7 +29,8 @@ class DonationsController < ApplicationController
     @selected_source = filter_params[:by_source]
     @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
     @selected_donation_site = filter_params[:from_donation_site]
-    @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
+    @selected_diaper_drive = filter_params[:by_diaper_drive]
+    @selected_diaper_participant_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
     @date_from = date_params[:date_from]
@@ -126,14 +131,15 @@ class DonationsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive_participant, :from_manufacturer)
+    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive, :by_diaper_drive_participant, :from_manufacturer)
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source
   def strip_unnecessary_params
     params[:donation].delete(:donation_site_id) unless params[:donation][:source] == Donation::SOURCES[:donation_site]
     params[:donation].delete(:manufacturer_id) unless params[:donation][:source] == Donation::SOURCES[:manufacturer]
-    params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive]
+    params[:donation].delete(:diaper_drive_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive]
+    params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive_participant]
     params
   end
 

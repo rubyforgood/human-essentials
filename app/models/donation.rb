@@ -19,6 +19,7 @@
 
 class Donation < ApplicationRecord
   SOURCES = { diaper_drive: "Diaper Drive",
+              diaper_drive_participant: "Diaper Drive Participant",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
               misc: "Misc. Donation" }.freeze
@@ -37,6 +38,9 @@ class Donation < ApplicationRecord
     where(storage_location_id: storage_location_id)
   }
   scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
+  scope :by_diaper_drive, ->(diaper_drive_id) {
+    where(diaper_drive_id: diaper_drive_id)
+  }
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
     where(diaper_drive_participant_id: diaper_drive_participant_id)
   }
@@ -53,10 +57,13 @@ class Donation < ApplicationRecord
 
   validates :donation_site, presence:
     { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
-                            if: :from_donation_site?
-  validates :diaper_drive_participant, presence:
+        if: :from_donation_site?
+  validates :diaper_drive, presence:
     { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" },
-                                       if: :from_diaper_drive?
+        if: :from_diaper_drive?
+  validates :diaper_drive_participant, presence:
+    { message: "must be specified since you chose '#{SOURCES[:diaper_drive_participant]}'" },
+        if: :from_diaper_drive_participant?
   validates :manufacturer, presence:
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" },
                            if: :from_manufacturer?
@@ -75,6 +82,10 @@ class Donation < ApplicationRecord
 
   def from_diaper_drive?
     source == SOURCES[:diaper_drive]
+  end
+
+  def from_diaper_drive_participant?
+    source == SOURCES[:diaper_drive_participant]
   end
 
   def from_manufacturer?
