@@ -17,7 +17,7 @@ class DonationsController < ApplicationController
 
     @diaper_drives = current_organization.diaper_drives.alphabetized
     @diaper_drive_participants = current_organization.diaper_drive_participants.alphabetized
-    
+
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum

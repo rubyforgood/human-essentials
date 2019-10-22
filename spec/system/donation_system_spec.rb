@@ -46,7 +46,7 @@ RSpec.describe "Donations", type: :system, js: true do
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 2)
       end
-      
+
       it "Filters by diaper drive participant" do
         x = create(:diaper_drive, name: 'x')
         a = create(:diaper_drive_participant, business_name: "A")
@@ -311,7 +311,7 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
           click_button "Save"
           donation = Donation.last
-          
+
           expect(donation.diaper_drive_participant_id).to be_present
           expect(donation.manufacturer_id).to be_nil
           expect(donation.donation_site_id).to be_nil

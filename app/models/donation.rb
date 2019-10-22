@@ -57,13 +57,13 @@ class Donation < ApplicationRecord
 
   validates :donation_site, presence:
     { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
-        if: :from_donation_site?
+                            if: :from_donation_site?
   validates :diaper_drive, presence:
     { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" },
-        if: :from_diaper_drive?
+                           if: :from_diaper_drive?
   validates :diaper_drive_participant, presence:
     { message: "must be specified since you chose '#{SOURCES[:diaper_drive_participant]}'" },
-        if: :from_diaper_drive_participant?
+                                       if: :from_diaper_drive_participant?
   validates :manufacturer, presence:
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" },
                            if: :from_manufacturer?
