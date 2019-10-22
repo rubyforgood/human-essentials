@@ -21,14 +21,15 @@ class DistributionsController < ApplicationController
   end
 
   def destroy
-    ActiveRecord::Base.transaction do
-      distribution = current_organization.distributions.find(params[:id])
-      distribution.storage_location.increase_inventory(distribution)
-      distribution.destroy!
-    end
+    result = DistributionDestroyService.new(params[:id]).call
 
-    flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
-    redirect_to distributions_path
+    if result.success?
+      flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
+      redirect_to distributions_path
+    else
+      flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
+      redirect_to action: :edit
+    end
   end
 
   def index
