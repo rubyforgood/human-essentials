@@ -10,7 +10,7 @@ class DistributionDestroyService
       OpenStruct.new(success?: true)
     end
   rescue StandardError => e
-    Rails.logger.error "[!] DistributionsController#create failed to save distribution for #{@distribution.organization.short_name}: #{@distribution.errors.full_messages} [#{e.inspect}]"
+    Rails.logger.error "[!] DistributionsController#destroy failed to destroy distribution for #{@distribution.organization.short_name}: #{@distribution.errors.full_messages} [#{e.inspect}]"
     OpenStruct.new(success: false, distribution: @distribution, error: e)
   end
 end
