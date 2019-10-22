@@ -60,7 +60,7 @@ class DiaperDrivesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_diaper_drive
-    @diaper_drive = DiaperDrive.find(params[:id])
+    @diaper_drive_info = DiaperDrive.find(params[:id])
   end
 
   def diaper_drive_params
