@@ -1,7 +1,11 @@
 After you've cloned the diaper and partner repos:
 
-Download puma-dev: `brew install puma/puma/puma-dev` (assumes you have homebrew installed)
-Install puma-dev: `puma-dev -install`
+Download puma-dev:
+`brew install puma/puma/puma-dev` (assumes you have homebrew installed)
+
+Install puma-dev:
+`sudo puma-dev -setup`
+`puma-dev -install`
 
 Assuming you've cloned the repos into `~/ruby/diaper` and `~/ruby/parter` link them with following:
 
