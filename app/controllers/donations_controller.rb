@@ -52,7 +52,7 @@ class DonationsController < ApplicationController
 
   def create
     @donation = current_organization.donations.new(donation_params)
-    
+
     if @donation.save
       @donation.storage_location.increase_inventory @donation
       redirect_to donations_path
