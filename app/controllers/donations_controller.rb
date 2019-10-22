@@ -9,7 +9,7 @@ class DonationsController < ApplicationController
 
   def index
     @donations = current_organization.donations
-                                     .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
+                                     .includes(:line_items, :storage_location, :donation_site, :diaper_drive, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
                                      .where(issued_at: date_range)
                                      .class_filter(filter_params)
@@ -52,6 +52,7 @@ class DonationsController < ApplicationController
 
   def create
     @donation = current_organization.donations.new(donation_params)
+    
     if @donation.save
       @donation.storage_location.increase_inventory @donation
       redirect_to donations_path
@@ -115,7 +116,7 @@ class DonationsController < ApplicationController
   def donation_params
     strip_unnecessary_params
     params = compact_line_items
-    params.require(:donation).permit(:source, :comment, :storage_location_id, :money_raised, :issued_at, :donation_site_id, :diaper_drive_participant_id, :manufacturer_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :comment, :storage_location_id, :money_raised, :issued_at, :donation_site_id, :diaper_drive_id, :diaper_drive_participant_id, :manufacturer_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
 
   def donation_item_params

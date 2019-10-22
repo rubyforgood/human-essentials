@@ -14,6 +14,11 @@ class DiaperDrivesController < ApplicationController
   # GET /diaper_drives/new
   def new
     @diaper_drive = DiaperDrive.new
+    if request.xhr?
+      respond_to do |format|
+        format.js { render template: "diaper_drives/new_modal.js.erb" }
+      end
+    end
   end
 
   # GET /diaper_drives/1/edit
