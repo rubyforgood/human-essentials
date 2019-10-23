@@ -312,7 +312,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
-          
+
           click_button "Save"
           donation = Donation.last
 

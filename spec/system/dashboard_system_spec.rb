@@ -547,7 +547,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             diaper_drive1 = create(:diaper_drive, name: 'First Diaper Drive')
             diaper_drive2 = create(:diaper_drive, name: 'Second Diaper Drive')
-            
+
             diaper_drive_participant1 = create(:diaper_drive_participant, business_name: "First Diaper Participant Drive", organization: @organization)
             diaper_drive_participant2 = create(:diaper_drive_participant, business_name: "Second Diaper Participant Drive", organization: @organization)
 
