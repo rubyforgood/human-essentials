@@ -49,8 +49,7 @@
         <div class="box-body row">
           <section id="filters" class="col-md-offset-6 col-md-6 col-sm-offset-4 col-sm-8 col-xs-12">
               <%= simple_form_for :filters, url: dashboard_path(current_organization), method: :get do |f| %>
-                <%= text_field_tag 'filters[date_range]', '', placeholder: '01/02/2011 - 03/04/2011', class: "daterange", data: { initial_start_date: @selected_date_interval.first.strftime('%m/%d/%Y'), initial_end_date: @selected_date_interval.last.strftime('%m/%d/%Y') }  %>
-                <%= hidden_field_tag 'filters[date_range_label]', @selected_date_range_label %>
+                <%= render partial: "shared/date_range_picker" %>
                 <%= filter_button %>
               <% end %>
           </section><!-- /#filters -->
