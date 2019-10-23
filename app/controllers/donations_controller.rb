@@ -8,11 +8,16 @@ class DonationsController < ApplicationController
   include Dateable
 
   def index
+    @selected_date_interval = helpers.selected_interval
+    @selected_date_range = helpers.selected_interval.map { |d| d.to_s(:long) }.join(" - ")
+    @selected_date_range_label = helpers.date_range_label
+
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
                                      .where(issued_at: date_range)
                                      .class_filter(filter_params)
+                                     .during(helpers.selected_range)
     @paginated_donations = @donations.page(params[:page])
     # Are these going to be inefficient with large datasets?
     # Using the @donations allows drilling down instead of always starting with the total dataset
@@ -31,8 +36,6 @@ class DonationsController < ApplicationController
     @selected_diaper_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
-    @date_from = date_params[:date_from]
-    @date_to = date_params[:date_to]
   end
 
   def scale
