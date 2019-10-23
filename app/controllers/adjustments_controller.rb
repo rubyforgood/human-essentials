@@ -5,12 +5,15 @@ class AdjustmentsController < ApplicationController
   include Dateable
 
   def index
+    setup_date_range_picker
+
     @selected_location = filter_params[:at_location]
     @selected_user = filter_params[:by_user]
     @adjustments = current_organization.adjustments
                                        .order(created_at: :desc)
                                        .where(created_at: date_range)
                                        .class_filter(filter_params)
+                                       .during(helpers.selected_range)
     @paginated_adjustments = @adjustments.page(params[:page])
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
