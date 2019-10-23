@@ -16,8 +16,6 @@ class TransfersController < ApplicationController
     @selected_to = filter_params[:to_location]
     @from_storage_locations = Transfer.storage_locations_transferred_from_in(current_organization)
     @to_storage_locations = Transfer.storage_locations_transferred_to_in(current_organization)
-    @date_from = date_params[:date_from]
-    @date_to = date_params[:date_to]
   end
 
   def create

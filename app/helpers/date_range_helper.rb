@@ -1,11 +1,11 @@
 # Encapsulates methods used on the Dashboard that need some business logic
 module DateRangeHelper
   def date_range_params
-    params.dig(:filters, :date_range) || this_year
+    params.dig(:filters, :date_range).presence || this_year
   end
 
   def date_range_label
-    case (params.dig(:filters, :date_range_label) || "this year").downcase
+    case (params.dig(:filters, :date_range_label).presence || "this year").downcase
     when "yesterday"
       "yesterday"
     when "last 7 days"
@@ -36,7 +36,6 @@ module DateRangeHelper
 
   def selected_range_described
     start_date, end_date = selected_interval
-
     if start_date == Time.zone.today
       return ""
     elsif end_date == Time.zone.today

@@ -11,15 +11,12 @@ class AdjustmentsController < ApplicationController
     @selected_user = filter_params[:by_user]
     @adjustments = current_organization.adjustments
                                        .order(created_at: :desc)
-                                       .where(created_at: date_range)
                                        .class_filter(filter_params)
                                        .during(helpers.selected_range)
     @paginated_adjustments = @adjustments.page(params[:page])
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
     @users = current_organization.users
-    @date_from = date_params[:date_from]
-    @date_to = date_params[:date_to]
   end
 
   # GET /adjustments/1

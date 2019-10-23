@@ -25,8 +25,6 @@ class PurchasesController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
-    @date_from = date_params[:date_from]
-    @date_to = date_params[:date_to]
   end
 
   def create

@@ -54,6 +54,22 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         expect(page).to have_no_content(item.name)
       end
     end
+
+    it "politely informs the user that they're adjusting way too hard", js: true do
+      sub_quantity = -9001
+      storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: @organization)
+      visit url_prefix + "/adjustments"
+      click_on "New Adjustment"
+      select storage_location.name, from: "From storage location"
+      fill_in "Comment", with: "something"
+      select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+      fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
+
+      expect do
+        click_button "Save"
+      end.not_to change { storage_location.size }
+      expect(page).to have_content("items exceed the available inventory")
+    end
   end
 
   it "can filter the #index by storage location" do
@@ -80,23 +96,5 @@ RSpec.describe "Adjustment management", type: :system, js: true do
     expect(page).to have_css("table tr", count: 2)
   end
 
-  it "can filter the #index by date" do
-    create(:adjustment, created_at: Date.new(2040, 2, 1))
-    create(:adjustment, created_at: Date.new(2040, 3, 1))
-    create(:adjustment, created_at: Date.new(2040, 4, 1))
-    visit subject
-
-    fill_in "dates_date_to", with: "01/01/2041"
-    fill_in "dates_date_from", with: "02/01/2040"
-    click_button "Filter"
-    expect(page).to have_css("table tbody tr", count: 3)
-
-    fill_in "dates_date_from", with: "03/01/2040"
-    click_button "Filter"
-    expect(page).to have_css("table tbody tr", count: 2)
-
-    fill_in "dates_date_to", with: "03/30/2040"
-    click_button "Filter"
-    expect(page).to have_css("table tbody tr", count: 1)
-  end
+  it_behaves_like "Date Range Picker", Adjustment
 end
