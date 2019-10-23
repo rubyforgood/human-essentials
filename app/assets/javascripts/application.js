@@ -22,7 +22,7 @@
 //= require moment
 //= require fullcalendar
 //= require quagga
-//= require bootstrap-datepicker
+//= require daterangepicker
 //= require_tree .
 
 

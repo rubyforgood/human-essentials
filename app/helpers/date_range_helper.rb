@@ -1,21 +1,48 @@
 # Encapsulates methods used on the Dashboard that need some business logic
 module DateRangeHelper
-  def display_interval
-    selected_interval.humanize.downcase
+  def date_range_params
+    params.dig(:filters, :date_range) || this_year
   end
 
-  def selected_interval
-    if params.dig(:dates, :date_interval)
-      "after " + params.dig(:dates, :date_interval)
+  def date_range_label
+    case (params.dig(:filters, :date_range_label) || "this year").downcase
+    when "yesterday"
+      "yesterday"
+    when "last 7 days"
+      "over the last week"
+    when "last 30 days"
+      "over the 30 days"
+    when "this month"
+      "this month, so far"
+    when "last month"
+      "during the last month"
     else
-      "until today"
+      selected_range_described
     end
   end
 
+  def this_year
+    "01/01/#{Date.today.year} - 12/31/#{Date.today.year}"
+  end
+
+  def selected_interval
+    date_range_params.split(" - ").map { |d| Date.strptime(d, "%m/%d/%Y") }
+  end
+
   def selected_range
-    now = Time.zone.now.end_of_day
-    start_date = params.dig(:dates, :date_interval)
-    start_date = start_date.present? ? Date.strptime(start_date, '%m/%d/%Y')&.to_date : "Jan, 1, 2017".to_date
-    start_date..now
+    start_date, end_date = selected_interval
+    start_date..end_date
+  end
+
+  def selected_range_described
+    start_date, end_date = selected_interval
+
+    if start_date == Date.today
+      return ""
+    elsif end_date == Date.today
+      return "since #{start_date}"
+    else
+      return "during the period #{start_date.to_s(:short)} to #{end_date.to_s(:short)}"
+    end
   end
 end
