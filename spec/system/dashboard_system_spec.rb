@@ -631,7 +631,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
 
             it "has a widget displaying the Diaper drive totals from this week, only using donations from this week" do
-              binding.pry
               within "#diaper_drives" do
                 expect(page).to have_content(/2 diaper drive/i)
                 expect(page).to have_content(total_inventory)
