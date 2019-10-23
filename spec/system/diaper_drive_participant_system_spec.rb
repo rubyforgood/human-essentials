@@ -4,7 +4,7 @@ RSpec.describe "Diaper Drive Participant", type: :system, js: true do
   end
 
   let(:url_prefix) { "/#{@organization.to_param}" }
-  let(:diaper_drive) { create(:diaper_drive)}
+  let(:diaper_drive) { create(:diaper_drive) }
   let(:diaper_drive_participant) { create(:diaper_drive_participant) }
 
   context "When a user views the index page" do
