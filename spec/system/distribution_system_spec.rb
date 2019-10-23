@@ -132,7 +132,7 @@ RSpec.feature "Distributions", type: :system do
       expect do
         fill_in 'distribution_line_items_attributes_0_quantity', with: distribution.line_items.first.quantity + 300
         click_on "Save", match: :first
-      end.not_to change { distribution.reload.line_items.first.quantity }
+      end.not_to change { distribution.line_items.first.quantity }
       expect(page).to have_content "Distribution could not be updated!"
     end
 
