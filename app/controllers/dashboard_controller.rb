@@ -3,9 +3,7 @@ class DashboardController < ApplicationController
   respond_to :html, :js
 
   def index
-    @selected_date_interval = helpers.selected_interval
-    @selected_date_range = helpers.selected_interval.map { |d| d.to_s(:long) }.join(" - ")
-    @selected_date_range_label = helpers.date_range_label
+    setup_date_range_picker
     
     @recent_donations = current_organization.donations.includes(:line_items).during(helpers.selected_range).recent
     @purchases = current_organization.purchases.includes(:line_items).during(helpers.selected_range)

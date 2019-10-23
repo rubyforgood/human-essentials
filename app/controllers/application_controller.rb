@@ -88,6 +88,12 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def setup_date_range_picker
+    @selected_date_interval = helpers.selected_interval
+    @selected_date_range = helpers.selected_interval.map { |d| d.to_s(:long) }.join(" - ")
+    @selected_date_range_label = helpers.date_range_label
+  end
+
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:account_update, keys: [:name])
   end

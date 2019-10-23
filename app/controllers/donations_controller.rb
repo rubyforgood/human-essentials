@@ -8,9 +8,7 @@ class DonationsController < ApplicationController
   include Dateable
 
   def index
-    @selected_date_interval = helpers.selected_interval
-    @selected_date_range = helpers.selected_interval.map { |d| d.to_s(:long) }.join(" - ")
-    @selected_date_range_label = helpers.date_range_label
+    setup_date_range_picker
 
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
