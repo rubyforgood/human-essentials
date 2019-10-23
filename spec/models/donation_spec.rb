@@ -30,13 +30,13 @@ RSpec.describe Donation, type: :model do
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", donation_site: nil)).to be_valid
     end
     it "requires a diaper drive participant if the source is 'Diaper Drive'" do
-      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive", diaper_drive_participant_id: nil)).not_to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive Participant", diaper_drive_participant_id: nil)).not_to be_valid
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", diaper_drive_participant_id: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", diaper_drive_participant_id: nil)).to be_valid
     end
     it "requires a manufacturer if the source is 'Manufacturer'" do
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", manufacturer: nil)).not_to be_valid
-      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive", manufacturer: nil)).to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive Participant", manufacturer: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", manufacturer: nil)).to be_valid
     end
     it "requires a source from the list of available sources" do
@@ -93,11 +93,11 @@ RSpec.describe Donation, type: :model do
       end
 
       it "returns all donations with the provided source" do
-        expect(Donation.by_source(Donation::SOURCES[:diaper_drive]).count).to eq(1)
+        expect(Donation.by_source(Donation::SOURCES[:diaper_drive_participant]).count).to eq(1)
       end
 
       it "allows a symbol as an argument, referencing the SOURCES hash" do
-        expect(Donation.by_source(:diaper_drive).count).to eq(1)
+        expect(Donation.by_source(:diaper_drive_participant).count).to eq(1)
       end
     end
   end
