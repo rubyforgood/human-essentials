@@ -4,7 +4,7 @@ class TransfersController < ApplicationController
 
   def index
     setup_date_range_picker
-    
+
     @transfers = current_organization.transfers
                                      .includes(:line_items)
                                      .includes(:from)

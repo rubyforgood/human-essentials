@@ -4,7 +4,7 @@ class DashboardController < ApplicationController
 
   def index
     setup_date_range_picker
-    
+
     @recent_donations = current_organization.donations.includes(:line_items).during(helpers.selected_range).recent
     @purchases = current_organization.purchases.includes(:line_items).during(helpers.selected_range)
     @recent_purchases = @purchases.recent

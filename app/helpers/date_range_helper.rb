@@ -22,7 +22,7 @@ module DateRangeHelper
   end
 
   def this_year
-    "01/01/#{Date.today.year} - 12/31/#{Date.today.year}"
+    "01/01/#{Time.zone.today.year} - 12/31/#{Time.zone.today.year}"
   end
 
   def selected_interval
@@ -37,9 +37,9 @@ module DateRangeHelper
   def selected_range_described
     start_date, end_date = selected_interval
 
-    if start_date == Date.today
+    if start_date == Time.zone.today
       return ""
-    elsif end_date == Date.today
+    elsif end_date == Time.zone.today
       return "since #{start_date}"
     else
       return "during the period #{start_date.to_s(:short)} to #{end_date.to_s(:short)}"

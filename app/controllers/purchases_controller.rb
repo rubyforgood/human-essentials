@@ -14,7 +14,7 @@ class PurchasesController < ApplicationController
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
-                                     
+
     @paginated_purchases = @purchases.page(params[:page])
     # Are these going to be inefficient with large datasets?
     # Using the @purchases allows drilling down instead of always starting with the total dataset

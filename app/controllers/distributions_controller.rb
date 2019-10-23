@@ -33,7 +33,7 @@ class DistributionsController < ApplicationController
 
   def index
     setup_date_range_picker
-    
+
     @highlight_id = session.delete(:created_distribution_id)
 
     @distributions = current_organization
