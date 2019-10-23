@@ -21,6 +21,8 @@ class Request < ApplicationRecord
 
   enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
+  scope :during, ->(range) { where(created_at: range) }
+
   def family_request_reply
     {
       "organization_id": organization_id,

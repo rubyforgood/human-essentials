@@ -59,7 +59,7 @@
         <div class="row">
           <div class="col-xs-12">
             <%= filter_button %>
-            <%= cancel_button_to donations_path %>
+            <%= cancel_button_to donations_path, { text: "Clear Filters" } %>
 
             <div class="pull-right">
               <%= download_button_to(csv_path(format: :csv, type: "Donation"), { text: "Export Donations", size: "lg" }) if @donations.any? %>
