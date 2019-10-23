@@ -79,6 +79,12 @@ class PartnersController < ApplicationController
     redirect_to partners_path, notice: "#{partner.name} invited!"
   end
 
+  def re_invite
+    partner = current_organization.partners.find(params[:partner])
+    partner.register_on_partnerbase(email: params[:email])
+    redirect_to partner_path(partner), notice: "We have invited to #{params[:email]} #{partner.name}!"
+  end
+
   def recertify_partner
     @partner = current_organization.partners.find(params[:id])
     response = DiaperPartnerClient.put(partner_id: @partner.id, status: "recertification_required")
