@@ -21,14 +21,15 @@ class DistributionsController < ApplicationController
   end
 
   def destroy
-    ActiveRecord::Base.transaction do
-      distribution = current_organization.distributions.find(params[:id])
-      distribution.storage_location.increase_inventory(distribution)
-      distribution.destroy!
-    end
+    result = DistributionDestroyService.new(params[:id]).call
 
-    flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
-    redirect_to distributions_path
+    if result.success?
+      flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
+      redirect_to distributions_path
+    else
+      flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
+      redirect_to action: :edit
+    end
   end
 
   def index
@@ -97,18 +98,16 @@ class DistributionsController < ApplicationController
   end
 
   def update
-    distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    old_distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
 
-    # there are ways to convert issued_at(*i) to Date but they are uglier then just remember it here
-    # see examples: https://stackoverflow.com/questions/13605598/how-to-get-a-date-from-date-select-or-select-date-in-rails
-    old_issued_at = distribution.issued_at
+    result = DistributionUpdateService.new(old_distribution, distribution_params).call
 
-    if distribution.replace_distribution!(distribution_params)
+    if result.success?
       @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
       @line_items = @distribution.line_items
 
-      if distribution.issued_at.to_date != old_issued_at.to_date
-        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{distribution.issued_at}")
+      if result.resend_notification?
+        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
       end
 
       schedule_reminder_email(@distribution.id)
