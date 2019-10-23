@@ -555,7 +555,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive1, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
               beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive_participant: diaper_drive2, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
-            
+
             @last_years_donations = create_list(:diaper_drive_donation, 2, :with_items, diaper_drive_participant: diaper_drive1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
             visit subject
           end

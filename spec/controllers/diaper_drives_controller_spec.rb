@@ -52,7 +52,6 @@ RSpec.describe DiaperDrivesController, type: :controller do
     end
 
     describe "DELETE #destroy" do
-      
       subject { delete :destroy, params: default_params.merge(id: diaper_drive.id) }
       it "redirects to the index" do
         expect(subject).to redirect_to(diaper_drives_path)

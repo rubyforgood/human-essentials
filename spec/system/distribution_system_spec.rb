@@ -264,7 +264,6 @@ RSpec.feature "Distributions", type: :system do
       end
 
       it "User creates a distribution from a donation then tries to make the quantity too big", js: true do
-        
         within "#edit_distribution_#{@distribution.to_param}" do
           first(".numeric").set 999_999
           click_on "Save"
