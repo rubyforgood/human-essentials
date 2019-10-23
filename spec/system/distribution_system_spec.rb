@@ -133,7 +133,7 @@ RSpec.feature "Distributions", type: :system do
         fill_in 'distribution_line_items_attributes_0_quantity', with: distribution.line_items.first.quantity + 300
         click_on "Save", match: :first
       end.not_to change { distribution.line_items.first.quantity }
-      expect(page).to have_content "Insufficient Supply"
+      expect(page).to have_content "Distribution could not be updated!"
     end
 
     it "the user can reclaim it" do
@@ -269,8 +269,7 @@ RSpec.feature "Distributions", type: :system do
           click_on "Save"
         end
         expect(page).to have_no_content "Distribution updated!"
-        # NOTE: This is rendering the app/views/errors/insufficient.html.erb template
-        expect(page).to have_content(/Insufficient/i)
+        expect(page).to have_content(/Distribution could not be updated/i)
         expect(page).to have_no_content 999_999
         expect(Distribution.first.line_items.count).to eq 1
       end
