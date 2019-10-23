@@ -72,7 +72,7 @@ $(document).on("change", diaper_drive_id, function(evt) {
       .filter(":selected")
       .text();
 
-    if (selection === diaper_drive_participant_text || selection === diaper_drive_text) {
+    if (selection === diaper_drive_text) {
       $(diaper_drive_container_id).show();
       $(diaper_drive_participant_container_id).show();
       $(donation_site_container_id).hide();

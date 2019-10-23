@@ -19,7 +19,6 @@
 
 class Donation < ApplicationRecord
   SOURCES = { diaper_drive: "Diaper Drive",
-              diaper_drive_participant: "Diaper Drive Participant",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
               misc: "Misc. Donation" }.freeze
@@ -61,9 +60,6 @@ class Donation < ApplicationRecord
   validates :diaper_drive, presence:
     { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" },
                            if: :from_diaper_drive?
-  validates :diaper_drive_participant, presence:
-    { message: "must be specified since you chose '#{SOURCES[:diaper_drive_participant]}'" },
-                                       if: :from_diaper_drive_participant?
   validates :manufacturer, presence:
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" },
                            if: :from_manufacturer?
@@ -84,10 +80,6 @@ class Donation < ApplicationRecord
     source == SOURCES[:diaper_drive]
   end
 
-  def from_diaper_drive_participant?
-    source == SOURCES[:diaper_drive_participant]
-  end
-
   def from_manufacturer?
     source == SOURCES[:manufacturer]
   end
@@ -101,8 +93,10 @@ class Donation < ApplicationRecord
   end
 
   def format_drive_name
-    if diaper_drive_participant.contact_name.present?
-      "#{diaper_drive_participant.contact_name} (diaper drive)"
+    if !diaper_drive_participant.nil? && diaper_drive_participant.contact_name.present?
+      "#{diaper_drive_participant.contact_name} (participant)"
+    elsif !diaper_drive.nil? && diaper_drive.name.present?
+      "#{diaper_drive.name} (diaper drive)"
     else
       source
     end
