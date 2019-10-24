@@ -47,7 +47,7 @@ gem "yajl-ruby"
 gem "toastr-rails"
 gem "webpacker", "> 4.0"
 gem 'sidekiq-scheduler'
-gem 'bootstrap-datepicker-rails'
+gem 'bootstrap-daterangepicker-rails'
 
 group :development, :test do
   gem "awesome_print"

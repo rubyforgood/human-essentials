@@ -7,11 +7,14 @@ class PurchasesController < ApplicationController
   include Dateable
 
   def index
+    setup_date_range_picker
     @purchases = current_organization.purchases
                                      .includes(:line_items, :storage_location)
                                      .where(issued_at: date_range)
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
+                                     .during(helpers.selected_range)
+
     @paginated_purchases = @purchases.page(params[:page])
     # Are these going to be inefficient with large datasets?
     # Using the @purchases allows drilling down instead of always starting with the total dataset
@@ -22,8 +25,6 @@ class PurchasesController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
-    @date_from = date_params[:date_from]
-    @date_to = date_params[:date_to]
   end
 
   def create

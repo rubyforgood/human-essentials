@@ -1,0 +1,5 @@
+<% 
+  css_class ||= ""
+%>
+<%= text_field_tag 'filters[date_range]', '', placeholder: '01/02/2011 - 03/04/2011', class: "daterange #{css_class}", data: { initial_start_date: @selected_date_interval.first.strftime('%m/%d/%Y'), initial_end_date: @selected_date_interval.last.strftime('%m/%d/%Y') }  %>
+<%= hidden_field_tag 'filters[date_range_label]', @selected_date_range_label %>

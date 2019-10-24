@@ -351,6 +351,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "when filtering on the index page" do
+    subject { @url_prefix + "/distributions" }
     let(:item1)    { create(:item, name: "Good item") }
     let(:item2)    { create(:item, name: "Crap item") }
     let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
@@ -360,40 +361,30 @@ RSpec.feature "Distributions", type: :system do
       create(:distribution, :with_items, item: item1)
       create(:distribution, :with_items, item: item2)
 
-      visit @url_prefix + "/distributions"
+      visit subject
       # check for all distributions
-      expect(page).to have_css("table tbody tr", count: 3)
+      expect(page).to have_css("table tbody tr", count: 2)
       # filter
       select(item1.name, from: "filters_by_item_id")
       click_button("Filter")
       # check for filtered distributions
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 1)
     end
 
     it "filters by partner" do
       create(:distribution, partner: partner1)
       create(:distribution, partner: partner2)
 
-      visit @url_prefix + "/distributions"
+      visit subject
       # check for all distributions
-      expect(page).to have_css("table tbody tr", count: 3)
+      expect(page).to have_css("table tbody tr", count: 2)
       # filter
       select(partner1.name, from: "filters_by_partner")
       click_button("Filter")
       # check for filtered distributions
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 1)
     end
 
-    it "Filters by date" do
-      create(:distribution, issued_at: Time.zone.today)
-      create(:distribution, issued_at: Time.zone.today)
-      create(:distribution, issued_at: Time.zone.today + 2.weeks)
-      visit @url_prefix + "/distributions"
-
-      expect(page).to have_css("table tbody tr", count: 4)
-      select("This Week", from: "filters_interval")
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 3)
-    end
+    it_behaves_like "Date Range Picker", Distribution, :issued_at
   end
 end

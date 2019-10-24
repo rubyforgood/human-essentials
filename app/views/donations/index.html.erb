@@ -50,20 +50,16 @@
               <%= collection_select(:filters, :from_donation_site, @donation_sites || {}, :id, :name, { include_blank: true, selected: @selected_donation_site }, class: "form-control") %>
             </div>
           <% end %>
-          <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <%= label_tag "from Date" %>
-            <%= text_field_tag 'dates[date_from]', @date_from, { id: 'dates_date_from', placeholder: 'mm/dd/YYY', class: 'form-control', 'data-provide': 'datepicker' } %>
-          </div>
 
           <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <%= label_tag "to Date" %>
-            <%= text_field_tag 'dates[date_to]', @date_to, { id: 'dates_date_to', placeholder: 'mm/dd/YYY', class: 'form-control', 'data-provide': 'datepicker' } %>
+            <%= label_tag "Date Range" %>
+            <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
           </div>
         </div><!-- /.row -->
         <div class="row">
           <div class="col-xs-12">
             <%= filter_button %>
-            <%= cancel_button_to donations_path %>
+            <%= cancel_button_to donations_path, { text: "Clear Filters" } %>
 
             <div class="pull-right">
               <%= download_button_to(csv_path(format: :csv, type: "Donation"), { text: "Export Donations", size: "lg" }) if @donations.any? %>
@@ -79,7 +75,7 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+            <table class="table table-hover striped records">
               <thead>
                 <tr>
                   <th>Source</th>
@@ -94,6 +90,8 @@
               </thead>
               <tbody>
                 <%= render partial: "donation_row", collection: @paginated_donations %>
+              </tbody>
+              <tfoot>
                 <tr>
                   <td><strong>Total</strong></td>
                   <td></td>
@@ -110,7 +108,7 @@
                   <td class="numeric"><strong><%= item_value(@total_value_all_donations) %></strong></td>
                   <td></td>
                 </tr>
-              </tbody>
+              </tfoot>
             </table>
           </div><!-- /.box-body.table-responsive -->
         </div><!-- /.col-xs-12 -->

@@ -26,6 +26,7 @@ class Transfer < ApplicationRecord
     where(organization: organization)
       .includes(:line_items, :from, :to)
   }
+  scope :during, ->(range) { where(created_at: range) }
 
   def self.storage_locations_transferred_to_in(organization)
     includes(:to).where(organization_id: organization.id).distinct(:to_id).collect(&:to).uniq.sort_by(&:name)
