@@ -102,8 +102,9 @@ $(function() {
 
 function hide_fields_with_no_value(field_selectors){
   $.each( field_selectors, function(index, selector){
-      if($(selector + " select").prop('selectedIndex') == 0){
-        $(selector).hide();
-      }
+    let selected_value_text = $(selector + " select option").filter(":selected").text()
+    if(selected_value_text == "" || selected_value_text == "Choose one..." ){
+      $(selector).hide();
+    }
   });
 }
