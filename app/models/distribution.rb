@@ -57,26 +57,6 @@ class Distribution < ApplicationRecord
 
   delegate :name, to: :partner, prefix: true
 
-  # TODO: kill me
-  def replace_distribution!(new_distribution_params)
-    ActiveRecord::Base.transaction do
-      # fixed_distribution_params = new_distribution_params["line_items_attributes"].to_h.values.reject { |f| f["item_id"].blank? && f["quantity"].blank? }
-      # Roll back distribution output by increasing storage location
-      storage_location.increase_inventory(to_a)
-      # Delete the line items -- they'll be replaced later
-      line_items.each(&:destroy!)
-      reload
-
-      # Replace the current distribution with the new parameters
-      update! new_distribution_params
-      reload
-      # Apply the new changes to the storage location inventory
-      storage_location.decrease_inventory(to_a)
-    end
-  rescue ActiveRecord::RecordInvalid
-    false
-  end
-
   def distributed_at
     if is_midnight(issued_at)
       issued_at.to_s(:distribution_date)
