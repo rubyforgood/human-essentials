@@ -107,7 +107,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(page).to have_content("333")
             end
 
-            page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_year.strftime('%m/%d/%Y'))
+            date_range_picker_select_range "Last Month"
 
             within "#summary" do
               expect(page).to have_content("333")
@@ -163,7 +163,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Year" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.today.beginning_of_year.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "This Year"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
@@ -183,7 +184,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Today" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.today.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Today"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -203,7 +205,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Yesterday" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.yesterday.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Yesterday"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
@@ -223,7 +226,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Week" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.today.beginning_of_week.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Last 7 Days"
+              click_on "Filter"
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -243,7 +247,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Month" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_month.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "This Month"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -263,7 +268,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "All Time" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.local(2017, 1, 1, 0, 0, 0).strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "All Time"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
@@ -330,7 +336,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Year" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.today.beginning_of_year.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "This Year"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum }
@@ -350,7 +357,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Today" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.today.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Today"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_purchases[:today].total_quantity }
@@ -370,7 +378,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Yesterday" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.yesterday.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Yesterday"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_purchases[:yesterday].total_quantity }
@@ -390,7 +399,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Week" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_week.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Last 7 Days"
+              click_on "Filter"
             end
 
             let(:total_inventory) { [@this_years_purchases[:today], @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week]].map(&:total_quantity).sum }
@@ -410,7 +420,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Month" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_month.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "This Month"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_purchases[:today].total_quantity }
@@ -430,7 +441,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "All Time" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.local(2017, 1, 1, 0, 0, 0).strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "All Time"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum + @last_years_purchases.map(&:total_quantity).sum }
@@ -482,7 +494,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Year" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_year.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "This Year"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
@@ -503,7 +516,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Today" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.today.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Today"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -524,7 +538,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Yesterday" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.yesterday.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Yesterday"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
@@ -545,7 +560,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Week" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_week.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Last 7 Days"
+              click_on "Filter"
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -566,7 +582,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Month" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_month.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "This Month"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -587,7 +604,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "All Time" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.local(2017, 1, 1, 0, 0, 0).strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "All Time"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
@@ -681,7 +699,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Year" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_year.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "This Year"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
@@ -705,7 +724,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Today" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.today.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Today"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -726,7 +746,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "Yesterday" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.yesterday.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Yesterday"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
@@ -747,7 +768,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Week" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_week.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Last 7 Days"
+              click_on "Filter"
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
@@ -770,7 +792,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "This Month" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_month.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "This Month"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
@@ -791,7 +814,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           describe "All Time" do
             before do
-              page.fill_in('dates[date_interval]', with: Time.zone.local(2017, 1, 1, 0, 0, 0).strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "All Time"
+              click_on "Filter"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
@@ -874,7 +898,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with year-to-date selected" do
           before do
-            page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_year.strftime('%m/%d/%Y')).send_keys(:return)
+            date_range_picker_select_range "This Year"
+            click_on "Filter"
           end
 
           let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum }
@@ -895,7 +920,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with today selected" do
           before do
-            page.fill_in('dates[date_interval]', with: Time.zone.today.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Today"
+              click_on "Filter"
           end
 
           let(:total_inventory) { @this_years_distributions[:today].line_items.total }
@@ -916,7 +942,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with yesterday selected" do
           before do
-            page.fill_in('dates[date_interval]', with: Time.zone.yesterday.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Yesterday"
+              click_on "Filter"
           end
 
           let(:total_inventory) { @this_years_distributions[:yesterday].line_items.total }
@@ -937,7 +964,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with this week selected" do
           before do
-            page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_week.strftime('%m/%d/%Y')).send_keys(:return)
+              date_range_picker_select_range "Last 7 Days"
+              click_on "Filter"
           end
 
           let(:total_inventory) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:line_items).flatten.map(&:quantity).sum }
@@ -960,7 +988,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with this month selected" do
           before do
-            page.fill_in('dates[date_interval]', with: Time.zone.now.beginning_of_month.strftime('%m/%d/%Y')).send_keys(:return)
+            date_range_picker_select_range "This Month"
+            click_on "Filter"
           end
 
           let(:total_inventory) { @this_years_distributions[:today].line_items.total }
@@ -981,7 +1010,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with All Time selected" do
           before do
-            page.fill_in('dates[date_interval]', with: Time.zone.local(2017, 1, 1, 0, 0, 0).strftime('%m/%d/%Y')).send_keys(:return)
+            date_range_picker_select_range "All Time"
+            click_on "Filter"
           end
 
           let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum + @last_years_distributions.map(&:line_items).flatten.map(&:quantity).sum }

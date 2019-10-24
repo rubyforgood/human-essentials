@@ -1,3 +1,14 @@
+def date_range_picker_params start_date, end_date
+  "#{start_date.strftime('%m/%d/%Y')} - #{end_date.strftime('%m/%d/%Y')}"
+end
+
+def date_range_picker_select_range range_name
+  page.find("#filters_date_range").click
+  within ".ranges" do
+    page.find("li[data-range-key='#{range_name}']").click
+  end
+end
+
 RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   before :each do
     date_field ||= "created_at"
@@ -15,10 +26,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   context "when choosing 'All Time'" do
     it "shows all the records" do
       visit subject
-      page.find("#filters_date_range").click
-      within ".ranges" do
-        page.find('li[data-range-key="All Time"]').click
-      end
+      date_range_picker_select_range "All Time"
       click_on "Filter"
       expect(page).to have_css("table.records tbody tr", count: 3)
     end
@@ -30,10 +38,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     it "shows only 2 of the records" do
       travel_to Date.tomorrow
       visit subject
-      page.find("#filters_date_range").click
-      within ".ranges" do
-        page.find('li[data-range-key="Last Month"]').click
-      end
+      date_range_picker_select_range "Last Month"
       click_on "Filter"
       expect(page).to have_css("table.records tbody tr", count: 2)
     end
