@@ -920,8 +920,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with today selected" do
           before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
+            date_range_picker_select_range "Today"
+            click_on "Filter"
           end
 
           let(:total_inventory) { @this_years_distributions[:today].line_items.total }
@@ -942,8 +942,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with yesterday selected" do
           before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
+            date_range_picker_select_range "Yesterday"
+            click_on "Filter"
           end
 
           let(:total_inventory) { @this_years_distributions[:yesterday].line_items.total }
@@ -964,8 +964,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "with this week selected" do
           before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
+            date_range_picker_select_range "Last 7 Days"
+            click_on "Filter"
           end
 
           let(:total_inventory) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:line_items).flatten.map(&:quantity).sum }

@@ -1,8 +1,8 @@
-def date_range_picker_params start_date, end_date
+def date_range_picker_params(start_date, end_date)
   "#{start_date.strftime('%m/%d/%Y')} - #{end_date.strftime('%m/%d/%Y')}"
 end
 
-def date_range_picker_select_range range_name
+def date_range_picker_select_range(range_name)
   page.find("#filters_date_range").click
   within ".ranges" do
     page.find("li[data-range-key='#{range_name}']").click

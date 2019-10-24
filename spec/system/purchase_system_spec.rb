@@ -25,7 +25,7 @@ RSpec.describe "Purchases", type: :system, js: true do
       expect(page).to have_text("Purchased Date")
       expect(page).to have_text(1.week.ago.strftime("%Y-%m-%d"))
     end
-  
+
     context "When filtering on the index page" do
       let!(:item) { create(:item) }
       let(:storage) { create(:storage_location) }

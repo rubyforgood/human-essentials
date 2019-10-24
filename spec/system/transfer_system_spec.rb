@@ -73,8 +73,8 @@ RSpec.describe "Transfer management", type: :system do
       click_button "Filter"
 
       expect(page).to have_css("table tr", count: 2)
-    end  
+    end
 
-    it_behaves_like "Date Range Picker", Transfer  
+    it_behaves_like "Date Range Picker", Transfer
   end
 end
