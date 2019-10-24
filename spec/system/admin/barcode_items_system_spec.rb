@@ -24,7 +24,7 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
 
     it "should edit an existing global barcode"
 
-    it "should delete a global barcode", focus: true do
+    it "should delete a global barcode" do
       visit admin_barcode_items_path
       page.refresh
 
