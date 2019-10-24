@@ -35,12 +35,8 @@
           </div><!-- /.row -->
           <div class="row">
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "from Date" %>
-              <%= date_field :dates, :date_from, class: "form-control", value: @date_from %>
-            </div>
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "to Date" %>
-              <%= date_field :dates, :date_to, class: "form-control", value: @date_to %>
+              <%= label_tag "Date Range" %>
+              <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
             </div>
           </div>
           <div class="row">
@@ -63,7 +59,7 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+            <table class="table table-hover striped records">
               <thead>
               <tr>
                 <th>Purchases from</th>
@@ -77,23 +73,22 @@
               </thead>
               <tbody>
               <%= render partial: "purchase_row", collection: @purchases %>
-              <tr>
-                <td><strong>Total</strong></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                  <strong id="purchase_quantity">
-                    <%= @purchases_quantity %> (Total)
-                  </strong>
-                  <br/>
-                  <%= @paginated_purchases_quantity %> (This page)
-                </td>
-                <td></td>
-                <td><strong><%= item_value(@total_value_all_purchases) %></strong></td>
-                <td></td>
-              </tr>
               </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="4" style="text-align: right"><strong>Total</strong></td>
+                  <td class="numeric">
+                    <strong id="purchase_quantity">
+                      <%= @purchases_quantity %> (Total)
+                    </strong>
+                    <br/>
+                    <%= @paginated_purchases_quantity %> (This page)
+                  </td>
+                  <td></td>
+                  <td><strong><%= item_value(@total_value_all_purchases) %></strong></td>
+                  <td></td>
+                </tr>
+              </tfoot>
             </table>
             <%= paginate @paginated_purchases %>
           </div><!-- /.box-body.table-responsive -->

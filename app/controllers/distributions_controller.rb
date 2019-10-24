@@ -33,6 +33,8 @@ class DistributionsController < ApplicationController
   end
 
   def index
+    setup_date_range_picker
+
     @highlight_id = session.delete(:created_distribution_id)
 
     @distributions = current_organization
@@ -41,6 +43,7 @@ class DistributionsController < ApplicationController
                      .includes(:partner, :storage_location, :line_items, :items)
                      .order(created_at: :desc)
                      .class_filter(filter_params)
+                     .during(helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
     @total_value_paginated_distributions = total_value(@paginated_distributions)
