@@ -23,13 +23,12 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
     end
 
     it "should edit an existing global barcode"
+
     it "should delete a global barcode", focus: true do
       visit admin_barcode_items_path
-      target_name = barcode_item.base_item.name
       page.refresh
 
-      options = page.all('option').map(&:text)
-      expect(options).to include(target_name)
+      expect(page).to have_css(".td_barcode_name", exact_text: barcode_item.base_item.name)
 
       expect(
         accept_confirm do
@@ -37,30 +36,7 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
         end
       ).to include "Are you sure you want to delete"
 
-      test_deletion_using_have_content = -> do
-        expect(page).not_to have_content target_name, exact: true
-      end
-
-      test_deletion_using_options = -> do
-        options = page.all('option').map(&:text)
-        expect(options).not_to include(target_name)
-      end
-
-      test_deletion_using_css = -> do
-        expect page.all('#tbl_barcode_items_name').include?(target_name)
-      end
-
-      test_deletion_using_have_css = -> do
-        expect(page).not_to have_css("#tbl_barcode_items_name", text: target_name)
-      end
-
-      test_deletion_using_options.()
-      test_deletion_using_have_content.()
-      test_deletion_using_css.()
-      test_deletion_using_have_css.()
-      # require 'pry'; binding.pry
-
-
+      expect(page).not_to have_css(".td_barcode_name", exact_text: barcode_item.base_item.name)
     end
 
     it "should view a barcode shows details about it"
