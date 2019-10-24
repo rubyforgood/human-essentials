@@ -56,7 +56,7 @@
                     <% @diaper_drive.donations.each do |donation| %>
                       <tr>
                         <td><%= link_to donation.id, donation %></td>
-                        <td><%= donation.diaper_drive_participant.business_name%></td>
+                        <td><%= donation.diaper_drive_participant_id ? donation.diaper_drive_participant.business_name : nil %></td>
                         <td><%= donation.storage_location.name %></td>
                         <td><%= donation.line_items.count(&:quantity) %></td>
                         <td><strong><%= item_value(donation.value_per_itemizable) %></strong></td>

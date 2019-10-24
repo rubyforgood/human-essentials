@@ -35,13 +35,13 @@
               <tbody>
                 <% @diaper_drives.each do |diaper_drive| %>
                   <tr>
-                    <td><%= diaper_drive.name %></td>
-                    <td><%= diaper_drive.start_date %></td>
-                    <td><%= diaper_drive.end_date %></td>
-                    <td><%= diaper_drive.donations.joins(:line_items).count('line_items.quantity') %></td>
-                    <td><%= diaper_drive.donations.joins(:items).distinct(:item_id).count %></td>
-                    <td><strong><%= item_value(diaper_drive.donations.count(&:value_per_itemizable)) %></strong></td>
-                    <td><%= view_button_to diaper_drive_path(diaper_drive.id) %></td>
+                    <td class="text-right"><%= diaper_drive.name %></td>
+                    <td class="text-right"><%= diaper_drive.start_date %></td>
+                    <td class="text-right"><%= diaper_drive.end_date %></td>
+                    <td class="text-right"><%= diaper_drive.donation_quantity %></td>
+                    <td class="text-right"><%= diaper_drive.distinct_items %></td>
+                    <td class="text-right"><strong><%= item_value(diaper_drive.in_kind_value) %></strong></td>
+                    <td class="text-right"><%= view_button_to diaper_drive_path(diaper_drive.id) %></td>
                   </tr>
                 <%end%>
               </tbody>
