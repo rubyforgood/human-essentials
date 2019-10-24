@@ -95,7 +95,7 @@ class DistributionsController < ApplicationController
       @storage_locations = current_organization.storage_locations.alphabetized
     else
       flash[:error] = 'To edit a distribution,
-      you must be an organization admin or the current date must be major then today.'
+      you must be an organization admin or the current date must be later than today.'
       redirect_to distributions_path
     end
   end
