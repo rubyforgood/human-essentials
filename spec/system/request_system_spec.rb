@@ -8,7 +8,7 @@ RSpec.describe "Requests", type: :system, js: true do
 
   context "While viewing the requests index page" do
     subject { url_prefix + "/requests" }
-    
+
     it "should list requests" do
       visit subject
       expect(page).to have_xpath("//h1", text: "Requests")
