@@ -54,42 +54,27 @@ RSpec.describe "Transfer management", type: :system do
     end
   end
 
-  it "can filter the #index by storage location both from and to as a user" do
-    from_storage_location = create(:storage_location, name: "here", organization: @organization)
-    to_storage_location = create(:storage_location, name: "there", organization: @organization)
-    create(:transfer, organization: @organization, from: from_storage_location, to: to_storage_location)
-    create(:transfer, organization: @organization, from: to_storage_location, to: from_storage_location)
+  context "when viewing the index page" do
+    subject { url_prefix + "/transfers" }
+    it "can filter the #index by storage location both from and to as a user" do
+      from_storage_location = create(:storage_location, name: "here", organization: @organization)
+      to_storage_location = create(:storage_location, name: "there", organization: @organization)
+      create(:transfer, organization: @organization, from: from_storage_location, to: to_storage_location)
+      create(:transfer, organization: @organization, from: to_storage_location, to: from_storage_location)
 
-    visit url_prefix + "/transfers"
-    select to_storage_location.name, from: "filters_to_location"
-    click_button "Filter"
+      visit subject
+      select to_storage_location.name, from: "filters_to_location"
+      click_button "Filter"
 
-    expect(page).to have_css("table tr", count: 2)
+      expect(page).to have_css("table tr", count: 2)
 
-    visit url_prefix + "/transfers"
-    select from_storage_location.name, from: "filters_from_location"
-    click_button "Filter"
+      visit subject
+      select from_storage_location.name, from: "filters_from_location"
+      click_button "Filter"
 
-    expect(page).to have_css("table tr", count: 2)
-  end
+      expect(page).to have_css("table tr", count: 2)
+    end  
 
-  it "can filter the #index by date" do
-    create(:transfer, created_at: Date.new(2040, 2, 1))
-    create(:transfer, created_at: Date.new(2040, 3, 1))
-    create(:transfer, created_at: Date.new(2040, 4, 1))
-    visit url_prefix + "/transfers"
-
-    fill_in "dates_date_to", with: "01/01/2041"
-    fill_in "dates_date_from", with: "02/01/2040"
-    click_button "Filter"
-    expect(page).to have_css("table tbody tr", count: 3)
-
-    fill_in "dates_date_from", with: "03/01/2040"
-    click_button "Filter"
-    expect(page).to have_css("table tbody tr", count: 2)
-
-    fill_in "dates_date_to", with: "03/30/2040"
-    click_button "Filter"
-    expect(page).to have_css("table tbody tr", count: 1)
+    it_behaves_like "Date Range Picker", Transfer  
   end
 end
