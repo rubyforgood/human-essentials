@@ -72,4 +72,33 @@ RSpec.describe "Transfer management", type: :system do
 
     expect(page).to have_css("table tr", count: 2)
   end
+
+  it "filters by date" do
+    from_storage_location_one = create(:storage_location, name: "here", organization: @organization)
+    to_storage_location_one = create(:storage_location, name: "there", organization: @organization)
+    create(:transfer, organization: @organization, from: from_storage_location_one, to: to_storage_location_one, created_at: Date.new(2018, 3, 1))
+    create(:transfer, organization: @organization, from: to_storage_location_one, to: from_storage_location_one, created_at: Date.new(2018, 2, 1))
+    from_storage_location_two = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
+    to_storage_location_two = create(:storage_location, :with_items, name: "To me", organization: @organization)
+    create(:transfer, organization: @organization, from: from_storage_location_two, to: to_storage_location_two, created_at: Date.new(2018, 3, 1))
+    create(:transfer, organization: @organization, from: to_storage_location_two, to: from_storage_location_two, created_at: Date.new(2018, 1, 1))
+    
+    visit url_prefix + "/transfers"
+
+    fill_in "dates_date_from", with: "02/01/2018"
+    click_button "Filter"
+    expect(page).to have_css("table tbody tr", count: 3)
+
+    fill_in "dates_date_from", with: "03/01/2018"
+    click_button "Filter"
+    expect(page).to have_css("table tbody tr", count: 2)
+
+    fill_in "dates_date_to", with: "03/01/2018"
+    click_button "Filter"
+    expect(page).to have_css("table tbody tr", count: 2)
+
+    fill_in "dates_date_to", with: "02/28/2018"
+    click_button "Filter"
+    expect(page).to have_css("table tbody tr", count: 0)
+  end
 end

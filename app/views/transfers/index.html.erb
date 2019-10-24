@@ -28,6 +28,14 @@
               <%= label_tag "To this Storage Location" %>
               <%= collection_select(:filters, :to_location, @to_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_to) }, class: "form-control") %>
             </div>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "From date" %>
+              <%= text_field_tag 'dates[date_from]', @date_from, { id: 'dates_date_from', placeholder: 'mm/dd/YYY', class: 'form-control', 'data-provide': 'datepicker' } %>
+            </div>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "To date" %>
+              <%= text_field_tag 'dates[date_to]', @date_to, { id: 'dates_date_to', placeholder: 'mm/dd/YYY', class: 'form-control', 'data-provide': 'datepicker' } %>
+            </div>
           </div><!-- /.row -->
           <div class="row">
             <div class="col-xs-12">
@@ -50,6 +58,7 @@
             <table class="table table-hover striped">
               <thead>
                 <tr>
+                  <th>Date</th>
                   <th>From</th>
                   <th>To</th>
                   <th>Comment</th>
@@ -58,7 +67,7 @@
                 </tr>
               </thead>
               <tbody>
-                <%= render partial: "transfer_row", collection: @transfers %>
+                <%= render partial: "transfer_row", collection: @transfers.order('created_at DESC') %>
               </tbody>
             </table>
           </div><!-- /.box-body.table-responsive -->

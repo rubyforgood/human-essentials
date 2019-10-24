@@ -24,9 +24,7 @@ module Dateable
 
     # Rails does a time-sensitive comparison, and the date is treated as 12:00 am that day
     # this means that timestamps for that day itself would be counted out
-    # calling end_of_day present this from happening
-    end_date.end_of_day
-
-    start_date..end_date
+    # calling end_of_day present this from happenin
+    start_date..end_date.end_of_day
   end
 end

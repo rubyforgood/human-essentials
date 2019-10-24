@@ -1,4 +1,5 @@
 <tr>
+  <td><%= transfer_row.created_at.strftime("%m/%d/%Y") %>
   <td><%= transfer_row.from.name %></td>
   <td><%= transfer_row.to.name %></td>
   <td><%= transfer_row.comment || "none" %></td>
