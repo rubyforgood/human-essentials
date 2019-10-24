@@ -123,7 +123,7 @@
               </div>
             </div>
             <div class="box-body text-center float-center">
-              <h3 class="text-center"><%= @recent_donations.by_source(:diaper_drive).map(&:diaper_drive).uniq.size %> Diaper Drives <%= display_interval %> for a total of <%= total_received_from_diaper_drives %> items collected</h3>
+              <h3 class="text-center"><%= @donations.by_source(:diaper_drive).map(&:diaper_drive).uniq.size %> Diaper Drives <%= display_interval %> for a total of <%= total_received_from_diaper_drives %> items collected</h3>
             </div>
             <div class="box-body">
               <div class="box-body text-center float-center">

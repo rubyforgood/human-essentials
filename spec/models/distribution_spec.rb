@@ -128,17 +128,6 @@ RSpec.describe Distribution, type: :model do
       end
     end
 
-    describe "#replace_distribution!" do
-      subject { create(:distribution, :with_items, item_quantity: 10) }
-      let(:attributes) { { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } } }
-
-      it "replaces a big distribution with a smaller one, resulting in increased stored quantities" do
-        expect do
-          subject.replace_distribution!(attributes)
-        end.to change { subject.storage_location.size }.by(8)
-      end
-    end
-
     describe "#future?" do
       let(:dist1)    { create(:distribution, issued_at: Time.zone.tomorrow) }
       let(:dist2)    { create(:distribution, issued_at: Time.zone.yesterday) }

@@ -3,7 +3,8 @@ class DashboardController < ApplicationController
   respond_to :html, :js
 
   def index
-    @recent_donations = current_organization.donations.includes(:line_items).during(helpers.selected_range).recent
+    @donations = current_organization.donations.includes(:line_items).during(helpers.selected_range)
+    @recent_donations = @donations.recent
     @purchases = current_organization.purchases.includes(:line_items).during(helpers.selected_range)
     @recent_purchases = @purchases.recent
 

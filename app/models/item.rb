@@ -100,14 +100,15 @@ class Item < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Barcodes", "Base Item"]
+    ["Name", "Barcodes", "Base Item", "Quantity"]
   end
 
   def csv_export_attributes
     [
       name,
       barcode_count,
-      base_item.name
+      base_item.name,
+      inventory_items.sum(&:quantity)
     ]
   end
 

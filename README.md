@@ -119,6 +119,20 @@ example:
   end
 ```
 
+##### Feature specs
+
+If you need to see a feature spec run in the browser, you can use the following env variable:
+
+```
+NOT_HEADLESS=true bundle exec rspec
+```
+
+Keep in mind that you need js to be enabled. For example:
+
+```
+describe "PickupSheet", type: :feature, js: true do
+```
+
 ### In-flight Pull Requests
 
 Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
