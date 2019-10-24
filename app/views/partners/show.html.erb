@@ -76,13 +76,13 @@
             exists in the Partnerbase system. If a user with that email exists it will send them a password reminder.
             </p>
             <br/>
-            <br/>
             <%= form_tag re_invite_partner_path do %>
               <div class="input-group">
                 <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
                 <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
                 <%= hidden_field_tag :partner , @partner.id %><br>
               </div>
+              <br>
               <%= submit_button({text: "Invite User", icon: "envelope"}) %>
             <% end # form %>
           </div><!-- box-body -->
