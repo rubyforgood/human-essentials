@@ -83,6 +83,27 @@
         <div class="row">
           <div class="col-12">
             <div class="card mb-4">
+            <h5 class="card-header bg-primary text-white">Children Information</h5>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Date of birth</th>
+                    <th scope="col">Gender</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @family.children.each do |child| %>
+                    <tr>
+                      <td><%= child.display_name %></td>
+                      <td><%= child.date_of_birth %></td>
+                      <td><%= child.gender %></td>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card mb-4">
             <h5 class="card-header bg-primary text-white">Authorized Members for Pick Up</h5>
               <table class="table table-striped">
                 <thead>
@@ -100,27 +121,6 @@
                       <td><%= member.last_name %></td>
                       <td><%= member.date_of_birth %></td>
                       <td><%= member.comments %></td>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="card mb-4">
-            <h5 class="card-header bg-primary text-white">Children Information</h5>
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Date of birth</th>
-                    <th scope="col">Gender</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @family.children.each do |child| %>
-                    <tr>
-                      <td><%= child.display_name %></td>
-                      <td><%= child.date_of_birth %></td>
-                      <td><%= child.gender %></td>
                   <% end %>
                 </tbody>
               </table>
