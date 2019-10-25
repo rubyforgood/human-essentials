@@ -83,7 +83,7 @@
                   <th>Donation Site</th>
                   <th>Storage Location</th>
                   <th class="numeric">Quantity of Items</th>
-                  <th class="numeric">Variety of Items</th>
+                  <th class="numeric">Money Raised</th>
                   <th class="numeric">In Kind Value</th>
                   <th class="pull-right">Actions</th>
                 </tr>
@@ -104,7 +104,7 @@
                   <br />
                     <%= @paginated_donations_quantity %> (This page)
                   </td>
-                  <td></td>
+                  <td class="numeric"><strong><%= item_value(@total_money_raised) %><strong></td>
                   <td class="numeric"><strong><%= item_value(@total_value_all_donations) %></strong></td>
                   <td></td>
                 </tr>
