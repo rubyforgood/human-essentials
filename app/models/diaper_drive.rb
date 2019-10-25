@@ -18,4 +18,16 @@ class DiaperDrive < ApplicationRecord
   validates :start_date, presence:
     { message: "Please enter a start date." }
   scope :alphabetized, -> { order(:name) }
+
+  def donation_quantity
+    donations.joins(:line_items).count('line_items.quantity')
+  end
+
+  def distinct_items
+    donations.joins(:items).distinct(:item_id).count
+  end
+
+  def in_kind_value
+    donations.count(&:value_per_itemizable)
+  end
 end
