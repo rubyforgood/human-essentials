@@ -25,10 +25,12 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
     it "should edit an existing global barcode"
 
     it "should delete a global barcode" do
+
       visit admin_barcode_items_path
       page.refresh
-      have_barcode_in_table = have_css(".td_barcode_name", exact_text: barcode_item.base_item.name)
-      expect(page).to have_barcode_in_table
+
+      barcode_names_in_table = Nokogiri::HTML(page.body).css('.td_barcode_name').map(&:text)
+      expect(barcode_names_in_table).to include(barcode_item.base_item.name)
 
       expect(
         accept_confirm do
@@ -36,7 +38,8 @@ RSpec.describe "Barcode Items Admin", type: :system, js: true do
         end
       ).to include "Are you sure you want to delete"
 
-      expect(page).not_to have_barcode_in_table
+      barcode_names_in_table = Nokogiri::HTML(page.body).css('.td_barcode_name').map(&:text)
+      expect(barcode_names_in_table).not_to include(barcode_item.base_item.name)
     end
 
     it "should view a barcode shows details about it"
