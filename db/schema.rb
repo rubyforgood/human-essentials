@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_20_165853) do
+ActiveRecord::Schema.define(version: 2019_10_25_230639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,7 +156,7 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
     t.integer "organization_id"
     t.integer "diaper_drive_participant_id"
     t.datetime "issued_at"
-    t.integer "money_raised"
+    t.float "money_raised"
     t.bigint "manufacturer_id"
     t.bigint "diaper_drive_id"
     t.index ["diaper_drive_id"], name: "index_donations_on_diaper_drive_id"
