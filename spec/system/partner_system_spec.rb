@@ -24,6 +24,13 @@ RSpec.describe "Partner management", type: :system, js: true do
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[4]")).to have_no_content('Invite')
     end
 
+    it "shows add user modal for partners" do
+      expect(page.find(:xpath, "//table/tbody/tr[1]/td[5]")).to have_content('Add User')
+      expect(page.find(:xpath, "//table/tbody/tr[2]/td[5]")).to have_content('Add User')
+      expect(page.find(:xpath, "//table/tbody/tr[3]/td[5]")).to have_content('Add User')
+      expect(page.find(:xpath, "//table/tbody/tr[4]/td[5]")).to have_content('Add User')
+    end
+
     context "when filtering" do
       it "allows the user to click on one of the statuses at the top to filter the results" do
         approved_count = Partner.approved.count

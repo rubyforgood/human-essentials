@@ -1,4 +1,5 @@
 <% status = partner_row.status%>
+<%= render partial: "add_user_modal", locals: { partner: partner_row } %>
 <tr>
   <td><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
@@ -8,7 +9,6 @@
       <button class="btn btn-xs bg-teal">Uninvited</button>
     <% when "invited" %>
       <%= view_button_to "#", { text: "#{status.humanize}", icon: "check" } %>
-
     <% when "awaiting_review" %>
       <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "warning" } %>
     <% when "approved" %>
@@ -34,5 +34,8 @@
     <% else %>
       &nbsp;
     <% end %>
+  </td>
+  <td>
+    <%= modal_button_to("#addUserModal_#{partner_row.id}", { text: "Add User", icon: "plus", size: "xs" }) %>
   </td>
 </tr>
