@@ -52,7 +52,6 @@
                   </thead>
                   
                   <tbody>
-                  <%# <%= link_to 'Back', diaper_drives_path %>
                     <% @diaper_drive.donations.each do |donation| %>
                       <tr>
                         <td><%= link_to donation.id, donation %></td>
@@ -67,9 +66,6 @@
               </div>
             </div>
           </div>
-        <!--
-        TODO: What's the best way to do this? Should we use a new workflow?
-        -->
         </section>
       </fieldset>
     </div>
