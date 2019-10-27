@@ -28,6 +28,6 @@ class DiaperDrive < ApplicationRecord
   end
 
   def in_kind_value
-    donations.count(&:value_per_itemizable)
+    donations.sum(&:value_per_itemizable)
   end
 end
