@@ -51,6 +51,16 @@ RSpec.describe Donation, type: :model do
       d.line_items << build(:line_item, quantity: nil)
       expect(d).not_to be_valid
     end
+    it "is invalid when money raised has more than 2 decimal places" do
+      d = build(:donation)
+      d.money_raised = 1.123
+      expect(d).not_to be_valid
+    end
+    it "is valid when money raised has not more than 2 decimal places" do
+      d = build(:donation)
+      d.money_raised = 1.12
+      expect(d).to be_valid
+    end
   end
 
   context "Callbacks >" do
