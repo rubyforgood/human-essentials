@@ -62,6 +62,7 @@ class Donation < ApplicationRecord
                            if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values,
                                                   message: "Must be a valid source." }
+  validates :money_raised, format: { with: /\A\d+(?:\.\d{0,2})?\z/ }, numericality: { greater_than: 0 }, allow_nil: true
 
   include IssuedAt
 

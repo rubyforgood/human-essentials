@@ -239,13 +239,15 @@ end
                                 diaper_drive_participant: random_record_for_org(pdx_org, DiaperDriveParticipant),
                                 storage_location:         random_record_for_org(pdx_org, StorageLocation),
                                 organization:             pdx_org,
-                                issued_at:                Time.zone.now
+                                issued_at:                Time.zone.now,
+                                money_raised:             (rand * 100).round(2)
              when Donation::SOURCES[:donation_site]
                Donation.create! source:           source,
                                 donation_site:    random_record_for_org(pdx_org, DonationSite),
                                 storage_location: random_record_for_org(pdx_org, StorageLocation),
                                 organization:     pdx_org,
-                                issued_at:        Time.zone.now
+                                issued_at:        Time.zone.now,
+                                money_raised:     (rand * 100).round(2)
              when Donation::SOURCES[:manufacturer]
                Donation.create! source:           source,
                                 manufacturer:     random_record_for_org(pdx_org, Manufacturer),
