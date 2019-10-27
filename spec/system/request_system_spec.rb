@@ -7,13 +7,14 @@ RSpec.describe "Requests", type: :system, js: true do
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
   context "While viewing the requests index page" do
-    before(:each) do
-      visit url_prefix + "/requests"
-    end
+    subject { url_prefix + "/requests" }
 
     it "should list requests" do
+      visit subject
       expect(page).to have_xpath("//h1", text: "Requests")
     end
+
+    it_behaves_like "Date Range Picker", Request
   end
 
   context "While viewing the request page" do

@@ -35,6 +35,25 @@ RSpec.describe AdjustmentsController, type: :controller do
         get :index, params: default_params, session: valid_session
         expect(response).to be_successful
       end
+
+      context 'when filtering by date' do
+        let!(:old_adjustment) { create(:adjustment, created_at: 7.days.ago) }
+        let!(:new_adjustment) { create(:adjustment, created_at: 1.day.ago) }
+
+        context 'when date parameters are supplied' do
+          it 'only returns the correct objects' do
+            get :index, params: default_params.merge(filters: { date_range: date_range_picker_params(3.days.ago, Time.zone.today) })
+            expect(assigns(:adjustments)).to contain_exactly(new_adjustment)
+          end
+        end
+
+        context 'when date parameters are not supplied' do
+          it 'returns all objects' do
+            get :index, params: default_params
+            expect(assigns(:adjustments)).to contain_exactly(old_adjustment, new_adjustment)
+          end
+        end
+      end
     end
 
     describe "GET #show" do

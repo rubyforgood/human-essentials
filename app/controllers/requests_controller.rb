@@ -1,8 +1,11 @@
 # Provides Read-only access to Requests, which are created via an API. Requests are transformed into Distributions.
 class RequestsController < ApplicationController
   def index
+    setup_date_range_picker
+
     @paginated_requests = current_organization
                           .ordered_requests
+                          .during(helpers.selected_range)
                           .page(params[:page])
     respond_to do |format|
       format.html

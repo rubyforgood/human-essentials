@@ -18,7 +18,20 @@
     <div class="box">
         <div class="box-header with-border bg-gray">
             <section id="filters">
-                <!-- TBA -- style after other #index views -->
+                <%= form_tag(requests_path, method: :get) do |f| %>
+                  <div class="row">
+                    <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                      <%= label_tag "Date Range" %>
+                      <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <%= filter_button %>
+                      <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
+                    </div>
+                  </div><!-- /.row -->
+                <% end # form %>
             </section><!-- /#filters -->
         </div><!-- /.box-header -->
         <div class="box-body">
@@ -26,7 +39,7 @@
                 <div class="col-xs-12">
                     <!-- /.box-header -->
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover striped">
+                        <table class="table table-hover striped records">
                             <thead>
                                 <tr>
                                     <th class="date">Date</th>
