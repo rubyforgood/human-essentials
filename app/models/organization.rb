@@ -43,7 +43,7 @@ class Organization < ApplicationRecord
   has_many :donations, dependent: :destroy
   has_many :purchases, dependent: :destroy
   has_many :donation_sites, dependent: :destroy
-  has_many :diaper_drives, dependent: :nullify
+  has_many :diaper_drives, dependent: :destroy
   has_many :diaper_drive_participants, dependent: :destroy
   has_many :manufacturers, dependent: :destroy
   has_many :vendors, dependent: :destroy
