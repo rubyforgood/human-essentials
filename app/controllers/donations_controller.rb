@@ -8,11 +8,14 @@ class DonationsController < ApplicationController
   include Dateable
 
   def index
+    setup_date_range_picker
+
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
                                      .where(issued_at: date_range)
                                      .class_filter(filter_params)
+                                     .during(helpers.selected_range)
     @paginated_donations = @donations.page(params[:page])
 
     @diaper_drives = current_organization.diaper_drives.alphabetized
@@ -33,8 +36,6 @@ class DonationsController < ApplicationController
     @selected_diaper_participant_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
-    @date_from = date_params[:date_from]
-    @date_to = date_params[:date_to]
   end
 
   def scale

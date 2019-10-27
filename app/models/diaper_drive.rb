@@ -20,7 +20,7 @@ class DiaperDrive < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
 
   def donation_quantity
-    donations.joins(:line_items).count('line_items.quantity')
+    donations.joins(:line_items).sum('line_items.quantity')
   end
 
   def distinct_items

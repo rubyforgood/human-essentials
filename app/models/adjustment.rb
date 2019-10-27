@@ -24,6 +24,7 @@ class Adjustment < ApplicationRecord
     where(organization: organization)
       .includes(:storage_location, :line_items)
   }
+  scope :during, ->(range) { where(adjustments: { created_at: range }) }
 
   validates :storage_location, :organization, presence: true
   validate :negative_line_item_items_exist_in_inventory

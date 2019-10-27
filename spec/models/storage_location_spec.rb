@@ -148,8 +148,8 @@ RSpec.describe StorageLocation, type: :model do
     describe "inventory_total_value_in_dollars" do
       it "returns total value of all items in this storage location" do
         storage_location = create(:storage_location)
-        item1 = create(:item, value_in_cents: 100)
-        item2 = create(:item, value_in_cents: 200)
+        item1 = create(:item, value_in_cents: 1_00)
+        item2 = create(:item, value_in_cents: 2_00)
         create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 10)
         create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 10)
         expect(storage_location.inventory_total_value_in_dollars).to eq(30)

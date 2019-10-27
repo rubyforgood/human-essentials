@@ -5,8 +5,9 @@ RSpec.describe "Purchases", type: :system, js: true do
   end
 
   context "When visiting the index page" do
+    subject { url_prefix + "/purchases" }
     before(:each) do
-      visit url_prefix + "/purchases"
+      visit subject
     end
 
     it "User can click to the new purchase form" do
@@ -18,65 +19,43 @@ RSpec.describe "Purchases", type: :system, js: true do
 
     it "User sees purchased date column" do
       storage1 = create(:storage_location, name: "storage1")
-      purchase_date = Time.zone.parse("Dec 8 1971 10:19")
-      create(:purchase, storage_location: storage1, created_at: purchase_date)
+      purchase_date = 1.week.ago
+      create(:purchase, storage_location: storage1, issued_at: purchase_date)
       page.refresh
       expect(page).to have_text("Purchased Date")
-      expect(page).to have_text("1971-12-08")
-    end
-  end
-
-  context "When filtering on the index page" do
-    let!(:item) { create(:item) }
-    let(:storage) { create(:storage_location) }
-    subject { url_prefix + "/purchases" }
-
-    it "User can filter the #index by storage location" do
-      storage1 = create(:storage_location, name: "storage1")
-      storage2 = create(:storage_location, name: "storage2")
-      create(:purchase, storage_location: storage1)
-      create(:purchase, storage_location: storage2)
-      visit subject
-      expect(page).to have_css("table tbody tr", count: 3)
-      select storage1.name, from: "filters_at_storage_location"
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 2)
+      expect(page).to have_text(1.week.ago.strftime("%Y-%m-%d"))
     end
 
-    it "User can filter the #index by vendor" do
-      vendor1 = create(:vendor, business_name: "vendor 1")
-      vendor2 = create(:vendor, business_name: "vendor 2")
-      create(:purchase, vendor: vendor1)
-      create(:purchase, vendor: vendor2)
-      visit subject
-      expect(page).to have_css("table tbody tr", count: 3)
-      select vendor1.business_name, from: "filters_from_vendor"
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 2)
-    end
+    context "When filtering on the index page" do
+      let!(:item) { create(:item) }
+      let(:storage) { create(:storage_location) }
+      subject { url_prefix + "/purchases" }
 
-    it "Filters by date" do
-      storage = create(:storage_location, name: "storage")
-      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 3, 1))
-      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 3, 1))
-      create(:purchase, storage_location: storage, issued_at: Date.new(2018, 2, 1))
+      it "User can filter the #index by storage location" do
+        storage1 = create(:storage_location, name: "storage1")
+        storage2 = create(:storage_location, name: "storage2")
+        create(:purchase, storage_location: storage1)
+        create(:purchase, storage_location: storage2)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select storage1.name, from: "filters_at_storage_location"
+        click_button "Filter"
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
 
-      visit subject
-      fill_in("dates[date_from]", with: "01/01/2018").send_keys(:escape)
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 4)
+      it "User can filter the #index by vendor" do
+        vendor1 = create(:vendor, business_name: "vendor 1")
+        vendor2 = create(:vendor, business_name: "vendor 2")
+        create(:purchase, vendor: vendor1)
+        create(:purchase, vendor: vendor2)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select vendor1.business_name, from: "filters_from_vendor"
+        click_button "Filter"
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
 
-      fill_in("dates_date_from", with: "03/01/2018").send_keys(:escape)
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 3)
-
-      fill_in("dates_date_to", with: "03/01/2018").send_keys(:escape)
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 3)
-
-      fill_in("dates_date_to", with: "02/28/2018").send_keys(:escape)
-      click_button "Filter"
-      expect(page).to have_css("table tbody tr", count: 1)
+      it_behaves_like "Date Range Picker", Purchase, :issued_at
     end
   end
 
