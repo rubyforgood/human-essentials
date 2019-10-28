@@ -61,6 +61,11 @@ RSpec.describe Donation, type: :model do
       d.money_raised = 1.12
       expect(d).to be_valid
     end
+    it "is valid when money raised is a whole number" do
+      d = build(:donation)
+      d.money_raised = 2
+      expect(d).to be_valid
+    end
   end
 
   context "Callbacks >" do
