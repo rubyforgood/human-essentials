@@ -22,7 +22,7 @@ class Manufacturer < ApplicationRecord
 
   def volume
     # returns 0 instead of nil when Manufacturer exists without any donations
-    donations.map { |d| d.line_items.total }.reduce(:+) || 0
+    donations.joins(:line_items).sum(:quantity)
   end
 
   def self.by_donation_count(count = 10)
