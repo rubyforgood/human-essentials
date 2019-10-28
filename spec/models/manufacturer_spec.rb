@@ -31,6 +31,21 @@ RSpec.describe Manufacturer, type: :model do
         create(:donation, :with_items, item_quantity: 15, source: Donation::SOURCES[:manufacturer], manufacturer: mfg)
         expect(mfg.volume).to eq(15)
       end
+
+      it "retrieves the amount of product that has been donated by manufacturer from multiple donations" do
+        mfg = create(:manufacturer)
+        create(:donation, :with_items, item_quantity: 15, source: Donation::SOURCES[:manufacturer], manufacturer: mfg)
+        create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:manufacturer], manufacturer: mfg)
+        expect(mfg.volume).to eq(25)
+      end
+
+      it "ignores the amount of product from other manufacturers" do
+        mfg = create(:manufacturer)
+        mfg2 = create(:manufacturer)
+        create(:donation, :with_items, item_quantity: 5, source: Donation::SOURCES[:manufacturer], manufacturer: mfg)
+        create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:manufacturer], manufacturer: mfg2)
+        expect(mfg.volume).to eq(5)
+      end
     end
   end
 end
