@@ -1,10 +1,12 @@
 <div class="app-title">
   <div>
-    <h1><i class="fa fa-new"></i>Editing Family</h1>
+    <h1><i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;Edit Family</h1>
   </div>
   <ul class="app-breadcrumb breadcrumb">
-    <li class="breadcrumb-item"><i class="fa fa-users"></i></li>
-    <li class="breadcrumb-item"><a href="#">Editing Family</a></li>
+    <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+    <li class="breadcrumb-item"><a href="<%= families_path %>">All Families</a></li>
+    <li class="breadcrumb-item"><a href="<%= family_path(@family) %>">The <%= "#{@family.guardian_last_name}" %> Family</a></li>
+    <li class="breadcrumb-item"><a href="#">Edit</a></li>
   </ul>
 </div>
 
