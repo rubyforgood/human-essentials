@@ -1,9 +1,10 @@
 <div class="app-title">
   <div>
-    <h1><i class="fa fa-new"></i>New Authorized Family Member</h1>
+    <h1><i class="fa fa-user"></i>&nbsp;&nbsp;New Authorized Family Member</h1>
   </div>
   <ul class="app-breadcrumb breadcrumb">
-    <li class="breadcrumb-item"><i class="fa fa-user"></i></li>
+    <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+    <li class="breadcrumb-item"><a href="<%= family_path(@authorized_family_member.family) %>">The <%= "#{@authorized_family_member.family.guardian_last_name}" %> Family</a></li>
     <li class="breadcrumb-item"><a href="#">New Authorized Family Member</a></li>
   </ul>
 </div>
