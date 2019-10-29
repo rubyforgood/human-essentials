@@ -4,6 +4,7 @@ class DiaperDrivesController < ApplicationController
   # GET /diaper_drives
   # GET /diaper_drives.json
   def index
+    setup_date_range_picker
     @diaper_drives = DiaperDrive.all
   end
 
