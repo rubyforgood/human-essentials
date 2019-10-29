@@ -234,15 +234,8 @@ RSpec.describe Organization, type: :model do
 
   describe "geocode" do
     it "adds coordinates to the database" do
-      pending("TODO: This spec is failing but the fix is out of scope for the PR")
-      organization = build(:organization,
-                           "street" => "1500 Remount Road",
-                           "city" => "Front Royal",
-                           "state" => "VA",
-                           "zipcode" => "12345")
-      organization.save
-      expect(organization.latitude).not_to eq(nil)
-      expect(organization.longitude).not_to eq(nil)
+      expect(organization.latitude).to be_a(Float)
+      expect(organization.longitude).to be_a(Float)
     end
   end
 
