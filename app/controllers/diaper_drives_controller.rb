@@ -77,6 +77,7 @@ class DiaperDrivesController < ApplicationController
 
   def date_range_filter
     return '' unless params.key?(:filters)
+
     params.require(:filters)[:date_range]
   end
 
