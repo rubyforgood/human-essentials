@@ -5,7 +5,10 @@ class DiaperDrivesController < ApplicationController
   # GET /diaper_drives.json
   def index
     setup_date_range_picker
-    @diaper_drives = DiaperDrive.all
+    @diaper_drives = DiaperDrive.class_filter(filter_params)
+                                .within_date_rage(date_range_filter)
+                                .order(created_at: :desc)
+    @selected_name_filter = filter_params[:by_name]
   end
 
   # GET /diaper_drives/1
@@ -70,5 +73,16 @@ class DiaperDrivesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def diaper_drive_params
     params.require(:diaper_drive).permit(:name, :start_date, :end_date)
+  end
+
+  def date_range_filter
+    return '' unless params.key?(:filters)
+    params.require(:filters)[:date_range]
+  end
+
+  def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).slice(:by_name)
   end
 end

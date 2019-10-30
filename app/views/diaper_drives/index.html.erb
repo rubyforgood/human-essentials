@@ -10,7 +10,7 @@
         <div class="row">
           <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <%= label_tag "by name" %>
-            <%= collection_select(:filters, :name, @diaper_drives || {}, :id, :name, { include_blank: true }, class: "form-control") %>
+            <%= collection_select(:filters, :by_name, @diaper_drives || {}, :name, :name, { include_blank: true, selected: @selected_name_filter }, class: "form-control") %>
           </div>
           <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <%= label_tag "Date Range" %>
