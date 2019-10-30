@@ -144,4 +144,14 @@ RSpec.describe DataExport, type: :model do
       end
     end
   end
+
+  describe 'SUPPORTED_TYPES' do
+    specify 'the array cannot be modified' do
+      expect(-> { DataExport::SUPPORTED_TYPES << 'foo' }).to raise_error(FrozenError)
+    end
+
+    specify 'elements in the array cannot be modified' do
+      expect(-> { DataExport::SUPPORTED_TYPES.map { |s| s << 'foo' } }).to raise_error(FrozenError)
+    end
+  end
 end

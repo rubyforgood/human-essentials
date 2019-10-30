@@ -192,5 +192,13 @@ RSpec.describe Donation, type: :model do
       expect(Donation::SOURCES).to have_key(:donation_site)
       expect(Donation::SOURCES).to have_key(:misc)
     end
+
+    specify 'the hash is immutable' do
+      expect(-> { Donation::SOURCES[:foo] = 'bar' }).to raise_error(FrozenError)
+    end
+
+    specify 'the hash values are immutable' do
+      expect(-> { Donation::SOURCES.values.map { |s| s << 'bar' } }).to raise_error(FrozenError)
+    end
   end
 end
