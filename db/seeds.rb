@@ -161,6 +161,10 @@ end
 # ----------------------------------------------------------------------------
 
 [
+  { name:        "First Diaper Drive",
+    start_date:  3.years.ago,
+    end_date:    3.years.ago
+  },
   { name:        "Best Diaper Drive",
     start_date:  3.weeks.ago,
     end_date:    2.week.ago
