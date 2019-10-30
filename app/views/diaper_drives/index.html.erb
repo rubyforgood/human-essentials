@@ -30,32 +30,38 @@
         <% end %>
       </section>
     </div>
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover striped records">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Start date</th>
+                <th>End date</th>
+                <th colspan="3"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @diaper_drives.each do |diaper_drive| %>
+                <tr>
+                  <td><%= diaper_drive.name %></td>
+                  <td><%= diaper_drive.start_date %></td>
+                  <td><%= diaper_drive.end_date %></td>
+                  <td><%= link_to 'Show', diaper_drive %></td>
+                  <td><%= link_to 'Edit', edit_diaper_drive_path(diaper_drive) %></td>
+                  <td><%= link_to 'Destroy', diaper_drive, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Start date</th>
-      <th>End date</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @diaper_drives.each do |diaper_drive| %>
-      <tr>
-        <td><%= diaper_drive.name %></td>
-        <td><%= diaper_drive.start_date %></td>
-        <td><%= diaper_drive.end_date %></td>
-        <td><%= link_to 'Show', diaper_drive %></td>
-        <td><%= link_to 'Edit', edit_diaper_drive_path(diaper_drive) %></td>
-        <td><%= link_to 'Destroy', diaper_drive, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
 
 <br>
 
