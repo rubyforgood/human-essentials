@@ -12,7 +12,7 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
     before(:each) do
       @diaper_drives = [
         create(:diaper_drive, name: "Test name 1", start_date: 3.weeks.ago, end_date: 2.weeks.ago),
-        create(:diaper_drive, name: "Test name 2", start_date: 2.weeks.ago, end_date: 1.weeks.ago)
+        create(:diaper_drive, name: "Test name 2", start_date: 2.weeks.ago, end_date: 1.week.ago)
       ]
       visit subject
     end
