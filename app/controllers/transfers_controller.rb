@@ -21,7 +21,12 @@ class TransfersController < ApplicationController
   def create
     @transfer = current_organization.transfers.new(transfer_params)
 
-    if @transfer.valid?
+    if !@transfer.valid? || @transfer.from_id == @transfer.to_id
+      load_form_collections
+      @transfer.line_items.build if @transfer.line_items.empty?
+      flash[:error] = !@transfer.valid? ? "There was an error creating the transfer" : "'From' and 'To' Storage Locations must be different"
+      render :new
+    else
       ActiveRecord::Base.transaction do
         @transfer.save
         @transfer.from.decrease_inventory @transfer
@@ -29,11 +34,6 @@ class TransfersController < ApplicationController
       end
 
       redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
-    else
-      flash[:error] = "There was an error creating the transfer"
-      load_form_collections
-      @transfer.line_items.build if @transfer.line_items.empty?
-      render :new
     end
   rescue Errors::InsufficientAllotment => ex
     flash[:error] = ex.message
