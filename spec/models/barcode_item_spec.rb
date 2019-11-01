@@ -127,8 +127,7 @@ RSpec.describe BarcodeItem, type: :model do
         barcode_item
         create(:barcode_item)
         results = BarcodeItem.barcodeable_id(item.id)
-        expect(results.length).to eq(1)
-        expect(results.first).to eq(barcode_item)
+        expect(results).to eq([barcode_item])
       end
     end
 
