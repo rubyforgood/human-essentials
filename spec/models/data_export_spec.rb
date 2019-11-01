@@ -151,7 +151,9 @@ RSpec.describe DataExport, type: :model do
     end
 
     specify 'elements in the array cannot be modified' do
-      expect(-> { DataExport::SUPPORTED_TYPES.map { |s| s << 'foo' } }).to raise_error(FrozenError)
+      DataExport::SUPPORTED_TYPES.each do |frozen_string|
+        expect(-> { frozen_string << 'foo' }).to raise_error(FrozenError)
+      end
     end
   end
 end

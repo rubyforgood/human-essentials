@@ -198,7 +198,9 @@ RSpec.describe Donation, type: :model do
     end
 
     specify 'the hash values are immutable' do
-      expect(-> { Donation::SOURCES.values.map { |s| s << 'bar' } }).to raise_error(FrozenError)
+      Donation::SOURCES.values.each do |frozen_string|
+        expect(-> { frozen_string << 'bar' }).to raise_error(FrozenError)
+      end
     end
   end
 end
