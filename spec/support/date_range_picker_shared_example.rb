@@ -47,16 +47,9 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   context "when choosing a date range that only includes the previous week" do
     it "shows only 1 record" do
       visit subject
-      page.find("#filters_date_range").click
-      within ".ranges" do
-        page.find('li[data-range-key="Custom Range"]').click
-      end
-      within ".drp-calendar.left .calendar-table", match: :first do
-        8.times { page.find('th.next span').click }
-        page.find('td', text: '11', match: :first, exact_text: true).click
-        page.all('td', text: '27').last.click
-      end
-      click_on "Filter"
+      date_range = "#{1.week.ago.beginning_of_week.strftime("%m/%d/%Y")} - #{1.week.ago.end_of_week.strftime("%m/%d/%Y")}"
+      fill_in "filters_date_range", with: date_range
+      find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table.records tbody tr", count: 1)
     end
   end
