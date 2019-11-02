@@ -87,8 +87,12 @@ RSpec.describe Distribution, type: :model do
     it "initializes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
       today = Time.zone.today
-      expect(create(:distribution, created_at: yesterday, issued_at: today).issued_at).to eq(today)
-      expect(create(:distribution, created_at: yesterday).issued_at).to eq(yesterday)
+
+      distribution = create(:distribution, created_at: yesterday, issued_at: today)
+      expect(distribution.issued_at.to_date).to eq(today)
+
+      distribution = create(:distribution, created_at: yesterday)
+      expect(distribution.issued_at).to eq(distribution.created_at)
     end
   end
 
@@ -100,12 +104,12 @@ RSpec.describe Distribution, type: :model do
     describe "#distributed_at" do
       it "displays explicit issued_at date" do
         two_days_ago = 2.days.ago.midnight
-        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00 UTC")
+        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00")
         expect(create(:distribution, issued_at: two_days_ago).distributed_at).to eq(two_days_ago.to_s(:distribution_date))
       end
 
       it "shows the hour and minutes if it has been provided" do
-        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00 UTC")
+        distribution.issued_at = Time.zone.parse("2014-03-01 14:30:00")
         expect(distribution.distributed_at).to eq("March 1 2014 2:30pm")
       end
     end

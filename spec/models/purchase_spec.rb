@@ -35,8 +35,12 @@ RSpec.describe Purchase, type: :model do
     it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
       today = Time.zone.today
-      expect(create(:purchase, created_at: yesterday, issued_at: today).issued_at).to eq(today)
-      expect(create(:purchase, created_at: yesterday).issued_at).to eq(yesterday)
+
+      purchase = create(:purchase, created_at: yesterday, issued_at: today)
+      expect(purchase.issued_at.to_date).to eq(today)
+
+      purchase = create(:purchase, created_at: yesterday)
+      expect(purchase.issued_at).to eq(purchase.created_at)
     end
 
     it "automatically combines duplicate line_item records when they're created" do
