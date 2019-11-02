@@ -13,6 +13,9 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   before :each do
     date_field ||= "created_at"
     travel_to 1.month.ago.end_of_month
+    # In case the described class/parent spec has already created instances in a `before` block
+    # I'm looking at you, spec/system/request_system_spec.rb:4
+    described_class.destroy_all
   end
 
   after do
