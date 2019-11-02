@@ -76,7 +76,7 @@ RSpec.describe User, type: :model do
       expect(build(:user).kind).to eq("normal")
     end
 
-    it "#reinvatable?" do
+    it "#reinvitable?" do
       expect(build(:user, invitation_sent_at: Time.current - 7.days).reinvitable?).to be true
       expect(build(:user, invitation_sent_at: Time.current - 6.days).reinvitable?).to be false
       expect(build(:user, invitation_sent_at: Time.current - 7.days, invitation_accepted_at: Time.current - 7.days).reinvitable?).to be false
