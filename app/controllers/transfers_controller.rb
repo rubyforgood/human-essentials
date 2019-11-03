@@ -1,7 +1,5 @@
 # Provides partial CRUD for managing Transfers, which move inventory from one storage location to another
 class TransfersController < ApplicationController
-  include Dateable
-
   def index
     setup_date_range_picker
 
@@ -9,7 +7,6 @@ class TransfersController < ApplicationController
                                      .includes(:line_items)
                                      .includes(:from)
                                      .includes(:to)
-                                     .where(created_at: date_range)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
     @selected_from = filter_params[:from_location]
