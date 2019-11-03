@@ -897,7 +897,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         context "When Date Filtering >" do
-
           context "with year-to-date selected" do
             before do
               date_range_picker_select_range "This Year"
