@@ -546,7 +546,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             it "has a widget displaying the Diaper drive totals from yesterday, only using donations from yesterday" do
               within "#diaper_drives" do
-                expect(page).to have_content(/2 diaper drive/i)
+                expect(page).to have_content(/1 diaper drive participant/i)
                 expect(page).to have_content(total_inventory)
               end
             end
