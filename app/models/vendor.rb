@@ -2,18 +2,18 @@
 #
 # Table name: vendors
 #
-#  id              :bigint(8)        not null, primary key
-#  contact_name    :string
-#  email           :string
-#  phone           :string
-#  comment         :string
-#  organization_id :integer
+#  id              :bigint           not null, primary key
 #  address         :string
 #  business_name   :string
+#  comment         :string
+#  contact_name    :string
+#  email           :string
 #  latitude        :float
 #  longitude       :float
+#  phone           :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  organization_id :integer
 #
 
 class Vendor < ApplicationRecord

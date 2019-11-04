@@ -3,16 +3,18 @@ require 'time_util'
 #
 # Table name: distributions
 #
-#  id                  :integer          not null, primary key
-#  comment             :text
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  storage_location_id :integer
-#  partner_id          :integer
-#  organization_id     :integer
-#  issued_at           :datetime
-#  agency_rep          :string
-#  state               :integer
+#  id                     :bigint           not null, primary key
+#  agency_rep             :string
+#  comment                :text
+#  issued_at              :datetime
+#  reminder_email_enabled :boolean          default(FALSE), not null
+#  state                  :integer          default("started"), not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  organization_id        :integer
+#  partner_id             :bigint
+#  storage_location_id    :bigint
+#
 
 class Distribution < ApplicationRecord
   # Distributions are issued from a single storage location, so we associate

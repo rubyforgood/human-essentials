@@ -3,12 +3,12 @@
 # Table name: adjustments
 #
 #  id                  :integer          not null, primary key
-#  organization_id     :integer
-#  storage_location_id :integer
 #  comment             :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  user_id             :integer
+#  organization_id     :integer
+#  storage_location_id :integer
+#  user_id             :bigint
 #
 
 RSpec.describe Adjustment, type: :model do
