@@ -3,14 +3,13 @@
 # Table name: barcode_items
 #
 #  id               :integer          not null, primary key
-#  value            :string
-#  barcodeable_id   :integer
+#  barcodeable_type :string           default("Item")
 #  quantity         :integer
+#  value            :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  barcodeable_id   :integer
 #  organization_id  :integer
-#  global           :boolean          default(FALSE)
-#  barcodeable_type :string           default("Item")
 #
 
 FactoryBot.define do
