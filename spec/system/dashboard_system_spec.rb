@@ -149,7 +149,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
 
             @this_years_donations = {
@@ -323,7 +322,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.purchases.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             @this_years_purchases = {
@@ -478,7 +476,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             diaper_drive1 = create(:diaper_drive_participant, business_name: "First Diaper Drive", organization: @organization)
@@ -549,7 +546,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             it "has a widget displaying the Diaper drive totals from yesterday, only using donations from yesterday" do
               within "#diaper_drives" do
-                expect(page).to have_content(/2 diaper drive/i)
+                expect(page).to have_content(/1 diaper drive participant/i)
                 expect(page).to have_content(total_inventory)
               end
             end
@@ -683,7 +680,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             manufacturer1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
@@ -901,10 +897,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         context "When Date Filtering >" do
-          before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
-          end
-
           context "with year-to-date selected" do
             before do
               date_range_picker_select_range "This Year"

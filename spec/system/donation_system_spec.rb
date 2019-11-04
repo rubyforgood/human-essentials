@@ -139,7 +139,7 @@ RSpec.describe "Donations", type: :system, js: true do
             click_button "Save"
           end.to change { Donation.count }.by(1)
 
-          expect(Donation.last.issued_at).to eq("01/01/2001")
+          expect(Donation.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
         end
 
         it "Accepts and combines multiple line items for the same item type" do
