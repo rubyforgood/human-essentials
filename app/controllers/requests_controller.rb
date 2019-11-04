@@ -14,7 +14,7 @@ class RequestsController < ApplicationController
 
   def show
     @request = Request.find(params[:id])
-    @request_items = get_items(@request.request_items)
+    @request_items = load_items
   end
 
   # Clicking the "New Distribution" button will set the the request to started
@@ -38,17 +38,9 @@ class RequestsController < ApplicationController
 
   private
 
-  def get_items(request_items)
-    # using Struct vs Hash so we can use dot notation in the view
-    return unless request_items
+  def load_items
+    return unless @request.request_items
 
-    Struct.new('Item', :name, :quantity, :on_hand)
-    request_items.map do |key|
-      Struct::Item.new(Item.find(key["item_id"]).name, key["quantity"], sum_inventory(Item.find(key["item_id"])))
-    end
-  end
-
-  def sum_inventory(key)
-    current_organization.inventory_items.where(item_id: key).sum(:quantity)
+    @request.request_items.map { |json| RequestItem.from_json(json, current_organization) }
   end
 end
