@@ -2,14 +2,14 @@
 #
 # Table name: donation_sites
 #
-#  id              :integer          not null, primary key
-#  name            :string
+#  id              :bigint           not null, primary key
 #  address         :string
+#  latitude        :float
+#  longitude       :float
+#  name            :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
-#  latitude        :float
-#  longitude       :float
 #
 
 class DonationSite < ApplicationRecord

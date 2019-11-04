@@ -2,13 +2,13 @@
 #
 # Table name: feedback_messages
 #
-#  id         :bigint(8)        not null, primary key
-#  user_id    :bigint(8)
+#  id         :bigint           not null, primary key
 #  message    :string
 #  path       :string
+#  resolved   :boolean
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  resolved   :boolean
+#  user_id    :bigint
 #
 
 # == No Schema Information
