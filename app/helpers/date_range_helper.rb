@@ -31,7 +31,7 @@ module DateRangeHelper
 
   def selected_range
     start_date, end_date = selected_interval
-    start_date..end_date
+    (start_date.beginning_of_day)..(end_date.end_of_day)
   end
 
   def selected_range_described

@@ -44,4 +44,9 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # Tell Rails to use the system default timezone. This avoids issues where Timecop
+  # freezes to UTC and the fake browser is running under a local timezone
+  config.time_zone = 'America/Los_Angeles'
+  ENV['TZ'] = 'America/Los_Angeles' # Make Capybara aware of the current time zone
 end

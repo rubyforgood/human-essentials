@@ -58,12 +58,6 @@ RSpec.describe User, type: :model do
   end
 
   context "Methods >" do
-    it "#most_recent_sign_in" do
-      expect(build(:user, current_sign_in_at: Time.zone.parse("2018-10-23 00:00:00"), last_sign_in_at: Time.zone.parse("2018-10-20 00:00:00 UTC")).most_recent_sign_in).to eq("2018-10-23 00:00:00 UTC")
-      expect(build(:user, current_sign_in_at: Time.zone.parse("2018-10-24 00:00:00"), last_sign_in_at: nil).most_recent_sign_in).to eq("2018-10-24 00:00:00 UTC")
-      expect(build(:user).most_recent_sign_in).to eq("")
-    end
-
     it "#invitation_status" do
       expect(build(:user, invitation_sent_at: Time.zone.parse("2018-10-10 00:00:00")).invitation_status).to eq("invited")
       expect(build(:user, invitation_sent_at: Time.zone.parse("2018-10-10 00:00:00"), invitation_accepted_at: Time.zone.parse("2018-10-11 00:00:00")).invitation_status).to eq("accepted")
@@ -76,7 +70,7 @@ RSpec.describe User, type: :model do
       expect(build(:user).kind).to eq("normal")
     end
 
-    it "#reinvatable?" do
+    it "#reinvitable?" do
       expect(build(:user, invitation_sent_at: Time.current - 7.days).reinvitable?).to be true
       expect(build(:user, invitation_sent_at: Time.current - 6.days).reinvitable?).to be false
       expect(build(:user, invitation_sent_at: Time.current - 7.days, invitation_accepted_at: Time.current - 7.days).reinvitable?).to be false
