@@ -2,15 +2,15 @@
 #
 # Table name: requests
 #
-#  id              :bigint(8)        not null, primary key
-#  partner_id      :bigint(8)
-#  organization_id :bigint(8)
-#  request_items   :jsonb
+#  id              :bigint           not null, primary key
 #  comments        :text
+#  request_items   :jsonb
+#  status          :integer          default("pending")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  distribution_id :integer
-#  status          :integer          default("pending")
+#  organization_id :bigint
+#  partner_id      :bigint
 #
 
 RSpec.describe Request, type: :model do
