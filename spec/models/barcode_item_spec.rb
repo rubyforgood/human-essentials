@@ -126,8 +126,7 @@ RSpec.describe BarcodeItem, type: :model do
         barcode_item
         create(:barcode_item)
         results = BarcodeItem.barcodeable_id(item.id)
-        expect(results.length).to eq(1)
-        expect(results.first).to eq(barcode_item)
+        expect(results).to eq([barcode_item])
       end
     end
 
@@ -136,8 +135,7 @@ RSpec.describe BarcodeItem, type: :model do
         barcode_item
         create(:barcode_item, organization: create(:organization))
         results = BarcodeItem.for_csv_export(barcode_item.organization)
-        expect(results.length).to eq(1)
-        expect(results.first).to eq(barcode_item)
+        expect(results).to eq([barcode_item])
       end
 
       it "#by_item_partner_key returns barcodes that match the partner key" do
