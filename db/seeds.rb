@@ -40,9 +40,7 @@ base_items = File.read(Rails.root.join("db", "base_items.json"))
 end
 
 
-# Only pdx_org and dc_org will be seeded with data.
-# sf_org will get only a minimal amount with which to start populating manually
-
+# pdx_org will be populated with a minimal but complete set of data
 pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
   organization.name    = "Pawnee Diaper Bank"
   organization.street  = "P.O. Box 22613"
@@ -53,6 +51,7 @@ pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organiz
 end
 Organization.seed_items(pdx_org)
 
+# sf_org will get only a minimal amount with which to start populating manually
 sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
   organization.name    = "SF Diaper Bank"
   organization.street  = "P.O. Box 12345"
@@ -63,19 +62,13 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
-dc_org = Organization.find_or_create_by!(short_name: "dc_bank") do |organization|
-  organization.name    = "DC Diaper Bank"
-  organization.street  = "P.O. Box 12345"
-  organization.city    = "Washington"
-  organization.state   = "DC"
-  organization.zipcode = "20003"
-  organization.email   = "info@dcdiaperbank.org"
-end
-Organization.seed_items(dc_org)
 
-# This array contains organizations _other than_ sf_org that need to be seeded.
-# If you add an organization, remember to create some users for that organization too.
-STANDARD_ORGS_TO_SEED = [pdx_org, dc_org]
+# This array contains organizations _other than_ sf_org that need to be seeded
+# with minimal but complete sets of data. It default to only pdx but you can add others.
+# If you add an organization, to this array, you will need to:
+#   1) create it
+#   2) add users to it in the Users section below
+STANDARD_ORGS_TO_SEED = [pdx_org]
 
 # Assign a value to some organization items to verify totals are working
 STANDARD_ORGS_TO_SEED.each do |org|
@@ -92,16 +85,12 @@ end
 
     { email: 'org_admin1@example.com', organization_admin: true,  organization: pdx_org },
     { email: 'org_admin2@example.com', organization_admin: true,  organization: sf_org },
-    { email: 'org_admin3@example.com', organization_admin: true,  organization: dc_org },
 
     { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
     { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
-    { email: 'user_3@example.com',     organization_admin: false, organization: dc_org },
 
     { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
     { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org },
-    { email: 'test_dc@example.com',    organization_admin: false, organization: dc_org, super_admin: true },
-    { email: 'test_dc2@example.com',   organization_admin: true,  organization: dc_org },
 ].each do |user|
   User.create(
       email:                 user[:email],
