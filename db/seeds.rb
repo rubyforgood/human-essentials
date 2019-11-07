@@ -73,10 +73,12 @@ dc_org = Organization.find_or_create_by!(short_name: "dc_bank") do |organization
 end
 Organization.seed_items(dc_org)
 
-ORGS_TO_SEED = [pdx_org, dc_org]
+# This array contains organizations _other than_ sf_org that need to be seeded.
+# If you add an organization, remember to create some users for that organization too.
+STANDARD_ORGS_TO_SEED = [pdx_org, dc_org]
 
 # Assign a value to some organization items to verify totals are working
-ORGS_TO_SEED.each do |org|
+STANDARD_ORGS_TO_SEED.each do |org|
   org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
 end
 
@@ -131,7 +133,7 @@ def create_donation_sites(organization)
   end
 end
 
-ORGS_TO_SEED.each { |org| create_donation_sites(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_donation_sites(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -152,7 +154,7 @@ def create_partners(organization)
   end
 end
 
-ORGS_TO_SEED.each { |org| create_partners(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_partners(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -177,7 +179,7 @@ def create_storage_locations(organization)
   @storage_locations[organization] = { arbor: inv_arbor, pdxdb: inv_pdxdb }
 end
 
-ORGS_TO_SEED.each { |org| create_storage_locations(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_storage_locations(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -197,7 +199,7 @@ def create_participants(organization)
   ].each { |participant| DiaperDriveParticipant.create! participant }
 end
 
-ORGS_TO_SEED.each { |org| create_participants(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_participants(org) }
 
 
 
@@ -212,7 +214,7 @@ def create_manufacturers(organization)
   ].each { |search_values| Manufacturer.find_or_create_by! search_values }
 end
 
-ORGS_TO_SEED.each { |org| create_manufacturers(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_manufacturers(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -247,7 +249,7 @@ def seed_item_quantities(organization)
   end
 end
 
-  ORGS_TO_SEED.each { |org| seed_item_quantities(org) }
+  STANDARD_ORGS_TO_SEED.each { |org| seed_item_quantities(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -279,7 +281,7 @@ def create_barcode_items(organization)
   end
 end
 
-ORGS_TO_SEED.each { |org| create_barcode_items(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_barcode_items(org) }
 
 
 
@@ -316,7 +318,7 @@ def create_donations(organization)
   donation.storage_location.increase_inventory(donation)
 end
 
-ORGS_TO_SEED.each do |organization|
+STANDARD_ORGS_TO_SEED.each do |organization|
   20.times.each { create_donations(organization) }
 end
 
@@ -345,7 +347,7 @@ def create_distributions(organization)
   end
 end
 
-ORGS_TO_SEED.each { |org| create_distributions(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_distributions(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -366,7 +368,7 @@ def create_requests(organization)
   end
 end
 
-ORGS_TO_SEED.each { |org| create_requests(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_requests(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -392,7 +394,7 @@ def create_vendors(organization)
   end
 end
 
-ORGS_TO_SEED.each { |org| create_vendors(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_vendors(org) }
 
 
 # ----------------------------------------------------------------------------
@@ -423,7 +425,7 @@ def create_purchases(organization)
   end
 end
 
-ORGS_TO_SEED.each { |org| create_purchases(org) }
+STANDARD_ORGS_TO_SEED.each { |org| create_purchases(org) }
 
 
 # ----------------------------------------------------------------------------
