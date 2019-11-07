@@ -71,7 +71,7 @@ Organization.seed_items(sf_org)
 STANDARD_ORGS_TO_SEED = [pdx_org]
 
 # Assign a value to some organization items to verify totals are working
-STANDARD_ORGS_TO_SEED.each do |org|
+Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
 end
 
