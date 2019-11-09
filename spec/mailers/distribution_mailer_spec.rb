@@ -8,11 +8,11 @@ RSpec.describe DistributionMailer, type: :mailer do
 
   it "renders the body with organizations email text" do
     expect(mail.body.encoded).to match("Default email text example")
-    expect(mail.subject).to eq("test subject")
+    expect(mail.subject).to eq("test subject from DEFAULT")
   end
 
   it "renders the body with distributions text" do
     expect(mail.body.encoded).to match("Distribution comment")
-    expect(mail.subject).to eq("test subject")
+    expect(mail.subject).to eq("test subject from DEFAULT")
   end
 end
