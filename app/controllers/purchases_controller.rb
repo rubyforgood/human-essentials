@@ -26,18 +26,24 @@ class PurchasesController < ApplicationController
 
   def create
     @purchase = current_organization.purchases.new(purchase_params)
-    @purchase.transaction do
-      @purchase.save
-      @purchase.storage_location.increase_inventory @purchase
-      redirect_to(purchases_path) && return
-    end
-    rescue StandardError => e
+
+    if @purchase.save
+      ActiveRecord::Base.transaction do
+        @purchase.storage_location.increase_inventory @purchase
+        redirect_to purchases_path
+      end
+    else
       load_form_collections
-      insufficient_message = e.message if e.is_a?(Errors::InsufficientAllotment)
-      flash[:error] = "There was an error starting this purchase, try again?"
-      logger.error "[!] PurchasesController#create failed to save purchase for #{@purchase.errors.full_messages}"
       @purchase.line_items.build if @purchase.line_items.count.zero?
+      flash[:error] = "There was an error starting this purchase, try again?"
+      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render action: :new
+    end
+
+    rescue Errors::InsufficientAllotment => ex
+      flash[:error] = ex.message
+      load_form_collections
+      render :new
   end
 
   def new
