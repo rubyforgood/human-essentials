@@ -28,10 +28,8 @@ class PurchasesController < ApplicationController
     @purchase = current_organization.purchases.new(purchase_params)
 
     if @purchase.save
-      ActiveRecord::Base.transaction do
         @purchase.storage_location.increase_inventory @purchase
         redirect_to purchases_path
-      end
     else
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
