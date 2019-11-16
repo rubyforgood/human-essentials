@@ -4,7 +4,7 @@ RSpec.describe ItemsOutTotalQuery do
   let!(:storage_location) { create(:storage_location, organization: @organization) }
   subject { ItemsOutTotalQuery.new(storage_location: storage_location, organization: @organization).call }
 
-  describe "items_in" do
+  describe "items_out_total_query" do
     before do
       items = create_list(:inventory_item, 3, storage_location: storage_location, quantity: 10).collect(&:item)
       other_storage_location = create(:storage_location, organization: @organization)
