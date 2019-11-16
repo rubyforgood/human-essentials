@@ -50,8 +50,8 @@ class AdjustmentsController < ApplicationController
       load_form_collections
       render :new
     end
-  rescue Errors::InsufficientAllotment => ex
-    flash[:error] = ex.message
+  rescue Errors::InsufficientAllotment => e
+    flash[:error] = e.message
     load_form_collections
     render :new
   end

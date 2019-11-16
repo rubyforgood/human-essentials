@@ -75,8 +75,8 @@ class AuditsController < ApplicationController
       @audit.line_items.build if @audit.line_items.empty?
       render :new
     end
-  rescue Errors::InsufficientAllotment => ex
-    flash[:error] = ex.message
+  rescue Errors::InsufficientAllotment => e
+    flash[:error] = e.message
     render :new
   end
 
