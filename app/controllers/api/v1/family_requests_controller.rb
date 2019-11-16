@@ -17,8 +17,8 @@ class API::V1::FamilyRequestsController < ApplicationController
     else
       render json: partner_request.errors, status: :bad_request
     end
-  rescue Request::MismatchedItemIdsError => error
-    render json: { message: error.message }, status: :bad_request
+  rescue Request::MismatchedItemIdsError => e
+    render json: { message: e.message }, status: :bad_request
   end
 
   private
