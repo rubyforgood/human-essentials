@@ -2,7 +2,6 @@
 class AdjustmentsController < ApplicationController
   # GET /adjustments
   # GET /adjustments.json
-  include Dateable
 
   def index
     setup_date_range_picker

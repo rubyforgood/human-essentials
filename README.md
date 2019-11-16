@@ -31,7 +31,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 ### Installation Instructions
 
-The `ubuntu_installation.md` file ([https://github.com/rubyforgood/diaper/blob/master/ubuntu-installation.md](https://github.com/rubyforgood/diaper/blob/master/ubuntu-installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
+The `installation.md` file ([https://github.com/rubyforgood/diaper/blob/master/installation.md](https://github.com/rubyforgood/diaper/blob/master/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
 
 ### Ruby Version
 This app uses Ruby version 2.6.4, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
@@ -117,6 +117,20 @@ example:
     pending("Need to implement this")
     expect(my_code).to be_valid
   end
+```
+
+##### Feature specs
+
+If you need to see a feature spec run in the browser, you can use the following env variable:
+
+```
+NOT_HEADLESS=true bundle exec rspec
+```
+
+Keep in mind that you need js to be enabled. For example:
+
+```
+describe "PickupSheet", type: :feature, js: true do
 ```
 
 ### In-flight Pull Requests

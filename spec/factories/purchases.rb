@@ -2,15 +2,15 @@
 #
 # Table name: purchases
 #
-#  id                    :bigint(8)        not null, primary key
-#  purchased_from        :string
-#  comment               :text
-#  organization_id       :integer
-#  storage_location_id   :integer
+#  id                    :bigint           not null, primary key
 #  amount_spent_in_cents :integer
+#  comment               :text
 #  issued_at             :datetime
+#  purchased_from        :string
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
+#  organization_id       :integer
+#  storage_location_id   :integer
 #  vendor_id             :integer
 #
 

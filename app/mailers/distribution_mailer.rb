@@ -12,7 +12,7 @@ class DistributionMailer < ApplicationMailer
     @comment = distribution.comment
     @from_email = current_organization.email.presence || current_organization.users.first.email
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = DistributionPdf.new(current_organization, @distribution).render
-    mail(to: @partner.email, from: @from_email, subject: subject)
+    mail(to: @partner.email, from: @from_email, subject: "#{subject} from #{current_organization.name}")
   end
 
   def reminder_email(distribution)

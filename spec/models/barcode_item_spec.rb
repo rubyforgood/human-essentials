@@ -3,14 +3,13 @@
 # Table name: barcode_items
 #
 #  id               :integer          not null, primary key
-#  value            :string
-#  barcodeable_id   :integer
+#  barcodeable_type :string           default("Item")
 #  quantity         :integer
+#  value            :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  barcodeable_id   :integer
 #  organization_id  :integer
-#  global           :boolean          default(FALSE)
-#  barcodeable_type :string           default("Item")
 #
 
 RSpec.shared_examples "common barcode tests" do |barcode_item_factory|
@@ -127,8 +126,7 @@ RSpec.describe BarcodeItem, type: :model do
         barcode_item
         create(:barcode_item)
         results = BarcodeItem.barcodeable_id(item.id)
-        expect(results.length).to eq(1)
-        expect(results.first).to eq(barcode_item)
+        expect(results).to eq([barcode_item])
       end
     end
 
@@ -137,8 +135,7 @@ RSpec.describe BarcodeItem, type: :model do
         barcode_item
         create(:barcode_item, organization: create(:organization))
         results = BarcodeItem.for_csv_export(barcode_item.organization)
-        expect(results.length).to eq(1)
-        expect(results.first).to eq(barcode_item)
+        expect(results).to eq([barcode_item])
       end
 
       it "#by_item_partner_key returns barcodes that match the partner key" do

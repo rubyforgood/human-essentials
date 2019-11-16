@@ -2,13 +2,13 @@
 #
 # Table name: line_items
 #
-#  id              :integer          not null, primary key
-#  quantity        :integer
-#  item_id         :integer
-#  itemizable_id   :integer
+#  id              :bigint           not null, primary key
 #  itemizable_type :string
+#  quantity        :integer
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  item_id         :integer
+#  itemizable_id   :integer
 #
 
 class LineItem < ApplicationRecord

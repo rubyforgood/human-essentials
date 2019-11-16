@@ -2,19 +2,19 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
-#  source                      :string
-#  donation_site_id            :integer
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
-#  storage_location_id         :integer
+#  id                          :bigint           not null, primary key
 #  comment                     :text
-#  organization_id             :integer
-#  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
 #  money_raised                :integer
-#  manufacturer_id             :bigint(8)
-#  diaper_drive_id             :bigint(8)
+#  source                      :string
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  diaper_drive_id             :bigint
+#  diaper_drive_participant_id :integer
+#  donation_site_id            :bigint
+#  manufacturer_id             :bigint
+#  organization_id             :integer
+#  storage_location_id         :bigint
 #
 
 RSpec.describe Donation, type: :model do
@@ -57,8 +57,12 @@ RSpec.describe Donation, type: :model do
     it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
       today = Time.zone.today
-      expect(create(:donation, created_at: yesterday, issued_at: today).issued_at).to eq(today)
-      expect(create(:donation, created_at: yesterday).issued_at).to eq(yesterday)
+
+      donation = create(:donation, created_at: yesterday, issued_at: today)
+      expect(donation.issued_at.to_date).to eq(today)
+
+      donation = create(:donation, created_at: yesterday)
+      expect(donation.issued_at).to eq(donation.created_at)
     end
 
     it "automatically combines duplicate line_item records when they're created" do

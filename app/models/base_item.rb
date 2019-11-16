@@ -2,15 +2,15 @@
 #
 # Table name: base_items
 #
-#  id            :bigint(8)        not null, primary key
-#  name          :string
-#  category      :string
+#  id            :bigint           not null, primary key
 #  barcode_count :integer
+#  category      :string
+#  item_count    :integer
+#  name          :string
+#  partner_key   :string
+#  size          :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  size          :string
-#  item_count    :integer
-#  partner_key   :string
 #
 
 class BaseItem < ApplicationRecord
