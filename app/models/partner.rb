@@ -59,6 +59,10 @@ class Partner < ApplicationRecord
     UpdateDiaperPartnerJob.perform_async(id, options)
   end
 
+  def add_user_on_partnerbase(options = {})
+    AddDiaperPartnerJob.perform_async(id, options)
+  end
+
   def quantity_year_to_date
     distributions
       .includes(:line_items)

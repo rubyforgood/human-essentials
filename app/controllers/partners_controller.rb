@@ -81,8 +81,8 @@ class PartnersController < ApplicationController
 
   def re_invite
     partner = current_organization.partners.find(params[:partner])
-    partner.register_on_partnerbase(email: params[:email])
-    redirect_to partner_path(partner), notice: "We have invited to #{params[:email]} #{partner.name}!"
+    partner.add_user_on_partnerbase(email: params[:email])
+    redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"
   end
 
   def recertify_partner
