@@ -3,15 +3,9 @@
 # API.
 module DiaperPartnerClient
   def self.post(attributes, invitation_message)
-    partner = { partner:
-                    { diaper_bank_id: attributes["organization_id"],
-                      diaper_partner_id: attributes["id"],
-                      invitation_text: invitation_message,
-                      email: attributes["email"] } }
-
     uri = URI(ENV["PARTNER_REGISTER_URL"])
     req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
-    req.body = partner.to_json
+    req.body = partner_json(attributes, invitation_message)
     req["Content-Type"] = "application/json"
     req["X-Api-Key"] = ENV["PARTNER_KEY"]
 
@@ -21,15 +15,9 @@ module DiaperPartnerClient
   end
 
   def self.add(attributes, invitation_message)
-    partner = { partner:
-                    { diaper_bank_id: attributes["organization_id"],
-                      diaper_partner_id: attributes["id"],
-                      invitation_text: invitation_message,
-                      email: attributes["email"] } }
-
     uri = URI(ENV["PARTNER_ADD_URL"])
     req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
-    req.body = partner.to_json
+    req.body = partner_json(attributes, invitation_message)
     req["Content-Type"] = "application/json"
     req["X-Api-Key"] = ENV["PARTNER_KEY"]
 
@@ -77,5 +65,13 @@ module DiaperPartnerClient
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
+  end
+
+  def self.partner_json(attributes, invitation_message)
+    { partner:
+          { diaper_bank_id: attributes["organization_id"],
+            diaper_partner_id: attributes["id"],
+            invitation_text: invitation_message,
+            email: attributes["email"] } }.to_json
   end
 end
