@@ -13,11 +13,49 @@
 
 RSpec.describe Transfer, type: :model do
   it_behaves_like "itemizable"
-  # 2 Specs are failing here because
 
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:transfer, organization_id: nil)).not_to be_valid
+    end
+
+    it "must have storage locations set" do
+      transfer = build(:transfer)
+      old_from = transfer.from
+      transfer.from = nil # Doing this separately so the after hook doesn't fix it
+      expect(transfer).not_to be_valid
+      transfer.from = old_from
+      transfer.to = nil
+      expect(transfer).not_to be_valid
+    end
+
+    it "must have different storage locations" do
+      transfer = build(:transfer)
+      transfer.to = transfer.from
+      expect(transfer).not_to be_valid
+    end
+
+    it "must only use storage locations that belong to the organization (no hacks!)" do
+      transfer = build(:transfer)
+      other_org = create(:organization)
+      other_storage = create(:storage_location, organization: other_org)
+      transfer.from = other_storage
+      expect(transfer).not_to be_valid
+    end
+
+    it "requires that each line item exists in the inventory" do
+      transfer = build(:transfer, :with_items)
+      item = create(:item)
+      transfer.line_items.first.item = item
+      expect(transfer).not_to be_valid
+    end
+
+    it "requires that the line items must have sufficient quantity in the inventory" do
+      transfer = build(:transfer, :with_items)
+      over_compromising_item = transfer.line_items.first.item
+      over_compromising_quantity = transfer.from.inventory_items.first.quantity + 1
+      transfer.line_items.first.quantity = over_compromising_quantity
+      expect(transfer).not_to be_valid
     end
   end
 

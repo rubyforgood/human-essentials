@@ -34,8 +34,12 @@ FactoryBot.define do
       end
 
       after(:build) do |transfer, evaluator|
-        item = evaluator.item || transfer.storage_location.inventory_items.first.item
+        item = evaluator.item || transfer.from.inventory_items.first&.item || create(:item)
         transfer.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: transfer)
+      end
+
+      after(:create) do |instance, evaluator|
+        evaluator.from.increase_inventory(instance)
       end
     end
   end
