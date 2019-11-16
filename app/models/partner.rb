@@ -55,8 +55,8 @@ class Partner < ApplicationRecord
     [name, email]
   end
 
-  def register_on_partnerbase(options = {})
-    UpdateDiaperPartnerJob.perform_async(id, options)
+  def register_on_partnerbase
+    UpdateDiaperPartnerJob.perform_async(id)
   end
 
   def add_user_on_partnerbase(options = {})
