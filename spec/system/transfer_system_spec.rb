@@ -50,7 +50,7 @@ RSpec.describe "Transfer management", type: :system do
 
     scenario "User can transfer an inventory from a storage location to another" do
       create_transfer("100", from_storage_location.name, to_storage_location.name)
-      expect(page).to have_content("exceed the available inventory")
+      expect(page).to have_content("insufficient inventory")
     end
   end
 
