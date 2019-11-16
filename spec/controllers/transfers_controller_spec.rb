@@ -57,20 +57,6 @@ RSpec.describe TransfersController, type: :controller do
         expect(response).to render_template("new")
         expect(response).to have_error(/error/i)
       end
-
-      it "renders to #new when from_id and to_id match" do
-        sl = create(:storage_location, organization: @organization)
-        attributes = attributes_for(
-          :transfer,
-          organization_id: @organization.id,
-          to_id: sl.id,
-          from_id: sl.id
-        )
-        post :create, params: { organization_id: @organization.id, transfer: attributes }
-        expect(response).to be_successful # Will render :new
-        expect(response).to render_template("new")
-        expect(response).to have_error(/error/i)
-      end
     end
 
     describe "GET #new" do
