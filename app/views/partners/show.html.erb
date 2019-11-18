@@ -1,67 +1,94 @@
 <section class="content-header">
-<% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
-<h1>
-  Partner info
-  <small>for <%= @partner.name %></small>
-</h1>
-<ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
-  </li>
-  <li><%= link_to "Partners", (partners_path) %></li>  
-  <li class="active"><%= @partner.name %></li>
-</ol>
+  <% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
+  <h1>
+    Partner info
+    <small>for <%= @partner.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
+    </li>
+    <li><%= link_to "Partners", (partners_path) %></li>
+    <li class="active"><%= @partner.name %></li>
+  </ol>
 </section>
 
 <!-- Main content -->
 <section class="content">
 
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= @partner.name %></h3>
-    <%= view_button_to approve_partner_partner_path(@partner) %>
-    <%= edit_button_to edit_partner_path(@partner) %>
-    <%= delete_button_to partner_path(@partner), { confirm: confirm_delete_msg(@partner.name) } %>
-  </div>
-  <div class="box-body">
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+      <h3 class="box-title"><%= @partner.name %></h3>
+      <%= view_button_to approve_partner_partner_path(@partner) %>
+      <%= edit_button_to edit_partner_path(@partner) %>
+      <%= delete_button_to partner_path(@partner), {confirm: confirm_delete_msg(@partner.name)} %>
+      <%= modal_button_to("#addUserModal", { text: "Add/Remind Partner", size: "xs" }) if can_administrate? %>
+    <div class="box-body">
 
-  <p><%= link_to @partner.email, "mailto:#{@partner.email}" %></p>
-  
-  <h3>Past Distributions</h3>
-  
-  <div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover striped">
-        <tr>
-        <th>Date</th>
-        <th>Source Inventory</th>
-        <th>Total items</th>
-        <th>&nbsp
-        </tr>
+      <p><%= link_to @partner.email, "mailto:#{@partner.email}" %></p>
 
-        <% @partner.distributions.each do |dist| %>  
-            <tr>
-            <td class="date"><%= dist.created_at.strftime("%m/%d/%Y") %></td>
-            <td><%= dist.storage_location.name %></td>
-            <td class="date"><%= dist.line_items.total %></td>
-            <td class="text-right">
-              <%= view_button_to distribution_path(dist) %>
-              <%= print_button_to print_distribution_path(dist, format: :pdf) %>
-            </td>
-          </tr>
-          <% end %>        
-        </table>
-      <!-- /.box-body -->
+      <h3>Past Distributions</h3>
+
+      <div class="row">
+        <div class="col-xs-12">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover striped">
+              <tr>
+                <th>Date</th>
+                <th>Source Inventory</th>
+                <th>Total items</th>
+                <th>&nbsp
+              </tr>
+
+              <% @partner.distributions.each do |dist| %>
+                <tr>
+                  <td class="date"><%= dist.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= dist.storage_location.name %></td>
+                  <td class="date"><%= dist.line_items.total %></td>
+                  <td class="text-right">
+                    <%= view_button_to distribution_path(dist) %>
+                    <%= print_button_to print_distribution_path(dist, format: :pdf) %>
+                  </td>
+                </tr>
+              <% end %>
+            </table>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
     </div>
-    <!-- /.box -->
   </div>
-  </div>
-  </div>
-</div>
+  <div id="addUserModal" class="modal fade">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add a User or Send a Reminder for <%= @partner.name %></h4>
+        </div><!-- modal-header -->
+        <div class="modal-body">
+          <div class="box-body">
+            <p>
+            This will invite an additional member of the partner organization to Partnerbase unless a user with that
+            exists in the Partnerbase system. If a user with that email exists it will send them a password reminder.
+            </p>
+            <br/>
+            <%= form_tag re_invite_partner_path do %>
+              <div class="input-group">
+                <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
+                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
+                <%= hidden_field_tag :partner , @partner.id %><br>
+              </div>
+              <br>
+              <%= submit_button({text: "Invite User", icon: "envelope"}) %>
+            <% end # form %>
+          </div><!-- box-body -->
+        </div><!-- modal-body -->
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- addUserModal -->
 
-
-
+</section>
