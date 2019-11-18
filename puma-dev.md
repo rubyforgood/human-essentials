@@ -17,6 +17,7 @@ You'll need to set the following environment variables for the apps to communica
 ```
 PARTNER_KEY="secretpassword"
 PARTNER_REGISTER_URL="https://partner.test/api/v1/partners"
+PARTNER_ADD_URL="https://partner.test/api/v1/add_partners"
 PARTNER_APPROVAL_URL="https://partner.test/api/v1/approve"
 PARTNER_BASE_URL="partner.test"
 FLIPPER_USERNAME="admin"
