@@ -76,7 +76,7 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="4" style="text-align: right"><strong>Total</strong></td>
+                  <td colspan="2" style="text-align: left"><strong>Total</strong></td>
                   <td class="numeric">
                     <strong id="purchase_quantity">
                       <%= @purchases_quantity %> (Total)
@@ -85,7 +85,7 @@
                     <%= @paginated_purchases_quantity %> (This page)
                   </td>
                   <td></td>
-                  <td><strong><%= item_value(@total_value_all_purchases) %></strong></td>
+                  <td class="numeric"><strong><%= item_value(@total_value_all_purchases) %></strong></td>
                   <td></td>
                 </tr>
               </tfoot>

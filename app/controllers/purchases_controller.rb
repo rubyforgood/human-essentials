@@ -77,10 +77,20 @@ class PurchasesController < ApplicationController
 
   private
 
-  def clean_purchase_amount
+  def clean_purchase_amount_in_cents
     return nil unless params[:purchase][:amount_spent_in_cents]
 
     params[:purchase][:amount_spent_in_cents] = params[:purchase][:amount_spent_in_cents].gsub(/[$,.]/, "")
+  end
+
+  def clean_purchase_amount_in_dollars
+    return nil unless params[:purchase][:amount_spent_in_dollars]
+
+    params[:purchase][:amount_spent_in_cents] = params[:purchase][:amount_spent_in_dollars].gsub(/[$,]/, "").to_d * 100
+  end
+
+  def clean_amount_spent_in_dollars
+    return nil unless params[:purchase][:amount_spent_in_dollars]
   end
 
   def load_form_collections
@@ -90,7 +100,8 @@ class PurchasesController < ApplicationController
   end
 
   def purchase_params
-    clean_purchase_amount
+    clean_purchase_amount_in_cents
+    clean_purchase_amount_in_dollars
     params = compact_line_items
     params.require(:purchase).permit(:comment, :amount_spent_in_cents, :purchased_from, :storage_location_id, :issued_at, :vendor_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
