@@ -1,0 +1,8 @@
+<%= Family.csv_headers.join(',') %>
+<%=
+  CSV.generate do |csv|
+    @families.each do |family|
+      csv << family.to_csv
+    end
+  end
+-%>
