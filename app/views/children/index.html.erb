@@ -1,6 +1,6 @@
 <div class="app-title">
   <div>
-    <h1><i class="fa fa-child"></i>&nbsp;&nbsp;Children</h1>
+    <h1><i class="fa fa-child"></i>&nbsp;&nbsp;Children</h1><%= link_to 'Export a CSV file', children_path(nil, format: :csv) %>
   </div>
   <ul class="app-breadcrumb breadcrumb">
     <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
