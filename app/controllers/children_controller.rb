@@ -1,8 +1,16 @@
+require "csv"
 class ChildrenController < ApplicationController
   before_action :authenticate_user!
 
   def index
     @children = current_partner.children.order(active: :desc, last_name: :asc)
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        render(csv: @children.map(&:to_csv))
+      end
+    end
   end
 
   def show
