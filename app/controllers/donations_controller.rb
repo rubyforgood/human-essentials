@@ -154,6 +154,6 @@ class DonationsController < ApplicationController
   end
 
   def total_money_raised(donations)
-    donations.sum {|d| d.money_raised.to_i}
+    donations.sum { |d| d.money_raised.to_i }
   end
 end
