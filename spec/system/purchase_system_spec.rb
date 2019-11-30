@@ -26,17 +26,17 @@ RSpec.describe "Purchases", type: :system, js: true do
       page.refresh
       expect(page).to have_text("Purchased Date")
       expect(page).to have_text(1.week.ago.strftime("%Y-%m-%d"))
-      expect(page).to have_text(@total_value_all_purchases)
     end
 
     it "User sees total purchases value" do
-      purchase1 = create(:purchase)
-      purchase2 = create(:purchase)
+      purchase1 = create(:purchase, amount_spent_in_cents: 1234)
+      purchase2 = create(:purchase, amount_spent_in_cents: 2345)
       purchases = [purchase1, purchase2]
       page.refresh
       expect(page).to have_text("Total")
       expect(page).to have_text(purchases.collect(&:total_quantity).sum)
       expect(page).to have_text(item_value(purchases.collect(&:amount_spent_in_cents).sum))
+      expect(page).to have_text(item_value(3579))
     end
 
     it "User sees total purchases value" do
