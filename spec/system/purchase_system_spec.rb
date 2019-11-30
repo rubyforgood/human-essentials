@@ -95,7 +95,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           click_button "Save"
         end.to change { Purchase.count }.by(1)
 
-        expect(Purchase.last.issued_at).to eq(Date.parse("01/01/2001"))
+        expect(Purchase.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
       end
 
       it "Does not include inactive items in the line item fields" do

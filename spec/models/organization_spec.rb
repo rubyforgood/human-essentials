@@ -2,22 +2,23 @@
 #
 # Table name: organizations
 #
-#  id              :integer          not null, primary key
-#  name            :string
-#  short_name      :string
-#  email           :string
-#  url             :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  intake_location :integer
-#  street          :string
+#  id              :bigint           not null, primary key
 #  city            :string
-#  state           :string
-#  zipcode         :string
+#  deadline_day    :integer
+#  email           :string
+#  intake_location :integer
+#  invitation_text :text
 #  latitude        :float
 #  longitude       :float
+#  name            :string
 #  reminder_day    :integer
-#  deadline_day    :integer
+#  short_name      :string
+#  state           :string
+#  street          :string
+#  url             :string
+#  zipcode         :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 
 RSpec.describe Organization, type: :model do
@@ -234,15 +235,8 @@ RSpec.describe Organization, type: :model do
 
   describe "geocode" do
     it "adds coordinates to the database" do
-      pending("TODO: This spec is failing but the fix is out of scope for the PR")
-      organization = build(:organization,
-                           "street" => "1500 Remount Road",
-                           "city" => "Front Royal",
-                           "state" => "VA",
-                           "zipcode" => "12345")
-      organization.save
-      expect(organization.latitude).not_to eq(nil)
-      expect(organization.longitude).not_to eq(nil)
+      expect(organization.latitude).to be_a(Float)
+      expect(organization.longitude).to be_a(Float)
     end
   end
 

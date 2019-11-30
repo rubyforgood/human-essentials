@@ -1,12 +1,12 @@
-# Welcome Hacktoberfest Contributors!
+# Welcome Contributors!
 Thanks for checking us out!
 
 If you're new here, here are some things you should know:
- - We actively curate issues and try to make them as self-contained as possible for people new to the application; those ones are tagged "Hacktoberfest" + "Help Wanted"
+ - We actively curate issues and try to make them as self-contained as possible for people new to the application; those ones are tagged "Help Wanted"
  - We're actively watching for Pull Requests and you shouldn't have to wait very long for a review. Try to make sure your build passes (`rubocop -a` is a frequent need) and that you've addressed the requirements in the issue
  - There is a wiki article called [Application Overview](https://github.com/rubyforgood/diaper/wiki/Application-Overview). It needs a tiny bit of updating, but is mostly still accurate. It will introduce you to some vocabulary and general concepts, if you find something confusing and want to find the answer on your own.
  - Check the `CONTRIBUTING.md` file for a guide on how to get started
- - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during October, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
+ - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
 Please feel free to join us on Slack! You can sign up at https://rubyforgood.org -- click on the Slack icon at the top to get an invite. We're in #diaper
  
@@ -15,6 +15,8 @@ There are numerous other folks that can chime in and answer questions -- please 
 
 # README
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/maintainability)](https://codeclimate.com/github/rubyforgood/diaper/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/test_coverage)](https://codeclimate.com/github/rubyforgood/diaper/test_coverage)
 [![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=master)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 
 ## About

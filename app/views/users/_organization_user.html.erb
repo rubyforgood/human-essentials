@@ -2,7 +2,7 @@
   <td><%= user.name %></td>
   <td><%= user.email %></td>
   <td><%= user.kind %> </td>
-  <td><%= user.most_recent_sign_in %></td>
+  <td><%= user.current_sign_in_at %></td>
   <td><%= user.invitation_status %></td>
   <td><%= reinvite_user_link(user) %></td>
   <td><%= edit_button_to promote_to_org_admin_organization_path(user_id: user.id),

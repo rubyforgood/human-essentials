@@ -4,8 +4,10 @@ inherit_from: .rubocop_todo.yml
 # Once it is empty this can be removed!
 # inherit_from: .rubocop_todo.yml
 
+require: rubocop-rails
+
 AllCops:
-  TargetRubyVersion: 2.5.3
+  TargetRubyVersion: 2.6.4
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
@@ -274,7 +276,7 @@ Style/FormatStringToken:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Exclude:
-    - "spec/**/*"  
+    - "spec/**/*"
 Lint/EachWithObjectArgument:
   Description: Check for immutable argument given to each_with_object.
   Enabled: true

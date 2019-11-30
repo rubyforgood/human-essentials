@@ -2,10 +2,10 @@
 #
 # Table name: diaper_drives
 #
-#  id         :bigint(8)        not null, primary key
+#  id         :bigint           not null, primary key
+#  end_date   :date
 #  name       :string
 #  start_date :date
-#  end_date   :date
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

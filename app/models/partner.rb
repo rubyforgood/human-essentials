@@ -2,20 +2,20 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
-#  name            :string
+#  id              :bigint           not null, primary key
 #  email           :string
+#  name            :string
+#  send_reminders  :boolean          default(FALSE), not null
+#  status          :integer          default("uninvited")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
-#  send_reminders  :boolean          default(FALSE), not null
-#  status          :integer          default("uninvited")
 #
 
 class Partner < ApplicationRecord
   require "csv"
 
-  enum status: [:uninvited, :invited, :awaiting_review, :approved, :error, :recertification_required]
+  enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, error: 4, recertification_required: 5 }
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy
@@ -57,6 +57,10 @@ class Partner < ApplicationRecord
 
   def register_on_partnerbase
     UpdateDiaperPartnerJob.perform_async(id)
+  end
+
+  def add_user_on_partnerbase(options = {})
+    AddDiaperPartnerJob.perform_async(id, options)
   end
 
   def quantity_year_to_date

@@ -5,15 +5,12 @@ class DonationsController < ApplicationController
   skip_before_action :authorize_user, only: %i(scale_intake scale)
   before_action :authorize_admin, only: [:destroy]
 
-  include Dateable
-
   def index
     setup_date_range_picker
 
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
-                                     .where(issued_at: date_range)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
     @paginated_donations = @donations.page(params[:page])

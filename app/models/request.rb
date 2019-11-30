@@ -2,15 +2,15 @@
 #
 # Table name: requests
 #
-#  id              :bigint(8)        not null, primary key
-#  partner_id      :bigint(8)
-#  organization_id :bigint(8)
-#  request_items   :jsonb
+#  id              :bigint           not null, primary key
 #  comments        :text
+#  request_items   :jsonb
+#  status          :integer          default("pending")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  distribution_id :integer
-#  status          :integer          default("pending")
+#  organization_id :bigint
+#  partner_id      :bigint
 #
 
 class Request < ApplicationRecord
@@ -45,7 +45,6 @@ class Request < ApplicationRecord
     request.request_items =
       Item.where(id: requested_items.map { |item| item['item_id'] })
           .order(:id).each.with_index.with_object([]) do |(item, index), request_items|
-
         unless requested_items[index]['item_id'] == item.id
           raise MismatchedItemIdsError,
                 'Item ids should match existing Diaper Base item ids.'

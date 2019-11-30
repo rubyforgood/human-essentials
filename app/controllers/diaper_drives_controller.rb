@@ -3,7 +3,12 @@ class DiaperDrivesController < ApplicationController
   before_action :set_diaper_drive, only: [:show, :edit, :update, :destroy]
 
   def index
-    @diaper_drives = current_organization.diaper_drives.includes(:donations).all.order(:name)
+    setup_date_range_picker
+    @diaper_drives = current_organization.diaper_drives.includes(:donations).class_filter(filter_params)
+                      .within_date_rage(@selected_date_range)
+                      .order(created_at: :desc)
+
+    @selected_name_filter = filter_params[:by_name]
   end
 
   def create
@@ -66,5 +71,17 @@ class DiaperDrivesController < ApplicationController
   def diaper_drive_params
     params.require(:diaper_drive)
           .permit(:name, :start_date, :end_date)
+  end
+
+  def date_range_filter
+    return '' unless params.key?(:filters)
+
+    params.require(:filters)[:date_range]
+  end
+
+  def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).slice(:by_name)
   end
 end

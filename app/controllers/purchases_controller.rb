@@ -4,13 +4,10 @@ class PurchasesController < ApplicationController
   skip_before_action :authenticate_user!, only: %i(scale_intake scale)
   skip_before_action :authorize_user, only: %i(scale_intake scale)
 
-  include Dateable
-
   def index
     setup_date_range_picker
     @purchases = current_organization.purchases
                                      .includes(:line_items, :storage_location)
-                                     .where(issued_at: date_range)
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)

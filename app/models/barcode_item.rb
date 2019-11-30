@@ -3,14 +3,13 @@
 # Table name: barcode_items
 #
 #  id               :integer          not null, primary key
-#  value            :string
-#  barcodeable_id   :integer
+#  barcodeable_type :string           default("Item")
 #  quantity         :integer
+#  value            :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  barcodeable_id   :integer
 #  organization_id  :integer
-#  global           :boolean          default(FALSE)
-#  barcodeable_type :string           default("Item")
 #
 
 class BarcodeItem < ApplicationRecord
@@ -27,10 +26,20 @@ class BarcodeItem < ApplicationRecord
   default_scope { order("barcodeable_type DESC, created_at ASC") }
 
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }
+
   # Because it's a polymorphic association, we have to do this join manually.
-  scope :by_item_partner_key, ->(partner_key) { joins("INNER JOIN items ON items.id = barcode_items.barcodeable_id").where(barcodeable_type: "Item", items: { partner_key: partner_key }) }
-  scope :by_base_item_partner_key, ->(partner_key) { joins("INNER JOIN base_items ON base_items.id = barcode_items.barcodeable_id").where(barcodeable_type: "BaseItem", base_items: { partner_key: partner_key }) }
+  scope :by_item_partner_key, ->(partner_key) do
+    joins("INNER JOIN items ON items.id = barcode_items.barcodeable_id") \
+      .where(barcodeable_type: "Item", items: { partner_key: partner_key })
+  end
+
+  scope :by_base_item_partner_key, ->(partner_key) do
+    joins("INNER JOIN base_items ON base_items.id = barcode_items.barcodeable_id") \
+      .where(barcodeable_type: "BaseItem", base_items: { partner_key: partner_key })
+  end
+
   scope :by_value, ->(value) { where(value: value) }
+
   scope :for_csv_export, ->(organization) {
     where(organization: organization)
       .includes(:barcodeable)
@@ -68,8 +77,8 @@ class BarcodeItem < ApplicationRecord
   private
 
   def unique_barcode_value
-    if (global? && BarcodeItem.where.not(id: id).find_by(value: value, barcodeable_type: "BaseItem")) ||
-       (!global? && BarcodeItem.where.not(id: id).find_by(value: value, organization: organization))
+    if (global?  && BarcodeItem.where.not(id: id).find_by(value: value, barcodeable_type: "BaseItem")) ||
+       (!global? && BarcodeItem.where.not(id: id).find_by(value: value, organization:     organization))
       errors.add(:value, "That barcode value already exists")
     end
   end

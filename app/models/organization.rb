@@ -2,23 +2,23 @@
 #
 # Table name: organizations
 #
-#  id              :integer          not null, primary key
-#  name            :string
-#  short_name      :string
-#  email           :string
-#  url             :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  intake_location :integer
-#  street          :string
+#  id              :bigint           not null, primary key
 #  city            :string
-#  state           :string
-#  zipcode         :string
+#  deadline_day    :integer
+#  email           :string
+#  intake_location :integer
+#  invitation_text :text
 #  latitude        :float
 #  longitude       :float
+#  name            :string
 #  reminder_day    :integer
-#  deadline_day    :integer
-#  invitation_text :text
+#  short_name      :string
+#  state           :string
+#  street          :string
+#  url             :string
+#  zipcode         :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 
 class Organization < ApplicationRecord
@@ -150,12 +150,12 @@ class Organization < ApplicationRecord
   def seed_items(item_collection)
     Array.wrap(item_collection).each do |item|
       items.create!(item)
-    rescue ActiveRecord::RecordInvalid => invalid
-      Rails.logger.info "[SEED] Duplicate item! #{invalid.record.name}"
-      existing_item = items.find_by(name: invalid.record.name)
-      if invalid.to_s.match(/been taken/).present? && existing_item.other?
-        Rails.logger.info "Changing Item##{existing_item.id} from Other to #{invalid.record.partner_key}"
-        existing_item.update(partner_key: invalid.record.partner_key)
+    rescue ActiveRecord::RecordInvalid => e
+      Rails.logger.info "[SEED] Duplicate item! #{e.record.name}"
+      existing_item = items.find_by(name: e.record.name)
+      if e.to_s.match(/been taken/).present? && existing_item.other?
+        Rails.logger.info "Changing Item##{existing_item.id} from Other to #{e.record.partner_key}"
+        existing_item.update(partner_key: e.record.partner_key)
         existing_item.reload
       else
         next

@@ -124,7 +124,7 @@ module UiHelper
 
   def _button_to(options = {}, other_properties = {})
     submit_type = options[:submit_type] || "submit"
-    id   = options[:id]
+    id = options[:id]
     type = options[:type]
     size = options[:size]
     icon = options[:icon]
