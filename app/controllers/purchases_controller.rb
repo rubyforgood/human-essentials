@@ -89,10 +89,6 @@ class PurchasesController < ApplicationController
     params[:purchase][:amount_spent_in_cents] = params[:purchase][:amount_spent_in_dollars].gsub(/[$,]/, "").to_d * 100
   end
 
-  def clean_amount_spent_in_dollars
-    return nil unless params[:purchase][:amount_spent_in_dollars]
-  end
-
   def load_form_collections
     @storage_locations = current_organization.storage_locations.alphabetized
     @items = current_organization.items.active.alphabetized
