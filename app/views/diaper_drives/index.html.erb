@@ -6,7 +6,7 @@
   <div class="box">
     <div class="box-header with-border bg-gray">
       <section id="filters">
-        <%= form_tag(diaper_drives_path, method: :get, organization_id: @organization.id) do |f| %>
+        <%= form_tag(diaper_drives_path, method: :get, organization_id: current_organization) do |f| %>
         <div class="row">
           <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <%= label_tag "by name" %>
