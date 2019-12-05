@@ -4,7 +4,7 @@ class AuthorizedFamilyMembersController < ApplicationController
   end
 
   def show
-    @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
+    @authorized_family_member = current_partner.authorized_family_members.find(params[:id])
   end
 
   def edit
@@ -34,7 +34,7 @@ class AuthorizedFamilyMembersController < ApplicationController
   private
 
   def family
-    @_family ||= current_partner.families.find_by(id: params[:family_id])
+    @_family ||= current_partner.families.find_by(params[:family_id])
   end
 
   def authorized_family_member_params
