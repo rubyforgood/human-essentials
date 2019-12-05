@@ -17,7 +17,7 @@ class PurchasesController < ApplicationController
     # Using the @purchases allows drilling down instead of always starting with the total dataset
     @purchases_quantity = @purchases.collect(&:total_quantity).sum
     @paginated_purchases_quantity = @paginated_purchases.collect(&:total_quantity).sum
-    @total_value_all_purchases = total_value(@purchases)
+    @total_value_all_purchases = @purchases.collect(&:amount_spent_in_cents).sum
     @storage_locations = @purchases.collect(&:storage_location).compact.uniq
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
@@ -77,10 +77,16 @@ class PurchasesController < ApplicationController
 
   private
 
-  def clean_purchase_amount
+  def clean_purchase_amount_in_cents
     return nil unless params[:purchase][:amount_spent_in_cents]
 
     params[:purchase][:amount_spent_in_cents] = params[:purchase][:amount_spent_in_cents].gsub(/[$,.]/, "")
+  end
+
+  def clean_purchase_amount_in_dollars
+    return nil unless params[:purchase][:amount_spent_in_dollars]
+
+    params[:purchase][:amount_spent_in_cents] = params[:purchase][:amount_spent_in_dollars].gsub(/[$,]/, "").to_d * 100
   end
 
   def load_form_collections
@@ -90,7 +96,8 @@ class PurchasesController < ApplicationController
   end
 
   def purchase_params
-    clean_purchase_amount
+    clean_purchase_amount_in_cents
+    clean_purchase_amount_in_dollars
     params = compact_line_items
     params.require(:purchase).permit(:comment, :amount_spent_in_cents, :purchased_from, :storage_location_id, :issued_at, :vendor_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
