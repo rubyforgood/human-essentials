@@ -1,4 +1,6 @@
 RSpec.describe "Purchases", type: :system, js: true do
+  include ItemsHelper
+
   let!(:url_prefix) { "/#{@organization.short_name}" }
   before :each do
     sign_in @user
@@ -24,6 +26,17 @@ RSpec.describe "Purchases", type: :system, js: true do
       page.refresh
       expect(page).to have_text("Purchased Date")
       expect(page).to have_text(1.week.ago.strftime("%Y-%m-%d"))
+    end
+
+    it "User sees total purchases value" do
+      purchase1 = create(:purchase, amount_spent_in_cents: 1234)
+      purchase2 = create(:purchase, amount_spent_in_cents: 2345)
+      purchases = [purchase1, purchase2]
+      page.refresh
+      expect(page).to have_text("Total")
+      expect(page).to have_text(purchases.collect(&:total_quantity).sum)
+      expect(page).to have_text(item_value(purchases.collect(&:amount_spent_in_cents).sum))
+      expect(page).to have_text(item_value(3579))
     end
 
     context "When filtering on the index page" do
@@ -83,13 +96,28 @@ RSpec.describe "Purchases", type: :system, js: true do
         select "businesstest", from: "purchase_vendor_id"
       end
 
+      it "User can create a purchase using dollars decimal amount" do
+        select StorageLocation.first.name, from: "purchase_storage_location_id"
+        select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
+        select Vendor.first.business_name, from: "purchase_vendor_id"
+        fill_in "purchase_line_items_attributes_0_quantity", with: "5"
+        fill_in "purchase_amount_spent_in_dollars", with: "1,234.56"
+
+        expect do
+          click_button "Save"
+        end.to change { Purchase.count }.by(1)
+
+        expect(Purchase.last.amount_spent_in_dollars).to eq(1234.56)
+        expect(Purchase.last.amount_spent_in_cents).to eq(123_456)
+      end
+
       it "User can create a purchase IN THE PAST" do
         select StorageLocation.first.name, from: "purchase_storage_location_id"
         select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
         select Vendor.first.business_name, from: "purchase_vendor_id"
         fill_in "purchase_line_items_attributes_0_quantity", with: "5"
         fill_in "purchase_issued_at", with: "01/01/2001"
-        fill_in "purchase_amount_spent_in_cents", with: "10"
+        fill_in "purchase_amount_spent_in_dollars", with: "10"
 
         expect do
           click_button "Save"
@@ -124,7 +152,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         select Item.alphabetized.first.name, from: select_id
         text_id = page.find(:xpath, '//*[@id="purchase_line_items"]/section[2]/div/*/div/input[@type="number"]')[:id]
         fill_in text_id, with: "10"
-        fill_in "purchase_amount_spent_in_cents", with: "10"
+        fill_in "purchase_amount_spent_in_dollars", with: "10"
 
         expect do
           click_button "Save"

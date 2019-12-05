@@ -67,6 +67,10 @@ class Item < ApplicationRecord
     partner_key == "other"
   end
 
+  def value_in_dollars
+    value_in_cents.to_d / 100
+  end
+
   # Override `destroy` to ensure Item isn't accidentally destroyed
   # without first being disassociated with its historical presence
   def destroy
