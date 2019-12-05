@@ -20,6 +20,19 @@ RSpec.describe "Item management", type: :system do
     expect(page.find(".alert")).to have_content "didn't work"
   end
 
+  it "can create a new item with dollars decimal amount for value field" do
+    visit url_prefix + "/items/new"
+    item_traits = attributes_for(:item)
+    fill_in "Name", with: item_traits[:name]
+    fill_in "item_value_in_dollars", with: '1,234.56'
+    select BaseItem.last.name, from: "Base Item"
+    click_button "Save"
+
+    expect(page.find(".alert")).to have_content "added"
+    expect(Item.last.value_in_dollars).to eq(1234.56)
+    expect(Item.last.value_in_cents).to eq(123_456)
+  end
+
   it "can update an existing item as a user" do
     item = create(:item)
     visit url_prefix + "/items/#{item.id}/edit"
