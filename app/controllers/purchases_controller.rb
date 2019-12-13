@@ -37,7 +37,6 @@ class PurchasesController < ApplicationController
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
       flash[:error] = "There was an error starting this purchase, try again?"
-      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render :new
     end
   rescue Errors::InsufficientAllotment => e
