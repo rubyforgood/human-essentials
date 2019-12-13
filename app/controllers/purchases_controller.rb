@@ -36,6 +36,11 @@ class PurchasesController < ApplicationController
       Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render action: :new
     end
+  rescue Errors::InsufficientAllotment => e
+    flash[:error] = e.message
+    load_form_collections
+    @purchase.line_items.build if @purchase.line_items.count.zero?
+    render :new
   end
 
   def new
