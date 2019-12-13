@@ -34,14 +34,13 @@ class PurchasesController < ApplicationController
 
       redirect_to purchases_path
     else
+      flash[:error] = "There was an error starting this purchase, try again?"
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash[:error] = "There was an error starting this purchase, try again?"
       render :new
     end
   rescue Errors::InsufficientAllotment => e
     flash[:error] = e.message
-    load_form_collections
     render :new
   end
 
