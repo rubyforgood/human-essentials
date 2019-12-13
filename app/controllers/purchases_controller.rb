@@ -31,7 +31,7 @@ class PurchasesController < ApplicationController
       ActiveRecord::Base.transaction do
         @purchase.storage_location.increase_inventory @purchase
       end
-      
+
       redirect_to purchases_path
     else
       load_form_collections
@@ -40,8 +40,8 @@ class PurchasesController < ApplicationController
       Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render action: :new
     end
-  rescue Errors::InsufficientAllotment => ex
-    flash[:error] = ex.message
+  rescue Errors::InsufficientAllotment => e
+    flash[:error] = e.message
     load_form_collections
     render :new
   end
