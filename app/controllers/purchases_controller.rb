@@ -28,8 +28,11 @@ class PurchasesController < ApplicationController
     @purchase = current_organization.purchases.new(purchase_params)
 
     if @purchase.save
+      ActiveRecord::Base.transaction do
         @purchase.storage_location.increase_inventory @purchase
-        redirect_to purchases_path
+      end
+      
+      redirect_to purchases_path
     else
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
@@ -37,11 +40,10 @@ class PurchasesController < ApplicationController
       Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render action: :new
     end
-
-    rescue Errors::InsufficientAllotment => ex
-      flash[:error] = ex.message
-      load_form_collections
-      render :new
+  rescue Errors::InsufficientAllotment => ex
+    flash[:error] = ex.message
+    load_form_collections
+    render :new
   end
 
   def new
