@@ -134,6 +134,10 @@ class Donation < ApplicationRecord
     line_item&.destroy
   end
 
+  def money_raised_in_dollars
+    money_raised.to_d / 100
+  end
+
   def donation_site_view
     donation_site.nil? ? "N/A" : donation_site.name
   end
