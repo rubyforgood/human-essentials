@@ -17,7 +17,7 @@ class PurchasesController < ApplicationController
     # Using the @purchases allows drilling down instead of always starting with the total dataset
     @purchases_quantity = @purchases.collect(&:total_quantity).sum
     @paginated_purchases_quantity = @paginated_purchases.collect(&:total_quantity).sum
-    @total_value_all_purchases = @purchases.collect(&:amount_spent_in_cents).sum
+    @total_value_all_purchases = @purchases.sum(&:amount_spent_in_cents)
     @storage_locations = @purchases.collect(&:storage_location).compact.uniq
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
