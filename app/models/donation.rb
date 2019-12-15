@@ -30,6 +30,7 @@ class Donation < ApplicationRecord
   belongs_to :diaper_drive, optional: true
   belongs_to :manufacturer, optional: proc { |d| d.from_manufacturer? } # Validation is conditionally handled below.
   belongs_to :storage_location
+
   include Itemizable
 
   include Filterable
