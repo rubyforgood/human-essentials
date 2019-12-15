@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
   def current_organization
-    @organization ||= Organization.find_by(short_name: params[:organization_id]) || current_user&.organization
+    @current_organization ||= Organization.find_by(short_name: params[:organization_id]) || current_user&.organization
   end
   helper_method :current_organization
 
@@ -46,10 +46,9 @@ class ApplicationController < ActionController::Base
 
   def log_active_user
     if current_user && should_update_last_request_at?
-      # rubocop:disable Rails/SkipsModelValidations
       # we don't want the user record to validate or run callbacks when we're tracking activity
       current_user.update_columns(last_request_at: Time.now.utc)
-      # rubocop:enable Rails/SkipsModelValidations
+
     end
   end
 

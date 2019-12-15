@@ -2,16 +2,18 @@
 #
 # Table name: line_items
 #
-#  id              :integer          not null, primary key
-#  quantity        :integer
-#  item_id         :integer
-#  itemizable_id   :integer
+#  id              :bigint           not null, primary key
 #  itemizable_type :string
+#  quantity        :integer
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  item_id         :integer
+#  itemizable_id   :integer
 #
 
 RSpec.describe LineItem, type: :model do
+  let(:line_item) { build :line_item }
+
   context "Validations >" do
     it "requires an item" do
       expect(build(:line_item, item: nil)).not_to be_valid
@@ -58,6 +60,67 @@ RSpec.describe LineItem, type: :model do
 
       it "retrieves only those with active status" do
         expect(described_class.active.size).to eq(1)
+      end
+    end
+  end
+
+  describe 'Methods >' do
+    context '#value_per_line_item' do
+      subject { line_item.value_per_line_item }
+
+      describe 'item has no value' do
+        it { is_expected.to eq(0) }
+      end
+
+      describe 'item has value and quantity' do
+        let(:value) { 5 }
+        let(:quantity) { 5 }
+
+        before do
+          line_item.item = create(:item, value_in_cents: value)
+          line_item.quantity = quantity
+        end
+
+        it { is_expected.to eq(value * quantity) }
+      end
+    end
+
+    context 'item packages' do
+      let(:package_size) { 5 }
+      let(:quantity) { 5 }
+
+      context '#has_packages' do
+        subject { line_item.has_packages }
+
+        describe 'item has no package size' do
+          it { is_expected.to be_falsy }
+        end
+
+        describe 'item has package size' do
+          before do
+            line_item.item = create(:item, package_size: package_size)
+            line_item.quantity = quantity
+          end
+
+          it { is_expected.to be_truthy }
+        end
+      end
+
+      context '#package_count' do
+        subject { line_item.package_count }
+
+        describe 'has packages' do
+          before do
+            line_item.item = create(:item, package_size: package_size)
+            line_item.quantity = quantity
+          end
+
+          it { is_expected.to eq((quantity / package_size).to_s) }
+        end
+
+        describe 'does not have packages' do
+          it { is_expected.to be_falsy }
+        end
       end
     end
   end

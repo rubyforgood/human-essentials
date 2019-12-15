@@ -2,20 +2,20 @@
 #
 # Table name: items
 #
-#  id                             :integer          not null, primary key
-#  name                           :string
-#  category                       :string
-#  created_at                     :datetime         not null
-#  updated_at                     :datetime         not null
-#  barcode_count                  :integer
-#  organization_id                :integer
-#  active                         :boolean          default(TRUE)
-#  partner_key                    :string
-#  value_in_cents                 :integer          default(0)
-#  on_hand_minimum_quantity       :integer          default(0)
-#  on_hand_recommended_quantity   :integer
-#  package_size                   :integer
-#  distribution_quantity          :integer
+#  id                           :bigint           not null, primary key
+#  active                       :boolean          default(TRUE)
+#  barcode_count                :integer
+#  category                     :string
+#  distribution_quantity        :integer
+#  name                         :string
+#  on_hand_minimum_quantity     :integer          default(0), not null
+#  on_hand_recommended_quantity :integer
+#  package_size                 :integer
+#  partner_key                  :string
+#  value_in_cents               :integer          default(0)
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  organization_id              :integer
 #
 
 class Item < ApplicationRecord
@@ -65,6 +65,10 @@ class Item < ApplicationRecord
 
   def other?
     partner_key == "other"
+  end
+
+  def value_in_dollars
+    value_in_cents.to_d / 100
   end
 
   # Override `destroy` to ensure Item isn't accidentally destroyed

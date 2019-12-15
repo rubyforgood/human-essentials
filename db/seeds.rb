@@ -156,6 +156,25 @@ end
     organization:  pdx_org }
 ].each { |participant| DiaperDriveParticipant.create! participant }
 
+# ----------------------------------------------------------------------------
+# Diaper Drives
+# ----------------------------------------------------------------------------
+
+[
+  { name:        "First Diaper Drive",
+    start_date:  3.years.ago,
+    end_date:    3.years.ago
+  },
+  { name:        "Best Diaper Drive",
+    start_date:  3.weeks.ago,
+    end_date:    2.week.ago
+  },
+  { name:        "Second Best Diaper Drive",
+    start_date:  2.weeks.ago,
+    end_date:    1.week.ago
+  }
+].each { |diaper_drive| DiaperDrive.find_or_create_by! diaper_drive }
+
 
 # ----------------------------------------------------------------------------
 # Manufacturers

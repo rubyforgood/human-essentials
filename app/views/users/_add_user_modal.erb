@@ -3,7 +3,7 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Invite a new user to <%= @organization.name %></h4>
+        <h4 class="modal-title">Invite a new user to <%= current_organization.name %></h4>
       </div><!-- modal-header -->
       <div class="modal-body">
         <div class="box-body">
@@ -17,7 +17,7 @@
               <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
               <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
             </div>
-            <%= hidden_field_tag :org , @organization.id %><br>
+            <%= hidden_field_tag :org , current_organization.id %><br>
             <%= submit_button({ text: "Invite User", icon: "envelope" }) %>
           <% end # form %>
         </div><!-- box-body -->

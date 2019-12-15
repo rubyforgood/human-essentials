@@ -2,7 +2,6 @@
 class AdjustmentsController < ApplicationController
   # GET /adjustments
   # GET /adjustments.json
-  include Dateable
 
   def index
     setup_date_range_picker
@@ -51,8 +50,8 @@ class AdjustmentsController < ApplicationController
       load_form_collections
       render :new
     end
-  rescue Errors::InsufficientAllotment => ex
-    flash[:error] = ex.message
+  rescue Errors::InsufficientAllotment => e
+    flash[:error] = e.message
     load_form_collections
     render :new
   end

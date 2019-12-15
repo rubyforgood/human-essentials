@@ -2,14 +2,14 @@
 #
 # Table name: audits
 #
-#  id                  :bigint(8)        not null, primary key
-#  user_id             :bigint(8)
-#  organization_id     :bigint(8)
-#  adjustment_id       :bigint(8)
-#  storage_location_id :bigint(8)
+#  id                  :bigint           not null, primary key
 #  status              :integer          default("in_progress"), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  adjustment_id       :bigint
+#  organization_id     :bigint
+#  storage_location_id :bigint
+#  user_id             :bigint
 #
 
 FactoryBot.define do

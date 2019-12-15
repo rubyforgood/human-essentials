@@ -2,14 +2,14 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
-#  name            :string
+#  id              :bigint           not null, primary key
 #  email           :string
+#  name            :string
+#  send_reminders  :boolean          default(FALSE), not null
+#  status          :integer          default("uninvited")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
-#  send_reminders  :boolean          default(FALSE), not null
-#  status          :integer          default("uninvited")
 #
 
 FactoryBot.define do

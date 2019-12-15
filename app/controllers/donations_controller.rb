@@ -5,15 +5,12 @@ class DonationsController < ApplicationController
   skip_before_action :authorize_user, only: %i(scale_intake scale)
   before_action :authorize_admin, only: [:destroy]
 
-  include Dateable
-
   def index
     setup_date_range_picker
 
     @donations = current_organization.donations
                                      .includes(:line_items, :storage_location, :donation_site, :diaper_drive_participant, :manufacturer)
                                      .order(created_at: :desc)
-                                     .where(issued_at: date_range)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
     @paginated_donations = @donations.page(params[:page])
@@ -115,8 +112,17 @@ class DonationsController < ApplicationController
     @items = current_organization.items.active.alphabetized
   end
 
+  def clean_donation_money_raised
+    money_raised = params[:donation][:money_raised]
+    params[:donation][:money_raised] = money_raised.gsub(/[$,.]/, "") if money_raised
+
+    money_raised_in_dollars = params[:donation][:money_raised_in_dollars]
+    params[:donation][:money_raised] = money_raised_in_dollars.gsub(/[$,]/, "").to_d * 100 if money_raised_in_dollars
+  end
+
   def donation_params
     strip_unnecessary_params
+    clean_donation_money_raised
     params = compact_line_items
     params.require(:donation).permit(:source, :comment, :storage_location_id, :money_raised, :issued_at, :donation_site_id, :diaper_drive_participant_id, :manufacturer_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
