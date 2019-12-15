@@ -142,6 +142,20 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(Donation.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
         end
 
+        it "User can create a donation using dollars decimal amount for its money raised" do
+          select Donation::SOURCES[:misc], from: "donation_source"
+          select StorageLocation.first.name, from: "donation_storage_location_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          fill_in "donation_money_raised_in_dollars", with: "1,234.56"
+
+          expect do
+            click_button "Save"
+          end.to change { Donation.count }.by(1)
+
+          expect(Donation.last.money_raised_in_dollars).to eq(1234.56)
+          expect(Donation.last.money_raised).to eq(123_456)
+        end
+
         it "Accepts and combines multiple line items for the same item type" do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
