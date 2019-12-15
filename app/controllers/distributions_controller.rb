@@ -164,16 +164,7 @@ class DistributionsController < ApplicationController
     DistributionReminderJob.perform_async(dist)
   end
 
-  def clean_distribution_money_raised
-    money_raised = params[:distribution][:money_raised]
-    params[:distribution][:money_raised] = money_raised.gsub(/[$,.]/, "") if money_raised
-
-    money_raised_in_dollars = params[:distribution][:money_raised_in_dollars]
-    params[:distribution][:money_raised] = money_raised_in_dollars.gsub(/[$,]/, "").to_d * 100 if money_raised_in_dollars
-  end
-
   def distribution_params
-    clean_distribution_money_raised
     params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, line_items_attributes: %i(item_id quantity _destroy))
   end
 
