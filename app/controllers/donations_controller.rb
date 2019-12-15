@@ -112,8 +112,17 @@ class DonationsController < ApplicationController
     @items = current_organization.items.active.alphabetized
   end
 
+  def clean_donation_money_raised
+    money_raised = params[:donation][:money_raised]
+    params[:donation][:money_raised] = money_raised.gsub(/[$,.]/, "") if money_raised
+
+    money_raised_in_dollars = params[:donation][:money_raised_in_dollars]
+    params[:donation][:money_raised] = money_raised_in_dollars.gsub(/[$,]/, "").to_d * 100 if money_raised_in_dollars
+  end
+
   def donation_params
     strip_unnecessary_params
+    clean_donation_money_raised
     params = compact_line_items
     params.require(:donation).permit(:source, :comment, :storage_location_id, :money_raised, :issued_at, :donation_site_id, :diaper_drive_participant_id, :manufacturer_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
