@@ -42,7 +42,7 @@ gem "simple_form"
 gem "skylight"
 gem "sprockets", "~> 3.7.2"
 gem "uglifier", ">= 1.3.0"
-gem "therubyracer", "~> 0.12", platforms: :ruby
+gem "mini_racer", "~> 0.2.8"
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "webpacker", "> 4.0"
