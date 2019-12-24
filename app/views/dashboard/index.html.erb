@@ -196,7 +196,7 @@
                 <%= total_purchased %> items purchased <%= @selected_date_range_label %>
               </h3>
               <h3>
-                <%= item_value(@purchases.sum(&:amount_spent_in_cents))%>
+                <%= dollar_value(@purchases.sum(&:amount_spent_in_cents))%>
                  spent
                 <%= @selected_date_range_label %>
               </h3>
