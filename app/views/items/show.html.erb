@@ -20,7 +20,7 @@
 <!-- Default box -->
 <div class="box">
   <div class="box-header with-border">
-    <h3 class="box-title"><%= @item.name %>  <%= item_value(@item.value_in_cents, ', value per Item (in cents): ') %></h3>
+    <h3 class="box-title"><%= @item.name %>  <%= dollar_value(@item.value_in_cents, ', value per Item (in cents): ') %></h3>
     <small class="box-subtitle">
       Value per item: <%= @item.value_in_cents ? @item.value_in_cents : 0 %> | 
       Distribution quantity: <%= @item.distribution_quantity ? @item.distribution_quantity : 0 %> |
