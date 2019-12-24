@@ -5,7 +5,7 @@
   <td><%= donation_row.storage_location.name %></td>
   <td class="numeric"><%= donation_row.line_items.total %></td>
   <td class="numeric"><%= donation_row.line_items.size %></td>
-  <td class="numeric"><%= item_value(donation_row.value_per_itemizable) %></td>
+  <td class="numeric"><%= dollar_value(donation_row.value_per_itemizable) %></td>
   <td class="text-right">
     <%= view_button_to donation_path(donation_row) %>
   </td>
