@@ -7,7 +7,7 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
   end
 
   context "When visiting the index page without parameters" do
-    subject { @url_prefix + "/diaper_drives" }
+    let(:subject) { @url_prefix + "/diaper_drives" }
 
     before(:each) do
       @diaper_drives = [

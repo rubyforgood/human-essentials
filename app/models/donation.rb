@@ -30,6 +30,7 @@ class Donation < ApplicationRecord
   belongs_to :diaper_drive, optional: true
   belongs_to :manufacturer, optional: proc { |d| d.from_manufacturer? } # Validation is conditionally handled below.
   belongs_to :storage_location
+
   include Itemizable
 
   include Filterable
@@ -137,6 +138,10 @@ class Donation < ApplicationRecord
     item_id = item.to_i
     line_item = line_items.find_by(item_id: item_id)
     line_item&.destroy
+  end
+
+  def money_raised_in_dollars
+    money_raised.to_d / 100
   end
 
   def donation_site_view

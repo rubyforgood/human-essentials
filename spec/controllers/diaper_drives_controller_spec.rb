@@ -24,16 +24,18 @@ RSpec.describe DiaperDrivesController, type: :controller do
     end
 
     describe "POST#create" do
-      let!(:storage_location) { create(:storage_location) }
-      let!(:diaper_drive_site) { create(:diaper_drive_site) }
-      let(:line_items) { [attributes_for(:line_item)] }
+      subject { get :create, params: default_params.merge(diaper_drive: attributes_for(:diaper_drive)) }
+
+      it "returns redirect http status" do
+        expect(subject).to have_http_status(:redirect)
+      end
     end
 
     describe "PUT#update" do
-      it "redirects to index after update" do
-        # diaper_drive = create(:diaper_drive)
-        # put :update, params: default_params.merge(id: diaper_drive.id, name: 'updated name')
-        # expect(response).to redirect_to(diaper_drives_path)
+      subject { put :update, params: default_params.merge(id: diaper_drive.id, diaper_drive: attributes_for(:diaper_drive)) }
+
+      it "returns redirect http status" do
+        expect(subject).to have_http_status(:redirect)
       end
     end
 

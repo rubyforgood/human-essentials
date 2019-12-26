@@ -4,9 +4,15 @@ class DiaperDrivesController < ApplicationController
 
   def index
     setup_date_range_picker
-    @diaper_drives = current_organization.diaper_drives.includes(:donations).class_filter(filter_params)
-                      .within_date_rage(@selected_date_range)
-                      .order(created_at: :desc)
+    @diaper_drives = DiaperDrive.class_filter(filter_params)
+                                .within_date_rage(@selected_date_range)
+                                .order(created_at: :desc)
+    @selected_name_filter = filter_params[:by_name]
+  end
+
+  # GET /diaper_drives/1
+  # GET /diaper_drives/1.json
+  def show; end
 
     @selected_name_filter = filter_params[:by_name]
   end
