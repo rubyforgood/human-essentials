@@ -89,10 +89,10 @@ group :test do
   gem "database_cleaner"
   gem "factory_bot_rails"
   gem "launchy"
-  gem 'webdrivers', '~> 3.0'
   gem "rails-controller-testing"
-  gem 'simplecov'
   gem "webmock", "~> 3.5"
+  gem 'simplecov'
+  gem 'webdrivers', '~> 3.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
