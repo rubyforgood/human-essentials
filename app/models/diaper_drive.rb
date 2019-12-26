@@ -38,6 +38,7 @@ class DiaperDrive < ApplicationRecord
 
   def in_kind_value
     donations.sum(&:value_per_itemizable)
+  end
 
   def self.search_date_range(dates)
     dates = dates.split(" - ")
