@@ -15,7 +15,7 @@ class DiaperDrive < ApplicationRecord
 
   scope :by_name, ->(name_filter) { where(name: name_filter) }
 
-  scope :within_date_rage, ->(search_range) {
+  scope :within_date_range, ->(search_range) {
     search_dates = search_date_range(search_range)
     where('end_date >= ? AND start_date <= ?', search_dates[:start_date], search_dates[:end_date])
   }
