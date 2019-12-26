@@ -42,7 +42,7 @@ gem "simple_form"
 gem "skylight"
 gem "sprockets", "~> 3.7.2"
 gem "uglifier", ">= 1.3.0"
-gem "therubyracer", "~> 0.12", platforms: :ruby
+gem "mini_racer", "~> 0.2.8"
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "webpacker", "> 4.0"
@@ -89,10 +89,10 @@ group :test do
   gem "database_cleaner"
   gem "factory_bot_rails"
   gem "launchy"
-  gem 'webdrivers', '~> 3.0'
   gem "rails-controller-testing"
-  gem 'simplecov'
   gem "webmock", "~> 3.5"
+  gem 'simplecov'
+  gem 'webdrivers', '~> 3.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

@@ -35,8 +35,8 @@ RSpec.describe "Purchases", type: :system, js: true do
       page.refresh
       expect(page).to have_text("Total")
       expect(page).to have_text(purchases.sum(&:total_quantity))
-      expect(page).to have_text(item_value(purchases.sum(&:amount_spent_in_cents)))
-      expect(page).to have_text(item_value(3579))
+      expect(page).to have_text(dollar_value(purchases.sum(&:amount_spent_in_cents)))
+      expect(page).to have_text(dollar_value(3579))
     end
 
     context "When filtering on the index page" do

@@ -22,6 +22,7 @@ class Donation < ApplicationRecord
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
               misc: "Misc. Donation" }.freeze
+  SOURCES.values.map(&:freeze)
 
   belongs_to :organization
 

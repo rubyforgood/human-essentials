@@ -43,9 +43,9 @@ class DistributionPdf
 
     data = [["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"]]
     data += @distribution.line_items.sorted.map do |c|
-      [c.item.name, item_value(c.item.value_in_cents), item_value(c.value_per_line_item), c.quantity, c.package_count]
+      [c.item.name, dollar_value(c.item.value_in_cents), dollar_value(c.value_per_line_item), c.quantity, c.package_count]
     end
-    data += [["", "", "", "", ""], ["Total Items Received", "", item_value(@distribution.value_per_itemizable), @distribution.line_items.total, ""]]
+    data += [["", "", "", "", ""], ["Total Items Received", "", dollar_value(@distribution.value_per_itemizable), @distribution.line_items.total, ""]]
 
     font_size 11
     # Line item table
