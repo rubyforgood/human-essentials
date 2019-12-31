@@ -2,6 +2,31 @@
   <div>
     <h1><i class="fa fa-child"></i>&nbsp;&nbsp;Children</h1><%= link_to 'Export a CSV file', children_path(nil, format: :csv) %>
   </div>
+
+    <!-- Main content -->
+  <div>
+    <section id="filters">
+      <%= form_tag(children_path, method: :get) do |f| %>
+      <div class="row">
+        <% if @family.present? %>
+          <div class="col-xs-12 col-sm-6">
+            <%= label_tag "by Guardian name" %>
+            <%= collection_select(:filters, :from_family, @family || {}, :id, :guardian_display_name, { include_blank: true, selected: @selected_family }, class: "form-control") %>
+          </div>
+        <% end %>
+        <% if @children.present? %>
+          <div class="col-xs-12 col-sm-6">
+            <%= label_tag "by Children first name" %>
+            <%= collection_select(:filters, :from_children, @children || {}, :id, :first_name, { include_blank: true, selected: @selected_children_first_name }, class: "form-control") %>
+          </div>
+        <% end %>
+        <div class="col-xs-12 col-sm-6">
+          <%= filter_button %>
+          <%= cancel_button_to children_path %>
+        </div><!-- /.row -->
+      <% end # form %>
+    </section><!-- /#filters -->
+  </div><!-- /.box-header -->
   <ul class="app-breadcrumb breadcrumb">
     <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
     <li class="breadcrumb-item"><a href="#">Children</a></li>
