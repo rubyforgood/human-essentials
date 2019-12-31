@@ -3,7 +3,10 @@ class ChildrenController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @children = current_partner.children.order(active: :desc, last_name: :asc)
+    @children = current_partner.children
+                               .includes(:family)
+                               .order(active: :desc, last_name: :asc)
+                               .class_filter(filter_params)
 
     respond_to do |format|
       format.html
@@ -11,6 +14,9 @@ class ChildrenController < ApplicationController
         render(csv: @children.map(&:to_csv))
       end
     end
+    @family = @children.collect(&:family).compact.uniq.sort
+    @selected_family = filter_params[:from_family]
+    @selected_children_first_name = filter_params[:from_children]
   end
 
   def show
@@ -83,5 +89,11 @@ class ChildrenController < ApplicationController
       :archived,
       child_lives_with: []
     )
+  end
+
+  def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).slice(:from_family, :from_children)
   end
 end
