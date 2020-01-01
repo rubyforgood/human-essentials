@@ -12,8 +12,7 @@ class DiaperDrivesController < ApplicationController
 
   # GET /diaper_drives/1
   # GET /diaper_drives/1.json
-  def show; end
-
+  def show
     @selected_name_filter = filter_params[:by_name]
   end
 
@@ -51,7 +50,7 @@ class DiaperDrivesController < ApplicationController
   def update
     @diaper_drive = current_organization.diaper_drives.find(params[:id])
     if @diaper_drive.update(diaper_drive_params)
-      redirect_to diaper_drives_path, notice: "#{@diaper_drive.contact_name} updated!"
+      redirect_to diaper_drives_path, notice: "#{@diaper_drive.name} updated!"
 
     else
       flash[:error] = "Something didn't work quite right -- try again?"
