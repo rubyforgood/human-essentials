@@ -12,9 +12,6 @@ class DiaperDrivesController < ApplicationController
 
   # GET /diaper_drives/1
   # GET /diaper_drives/1.json
-  def show
-    @selected_name_filter = filter_params[:by_name]
-  end
 
   def create
     @diaper_drive = current_organization.diaper_drives.new(diaper_drive_params.merge(organization: current_organization))
@@ -44,6 +41,7 @@ class DiaperDrivesController < ApplicationController
   end
 
   def show
+    @selected_name_filter = filter_params[:by_name]
     @diaper_drive = current_organization.diaper_drives.includes(:donations).find(params[:id])
   end
 
