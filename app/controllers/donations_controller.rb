@@ -146,7 +146,7 @@ class DonationsController < ApplicationController
     params[:donation].delete(:donation_site_id) unless params[:donation][:source] == Donation::SOURCES[:donation_site]
     params[:donation].delete(:manufacturer_id) unless params[:donation][:source] == Donation::SOURCES[:manufacturer]
     params[:donation].delete(:diaper_drive_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive]
-    params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive_participant]
+    params[:donation].delete(:diaper_drive_participant_id) unless params[:donation][:source] == Donation::SOURCES[:diaper_drive]
     params
   end
 

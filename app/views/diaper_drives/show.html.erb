@@ -50,7 +50,7 @@
                     <th>Quantity</th>
                     <th>In Kind Value</th>
                   </thead>
-                  
+
                   <tbody>
                     <% @diaper_drive.donations.each do |donation| %>
                       <tr>
@@ -70,7 +70,7 @@
       </fieldset>
     </div>
     <div class="box-footer">
-      <%= edit_button_to edit_donation_path(@diaper_drive), { text: "Make a correction", size: "lg" } %>
+      <%= edit_button_to edit_diaper_drive_path(@diaper_drive), { text: "Make a correction", size: "lg" } %>
       <%# <%= new_button_to new_distribution_path(donation_id: @diaper_drive.id, storage_location_id: @diaper_drive.storage_location_id), { text: "Start a new Distribution" } %>
       <%= delete_button_to donation_path(@diaper_drive), { size: "lg", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.organization_admin? %>
     </div>

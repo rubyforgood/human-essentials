@@ -4,7 +4,9 @@ class DiaperDrivesController < ApplicationController
 
   def index
     setup_date_range_picker
-    @diaper_drives = DiaperDrive.class_filter(filter_params)
+    @diaper_drives = current_organization
+                                .diaper_drives
+                                .class_filter(filter_params)
                                 .within_date_range(@selected_date_range)
                                 .order(created_at: :desc)
     @selected_name_filter = filter_params[:by_name]
