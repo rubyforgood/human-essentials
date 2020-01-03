@@ -1,5 +1,5 @@
 # Welcome Contributors!
-Thanks for checking us out!
+Thanks for checking us out!!
 
 If you're new here, here are some things you should know:
  - We actively curate issues and try to make them as self-contained as possible for people new to the application; those ones are tagged "Help Wanted"
@@ -9,7 +9,7 @@ If you're new here, here are some things you should know:
  - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
 Please feel free to join us on Slack! You can sign up at https://rubyforgood.org -- click on the Slack icon at the top to get an invite. We're in #diaper
- 
+
 The core team leads are: @armahillo @seanmarcia @mdworken @benreyn
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
@@ -105,7 +105,7 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 Run all the tests with:
 
-  `bundle exec rspec`            
+  `bundle exec rspec`
 
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
