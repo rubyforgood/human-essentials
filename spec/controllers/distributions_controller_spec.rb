@@ -107,7 +107,7 @@ RSpec.describe DistributionsController, type: :controller do
       end
 
       context 'when the distribution update fails' do
-        let(:distribution) { create(:distribution, state: :complete) }
+        let(:distribution) { create(:distribution, state: :started) }
 
         it "redirects the user back to the distributions page with an error message" do
           subject
