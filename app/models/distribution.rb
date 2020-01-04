@@ -53,8 +53,8 @@ class Distribution < ApplicationRecord
       .includes(:partner, :storage_location, :line_items)
   }
   scope :this_week, -> do
-    where("issued_at >= :start_date AND issued_at <= :end_date",
-          start_date: Time.zone.today, end_date: Time.zone.today.sunday)
+    where("issued_at > :start_date AND issued_at <= :end_date",
+          start_date: Time.zone.today.beginning_of_week.beginning_of_day, end_date: Time.zone.today.end_of_week.end_of_day)
   end
 
   delegate :name, to: :partner, prefix: true
