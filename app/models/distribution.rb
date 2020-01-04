@@ -38,7 +38,7 @@ class Distribution < ApplicationRecord
 
   before_save :combine_distribution
 
-  enum state: { started: 0, scheduled: 1, complete: 10 }
+  enum state: { scheduled: 0, complete: 10 }
 
   include Filterable
   # add item_id scope to allow filtering distributions by item
