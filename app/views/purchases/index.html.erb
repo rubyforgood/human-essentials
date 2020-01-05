@@ -18,6 +18,8 @@
   <div class="box">
     <div class="box-header with-border bg-gray">
       <section id="filters">
+      <%= Time.zone.now %>
+      <script>document.write(moment('<%= Time.zone.now.strftime('%Y%m%d') %>'));</script>
         <%= form_tag(purchases_path, method: :get) do |f| %>
           <div class="row">
             <% if @storage_locations.present? %>
