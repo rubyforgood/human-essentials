@@ -1,6 +1,21 @@
-<h1>Editing Diaper drive</h1>
+<section class="content-header">
+  <h1>Editing Diaper Drive</h1>
 
-<%= render 'form', diaper_drive: @diaper_drive %>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Diaper Drivers", (diaper_drives_path) %></li>
+    <li class="active"> Editing <%= @diaper_drive.name %> on <%= @diaper_drive.created_at.to_s(:distribution_date) %></li>
+  </ol>
+</section>
 
-<%= link_to 'Show', @diaper_drive %> |
-<%= link_to 'Back', diaper_drives_path %>
+<section class="content">
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+      <%= render 'form', diaper_drive: @diaper_drive %>
+    </div>
+  </div>
+</section>
