@@ -12,7 +12,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
     context "In the middle of the year" do
       before :each do
-        travel_to Time.local(2019, 7, 1)
+        travel_to Time.zone.local(2019, 7, 1)
         visit subject
       end
 
@@ -47,7 +47,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         expect(page).to have_text(dollar_value(3579))
       end
     end
-    
+
     context "When filtering on the index page" do
       let!(:item) { create(:item) }
       let(:storage) { create(:storage_location) }

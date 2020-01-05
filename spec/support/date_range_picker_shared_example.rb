@@ -17,14 +17,14 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     described_class.destroy_all
   end
 
-  let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.local(1919, 7, 31)) }
-  let!(:recent) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.local(2019, 7, 24)) }
-  let!(:today) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.local(2019, 7, 31)) }
+  let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(1919, 7, 31)) }
+  let!(:recent) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 24)) }
+  let!(:today) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 31)) }
 
   context "when choosing 'All Time'" do
     before do
       sign_out @user
-      travel_to Time.local(2019, 7, 31)
+      travel_to Time.zone.local(2019, 7, 31)
       sign_in @user
     end
 
@@ -34,8 +34,8 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
 
     it "shows all the records" do
       visit subject
-      date_range = "#{Time.local(1919, 7, 1).strftime("%m/%d/%Y")} - #{Time.local(2019, 7, 31).strftime("%m/%d/%Y")}"
-      fill_in "filters_date_range", with: date_range      
+      date_range = "#{Time.zone.local(1919, 7, 1).strftime("%m/%d/%Y")} - #{Time.zone.local(2019, 7, 31).strftime("%m/%d/%Y")}"
+      fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table.records tbody tr", count: 3)
     end
@@ -44,7 +44,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   context "when choosing 'Last Month'" do
     before do
       sign_out @user
-      travel_to Time.local(2019, 8, 1)
+      travel_to Time.zone.local(2019, 8, 1)
       sign_in @user
     end
 
@@ -56,8 +56,8 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     # The dates being set may or may not respect the time travelling.
     it "shows only 2 of the records" do
       visit subject
-      date_range = "#{Time.local(2019, 7, 1).strftime("%m/%d/%Y")} - #{Time.local(2019, 7, 31).strftime("%m/%d/%Y")}"
-      fill_in "filters_date_range", with: date_range      
+      date_range = "#{Time.zone.local(2019, 7, 1).strftime("%m/%d/%Y")} - #{Time.zone.local(2019, 7, 31).strftime("%m/%d/%Y")}"
+      fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table.records tbody tr", count: 2)
     end
@@ -66,7 +66,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   context "when choosing a date range that only includes the previous week" do
     it "shows only 1 record" do
       visit subject
-      date_range = "#{Time.local(2019, 7, 22).strftime("%m/%d/%Y")} - #{Time.local(2019, 7, 28).strftime("%m/%d/%Y")}"
+      date_range = "#{Time.zone.local(2019, 7, 22).strftime("%m/%d/%Y")} - #{Time.zone.local(2019, 7, 28).strftime("%m/%d/%Y")}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table.records tbody tr", count: 1)

@@ -10,7 +10,7 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
     let(:subject) { @url_prefix + "/diaper_drives" }
 
     around do |example|
-      travel_to Time.local(2019, 7, 1)
+      travel_to Time.zone.local(2019, 7, 1)
       example.run
       travel_back
     end

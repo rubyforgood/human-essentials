@@ -31,7 +31,7 @@ RSpec.describe AdjustmentsController, type: :controller do
 
     describe "GET #index" do
       around do |example|
-        travel_to Time.local(2019, 7, 1)
+        travel_to Time.zone.local(2019, 7, 1)
         example.run
         travel_back
       end
