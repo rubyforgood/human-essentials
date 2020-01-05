@@ -90,7 +90,7 @@ class DistributionsController < ApplicationController
 
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-    if @distribution.future? || current_user.organization_admin?
+    if (!@distribution.complete? && @distribution.future?) || current_user.organization_admin?
       @distribution.line_items.build
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
