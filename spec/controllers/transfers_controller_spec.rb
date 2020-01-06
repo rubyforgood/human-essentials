@@ -5,6 +5,12 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "GET #index" do
+      around do |example|
+        travel_to Time.zone.local(2019, 7, 1)
+        example.run
+        travel_back
+      end
+
       subject { get :index, params: { organization_id: @organization.short_name } }
       it "returns http success" do
         expect(subject).to be_successful
