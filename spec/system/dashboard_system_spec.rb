@@ -118,9 +118,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
       describe "Donations" do
         around do |example|
-          Timecop.travel(date_to_view) do
-            example.run
-          end
+          travel_to(date_to_view)
+          example.run
+          travel_back
         end
 
         it "has a link to create a new donation" do
@@ -292,9 +292,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
       describe "Purchases" do
         around do |example|
-          Timecop.travel(date_to_view) do
-            example.run
-          end
+          travel_to(date_to_view)
+          example.run
+          travel_back
         end
 
         it "has a link to create a new purchase" do
@@ -466,9 +466,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
       describe "Diaper Drives" do
         around do |example|
-          Timecop.travel(date_to_view) do
-            example.run
-          end
+          travel_to(date_to_view)
+          example.run
+          travel_back
         end
 
         it "has a widget for diaper drive summary data" do
@@ -631,9 +631,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
       describe "Manufacturer Donations" do
         around do |example|
-          Timecop.travel(date_to_view) do
-            example.run
-          end
+          travel_to(date_to_view)
+          example.run
+          travel_back
         end
 
         it "should list top 10 manufacturers" do
@@ -844,9 +844,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
       describe "Distributions" do
         around do |example|
-          Timecop.travel(date_to_view) do
-            example.run
-          end
+          travel_to(date_to_view)
+          example.run
+          travel_back
         end
 
         before do
