@@ -9,6 +9,12 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
   context "When visiting the index page without parameters" do
     let(:subject) { @url_prefix + "/diaper_drives" }
 
+    around do |example|
+      travel_to Time.zone.local(2019, 7, 1)
+      example.run
+      travel_back
+    end
+
     before(:each) do
       @diaper_drives = [
         create(:diaper_drive, name: "Test name 1", start_date: 3.weeks.ago, end_date: 2.weeks.ago),

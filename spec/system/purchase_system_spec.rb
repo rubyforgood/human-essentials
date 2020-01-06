@@ -1,42 +1,51 @@
 RSpec.describe "Purchases", type: :system, js: true do
   include ItemsHelper
 
-  let!(:url_prefix) { "/#{@organization.short_name}" }
+  let(:url_prefix) { "/#{@organization.short_name}" }
+
   before :each do
     sign_in @user
   end
 
   context "When visiting the index page" do
     subject { url_prefix + "/purchases" }
-    before(:each) do
-      visit subject
-    end
 
-    it "User can click to the new purchase form" do
-      find(".fa-plus").click
+    context "In the middle of the year" do
+      before :each do
+        travel_to Time.zone.local(2019, 7, 1)
+        visit subject
+      end
 
-      expect(current_path).to eq(new_purchase_path(@organization))
-      expect(page).to have_content "Start a new purchase"
-    end
+      after do
+        travel_back
+      end
 
-    it "User sees purchased date column" do
-      storage1 = create(:storage_location, name: "storage1")
-      purchase_date = 1.week.ago
-      create(:purchase, storage_location: storage1, issued_at: purchase_date)
-      page.refresh
-      expect(page).to have_text("Purchased Date")
-      expect(page).to have_text(1.week.ago.strftime("%Y-%m-%d"))
-    end
+      it "User can click to the new purchase form" do
+        find(".fa-plus").click
 
-    it "User sees total purchases value" do
-      purchase1 = create(:purchase, amount_spent_in_cents: 1234)
-      purchase2 = create(:purchase, amount_spent_in_cents: 2345)
-      purchases = [purchase1, purchase2]
-      page.refresh
-      expect(page).to have_text("Total")
-      expect(page).to have_text(purchases.sum(&:total_quantity))
-      expect(page).to have_text(dollar_value(purchases.sum(&:amount_spent_in_cents)))
-      expect(page).to have_text(dollar_value(3579))
+        expect(current_path).to eq(new_purchase_path(@organization))
+        expect(page).to have_content "Start a new purchase"
+      end
+
+      it "User sees purchased date column" do
+        storage1 = create(:storage_location, name: "storage1")
+        purchase_date = 1.week.ago
+        create(:purchase, storage_location: storage1, issued_at: purchase_date)
+        page.refresh
+        expect(page).to have_text("Purchased Date")
+        expect(page).to have_text(1.week.ago.strftime("%Y-%m-%d"))
+      end
+
+      it "User sees total purchases value" do
+        purchase1 = create(:purchase, amount_spent_in_cents: 1234)
+        purchase2 = create(:purchase, amount_spent_in_cents: 2345)
+        purchases = [purchase1, purchase2]
+        page.refresh
+        expect(page).to have_text("Total")
+        expect(page).to have_text(purchases.sum(&:total_quantity))
+        expect(page).to have_text(dollar_value(purchases.sum(&:amount_spent_in_cents)))
+        expect(page).to have_text(dollar_value(3579))
+      end
     end
 
     context "When filtering on the index page" do

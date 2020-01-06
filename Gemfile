@@ -62,7 +62,6 @@ group :development, :test do
   gem "rubocop-rails"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
-  gem "timecop"
   gem "faker"
 end
 
