@@ -1,7 +1,20 @@
-<p id="notice"><%= notice %></p>
+<section class="content-header">
+<% content_for :title, "Diaper Drives - #{current_organization.name}" %>
+<h1>
+  Diaper Drives
+  <small>for <%= current_organization.name %></small>
+</h1>
+<ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li><a href="#">Diaper Drives</a></li>
+</ol>
+</section>
 
-<h1>Diaper Drives</h1>
 
+<!-- Main content -->
 <section class="content">
   <div class="box">
     <div class="box-header with-border bg-gray">
@@ -30,35 +43,42 @@
         <% end %>
       </section>
     </div>
+
     <div class="box-body">
       <div class="row">
         <div class="col-xs-12">
           <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped records">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Start date</th>
-                <th>End date</th>
-                <th colspan="3"></th>
-              </tr>
-            </thead>
 
-            <tbody>
-              <% @diaper_drives.each do |diaper_drive| %>
+            <table class="table table-hover striped">
+              <thead>
                 <tr>
-                  <td><%= diaper_drive.name %></td>
-                  <td><%= diaper_drive.start_date %></td>
-                  <td><%= diaper_drive.end_date %></td>
-                  <td><%= link_to 'Show', diaper_drive %></td>
-                  <td><%= link_to 'Edit', edit_diaper_drive_path(diaper_drive) %></td>
-                  <td><%= link_to 'Destroy', diaper_drive, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+                  <th>Diaper Drive Name</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th class="numeric">Quantity of Items</th>
+                  <th class="numeric">Variety of Items</th>
+                  <th class="numeric">In Kind Value</th>
+                  <th class="pull-right">Actions</th>
                 </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+              </thead>
+              <tbody>
+                <% @diaper_drives.each do |diaper_drive| %>
+                  <tr>
+                    <td ><%= diaper_drive.name %></td>
+                    <td ><%= diaper_drive.start_date.strftime("%m-%d-%Y") %></td>
+                    <td ><%= diaper_drive.end_date.strftime("%m-%d-%Y") %></td>
+                    <td class="text-right"><%= diaper_drive.donation_quantity %></td>
+                    <td class="text-right"><%= diaper_drive.distinct_items %></td>
+                    <td class="text-right"><strong><%= dollar_value(diaper_drive.in_kind_value) %></strong></td>
+                    <td class="text-right"><%= view_button_to diaper_drive_path(diaper_drive.id) %></td>
+                  </tr>
+                <%end%>
+              </tbody>
+            </table>
+          </div><!-- /.box-body.table-responsive -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+  <%# <%= paginate @paginated_donations %>
 </section>

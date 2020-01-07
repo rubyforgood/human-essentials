@@ -39,6 +39,9 @@ class Donation < ApplicationRecord
     where(storage_location_id: storage_location_id)
   }
   scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
+  scope :by_diaper_drive, ->(diaper_drive_id) {
+    where(diaper_drive_id: diaper_drive_id)
+  }
   scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
     where(diaper_drive_participant_id: diaper_drive_participant_id)
   }
@@ -56,9 +59,9 @@ class Donation < ApplicationRecord
   validates :donation_site, presence:
     { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
                             if: :from_donation_site?
-  validates :diaper_drive_participant, presence:
+  validates :diaper_drive, presence:
     { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" },
-                                       if: :from_diaper_drive?
+                           if: :from_diaper_drive?
   validates :manufacturer, presence:
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" },
                            if: :from_manufacturer?
@@ -92,8 +95,10 @@ class Donation < ApplicationRecord
   end
 
   def format_drive_name
-    if diaper_drive_participant.contact_name.present?
-      "#{diaper_drive_participant.contact_name} (diaper drive)"
+    if !diaper_drive_participant.nil? && diaper_drive_participant.contact_name.present?
+      "#{diaper_drive_participant.contact_name} (participant)"
+    elsif !diaper_drive.nil? && diaper_drive.name.present?
+      "#{diaper_drive.name} (diaper drive)"
     else
       source
     end
