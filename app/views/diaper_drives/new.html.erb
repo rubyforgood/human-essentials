@@ -1,5 +1,25 @@
-<h1>New Diaper drive</h1>
+<section class="content-header">
+  <% content_for :title, "New - Diaper Drive - #{current_organization.name}" %>
 
-<%= render 'form', diaper_drive: @diaper_drive %>
+  <h1>
+    Start a new diaper drive
+    <small>for <%= current_organization.name %></small>
+  </h1>
 
-<%= link_to 'Back', diaper_drives_path %>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Diaper Drives", (diaper_drives_path) %></li>
+    <li class="active"> New Diaper Drive</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+	<!-- Default box -->
+	<div class="box" style="padding-left:1rem; padding-bottom:1rem;">
+    <%= render 'form', diaper_drive: @diaper_drive %>
+  </div><!-- /.box -->
+</section>

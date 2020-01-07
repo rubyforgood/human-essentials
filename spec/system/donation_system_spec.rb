@@ -50,11 +50,13 @@ RSpec.describe "Donations", type: :system, js: true do
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
-      it "Filters by diaper drive" do
+
+      it "Filters by diaper drive participant" do
+        x = create(:diaper_drive, name: 'x')
         a = create(:diaper_drive_participant, business_name: "A")
         b = create(:diaper_drive_participant, business_name: "B")
-        create(:diaper_drive_donation, diaper_drive_participant: a)
-        create(:diaper_drive_donation, diaper_drive_participant: b)
+        create(:diaper_drive_donation, diaper_drive: x, diaper_drive_participant: a)
+        create(:diaper_drive_donation, diaper_drive: x, diaper_drive_participant: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
         select a.business_name, from: "filters_by_diaper_drive_participant"
@@ -118,6 +120,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:item, organization: @organization)
         create(:storage_location, organization: @organization)
         create(:donation_site, organization: @organization)
+        create(:diaper_drive, organization: @organization)
         create(:diaper_drive_participant, organization: @organization)
         create(:manufacturer, organization: @organization)
         @organization.reload
@@ -188,11 +191,12 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).to have_no_content(item.name)
         end
 
-        it "Allows User to create a donation for a Diaper Drive source" do
+        it "Allows User to create a donation for a Diaper Drive Participant source" do
           select Donation::SOURCES[:diaper_drive], from: "donation_source"
           expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
           expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
+          select DiaperDrive.first.name, from: "donation_diaper_drive_id"
           select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -205,7 +209,17 @@ RSpec.describe "Donations", type: :system, js: true do
 
         it "Allows User to create a Diaper Drive from donation" do
           select Donation::SOURCES[:diaper_drive], from: "donation_source"
-          select "---Create new diaper drive---", from: "donation_diaper_drive_participant_id"
+          select "---Create new Diaper Drive---", from: "donation_diaper_drive_id"
+          expect(page).to have_content("New Diaper Drive")
+          fill_in "diaper_drive_name", with: "drivenametest"
+          fill_in "diaper_drive_start_date", with: Time.current
+          click_on "diaper_drive_submit"
+          select "drivenametest", from: "donation_diaper_drive_id"
+        end
+
+        it "Allows User to create a Diaper Drive Participant from donation" do
+          select Donation::SOURCES[:diaper_drive], from: "donation_source"
+          select "---Create new Participant---", from: "donation_diaper_drive_participant_id"
           expect(page).to have_content("New Diaper Drive Participant")
           fill_in "diaper_drive_participant_business_name", with: "businesstest"
           fill_in "diaper_drive_participant_contact_name", with: "test"
@@ -289,13 +303,16 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:manufacturer], from: "donation_source"
           select Manufacturer.first.name, from: "donation_manufacturer_id"
           select Donation::SOURCES[:diaper_drive], from: "donation_source"
+          select DiaperDrive.first.name, from: "donation_diaper_drive_id"
           select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
+
           click_button "Save"
           donation = Donation.last
-          expect(donation.diaper_drive_participant_id).to be_present
+
+          expect(donation.diaper_drive).to be_present
           expect(donation.manufacturer_id).to be_nil
           expect(donation.donation_site_id).to be_nil
         end
@@ -477,6 +494,7 @@ RSpec.describe "Donations", type: :system, js: true do
         item = create(:item, organization: @organization, name: "Rare Candy")
         create(:storage_location, organization: @organization)
         create(:donation_site, organization: @organization)
+        create(:diaper_drive, organization: @organization)
         create(:diaper_drive_participant, organization: @organization)
         create(:manufacturer, organization: @organization)
         create(:donation, :with_items, item: item, organization: @organization)

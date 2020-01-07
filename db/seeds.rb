@@ -140,6 +140,17 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
   inventory.organization = pdx_org
 end
 
+# ----------------------------------------------------------------------------
+# Diaper Drives
+# ----------------------------------------------------------------------------
+
+[
+  {
+    name: 'Pamper the Poopsies',
+    start_date: Time.current
+  }
+].each { |drive| DiaperDrive.create! drive }
+
 
 # ----------------------------------------------------------------------------
 # Diaper Drive Participants
@@ -255,6 +266,7 @@ end
   donation = case source
              when Donation::SOURCES[:diaper_drive]
                Donation.create! source:                   source,
+                                diaper_drive:             DiaperDrive.first,
                                 diaper_drive_participant: random_record_for_org(pdx_org, DiaperDriveParticipant),
                                 storage_location:         random_record_for_org(pdx_org, StorageLocation),
                                 organization:             pdx_org,

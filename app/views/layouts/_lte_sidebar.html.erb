@@ -10,29 +10,27 @@
           <i class="fa fa-dashboard"></i> <span>Dashboard</span>
         <% end %>
       </li>
-      <% if Flipper.enabled?(:diaper_drive_tab) %>
-        <li class="<%= active_class(['diaper_drives']) %> treeview">
-          <a href="#">
-            <i class="fa fa-trophy"></i>
-            <span>Diaper Drives</span>
-            <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li class="<%= 'active' if current_page?(diaper_drives_path) %>">
-              <%= link_to(diaper_drives_path) do %>
-                <i class="fa fa-circle-o"></i> All Diaper Drives
-              <% end %>
-            </li>
-            <li class="<%= 'active' if current_page?(new_diaper_drive_path) %>">
-              <%= link_to(new_diaper_drive_path) do %>
-                <i class="fa fa-circle-o"></i> New Diaper Drive
-              <% end %>
-            </li>
-          </ul>
-        </li>
-      <% end %>
+      <li class="<%= active_class(['diaper_drives']) %> treeview">
+        <a href="#">
+          <i class="fa fa-trophy"></i>
+          <span>Diaper Drives</span>
+          <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class="<%= 'active' if current_page?(diaper_drives_path) %>">
+            <%= link_to(diaper_drives_path) do %>
+              <i class="fa fa-circle-o"></i> All Diaper Drives
+            <% end %>
+          </li>
+          <li class="<%= 'active' if current_page?(new_diaper_drive_path) %>">
+            <%= link_to(new_diaper_drive_path) do %>
+              <i class="fa fa-circle-o"></i> New Diaper Drive
+            <% end %>
+          </li>
+        </ul>
+      </li>
       <li class="<%= active_class(['donations']) %> treeview">
         <a href="#">
           <i class="fa fa-gratipay"></i>

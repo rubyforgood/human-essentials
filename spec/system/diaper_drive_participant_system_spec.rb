@@ -4,6 +4,7 @@ RSpec.describe "Diaper Drive Participant", type: :system, js: true do
   end
 
   let(:url_prefix) { "/#{@organization.to_param}" }
+  let(:diaper_drive) { create(:diaper_drive) }
   let(:diaper_drive_participant) { create(:diaper_drive_participant) }
 
   context "When a user views the index page" do
@@ -24,8 +25,8 @@ RSpec.describe "Diaper Drive Participant", type: :system, js: true do
 
     context "When the Diaper Drives have donations associated with them already" do
       before(:each) do
-        create(:donation, :with_items, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: diaper_drive_participant)
-        create(:donation, :with_items, created_at: 1.week.ago, item_quantity: 15, source: Donation::SOURCES[:diaper_drive], diaper_drive_participant: diaper_drive_participant)
+        create(:donation, :with_items, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:diaper_drive], diaper_drive: diaper_drive, diaper_drive_participant: diaper_drive_participant)
+        create(:donation, :with_items, created_at: 1.week.ago, item_quantity: 15, source: Donation::SOURCES[:diaper_drive], diaper_drive: diaper_drive, diaper_drive_participant: diaper_drive_participant)
       end
 
       it "shows existing Diaper Drive Participants in the #index with some summary stats" do
