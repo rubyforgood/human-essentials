@@ -29,8 +29,8 @@
             <tbody>
               <tr>
                 <td><%= @diaper_drive.name %></td>
-                <td class="date"><%= @diaper_drive.created_at.to_s(:start_date) %></td>
-                <td class="date"><%= @diaper_drive.created_at.to_s(:end_date) %></td>
+                <td class="text-left" class="date"><%= @diaper_drive.start_date.strftime("%m-%d-%Y") %></td>
+                <td class="text-left"><%= @diaper_drive.end_date.strftime("%m-%d-%Y") %></td>
               </tr>
             </tbody>
           </table>
@@ -69,10 +69,16 @@
         </section>
       </fieldset>
     </div>
-    <div class="box-footer">
+    <div class="box-footer" >
+
       <%= edit_button_to edit_diaper_drive_path(@diaper_drive), { text: "Make a correction", size: "lg" } %>
       <%# <%= new_button_to new_distribution_path(donation_id: @diaper_drive.id, storage_location_id: @diaper_drive.storage_location_id), { text: "Start a new Distribution" } %>
-      <%= delete_button_to donation_path(@diaper_drive), { size: "lg", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.organization_admin? %>
+      <%= delete_button_to diaper_drive_path(@diaper_drive), { size: "lg", confirm: "Are you sure you want to permanently remove this diaper drive?" } if current_user.organization_admin? %>
+
     </div>
+
   </div>
+      <p style="text-align: center">
+        To add a donation to this diaper drive, please edit that donation and select this diaper drive from the appropriate dropdown.
+      </p>
 </section>
