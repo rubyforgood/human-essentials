@@ -61,7 +61,7 @@ RSpec.describe Distribution, type: :model do
     describe "this_week >" do
       context "When it's Sunday (end of the week)" do
         before do
-          travel_to Time.local(2019, 6, 30)
+          travel_to Time.zone.local(2019, 6, 30)
         end
 
         after do
@@ -69,8 +69,8 @@ RSpec.describe Distribution, type: :model do
         end
 
         it "doesn't include distributions past Sunday" do
-          sunday_distribution = create(:distribution, organization: @organization, issued_at: Time.local(2019, 6, 30))
-          create(:distribution, organization: @organization, issued_at: Time.local(2019, 7, 1))
+          sunday_distribution = create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 6, 30))
+          create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 7, 1))
           distributions = Distribution.this_week
           expect(distributions.count).to eq(1)
           expect(distributions.first).to eq(sunday_distribution)
@@ -79,7 +79,7 @@ RSpec.describe Distribution, type: :model do
 
       context "When it's Tuesday (mid-week)" do
         before do
-          travel_to Time.local(2019, 7, 2)
+          travel_to Time.zone.local(2019, 7, 2)
         end
 
         after do
@@ -87,9 +87,9 @@ RSpec.describe Distribution, type: :model do
         end
 
         it "includes distributions as early as Monday and as late as upcoming Sunday" do
-          create(:distribution, organization: @organization, issued_at: Time.local(2019, 6, 30))
-          tuesday_distribution = create(:distribution, organization: @organization, issued_at: Time.local(2019, 7, 2))
-          sunday_distribution = create(:distribution, organization: @organization, issued_at: Time.local(2019, 7, 7))
+          create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 6, 30))
+          tuesday_distribution = create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 7, 2))
+          sunday_distribution = create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 7, 7))
           distributions = Distribution.this_week
           expect(distributions.count).to eq(2)
           expect(distributions.first).to eq(tuesday_distribution)

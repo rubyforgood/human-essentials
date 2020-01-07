@@ -102,6 +102,7 @@ RSpec.feature "Distributions", type: :system do
     let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization) }
 
     before do
+      sign_in(@organization_admin)
       visit @url_prefix + "/distributions"
     end
 
@@ -237,6 +238,7 @@ RSpec.feature "Distributions", type: :system do
     let(:donation) { create :donation, :with_items }
     before do
       visit @url_prefix + "/donations/#{donation.id}"
+      sign_in(@organization_admin)
       click_on "Start a new Distribution"
       within "#new_distribution" do
         select @partner.name, from: "Partner"
