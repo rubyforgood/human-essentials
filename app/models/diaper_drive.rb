@@ -34,7 +34,7 @@ class DiaperDrive < ApplicationRecord
     return if start_date.nil? || end_date.nil?
 
     if end_date < start_date
-      errors.add(:end_date, 'needs to be bigger of start date')
+      errors.add(:end_date, 'needs to be after of start date')
     end
   end
 
