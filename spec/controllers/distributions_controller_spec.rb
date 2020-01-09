@@ -94,7 +94,7 @@ RSpec.describe DistributionsController, type: :controller do
       subject { patch :picked_up, params: default_params.merge(id: distribution.id) }
 
       context 'when the distribution is successfully updated' do
-        let(:distribution) { create(:distribution, state: 'scheduled') }
+        let(:distribution) { create(:distribution, state: :scheduled) }
 
         it "updates the state to 'complete'" do
           subject
@@ -105,17 +105,12 @@ RSpec.describe DistributionsController, type: :controller do
           expect(subject).to redirect_to distribution_path
         end
       end
+    end
 
-      context 'when the distribution update fails' do
-        let(:distribution) { create(:distribution, state: 'started') }
-
-        it 'raises a warning' do
-          expect(subject.request.flash[:error]).to_not be_nil
-        end
-
-        it 'redirects the user back to the distributions page' do
-          expect(subject).to redirect_to distribution_path
-        end
+    describe "GET #pickup_day" do
+      subject { get :pickup_day, params: default_params }
+      it "returns http success" do
+        expect(subject).to be_successful
       end
     end
 
