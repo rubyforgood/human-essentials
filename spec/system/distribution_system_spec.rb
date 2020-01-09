@@ -102,6 +102,7 @@ RSpec.feature "Distributions", type: :system do
     let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization) }
 
     before do
+      sign_in(@organization_admin)
       visit @url_prefix + "/distributions"
     end
 
@@ -160,38 +161,40 @@ RSpec.feature "Distributions", type: :system do
     end
   end
 
-  context "With an existing distribution after the issued date" do
-    context "on the Distribution index" do
-      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day) }
+  context "When attempting to edit a distribution" do
+    context "after the distribution issued_at has passed or it has been marked complete" do
+      let!(:past_distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.yesterday, state: :scheduled) }
+      let!(:complete_distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today, state: :complete) }
 
-      before do
+      it "does not contain a Edit button" do
         visit @url_prefix + "/distributions"
-      end
-
-      it "not contain a Edit button" do
         expect(page).not_to have_button("Edit")
       end
-    end
 
-    context "accesing through URL" do
-      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day) }
-
-      it "cannot access directly" do
-        visit @url_prefix + "/distributions/#{distribution.id}/edit"
+      it "cannot be accessed directly" do
+        visit @url_prefix + "/distributions/#{past_distribution.id}/edit"
+        expect(page.find(".alert-danger")).to have_content "you must be an organization admin"
+        visit @url_prefix + "/distributions/#{complete_distribution.id}/edit"
         expect(page.find(".alert-danger")).to have_content "you must be an organization admin"
       end
     end
 
-    context "logged as Admin" do
-      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day) }
+    context "when logged as Admin" do
+      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day, state: :complete) }
 
       before do
         sign_in(@organization_admin)
-        visit @url_prefix + "/distributions"
       end
 
       it "can click on Edit button and a warning appears " do
+        visit @url_prefix + "/distributions"
         click_on "Edit", match: :first
+        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
+      end
+
+      it "can be accessed directly" do
+        visit @url_prefix + "/distributions/#{distribution.id}/edit"
+        expect(page).to have_no_css(".alert-danger")
         expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
       end
     end
@@ -235,6 +238,7 @@ RSpec.feature "Distributions", type: :system do
     let(:donation) { create :donation, :with_items }
     before do
       visit @url_prefix + "/donations/#{donation.id}"
+      sign_in(@organization_admin)
       click_on "Start a new Distribution"
       within "#new_distribution" do
         select @partner.name, from: "Partner"

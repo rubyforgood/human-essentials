@@ -5,6 +5,7 @@
 # might want if they were doing direct services.
 class DistributionsController < ApplicationController
   include DateRangeHelper
+  include DistributionHelper
   rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
@@ -41,7 +42,7 @@ class DistributionsController < ApplicationController
                      .distributions
                      .where(issued_at: selected_range)
                      .includes(:partner, :storage_location, :line_items, :items)
-                     .order(created_at: :desc)
+                     .order(issued_at: :desc)
                      .class_filter(filter_params)
                      .during(helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
@@ -89,7 +90,7 @@ class DistributionsController < ApplicationController
 
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-    if @distribution.future? || current_user.organization_admin?
+    if (!@distribution.complete? && @distribution.future?) || current_user.organization_admin?
       @distribution.line_items.build
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
@@ -129,13 +130,20 @@ class DistributionsController < ApplicationController
   end
 
   def picked_up
-    if Distribution.find_by(id: params['id'])&.scheduled? && Distribution.find_by(id: params['id'])&.complete!
+    distribution = current_organization.distributions.find(params[:id])
+
+    if !distribution.complete? && distribution.complete!
       flash[:notice] = 'This distribution has been marked as being picked up!'
     else
       flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being picked up'
     end
 
-    redirect_to distribution_path
+    redirect_back(fallback_location: distribution_path)
+  end
+
+  def pickup_day
+    @pick_ups = current_organization.distributions.during(pickup_date).order(issued_at: :asc)
+    @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
 
   # TODO: This shouldl probably be private
