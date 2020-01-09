@@ -105,16 +105,6 @@ RSpec.describe DistributionsController, type: :controller do
           expect(subject).to redirect_to distribution_path
         end
       end
-
-      context 'when the distribution update fails' do
-        let(:distribution) { create(:distribution, state: :started) }
-
-        it "redirects the user back to the distributions page with an error message" do
-          subject
-          expect(subject).to redirect_to distribution_path
-          expect(flash[:error]).to be_present
-        end
-      end
     end
 
     describe "GET #pickup_day" do

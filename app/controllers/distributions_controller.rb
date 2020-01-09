@@ -132,7 +132,7 @@ class DistributionsController < ApplicationController
   def picked_up
     distribution = current_organization.distributions.find(params[:id])
 
-    if distribution.scheduled? && distribution.complete!
+    if !distribution.complete? && distribution.complete!
       flash[:notice] = 'This distribution has been marked as being picked up!'
     else
       flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being picked up'
