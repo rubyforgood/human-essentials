@@ -1,7 +1,7 @@
 <section class="content-header">
-  <% content_for :title, "Distribution Pick-ups - #{current_organization.name}" %>
+  <% content_for :title, "Distribution Pick-Ups - #{current_organization.name}" %>
   <h1>
-    Pick Up Schedule
+    Pick-Ups Schedule
   </h1>
   <ol class="breadcrumb">
     <li><%= link_to(dashboard_path) do %>
@@ -9,18 +9,15 @@
       <% end %>
     </li>
     <li><%= link_to "Distributions", (distributions_path) %></li>
-    <li class="active"> Pickups</li>
-      </ol>
+    <li class="active"> Pick-Ups</li>
+  </ol>
 </section>
 
 <!-- Main content -->
 <section class="content">
-
   <!-- Default box -->
-
   <div class="box box-primary">
     <div class="box-body">
-
       <div id="calendar" class="fc fc-unthemed fc-ltr"></div>
     </div>
 </section>

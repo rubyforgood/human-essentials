@@ -51,9 +51,8 @@
     <li class="dropdown notifications-menu">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         <i class="fa fa-calendar"></i>
-        <% if current_organization && current_organization&.upcoming_distributions > 0 %>
-          <span class="label label-danger"><%= current_organization&.upcoming_distributions %></span>
-        <% end %>
+        <% # TODO: Replace this with an ActionView::Component %>
+        <span class="label label-danger"><%= current_organization.distributions.upcoming.count.to_s.gsub(/^0$/,'') %></span>
       </a>
       <ul class="dropdown-menu">
         <li>
@@ -61,7 +60,7 @@
           <ul class="menu">
             <li>
               <a href="#">
-                <i class="fa fa-users text-aqua"></i> <%= current_organization&.upcoming_distributions || 0 %> Pick-ups
+                <i class="fa fa-users text-aqua"></i> <%= current_organization.distributions.upcoming.count %> Pick-ups
                 remaining this week
               </a>
             </li>

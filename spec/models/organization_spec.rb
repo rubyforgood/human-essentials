@@ -40,6 +40,26 @@ RSpec.describe Organization, type: :model do
       end
     end
 
+    describe "distributions" do
+      describe "upcoming" do
+        before do
+          travel_to Time.zone.local(2019, 7, 3) # Wednesday
+        end
+
+        after do
+          travel_back
+        end
+
+        it "retrieves the distributions scheduled for this week that have not yet happened" do
+          wednesday_distribution_scheduled = create(:distribution, organization: @organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 3))
+          create(:distribution, organization: @organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))
+          sunday_distribution = create(:distribution, organization: @organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
+          upcoming_distributions = @organization.distributions.upcoming
+          expect(upcoming_distributions).to match_array([wednesday_distribution_scheduled, sunday_distribution])
+        end
+      end
+    end
+
     describe "items" do
       before do
         organization.items.each_with_index do |item, index|
