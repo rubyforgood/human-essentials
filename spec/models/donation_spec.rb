@@ -30,7 +30,7 @@ RSpec.describe Donation, type: :model do
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", donation_site: nil)).to be_valid
     end
     it "requires a diaper drive participant if the source is 'Diaper Drive'" do
-      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive", diaper_drive_participant_id: nil)).not_to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive Participant", diaper_drive_participant_id: nil)).not_to be_valid
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", diaper_drive_participant_id: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", diaper_drive_participant_id: nil)).to be_valid
     end
@@ -195,6 +195,16 @@ RSpec.describe Donation, type: :model do
       expect(Donation::SOURCES).to have_key(:diaper_drive)
       expect(Donation::SOURCES).to have_key(:donation_site)
       expect(Donation::SOURCES).to have_key(:misc)
+    end
+
+    specify 'the hash is immutable' do
+      expect(-> { Donation::SOURCES[:foo] = 'bar' }).to raise_error(FrozenError)
+    end
+
+    specify 'the hash values are immutable' do
+      Donation::SOURCES.values.each do |frozen_string|
+        expect(-> { frozen_string << 'bar' }).to raise_error(FrozenError)
+      end
     end
   end
 end

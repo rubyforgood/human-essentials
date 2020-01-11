@@ -102,6 +102,10 @@ Then, from your project directory, install the gems required for the project:
 
 ### Configuring Postgres
 
+Copy the database.yml file:
+
+    $ cp config/database.yml.example config/database.yml
+
 By default, Postgres has no password for the admin user. You'll need to set one. Run `psql` as the Unix user `postgres` that was added by the Postgres installation (Ubuntu only):
 
 #### Ubuntu

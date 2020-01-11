@@ -39,10 +39,15 @@ class Organization < ApplicationRecord
       unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
     end
   end
-  has_many :distributions, dependent: :destroy
+  has_many :distributions, dependent: :destroy do
+    def upcoming
+      this_week.scheduled.where('issued_at >= ?', Time.zone.today)
+    end
+  end
   has_many :donations, dependent: :destroy
   has_many :purchases, dependent: :destroy
   has_many :donation_sites, dependent: :destroy
+  has_many :diaper_drives, dependent: :destroy
   has_many :diaper_drive_participants, dependent: :destroy
   has_many :manufacturers, dependent: :destroy
   has_many :vendors, dependent: :destroy
@@ -97,10 +102,6 @@ class Organization < ApplicationRecord
 
   def ordered_requests
     requests.order(status: :asc, updated_at: :desc)
-  end
-
-  def upcoming_distributions
-    distributions&.this_week&.count || 0
   end
 
   # Computes full address string based on street, city, state, and zip, adding ', ' and ' ' separators

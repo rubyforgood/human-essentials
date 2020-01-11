@@ -54,6 +54,10 @@ class Purchase < ApplicationRecord
     line_items.sum(:quantity)
   end
 
+  def amount_spent_in_dollars
+    amount_spent_in_cents.to_d / 100
+  end
+
   def remove(item)
     # doing this will handle either an id or an object
     item_id = item.to_i

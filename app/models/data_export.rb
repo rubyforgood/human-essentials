@@ -17,7 +17,7 @@ class DataExport
     Transfer
     Item
     BarcodeItem
-  ).freeze
+  ).map(&:freeze).freeze
 
   def initialize(organization, type)
     @current_organization = organization
