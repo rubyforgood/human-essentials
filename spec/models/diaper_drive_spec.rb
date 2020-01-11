@@ -29,6 +29,7 @@ RSpec.describe DiaperDrive, type: :model do
   describe 'validations' do
     it { expect(build(:diaper_drive, name: nil)).not_to be_valid }
     it { expect(build(:diaper_drive, start_date: nil)).not_to be_valid }
+    it { expect(build(:diaper_drive, start_date: '2020-12-17', end_date: '2019-12-19')).not_to be_valid }
   end
 
   describe 'associations' do
