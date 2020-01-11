@@ -28,6 +28,16 @@ class DiaperDrive < ApplicationRecord
     { message: "Please enter a start date." }
   scope :alphabetized, -> { order(:name) }
 
+  validate :end_date_is_bigger_of_end_date
+
+  def end_date_is_bigger_of_end_date
+    return if start_date.nil? || end_date.nil?
+
+    if end_date < start_date
+      errors.add(:end_date, 'End date must be after the start date')
+    end
+  end
+
   def donation_quantity
     donations.joins(:line_items).sum('line_items.quantity')
   end
