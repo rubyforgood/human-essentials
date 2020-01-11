@@ -23,6 +23,7 @@ class DonationsController < ApplicationController
     @donations_quantity = @donations.collect(&:total_quantity).sum
     @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
     @total_value_all_donations = total_value(@donations)
+    @total_money_raised = total_money_raised(@donations)
     @storage_locations = @donations.collect(&:storage_location).compact.uniq.sort
     @selected_storage_location = filter_params[:at_storage_location]
     @sources = @donations.collect(&:source).uniq.sort
@@ -164,5 +165,9 @@ class DonationsController < ApplicationController
       total_value_all_donations += donation.value_per_itemizable
     end
     total_value_all_donations
+  end
+
+  def total_money_raised(donations)
+    donations.sum { |d| d.money_raised.to_i }
   end
 end
