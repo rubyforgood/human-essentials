@@ -10,6 +10,9 @@ class DashboardController < ApplicationController
     @recent_purchases = @purchases.recent
 
     @recent_distributions = current_organization.distributions.includes(:line_items).during(helpers.selected_range).recent
+    if Flipper.enabled?(:itemized_distributions, current_user)
+      @itemized_distributions = current_organization.distributions.includes(:line_items).during(helpers.selected_range)
+    end
     @total_inventory = current_organization.total_inventory
 
     @org_stats = OrganizationStats.new(current_organization)
