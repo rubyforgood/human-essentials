@@ -57,6 +57,10 @@ class User < ApplicationRecord
     "normal"
   end
 
+  def flipper_id
+    "User:#{id}"
+  end
+
   def reinvitable?
     return true if invitation_status == "invited" && invitation_sent_at <= 7.days.ago
 
