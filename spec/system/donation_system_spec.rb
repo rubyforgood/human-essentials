@@ -51,6 +51,19 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
+      it "Filters by diaper drives" do
+        a = create(:diaper_drive, name: 'A')
+        b = create(:diaper_drive, name: "B")
+        x = create(:diaper_drive_participant, business_name: "X")
+        create(:diaper_drive_donation, diaper_drive: a, diaper_drive_participant: x)
+        create(:diaper_drive_donation, diaper_drive: b, diaper_drive_participant: x)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select a.name, from: "filters_by_diaper_drive"
+        click_button "Filter"
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
+
       it "Filters by diaper drive participant" do
         x = create(:diaper_drive, name: 'x')
         a = create(:diaper_drive_participant, business_name: "A")

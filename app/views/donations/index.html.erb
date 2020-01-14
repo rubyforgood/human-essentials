@@ -32,6 +32,12 @@
               <%= select_tag "filters[by_source]", options_for_select(@sources, @selected_source), { include_blank: true, class: "form-control" } %>
             </div>
           <% end %>
+          <% if @diaper_drives.present? %>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "by Diaper Drives" %>
+              <%= collection_select(:filters, :by_diaper_drive, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
+            </div>
+          <% end %>
           <% if @diaper_drive_participants.present? %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
               <%= label_tag "by Diaper Drive Participants" %>
