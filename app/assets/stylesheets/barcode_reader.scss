@@ -8,6 +8,7 @@
 .add-items-container {
   font-weight: bold;
 }
+
 @media only screen and (max-width: 1000px) {
   .barcode-scanner {
     width: 50%;
@@ -18,12 +19,6 @@
     border: solid 1px gray;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .list-line-items {
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: solid 5px grey;
   }
 }
 
