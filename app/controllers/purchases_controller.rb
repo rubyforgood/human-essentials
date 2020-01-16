@@ -1,9 +1,5 @@
 # Provides full CRUD for Purchases, which are a way for Diaperbanks to track inventory that they purchase from vendors
 class PurchasesController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: %i(scale_intake scale)
-  skip_before_action :authenticate_user!, only: %i(scale_intake scale)
-  skip_before_action :authorize_user, only: %i(scale_intake scale)
-
   def index
     setup_date_range_picker
     @purchases = current_organization.purchases
