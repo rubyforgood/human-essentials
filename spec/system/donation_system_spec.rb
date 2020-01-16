@@ -180,7 +180,7 @@ RSpec.describe "Donations", type: :system, js: true do
           page.find(:css, "#__add_line_item").click
           select_id = page.find(:xpath, '//*[@id="donation_line_items"]/section[2]//select')[:id]
           select Item.alphabetized.first.name, from: select_id
-          text_id = page.find(:css, '#donation_line_items > section:nth-child(2) > div > div.col-md-3.col-12 > div.donation_line_items_quantity > input')[:id]
+          text_id = page.find_all('.donation_line_items_quantity > input').last[:id]
           fill_in text_id, with: "10"
 
           expect do
