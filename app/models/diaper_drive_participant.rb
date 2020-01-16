@@ -2,7 +2,7 @@
 #
 # Table name: diaper_drive_participants
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  address         :string
 #  business_name   :string
 #  comment         :string

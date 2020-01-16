@@ -2,7 +2,7 @@
 #
 # Table name: distributions
 #
-#  id                     :bigint           not null, primary key
+#  id                     :integer          not null, primary key
 #  agency_rep             :string
 #  comment                :text
 #  issued_at              :datetime
@@ -11,8 +11,8 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  organization_id        :integer
-#  partner_id             :bigint
-#  storage_location_id    :bigint
+#  partner_id             :integer
+#  storage_location_id    :integer
 #
 
 FactoryBot.define do
