@@ -22,6 +22,10 @@ module ApplicationHelper
     name.include?(controller_name) ? "active" : controller_name
   end
 
+  def menu_open?(name)
+    name.include?(controller_name) ? 'menu-open' : ''
+  end
+
   def can_administrate?
     (current_user.organization_admin? && current_user.organization_id == current_organization.id)
   end

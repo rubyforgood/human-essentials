@@ -10,9 +10,9 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
+//= require jquery3
+//= require bootstrap
 //= require jquery_ujs
-//= require bootstrap.min
 //= require fastclick
 //= require adminlte.min
 //= require cocoon
@@ -102,3 +102,4 @@ function order_by_occurrence(arr) {
     }
   };
   $(document).on('turbolinks:load', load_quagga);
+
