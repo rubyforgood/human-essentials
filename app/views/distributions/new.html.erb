@@ -35,10 +35,9 @@
       <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send Email Reminder The Day Before?" %>
       <%= f.input :agency_rep, label: "Agency representative" %>
 
-    <%= render partial: "storage_locations/source", object: f %>
+    <%= render partial: "storage_locations/source", object: f, default_location: current_organization.distribution_location %>
 
     <%= f.input :comment, label: "Comment" %>
-
 
     <fieldset style="margin-bottom: 2rem;" class="form-inline">
       <legend>Items in this distribution</legend>

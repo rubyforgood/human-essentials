@@ -3,8 +3,6 @@ class Admin::OrganizationsController < AdminController
   def edit
     @organization = Organization.find(params[:id])
     @current_organization = Organization.find(params[:id])
-    @distributions = current_organization.distributions
-    @storage_id = @distributions.first.storage_location_id
   end
 
   def update
@@ -56,7 +54,8 @@ class Admin::OrganizationsController < AdminController
 
   def organization_params
     params.require(:organization)
-          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text,
+          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, 
+                  :logo, :intake_location, :distribution_location, :default_email_text,
                   users_attributes: %i(name email organization_admin))
   end
 end
