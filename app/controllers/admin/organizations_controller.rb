@@ -2,6 +2,9 @@
 class Admin::OrganizationsController < AdminController
   def edit
     @organization = Organization.find(params[:id])
+    @current_organization = Organization.find(params[:id])
+    @distributions = current_organization.distributions
+    @storage_id = @distributions.first.storage_location_id
   end
 
   def update
