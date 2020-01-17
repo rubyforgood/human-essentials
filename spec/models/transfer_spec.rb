@@ -52,7 +52,7 @@ RSpec.describe Transfer, type: :model do
 
     it "requires that the line items must have sufficient quantity in the inventory" do
       transfer = build(:transfer, :with_items)
-      over_compromising_item = transfer.line_items.first.item
+      create(:inventory_item, item: transfer.line_items.first.item, quantity: 1, storage_location: transfer.from)
       over_compromising_quantity = transfer.from.inventory_items.first.quantity + 1
       transfer.line_items.first.quantity = over_compromising_quantity
       expect(transfer).not_to be_valid
