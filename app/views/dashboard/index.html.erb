@@ -1,19 +1,27 @@
-<section class="content-header">
-  <% content_for :title, "Dashboard - #{current_organization.name}" %>
-  <h1>
-    Dashboard
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li><a href="#">Dashboard</a></li>
-    <li class="active"><%= current_organization.name %></li>
-  </ol>
-</section>
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark"><%=current_organization.name %> - Dashboard</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active"><%= current_organization.name %></li>
+        </ol>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
 
 <!-- Main content -->
 <section class="content">
-  <div class="row">
+  <div class="container-fluid">
+
+    <div class="row">
+      <!-- Left col -->
+      <section class="col-lg-6 connectedSortable">
     <%= render partial: "getting_started_prompt", locals: {org_stats: @org_stats} %>
 
     <div class="col-md-12">
@@ -44,7 +52,8 @@
           </div>
         </div>
       </div>
-
+    </div>
+      </section>
       <div class="box-header with-border bg-gray">
         <div class="box-body row">
           <section id="filters" class="col-md-offset-6 col-md-6 col-sm-offset-4 col-sm-8 col-xs-12">
