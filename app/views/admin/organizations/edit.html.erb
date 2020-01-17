@@ -1,5 +1,5 @@
 <section class="content-header">
-<% content_for :title, "Edit - Organizations - #{current_organization.name}" %>
+<% content_for :title, "Edit - Organizations - {#@organization.name}" %>
 <h1>
 Editing
 <small><%= @organization.name %></small>
@@ -21,7 +21,7 @@ Editing
 <!-- Default box -->
 <div class="box">
 <div class="box-header with-border">
-  <h3 class="box-title">Update record for <%= current_organization.name %></h3>
+  <h3 class="box-title">Update record for <%= @organization.name %> </h3>
 </div>
 <div class="box-body">
 <%= simple_form_for @organization, url: admin_organization_path do |f| %>
@@ -35,7 +35,8 @@ Editing
   <%= f.input :city %>
   <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
   <%= f.input :zipcode %>
-  <%= f.input :intake_location, collection: current_organization.storage_locations.alphabetized, label_method: :name, value_method: :id, label: "Default Intake Location" , include_blank: true %>
+  <%= f.input :intake_location, collection: current_organization.storage_locations.alphabetized, label_method: :name, value_method: :id, label: "Default Intake Location", include_blank: true %>
+  <%= f.input :distribution_location, collection: current_organization.storage_locations.alphabetized, label_method: :name, value: @storage_id, label: "Default Distribution Location", include_blank: true %>
   <%= f.rich_text_area :default_email_text %>
   <%= f.input :logo %>
   <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
