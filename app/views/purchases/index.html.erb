@@ -56,19 +56,19 @@
                 </div><!-- /.row -->
                 <div class="card-footer">
                   <%= filter_button %>
-                  <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
+                  <%= cancel_button_to purchases_path, {text: "Clear Filters"} %>
                   <span class="float-right">
                     <%= download_button_to(csv_path(format: :csv, type: "Purchase"), {text: "Export Purchases"}) if @purchases.any? %>
                     <%= new_button_to new_purchase_path(organization_id: current_organization), {text: "New Purchase"} %>
                     </span>
                 </div>
-              <% end # form %>
+              <% end %>
+            </div>
           </form>
         </div>
       </div>
     </div>
   </div><!-- /.container-fluid -->
-
 </section>
 
 <section class="content">
