@@ -85,7 +85,7 @@ module UiHelper
   end
 
   def print_button_to(link, options = {})
-    _link_to link, { icon: "print", type: "default", text: "Print", size: "xs" }.merge(options)
+    _link_to link, { icon: "print", type: "outline-dark", text: "Print", size: "xs" }.merge(options)
   end
 
   # Generic Submit button for a form
