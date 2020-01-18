@@ -107,13 +107,13 @@
               <thead>
               <tr>
                 <th>Source</th>
-                <th class="date">Date</th>
+                <th>Date</th>
                 <th>Donation Site</th>
                 <th>Storage Location</th>
-                <th class="numeric">Quantity of Items</th>
-                <th class="numeric">Money Raised</th>
-                <th class="numeric">In Kind Value</th>
-                <th class="pull-right">Actions</th>
+                <th>Quantity of Items</th>
+                <th>Money Raised</th>
+                <th>In Kind Value</th>
+                <th>Actions</th>
               </tr>
               </thead>
               <tbody>
@@ -125,15 +125,15 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="numeric">
+                <td class="text-left numeric">
                   <strong id="donation_quantity">
                     <%= @donations_quantity %> (Total)
                   </strong>
                   <br/>
                   <%= @paginated_donations_quantity %> (This page)
                 </td>
-                <td class="numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
-                <td class="numeric"><strong><%= dollar_value(@total_value_all_donations) %></strong></td>
+                <td class="text-left numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
+                <td class="text-left numeric"><strong><%= dollar_value(@total_value_all_donations) %></strong></td>
                 <td></td>
               </tr>
               </tfoot>
