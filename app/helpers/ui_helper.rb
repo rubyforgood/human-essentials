@@ -64,7 +64,7 @@ module UiHelper
   end
 
   def download_button_to(link, options = {})
-    _link_to link, { icon: "download", type: "default", text: "Download", size: "md" }.merge(options)
+    _link_to link, { icon: "download", type: "info", text: "Download", size: "md" }.merge(options)
   end
 
   def edit_button_to(link, options = {}, properties = {})
@@ -81,7 +81,7 @@ module UiHelper
   end
 
   def new_button_to(link, options = {})
-    _link_to link, { icon: "plus", type: "success", text: "New", size: "lg" }.merge(options)
+    _link_to link, { icon: "plus", type: "success", text: "New", size: "md" }.merge(options)
   end
 
   def print_button_to(link, options = {})
