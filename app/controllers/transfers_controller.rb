@@ -52,6 +52,12 @@ class TransfersController < ApplicationController
     @line_items = @transfer.line_items.sorted
   end
 
+  def edit
+    @transfer = current_organization.transfers.find(params[:id])
+    @storage_locations = current_organization.storage_locations.alphabetized
+    @items = current_organization.items.active.alphabetized
+  end
+
   private
 
   def load_form_collections

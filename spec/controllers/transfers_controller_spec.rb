@@ -72,6 +72,34 @@ RSpec.describe TransfersController, type: :controller do
         expect(subject).to be_successful
       end
     end
+
+    describe "GET #edit" do
+      subject { get :edit, params: { organization_id: @organization.short_name, id: transfer.id } }
+
+      context 'when the transfer belongs to the organization' do
+        let(:transfer) { create(:transfer, organization: @organization) }
+
+        it "returns http success" do
+          expect(subject).to be_successful
+        end
+
+        it "should assign the transfer, storage locations, and items" do
+          subject
+          expect(assigns[:transfer]).to eq(transfer)
+          expect(assigns[:storage_locations]).to eq(@organization.storage_locations.alphabetized)
+          expect(assigns[:items]).to eq(@organization.items.active.alphabetized)
+        end
+      end
+
+      context 'when the transfer does not belong to the organization' do
+        let(:transfer) { create(:transfer, organization: create(:organization)) }
+
+        it "returns http not successful" do
+          expect(subject).not_to be_successful
+        end
+      end
+    end
+
     context "Looking at a different organization" do
       let(:object) do
         org = create(:organization)

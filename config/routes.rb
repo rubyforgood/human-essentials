@@ -70,7 +70,7 @@ Rails.application.routes.draw do
     resources :audits do
       post :finalize
     end
-    resources :transfers, only: %i(index create new show)
+    resources :transfers, only: %i(index create new show edit)
     resources :storage_locations do
       collection do
         post :import_csv
