@@ -39,7 +39,7 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "POST #create" do
-      it "redirects to #show when successful" do
+      it "redirects to #index when successful" do
         attributes = attributes_for(
           :transfer,
           organization_id: @organization.id,
