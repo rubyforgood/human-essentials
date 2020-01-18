@@ -80,14 +80,30 @@
           </li>
         </ul>
       </li>
+      <li class="<%= active_class(['distributions']) %> treeview">
+        <a href="#">
+          <i class="fa fa-circle-o"></i> 
+          <span>Distributions</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class="<%= active_class(['items']) %>">
+            <%= link_to(distributions_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> All Distributions
+            <% end %>
+          </li>
+          <li class="<%= active_class(['items']) %>">
+            <%= link_to(new_distribution_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> New Distribution
+            <% end %>
+          </li>
+        </ul>
+      </li>
       <li class="<%= 'active' if current_page?(requests_path) %>">
         <%= link_to(requests_path) do %>
           <i class="fa fa-file-text"></i> <span>Requests</span>
-        <% end %>
-      </li>
-      <li class="<%= 'active' if current_page?(distributions_path) %>">
-        <%= link_to(distributions_path) do %>
-          <i class="fa fa-circle-o"></i> <span>Distributions</span>
         <% end %>
       </li>
       <li class="<%= 'active' if current_page?(pick_ups_distributions_path) %>">
