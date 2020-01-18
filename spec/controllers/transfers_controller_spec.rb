@@ -55,7 +55,7 @@ RSpec.describe TransfersController, type: :controller do
         post :create, params: { organization_id: @organization.short_name, transfer: { from_id: nil, to_id: nil } }
         expect(response).to be_successful # Will render :new
         expect(response).to render_template("new")
-        expect(response).to have_error(/error/i)
+        expect(flash.keys).to match_array(['error'])
       end
     end
 

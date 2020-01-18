@@ -6,7 +6,7 @@ RSpec.describe ItemsInTotalQuery do
   let!(:shared_item) { create(:item) }
   subject { ItemsInTotalQuery.new(storage_location: storage_location, organization: @organization).call }
 
-  describe "items_in" do
+  describe "items_in_total_query" do
     before do
       create(:donation, :with_items, item: create(:item), item_quantity: 10, storage_location: storage_location)
       create(:purchase, :with_items, item: create(:item), item_quantity: 10, storage_location: storage_location)
