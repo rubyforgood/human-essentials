@@ -101,6 +101,11 @@
           </li>
         </ul>
       </li>
+      <li class="<%= 'active' if current_page?(organization_path) %>">
+        <%= link_to(organization_path) do %>
+          <i class="fa fa-circle-o"></i> <span>Organizations</span>
+        <% end %>
+      </li>
       <li class="<%= 'active' if current_page?(requests_path) %>">
         <%= link_to(requests_path) do %>
           <i class="fa fa-file-text"></i> <span>Requests</span>
