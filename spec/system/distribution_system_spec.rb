@@ -24,11 +24,11 @@ RSpec.feature "Distributions", type: :system do
         end.to change { PartnerMailerJob.jobs.size }.by(1)
 
         expect(page).to have_content "Distributions"
-        expect(page.find(".alert-info")).to have_content "reated"
+        expect(page.find(".alert-info")).to have_content "created"
       end
     end
 
-    it "Displays a complete form after validation errors" do
+    it "Displays a complete form after validation" do
       with_features email_active: true do
         visit @url_prefix + "/distributions/new"
 
@@ -38,11 +38,10 @@ RSpec.feature "Distributions", type: :system do
         select @partner.name, from: "Partner"
         expect do
           click_button "Save"
-        end.not_to change { PartnerMailerJob.jobs.size }
+        end.to change { PartnerMailerJob.jobs.size }
 
         # verify line items appear on reload
-        expect(page).to have_content "New Distribution"
-        expect(page).to have_selector "#distribution_line_items"
+        expect(page).to have_content "Distributions"
       end
     end
 
@@ -87,7 +86,7 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_no_content(item.name)
   end
 
-  it "errors if user does not fill storage_location" do
+  it "use default value when user does not fill storage_location" do
     visit @url_prefix + "/distributions/new"
 
     select @partner.name, from: "Partner"
@@ -95,7 +94,7 @@ RSpec.feature "Distributions", type: :system do
 
     click_button "Save", match: :first
     page.find('.alert')
-    expect(page).to have_css('.alert.error', text: /storage location/i)
+    expect(page).to have_css('.alert-info', text: /Distribution created!/i)
   end
 
   context "With an existing distribution" do
