@@ -1,7 +1,7 @@
 shared_examples_for "pagination" do
     let(:model_f) { described_class.to_s.underscore.to_sym }
 
-    describe "#index" do
+    describe "#index", :type => :controller do
         context "initialized with 100 records" do
 
             it "says it has 100 records" do
@@ -11,7 +11,7 @@ shared_examples_for "pagination" do
 
             it "should default to #{Kaminari.config.default_per_page} records per page" do
                 get :index
-                page.should have_css('name some html element here', :count => 50)
+                page.should have_css('.table-index', :count => 50)
             end
 
     #         # it "allows user to jump to a different page" do
