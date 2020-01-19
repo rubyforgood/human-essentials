@@ -3,17 +3,17 @@ require 'time_util'
 #
 # Table name: distributions
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint          not null, primary key
 #  agency_rep             :string
 #  comment                :text
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
-#  state                  :integer          default("started"), not null
+#  state                  :bigint           default("started"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  organization_id        :integer
-#  partner_id             :integer
-#  storage_location_id    :integer
+#  organization_id        :bigint
+#  partner_id             :bigint
+#  storage_location_id    :bigint
 #
 
 class Distribution < ApplicationRecord

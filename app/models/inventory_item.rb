@@ -2,12 +2,12 @@
 #
 # Table name: inventory_items
 #
-#  id                  :integer          not null, primary key
-#  quantity            :integer          default(0)
+#  id                  :bigint          not null, primary key
+#  quantity            :bigint          default(0)
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  item_id             :integer
-#  storage_location_id :integer
+#  item_id             :bigint
+#  storage_location_id :bigint
 #
 
 class InventoryItem < ApplicationRecord

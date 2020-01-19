@@ -2,19 +2,19 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
+#  id                          :bigint          not null, primary key
 #  comment                     :text
 #  issued_at                   :datetime
-#  money_raised                :integer
+#  money_raised                :bigint
 #  source                      :string
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
 #  diaper_drive_id             :bigint
-#  diaper_drive_participant_id :integer
-#  donation_site_id            :integer
+#  diaper_drive_participant_id :bigint
+#  donation_site_id            :bigint
 #  manufacturer_id             :bigint
-#  organization_id             :integer
-#  storage_location_id         :integer
+#  organization_id             :bigint
+#  storage_location_id         :bigint
 #
 
 class Donation < ApplicationRecord

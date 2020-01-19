@@ -2,17 +2,17 @@
 #
 # Table name: organizations
 #
-#  id                    :integer          not null, primary key
+#  id                    :bigint          not null, primary key
 #  city                  :string
-#  deadline_day          :integer
-#  distribution_location :integer
+#  deadline_day          :bigint
+#  distribution_location :bigint
 #  email                 :string
-#  intake_location       :integer
+#  intake_location       :bigint
 #  invitation_text       :text
 #  latitude              :float
 #  longitude             :float
 #  name                  :string
-#  reminder_day          :integer
+#  reminder_day          :bigint
 #  short_name            :string
 #  state                 :string
 #  street                :string

@@ -2,20 +2,20 @@
 #
 # Table name: items
 #
-#  id                           :integer          not null, primary key
+#  id                           :bigint          not null, primary key
 #  active                       :boolean          default(TRUE)
-#  barcode_count                :integer
+#  barcode_count                :bigint
 #  category                     :string
-#  distribution_quantity        :integer
+#  distribution_quantity        :bigint
 #  name                         :string
-#  on_hand_minimum_quantity     :integer          default(0), not null
-#  on_hand_recommended_quantity :integer
-#  package_size                 :integer
+#  on_hand_minimum_quantity     :bigint          default(0), not null
+#  on_hand_recommended_quantity :bigint
+#  package_size                 :bigint
 #  partner_key                  :string
-#  value_in_cents               :integer          default(0)
+#  value_in_cents               :bigint          default(0)
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
-#  organization_id              :integer
+#  organization_id              :bigint
 #
 
 class Item < ApplicationRecord

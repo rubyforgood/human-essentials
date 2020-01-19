@@ -2,13 +2,13 @@
 #
 # Table name: transfers
 #
-#  id              :integer          not null, primary key
+#  id              :bigint          not null, primary key
 #  comment         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  from_id         :integer
-#  organization_id :integer
-#  to_id           :integer
+#  from_id         :bigint
+#  organization_id :bigint
+#  to_id           :bigint
 #
 
 class Transfer < ApplicationRecord

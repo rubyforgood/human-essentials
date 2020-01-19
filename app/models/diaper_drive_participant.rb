@@ -2,7 +2,7 @@
 #
 # Table name: diaper_drive_participants
 #
-#  id              :integer          not null, primary key
+#  id              :bigint          not null, primary key
 #  address         :string
 #  business_name   :string
 #  comment         :string
@@ -13,7 +13,7 @@
 #  phone           :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  organization_id :integer
+#  organization_id :bigint
 #
 
 class DiaperDriveParticipant < ApplicationRecord
