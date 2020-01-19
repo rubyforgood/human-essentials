@@ -10,9 +10,8 @@ shared_examples_for "pagination" do
             end
 
             it "should default to #{Kaminari.config.default_per_page} records per page" do
-            puts "==="
-            puts current_path
-            puts "==="
+                get :index
+                page.should have_css('name some html element here', :count => 50)
             end
 
     #         # it "allows user to jump to a different page" do
