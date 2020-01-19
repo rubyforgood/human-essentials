@@ -53,6 +53,16 @@ class Transfer < ApplicationRecord
     ]
   end
 
+  def inventory_change!
+    from.decrease_inventory(self)
+    to.increase_inventory(self)
+  end
+
+  def revert_inventory_changes!
+    to.decrease_inventory(self)
+    from.increase_inventory(self)
+  end
+
   private
 
   def storage_locations_belong_to_organization

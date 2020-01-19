@@ -58,6 +58,24 @@ class TransfersController < ApplicationController
     @items = current_organization.items.active.alphabetized
   end
 
+  def update
+    @transfer = current_organization.transfers.find(params[:id])
+    @transfer.assign_attributes(transfer_params)
+
+    if @transfer.valid?
+      ActiveRecord::Base.transaction do
+        @transfer.save
+        @transfer.from.decrease_inventory @transfer
+        @transfer.to.increase_inventory @transfer
+      end
+
+      redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
+    else
+      flash[:error] = "There was an error updating the transfer"
+      redirect_to edit_transfer_path(@transfer.id)
+    end
+  end
+
   private
 
   def load_form_collections
@@ -67,7 +85,7 @@ class TransfersController < ApplicationController
 
   def transfer_params
     params.require(:transfer).permit(:from_id, :to_id, :comment,
-                                     line_items_attributes: %i(item_id quantity _destroy))
+                                     line_items_attributes: %i(id item_id quantity _destroy))
   end
 
   def filter_params

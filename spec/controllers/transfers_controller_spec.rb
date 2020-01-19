@@ -100,6 +100,69 @@ RSpec.describe TransfersController, type: :controller do
       end
     end
 
+    describe 'PATCH #update' do
+      subject { patch :update, params: { organization_id: @organization.short_name, id: transfer.id, transfer: transfer_params } }
+      let(:transfer_params) { attributes_for(:transfer, organization_id: @organization.id, to_id: create(:storage_location, organization: @organization).id.to_s, from_id: create(:storage_location, organization: @organization).id.to_s) }
+
+      context 'when the transfer belongs to the organization' do
+        let(:transfer) { create(:transfer, organization: @organization) }
+        let(:fake_organization_transfers) { instance_double('Transfer::ActiveRecord_Associations_CollectionProxy') }
+
+        before do
+          allow(controller.current_organization).to receive(:transfers).and_return(
+            fake_organization_transfers
+          )
+          allow(fake_organization_transfers).to receive(:find).with(transfer.id.to_s).and_return(
+            transfer
+          )
+          expect(transfer).to receive(:assign_attributes).with(
+            ActionController::Parameters.new(transfer_params).permit(
+              :from_id, :to_id, :comment, line_items_attributes: %i(item_id quantity _destroy)
+            )
+          )
+        end
+
+        context 'and the update is successful' do
+          let(:fake_from) { instance_double(StorageLocation, decrease_inventory: -> {}, name: 'fake-from-name') }
+          let(:fake_to) { instance_double(StorageLocation, increase_inventory: -> {}, name: 'fake-to-name')}
+
+          before do
+            allow(transfer).to receive(:valid?).and_return(true)
+            allow(transfer).to receive(:save).and_return(true)
+            allow(transfer).to receive(:from).and_return(fake_from)
+            allow(transfer).to receive(:to).and_return(fake_to)
+          end
+
+          it 'should save the record and update inventories' do
+            subject
+            expect(transfer).to have_received(:save)
+            expect(fake_from).to have_received(:decrease_inventory).with(transfer)
+            expect(fake_to).to have_received(:increase_inventory).with(transfer)
+          end
+        end
+
+        context 'but the update was not valid' do
+          before do
+            allow(transfer).to receive(:valid?).and_return(false)
+          end
+
+          it 'should redirect to the edit page with and error message' do
+            subject
+            expect(flash[:error]).to match(/There was an error updating the transfer/)
+            expect(response).to redirect_to(edit_transfer_path(transfer.id))
+          end
+        end
+      end
+
+      context 'when the transfer does not belong to the organization' do
+        let(:transfer) { create(:transfer, organization: create(:organization)) }
+
+        it "returns http not successful" do
+          expect(subject).not_to be_successful
+        end
+      end
+    end
+
     context "Looking at a different organization" do
       let(:object) do
         org = create(:organization)
