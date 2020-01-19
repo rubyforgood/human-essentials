@@ -121,4 +121,8 @@ class Distribution < ApplicationRecord
   def future?
     issued_at > Time.zone.today
   end
+
+  def past?
+    issued_at < Time.zone.today
+  end
 end
