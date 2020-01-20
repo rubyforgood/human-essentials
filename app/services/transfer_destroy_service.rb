@@ -1,5 +1,4 @@
 class TransferDestroyService
-
   def initialize(transfer_id:)
     @transfer_id = transfer_id
   end
@@ -27,5 +26,4 @@ class TransferDestroyService
     transfer.to.decrease_inventory(transfer)
     transfer.from.increase_inventory(transfer)
   end
-
 end

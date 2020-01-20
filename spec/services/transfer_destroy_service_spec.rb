@@ -2,7 +2,6 @@ require 'spec_helper'
 require_relative '../support/env_helper'
 
 RSpec.describe TransferDestroyService, type: :service do
-
   describe '#call' do
     subject { described_class.new(transfer_id: transfer_id).call }
     let(:transfer_id) { transfer.id }
@@ -11,8 +10,8 @@ RSpec.describe TransferDestroyService, type: :service do
     # Create a double StorageLocation that behaves like how we want to use
     # it within the service object. The benefit is that we aren't testing
     # ActiveRecord and the database.
-    let(:fake_from) { instance_double(StorageLocation, increase_inventory: ->{}) }
-    let(:fake_to) { instance_double(StorageLocation, decrease_inventory: ->{}) }
+    let(:fake_from) { instance_double(StorageLocation, increase_inventory: -> {}) }
+    let(:fake_to) { instance_double(StorageLocation, decrease_inventory: -> {}) }
 
     before do
       # Stub the outputs of these method calls to avoid testing
@@ -49,7 +48,6 @@ RSpec.describe TransferDestroyService, type: :service do
     end
 
     context 'when an issue occurs in transaction' do
-
       context 'because the transfer_id does not match any Transfer' do
         before do
           allow(Transfer).to receive(:find).with(transfer_id).and_raise(ActiveRecord::RecordNotFound)
@@ -102,7 +100,5 @@ RSpec.describe TransferDestroyService, type: :service do
         end
       end
     end
-
   end
-
 end

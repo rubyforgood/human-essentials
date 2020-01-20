@@ -55,11 +55,11 @@ class TransfersController < ApplicationController
 
     if results.success?
       flash[:notice] = "Succesfully deleted Transfer ##{params[:id]}!"
-      redirect_to transfers_path
     else
       flash[:error] = results.error.message
-      redirect_to transfers_path
     end
+
+    redirect_to transfers_path
   end
 
   private
