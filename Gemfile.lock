@@ -280,7 +280,7 @@ GEM
     parser (2.6.5.0)
       ast (~> 2.4.0)
     pdf-core (0.7.0)
-    pg (1.1.3)
+    pg (1.2.2)
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
       ttfunk (~> 1.5)
@@ -544,7 +544,7 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri (>= 1.10.4)
   paperclip
-  pg (~> 1.1.3)
+  pg (~> 1.2.2)
   prawn-rails
   pry-nav
   pry-rails
