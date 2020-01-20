@@ -44,6 +44,31 @@ RSpec.describe "Transfer management", type: :system do
     expect(page).to have_content("10 items have been transferred")
   end
 
+  it "can delete a transfer to undo the inventory count changes" do
+    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
+    to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
+
+    original_from_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
+    original_to_storage_item_count = 0
+    transfer_amount = 10
+
+    create_transfer(transfer_amount.to_s, from_storage_location.name, to_storage_location.name)
+
+    # Ensure the that the transfer has changed the inventory quantities
+    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).not_to eq(original_from_storage_item_count)
+    expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
+
+    accept_confirm do
+      click_link 'Delete'
+    end
+
+    expect(page).to have_content(/Succesfully deleted Transfer/)
+
+    # Assert that the original inventory counts have been restored.
+    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count)
+    expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_to_storage_item_count)
+  end
+
   context "when there's insufficient inventory at the origin to cover the move" do
     let!(:from_storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, name: "From me", organization: @organization) }
     let!(:to_storage_location) { create(:storage_location, :with_items, name: "To me", organization: @organization) }
