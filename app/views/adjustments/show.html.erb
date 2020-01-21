@@ -1,64 +1,80 @@
-
 <section class="content-header">
-  <% content_for :title, "Adjustments - Inventory - #{current_organization.name}" %>
-  <h1>
-    Inventory Adjustment
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "All Adjustments", (adjustments_path) %></li>
-    <li class="active">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Adjustments - Inventory - #{current_organization.name}" %>
+        <h1>
+          Inventory Adjustment
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Adjustments", (adjustments_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</h3>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h2 class="card-title">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</h2>
+          </div>
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>&nbsp;</th>
+                <th>Item</th>
+                <th>Quantity</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @adjustment.line_items.each do |line_item|  %>
+                <tr class="<%= line_item.quantity > 0 ? "positive" : "negative" %>">
+                  <td><%= (line_item.quantity > 0) ? "Added " : "Removed " %></td>
+                  <td><%= line_item.item.name %></td>
+                  <td><%= line_item.quantity.abs %></td>
+                </tr>
+              <% end %>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Organization:</td>
+                <td><%= @adjustment.organization.name %></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Storage location:</td>
+                <td><%= @adjustment.storage_location.name %></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Comments:</td>
+                <td><%= @adjustment.comment %></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
   </div>
-  <div class="box-body">
-
-<p>
-  <strong>Organization:</strong>
-  <%= @adjustment.organization.name %>
-</p>
-
-<p>
-  <strong>Storage location:</strong>
-  <%= @adjustment.storage_location.name %>
-</p>
-        <!-- /.box-header -->
-  <div class="box-body table-responsive no-padding">
-    <table class="table table-hover striped">
-    <tr>
-      <th>&nbsp;</th>
-      <th>Item</th>
-      <th class="numeric">Quantity</th>
-    </tr>
-  <% @adjustment.line_items.each do |line_item|  %>
-    <tr class="<%= line_item.quantity > 0 ? "positive" : "negative" %>">
-      <td><%= (line_item.quantity > 0) ? "Added " : "Removed " %></td>
-      <td><%= line_item.item.name %></td>
-      <td class="numeric"><%= line_item.quantity.abs %></td>
-    </tr>
-  <% end %>
-    </table>
-  <!-- /.box-body -->
-
-  </div>
-      <!-- /.box -->
-    <p>
-      <strong>Comments:</strong>
-      <%= @adjustment.comment %>
-    </p>
-
-  </div>
-</div>
 </section>
