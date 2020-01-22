@@ -89,7 +89,7 @@ group :test do
   gem "factory_bot_rails"
   gem "launchy"
   gem "rails-controller-testing"
-  gem "webmock", "~> 3.5"
+  gem "webmock", "~> 3.8"
   gem 'simplecov'
   gem 'webdrivers', '~> 4.2'
 end
