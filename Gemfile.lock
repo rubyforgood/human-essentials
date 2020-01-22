@@ -160,7 +160,7 @@ GEM
     fakeredis (0.7.0)
       redis (>= 3.2, < 5.0)
     ffi (1.12.1)
-    flipper (0.17.1)
+    flipper (0.17.2)
     flipper-active_record (0.17.1)
       activerecord (>= 4.2, < 7)
       flipper (~> 0.17.1)
