@@ -91,7 +91,7 @@ group :test do
   gem "rails-controller-testing"
   gem "webmock", "~> 3.5"
   gem 'simplecov'
-  gem 'webdrivers', '~> 3.0'
+  gem 'webdrivers', '~> 4.2'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
