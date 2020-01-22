@@ -66,7 +66,7 @@
   <div class="row">
     <div class="col-xs-8 col-md-6 col-lg-3">
       <%= f.input :money_raised_in_dollars, as: :money_raised_in_dollars, wrapper: :vertical_input_group do %>
-        <span class="input-group-addon"><i class="fa fa-usd"></i></span>
+        <span class="input-group-text"><i class="fa fa-usd"></i></span>
         <%= f.input_field :money_raised_in_dollars, class: "form-control" %>
       <% end %>
     </div>
@@ -104,11 +104,9 @@
         </div>
       </div>
   </fieldset>
-  <div class="row">
-    <div class="col-xs-12">
-      <%= submit_button %>
-    </div>
+  <div class="card-footer">
+    <%= submit_button %>
   </div>
-</div><!-- /.box-body.container -->
+</div>
 
 <% end %>
