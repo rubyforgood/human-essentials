@@ -75,7 +75,7 @@ group :development do
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
-  gem "listen", "~> 3.1.5"
+  gem "listen", "~> 3.2.1"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
