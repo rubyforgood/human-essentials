@@ -90,8 +90,8 @@
             To add additional donations to this diaper drive, please edit that donation and select this diaper drive from the appropriate dropdown.
           </p>
           <div class="card-footer clearfix">
-            <%= edit_button_to edit_diaper_drive_path(@diaper_drive), { text: "Make a correction" } %>
-            <%= delete_button_to diaper_drive_path(@diaper_drive), { confirm: "Are you sure you want to permanently remove this diaper drive?" } if current_user.organization_admin? %>
+            <%= edit_button_to edit_diaper_drive_path(@diaper_drive), { text: "Make a correction", size: "md" } %>
+            <%= delete_button_to diaper_drive_path(@diaper_drive), { confirm: "Are you sure you want to permanently remove this diaper drive?", size: "md" } if current_user.organization_admin? %>
           </div>
           <!-- /.card-footer-->
         </div>
