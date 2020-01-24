@@ -13,7 +13,7 @@ module DashboardHelper
   end
 
   def total_received_money_donations(range = selected_range)
-    number_with_delimiter current_organization.donations.during(range).collect(&:money_raised).compact.reduce(0, :+)
+    current_organization.donations.during(range).sum { |d| d.money_raised || 0 }
   end
 
   def total_received_donations(range = selected_range)
