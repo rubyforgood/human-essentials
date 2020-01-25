@@ -1,36 +1,25 @@
 <section class="content-header">
-<% content_for :title, "New - Donation Sites - Agencies - #{current_organization.name}" %>
-<h1>
-  Donation Site
-  <small>for <%= current_organization.name %></small>
-</h1>
-<ol class="breadcrumb">
-<li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
-  </li>
-  <li><%= link_to "Donation Sites", (donation_sites_path) %></li>  
-  <li class="active"> New Donation Site</li>
-</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - Donation Sites - Agencies - #{current_organization.name}" %>
+        <h1>
+          Donation Site
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Donation Sites", (donation_sites_path) %></li>
+          <li class="breadcrumb-item"><a href="#">New Donation Site</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
-<section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title">New Donation Site</h3>
-  </div>
-  <div class="box-body">
-
-  <h1 class="medium-offset-3 medium-6"></h1>
-  
-	<%= render partial: "form", object: @donation_site %>
-  </div>
-</div>
-<!-- /.box -->
-
-</section>
-
-
+<%= render partial: "form", object: @donation_site %>
