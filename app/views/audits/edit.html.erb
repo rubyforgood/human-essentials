@@ -1,37 +1,41 @@
 <section class="content-header">
-  <% content_for :title, "Edit - Audits - Inventory - #{current_organization.name}" %>
-  <h1>
-    Edit Inventory Audit
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><%= link_to "Inventory Audits", (audits_path) %></li>
-    <li class="active"> New Audit</li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - Audits - Inventory - #{current_organization.name}" %>
+        <h1>
+          New Inventory Audit
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Inventory Audits", (audits_path) %></li>
+          <li class="breadcrumb-item"><a href="#">New Audit</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <p class="box-title">Edit the <strong>Audit</strong> recording all the inventory present in a particular storage location.</p>
-    </div>
-
-    <div class="box-body">
-      <p class="help">Enter <em>all</em> the items with their corresponding <em>quantity</em> that are present in the storage location</p>
-      <p class="help">Click on <em>Save Progress</em> button to save the current progress of audit.</p>
-      <p class="help">You can <em>resume</em> the saved audit at a later time again.</p>
-      <%= render partial: "audits/form" %>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="callout callout-info">
+          <h5><i class="fas fa-info"></i> Note:</h5>
+          <p class="help">Edit the <strong>Audit</strong> recording all the inventory present in a particular storage location.</p>
+          <p class="help">Enter <em>all</em> the items with their corresponding <em>quantity</em> that are present in the storage location</p>
+          <p class="help">Click on <em>Save Progress</em> button to save the current progress of audit.</p>
+          <p class="help">You can <em>resume</em> the saved audit at a later time again.</p>
+        </div>
+      </div>
     </div>
   </div>
-  <!-- /.box -->
-
-  <%= render partial: "barcode_items/barcode_modal" %>
-
 </section>
+
+<%= render partial: "audits/form" %>
