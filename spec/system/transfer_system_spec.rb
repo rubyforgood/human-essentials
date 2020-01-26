@@ -78,7 +78,7 @@ RSpec.describe "Transfer management", type: :system do
 
     create_transfer(transfer_amount.to_s, from_storage_location.name, to_storage_location.name)
 
-    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).not_to eq(original_from_storage_item_count)
+    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count-transfer_amount)
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
 
     allow_any_instance_of(StorageLocation).to receive(:decrease_inventory).and_raise(
@@ -93,7 +93,7 @@ RSpec.describe "Transfer management", type: :system do
 
     # Assert that the inventory did not change in response
     # to the raised error.
-    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count)
+    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count-transfer_amount)
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
   end
 
