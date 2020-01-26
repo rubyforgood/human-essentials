@@ -49,6 +49,19 @@ class TransfersController < ApplicationController
     @line_items = @transfer.line_items.sorted
   end
 
+  def destroy
+    transfer_destroy_service = TransferDestroyService.new(transfer_id: params[:id])
+    results = transfer_destroy_service.call
+
+    if results.success?
+      flash[:notice] = "Succesfully deleted Transfer ##{params[:id]}!"
+    else
+      flash[:error] = results.error.message
+    end
+
+    redirect_to transfers_path
+  end
+
   private
 
   def load_form_collections
