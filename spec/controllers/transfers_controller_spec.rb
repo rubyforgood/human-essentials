@@ -72,6 +72,45 @@ RSpec.describe TransfersController, type: :controller do
         expect(subject).to be_successful
       end
     end
+
+    describe 'DELETE #destroy' do
+      subject { delete :destroy, params: { organization_id: @organization.short_name, id: transfer_id } }
+      let(:transfer_id) { create(:transfer, organization: @organization).id.to_s }
+      let(:fake_destroy_service) { instance_double(TransferDestroyService) }
+      before do
+        allow(TransferDestroyService).to receive(:new).with(transfer_id: transfer_id).and_return(fake_destroy_service)
+      end
+
+      context 'when the transfer destroy service was successful' do
+        let(:fake_success_struct) { OpenStruct.new(success?: true) }
+
+        before do
+          allow(fake_destroy_service).to receive(:call).and_return(fake_success_struct)
+          subject
+        end
+
+        it 'should set a notice flash with the success message and redirect to index' do
+          expect(flash[:notice]).to eq("Succesfully deleted Transfer ##{transfer_id}!")
+          expect(response).to redirect_to(transfers_path)
+        end
+      end
+
+      context 'when the transfer destroy service was not successful' do
+        let(:fake_error_struct) { OpenStruct.new(success?: false, error: fake_error) }
+        let(:fake_error) { StandardError.new('fake-error-msg') }
+
+        before do
+          allow(fake_destroy_service).to receive(:call).and_return(fake_error_struct)
+          subject
+        end
+
+        it 'should set a error flash with the error message and redirect to index' do
+          expect(flash[:error]).to eq(fake_error.message)
+          expect(response).to redirect_to(transfers_path)
+        end
+      end
+    end
+
     context "Looking at a different organization" do
       let(:object) do
         org = create(:organization)
@@ -80,13 +119,13 @@ RSpec.describe TransfersController, type: :controller do
                from: create(:storage_location, organization: org),
                organization: org)
       end
-      include_examples "requiring authorization", except: %i(edit update destroy)
+      include_examples "requiring authorization", except: %i(edit update)
     end
   end
 
   context "While not signed in" do
     let(:object) { create(:transfer) }
 
-    include_examples "requiring authorization", except: %i(edit update destroy)
+    include_examples "requiring authorization", except: %i(edit update)
   end
 end
