@@ -69,6 +69,34 @@ RSpec.describe "Transfer management", type: :system do
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_to_storage_item_count)
   end
 
+  it 'shows a error when deleting a transfer that causes an insufficient inventory counts' do
+    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
+    to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
+
+    original_from_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
+    transfer_amount = 10
+
+    create_transfer(transfer_amount.to_s, from_storage_location.name, to_storage_location.name)
+
+    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).not_to eq(original_from_storage_item_count)
+    expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
+
+    allow_any_instance_of(StorageLocation).to receive(:decrease_inventory).and_raise(
+      Errors::InsufficientAllotment.new('error-msg', [])
+    )
+
+    accept_confirm do
+      click_link 'Delete'
+    end
+
+    expect(page).to have_content(/error-msg/)
+
+    # Assert that the inventory did not change in response
+    # to the raised error.
+    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count)
+    expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
+  end
+
   context "when there's insufficient inventory at the origin to cover the move" do
     let!(:from_storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, name: "From me", organization: @organization) }
     let!(:to_storage_location) { create(:storage_location, :with_items, name: "To me", organization: @organization) }
