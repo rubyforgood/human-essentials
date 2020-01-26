@@ -231,10 +231,9 @@ GEM
     launchy (2.4.3)
       addressable (~> 2.3)
     libv8 (7.3.492.27.1)
-    listen (3.1.5)
-      rb-fsevent (~> 0.9, >= 0.9.4)
-      rb-inotify (~> 0.9, >= 0.9.7)
-      ruby_dep (~> 1.2)
+    listen (3.2.1)
+      rb-fsevent (~> 0.10, >= 0.10.3)
+      rb-inotify (~> 0.9, >= 0.9.10)
     loofah (2.4.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -346,7 +345,7 @@ GEM
     rainbow (3.0.0)
     rake (13.0.1)
     rb-fsevent (0.10.3)
-    rb-inotify (0.10.0)
+    rb-inotify (0.10.1)
       ffi (~> 1.0)
     rb-readline (0.5.5)
     redis (4.1.0)
@@ -389,7 +388,6 @@ GEM
     ruby-progressbar (1.10.1)
     ruby-vips (2.0.17)
       ffi (~> 1.9)
-    ruby_dep (1.5.0)
     rubyzip (2.0.0)
     rufus-scheduler (3.6.0)
       fugit (~> 1.1, >= 1.1.6)
@@ -534,7 +532,7 @@ DEPENDENCIES
   jquery-ui-rails
   kaminari
   launchy
-  listen (~> 3.1.5)
+  listen (~> 3.2.1)
   mini_racer (~> 0.2.8)
   momentjs-rails
   newrelic_rpm
