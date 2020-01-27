@@ -32,7 +32,7 @@ gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
 gem "paperclip"
-gem "pg", "~> 1.1.3"
+gem "pg", "~> 1.2.2"
 gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 6.0.0"
@@ -75,7 +75,7 @@ group :development do
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
-  gem "listen", "~> 3.1.5"
+  gem "listen", "~> 3.2.1"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
@@ -83,15 +83,15 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 3.12"
+  gem "capybara", "~> 3.30"
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "factory_bot_rails"
   gem "launchy"
   gem "rails-controller-testing"
-  gem "webmock", "~> 3.5"
+  gem "webmock", "~> 3.8"
   gem 'simplecov'
-  gem 'webdrivers', '~> 3.0'
+  gem 'webdrivers', '~> 4.2'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

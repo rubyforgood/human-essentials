@@ -130,8 +130,10 @@
               <%= new_button_to new_donation_path, {text: "New Donation"} %>
               <h3 class="text-center"><%= total_received_donations %> items
                 received <%= @selected_date_range_label %></h3>
-              <h3 class="text-center">$<%= total_received_money_donations %>
-                raised  <%= @selected_date_range_label %></h3>
+              <% if total_received_money_donations > 0 %>
+                <h3 class="text-center"><%= dollar_value(total_received_money_donations) %>
+                  raised <%= @selected_date_range_label %></h3>
+              <% end %>
               <div class="box-body">
                 <h4>Recent donations</h4>
                 <%= render partial: "donation", collection: @recent_donations, as: :donation %>
@@ -218,11 +220,13 @@
               <h3 class="text-center">
                 <%= total_purchased %> items purchased <%= @selected_date_range_label %>
               </h3>
-              <h3>
-                <%= dollar_value(@purchases.sum(&:amount_spent_in_cents)) %>
-                spent
-                <%= @selected_date_range_label %>
-              </h3>
+              <% if @purchases.sum(&:amount_spent_in_cents) > 0 %>
+                <h3>
+                  <%= dollar_value(@purchases.sum(&:amount_spent_in_cents)) %>
+                  spent
+                  <%= @selected_date_range_label %>
+                </h3>
+              <% end %>
               <div class="box-body">
                 <h4>Recent purchases</h4>
                 <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>

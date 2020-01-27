@@ -27,12 +27,9 @@ class TransfersController < ApplicationController
 
       redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
     else
-      flash[:error] = "There was an error creating the transfer"
-      load_form_collections
-      @transfer.line_items.build if @transfer.line_items.empty?
-      render :new
+      raise StandardError.new(@transfer.errors.full_messages.join("</br>"))
     end
-  rescue Errors::InsufficientAllotment => e
+  rescue StandardError => e
     flash[:error] = e.message
     load_form_collections
     @transfer.line_items.build if @transfer.line_items.empty?
@@ -59,6 +56,8 @@ class TransfersController < ApplicationController
   end
 
   def update
+    binding.pry
+
     @transfer = current_organization.transfers.find(params[:id])
     @transfer.assign_attributes(transfer_params)
 
@@ -74,6 +73,19 @@ class TransfersController < ApplicationController
       flash[:error] = "There was an error updating the transfer"
       redirect_to edit_transfer_path(@transfer.id)
     end
+  end
+
+  def destroy
+    transfer_destroy_service = TransferDestroyService.new(transfer_id: params[:id])
+    results = transfer_destroy_service.call
+
+    if results.success?
+      flash[:notice] = "Succesfully deleted Transfer ##{params[:id]}!"
+    else
+      flash[:error] = results.error.message
+    end
+
+    redirect_to transfers_path
   end
 
   private

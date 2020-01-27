@@ -39,6 +39,8 @@ class Transfer < ApplicationRecord
   validates :from, :to, :organization, presence: true
   validate :line_item_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
+  validate :storage_locations_must_be_different
+  validate :from_storage_locations_must_have_enough_to_transfer_out
 
   def self.csv_export_headers
     ["From", "To", "Comment", "Total Moved"]
@@ -69,11 +71,36 @@ class Transfer < ApplicationRecord
     return if organization.nil?
 
     unless organization.storage_locations.include?(from)
-      errors.add :from, "from location must belong to organization"
+      errors.add :from, "location must belong to organization"
     end
 
     unless organization.storage_locations.include?(to)
-      errors.add :to, "to location must belong to organization"
+      errors.add :to, "location must belong to organization"
+    end
+  end
+
+  def storage_locations_must_be_different
+    return if organization.nil? || to_id.nil?
+
+    if from_id == to_id
+      errors.add :to, "location must be different than from location"
+    end
+  end
+
+  def from_storage_locations_must_have_enough_to_transfer_out
+    return if organization.nil? || from.nil?
+
+    inventory_items = from.inventory_items.each_with_object({}) do |inventory_item, memo|
+      memo[inventory_item.item_id] = inventory_item.quantity
+    end
+    insufficient_items = []
+    line_items.each do |line_item|
+      if line_item.quantity > inventory_items.fetch(line_item.item_id, 0)
+        insufficient_items << line_item.item.name
+      end
+    end
+    if insufficient_items.any?
+      errors.add :from, "location has insufficient inventory for #{insufficient_items.join(', ')}"
     end
   end
 end

@@ -39,7 +39,7 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "POST #create" do
-      it "redirects to #show when successful" do
+      it "redirects to #index when successful" do
         attributes = attributes_for(
           :transfer,
           organization_id: @organization.id,
@@ -55,7 +55,7 @@ RSpec.describe TransfersController, type: :controller do
         post :create, params: { organization_id: @organization.short_name, transfer: { from_id: nil, to_id: nil } }
         expect(response).to be_successful # Will render :new
         expect(response).to render_template("new")
-        expect(response).to have_error(/error/i)
+        expect(flash.keys).to match_array(['error'])
       end
     end
 
@@ -100,65 +100,40 @@ RSpec.describe TransfersController, type: :controller do
       end
     end
 
-    describe 'PATCH #update' do
-      subject { patch :update, params: { organization_id: @organization.short_name, id: transfer.id, transfer: transfer_params } }
-      let(:transfer_params) { attributes_for(:transfer, organization_id: @organization.id, to_id: create(:storage_location, organization: @organization).id.to_s, from_id: create(:storage_location, organization: @organization).id.to_s) }
+    describe 'DELETE #destroy' do
+      subject { delete :destroy, params: { organization_id: @organization.short_name, id: transfer_id } }
+      let(:transfer_id) { create(:transfer, organization: @organization).id.to_s }
+      let(:fake_destroy_service) { instance_double(TransferDestroyService) }
+      before do
+        allow(TransferDestroyService).to receive(:new).with(transfer_id: transfer_id).and_return(fake_destroy_service)
+      end
 
-      context 'when the transfer belongs to the organization' do
-        let(:transfer) { create(:transfer, organization: @organization) }
-        let(:fake_organization_transfers) { instance_double('Transfer::ActiveRecord_Associations_CollectionProxy') }
+      context 'when the transfer destroy service was successful' do
+        let(:fake_success_struct) { OpenStruct.new(success?: true) }
 
         before do
-          allow(controller.current_organization).to receive(:transfers).and_return(
-            fake_organization_transfers
-          )
-          allow(fake_organization_transfers).to receive(:find).with(transfer.id.to_s).and_return(
-            transfer
-          )
-          expect(transfer).to receive(:assign_attributes).with(
-            ActionController::Parameters.new(transfer_params).permit(
-              :from_id, :to_id, :comment, line_items_attributes: %i(item_id quantity _destroy)
-            )
-          )
+          allow(fake_destroy_service).to receive(:call).and_return(fake_success_struct)
+          subject
         end
 
-        context 'and the update is successful' do
-          let(:fake_from) { instance_double(StorageLocation, decrease_inventory: -> {}, name: 'fake-from-name') }
-          let(:fake_to) { instance_double(StorageLocation, increase_inventory: -> {}, name: 'fake-to-name')}
-
-          before do
-            allow(transfer).to receive(:valid?).and_return(true)
-            allow(transfer).to receive(:save).and_return(true)
-            allow(transfer).to receive(:from).and_return(fake_from)
-            allow(transfer).to receive(:to).and_return(fake_to)
-          end
-
-          it 'should save the record and update inventories' do
-            subject
-            expect(transfer).to have_received(:save)
-            expect(fake_from).to have_received(:decrease_inventory).with(transfer)
-            expect(fake_to).to have_received(:increase_inventory).with(transfer)
-          end
-        end
-
-        context 'but the update was not valid' do
-          before do
-            allow(transfer).to receive(:valid?).and_return(false)
-          end
-
-          it 'should redirect to the edit page with and error message' do
-            subject
-            expect(flash[:error]).to match(/There was an error updating the transfer/)
-            expect(response).to redirect_to(edit_transfer_path(transfer.id))
-          end
+        it 'should set a notice flash with the success message and redirect to index' do
+          expect(flash[:notice]).to eq("Succesfully deleted Transfer ##{transfer_id}!")
+          expect(response).to redirect_to(transfers_path)
         end
       end
 
-      context 'when the transfer does not belong to the organization' do
-        let(:transfer) { create(:transfer, organization: create(:organization)) }
+      context 'when the transfer destroy service was not successful' do
+        let(:fake_error_struct) { OpenStruct.new(success?: false, error: fake_error) }
+        let(:fake_error) { StandardError.new('fake-error-msg') }
 
-        it "returns http not successful" do
-          expect(subject).not_to be_successful
+        before do
+          allow(fake_destroy_service).to receive(:call).and_return(fake_error_struct)
+          subject
+        end
+
+        it 'should set a error flash with the error message and redirect to index' do
+          expect(flash[:error]).to eq(fake_error.message)
+          expect(response).to redirect_to(transfers_path)
         end
       end
     end
@@ -171,13 +146,13 @@ RSpec.describe TransfersController, type: :controller do
                from: create(:storage_location, organization: org),
                organization: org)
       end
-      include_examples "requiring authorization", except: %i(edit update destroy)
+      include_examples "requiring authorization", except: %i(edit update)
     end
   end
 
   context "While not signed in" do
     let(:object) { create(:transfer) }
 
-    include_examples "requiring authorization", except: %i(edit update destroy)
+    include_examples "requiring authorization", except: %i(edit update)
   end
 end
