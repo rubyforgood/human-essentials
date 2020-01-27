@@ -250,7 +250,7 @@ GEM
     mini_magick (4.10.1)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    mini_racer (0.2.8)
+    mini_racer (0.2.9)
       libv8 (>= 6.9.411)
     minitest (5.14.0)
     momentjs-rails (2.20.1)
@@ -533,7 +533,7 @@ DEPENDENCIES
   kaminari
   launchy
   listen (~> 3.2.1)
-  mini_racer (~> 0.2.8)
+  mini_racer (~> 0.2.9)
   momentjs-rails
   newrelic_rpm
   nokogiri (>= 1.10.4)
