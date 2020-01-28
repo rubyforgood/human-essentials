@@ -22,8 +22,6 @@ class TransferUpdateService
       OpenStruct.new(success?: true)
     end
   rescue StandardError => e
-    puts(e.message)
-
     OpenStruct.new(success?: false, error: e)
   end
 
