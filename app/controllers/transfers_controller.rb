@@ -56,23 +56,19 @@ class TransfersController < ApplicationController
   end
 
   def update
-    binding.pry
+    transfer_update_service = TransferUpdateService.new(
+      transfer_id: params[:id],
+      update_params: transfer_params
+    )
+    results = transfer_update_service.call
 
-    @transfer = current_organization.transfers.find(params[:id])
-    @transfer.assign_attributes(transfer_params)
-
-    if @transfer.valid?
-      ActiveRecord::Base.transaction do
-        @transfer.save
-        @transfer.from.decrease_inventory @transfer
-        @transfer.to.increase_inventory @transfer
-      end
-
-      redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
+    if results.success?
+      flash[:notice] = "Succesfully updated Transfer ##{params[:id]}!"
     else
-      flash[:error] = "There was an error updating the transfer"
-      redirect_to edit_transfer_path(@transfer.id)
+      flash[:error] = results.error.message
     end
+
+    redirect_to transfers_path
   end
 
   def destroy

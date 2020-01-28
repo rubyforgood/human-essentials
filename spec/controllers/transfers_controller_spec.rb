@@ -100,6 +100,49 @@ RSpec.describe TransfersController, type: :controller do
       end
     end
 
+    describe 'PATCH #update' do
+      subject { patch :update, params: { organization_id: @organization.short_name, id: transfer_id, transfer: transfer_params} }
+      let(:transfer_id) { transfer.id.to_s }
+      let(:transfer) { create(:transfer, organization: @organization) }
+      let(:transfer_params) { { from_id: '5' } }
+      let(:fake_update_service) { instance_double(TransferUpdateService) }
+      before do
+        allow(TransferUpdateService).to receive(:new).with(
+          transfer_id: transfer_id,
+          update_params: ActionController::Parameters.new(transfer_params).tap(&:permit!)
+        ).and_return(fake_update_service)
+      end
+
+      context 'when the transfer update service was successful' do
+        let(:fake_success_struct) { OpenStruct.new(success?: true) }
+
+        before do
+          allow(fake_update_service).to receive(:call).and_return(fake_success_struct)
+          subject
+        end
+
+        it 'should set a notice flash with the success message and redirect to index' do
+          expect(flash[:notice]).to eq("Succesfully updated Transfer ##{transfer_id}!")
+          expect(response).to redirect_to(transfers_path)
+        end
+      end
+
+      context 'when the transfer update service was not successful' do
+        let(:fake_error_struct) { OpenStruct.new(success?: false, error: fake_error) }
+        let(:fake_error) { StandardError.new('fake-error-msg') }
+
+        before do
+          allow(fake_update_service).to receive(:call).and_return(fake_error_struct)
+          subject
+        end
+
+        it 'should set a error flash with the error message and redirect to index' do
+          expect(flash[:error]).to eq(fake_error.message)
+          expect(response).to redirect_to(transfers_path)
+        end
+      end
+    end
+
     describe 'DELETE #destroy' do
       subject { delete :destroy, params: { organization_id: @organization.short_name, id: transfer_id } }
       let(:transfer_id) { create(:transfer, organization: @organization).id.to_s }
