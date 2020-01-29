@@ -49,11 +49,6 @@ class TransferUpdateService
     transfer.from_id != updated_transfer.from_id || transfer.to_id != updated_transfer.to_id
   end
 
-  def revert_inventory_transfer!
-    transfer.to.decrease_inventory(transfer)
-    transfer.from.increase_inventory(transfer)
-  end
-
   def reconcile_inventory_count!(old_transfer, old_line_items, updated_transfer, updated_line_items)
     # TODO - handling the removal case
     #
