@@ -36,7 +36,6 @@
           <form role="form" id="quickForm">
             <div class="card-body">
               <%= simple_form_for @user, url: admin_user_path do |f| %>
-                <%= f.error_notification %>
                 <div class="form-inputs">
                   <%= f.input :organization_id, label: "Organization", wrapper: :vertical_input_group, required: true, autofocus: true do %>
                     <span class="input-group-text"><%= fa_icon "building" %></span>

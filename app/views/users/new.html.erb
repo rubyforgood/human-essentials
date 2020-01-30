@@ -5,7 +5,6 @@
     <h1>Add a user to <%= current_organization.name %></h1>
 
     <%= simple_form_for(@user) do |f| %>
-      <%= f.error_notification %>
       <div class="form-inputs">
         <%= f.input :name, label: "Name", wrapper: :vertical_input_group, required: true, autofocus: true do %>
           <span class="input-group-addon"><%= fa_icon "user" %></span>
