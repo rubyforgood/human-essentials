@@ -1,43 +1,59 @@
 <section class="content-header">
-	<% content_for :title, "Partners - #{@partner.name} - #{@partner.organization.name}" %>
-  <h1>
-    Partner Information
-    <small>for <%=  @partner.name %></small>
-  </h1>
-	<ol class="breadcrumb">
-	<li><%= link_to(dashboard_path) do %>
-	    <i class="fa fa-dashboard"></i> Home
-	  <% end %>
-	  </li>
-	  <li><%= link_to "All Partners", (admin_partners_path) %></li>
-	  <li class="active">Viewing Partner</li>
-	</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Partners - #{@partner.name} - #{@partner.organization.name}" %>
+        <h1>
+          Partner Information
+          <small>for <%= @partner.name %></small></h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Partners", (admin_partners_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Viewing Partner</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"></h2>
+          </div>
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Partner Name</th>
+                <th>Diaper Bank</th>
+                <th>Partner Email</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><%= @partner.name %></td>
+                  <td><%= @partner.organization.name %></td>
+                  <td><%= @partner.email %></td>
+                </tr>
 
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= @partner.name %></h3>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
   </div>
-  <div class="box-body">
-
-	<dl>
-	  <dt>E-mail</dt>
-		<dd><%= @partner.email %></dd>
-	</dl>
-
-	<dl>
-	  <dt>Organization</dt>
-		<dd><%= @partner.organization.name %></dd>
-	</dl>
-
-  </div>
-</div>
-
-
-
-
-
+</section>

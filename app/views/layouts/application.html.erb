@@ -64,9 +64,6 @@
     </div>
   </aside>
 
-  <!-- =============================================== -->
-
-  <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <% flash.each do |key, value| %>
       <div class="alert alert-<%= flash_class(key) %> alert-dismissible fade show" role="alert">
@@ -74,13 +71,8 @@
         <%= value %>
       </div>
     <% end %>
-    <!-- Content Header (Page header) -->
     <%= yield %>
-
   </div>
-
-  <!-- Content Wrapper. Contains page content -->
-  <!-- /.content-wrapper -->
 
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
