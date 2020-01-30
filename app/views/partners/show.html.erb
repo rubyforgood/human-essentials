@@ -1,64 +1,87 @@
 <section class="content-header">
-  <% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
-  <h1>
-    Partner info
-    <small>for <%= @partner.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><%= link_to "Partners", (partners_path) %></li>
-    <li class="active"><%= @partner.name %></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
+        <h1>
+          Partner info
+          <small>for <%= @partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Partners", (partners_path) %></li>
+          <li class="breadcrumb-item"><a href="#"><%= @partner.name %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title"><%= @partner.name %></h3>
-      <%= view_button_to approve_partner_partner_path(@partner) %>
-      <%= edit_button_to edit_partner_path(@partner) %>
-      <%= delete_button_to partner_path(@partner), {confirm: confirm_delete_msg(@partner.name)} %>
-      <%= modal_button_to("#addUserModal", { text: "Add/Remind Partner", size: "xs" }) if can_administrate? %>
-      <%= print_button_to approve_application_partner_path(@partner), { text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "xs" } if can_administrate? %>
-    <div class="box-body">
-
-      <p><%= link_to @partner.email, "mailto:#{@partner.email}" %></p>
-
-      <h3>Past Distributions</h3>
-
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
-              <tr>
-                <th>Date</th>
-                <th>Source Inventory</th>
-                <th>Total items</th>
-                <th>&nbsp
-              </tr>
-
-              <% @partner.distributions.each do |dist| %>
-                <tr>
-                  <td class="date"><%= dist.created_at.strftime("%m/%d/%Y") %></td>
-                  <td><%= dist.storage_location.name %></td>
-                  <td class="date"><%= dist.line_items.total %></td>
-                  <td class="text-right">
-                    <%= view_button_to distribution_path(dist) %>
-                    <%= print_button_to print_distribution_path(dist, format: :pdf) %>
-                  </td>
-                </tr>
-              <% end %>
-            </table>
-            <!-- /.box-body -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-info card-outline">
+          <div class="card-header">
+            <h2 class="card-title"><%= @partner.name %></h2>
           </div>
-          <!-- /.box -->
+          <div class="card-body p-0">
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            <%= view_button_to approve_partner_partner_path(@partner) %>
+            <%= edit_button_to edit_partner_path(@partner) %>
+            <%= delete_button_to partner_path(@partner), {confirm: confirm_delete_msg(@partner.name)} %>
+            <%= modal_button_to("#addUserModal", {text: "Add/Remind Partner", size: "xs"}) if can_administrate? %>
+            <%= print_button_to approve_application_partner_path(@partner), {text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "xs"} if can_administrate? %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-primary card-outline card-outline-tabs">
+          <div class="card-header p-0 border-bottom-0">
+          </div>
+          <div class="card-body">
+            <div class="tab-content" id="custom-tabs-three-tabContent">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Source Inventory</th>
+                  <th>Total items</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @partner.distributions.each do |dist| %>
+                  <tr>
+                    <td><%= dist.created_at.strftime("%m/%d/%Y") %></td>
+                    <td><%= dist.storage_location.name %></td>
+                    <td><%= dist.line_items.total %></td>
+                    <td class="text-right">
+                      <%= view_button_to distribution_path(dist) %>
+                      <%= print_button_to print_distribution_path(dist, format: :pdf) %>
+                    </td>
+                  </tr>
+                  </tbody>
+                <% end %>
+                </table>
+            </div><!-- /.box-body.table-responsive -->
+          </div>
         </div>
       </div>
     </div>
@@ -73,15 +96,15 @@
         <div class="modal-body">
           <div class="box-body">
             <p>
-            This will invite an additional member of the partner organization to Partnerbase unless a user with that
-            exists in the Partnerbase system. If a user with that email exists it will send them a password reminder.
+              This will invite an additional member of the partner organization to Partnerbase unless a user with that
+              exists in the Partnerbase system. If a user with that email exists it will send them a password reminder.
             </p>
             <br/>
             <%= form_tag re_invite_partner_path do %>
               <div class="input-group">
-                <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
+                <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
                 <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
-                <%= hidden_field_tag :partner , @partner.id %><br>
+                <%= hidden_field_tag :partner, @partner.id %><br>
               </div>
               <br>
               <%= submit_button({text: "Invite User", icon: "envelope"}) %>
@@ -91,5 +114,4 @@
       </div><!-- modal-content -->
     </div><!-- modal-dialog -->
   </div><!-- addUserModal -->
-
 </section>
