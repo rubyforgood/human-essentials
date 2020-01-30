@@ -1,30 +1,52 @@
 <section class="content-header">
-  <% content_for :title, "Admin - Inventory - Barcode Items - New" %>
-  <h1>
-    Editing Barcode Item
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-lock"></i> Admin
-    <% end %>
-    </li>
-    <li><%= link_to "All Barcodes", (admin_barcode_items_path) %></li>
-    <li class="active"> Editing Barcode</li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Admin - Inventory - Barcode Items - New" %>
+        <h1>
+          Editing Barcode Item
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Barcodes", (admin_barcode_items_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Editing Barcode</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-<!-- Default box -->
-	<div class="box">
-	  <div class="box-header with-border">
-	    <h3 class="box-title">Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %></h3>
-	  </div>
-	  <div class="box-body">
-			<%= render partial: "form", object: @barcode_item %>
-	  </div>
-	</div>
-	<!-- /.box -->
-
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h5 class="card-title">Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %>
+            </h5>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <form role="form" id="quickForm">
+            <div class="card-body">
+              <%= render partial: "form", object: @barcode_item %>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
+          </form>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
 </section>
