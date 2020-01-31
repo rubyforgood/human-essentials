@@ -1,4 +1,6 @@
-RSpec.describe DashboardController, type: :controller do
+require 'rails_helper'
+
+RSpec.describe "Dashboard", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -10,14 +12,14 @@ RSpec.describe DashboardController, type: :controller do
 
     describe "GET #show" do
       it "returns http success" do
-        get :index, params: default_params
+        get dashboard_path(default_params)
         expect(response).to be_successful
       end
 
       context "for another org" do
         it "requires authorization" do
           # nother org
-          get :index, params: { organization_id: create(:organization).to_param }
+          get dashboard_path(organization_id: create(:organization).to_param)
           expect(response).to be_redirect
         end
       end
@@ -26,7 +28,7 @@ RSpec.describe DashboardController, type: :controller do
 
   context "While not signed in" do
     it "redirects for authentication" do
-      get :index, params: { organization_id: create(:organization).to_param }
+      get dashboard_path(organization_id: create(:organization).to_param)
       expect(response).to be_redirect
     end
   end
