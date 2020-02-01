@@ -8,9 +8,10 @@ Ruby for Good [code of conduct](https://github.com/rubyforgood/code-of-conduct).
 ## Onboarding the App
  1. Fork the repo.
  2. Clone your fork
- 3. Run `bin/setup` - we've expanded this to check for some additional setup things, including some dependencies
- 4. Run `bundle exec rake db:seed` - This will set you up with a bunch of realistic data
- 5. Run the specs (tests). We only take pull requests with passing tests, and it's great to know that you have a clean  slate: `bundle exec rake`.
+ 3. Run `cp config/database.yml.example config/database.yml` - This will copy the contents of `database.yml.example ` and put it in a new file called `database.yml`.
+ 4. Run `bin/setup` - we've expanded this to check for some additional setup things, including some dependencies
+ 5. Run `bundle exec rake db:seed` - This will set you up with a bunch of realistic data
+ 6. Run the specs (tests). We only take pull requests with passing tests, and it's great to know that you have a clean  slate: `bundle exec rake`.
  
 ## Working on an Issue
  1. Choose an issue from our [Issues List](https://github.com/rubyforgood/diaper/issues). Make sure that you're working on is an [open issue]–if the relevant issue doesn't exist, open it! Check the comment thread and see if anyone else has claimed it already, and if not, go ahead and let us know in the comments!

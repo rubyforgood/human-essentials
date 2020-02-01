@@ -1,19 +1,84 @@
-<p id="notice"><%= notice %></p>
+<section class="content-header">
+  <% content_for :title, "Diaper Drive - #{@diaper_drive.name} - #{current_organization.name}" %>
+  <h1>
+    Diaper Drive
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to(diaper_drive_path) do %>
+        <i class="fa fa-dashboard"></i> Home
+      <% end %>
+    </li>
+      <li><%= link_to "Diaper Drives", (diaper_drives_path) %></li>
+  </ul>
+</section>
 
-<p>
-  <strong>Name:</strong>
-  <%= @diaper_drive.name %>
-</p>
+<section class="content">
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+      <fieldset>
+        <div class="box-body table-responsive no-padding large-table" style="margin-bottom: 4rem;">
+          <table class="table table-bordered striped">
+            <thead>
+              <th>Name</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td><%= @diaper_drive.name %></td>
+                <td class="text-left" class="date"><%= @diaper_drive.start_date.strftime("%m-%d-%Y") %></td>
+                <td class="text-left"><%= @diaper_drive.end_date.strftime("%m-%d-%Y") %></td>
+              </tr>
+            </tbody>
+          </table>
+       </div>
 
-<p>
-  <strong>Start date:</strong>
-  <%= @diaper_drive.start_date %>
-</p>
 
-<p>
-  <strong>End date:</strong>
-  <%= @diaper_drive.end_date %>
-</p>
+        <section id="line_items">
+          <!-- /.box-header -->
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="box-body table-responsive no-padding">
+                <table class="table table-hover striped">
+                  <thead>
+                    <th>Donation Id</th>
+                    <th>Diaper Drive Participant</th>
+                    <th>Storage Location</th>
+                    <th>Quantity</th>
+                    <th>In Kind Value</th>
+                  </thead>
 
-<%= link_to 'Edit', edit_diaper_drive_path(@diaper_drive) %> |
-<%= link_to 'Back', diaper_drives_path %>
+                  <tbody>
+                    <% @diaper_drive.donations.each do |donation| %>
+                      <tr>
+                        <td><%= link_to donation.id, donation %></td>
+                        <td><%= donation.diaper_drive_participant_id ? donation.diaper_drive_participant.business_name : nil %></td>
+                        <td><%= donation.storage_location.name %></td>
+                        <td><%= donation.line_items.count(&:quantity) %></td>
+                        <td><strong><%= dollar_value(donation.value_per_itemizable) %></strong></td>
+                      </tr>
+                    <% end%>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </fieldset>
+    </div>
+    <div class="box-footer" >
+
+      <%= edit_button_to edit_diaper_drive_path(@diaper_drive), { text: "Make a correction", size: "lg" } %>
+      <%# <%= new_button_to new_distribution_path(donation_id: @diaper_drive.id, storage_location_id: @diaper_drive.storage_location_id), { text: "Start a new Distribution" } %>
+      <%= delete_button_to diaper_drive_path(@diaper_drive), { size: "lg", confirm: "Are you sure you want to permanently remove this diaper drive?" } if current_user.organization_admin? %>
+
+    </div>
+
+  </div>
+      <p style="text-align: center">
+        To add a donation to this diaper drive, please edit that donation and select this diaper drive from the appropriate dropdown.
+      </p>
+</section>

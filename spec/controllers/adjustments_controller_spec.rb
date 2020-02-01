@@ -30,6 +30,12 @@ RSpec.describe AdjustmentsController, type: :controller do
     end
 
     describe "GET #index" do
+      around do |example|
+        travel_to Time.zone.local(2019, 7, 1)
+        example.run
+        travel_back
+      end
+
       it "is successful" do
         Adjustment.create! valid_attributes.merge(user_id: @user.id)
         get :index, params: default_params, session: valid_session

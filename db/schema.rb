@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_20_165853) do
+ActiveRecord::Schema.define(version: 2019_10_21_155337) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,6 +116,8 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
     t.date "end_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.index ["organization_id"], name: "index_diaper_drives_on_organization_id"
   end
 
   create_table "distributions", id: :serial, force: :cascade do |t|
@@ -263,8 +265,8 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
-    t.integer "status", default: 0
     t.boolean "send_reminders", default: false, null: false
+    t.integer "status", default: 0
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 
@@ -370,6 +372,7 @@ ActiveRecord::Schema.define(version: 2019_10_20_165853) do
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
+  add_foreign_key "diaper_drives", "organizations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "diaper_drives"

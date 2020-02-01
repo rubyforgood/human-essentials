@@ -11,6 +11,7 @@
 #
 
 class DiaperDrive < ApplicationRecord
+  belongs_to :organization, optional: true
   include Filterable
 
   scope :by_name, ->(name_filter) { where(name: name_filter) }
@@ -25,6 +26,29 @@ class DiaperDrive < ApplicationRecord
     { message: "A name must be chosen." }
   validates :start_date, presence:
     { message: "Please enter a start date." }
+  scope :alphabetized, -> { order(:name) }
+
+  validate :end_date_is_bigger_of_end_date
+
+  def end_date_is_bigger_of_end_date
+    return if start_date.nil? || end_date.nil?
+
+    if end_date < start_date
+      errors.add(:end_date, 'End date must be after the start date')
+    end
+  end
+
+  def donation_quantity
+    donations.joins(:line_items).sum('line_items.quantity')
+  end
+
+  def distinct_items
+    donations.joins(:items).distinct(:item_id).count
+  end
+
+  def in_kind_value
+    donations.sum(&:value_per_itemizable)
+  end
 
   def self.search_date_range(dates)
     dates = dates.split(" - ")

@@ -31,6 +31,7 @@ FactoryBot.define do
     end
 
     factory :diaper_drive_donation do
+      diaper_drive
       diaper_drive_participant
       source { Donation::SOURCES[:diaper_drive] }
     end

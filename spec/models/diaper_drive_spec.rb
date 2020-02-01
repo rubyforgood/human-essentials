@@ -13,9 +13,23 @@
 require 'rails_helper'
 
 RSpec.describe DiaperDrive, type: :model do
+  let!(:diaper_drive) { create(:diaper_drive) }
+  let!(:donation) { create(:donation, :with_items, item_quantity: 7, diaper_drive: diaper_drive) }
+  let!(:donation_2) { create(:donation, :with_items, item_quantity: 9, diaper_drive: diaper_drive) }
+  let!(:extra_line_item) { create(:line_item, itemizable: donation, quantity: 4) }
+
+  it "calculates donation quantity" do
+    expect(diaper_drive.donation_quantity).to eq 20
+  end
+
+  it "calculates in-kind value" do
+    expect(diaper_drive.in_kind_value).to be_a Integer
+  end
+
   describe 'validations' do
     it { expect(build(:diaper_drive, name: nil)).not_to be_valid }
     it { expect(build(:diaper_drive, start_date: nil)).not_to be_valid }
+    it { expect(build(:diaper_drive, start_date: '2020-12-17', end_date: '2019-12-19')).not_to be_valid }
   end
 
   describe 'associations' do

@@ -21,7 +21,7 @@ FactoryBot.define do
     partner
     organization { Organization.try(:first) || create(:organization) }
     issued_at { nil }
-    state { 0 }
+    state { :started }
 
     trait :with_items do
       transient do

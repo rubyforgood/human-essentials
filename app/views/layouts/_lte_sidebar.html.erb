@@ -10,29 +10,27 @@
           <i class="fa fa-dashboard"></i> <span>Dashboard</span>
         <% end %>
       </li>
-      <% if Flipper.enabled?(:diaper_drive_tab) %>
-        <li class="<%= active_class(['diaper_drives']) %> treeview">
-          <a href="#">
-            <i class="fa fa-trophy"></i>
-            <span>Diaper Drives</span>
-            <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li class="<%= 'active' if current_page?(diaper_drives_path) %>">
-              <%= link_to(diaper_drives_path) do %>
-                <i class="fa fa-circle-o"></i> All Diaper Drives
-              <% end %>
-            </li>
-            <li class="<%= 'active' if current_page?(new_diaper_drive_path) %>">
-              <%= link_to(new_diaper_drive_path) do %>
-                <i class="fa fa-circle-o"></i> New Diaper Drive
-              <% end %>
-            </li>
-          </ul>
-        </li>
-      <% end %>
+      <li class="<%= active_class(['diaper_drives']) %> treeview">
+        <a href="#">
+          <i class="fa fa-trophy"></i>
+          <span>Diaper Drives</span>
+          <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class="<%= 'active' if current_page?(diaper_drives_path) %>">
+            <%= link_to(diaper_drives_path) do %>
+              <i class="fa fa-circle-o"></i> All Diaper Drives
+            <% end %>
+          </li>
+          <li class="<%= 'active' if current_page?(new_diaper_drive_path) %>">
+            <%= link_to(new_diaper_drive_path) do %>
+              <i class="fa fa-circle-o"></i> New Diaper Drive
+            <% end %>
+          </li>
+        </ul>
+      </li>
       <li class="<%= active_class(['donations']) %> treeview">
         <a href="#">
           <i class="fa fa-gratipay"></i>
@@ -82,14 +80,30 @@
           </li>
         </ul>
       </li>
+      <li class="<%= active_class(['distributions']) %> treeview">
+        <a href="#">
+          <i class="fa fa-circle-o"></i> 
+          <span>Distributions</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li class="<%= active_class(['items']) %>">
+            <%= link_to(distributions_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> All Distributions
+            <% end %>
+          </li>
+          <li class="<%= active_class(['items']) %>">
+            <%= link_to(new_distribution_path(organization_id: current_user.organization)) do %>
+              <i class="fa fa-circle-o"></i> New Distribution
+            <% end %>
+          </li>
+        </ul>
+      </li>
       <li class="<%= 'active' if current_page?(requests_path) %>">
         <%= link_to(requests_path) do %>
           <i class="fa fa-file-text"></i> <span>Requests</span>
-        <% end %>
-      </li>
-      <li class="<%= 'active' if current_page?(distributions_path) %>">
-        <%= link_to(distributions_path) do %>
-          <i class="fa fa-circle-o"></i> <span>Distributions</span>
         <% end %>
       </li>
       <li class="<%= 'active' if current_page?(pick_ups_distributions_path) %>">

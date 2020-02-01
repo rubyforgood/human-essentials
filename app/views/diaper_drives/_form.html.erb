@@ -1,9 +1,14 @@
-<%= simple_form_for(@diaper_drive) do |f| %>
+ <%= simple_form_for @diaper_drive, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
   <%= f.error_notification %>
 
-  <div class="form-inputs">
-    <%= f.input :name %>
-    <div class="row">
+<div class="box-body" style="margin-left: 1rem">
+  <div class="row">
+    <div class="col-xs-8 col-md-6 col-lg-3">
+      <%= f.input :name %>
+    </div>
+  </div>
+
+  <div class="row">
     <div class="col-xs-8 col-md-6 col-lg-3">
       <%= f.input :start_date,
         label: "Start Date",
@@ -11,6 +16,9 @@
         html5: true,
         wrapper: :vertical_input_group %>
     </div>
+  </div>
+
+  <div class="row">
     <div class="col-xs-8 col-md-6 col-lg-3">
       <%= f.input :end_date,
         label: "End Date",
@@ -20,7 +28,9 @@
     </div>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+  <div class="form-actions" style="margin-left: -1.5rem; margin-top: 1rem">
+    <%= f.button :submit, :class => 'diaper-drive-submit', :id => 'diaper_drive_submit' %>
   </div>
+</div>
+
 <% end %>

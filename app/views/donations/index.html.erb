@@ -34,8 +34,14 @@
           <% end %>
           <% if @diaper_drives.present? %>
             <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "by Diaper Drives" %>
+              <%= collection_select(:filters, :by_diaper_drive, @diaper_drives || {}, :id, :name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
+            </div>
+          <% end %>
+          <% if @diaper_drive_participants.present? %>
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
               <%= label_tag "by Diaper Drive Participants" %>
-              <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drives || {}, :id, :business_name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
+              <%= collection_select(:filters, :by_diaper_drive_participant, @diaper_drive_participants || {}, :id, :business_name, { include_blank: true, selected: @selected_diaper_drive }, class: "form-control") %>
             </div>
           <% end %>
           <% if @manufacturers.present? %>
@@ -83,7 +89,7 @@
                   <th>Donation Site</th>
                   <th>Storage Location</th>
                   <th class="numeric">Quantity of Items</th>
-                  <th class="numeric">Variety of Items</th>
+                  <th class="numeric">Money Raised</th>
                   <th class="numeric">In Kind Value</th>
                   <th class="pull-right">Actions</th>
                 </tr>
@@ -104,8 +110,9 @@
                   <br />
                     <%= @paginated_donations_quantity %> (This page)
                   </td>
-                  <td></td>
+                  <td class="numeric"><strong><%= dollar_value(@total_money_raised) %><strong></td>
                   <td class="numeric"><strong><%= dollar_value(@total_value_all_donations) %></strong></td>
+
                   <td></td>
                 </tr>
               </tfoot>

@@ -70,7 +70,7 @@ Rails.application.routes.draw do
     resources :audits do
       post :finalize
     end
-    resources :transfers, only: %i(index create new show)
+    resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
       collection do
         post :import_csv
@@ -85,6 +85,7 @@ Rails.application.routes.draw do
       get :print, on: :member
       collection do
         get :pick_ups
+        get :pickup_day
       end
       patch :picked_up, on: :member
     end
