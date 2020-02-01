@@ -34,18 +34,16 @@
           </div>
           <!-- /.card-header -->
           <!-- form start -->
-          <form role="form" id="quickForm">
-            <div class="card-body">
-              <%= simple_form_for [:admin, @base_item], html: { class: 'form-horizontal' } do |f| %>
-                <%= render partial: "form", object: f %>
-              <% end %>
+          <div class="card-body">
+            <%= simple_form_for [:admin, @base_item], html: {class: 'form-horizontal', id: 'quickForm'} do |f| %>
+              <%= render partial: "form", object: f %>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <%= submit_button %>
+              </div>
+            <% end %>
             </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-              <%= submit_button %>
-            </div>
-          </form>
-        </div>
         <!-- /.card -->
       </div>
     </div>

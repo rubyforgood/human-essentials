@@ -31,7 +31,6 @@
         <div class="card card-primary">
           <!-- /.card-header -->
           <!-- form start -->
-          <form role="form" id="quickForm">
             <div class="card-body">
               <!-- Default box -->
               <div class="box">
@@ -41,7 +40,7 @@
                 </div>
                 <div class="box-body">
 
-                  <%= simple_form_for @transfer, html: {class: "storage-location-required"} do |f| %>
+                  <%= simple_form_for @transfer, html: { class: "storage-location-required", id: 'new_transfer' } do |f| %>
                     <%= render partial: "storage_locations/source", object: f, locals: {label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from} %>
 
                     <%= f.association :to,
@@ -73,7 +72,6 @@
                   <% end %>
                   </div>
             </div><!-- /.box -->
-          </form>
         </div>
       </div>
     </div>

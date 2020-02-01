@@ -14,8 +14,8 @@ RSpec.describe "Transfer management", type: :system do
       fill_in "Comment", with: "something"
       select item.name, from: "transfer_line_items_attributes_0_item_id"
       fill_in "transfer_line_items_attributes_0_quantity", with: amount
-      click_on "Save"
     end
+    click_on "Save"
   end
 
   it "Does not include inactive items in the line item fields" do
@@ -82,7 +82,7 @@ RSpec.describe "Transfer management", type: :system do
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
 
     allow_any_instance_of(StorageLocation).to receive(:decrease_inventory).and_raise(
-      Errors::InsufficientAllotment.new('error-msg', [])
+        Errors::InsufficientAllotment.new('error-msg', [])
     )
 
     accept_confirm do

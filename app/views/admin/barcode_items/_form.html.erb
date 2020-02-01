@@ -5,7 +5,11 @@
         <!-- left column -->
         <div class="col-md-12">
           <!-- jquery validation -->
-          <div class="card card-primary">
+          <div class="card card-primary card-outline">
+            <div class="card-header">
+              <h5 class="card-title">Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %>
+              </h5>
+            </div>
             <!-- /.card-header -->
             <!-- form start -->
             <form role="form" id="quickForm">

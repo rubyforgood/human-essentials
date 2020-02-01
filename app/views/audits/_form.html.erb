@@ -26,7 +26,7 @@
                         </div>
                       <% end %>
                       <div class="row links">
-                        <div class="col-xs-12">
+                        <div class="col-xs-12 p-3">
                           <%= add_line_item_button f, "#audit_line_items" %>
                         </div>
                       </div>
@@ -35,7 +35,8 @@
 
                     </div>
                     <div class="card-footer">
-                      <%= submit_button %>
+                      <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'md'}, {confirm: 'Are you sure?'}) %>
+                      <%= submit_button({ text: 'Save Progress', name: 'save_progress', size: 'md' }) %>
                     </div>
                   <% end %>
                   </div>
