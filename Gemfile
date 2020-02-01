@@ -9,7 +9,6 @@ ruby "2.6.4"
 
 gem "api-auth", "~> 2.3"
 gem 'bootstrap', '~> 4.4.1'
-gem "bootstrap-sass"
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
