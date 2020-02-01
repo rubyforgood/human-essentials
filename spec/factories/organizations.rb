@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  city            :string
 #  deadline_day    :integer
 #  email           :string
