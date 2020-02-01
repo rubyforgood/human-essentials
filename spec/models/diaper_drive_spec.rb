@@ -2,13 +2,12 @@
 #
 # Table name: diaper_drives
 #
-#  id              :bigint           not null, primary key
-#  end_date        :date
-#  name            :string
-#  start_date      :date
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :bigint
+#  id         :bigint           not null, primary key
+#  end_date   :date
+#  name       :string
+#  start_date :date
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 
 require 'rails_helper'

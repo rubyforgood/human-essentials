@@ -3,7 +3,7 @@ require 'time_util'
 #
 # Table name: distributions
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint           not null, primary key
 #  agency_rep             :string
 #  comment                :text
 #  issued_at              :datetime
@@ -12,8 +12,8 @@ require 'time_util'
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  organization_id        :integer
-#  partner_id             :integer
-#  storage_location_id    :integer
+#  partner_id             :bigint
+#  storage_location_id    :bigint
 #
 
 class Distribution < ApplicationRecord

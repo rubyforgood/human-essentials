@@ -2,7 +2,7 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
+#  id              :bigint           not null, primary key
 #  email           :string
 #  name            :string
 #  send_reminders  :boolean          default(FALSE), not null

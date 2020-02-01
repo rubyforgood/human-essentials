@@ -2,7 +2,7 @@
 #
 # Table name: items
 #
-#  id                           :integer          not null, primary key
+#  id                           :bigint           not null, primary key
 #  active                       :boolean          default(TRUE)
 #  barcode_count                :integer
 #  category                     :string

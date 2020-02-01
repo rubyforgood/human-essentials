@@ -2,7 +2,7 @@
 #
 # Table name: inventory_items
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint           not null, primary key
 #  quantity            :integer          default(0)
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
