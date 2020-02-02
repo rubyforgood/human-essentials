@@ -6,31 +6,39 @@
       <div class="card-body login-card-body">
         <p class="login-box-msg">Sign in to start your session</p>
 
-        <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Email">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
-            </div>
+          <div class="form-inputs">
+            <%= f.input :email, autofocus: true %>
           </div>
-        </div>
-        <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Password">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
+          <div class="form-inputs">
+            <%= f.input :password, autofocus: true %>
           </div>
-        </div>
-        <%= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
-          <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-          <%= f.input_field :email, class: "form-control" %>
-        <% end %>
-        <%= f.input :password, label: "Password:", wrapper: :vertical_input_group do %>
-          <span class="input-group-text"><i class="fa fa-lock"></i></span>
-          <%= f.input_field :password, class: "form-control" %>
-        <% end %>
-        <div class="row">
+
+
+        <!--        <div class="input-group mb-3">-->
+<!--          <input type="email" class="form-control" placeholder="Email">-->
+<!--          <div class="input-group-append">-->
+<!--            <div class="input-group-text">-->
+<!--              <span class="fas fa-envelope"></span>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="input-group mb-3">-->
+<!--          <input type="password" class="form-control" placeholder="Password">-->
+<!--          <div class="input-group-append">-->
+<!--            <div class="input-group-text">-->
+<!--              <span class="fas fa-lock"></span>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+        <%#= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
+<!--          <span class="input-group-text"><i class="fa fa-envelope"></i></span>-->
+          <%#= f.input_field :email, class: "form-control" %>
+        <%# end %>
+        <%#= f.input :password, label: "Password:", wrapper: :vertical_input_group do %>
+<!--          <span class="input-group-text"><i class="fa fa-lock"></i></span>-->
+          <%#= f.input_field :password, class: "form-control" %>
+        <%# end %>
+<!--        <div class="row">-->
           <div class="col-12 text-center">
             <%= f.button :submit, "Log in", class: "btn btn-primary btn-block" %>
           </div>

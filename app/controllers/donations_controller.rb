@@ -59,6 +59,7 @@ class DonationsController < ApplicationController
 
     if @donation.save
       @donation.storage_location.increase_inventory @donation
+      flash[:notice] = "Donation created and logged!"
       redirect_to donations_path
     else
       load_form_collections
