@@ -35,32 +35,28 @@
           </div>
           <!-- /.card-header -->
           <!-- form start -->
-          <form role="form" id="quickForm">
-            <div class="card-body">
-              <%= form_tag(diaper_drives_path, method: :get, organization_id: current_organization) do |f| %>
-                <table class="table">
-                  <thead>
-                  <tr>
-                    <th>Donation Site</th>
-                    <th>Address</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                  <%= render partial: 'shared/table_row_form',
-                             object: @donation_site,
-                             locals: {columns: [{name: :text_field}, {address: :text_field}]}
-                  %>
-                  </thead>
-                </table>
-                </div>
-                <div class="card-footer">
-                  <div class="pull-right">
-                  <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Donation Sites", size: "md"}) if @donation_sites.empty? %>
-                  <%= download_button_to(csv_path(format: :csv, type: "DonationSite"), {text: "Export Donation Sites", size: "md"}) if @donation_sites.any? %>
-                  <%= new_button_to new_donation_site_path(organization_id: current_organization), {text: "New Donation Site"} %>
-                  </div>
-                </div>
-              <% end # form %>
-              </form>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Donation Site</th>
+                <th>Address</th>
+                <th>&nbsp;</th>
+              </tr>
+              <%= render partial: 'shared/table_row_form',
+                         object: @donation_site,
+                         locals: {columns: [{name: :text_field}, {address: :text_field}]}
+              %>
+              </thead>
+            </table>
+          </div>
+          <div class="card-footer">
+            <div class="pull-right">
+              <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Donation Sites", size: "md"}) if @donation_sites.empty? %>
+              <%= download_button_to(csv_path(format: :csv, type: "DonationSite"), {text: "Export Donation Sites", size: "md"}) if @donation_sites.any? %>
+              <%= new_button_to new_donation_site_path(organization_id: current_organization), {text: "New Donation Site"} %>
+            </div>
+          </div>
         </div>
         <!-- /.card -->
       </div>
@@ -76,7 +72,7 @@
         <!-- Default box -->
         <div class="card">
           <div class="card-body p-0">
-            <table class="table">
+            <table class="table index">
               <thead>
               <tr>
                 <th>Donation Site</th>
