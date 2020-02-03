@@ -19,7 +19,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <div class="card">
+        <div class="card" id="summary">
           <div class="card-header">
             <h5 class="card-title"><%= current_organization.name %></h5>
             <div class="card-tools">
@@ -92,7 +92,7 @@
     <div class="row">
       <div class="col-lg-6">
 
-        <div class="card">
+        <div class="card" id="distributions">
           <div class="card-header border-0 bg-gradient-info">
             <h3 class="card-title">Distributions
               <small><%= @selected_date_range %></small></h3>
@@ -169,7 +169,7 @@
       </div>
       <div class="col-lg-6">
 
-        <div class="card">
+        <div class="card" id="donations">
           <div class="card-header border-0 bg-gradient-primary">
             <h3 class="card-title">Donations (All Sources)
               <small><%= @selected_date_range %></small></h3>
@@ -202,7 +202,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="diaper_drives">
           <div class="card-header border-0 bg-gradient-info">
             <h3 class="card-title">Diaper Drives <small><%= @selected_date_range %></small></h3>
             <div class="card-tools">
@@ -236,7 +236,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="manufacturers">
           <div class="card-header border-0 bg-gradient-success">
             <h3 class="card-title">Manufacturer Donations <small><%= @selected_date_range %></small></h3>
             <div class="card-tools">
@@ -269,7 +269,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="purchases">
           <div class="card-header border-0 bg-gradient-secondary">
             <h3 class="card-title">Purchases <small><%= @selected_date_range %></small></h3>
             <div class="card-tools">
