@@ -1,4 +1,6 @@
-RSpec.describe DistributionsController, type: :controller do
+require 'rails_helper'
+
+RSpec.describe "Distributions", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -9,39 +11,39 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     describe "GET #print" do
-      subject { get :print, params: default_params.merge(id: create(:distribution).id) }
       it "returns http success" do
-        expect(subject).to be_successful
+        get print_distribution_path(default_params.merge(id: create(:distribution).id))
+        expect(response).to be_successful
       end
 
       context "with non-UTF8 characters" do
         let(:non_utf8_partner) { create(:partner, name: "KOKA Keiki O Ka ‘Āina") }
-        subject { get :print, params: default_params.merge(id: create(:distribution, partner: non_utf8_partner).id) }
-
+        
         it "returns http success" do
-          expect(subject).to be_successful
+          get print_distribution_path(default_params.merge(id: create(:distribution, partner: non_utf8_partner).id))
+          expect(response).to be_successful
         end
       end
     end
 
     describe "GET #reclaim" do
-      subject { get :index, params: default_params.merge(organization_id: @organization, id: create(:distribution).id) }
       it "returns http success" do
-        expect(subject).to be_successful
+        get distributions_path(default_params.merge(organization_id: @organization, id: create(:distribution).id))
+        expect(response).to be_successful
       end
     end
 
     describe "GET #index" do
-      subject { get :index, params: default_params }
       it "returns http success" do
-        expect(subject).to be_successful
+        get distributions_path(default_params)
+        expect(response).to be_successful
       end
 
       it "sums distribution totals accurately" do
         distribution = create(:distribution, :with_items, item_quantity: 10)
         create(:distribution, :with_items, item_quantity: 5)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
-        subject
+        get distributions_path(default_params)
         expect(assigns(:total_items_all_distributions)).to eq(22)
         expect(assigns(:total_items_paginated_distributions)).to eq(22)
       end
@@ -62,7 +64,7 @@ RSpec.describe DistributionsController, type: :controller do
 
         jobs_count = PartnerMailerJob.jobs.count
 
-        post :create, params: params
+        post distributions_path(params)
         expect(response).to have_http_status(:redirect)
 
         expect(response).to redirect_to(distributions_path)
@@ -70,28 +72,28 @@ RSpec.describe DistributionsController, type: :controller do
       end
 
       it "renders #new again on failure, with notice" do
-        post :create, params: default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil })
+        post distributions_path(default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }))
         expect(response).to be_successful
         expect(response).to have_error
       end
     end
 
     describe "GET #new" do
-      subject { get :new, params: default_params }
       it "returns http success" do
-        expect(subject).to be_successful
+        get new_distribution_path(default_params)
+        expect(response).to be_successful
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:distribution).id) }
       it "returns http success" do
-        expect(subject).to be_successful
+        get distribution_path(default_params.merge(id: create(:distribution).id))
+        expect(response).to be_successful
       end
     end
 
     describe 'PATCH #picked_up' do
-      subject { patch :picked_up, params: default_params.merge(id: distribution.id) }
+      subject { patch picked_up_distribution_path(default_params.merge(id: distribution.id)) }
 
       context 'when the distribution is successfully updated' do
         let(:distribution) { create(:distribution, state: :scheduled) }
@@ -108,9 +110,9 @@ RSpec.describe DistributionsController, type: :controller do
     end
 
     describe "GET #pickup_day" do
-      subject { get :pickup_day, params: default_params }
       it "returns http success" do
-        expect(subject).to be_successful
+        get pickup_day_distributions_path(default_params)
+        expect(response).to be_successful
       end
     end
 
@@ -137,10 +139,11 @@ RSpec.describe DistributionsController, type: :controller do
           }
         )
       end
-
-      subject { patch :update, params: distribution_params }
-
-      it { expect(subject).to have_http_status(:ok) }
+      
+      it "returns a 200" do
+        patch distribution_path(distribution_params)
+        expect(response.status).to eq(200) 
+      end
 
       describe "when changing storage location" do
         it "updates storage quantity correctly" do
@@ -159,7 +162,7 @@ RSpec.describe DistributionsController, type: :controller do
           }
           distribution_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
-            put :update, params: default_params.merge(id: distribution.id, distribution: distribution_params)
+            put distribution_path(default_params.merge(id: distribution.id, distribution: distribution_params))
           end.to change { original_storage_location.size }.by(10) # removes the whole distribution of 10 - increasing inventory
           expect(new_storage_location.size).to eq 25
         end
@@ -194,6 +197,8 @@ RSpec.describe DistributionsController, type: :controller do
       end
 
       context "mail follow up" do
+        subject { patch distribution_path(distribution_params) } 
+
         before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 
         it { expect { subject }.not_to change { PartnerMailerJob.jobs.count } }

@@ -1,4 +1,6 @@
-RSpec.describe DiaperDriveParticipantsController, type: :controller do
+require 'rails_helper'
+
+RSpec.describe "DiaperDriveParticipants", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -9,23 +11,23 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
     end
 
     describe "GET #index" do
-      subject { get :index, params: default_params }
       it "returns http success" do
-        expect(subject).to be_successful
+        get diaper_drive_participants_path(default_params)
+        expect(response).to be_successful
       end
     end
 
     describe "GET #new" do
-      subject { get :new, params: default_params }
       it "returns http success" do
-        expect(subject).to be_successful
+        get new_diaper_drive_participant_path(default_params)
+        expect(response).to be_successful
       end
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:diaper_drive_participant, organization: @user.organization)) }
       it "returns http success" do
-        expect(subject).to be_successful
+        get edit_diaper_drive_participant_path(default_params.merge(id: create(:diaper_drive_participant, organization: @user.organization)))
+        expect(response).to be_successful
       end
     end
 
@@ -35,27 +37,27 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:diaper_drive_participant, organization: @organization)) }
       it "returns http success" do
-        expect(subject).to be_successful
+        get diaper_drive_participant_path(default_params.merge(id: create(:diaper_drive_participant, organization: @organization)))
+        expect(response).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:diaper_drive_participant)) }
       it "does not have a route for this" do
-        expect { subject }.to raise_error(ActionController::UrlGenerationError)
+        delete diaper_drive_participant_path(default_params.merge(id: create(:diaper_drive_participant)))
+        expect (response).to raise_error(ActionController::RoutingError)
       end
     end
 
     describe "XHR #create" do
       it "successful create" do
-        post :create, xhr: true, params: default_params.merge(diaper_drive_participant: { name: "test", email: "123@mail.ru" })
+        post diaper_drive_participants_path(default_params.merge(diaper_drive_participant: { name: "test", email: "123@mail.ru" }, xhr: true))
         expect(response).to be_successful
       end
 
       it "flash error" do
-        post :create, xhr: true, params: default_params.merge(diaper_drive_participant: { name: "test" })
+        post diaper_drive_participants_path(default_params.merge(diaper_drive_participant: { name: "test" }, xhr: true))
         expect(response).to be_successful
         expect(response).to have_error(/try again/i)
       end
@@ -63,14 +65,14 @@ RSpec.describe DiaperDriveParticipantsController, type: :controller do
 
     describe "POST #create" do
       it "successful create" do
-        post :create, params: default_params.merge(diaper_drive_participant: { business_name: "businesstest",
-                                                                               contact_name: "test", email: "123@mail.ru" })
+        post diaper_drive_participants_path(default_params.merge(diaper_drive_participant: { business_name: "businesstest",
+                                                                               contact_name: "test", email: "123@mail.ru" }))
         expect(response).to redirect_to(diaper_drive_participants_path)
         expect(response).to have_notice(/added!/i)
       end
 
       it "flash error" do
-        post :create, xhr: true, params: default_params.merge(diaper_drive_participant: { name: "test" })
+        post diaper_drive_participants_path(default_params.merge(diaper_drive_participant: { name: "test" }, xhr: true))
         expect(response).to be_successful
         expect(response).to have_error(/try again/i)
       end
