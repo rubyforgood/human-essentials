@@ -18,7 +18,7 @@ RSpec.describe "Distributions", type: :request do
 
       context "with non-UTF8 characters" do
         let(:non_utf8_partner) { create(:partner, name: "KOKA Keiki O Ka ‘Āina") }
-        
+
         it "returns http success" do
           get print_distribution_path(default_params.merge(id: create(:distribution, partner: non_utf8_partner).id))
           expect(response).to be_successful
@@ -139,10 +139,10 @@ RSpec.describe "Distributions", type: :request do
           }
         )
       end
-      
+
       it "returns a 200" do
         patch distribution_path(distribution_params)
-        expect(response.status).to eq(200) 
+        expect(response.status).to eq(200)
       end
 
       describe "when changing storage location" do
@@ -197,7 +197,7 @@ RSpec.describe "Distributions", type: :request do
       end
 
       context "mail follow up" do
-        subject { patch distribution_path(distribution_params) } 
+        subject { patch distribution_path(distribution_params) }
 
         before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 
