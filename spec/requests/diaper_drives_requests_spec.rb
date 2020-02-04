@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 RSpec.describe "DiaperDrives", type: :request do
   let(:default_params) do
     { organization_id: @organization.id.to_param }
