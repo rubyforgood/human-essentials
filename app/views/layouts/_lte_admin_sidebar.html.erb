@@ -106,4 +106,14 @@
       <i class="nav-icon fa fa-sticky-note"></i> User Feedback
     <% end %>
   </li>
+
+
+  <% if (current_user.organization.present?) %>
+    <li class="nav-item">
+      <%= link_to(dashboard_path(organization_id: current_user.organization), class: "nav-link") do %>
+        <i class="nav-icon fas fa-home"></i> <span>My Organization</span>
+      <% end %>
+    </li>
+  <% end %>
+
 </ul>

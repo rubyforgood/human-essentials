@@ -82,7 +82,7 @@ RSpec.describe "Transfer management", type: :system do
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
 
     allow_any_instance_of(StorageLocation).to receive(:decrease_inventory).and_raise(
-        Errors::InsufficientAllotment.new('error-msg', [])
+      Errors::InsufficientAllotment.new('error-msg', [])
     )
 
     accept_confirm do

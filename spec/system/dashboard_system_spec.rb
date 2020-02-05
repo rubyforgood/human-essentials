@@ -69,18 +69,14 @@ RSpec.describe "Dashboard", type: :system, js: true do
       it "shows their organization name unless they have a logo set" do
         visit subject
         # extract just the filename
-        header_logo = extract_image(:xpath, "//img[@id='logo']")
-        expect(header_logo).to be_include("diaper-base-logo")
-
-        organization_logo = extract_image(:xpath, "//div/img")
-        expect(organization_logo).to eq("logo.jpg")
+        org_logo = extract_image(:css, ".organization-logo")
+        expect(org_logo).to be_include("logo.jpg")
 
         @organization.logo.purge
         @organization.save
         visit subject
 
-        expect(page).not_to have_xpath("//div/img")
-        expect(page.find(:xpath, "//div[@class='logo']")).to have_content(@organization.name)
+        expect(page).not_to have_css(".organization-logo")
       end
     end
 
