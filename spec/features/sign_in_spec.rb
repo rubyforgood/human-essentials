@@ -5,7 +5,7 @@ RSpec.feature "User sign in form", type: :feature do
 
   context "when users are invalid" do
     scenario "shows invalid credentials alert" do
-      fill_in "E-mail", with: 'invalid_username'
+      fill_in "Email", with: 'invalid_username'
       fill_in "Password", with: 'invalid_password'
       click_button "Log in"
 
@@ -15,7 +15,7 @@ RSpec.feature "User sign in form", type: :feature do
 
   context "when users are valid and belong to an organization" do
     scenario "redirects to user's dashboard" do
-      fill_in "E-mail", with: @user.email
+      fill_in "Email", with: @user.email
       fill_in "Password", with: @user.password
       click_button "Log in"
 
@@ -28,7 +28,7 @@ RSpec.feature "User sign in form", type: :feature do
   context "when users are valid and don't belong to an organization" do
     scenario "redirects to home " do
       user_no_org = create(:user, organization: nil)
-      fill_in "E-mail", with: user_no_org.email
+      fill_in "Email", with: user_no_org.email
       fill_in "Password", with: user_no_org.password
       click_button "Log in"
 
