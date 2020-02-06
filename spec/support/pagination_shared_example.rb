@@ -3,7 +3,7 @@ shared_examples_for "pagination", type: :feature do
   let(:plural_model_name) { described_class.to_s.underscore.pluralize }
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
-  scenario "User visits page displays with 100 records in it" do
+  scenario "user visits page that displays 100 records" do
     Kaminari.configure do |config|
       config.default_per_page = 25
     end
