@@ -4,7 +4,6 @@ shared_examples_for "pagination", type: :feature do
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
   scenario "user can visit the paginated results for a given resource" do
-
     sign_in(@user)
 
     create_list(model_f, 200)
