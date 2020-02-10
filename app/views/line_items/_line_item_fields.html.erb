@@ -6,10 +6,10 @@
   <span class="col-xs-6 col-md-12 col-sm-12">
     <label class="pull-left">OR</label>
   </span>
-  <span class="col-md-4 col-10">
+  <span class="col-md-4 col-10 li-name">
     <%= f.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false %>
   </span>
-  <div class='col-md-4 col-12'>
+  <div class='col-md-4 col-12 li-quantity'>
     <%= f.input :quantity, placeholder: "Quantity", label: false, input_html: { class: "quantity" } %>
   </div>
   <div class='col-md-2 col-12'>
