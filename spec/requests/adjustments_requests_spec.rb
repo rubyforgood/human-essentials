@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AdjustmentsController, type: :controller do
+RSpec.describe "Adjustments", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -38,7 +38,7 @@ RSpec.describe AdjustmentsController, type: :controller do
 
       it "is successful" do
         Adjustment.create! valid_attributes.merge(user_id: @user.id)
-        get :index, params: default_params, session: valid_session
+        get adjustments_path(default_params)
         expect(response).to be_successful
       end
 
@@ -48,14 +48,14 @@ RSpec.describe AdjustmentsController, type: :controller do
 
         context 'when date parameters are supplied' do
           it 'only returns the correct objects' do
-            get :index, params: default_params.merge(filters: { date_range: date_range_picker_params(3.days.ago, Time.zone.today) })
+            get adjustments_path(default_params.merge(filters: { date_range: date_range_picker_params(3.days.ago, Time.zone.today) }))
             expect(assigns(:adjustments)).to contain_exactly(new_adjustment)
           end
         end
 
         context 'when date parameters are not supplied' do
           it 'returns all objects' do
-            get :index, params: default_params
+            get adjustments_path(default_params)
             expect(assigns(:adjustments)).to contain_exactly(old_adjustment, new_adjustment)
           end
         end
@@ -64,15 +64,14 @@ RSpec.describe AdjustmentsController, type: :controller do
 
     describe "GET #show" do
       it "is successful" do
-        adjustment = create(:adjustment, organization: @organization)
-        get :show, params: default_params.merge(id: adjustment.to_param), session: valid_session
+        get adjustments_path(default_params)
         expect(response).to be_successful
       end
     end
 
     describe "GET #new" do
       it "is successful" do
-        get :new, params: default_params, session: valid_session
+        get new_adjustment_path(default_params)
         expect(response).to be_successful
       end
     end
@@ -81,35 +80,35 @@ RSpec.describe AdjustmentsController, type: :controller do
       context "with valid params" do
         it "creates a new Adjustment" do
           expect do
-            post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
+            post adjustments_path(default_params.merge(adjustment: valid_attributes))
           end.to change(Adjustment, :count).by(1)
         end
 
         it "assigns a newly created adjustment as @adjustment" do
-          post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
+          post adjustments_path(default_params.merge(adjustment: valid_attributes))
           expect(assigns(:adjustment)).to be_a(Adjustment)
           expect(assigns(:adjustment)).to be_persisted
         end
 
         it "assigns a user id from the current user" do
-          post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
+          post adjustments_path(default_params.merge(adjustment: valid_attributes))
           expect(assigns(:adjustment).user_id).to eq(@user.id)
         end
 
         it "redirects to the #show after created adjustment" do
-          post :create, params: default_params.merge(adjustment: valid_attributes), session: valid_session
+          post adjustments_path(default_params.merge(adjustment: valid_attributes))
           expect(response).to redirect_to(adjustment_path(Adjustment.last))
         end
       end
 
       context "with invalid params" do
         it "assigns a newly created but unsaved adjustment as @adjustment" do
-          post :create, params: default_params.merge(adjustment: invalid_attributes), session: valid_session
+          post adjustments_path(default_params.merge(adjustment: invalid_attributes))
           expect(assigns(:adjustment)).to be_a_new(Adjustment)
         end
 
         it "re-renders the 'new' template" do
-          post :create, params: default_params.merge(adjustment: invalid_attributes), session: valid_session
+          post adjustments_path(default_params.merge(adjustment: invalid_attributes))
           expect(response).to render_template("new")
         end
       end
