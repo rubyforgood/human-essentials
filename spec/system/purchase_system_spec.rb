@@ -223,7 +223,6 @@ RSpec.describe "Purchases", type: :system, js: true do
           Barcode.boop(@existing_barcode.value)
         end
 
-        binding.pry
         expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
         within "#purchase_line_items" do
