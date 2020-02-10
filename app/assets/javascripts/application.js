@@ -10,9 +10,10 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery3
+//= require rails-ujs
+//= require jquery
 //= require bootstrap
-//= require jquery_ujs
+// require jquery_ujs
 //= require fastclick
 //= require adminlte.min
 //= require cocoon
