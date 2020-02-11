@@ -1,12 +1,20 @@
+# Provides Full CRUD+ for Storage Locations, which are digital representations of inventory holdings
 class StorageLocationsController < ApplicationController
+  include Importable
+
   def index
     @items = current_organization.storage_locations.items_inventoried
-    @storage_locations = current_organization.storage_locations.includes(:inventory_items).filter(filter_params)
+    @storage_locations = current_organization.storage_locations.alphabetized.includes(:inventory_items).class_filter(filter_params)
   end
 
   def create
-    @storage_location = current_organization.storage_locations.create(storage_location_params)
-    redirect_to storage_locations_path, notice: "New storage location added!"
+    @storage_location = current_organization.storage_locations.new(storage_location_params)
+    if @storage_location.save
+      redirect_to storage_locations_path, notice: "New storage location added!"
+    else
+      flash[:error] = "Something didn't work quite right -- try again?"
+      render action: :new
+    end
   end
 
   def new
@@ -17,28 +25,42 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
   end
 
+  # TODO: Move these queries to Query Object
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
+    # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
+    @items_out = ItemsOutQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @storage_location.to_csv }
+      format.xls
+    end
   end
 
-  def import_csv
+  def import_inventory
     if params[:file].nil?
       redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
-      flash[:alert] = "No file was attached!"
+      flash[:error] = "No file was attached!"
     else
       filepath = params[:file].read
-      StorageLocation.import_csv(filepath, current_organization.id)
-      flash[:notice] = "Storage locations were imported successfully!"
+      StorageLocation.import_inventory(filepath, current_organization.id, params[:storage_location])
+      flash[:notice] = "Inventory imported successfully!"
       redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
     end
   end
 
-  # TODO - the intake! method needs to be worked into this controller somehow.
-  # TODO - the distribute! method needs to be worked into this controller somehow
   def update
     @storage_location = current_organization.storage_locations.find(params[:id])
-    @storage_location.update_attributes(storage_location_params)
-    redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
+    if @storage_location.update(storage_location_params)
+      redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
+    else
+      flash[:error] = "Something didn't work quite right -- try again?"
+      render action: :edit
+    end
   end
 
   def destroy
@@ -47,17 +69,24 @@ class StorageLocationsController < ApplicationController
   end
 
   def inventory
-    @storage_location = current_organization.storage_locations.includes(inventory_items: :item).find(params[:id])
+    @inventory_items = current_organization.storage_locations
+                                           .includes(inventory_items: :item)
+                                           .find(params[:id])
+                                           .inventory_items
+
+    @inventory_items = @inventory_items.active unless params[:include_inactive_items] == "true"
     respond_to :json
   end
 
-private
+  private
+
   def storage_location_params
     params.require(:storage_location).permit(:name, :address)
   end
 
   def filter_params
-    return {} unless params.has_key?(:filters)
+    return {} unless params.key?(:filters)
+
     params.require(:filters).slice(:containing)
   end
 end

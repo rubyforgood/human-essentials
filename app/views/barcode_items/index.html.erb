@@ -1,32 +1,80 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Barcode Items" %>
-
-<% content_for :sidebar do %>
-<section id="filters">
-  <h2>Filters</h2>
-  <%= form_tag(barcode_items_path, method: :get) do |f| %>
-    <%= label_tag "By Item Category" %>
-    <%= collection_select(:filters, :item_id, @items, :id, :name) %>
-    <%= submit_tag "Filter", class: "button primary" %>
-    <%= link_to "Clear Filters", barcode_items_path, class: "button secondary" %>
-  <% end %>
+<section class="content-header">
+  <% content_for :title, "Barcode Items - Inventory - #{current_organization.name}" %>
+  <h1>
+    Barcode Items
+    <small>(unique to <%= current_organization.name %>)</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><a href="#">Barcode Items</a></li>
+  </ol>
 </section>
-<% end %>
 
-<div class="header-action">
-  <%= link_to "Create New Barcode", new_barcode_item_path, class: "button float-right" %>
-</div>
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+      <section id="filters">
+        <%= form_with(url: barcode_items_path, method: :get) do |f| %>
+          <div class="row">
+            <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter By Item Category" %>
+              <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, { include_blank: true }, class: "form-control") %>
+            </div>
+          </div><!-- /.row -->
+          <div class="row">
+            <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter By Base Item" %>
+              <%= collection_select(:filters, :by_item_partner_key, @base_items.order('name'), :partner_key, :name, { include_blank: true }, class: "form-control") %>
+            </div>
+          </div><!-- /.row -->
+          <div class="row">
+            <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter By Barcode (Boop it!)" %>
+              <%= text_field(:filters, :by_value, class: "form-control") %>
+            </div>
+          </div><!-- /.row -->
 
-<h1>Barcodes</h1>
+          <div class="row">
+            <div class="col-xs-12">
+              <%= filter_button %>
+              <%= cancel_button_to barcode_items_path, { text: "Clear Filters" } %>
+              <div class="btn-group pull-right">
+                <p>
+                  <%= download_button_to(csv_path(format: :csv, type: "BarcodeItem"), { text: "Export Barcode Items", size: "lg" }) if @barcode_items.length > 0 %>
+                  <%= download_button_to(font_barcode_items_path, { text: "Download Barcode Font", size: "lg" }) %>
+                  <%= new_button_to new_barcode_item_path(organization_id: current_organization), { text: "New Barcode" } %>
+                </p>
+              </div>
 
-<table id="barcode_items">
-  <thead>
-    <tr>
-      <th>Item Type</th>
-      <th>Quantity in the Box</th>
-      <th>Barcode</th>
-      <th>&nbsp;</th>
-  </thead>
-  <tbody>
-    <%= render partial: "barcode_item_row", collection: @barcode_items %>
-  </tbody>
-</table>
+            </div>
+          </div><!-- /.row -->
+        <% end #form %>
+      </section><!-- /#filters -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table id="tbl_barcode_items" class="table table-hover striped">
+              <thead>
+                <tr>
+                  <th>Item Type</th>
+                  <th class="numeric">Quantity in the Box</th>
+                  <th class="numeric">Barcode</th>
+                  <th class="pull-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "barcode_item_row", collection: @barcode_items %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section>

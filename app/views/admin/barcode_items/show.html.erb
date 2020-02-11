@@ -1,0 +1,43 @@
+<section class="content-header">
+	<% content_for :title, "Admin - Inventory - Barcode Items - #{@barcode_item.item.name}" %>
+  <h1>
+    Barcode Information
+    <small>for <%=  @barcode_item.item.name %></small>
+  </h1>
+	<ol class="breadcrumb">
+	<li><%= link_to(admin_dashboard_path) do %>
+      <i class="fa fa-lock"></i> Admin
+    <% end %>
+    </li>
+	  <li><%= link_to "All Barcodes", (admin_barcode_items_path) %></li>  
+	  <li class="active">Viewing Barcode</li>
+	</ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title"><%= @barcode_item.item.name %></h3>
+  </div>
+  <div class="box-body">
+
+	<dl>
+	    <dt>Quantity</dt>
+		<dd><%= @barcode_item.quantity %></dd>
+
+		<dt>Barcode</dt>
+		<dd><%= @barcode_item.value %></dd>
+	</dl>
+
+  <p>This could be expanded to include summary data about its usage throughout the app.</p>
+
+  </div>
+</div>
+
+
+
+
+

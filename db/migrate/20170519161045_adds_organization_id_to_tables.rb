@@ -1,3 +1,4 @@
+# Connects organizations to other things
 class AddsOrganizationIdToTables < ActiveRecord::Migration[5.0]
   def change
   	[:barcode_items, :distributions, :donations, :dropoff_locations, 

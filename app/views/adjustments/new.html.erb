@@ -1,53 +1,62 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Adjustments - New" %>
+<section class="content-header">
+<% content_for :title, "New - Adjustments - Inventory - #{current_organization.name}" %>
+  <h1>
+    New Inventory Adjustment
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Inventory Adjustments", (adjustments_path) %></li>
+    <li class="active"> New Adjustment</li>
+  </ol>
+</section>
 
-<h1 class="medium-offset-3 medium-6">New Adjustment</h1>
+<!-- Main content -->
+<section class="content">
 
-<p class="medium-offset-3 medium-6">
-  Create an <strong>Adjustment</strong> to manually reduce the amount of
-  inventory in a particular storage location.
-</p>
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <p class="box-title">Create an <strong>Adjustment</strong> to manually increase (+) or decrease (-) the amount of inventory in a particular storage location.</p>
+  </div>
 
-<%= simple_form_for @adjustment do |f| %>
+  <div class="box-body">
+<p class="help">Enter a negative (-) amount for <code>quantity</code> if you want to subtract that kind of item.</p>
+<p class="help">Simply enter an amount for <code>quantity</code> if you want to add that kind of item.</p>
+<%= simple_form_for @adjustment, html: { class: "storage-location-required" } do |f| %>
 
-  <%= f.association :storage_location,
-    collection: @storage_locations,
-    label: "From storage location",
-    error: "Which location are you moving inventory from?",
-    input_html: {
-      data: {
-        storage_location_inventory_path: inventory_storage_location_path(
-          organization_id: current_organization,
-          id: ":id",
-          format: :json
-        )
-      }
-    }
-  %>
+  <%= render partial: "storage_locations/source", object: f %>
 
   <%= f.input :comment %>
 
-  <%= f.simple_fields_for :line_items do |item| %>
-    <div id="adjustment_storage_location_line_items">
-      <%= render 'transfers/line_item_fields', f: item %>
-    </div>
 
-    <div class="row links">
-      <div class="medium-offset-3 medium-6 columns">
-        <%= link_to_add_association "add line item", f, :line_items,
-          data: {
-            association_insertion_node: "#adjustment_storage_location_line_items",
-            association_insertion_method: "append"
-          },
-          partial: 'adjustments/line_item_fields'
-        %>
+    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+      <legend>Items in this adjustment</legend>
+      <%= f.simple_fields_for :line_items do |item| %>
+        <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
+          <%= render 'line_items/line_item_fields', f: item %>
+        </div>
+      <% end %>
+      <div class="row links">
+        <div class="col-xs-12">
+          <%= add_line_item_button f, "#adjustment_line_items" %>
+        </div>
       </div>
-    </div>
+
+    </fieldset>
+      <div class="row">
+        <div class="col-xs-12 pull-right">
+          <%= submit_button %>
+       </div>
+     </div>
   <% end %>
-  <br>
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %> <%= link_to 'Back', adjustments_path, class: "button" %>
   </div>
+</div>
+<!-- /.box -->
 
-<% end %>
+<%= render partial: "barcode_items/barcode_modal" %>
 
-
+</section>

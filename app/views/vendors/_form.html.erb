@@ -1,0 +1,30 @@
+<div class="box-body">
+  <%= simple_form_for form, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
+    <%= f.input :business_name, label: "Business Name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-suitcase"></i></span>
+      <%= f.input_field :business_name, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :contact_name, label: "Contact Name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :contact_name, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :phone, label: "Phone", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+      <%= f.input_field :phone, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+      <%= f.input_field :email, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :address, label: "Address", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-home"></i></span>
+      <%= f.input_field :address, class: "form-control" %>
+    <% end %>
+
+    <%= submit_button({ id: "vendor-submit" }) %>
+  <% end %>
+</div>

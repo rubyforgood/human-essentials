@@ -2,30 +2,43 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
-#  source                      :string
-#  dropoff_location_id         :integer
-#  created_at                  :datetime
-#  updated_at                  :datetime
-#  storage_location_id         :integer
+#  id                          :bigint           not null, primary key
 #  comment                     :text
-#  organization_id             :integer
-#  diaper_drive_participant_id :integer
 #  issued_at                   :datetime
+#  money_raised                :integer
+#  source                      :string
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  diaper_drive_id             :bigint
+#  diaper_drive_participant_id :integer
+#  donation_site_id            :bigint
+#  manufacturer_id             :bigint
+#  organization_id             :integer
+#  storage_location_id         :bigint
 #
 
 RSpec.describe Donation, type: :model do
+  it_behaves_like "itemizable"
+  it_behaves_like "pagination"
+
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:donation, organization_id: nil)).not_to be_valid
     end
-    it "requires a dropoff_location if the source is 'Donation Pickup Location'" do
-      expect(build(:donation, source: "Donation Pickup Location", dropoff_location: nil)).not_to be_valid
-      expect(build(:donation, source: "Purchased Supplies", dropoff_location: nil)).to be_valid
+    it "requires a donation_site if the source is 'Donation Site'" do
+      expect(build_stubbed(:donation_site_donation, source: "Donation Site", donation_site: nil)).not_to be_valid
+      expect(build(:donation, source: "Misc. Donation", donation_site: nil)).to be_valid
+      expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", donation_site: nil)).to be_valid
     end
     it "requires a diaper drive participant if the source is 'Diaper Drive'" do
-      expect(build(:donation, source: "Diaper Drive", diaper_drive_participant_id: nil)).not_to be_valid
-      expect(build(:donation, source: "Purchased Supplies", diaper_drive_participant_id: nil)).to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive Participant", diaper_drive_participant_id: nil)).not_to be_valid
+      expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", diaper_drive_participant_id: nil)).to be_valid
+      expect(build(:donation, source: "Misc. Donation", diaper_drive_participant_id: nil)).to be_valid
+    end
+    it "requires a manufacturer if the source is 'Manufacturer'" do
+      expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", manufacturer: nil)).not_to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive", manufacturer: nil)).to be_valid
+      expect(build(:donation, source: "Misc. Donation", manufacturer: nil)).to be_valid
     end
     it "requires a source from the list of available sources" do
       expect(build(:donation, source: nil)).not_to be_valid
@@ -44,16 +57,20 @@ RSpec.describe Donation, type: :model do
   context "Callbacks >" do
     it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
       yesterday = 1.day.ago
-      today = Date.today
-      expect(create(:donation, created_at: yesterday, issued_at: today).issued_at).to eq(today)
-      expect(create(:donation, created_at: yesterday).issued_at).to eq(yesterday)
+      today = Time.zone.today
+
+      donation = create(:donation, created_at: yesterday, issued_at: today)
+      expect(donation.issued_at.to_date).to eq(today)
+
+      donation = create(:donation, created_at: yesterday)
+      expect(donation.issued_at).to eq(donation.created_at)
     end
 
     it "automatically combines duplicate line_item records when they're created" do
       donation = build(:donation)
       item = create(:item)
-      donation.line_items.build({item_id: item.id, quantity: 5})
-      donation.line_items.build({item_id: item.id, quantity: 10})
+      donation.line_items.build(item_id: item.id, quantity: 5)
+      donation.line_items.build(item_id: item.id, quantity: 10)
       donation.save
       expect(donation.line_items.size).to eq(1)
       expect(donation.line_items.first.quantity).to eq(15)
@@ -63,13 +80,13 @@ RSpec.describe Donation, type: :model do
   context "Scopes >" do
     describe "during >" do
       it "returns all donations created between two dates" do
+        Donation.destroy_all
         # The models should default to assigning the created_at time to the issued_at
-        create(:donation, created_at: Date.today)
+        create(:donation, created_at: Time.zone.today)
         # but just for fun we'll force one in the past within the range
         create(:donation, issued_at: Date.yesterday)
         # and one outside the range
         create(:donation, issued_at: 1.year.ago)
-
         expect(Donation.during(1.month.ago..Date.tomorrow).size).to eq(2)
       end
     end
@@ -77,7 +94,7 @@ RSpec.describe Donation, type: :model do
     describe "by_source >" do
       before(:each) do
         create(:donation, source: Donation::SOURCES[:misc])
-        create(:donation, source: Donation::SOURCES[:diaper_drive])
+        create(:diaper_drive_donation)
       end
 
       it "returns all donations with the provided source" do
@@ -94,134 +111,82 @@ RSpec.describe Donation, type: :model do
     describe "items >" do
       it "has_many" do
         donation = create(:donation)
-        item = create(:item)
-        # Using donation.track because it marshalls the HMT
-        donation.track(item, 1)
+        create(:line_item, :donation, itemizable: donation)
         expect(donation.items.count).to eq(1)
       end
     end
-
-    describe "line_items >" do
-      describe ".combine" do
-        let!(:item) { create(:item) }
-        it "combines multiple line_items with the same item_id into a single record" do
-          donation = build(:donation)
-          donation.line_items.build({item_id: item.id, quantity: 5})
-          donation.line_items.build({item_id: item.id, quantity: 10})
-          donation.line_items.combine!
-          expect(donation.save).to eq(true)
-          expect(donation.line_items.count).to eq(1)
-          expect(donation.line_items.first.quantity).to eq(15)
-          expect(donation.line_items.first.item_id).to eq(item.id)
-        end
-
-        it "incrementally combines line_items on donations that have already been created" do
-          donation = create(:donation, :with_item, item_id: item.id, item_quantity: 10)
-          donation.line_items.build({item_id: item.id, quantity: 5})
-          donation.line_items.combine!
-          donation.save
-          expect(donation.line_items.count).to eq(1)
-          expect(donation.line_items.first.quantity).to eq(15)
-        end
-      end
-    end
-
   end
 
   context "Methods >" do
-    context "line_items >" do
-      describe "total" do
-        it "has an item total" do
-          donation = create(:donation)
-          item1 = create :item
-          item2 = create :item
-          donation.track(item1, 1)
-          donation.track(item2, 2)
-          expect(donation.line_items.total).to eq(3)
-        end
-      end
-    end
-
-    describe "track" do
-      let!(:donation) { create(:donation) }
-      let!(:item) { create(:item) }
-
-      it "does not add a new line_item unnecessarily, updating existing line_item instead" do
-        item = create :item
-        donation.track(item, 5)
-        expect {
-          donation.track(item, 10)
-          donation.reload
-        }.not_to change{donation.line_items.count}
-
-        expect(donation.line_items.first.quantity).to eq(15)
-      end
-    end
-
-    describe "contains_item_id?" do
-      it "returns true if the item_id already exists" do
-        donation = create(:donation, :with_item)
-        expect(donation.contains_item_id?(donation.items.first.id)).to be_truthy
-      end
-    end
-
-    describe "update_quantity" do
-      let!(:donation) { create(:donation, :with_item) }
-      it "adds an additional quantity to the existing line_item" do
-        expect {
-          donation.update_quantity(1, donation.items.first)
-          donation.reload
-        }.to change{donation.line_items.first.quantity}.by(1)
-      end
-
-      it "can receive a negative quantity to subtract inventory" do
-        expect {
-          donation.update_quantity(-1, donation.items.first)
-        }.to change{donation.total_quantity}.by(-1)
-      end
-
-      it "can never go negative even if a very large negative quantity is given" do
-        reduce_by_quantity = -1 * (donation.total_quantity + 1)
-        expect {
-          donation.update_quantity(reduce_by_quantity, donation.items.first)
-        }.to change{donation.total_quantity}.to(0)
-      end
-
-      it "works whether you give it an item or an id" do
-        expect {
-          donation.update_quantity(1, donation.items.first.id)
-          donation.reload
-        }.to change{donation.line_items.first.quantity}.by(1)
-      end
-    end
-
     describe "remove" do
-      let!(:donation) { create(:donation, :with_item) }
+      let!(:donation) { create(:donation, :with_items) }
 
       it "removes the item from the donation" do
         item_id = donation.line_items.last.item_id
-        expect {
+        expect do
           donation.remove(item_id)
-        }.to change{donation.line_items.count}.by(-1)
+        end.to change { donation.line_items.count }.by(-1)
       end
 
       it "works with either an id or an object" do
-
       end
 
       it "fails gracefully if the item doesn't exist" do
         item_id = create(:item).id
-        expect {
+        expect do
           donation.remove(item_id)
-        }.not_to change{donation.line_items.count}
+        end.not_to change { donation.line_items.count }
       end
     end
 
-    describe "remove_inventory" do
-      it "removes inventory from the right storage location when donation deleted" do
-        donation = create(:donation, :with_item)
-        expect(donation.storage_location).to receive(:remove!)
-        donation.remove_inventory
+    describe "money_raised" do
+      it "tracks the money raised in a donation" do
+        donation = create(:donation, :with_items, money_raised: 100)
+        expect(donation.money_raised).to eq(100)
+      end
+    end
+
+    describe "replace_increase!" do
+      let!(:storage_location) { create(:storage_location, organization: @organization) }
+      subject { create(:donation, :with_items, organization: @organization, item_quantity: 5, storage_location: storage_location) }
+
+      context "changing the donation" do
+        let(:attributes) { { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } } }
+
+        it "updates the quantity of items" do
+          subject
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.size }.by(-3)
+        end
+      end
+
+      context "when adding an item that has been previously deleted" do
+        let!(:inactive_item) { create(:item, active: false) }
+        let(:attributes) { { line_items_attributes: { "0": { item_id: inactive_item.to_param, quantity: 10 } } } }
+
+        it "re-creates the item" do
+          subject
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.size }.by(5) # We had 5 items of a different kind before, now we have 10
+                                                 .and change { Item.active.count }.by(1)
+        end
+      end
+
+      context "with empty line_items" do
+        let(:attributes) { { line_items_attributes: {} } }
+
+        it "removes the inventory item if the item's removal results in a 0 count" do
+          subject
+          expect do
+            subject.replace_increase!(attributes)
+            storage_location.reload
+          end.to change { storage_location.inventory_items.size }.by(-1)
+                                                                 .and change { InventoryItem.count }.by(-1)
+        end
       end
     end
   end
@@ -229,9 +194,18 @@ RSpec.describe Donation, type: :model do
   describe "SOURCES" do
     it "is a hash that is referenceable by key to avoid 'magic strings'" do
       expect(Donation::SOURCES).to have_key(:diaper_drive)
-      expect(Donation::SOURCES).to have_key(:purchased)
-      expect(Donation::SOURCES).to have_key(:dropoff)
+      expect(Donation::SOURCES).to have_key(:donation_site)
       expect(Donation::SOURCES).to have_key(:misc)
+    end
+
+    specify 'the hash is immutable' do
+      expect(-> { Donation::SOURCES[:foo] = 'bar' }).to raise_error(FrozenError)
+    end
+
+    specify 'the hash values are immutable' do
+      Donation::SOURCES.values.each do |frozen_string|
+        expect(-> { frozen_string << 'bar' }).to raise_error(FrozenError)
+      end
     end
   end
 end

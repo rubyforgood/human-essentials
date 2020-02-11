@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@babel/core": "^7.5.5",
+    "@rails/webpacker": "^4.0.7",
+    "actiontext": "https://github.com/rails/actiontext#archive",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "caniuse-lite": "^1.0.30000989",
+    "fstream": "^1.0.12",
+    "js-yaml": "^3.13.1",
+    "lodash": "^4.17.15",
+    "lodash.mergewith": "^4.6.2",
+    "lodash.template": "^4.5.0",
+    "mem": "^5.1.1",
+    "mixin-deep": "^2.0.1",
+    "set-value": "^3.0.1",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.8.0"
+  }
+}

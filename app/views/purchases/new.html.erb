@@ -1,0 +1,30 @@
+<section class="content-header">
+<% content_for :title, "New - Purchases - #{current_organization.name}" %>
+
+<h1>
+  Start a new purchase
+  <small>for <%= current_organization.name %></small>
+</h1>
+
+<ol class="breadcrumb">
+<li><%= link_to(dashboard_path) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li><%= link_to "Purchases", (purchases_path) %></li>
+  <li class="active"> New purchase</li>
+</ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+	<!-- Default box -->
+	<div class="box">
+    <%= render partial: "purchase_form", object: @purchase %>
+    <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"}  %>
+	</div><!-- /.box -->
+
+  <%= render partial: "barcode_items/barcode_modal" %>
+
+</section>

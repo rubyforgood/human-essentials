@@ -1,22 +1,130 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Storage Locations - #{@storage_location.name}" %>
+<section class="content-header">
+  <% content_for :title, "Storage Locations - #{@storage_location.name} - Inventory - #{current_organization.name}" %>
+<h1>
+  Storage Location Info
+  <small>for <%= @storage_location.name %></small>
+</h1>
+<ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li><%= link_to "Storage Locations", (storage_locations_path) %></li>  
+  <li class="active"><%= @storage_location.name %></li>
+</ol>
+</section>
 
-<h1><%= @storage_location.name %></h1>
-<address><%= @storage_location.address %></address>
+<!-- Main content -->
+<section class="content">
 
-<table id="storage_location">
-  <thead>
-    <tr>
-      <th>Item</th>
-      <th>Quantity</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td>Total</td>
-      <td><%= @storage_location.size %></td>
-    </tr>
-  </tfoot>
-</table>
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border bg-gray">
+    <div class="pull-right">
+      <%= modal_button_to("#csvImportModal", { text: "Import Baseline Inventory", icon: "upload" }) if @storage_location.items.empty? %>
+    </div>
+  </div>
+  <div class="box-body">
+    <h3 class="box-title"><%= @storage_location.name %></h3>
+    <p><%= @storage_location.address %></p>
+  
+  <div class="row">
+    <div class="col-xs-12">
+      <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a data-toggle="tab" href="#sectionA">Inventory</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#sectionB">Inventory coming in</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#sectionC">Inventory going out</a></li>
+      </ul>
+      <div class="tab-content">
+        <div id="sectionA" class="tab-pane fade in active">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table id="sectionA" class="table table-hover striped">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="numeric">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td class="numeric"><%= @storage_location.size %></td>
+                </tr>
+              </tfoot>
+            </table>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div><!-- /#sectionA -->
+        <div id="sectionB" class="tab-pane fade info">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table id="sectionB" class="table table-hover striped">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="numeric">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "line_item_row", collection: @items_in %>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td class="numeric"><%= @items_in_total %></td>
+                </tr>
+              </tfoot>
+            </table>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <div id="sectionC" class="tab-pane fade">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table id="sectionC" class="table table-hover striped">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="numeric">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "line_item_row", collection: @items_out %>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td class="numeric"><%= @items_out_total %></td>
+                </tr>
+              </tfoot>
+            </table>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
+  </div>
+  </div>
+  </div>
+</div>
+</section>
+
+<%= render(
+  layout: "shared/csv_import_modal",
+  locals: {
+    title: 'Import Storage Locations Instructions:',
+    csv_template_url: storage_location_path(@storage_location, format: :csv),
+    csv_import_url: import_inventory_storage_locations_path(storage_location: @storage_location.id)
+  }
+) do %>
+  <li>Open the csv file with excel <br>or your favourite spreadsheet program.</li>
+  <li>Enter your quantities for each item.</li>
+  <li>Save the file as a csv file.</li>
+  <li>DO NOT CHANGE ANY ITEM NAME.</li>
+<% end %>

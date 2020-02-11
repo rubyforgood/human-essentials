@@ -1,33 +1,54 @@
-<% content_for :title, "#{current_organization.name} - Users" %>
-
-<div class="header-action">
-  <%= link_to "Add a user", new_user_path, class: "button float-right" %>
-</div>
-
-<h1><%= current_organization.name %> Users</h1>
-
-<table>
-  <thead>
-    <tr>
-      <td>Name</td>
-      <td>Email</td>
-      <td></td>
-    </tr>
-  </thead>
-  <tbody>
-    <% @users.each do |user| %>
-      <tr>
-        <td><%= user.name %></td>
-        <td><%= user.email %></td>
-        <td>
-          <% if user != current_user %>
-            <%= link_to "Edit", edit_user_path(user) %>
-            <%= link_to "Delete", user_path(user), method: :delete, confirm: "Are you sure you want to permanently remove this user?" %>
-          <% else %>
-            <%= link_to "Edit", edit_user_registration_path(organization_id: nil) %>
-          <% end %>
-        </td>
-      </tr>
+<section class="content-header">
+  <% content_for :title, "Users - #{current_organization.name}" %>
+  <h1>
+    Users
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
     <% end %>
-  </tbody>
-</table>
+    </li>
+    <li><a href="#"><%= current_organization.name %> Users</a></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+      <div class="btn-group pull-right">
+        <%= modal_button_to("#addUserModal", { text: "Invite User to this Organization" }) if can_administrate? %>
+      </div>
+      <div class="box-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <% @users.each do |user| %>
+                  <tr>
+                    <td><%= user.name %></td>
+                    <td><%= user.email %></td>
+                  </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <!-- /.box-body -->
+            </div>
+          </div>
+            <!-- /.box -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= render "add_user_modal" %>
+</section>

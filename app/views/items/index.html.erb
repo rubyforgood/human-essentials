@@ -1,33 +1,36 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Items" %>
-
-<% content_for :sidebar do %>
-<section id="filters">
-  <h2>Filters</h2>
-  <%= form_tag(items_path, method: :get) do |f| %>
-    <%= label_tag "by Item Category" %>
-    <%= collection_select(:filters, :in_category, @categories || {}, :category, :category) %>
-    <%= submit_tag "Filter", class: "button primary" %>
-    <%= link_to "Clear Filters", items_path, class: "button secondary" %>
-  <% end %>
+<section class="content-header">
+  <% content_for :title, "Items - Inventory - #{current_organization.name}" %>
+  <h1>
+    Item Types
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><a href="#">All Items</a></li>
+  </ol>
 </section>
-<% end %>
 
-<div class="header-action">
-  <%= link_to "Create New Item", new_item_path, class: "button float-right" %>
-</div>
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <%= render partial: 'header' %>
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a data-toggle="tab" href="#sectionA">Item List</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#sectionB">Items, Quantity, and Location</a></li>
+          </ul>
 
-<h1>Items</h1>
-
-<table id="items">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Category</th>
-      <th>Barcodes</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render partial: "item_row", collection: @items %>
-  </tbody>
-</table>
+          <div class="tab-content">
+            <%= render partial: 'item_list' %>
+            <%= render partial: 'items_quantity_and_location' %>
+          </div><!-- /.tab-content -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section><!-- /.content -->

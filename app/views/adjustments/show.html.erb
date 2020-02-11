@@ -1,6 +1,29 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Adjustments" %>
 
-<p id="notice"><%= notice %></p>
+<section class="content-header">
+  <% content_for :title, "Adjustments - Inventory - #{current_organization.name}" %>
+  <h1>
+    Inventory Adjustment
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "All Adjustments", (adjustments_path) %></li>
+    <li class="active">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">Adjustment (<%= @adjustment.created_at.strftime("%m/%d/%Y") %>)</h3>
+  </div>
+  <div class="box-body">
 
 <p>
   <strong>Organization:</strong>
@@ -11,27 +34,31 @@
   <strong>Storage location:</strong>
   <%= @adjustment.storage_location.name %>
 </p>
-
-<table>
-  <thead>
+        <!-- /.box-header -->
+  <div class="box-body table-responsive no-padding">
+    <table class="table table-hover striped">
     <tr>
+      <th>&nbsp;</th>
       <th>Item</th>
-      <th>Quantity</th>
+      <th class="numeric">Quantity</th>
     </tr>
-  </thead>
-  <tbody>
-    <% @adjustment.line_items.each do |line_item| %>
-      <tr>
-        <td><%= line_item.item.name %></td>
-        <td><%= line_item.quantity %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  <% @adjustment.line_items.each do |line_item|  %>
+    <tr class="<%= line_item.quantity > 0 ? "positive" : "negative" %>">
+      <td><%= (line_item.quantity > 0) ? "Added " : "Removed " %></td>
+      <td><%= line_item.item.name %></td>
+      <td class="numeric"><%= line_item.quantity.abs %></td>
+    </tr>
+  <% end %>
+    </table>
+  <!-- /.box-body -->
 
-<p>
-  <strong>Comment:</strong>
-  <%= @adjustment.comment %>
-</p>
+  </div>
+      <!-- /.box -->
+    <p>
+      <strong>Comments:</strong>
+      <%= @adjustment.comment %>
+    </p>
 
-<%= link_to 'Back', adjustments_path %>
+  </div>
+</div>
+</section>

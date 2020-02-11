@@ -1,0 +1,25 @@
+<section class="content-header">
+  <% content_for :title, "Edit - Purchases - #{@purchase.purchased_from_view} - #{current_organization.name}" %>
+  <h1>
+    Editing Purchase
+    <small>from <%= @purchase.purchased_from_view %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Purchases", (purchases_path) %></li>
+    <li class="active"> Editing <%= @purchase.purchased_from_view %> on <%= @purchase.created_at.to_s(:distribution_date) %></li>
+  </ol>
+</section>
+
+<section class="content">
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
+
+      <%= render partial: "purchase_form", object: @purchase %>
+    </div>
+  </div>
+</section>

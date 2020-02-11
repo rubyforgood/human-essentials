@@ -12,10 +12,12 @@ Rails.application.configure do
   # preloads Rails for running tests, you may have to set it to true.
   config.eager_load = false
 
+  config.action_mailer.default_url_options = { host: "localhost" }
+
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
-    'Cache-Control' => 'public, max-age=3600'
+    'Cache-Control' => "public, max-age=#{1.hour.to_i}"
   }
 
   # Show full error reports and disable caching.
@@ -37,6 +39,14 @@ Rails.application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  # Store files locally.
+  config.active_storage.service = :test
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # Tell Rails to use the system default timezone. This avoids issues where Timecop
+  # freezes to UTC and the fake browser is running under a local timezone
+  config.time_zone = 'America/Los_Angeles'
+  ENV['TZ'] = 'America/Los_Angeles' # Make Capybara aware of the current time zone
 end

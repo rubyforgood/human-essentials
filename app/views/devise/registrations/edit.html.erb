@@ -1,35 +1,82 @@
-<% content_for :title, "Users - Edit" %>
-
-<h2 class="medium-offset-3 medium-6">Update your account information</h2>
-<%= simple_form_for(resource, as: resource_name, url: user_registration_path, html: { method: :put }) do |f| %>
-  <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <%= f.input :name, required: true, autofocus: true %>
-    <%= f.input :email, required: true %>
-
-    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
+<section class="content-header">
+  <% content_for :title, "Edit - Users" %>
+<h1>
+  Editing
+  <small>your profile</small>
+</h1>
+<ol class="breadcrumb">
+  <li>
+    <%= link_to(dashboard_path_from_user) do %>
+      <i class="fa fa-dashboard"></i> Home
     <% end %>
+  </li>
+    <li><a href="#">Editing <%= current_user.name %></a></li>
+</ol>
+</section>
 
-    <div class='change-password-link medium-offset-3 medium-6'>
-      <a data-toggle="change-password">Change Password</a>
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title"><%= current_user.name %></h3>
+  </div>
+  <%= simple_form_for(resource, as: resource_name, url: user_registration_path, html: { method: :put }) do |f| %>
+    <div class="box-body">
+    <%= f.error_notification %>
+
+    <div class="col-md-6">
+      <%= f.input :name, label: "Name:", required: true, autofocus: true, wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+        <%= f.input_field :name, class: "form-control" %>
+      <% end %>
+      <%= f.input :email, label: "Email:", wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+        <%= f.input_field :email, class: "form-control" %>
+      <% end %>
+      <%= f.input :current_password, label: "Current Password:", wrapper: :vertical_input_group do %>
+        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+        <%= f.input_field :current_password, class: "form-control" %>
+      <% end %>
+      <p class="help-block" id="password-confirmation-help">we need your current password to confirm your changes</p>
+      <br>
     </div>
 
-    <fieldset id='change-password'  class='hide' data-toggler=".hide">
-      <%= f.input :password, autocomplete: "off", required: false %>
-      <p class="help-text medium-offset-3 medium-6" id="password-help">leave it blank if you don't want to change it</p>
-      <%= f.input :password_confirmation, required: false %>
-    </fieldset>
+    <div class="col-md-6">
+      <div class="box box-primary collapsed-box">
+        <div class="box-header with-border">
+          <h3 class="box-title">Change Password</h3>
+          <div class="box-tools pull-left">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body">
+          <p class="help-block" id="password-help">leave it blank if you don't want to change it</p>
+          <%= f.input :password, label: "New Password:", wrapper: :vertical_input_group do %>
+            <span class="input-group-addon"><%= fa_icon "lock" %></span>
+            <%= f.input_field :password, class: "form-control" %>
+          <% end %>
+          <%= f.input :password_confirmation, label: "New Password Confirmation:", wrapper: :vertical_input_group do %>
+            <span class="input-group-addon"><%= fa_icon "check" %></span>
+            <%= f.input_field :password_confirmation, class: "form-control" %>
+          <% end %>
+        </div>
+        <!-- /.box-body -->
+      </div>
+    </div>
 
-    <%= f.input :current_password, hint: "we need your current password to confirm your changes", required: true %>
-    <p class="help-text medium-offset-3 medium-6" id="password-confirmation-help">we need your current password to confirm your changes</p>
+    </div>
+    <!-- /.box-body -->
 
-  </div>
-  <br>
-  <div class="form-actions medium-offset-3 medium-6">
-    <%= f.button :submit, "Update" %> <%= link_to "Back", :back, class: "button" %>
-  </div>
-<% end %>
+    <div class="form-actions col-md-12 box-footer">
+      <%= submit_button %>
+    </div>
 
+  <% end %>
+</div>
+<!-- /.box -->
 
+</section>

@@ -1,5 +1,25 @@
-<% content_for :title, "#{current_organization.name} - Donations - #{@donation.source} - Edit" %>
+<section class="content-header">
+  <% content_for :title, "Edit - Donations - #{@donation.source} - #{current_organization.name}" %>
+  <h1>
+    Editing Donation
+    <small>from <%= @donation.source %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Donations", (donations_path) %></li>
+    <li class="active"> Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></li>
+  </ol>
+</section>
 
-<h1>Editing donation from <%= @donation.source %></h1>
+<section class="content">
+  <!-- Default box -->
+  <div class="box">
+    <div class="box-header with-border">
 
-<%= render partial: "donation_form", object: @donation %>
+      <%= render partial: "donation_form", object: @donation %>
+    </div>
+  </div>
+</section>

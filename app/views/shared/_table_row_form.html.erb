@@ -1,0 +1,10 @@
+<tr>
+  <%= form_for table_row_form, html: { class: 'form-horizontal', remote: true } do |f| %>
+    <% local_assigns[:columns].map(&:flatten).each do |attr, helper_method| %>
+      <td><%= f.send(helper_method, attr, class: "form-control clearable") %></td>
+    <% end %>
+    <td class="text-right">
+      <%= submit_button({ text: "Create"} ) %>
+    </td>
+  <% end %>
+</tr>

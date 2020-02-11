@@ -1,19 +1,30 @@
-<%= simple_form_for form do |f| %>
+<div class="box-body">
+  <%= simple_form_for form, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
+    <%= f.input :business_name, label: "Business Name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-suitcase"></i></span>
+      <%= f.input_field :business_name, class: "form-control" %>
+    <% end %>
 
-  <%= f.input :name,
-    label: "Name",
-    error: "A name is required" %>
+    <%= f.input :contact_name, label: "Contact Name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :contact_name, class: "form-control" %>
+    <% end %>
 
-  <%= f.input :phone,
-    label: "Phone",
-    error: "Either a phone or an e-mail is required" %>
+    <%= f.input :phone, label: "Phone", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+      <%= f.input_field :phone, class: "form-control" %>
+    <% end %>
 
-  <%= f.input :email,
-    label: "Email",
-    error: "Either a phone or an e-mail is required" %>
+    <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+      <%= f.input_field :email, class: "form-control" %>
+    <% end %>
 
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
-  </div>
+    <%= f.input :address, label: "Address", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-home"></i></span>
+      <%= f.input_field :address, class: "form-control" %>
+    <% end %>
 
-<% end %>
+    <%= submit_button({ id: "diaper-drive-participant-submit" }) %>
+  <% end %>
+</div>

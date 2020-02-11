@@ -1,0 +1,21 @@
+$('#flash-message-container').html('')
+
+<% if table_row_prepend.errors.present? %>
+    <% table_row_prepend.errors.full_messages.each do |err| %>
+        $('#flash-message-container').prepend(`
+            <div class="alert alert-danger alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+                <%= err %>
+            </div>
+        `)
+    <% end %>
+<% else %>
+    $("input.clearable").val('')
+    $("input.clearable").first().focus()
+    $(".index tbody").prepend(
+      `<%= j render(partial: "#{table_row_prepend.class.to_s.underscore}_row",
+                    object: table_row_prepend,
+                    locals: {class: 'info'})
+        %>`
+    )
+<% end %>

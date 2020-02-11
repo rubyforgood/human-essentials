@@ -1,7 +1,12 @@
 <tr>
-  <td><%= link_to donation_row.source_view, donation_row %></td>
-  <td><%= donation_row.dropoff_location.name if donation_row.dropoff_location.present? %></td>
+  <td><%= donation_row.source_view %></td>
+  <td class="date"><%= donation_row.issued_at.strftime("%F") %>
+  <td><%= donation_row.donation_site.try(:name) %></td>
   <td><%= donation_row.storage_location.name %></td>
-  <td><%= donation_row.line_items.total %></td>
-  <td><%= donation_row.line_items.size %></td>
+  <td class="numeric"><%= donation_row.line_items.total %></td>
+  <td class="numeric"><%= dollar_value(donation_row.money_raised.to_i) %></td>
+  <td class="numeric"><%= dollar_value(donation_row.value_per_itemizable) %></td>
+  <td class="text-right">
+    <%= view_button_to donation_path(donation_row) %>
+  </td>
 </tr>

@@ -1,0 +1,64 @@
+<section class="content-header">
+<% content_for :title, "Donation Sites - #{@donation_site.name} - Agencies - #{current_organization.name}" %>
+<h1>
+  Donation Site Information
+  <small>for <%= @donation_site.name %></small>
+</h1>
+<ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li><%= link_to "Donation Sites", (donation_sites_path) %></li>  
+  <li class="active"><%= @donation_site.name %></li>
+</ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title"><%= @donation_site.name %></h3>
+  </div>
+  <div class="box-body">
+
+  <p><%= @donation_site.address %></p>
+  
+  <% if @donation_site.donations.present? %>
+  <h4>Past Donations Received at this Location</h3>
+  <div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover striped">
+        <tr>
+	      <th>Storage Location</th>
+	      <th class="numeric">Quantity of Items</th>
+	      <th class="numeric">Variety of Items</th>
+	      <th>Source</th>
+        </tr>
+
+        <% @donation_site.donations.each do |donation| %>  
+            <tr>
+					  <td><%= donation.storage_location&.name %></td>
+  					<td class="numeric"><%= donation.line_items.total %></td>
+  					<td class="numeric"><%= donation.line_items.size %></td>
+  					<td><%= link_to "View donation details", donation %></td>
+          </tr>
+          <% end %>        
+        </table>
+      <!-- /.box-body -->
+
+  </div>
+    <!-- /.box -->
+  </div>
+  </div>
+  <% end %>
+
+  </div>
+</div>
+
+
+

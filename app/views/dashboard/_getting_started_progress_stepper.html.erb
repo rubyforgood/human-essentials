@@ -1,0 +1,16 @@
+<div class="step-progression-container hidden-xs">
+  <% criterias.each_with_index do |criteria, index| %>
+    <div class="step-container<%= step_container_helper(index, current_step) %>">
+      <div class="step-inner-container">
+        <div class="<%= lines[index] %> step-number">
+          <% if criteria && current_step > index %>
+            <i class="fa fa-check" aria-hidden="true"></i>
+          <% else %>
+            <%= index + 1 %>
+          <% end %>
+        </div>
+        <div class="step-desc"><%= step_labels[index] %></div>
+      </div>
+    </div>
+  <% end %>
+</div>

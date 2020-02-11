@@ -2,31 +2,50 @@
 #
 # Table name: storage_locations
 #
-#  id              :integer          not null, primary key
-#  name            :string
+#  id              :bigint           not null, primary key
 #  address         :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  latitude        :float
+#  longitude       :float
+#  name            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  organization_id :integer
 #
 
 class StorageLocation < ApplicationRecord
-  require 'csv'
+  require "csv"
 
   belongs_to :organization
-  has_many :inventory_items, -> { includes(:item).order("items.name") }
-  has_many :donations
-  has_many :distributions
+  has_many :inventory_items, -> { includes(:item).order("items.name") },
+           inverse_of: :storage_location
+  has_many :donations, dependent: :destroy
+  has_many :distributions, dependent: :destroy
   has_many :items, through: :inventory_items
+  has_many :transfers_from, class_name: "Transfer",
+                            inverse_of: :from,
+                            foreign_key: :id,
+                            dependent: :destroy
+  has_many :transfers_to, class_name: "Transfer",
+                          inverse_of: :to,
+                          foreign_key: :id,
+                          dependent: :destroy
 
   validates :name, :address, :organization, presence: true
 
+  include Geocodable
   include Filterable
-  scope :containing, ->(item_id) { joins(:inventory_items).where('inventory_items.item_id = ?', item_id) }
+  scope :containing, ->(item_id) {
+    joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
+  }
   scope :alphabetized, -> { order(:name) }
+  scope :for_csv_export, ->(organization) { where(organization: organization) }
 
   def self.item_total(item_id)
-    StorageLocation.select('quantity').joins(:inventory_items).where('inventory_items.item_id = ?', item_id).collect { |h| h.quantity }.reduce(:+)
+    StorageLocation.select("quantity")
+                   .joins(:inventory_items)
+                   .where("inventory_items.item_id = ?", item_id)
+                   .collect(&:quantity)
+                   .reduce(:+)
   end
 
   def self.items_inventoried
@@ -34,160 +53,133 @@ class StorageLocation < ApplicationRecord
   end
 
   def item_total(item_id)
-    inventory_items.select(:quantity).find_by_item_id(item_id).try(:quantity)
+    inventory_items.select(:quantity).find_by(item_id: item_id).try(:quantity)
   end
 
   def size
     inventory_items.sum(:quantity)
   end
 
-  def intake!(donation)
-    log = {}
-    donation.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_or_create_by(storage_location_id: self.id, item_id: line_item.item_id) do |inventory_item|
-        inventory_item.quantity = 0
-      end
-      inventory_item.quantity += line_item.quantity rescue 0
-      inventory_item.save
-      log[line_item.item_id] = "+#{line_item.quantity}"
-    end
-    log
+  def inventory_total_value_in_dollars
+    inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
+      value_in_cents = inventory_item.item.try(:value_in_cents)
+      value_in_cents * inventory_item.quantity
+    end.reduce(:+)
+    inventory_total_value.present? ? (inventory_total_value / 100) : 0
   end
 
-  def remove!(donation)
-    log = {}
-    donation.line_items.each do |line_item|
-      inventory_item = InventoryItem.find_by(storage_location: id, item_id: line_item.item_id )
-      if inventory_item.quantity - line_item.quantity <= 0
-        inventory_item.destroy
-      else
-        inventory_item.quantity -= line_item.quantity
-        inventory_item.save
-      end
-      log[line_item.item_id] = "-#{line_item.quantity}"
-    end
-    log
-  end
+  def to_csv
+    org = organization
 
-  def distribute!(distribution)
-    updated_quantities = {}
-    insufficient_items = []
-    distribution.line_items.each do |line_item|
-      inventory_item = self.inventory_items.find_by(item: line_item.item)
-      next if inventory_item.nil?
-      if inventory_item.quantity >= line_item.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
-      else
-        insufficient_items << {
-          item_id: line_item.item.id,
-          item_name: line_item.item.name,
-          quantity_on_hand: inventory_item.quantity,
-          quantity_requested: line_item.quantity
-        }
+    CSV.generate(headers: true) do |csv|
+      csv << ["Quantity", "DO NOT CHANGE ANYTHING IN THIS ROW"]
+      org.items.each do |item|
+        csv << ["", item.name]
       end
     end
-
-    unless insufficient_items.empty?
-      raise Errors::InsufficientAllotment.new(
-        "Distribution line_items exceed the available inventory",
-        insufficient_items)
-    end
-
-    update_inventory_inventory_items(updated_quantities)
   end
 
-  def self.import_csv(filename,organization)
-    CSV.parse(filename, :headers => true) do |row|
+  # NOTE: We should generalize this elsewhere -- Importable concern?
+  def self.import_csv(csv, organization)
+    csv.each do |row|
       loc = StorageLocation.new(row.to_hash)
       loc.organization_id = organization
       loc.save!
     end
   end
 
-  # TODO - this action is happening in the Transfer model/controller - does this method belong here?
-  def move_inventory!(transfer)
-    updated_quantities = {}
+  # NOTE: We should generalize this elsewhere -- Importable concern?
+  def self.import_inventory(filename, org, loc)
+    current_org = Organization.find(org)
+    adjustment = current_org.adjustments.create(storage_location_id: loc.to_i, user_id: current_org.users.find_by(organization_admin: true)&.id, comment: "Starting Inventory")
+    # NOTE: this was originally headers: false; it may create buggy behavior
+    CSV.parse(filename, headers: true) do |row|
+      adjustment.line_items
+                .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
+    end
+    adjustment.storage_location.increase_inventory(adjustment)
+  end
+
+  # FIXME: After this is stable, revisit how we do logging
+  def increase_inventory(itemizable_array)
+    itemizable_array = itemizable_array.to_a
+
+    # This is, at least for now, how we log changes to the inventory made in this call
+    log = {}
+    # Iterate through each of the line-items in the moving box
+    Item.reactivate(itemizable_array.map { |item_hash| item_hash[:item_id] })
+    itemizable_array.each do |item_hash|
+      # Locate the storage box for the item, or create a new storage box for it
+      inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
+      # Increase the quantity-on-record for that item
+      inventory_item.increment!(:quantity, item_hash[:quantity].to_i)
+      # Record in the log that this has occurred
+      log[item_hash[:item_id]] = "+#{item_hash[:quantity]}"
+    end
+    # log could be pulled from dirty AR stuff?
+    # Save the final changes -- does this need to occur here?
+    save
+    # return log
+    log
+  end
+
+  # TODO: re-evaluate this for optimization
+  def decrease_inventory(itemizable_array)
+    itemizable_array = itemizable_array.to_a
+
+    # This is, at least for now, how we log changes to the inventory made in this call
+    log = {}
+    # This tracks items that have insufficient inventory counts to be reduced as much
     insufficient_items = []
-    transfer.line_items.each do |line_item|
-      inventory_item = self.inventory_items.find_by(item: line_item.item)
-      new_inventory_item = transfer.to.inventory_items.find_or_create_by(item: line_item.item)
-      next if inventory_item.nil? || inventory_item.quantity == 0
-      if inventory_item.quantity >= line_item.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
-        updated_quantities[new_inventory_item.id] = (updated_quantities[new_inventory_item.id] ||
-          new_inventory_item.quantity) + line_item.quantity
-      else
-        insufficient_items << {
-          item_id: line_item.item.id,
-          item_name: line_item.item.name,
-          quantity_on_hand: inventory_item.quantity,
-          quantity_requested: line_item.quantity
-        }
-      end
+    # Iterate through each of the line-items in the moving box
+    itemizable_array.each do |item_hash|
+      # Locate the storage box for the item, or create an empty storage box
+      inventory_item = inventory_items.find_by(item_id: item_hash[:item_id]) || inventory_items.build
+      # If we've got sufficient inventory in the storage box to fill the moving box, then continue
+      next unless inventory_item.quantity < item_hash[:quantity]
+
+      # Otherwise, we need to record that there was insufficient inventory on-hand
+      insufficient_items << {
+        item_id: item_hash[:item_id],
+        item_name: item_hash[:name],
+        quantity_on_hand: inventory_item.quantity,
+        quantity_requested: item_hash[:quantity]
+      }
     end
 
+    # NOTE: Could this be handled by a validation instead?
+    # If we found any insufficiencies
     unless insufficient_items.empty?
+      # Raise this custom error with information about each of the items that showed insufficient
+      # This bails out of the method!
       raise Errors::InsufficientAllotment.new(
-        "Oh no! Transfer line items exceed the available inventory",
-        insufficient_items)
+        "Requested items exceed the available inventory",
+        insufficient_items
+      )
     end
 
-    update_inventory_inventory_items(updated_quantities)
+    # Re-run through the items in the moving box again
+    itemizable_array.each do |item_hash|
+      # Look for the moving box for this item -- we know there is sufficient quantity this time
+      # Raise AR:RNF if it fails to find it -- though that seems moot since it would have been
+      # captured by the previous block.
+      inventory_item = inventory_items.find_by(item_id: item_hash[:item_id])
+      # Reduce the inventory box quantity
+      inventory_item.decrement!(:quantity, item_hash[:quantity])
+      # Record in the log that this has occurred
+      log[item_hash[:item_id]] = "-#{item_hash[:quantity]}"
+    end
+    # log could be pulled from dirty AR stuff
+    save!
+    # return log
+    log
   end
 
-
-  # mimcs move_inventory!
-  # TODO - this is called from the AdjustmentsController, should probably be in a service, not this model
-  def adjust!(adjustment)
-    updated_quantities = {}
-    insufficient_items = []
-
-    adjustment.line_items.each do |line_item|
-
-      inventory_item = self.inventory_items.find_by(item: line_item.item)
-      next if inventory_item.nil? || inventory_item.quantity == 0
-
-      if inventory_item.quantity >= line_item.quantity
-        updated_quantities[inventory_item.id] = (updated_quantities[inventory_item.id] || inventory_item.quantity) - line_item.quantity
-      else
-        insufficient_items << {
-          item_id: line_item.item.id,
-          item_name: line_item.item.name,
-          quantity_on_hand: inventory_item.quantity,
-          quantity_requested: line_item.quantity
-        }
-      end
-
-    end
-
-    unless insufficient_items.empty?
-      raise Errors::InsufficientAllotment.new(
-        "Transfer line_items exceed the available inventory",
-        insufficient_items)
-    end
-
-    update_inventory_inventory_items(updated_quantities)
+  def self.csv_export_headers
+    ["Name", "Address", "Total Inventory"]
   end
 
-  # TODO - this action is happening in the DistributionsController. Is this model the correct place for this method?
-  def reclaim!(distribution)
-    ActiveRecord::Base.transaction do
-      distribution.line_items.each do |line_item|
-        inventory_item = self.inventory_items.find_by(item: line_item.item)
-        inventory_item.update_attribute(:quantity, inventory_item.quantity + line_item.quantity)
-      end
-    end
-    distribution.destroy
+  def csv_export_attributes
+    [name, address, size]
   end
-
-  private
-
-  def update_inventory_inventory_items(records)
-    ActiveRecord::Base.transaction do
-      records.each do |inventory_item_id, quantity|
-        InventoryItem.find(inventory_item_id).update_attribute("quantity", quantity)
-      end
-    end
-  end
-
 end

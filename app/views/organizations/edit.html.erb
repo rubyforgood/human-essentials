@@ -1,32 +1,115 @@
-<% content_for :title, "Organizations - #{@organization.name} - Edit" %>
 
-<h1 class="medium-offset-3 medium-6">Edit <%= current_organization.name %></h1>
+<section class="content-header">
+  <% content_for :title, "Edit - Organizations - #{@organization.name} - " %>
+<h1>
+  Editing
+  <small><%= current_organization.name %></small>
+</h1>
+<ol class="breadcrumb">
+<li><%= link_to(dashboard_path) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+    <li><a href="#">Editing <%= current_organization.name %></a></li>
+</ol>
+</section>
 
-<%= simple_form_for current_organization, url: organization_path do |f| %>
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">Update record for <%= current_organization.name %></h3>
+  </div>
+  <div class="box-body">
+<%= simple_form_for current_organization, url: { controller: "organizations", action: "update" } do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">
-    <%= f.input :name, required: true, autofocus: true %>
-    <%= f.input :short_name, required: true, autofocus: true %>
-    <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
-    <%= f.input :email %>
-    <%= f.input :address %>
-    <%= f.input :intake_location, :collection => current_organization.storage_locations, :label_method => :name,:value_method => :id,:label => "Intake Location" ,:include_blank => true %>
-    <%= f.input :logo %>
-
-    <p class="help-text medium-offset-3 medium-6">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels)</p>
-    <% if current_organization.logo.present? %>
-      <div class="reveal" id="exampleModal1" data-reveal>
-        <%= image_tag current_organization.logo.url %>
-        <button class="close-button" data-close aria-label="Close modal" type="button">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <p><a data-open="exampleModal1" class="medium-offset-3 medium-6">Preview current logo</a></p>
+    <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :name, class: "form-control" %>
     <% end %>
+    <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-desktop"></i></span>
+      <%= f.input_field :short_name, disabled: true, class: "form-control" %>
+    <% end %>
+    <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-link"></i></span>
+      <%= f.input_field :url, class: "form-control" %>
+    <% end %>
+    <%= f.input :email, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+      <%= f.input_field :email, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :address, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-address-book"></i></span>
+      <%= f.input_field :street, class: "form-control", placeholder: "street" %>
+      <%= f.input_field :city, class: "form-control", placeholder: "city" %>
+      <%= f.input_field :state, collection: us_states, class: "form-control", placeholder: "state" %>
+      <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
+    <% end %>
+
+    <%= f.input :reminder_day, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+      <%= f.input_field :reminder_day, class: "form-control", placeholder: "Reminder day" %>
+    <% end %>
+
+    <%= f.input :deadline_day, wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+      <%= f.input_field :deadline_day, class: "form-control", placeholder: "Deadline day" %>
+    <% end %>
+
+    <%= f.input :intake_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name,:value_method => :id,:label => "Default Intake Location" ,:include_blank => true, wrapper: :vertical_input_group %>
+
+    <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :vertical_input_group do %>
+      <%= f.text_area :invitation_text, class: "form-control" %>
+    <% end %>
+
+    <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails", wrapper: :vertical_input_group do %>
+      <%= f.rich_text_area :default_email_text %>
+    <% end %>
+
+
+    <%= f.input :logo, wrapper: :vertical_input_group do %>
+
+      <% if current_organization.logo.attached? %>
+        <div>
+          <p>
+            <%= image_tag current_organization.logo %>
+          </p>
+          <p>
+            <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+              View Original
+            </a>
+          </p>
+          <div id="showTheLogo" class="modal fade">
+            <div class="modal-dialog">
+              <%= image_tag current_organization.logo, class: "thumbnail" %>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+        <label class="control-label">Update Logo</label>
+      <% end %>
+
+      <%= f.input_field :logo, as: :file %>
+      <p class="help-block">
+        Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
+        Only jpeg/png format is supported.
+      </p>
+
+    <% end %>
+    <%= submit_button %>
+    
   </div>
 
-  <div class="form-actions medium-offset-3 medium-6"">
-    <%= f.button :submit, "Update" %>
   </div>
+
 <% end %>
+</div>
+<!-- /.box -->
+
+</section>

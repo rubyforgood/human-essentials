@@ -1,0 +1,10 @@
+<tr class="<%= organization_row.short_name %>">
+  <td><%= organization_row.name %></td>
+  <td><%= link_to organization_row.email, "mailto:#{organization_row.email}" %></td>
+  <td class="date"><%= organization_row.created_at.strftime("%F") %></td>
+  <td class="text-right">
+      <%= view_button_to admin_organization_path(organization_row.id) %>
+      <%= edit_button_to edit_admin_organization_path(organization_row.id) %>
+      <%= delete_button_to(admin_organization_path(organization_row.id), { confirm: confirm_delete_msg(organization_row.name) }) unless (Organization.count <= 1) %>
+  </td>
+</tr>

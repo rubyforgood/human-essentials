@@ -1,5 +1,30 @@
-<% content_for :title, "#{current_organization.name} - Donations - New" %>
+<section class="content-header">
+  <% content_for :title, "New - Donations - #{current_organization.name}" %>
 
-<h1>Start a new donation</h1>
+  <h1>
+    Start a new donation
+    <small>for <%= current_organization.name %></small>
+  </h1>
 
-<%= render partial: "donation_form", object: @donation %>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Donations", (donations_path) %></li>
+    <li class="active"> New Donation</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+	<!-- Default box -->
+	<div class="box">
+    <%= render partial: "donation_form", object: @donation %>
+    <%= link_to "Add diaper drive", new_diaper_drive_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_diaper_drive", "style" => "display: none;"}  %>
+    <%= link_to "Add diaper drive participant", new_diaper_drive_participant_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_participant", "style" => "display: none;"}  %>
+    <%= link_to "Add manufacturer", new_manufacturer_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_manufacturer", "style" => "display: none;"}  %>
+	</div><!-- /.box -->
+
+  <%= render partial: "barcode_items/barcode_modal" %>
+</section>

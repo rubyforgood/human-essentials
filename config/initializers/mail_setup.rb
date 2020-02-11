@@ -4,6 +4,6 @@
       :authentication => :plain,
 		  :user_name 			=> ENV['SENDGRID_USERNAME'],
 		  :password 			=> ENV['SENDGRID_PASSWORD'],
-      :domain         => 'diaperbase.org',
+      :domain         => 'diaper.app',
       :enable_starttls_auto => true
     }

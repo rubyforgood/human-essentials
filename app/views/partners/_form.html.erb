@@ -1,16 +1,16 @@
-<%= simple_form_for form do |f| %>
-
-  <%= f.input :name,
-    label: "Name",
-    error: "You must enter a name" %>
-
-  <%= f.input :email,
-    label: "E-mail",
-    error: "You must enter a valid e-mail",
-    as: :email %>
-
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
-  </div>
-
-<% end %>
+<div class="box-body">
+  <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
+    <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <%= f.input_field :name, class: "form-control" %>
+    <% end %>
+    <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+      <%= f.input_field :email, class: "form-control" %>
+    <% end %>
+    <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :vertical_input_group do %>
+      <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
+    <% end %>
+    <%= submit_button(submit_btn_options) %>
+  <% end %>
+</div>

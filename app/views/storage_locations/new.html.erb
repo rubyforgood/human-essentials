@@ -1,5 +1,33 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Storage Locations - New" %>
+<section class="content-header">
+	<% content_for :title, "New - Storage Locations - Inventory - #{current_organization.name}" %>
+<h1>
+  Storage Location
+  <small>for <%= current_organization.name %></small>
+</h1>
+<ol class="breadcrumb">
+<li><%= link_to(dashboard_path) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li><%= link_to "Storage Locations", (storage_locations_path) %></li>  
+  <li class="active"> New Storage Location</li>
+</ol>
+</section>
 
-<h1 class="medium-offset-3 medium-6">New Storage Location</h1>
+<!-- Main content -->
+<section class="content">
 
-<%= render partial: "form", object: @storage_location %>
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">New Storage Location</h3>
+  </div>
+  <div class="box-body">
+		<%= render partial: "form", object: @storage_location %>
+  </div>
+</div>
+<!-- /.box -->
+
+</section>
+
+

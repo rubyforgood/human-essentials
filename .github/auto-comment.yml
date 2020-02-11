@@ -1,0 +1,20 @@
+issuesOpened: >
+  <img src="https://i.giphy.com/media/osjgQPWRx3cac/giphy.webp" height=200 />
+  <br />
+  Thank you for raising a issue. We will try and get back to you as soon as possible.
+  <br />
+  Please make sure you have given us as much context as possible.
+  <br />
+  Best,
+  <br />
+  @rubyforgood/diaper-team
+pullRequestOpened: >
+  <img src="https://i.giphy.com/media/osjgQPWRx3cac/giphy.webp" height=200 />
+  <br />
+  Thank you for your pull request!
+  <br />
+  Please make sure you have followed our contributing guidelines. We will review it as soon as possible. 
+  <br />
+  Best,
+  <br />
+  @rubyforgood/diaper-team

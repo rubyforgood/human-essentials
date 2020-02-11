@@ -1,65 +1,77 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Storage Locations" %>
-
-<% content_for :sidebar do %>
-
-                             <div class="header-action">
-  <%= link_to "New Storage Location", new_storage_location_path, class: "button float-right" %>
-</div>
-
-<% if @storage_locations.empty? %>
-
-<div class="reveal" id="addStorageLocationModal" data-reveal>
-  <h2 id="modalTitle">Import Storage Locations</h2>
-  <p class="lead">Instructions:</p>
-    <ol>
-      <li><%= link_to "Download example csv", "/storage_locations.csv", :format => :csv, :class => "btn btn-info" %>.</li>
-      <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-      <li>Delete the sample data and enter your storage location names and addresses in the appropriate columns.</li>
-      <li>Save the file as a csv file.</li>
-      <li>Click the choose file button and navigate to the saved file and select it.</li>
-      <li>Then click the Import CSV button to import your storage locations.</li>
-    </ol>
-    <p class="help-text">Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</p>
-
-    <%= form_tag import_csv_storage_locations_path, multipart: true do %>
-        <%= file_field_tag :file, :accept => 'text/csv' %>
-        <%= submit_tag "Import CSV", :class => "btn btn-white" %>
+<section class="content-header">
+  <% content_for :title, "Storage Locations - Inventory - #{current_organization.name}" %>
+  <h1>
+    Storage Locations
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
     <% end %>
-</div>
-<br/>
-<p><a class="button success" data-open="addStorageLocationModal">Import Storage Locations</a></p>
-<% end %>
-
-<h1>Storage Locations</h1>
-
-<section id="filters">
-  <h2>Filters</h2>
-  <%= form_tag(storage_locations_path, method: :get) do |f| %>
-    <%= label_tag "by Item Category" %>
-    <%= collection_select(:filters, :containing, @items || {}, :id, :name) %>
-    <%= submit_tag "Filter", class: "button primary" %>
-    <%= link_to "Clear Filters", storage_locations_path, class: "button secondary" %>
-  <% end %>
-
+    </li>
+    <li><a href="#">Partner Agencies</a></li>
+  </ol>
 </section>
-<% end %>
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+      <section id="filters">
+        <%= form_tag(storage_locations_path, method: :get) do |f| %>
+          <div class="row">
+            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+              <%= label_tag "Filter by Item Category" %>
+              <%= collection_select(:filters, :containing, @items || {}, :id, :name, { include_blank: true }, class: "form-control") %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <%= filter_button %>
+              <%= cancel_button_to storage_locations_path, { text: "Clear Filters" } %>
 
-<div class="header-action">
-  <%= link_to "New Storage Location", new_storage_location_path, class: "button float-right" %>
-</div>
-
-<h1>Storage Locations</h1>
-
-<table id="storage_locations">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Address</th>
-      <th>Total Inventory</th>
-      <th>&nbsp;</th>
-  </thead>
-
-  <tbody>
-    <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
-  </tbody>
-</table>
+              <div class="pull-right">
+                <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Storage Locations", size: "lg" }) if @storage_locations.empty? %>
+                <%= download_button_to(csv_path(format: :csv, type: "StorageLocation"), { text: "Export Locations", size: "lg"}) if @storage_locations.any? %>
+                <%= new_button_to new_storage_location_path(organization_id: current_organization), { text: "New Storage Location" } %>
+              </div>
+            </div>
+          </div><!-- /.row -->
+        <% end %>
+      </section><!-- /#filters -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th class="numeric">Total Inventory</th>
+                  <th class="numeric">Fair Market Value</th>
+                  <th class="pull-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body.table-responsive -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+  <%= render(
+          layout: "shared/csv_import_modal",
+          locals: {
+              title: 'Import Storage Locations Instructions:',
+              csv_template_url: "/storage_locations.csv",
+              csv_import_url: import_csv_storage_locations_path
+          }
+      ) do %>
+    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter your storage location names and addresses in the appropriate columns.</li>
+    <li>Save the file as a csv file.</li>
+  <% end %>
+</section><!-- /.content -->

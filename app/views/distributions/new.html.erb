@@ -1,48 +1,69 @@
-<% content_for :title, "#{current_organization.name} - Distributions - New" %>
+<section class="content-header">
+  <% content_for :title, "New - Distributions - #{current_organization.name}" %>
+  <h1>
+    New Distribution
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Distributions", (distributions_path) %></li>
+    <li class="active"> New Distribution</li>
+  </ol>
+</section>
 
-<h1 class="medium-offset-3 medium-6">Create a new distribution</h1>
+<!-- Main content -->
+<section class="content">
 
-<%= simple_form_for @distribution do |f| %>
+<!-- Default box -->
+<div class="box">
+  <div class="box-body">
 
-  <%= f.association :partner,
-    label: "Partner",
-    error: "Which partner is this distribution going to?" %>
+  <%= simple_form_for @distribution, html: { class: "storage-location-required" } do |f| %>
+    <%= f.simple_fields_for :request do |r| %>
+      <%= r.input :id, as: :hidden %>
+    <% end %>
 
-  <%= f.association :storage_location,
-    collection: @storage_locations,
-    label: "From storage location",
-    error: "Which location are you moving inventory from?",
-    input_html: {
-      data: {
-        storage_location_inventory_path: inventory_storage_location_path(
-          organization_id: current_organization,
-          id: ":id",
-          format: :json
-        )
-      }
-    }
-  %>
+    <%= f.association :partner,
+      collection: current_organization.partners.alphabetized,
+      label: "Partner",
+      error: "Which partner is this distribution going to?" %>
 
-  <%= f.input :comment, label: "Comment" %>
+      <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date" %>
+      <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send Email Reminder The Day Before?" %>
+      <%= f.input :agency_rep, label: "Agency representative" %>
 
-  <%= f.simple_fields_for :line_items do |item| %>
-    <div id="distribution_line_items" data-capture-barcode="true">
-      <%= render 'line_item_fields', f: item %>
-    </div>
-    <div class="row links">
-      <div class="medium-offset-3 medium-6 columns">
-        <%= link_to_add_association "add line item", f, :line_items,
-          data: {
-            association_insertion_node: "#distribution_line_items",
-            association_insertion_method: "append"
-          }, id: "__add_line_item"
-        %>
+    <%= render partial: "storage_locations/source", object: f %>
+
+    <%= f.input :comment, label: "Comment" %>
+
+
+    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+      <legend>Items in this distribution</legend>
+      <%= f.simple_fields_for :line_items do |item| %>
+        <div id="distribution_line_items" data-capture-barcode="true">
+          <%= render 'line_items/line_item_fields', f: item %>
+        </div>
+      <% end %>
+      <div class="row links">
+        <div class="col-xs-12">
+          <%= add_line_item_button f, "#distribution_line_items" %>
+        </div>
+      </div>
+
+    </fieldset>
+      <div class="row">
+        <div class="col-xs-12">
+          <%= submit_button %>
       </div>
     </div>
   <% end %>
-
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
   </div>
+</div>
+<!-- /.box -->
 
-<% end %>
+<%= render partial: "barcode_items/barcode_modal" %>
+
+</section>

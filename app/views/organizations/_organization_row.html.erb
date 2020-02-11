@@ -1,6 +1,0 @@
-<tr>
-  <td><%= organization_row.name %></td>
-  <td><%= link_to organization_row.email, "mailto:#{organization_row.email}" %></td>
-  <td><%= link_to "View", organization_path(organization_row) %>    
-      <%= link_to "Edit", edit_organization_path(organization_id: organization_row.short_name) %> 
-</tr>

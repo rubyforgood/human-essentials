@@ -1,5 +1,5 @@
 # config valid only for current version of Capistrano
-lock '3.9.1'
+lock "3.11.2"
 
 set :repo_url,        "git@github.com:rubyforgood/diaper.git"
 set :application,     "diaper_base"
@@ -9,9 +9,9 @@ set :puma_workers,    0
 set :ssh_options, keys: ["config/deploy_id_rsa"] if File.exist?("config/deploy_id_rsa")
 
 # Don't change these unless you know what you're doing
-set :pty,             true
+set :pty,             false
 set :use_sudo,        false
-set :stage,           :production
+# set :stage,           :production
 set :deploy_via,      :remote_cache
 set :deploy_to,       "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 set :puma_bind,       "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
@@ -19,24 +19,25 @@ set :puma_state,      "#{shared_path}/tmp/pids/puma.state"
 set :puma_pid,        "#{shared_path}/tmp/pids/puma.pid"
 set :puma_access_log, "#{release_path}/log/puma.error.log"
 set :puma_error_log,  "#{release_path}/log/puma.access.log"
-set :ssh_options,     { forward_agent: true, user: fetch(:user), keys: %w(~/.ssh/id_rsa.pub) }
+set :ssh_options,     forward_agent: true, user: fetch(:user), keys: %w(~/.ssh/id_rsa.pub)
 set :puma_preload_app, true
 set :puma_worker_timeout, nil
-set :puma_init_active_record, true  # Change to false when not using ActiveRecord
+set :puma_init_active_record, true # Change to false when not using ActiveRecord
+set :sidekiq_processes, 2
 
 ## Defaults:
 # set :scm,           :git
-# set :branch,        :master
+set :branch, ENV["BRANCH"] || :master
 # set :format,        :pretty
 # set :log_level,     :debug
 # set :keep_releases, 5
 
 ## Linked Files & Directories (Default None):
-set :linked_files, %w{config/database.yml}
-set :linked_dirs,  %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+set :linked_files, %w{config/database.yml config/master.key .env.production}
+set :linked_dirs,  %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system storage}
 
 namespace :puma do
-  desc 'Create Directories for Puma Pids and Socket'
+  desc "Create Directories for Puma Pids and Socket"
   task :make_dirs do
     on roles(:app) do
       execute "mkdir #{shared_path}/tmp/sockets -p"
@@ -59,17 +60,17 @@ namespace :deploy do
     end
   end
 
-  desc 'Restart application'
-    task :restart do
-      on roles(:app), in: :sequence, wait: 5 do
-      invoke 'puma:restart'
+  desc "Restart application"
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      invoke "puma:restart"
     end
   end
 
-  desc 'Puma is sometimes not restarting. This ensures it restarts... Nothing happens if restart works'
-    task :ensure_start do
-      on roles(:app), in: :sequence, wait: 10 do
-      invoke 'puma:stop'
+  desc "Puma is sometimes not restarting. This ensures it restarts... Nothing happens if restart works"
+  task :ensure_start do
+    on roles(:app), in: :sequence, wait: 10 do
+      invoke "puma:stop"
     end
   end
 

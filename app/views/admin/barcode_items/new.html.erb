@@ -1,0 +1,24 @@
+<section class="content-header">
+  <% content_for :title, "Admin - Inventory - Barcode Items - New" %>
+  <h1>
+    New Barcode Item
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(admin_dashboard_path) do %>
+      <i class="fa fa-lock"></i> Admin
+    <% end %>
+    </li>
+    <li><%= link_to "Barcode Items", (admin_barcode_items_path) %></li>
+    <li class="active"> New Barcode</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+  <!-- Default box -->
+  <div class="box">
+    <%= render partial: "form", object: [:admin, @barcode_item] %>
+  </div><!-- /.box -->
+
+</section>

@@ -3,6 +3,39 @@ require 'pathname'
 require 'fileutils'
 include FileUtils
 
+def detect_os
+  if `uname`.chomp == "Darwin"
+    'mac'
+  elsif `expr substr $(uname -s) 1 5`.chomp == "Linux"
+    'linux'
+  end
+end
+
+def install_pg_dev
+  case detect_os
+  when 'mac'
+    puts "Attempting Homebrew installation of 'libpq'; if you don't use Homebrew (https://brew.sh), look up how to install dependencies for 'pg' on MacOS"
+    system('brew install libpq') || system!('sudo brew install libpq')
+  when 'linux'
+    puts "Attempting Aptitude installation of 'libpq-dev'; if you don't use Aptitude, install the package using your package manager"
+    system!('sudo apt install libpq-dev')
+  else
+    abort "\nUnable to detect OS {install_pg_dev}\n"
+  end
+end
+
+def can_install_postgres?
+  puts "Checking if environment can install 'pg' gem..."
+  # This evaluates to false if it fails
+  system('gem install pg')
+end
+
+def ruby_version_ok?
+  expected_version = `cat .ruby-version`.chomp
+  current_version = `ruby -v`.chomp
+  current_version.include?(expected_version)
+end
+
 # path to your application root.
 APP_ROOT = Pathname.new File.expand_path('../../', __FILE__)
 
@@ -16,11 +49,12 @@ chdir APP_ROOT do
 
   puts '== Installing dependencies =='
   system! 'gem install bundler --conservative'
+  install_pg_dev unless can_install_postgres?
   system('bundle check') || system!('bundle install')
 
   # Install JavaScript dependencies if using Yarn
-  # system('bin/yarn')
-
+  puts 'Setting up yarn'
+  system('bin/yarn')
 
   # puts "\n== Copying sample files =="
   # unless File.exist?('config/database.yml')

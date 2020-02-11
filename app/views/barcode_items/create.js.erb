@@ -1,0 +1,21 @@
+$('#newBarcode').modal('hide');
+source_field = $('#trigger-field-id').val();
+
+// Clear out the fields, capturing the quantity and item_id
+item_id = $('#barcode_item_barcodeable_id').val();
+quantity = $('#barcode_item_quantity').val();
+$('#barcode_item_quantity').val('');
+$('#barcode_item_barcodeable_id').val('');
+$('#barcode_item_value').val('');
+$('#trigger-field-id').val('');
+
+// Notify the user
+toastr.success("Barcode Added to Inventory");
+
+// Locate the row where the barcode was entered from
+line_item = $('#' + source_field).closest('.nested-fields');
+// Set the values in the form. This is replicating some logic from barcode_items.js.erb
+$(line_item).find('input[type=number]').val(quantity);
+$(line_item).find('[value="' + item_id + '"]').attr("selected", true);
+$('#__add_line_item').trigger('click');
+$("input.__barcode_item_lookup").last().focus();

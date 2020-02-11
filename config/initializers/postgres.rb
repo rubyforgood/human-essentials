@@ -1,8 +1,7 @@
-# config/initializers/postgresql_database_tasks.rb
-
 if Rails.env.development? || Rails.env.test?
   module ActiveRecord
     module Tasks
+      # Creates a Rake Task to drop databases
       class PostgreSQLDatabaseTasks
         def drop
           establish_master_connection

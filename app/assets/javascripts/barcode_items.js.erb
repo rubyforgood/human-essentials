@@ -28,11 +28,17 @@ $(document).ready(function() {
     $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, function(data) {
          // Preserve this for reference of where we came from.
          data['src'] = src;
+         data['value'] = value;
+         // We're setting this here because if it's looked up as a global, we need to find the first local
+         // item that matches.
+         data['item_id'] = data['item']['id'];
+         data['quantity'] = data['barcode_item']['quantity'];
+         console.log(data);
          // Pass it all along to the .done() method
          return data;
       })
       .done(fill_fields_with_barcode_results)
-      .fail(prompt_for_new_barcode_item)
+      .fail(function(data) { prompt_for_new_barcode_item(data, value, src); } )
       .always(function(data){
         // ...
     });
@@ -45,18 +51,47 @@ $(document).ready(function() {
   */
   function fill_fields_with_barcode_results(data) {
     line_item = $(data['src']).closest('.nested-fields');
-    $(line_item).find('input[type=number]').val(data['quantity']);
-    $(line_item).find('select option[value="' + data['item_id'] + '"]').attr("selected", true);
+      line_item_quantity = data['quantity'];
+      $('.__barcode_item_lookup').each(function () {
+          if (data['src'] != this && data['value'] == this.value) {
+              line_item = this.closest('.nested-fields');
+              if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
+                  current_total = parseInt($(line_item).find('input[type=number]').val());
+                  current_boops = (current_total / line_item_quantity) + 1;
+                  total_boops = prompt('Enter total number of packages for this item', current_boops);
+                  if (total_boops != null) {
+                      total_boops = parseInt(total_boops);
+                      line_item_quantity = total_boops * line_item_quantity;
+                  } else {
+                      total_boops = 0;
+                      line_item_quantity = 0;
+                  }
+              }
+              if ($(line_item).attr('scanned_more_than_two_times') != "true") {
+                line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('input[type=number]').val());
+              }
+              $(line_item).attr('scanned_more_than_two_times', true);
+          }
+      })
+      $(line_item).find('input[type=number]').val(line_item_quantity);
+      $(line_item).find('[value="' + data['item_id'] + '"]').attr("selected", true);
 
+      if (data['src'] != $(line_item).closest('.__barcode_item_lookup').context) {
+          $(data['src']).closest('.nested-fields').remove();
+      }
     // This will facilitate serial barcode inputs.
     // First trigger the "add new line item"
     $('#__add_line_item').trigger('click');
     // Now focus on the barcode field
-    $(line_item).parent().find('.nested-fields:last-child input.__barcode_item_lookup').focus();
+    $("input.__barcode_item_lookup").last().focus();
   }
 
-  function prompt_for_new_barcode_item(data) {
-    $(data['src']).val('');
-    // TODO: Prompt the user with a dialog to create a new barcode entry, then add that to the form
+  function prompt_for_new_barcode_item(data, value, src) {
+    // Pre-fill the barcode field with the value
+    $("#barcode_item_value").val(value);
+    // Saving this to the modal so the modal knows which field to trigger when it's done.
+    $("#trigger-field-id").val($(src).attr('id'));
+    $("#newBarcode").modal();
+    $("#barcode_item_quantity").focus();
   }
 });

@@ -1,3 +1,4 @@
+# Creates the initial "BarcodeItems" table
 class CreateBarcodeItems < ActiveRecord::Migration[5.0]
   def change
     create_table :barcode_items do |t|

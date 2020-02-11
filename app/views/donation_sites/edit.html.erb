@@ -1,0 +1,34 @@
+<section class="content-header">
+<% content_for :title, "Edit - Donation Sites - #{@donation_site.name} - Agencies - #{current_organization.name}" %>
+<h1>
+  Editing Donation Sites
+  <small>for <%= current_organization.name %></small>
+</h1>
+<ol class="breadcrumb">
+<li><%= link_to(dashboard_path) do %>
+    <i class="fa fa-dashboard"></i> Home
+  <% end %>
+  </li>
+  <li><%= link_to "Donation Sites", (donation_sites_path) %></li>  
+  <li class="active">Editing <%= @donation_site.name %></li>
+</ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">Update record for <%= @donation_site.name %></h3>
+  </div>
+  <div class="box-body">
+  
+		<%= render partial: "form", object: @donation_site %>
+  </div>
+</div>
+<!-- /.box -->
+
+</section>
+
+

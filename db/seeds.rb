@@ -1,271 +1,397 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-# Creates Seed Data for the organization
+# This file should contain all the record creation needed to seed the database with demo values.
+# The data can then be loaded with `rails db:seed` (or along with the creation of the db with `rails db:setup`).
 
-pdx_org = Organization.find_or_create_by!(short_name: "pdx_bank") do |organization|
-  organization.name = "PDX Diaper Bank"
-  organization.address = "P.O. Box 22613, Portland OR 97269"
-  organization.email = "info@pdxdiaperbank.org"
+unless Rails.env.development?
+  puts "Database seeding has been configured to work only in development mode."
+  return
 end
 
-sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
-  organization.name = "SF Diaper Bank"
-  organization.address = "P.O. Box 12345, San Francisco CA 90210"
-  organization.email = "info@sfdiaperbank.org"
+
+# ----------------------------------------------------------------------------
+# Random Record Generators
+# ----------------------------------------------------------------------------
+
+def random_record(klass)
+  klass.limit(1).order(Arel.sql('random()')).first
 end
 
-user = User.create email: 'test@example.com', password: 'password', password_confirmation: 'password', organization: pdx_org, organization_admin: true
-user2 = User.create email: 'test2@example.com', password: 'password', password_confirmation: 'password', organization: sf_org
-
-DropoffLocation.find_or_create_by!(name: "Know Thy Food & Warehouse Cafe") do |location|
-  location.address = "3434 SE Milwaukie Ave., Portland, OR 97202"
-  location.organization = pdx_org
-end
-DropoffLocation.find_or_create_by!(name: "Tidee Didee Diaper Service") do |location|
-  location.address = "6011 SE 92nd Ave., Portland,OR 97266"
-  location.organization = pdx_org
-end
-DropoffLocation.find_or_create_by!(name: "Southside Swap & Play") do |location|
-  location.address = "5239 SE Woodstock Ave, Portland, OR 97206"
-  location.organization = pdx_org
-end
-DropoffLocation.find_or_create_by!(name: "Kuts 4 Kids & Adults") do |location|
-  location.address = "4423 SE Hawthorne Blvd., Portland, OR 97215"
-  location.organization = pdx_org
-end
-DropoffLocation.find_or_create_by!(name: "JJ Jump") do |location|
-  location.address = "9057 SE Jannsen Rd., Clackamas, OR 97015"
-  location.organization = pdx_org
+def random_record_for_org(org, klass)
+  klass.where(organization: org).limit(1).order(Arel.sql('random()')).first
 end
 
-Partner.find_or_create_by!(name: "Teen Parent Services - PPS", email: "someone@teenservices.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Portland Homeless Family Solutions", email: "anyone@portlandhomeless.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Pregnancy Resource Center", email: "contactus@pregnancyresources.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Rose Haven", email: "contact@rosehaven.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Volunteers of America", email: "info@volunteersofamerica.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Clackamas Service Center", email: "outreach@clackamas.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Housing Alternatives", email: "support@housingalternatives.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "JOIN", email: "info@join.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Emmanuel Housing Center", email: "contact@emmanuelhousingcenter.com") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Catholic Charities", email: "contactus@catholiccharities.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Healthy Families of Oregon", email: "info@oregonfamilies.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "NARA Northwest", email: "contactus@naranorthwest.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Job Corps", email: "someone@jobcorps.org") do |partner|
-  partner.organization = pdx_org
-end
-Partner.find_or_create_by!(name: "Helensview Middle and High School", email: "programs@helensviewschooldistrict.edu") do |partner|
-  partner.organization = pdx_org
-end
 
-inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage (Arborscape)") do |inventory|
-  inventory.address = "Unknown"
-  inventory.organization = pdx_org
-end
-inv_dsu = StorageLocation.find_or_create_by!(name: "Diaper Storage Unit") do |inventory|
-  inventory.address = "Unknown"
-  inventory.organization = pdx_org
-end
-inv_pdxdb = StorageLocation.find_or_create_by!(name: "PDX Diaper Bank (Office)") do |inventory|
-  inventory.address = "Unknown"
-  inventory.organization = pdx_org
-end
+# ----------------------------------------------------------------------------
+# Script-Global Variables
+# ----------------------------------------------------------------------------
 
-# qty is Arborscape, Diaper Storage Unit, PDX Diaperbank
-items_by_category = {
-  "Diapers - Adult Briefs" => [
-    { name: "Adult Briefs (Large/X-Large)", qty: [0,0,3741] },
-    { name: "Adult Briefs (Medium/Large)", qty: [0,0,108] },
-    { name: "Adult Briefs (Small/Medium)", qty: [0,0,2742] },
-    { name: "Adult Briefs (XXL)", qty: [0,0,24] }
-  ],
-  "Diapers - Childrens" => [
-    { name: "Cloth Diapers (Plastic Cover Pants)", qty: [0,0,75] },
-    { name: "Disposable Inserts", qty: [0,0,143] },
-    { name: "Kids (Newborn)", qty: [0,0,4217] },
-    { name: "Kids (Preemie)", qty: [0,240,360] },
-    { name: "Kids (Size 1)", qty: [6051, 1870, 6742] },
-    { name: "Kids (Size 2)", qty: [4480, 1380, 11082] },
-    { name: "Kids (Size 3)", qty: [15080, 1776, 2596] },
-    { name: "Kids (Size 4)", qty: [25472, 0, 3616] },
-    { name: "Kids (Size 5)", qty: [13634, 0, 3616] },
-    { name: "Kids (Size 6)", qty: [3216, 1, 211] },
-    { name: "Kids L/XL (60-125 lbs)", qty: [0,49,0] },
-    { name: "Kids Pull-Ups (2T-3T)", qty: [0,0,1532] },
-    { name: "Kids Pull-Ups (3T-4T)", qty: [0,0,787] },
-    { name: "Kids Pull-Ups (4T-5T)", qty: [0,408,124] },
-    { name: "Kids S/M (38-65 lbs)", qty: [0,1495,264] },
-    { name: "Swimmers", qty: [0,20,459] }
-  ],
-  "Diapers - Cloth (Adult)" => [
-    { name: "Adult Cloth Diapers (Large/XL/XXL)", qty: [0,0,89] },
-    { name: "Adult Cloth Diapers (Small/Medium)", qty: [0,0,2742] }
-  ],
-  "Diapers - Cloth (Kids)" => [
-    { name: "Cloth Diapers (AIO's/Pocket)", qty: [0,0,219] },
-    { name: "Cloth Diapers (Covers)", qty: [0,0,428] },
-    { name: "Cloth Diapers (Prefolds & Fitted)", qty: [0,0,431] },
-    { name: "Cloth Inserts (For Cloth Diapers)", qty: [0,0,0] },
-    { name: "Cloth Swimmers (Kids)", qty: [0,0,0] }
-  ],
-  "Incontinence Pads - Adult" => [
-    { name: "Adult Incontinence Pads", qty: [0,0,2304] },
-    { name: "Underpads (Pack)", qty: [0,1,2] }
-  ],
-  "Misc Supplies" => [
-    { name: "Bed Pads (Cloth)", qty: [0,0,44] },
-    { name: "Bed Pads (Disposable)", qty: [0,0,0] },
-    { name: "Bibs (Adult & Child)", qty: [0,0,35] },
-    { name: "Diaper Rash Cream/Powder", qty: [0,0,0] },
-  ],
-  "Training Pants" => [
-    { name: "Cloth Potty Training Pants/Underwear", qty: [0,0,246] },
-  ],
-  "Wipes - Childrens" => [
-    { name: "Wipes (Baby)", qty: [0,0,162] },
-  ]
-}
+# Initial starting qty for our test organizations
+base_items = File.read(Rails.root.join("db", "base_items.json"))
+items_by_category = JSON.parse(base_items)
 
-def seed_quantity(item_id, storage_location_id, quantity)
-  return if (quantity == 0)
-  InventoryItem.find_or_create_by(item_id: item_id, storage_location_id: storage_location_id) { |h|
-    h.quantity = quantity
-  }
-end
+
+# ----------------------------------------------------------------------------
+# Base Items
+# ----------------------------------------------------------------------------
 
 items_by_category.each do |category, entries|
   entries.each do |entry|
-    item = Item.find_or_create_by!(name: entry[:name], organization: pdx_org)
-    item.update_attributes(entry.except(:name).except(:qty).merge(category: category))
-
-    seed_quantity(item.id, inv_arbor.id, entry[:qty][0])
-    seed_quantity(item.id, inv_dsu.id, entry[:qty][1])
-    seed_quantity(item.id, inv_pdxdb.id, entry[:qty][2])
+    BaseItem.find_or_create_by!(name: entry["name"], category: category, partner_key: entry["key"])
   end
 end
 
-BarcodeItem.find_or_create_by!(value: "10037867880046") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 5)")
-  barcode.quantity = 108
-  barcode.organization = pdx_org
+
+# ----------------------------------------------------------------------------
+# Organizations
+# ----------------------------------------------------------------------------
+
+pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
+  organization.name    = "Pawnee Diaper Bank"
+  organization.street  = "P.O. Box 22613"
+  organization.city    = "Pawnee"
+  organization.state   = "Indiana"
+  organization.zipcode = "12345"
+  organization.email   = "info@pawneediaper.org"
 end
-BarcodeItem.find_or_create_by!(value: "10037867880053") do |barcode|
-  barcode.item = Item.find_by(name: "Kids (Size 6)")
-  barcode.quantity = 92
-  barcode.organization = pdx_org
+Organization.seed_items(pdx_org)
+
+sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
+  organization.name    = "SF Diaper Bank"
+  organization.street  = "P.O. Box 12345"
+  organization.city    = "San Francisco"
+  organization.state   = "CA"
+  organization.zipcode = "90210"
+  organization.email   = "info@sfdiaperbank.org"
 end
-BarcodeItem.find_or_create_by!(value: "10037867880039") do |barcode|
-  barcode.item = Item.find_by(name: "Kids (Size 4)")
-  barcode.quantity = 124
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "803516626364") do |barcode|
-  barcode.item = Item.find_by(name: "Kids (Size 1)")
-  barcode.quantity = 40
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "036000406535") do |barcode|
-  barcode.item = Item.find_by(name: "Kids (Size 1)")
-  barcode.quantity = 44
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "037000863427") do |barcode|
-  barcode.item = Item.find_by(name: "Kids (Size 1)")
-  barcode.quantity = 35
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "041260379000") do |barcode|
-  barcode.item = Item.find_by(name: "Kids (Size 3)")
-  barcode.quantity = 160
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "074887711700") do |barcode|
-  barcode.item = Item.find_by(name: "Wipes (Baby)")
-  barcode.quantity = 8
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "036000451306") do |barcode|
-  barcode.item = Item.find_by(name: "Kids Pull-Ups (4T-5T)")
-  barcode.quantity = 56
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "037000862246") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 4)")
-  barcode.quantity = 92
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "041260370236") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 4)")
-  barcode.quantity = 68
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "036000407679") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 4)")
-  barcode.quantity = 24
-  barcode.organization = pdx_org
-end
-BarcodeItem.find_or_create_by!(value: "311917152226") do |barcode|
-  barcode.item =  Item.find_by(name: "Kids (Size 4)")
-  barcode.quantity = 82
-  barcode.organization = pdx_org
+Organization.seed_items(sf_org)
+
+# Assign a value to some organization items to verify totals are working
+Organization.all.each do |org|
+  org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
 end
 
-DiaperDriveParticipant.create! name: "A Good Place to Collect Diapers", email: "good@place.is", organization: pdx_org
-DiaperDriveParticipant.create! name: "A Mediocre Place to Collect Diapers", email: "ok@place.is", organization: pdx_org
 
-def random_record(klass)
-  klass.limit(1).order("random()").first
+# ----------------------------------------------------------------------------
+# Users
+# ----------------------------------------------------------------------------
+
+[
+  { email: 'superadmin@example.com', organization_admin: false,                        super_admin: true },
+  { email: 'org_admin1@example.com', organization_admin: true,  organization: pdx_org },
+  { email: 'org_admin2@example.com', organization_admin: true,  organization: sf_org },
+  { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
+  { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
+  { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
+  { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org }
+].each do |user|
+  User.create(
+    email:                 user[:email],
+    password:              'password',
+    password_confirmation: 'password',
+    organization_admin:    user[:organization_admin],
+    super_admin:           user[:super_admin],
+    organization:          user[:organization]
+  )
 end
 
+
+# ----------------------------------------------------------------------------
+# Donation Sites
+# ----------------------------------------------------------------------------
+
+[
+  { name: "Pawnee Hardware",       address: "1234 SE Some Ave., Pawnee, OR 12345" },
+  { name: "Parks Department",      address: "2345 NE Some St., Pawnee, OR 12345" },
+  { name: "Waffle House",          address: "3456 Some Bay., Pawnee, OR 12345" },
+  { name: "Eagleton Country Club", address: "4567 Some Blvd., Eagleton, OR 12345" }
+].each do |donation_option|
+  DonationSite.find_or_create_by!(name: donation_option[:name]) do |donation|
+    donation.address = donation_option[:address]
+    donation.organization = pdx_org
+  end
+end
+
+
+# ----------------------------------------------------------------------------
+# Partners
+# ----------------------------------------------------------------------------
+
+[
+  { name: "Pawnee Parent Service",         email: "someone@pawneeparent.org",      status: :approved },
+  { name: "Pawnee Homeless Shelter",       email: "anyone@pawneehomelss.com",      status: :invited },
+  { name: "Pawnee Pregnancy Center",       email: "contactus@pawneepregnancy.com", status: :invited },
+  { name: "Pawnee Senior Citizens Center", email: "help@pscc.org",                 status: :recertification_required }
+].each do |partner_option|
+  Partner.find_or_create_by!(partner_option) do |partner|
+    partner.organization = pdx_org
+  end
+end
+
+
+# ----------------------------------------------------------------------------
+# Storage Locations
+# ----------------------------------------------------------------------------
+
+inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage Location") do |inventory|
+  inventory.address = "Unknown"
+  inventory.organization = pdx_org
+end
+inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)") do |inventory|
+  inventory.address = "Unknown"
+  inventory.organization = pdx_org
+end
+
+# ----------------------------------------------------------------------------
+# Diaper Drives
+# ----------------------------------------------------------------------------
+
+[
+  {
+    name: 'Pamper the Poopsies',
+    start_date: Time.current,
+    organization: pdx_org
+  }
+].each { |drive| DiaperDrive.create! drive }
+
+
+# ----------------------------------------------------------------------------
+# Diaper Drive Participants
+# ----------------------------------------------------------------------------
+
+[
+  { business_name: "A Good Place to Collect Diapers",
+    contact_name:  "fred",
+    email:         "good@place.is",
+    organization:  pdx_org },
+  { business_name: "A Mediocre Place to Collect Diapers",
+    contact_name:  "wilma",
+    email:         "ok@place.is",
+    organization:  pdx_org }
+].each { |participant| DiaperDriveParticipant.create! participant }
+
+# ----------------------------------------------------------------------------
+# Diaper Drives
+# ----------------------------------------------------------------------------
+
+[
+  { name:        "First Diaper Drive",
+    start_date:  3.years.ago,
+    end_date:    3.years.ago,
+    organization: sf_org
+  },
+  { name:        "Best Diaper Drive",
+    start_date:  3.weeks.ago,
+    end_date:    2.week.ago,
+    organization: sf_org
+  },
+  { name:        "Second Best Diaper Drive",
+    start_date:  2.weeks.ago,
+    end_date:    1.week.ago,
+    organization: pdx_org
+  }
+].each { |diaper_drive| DiaperDrive.find_or_create_by! diaper_drive }
+
+
+# ----------------------------------------------------------------------------
+# Manufacturers
+# ----------------------------------------------------------------------------
+
+[
+  { name: "Manufacturer 1", organization: pdx_org },
+  { name: "Manufacturer 2", organization: pdx_org }
+].each { |manu| Manufacturer.find_or_create_by! manu }
+
+
+# ----------------------------------------------------------------------------
+# Line Items
+# ----------------------------------------------------------------------------
+
+def seed_quantity(item_name, organization, storage_location, quantity)
+  return if quantity == 0
+
+  item = Item.find_by(name: item_name, organization: organization)
+
+  adjustment = organization.adjustments.create!(
+    comment:          "Starting inventory",
+    storage_location: storage_location,
+    user:             organization.users.find_by(organization_admin: true)
+  )
+
+  LineItem.create!(quantity: quantity, item: item, itemizable: adjustment)
+
+  adjustment.reload
+  increasing_adjustment, decreasing_adjustment = adjustment.split_difference
+  adjustment.storage_location.increase_inventory increasing_adjustment
+  adjustment.storage_location.decrease_inventory decreasing_adjustment
+end
+
+items_by_category.each do |_category, entries|
+  entries.each do |entry|
+    seed_quantity(entry['name'], pdx_org, inv_arbor, entry['qty']['arbor'])
+    seed_quantity(entry['name'], pdx_org, inv_pdxdb, entry['qty']['pdxdb'])
+  end
+end
+
+
+# ----------------------------------------------------------------------------
+# Barcode Items
+# ----------------------------------------------------------------------------
+
+[
+  { value: "10037867880046", name: "Kids (Size 5)",         quantity: 108 },
+  { value: "10037867880053", name: "Kids (Size 6)",         quantity: 92 },
+  { value: "10037867880039", name: "Kids (Size 4)",         quantity: 124 },
+  { value: "803516626364",   name: "Kids (Size 1)",         quantity: 40 },
+  { value: "036000406535",   name: "Kids (Size 1)",         quantity: 44 },
+  { value: "037000863427",   name: "Kids (Size 1)",         quantity: 35 },
+  { value: "041260379000",   name: "Kids (Size 3)",         quantity: 160 },
+  { value: "074887711700",   name: "Wipes (Baby)",          quantity: 8 },
+  { value: "036000451306",   name: "Kids Pull-Ups (4T-5T)", quantity: 56 },
+  { value: "037000862246",   name: "Kids (Size 4)",         quantity: 92 },
+  { value: "041260370236",   name: "Kids (Size 4)",         quantity: 68 },
+  { value: "036000407679",   name: "Kids (Size 4)",         quantity: 24 },
+  { value: "311917152226",   name: "Kids (Size 4)",         quantity: 82 },
+].each do |item|
+  BarcodeItem.find_or_create_by!(value: item[:value]) do |barcode|
+    barcode.item = Item.find_by(name: item[:name])
+    barcode.quantity = item[:quantity]
+    barcode.organization = pdx_org
+  end
+end
+
+
+# ----------------------------------------------------------------------------
+# Donations
+# ----------------------------------------------------------------------------
+
+# Make some donations of all sorts
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
-  case source
-  when Donation::SOURCES[:diaper_drive]
-    donation = Donation.create! source: source, diaper_drive_participant: random_record(DiaperDriveParticipant), storage_location: random_record(StorageLocation), organization: pdx_org
-  when Donation::SOURCES[:dropoff]
-    donation = Donation.create! source: source, dropoff_location: random_record(DropoffLocation), storage_location: random_record(StorageLocation), organization: pdx_org
-  else
-    donation = Donation.create! source: source, storage_location: random_record(StorageLocation), organization: pdx_org
-  end
+  donation = case source
+             when Donation::SOURCES[:diaper_drive]
+               Donation.create! source:                   source,
+                                diaper_drive:             DiaperDrive.first,
+                                diaper_drive_participant: random_record_for_org(pdx_org, DiaperDriveParticipant),
+                                storage_location:         random_record_for_org(pdx_org, StorageLocation),
+                                organization:             pdx_org,
+                                issued_at:                Time.zone.now
+             when Donation::SOURCES[:donation_site]
+               Donation.create! source:           source,
+                                donation_site:    random_record_for_org(pdx_org, DonationSite),
+                                storage_location: random_record_for_org(pdx_org, StorageLocation),
+                                organization:     pdx_org,
+                                issued_at:        Time.zone.now
+             when Donation::SOURCES[:manufacturer]
+               Donation.create! source:           source,
+                                manufacturer:     random_record_for_org(pdx_org, Manufacturer),
+                                storage_location: random_record_for_org(pdx_org, StorageLocation),
+                                organization:     pdx_org,
+                                issued_at:        Time.zone.now
+             else
+               Donation.create! source:           source,
+                                storage_location: random_record_for_org(pdx_org, StorageLocation),
+                                organization:     pdx_org,
+                                issued_at:        Time.zone.now
+             end
 
   rand(1..5).times.each do
-    LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: donation
+    LineItem.create! quantity: rand(250..500), item: random_record_for_org(pdx_org, Item), itemizable: donation
   end
+  donation.reload
+  donation.storage_location.increase_inventory(donation)
 end
 
+
+# ----------------------------------------------------------------------------
+# Distributions
+# ----------------------------------------------------------------------------
+
+# Make some distributions, but don't use up all the inventory
 20.times.each do
-  distribution = Distribution.create! storage_location: random_record(StorageLocation), partner: random_record(Partner), organization: pdx_org
+  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  stored_inventory_items_sample = storage_location.inventory_items.sample(20)
 
-  rand(1..5).times.each do
-    LineItem.create! quantity: rand(1..500), item: random_record(Item), itemizable: distribution
+  distribution = Distribution.create!(storage_location: storage_location,
+                                      partner:          random_record_for_org(pdx_org, Partner),
+                                      organization:     pdx_org,
+                                      issued_at:        Faker::Date.between(from: 4.days.ago, to: Time.zone.today))
+
+  stored_inventory_items_sample.each do |stored_inventory_item|
+    distribution_qty = rand(stored_inventory_item.quantity / 2)
+    LineItem.create! quantity: distribution_qty, item: stored_inventory_item.item, itemizable: distribution if distribution_qty >= 1
   end
+  distribution.reload
+  distribution.storage_location.decrease_inventory(distribution)
 end
+
+
+# ----------------------------------------------------------------------------
+# Requests
+# ----------------------------------------------------------------------------
+
+20.times.each do |count|
+  status = count > 15 ? 'fulfilled' : 'pending'
+  Request.create(
+    partner: random_record_for_org(pdx_org, Partner),
+    organization: pdx_org,
+    request_items: [{ "item_id" => Item.all.pluck(:id).sample, "quantity" => 3 },
+                    { "item_id" => Item.all.pluck(:id).sample, "quantity" => 2 }],
+    comments: "Urgent",
+    status: status
+  )
+end
+
+
+# ----------------------------------------------------------------------------
+# Vendors
+# ----------------------------------------------------------------------------
+
+# Create some Vendors so Purchases can have vendor_ids
+5.times do
+  Vendor.create(
+    contact_name:    Faker::FunnyName.two_word_name,
+    email:           Faker::Internet.email,
+    phone:           Faker::PhoneNumber.cell_phone,
+    comment:         Faker::Lorem.paragraph(sentence_count: 2),
+    organization_id: Organization.all.pluck(:id).sample,
+    address:         "#{Faker::Address.street_address} #{Faker::Address.city}, #{Faker::Address.state_abbr} #{Faker::Address.zip_code}",
+    business_name:   Faker::Company.name,
+    latitude:        rand(-90.000000000...90.000000000),
+    longitude:       rand(-180.000000000...180.000000000),
+    created_at:      (Date.today - rand(15).days),
+    updated_at:      (Date.today - rand(15).days),
+  )
+end
+
+
+# ----------------------------------------------------------------------------
+# Purchases
+# ----------------------------------------------------------------------------
+
+suppliers = ["Target", "Wegmans", "Walmart", "Walgreens"]
+comments = [
+  "Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.",
+  "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.",
+  "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."]
+
+20.times do
+  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  vendor = random_record_for_org(pdx_org, Vendor)
+  Purchase.create(
+    purchased_from:        suppliers.sample,
+    comment:               comments.sample,
+    organization_id:       pdx_org.id,
+    storage_location_id:   storage_location.id,
+    amount_spent_in_cents: rand(200..10000),
+    issued_at:             (Date.today - rand(15).days),
+    created_at:            (Date.today - rand(15).days),
+    updated_at:            (Date.today - rand(15).days),
+    vendor_id:             vendor.id
+  )
+end
+
+# ----------------------------------------------------------------------------
+# Flipper
+# ----------------------------------------------------------------------------
+
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")

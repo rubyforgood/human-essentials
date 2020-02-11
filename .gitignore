@@ -15,10 +15,16 @@
 /public/system
 /public/.htaccess
 
-# Ignore the default SQLite database.
+# Ignore ActiveStorage
+/storage/**/*
+
+# Ignore database files.
 /db/*.sqlite3
 /db/*.sqlite3-journal
 pdx_db_test
+/db/data
+dump.rdb
+/config/database.yml
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
@@ -32,6 +38,30 @@ pdx_db_test
 # Ignore compiled assets
 /public/assets
 
+# Ignore Rubymine
+.idea
+
+# Ignore asdf file
+.tool-versions
+
 .rails_routes*
 .rake_tasks~
 .DS_Store
+.ruby-gemset
+*.pdf
+/spec/example_failures.txt
+
+# Ignore Docker stuff (see issues #503, #603)
+Dockerfile
+docker-compose.yml
+/public/packs
+/public/packs-test
+/node_modules
+yarn-debug.log*
+.yarn-integrity
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+
+# Ignore SimpleCov assets
+coverage

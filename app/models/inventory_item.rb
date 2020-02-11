@@ -2,16 +2,16 @@
 #
 # Table name: inventory_items
 #
-#  id                  :integer          not null, primary key
-#  storage_location_id :integer
+#  id                  :bigint           not null, primary key
+#  quantity            :integer          default(0)
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #  item_id             :integer
-#  quantity            :integer
-#  created_at          :datetime
-#  updated_at          :datetime
+#  storage_location_id :integer
 #
 
 class InventoryItem < ApplicationRecord
-  after_initialize :set_quantity
+  MAX_INT = 2**31
 
   belongs_to :storage_location
   belongs_to :item
@@ -19,16 +19,10 @@ class InventoryItem < ApplicationRecord
   validates :quantity, presence: true
   validates :storage_location_id, presence: true
   validates :item_id, presence: true
-  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0}
+  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: MAX_INT }
+
+  scope :by_partner_key, ->(partner_key) { joins(:item).merge(Item.by_partner_key(partner_key)) }
+  scope :active, -> { joins(:item).where(items: { active: true }) }
 
   delegate :name, to: :item, prefix: true
-
-  def self.quantity_by_category
-    self.includes(:item).select("items.category").group("items.category").sum(:quantity).sort_by { |_, v| -v }
-  end
-
-  # TODO - is there a reason for doing this instead of setting a DB default?
-  def set_quantity
-    self.quantity ||= 0
-  end
 end

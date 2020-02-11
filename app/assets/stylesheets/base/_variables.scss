@@ -1,0 +1,140 @@
+//Reusable tokens/variables
+//namespaced as 'diaper-'.
+
+//Colors
+// The number at the end of the color variable names are derived
+// from the 'l' lightness number from the color's HSL value.
+
+// black/white
+$diaper-color-black: #000000;
+$diaper-color-white: #ffffff;
+
+// neutral
+$diaper-color-neutral-07: #111111;
+$diaper-color-neutral-10: #141a1d;
+$diaper-color-neutral-12: #181f23;
+$diaper-color-neutral-13: #222222;
+$diaper-color-neutral-14: #1c2529;
+$diaper-color-neutral-15: #1e282c;
+$diaper-color-neutral-16: #222d32;
+$diaper-color-neutral-17: #2b2b2b;
+$diaper-color-neutral-20: #333333;
+$diaper-color-neutral-21: #2c3b41;
+$diaper-color-neutral-26: #374850;
+$diaper-color-neutral-27: #444444;
+$diaper-color-neutral-33: #555555;
+$diaper-color-neutral-36: #4b646f;
+$diaper-color-neutral-37: #5e5e5e;
+$diaper-color-neutral-40: #666666;
+$diaper-color-neutral-45: #606c84;
+$diaper-color-neutral-47: #777777;
+$diaper-color-neutral-52: #848484;
+$diaper-color-neutral-53: #888888;
+$diaper-color-neutral-55: #7a869d;
+$diaper-color-neutral-60: #999999;
+$diaper-color-neutral-65: #97a0b3;
+$diaper-color-neutral-67: #aaaaaa;
+$diaper-color-neutral-73: #bbbbbb;
+$diaper-color-neutral-75: #b5bbc8;
+$diaper-color-neutral-76: #b8c7ce;
+$diaper-color-neutral-80: #cccccc;
+$diaper-color-neutral-85: #d2d6de;
+$diaper-color-neutral-87: #dddddd;
+$diaper-color-neutral-90: #e1e3e9;
+$diaper-color-neutral-91: #e6e7e8;
+$diaper-color-neutral-93: #eeeeee;
+$diaper-color-neutral-94: #f0f0f0;
+$diaper-color-neutral-95: #eff1f7;
+$diaper-color-neutral-96: #f4f4f5;
+$diaper-color-neutral-97: #f7f7f7;
+$diaper-color-neutral-98: #f9fafc;
+$diaper-color-neutral-99: #fcfcfc;
+
+// blues
+$diaper-color-blue-10: #001a35;
+$diaper-color-blue-12: #001f3f;
+$diaper-color-blue-26: #005384;
+$diaper-color-blue-36: #0073b7;
+$diaper-color-blue-37: #0097bc;
+$diaper-color-blue-39: #307095;
+$diaper-color-blue-41: #00a7d0;
+$diaper-color-blue-42: #00acd6;
+$diaper-color-blue-43: #357ca5;
+$diaper-color-blue-44: #367fa9;
+$diaper-color-blue-45: #0089db;
+$diaper-color-blue-47: #00c0ef;
+$diaper-color-blue-48: #3b8ab8;
+$diaper-color-blue-49: #3c8dbc;
+$diaper-color-blue-54: #14d1ff;
+$diaper-color-blue-61: #67a8ce;
+$diaper-color-blue-64: #72afd2;
+$diaper-color-blue-70: #7eb0e9;
+$diaper-color-blue-93: #e8ecf4;
+$diaper-color-blue-94: #ecf0f5;
+$diaper-color-blue-95: #e6f7ff;
+
+// reds
+$diaper-color-red-45: #c23321;
+$diaper-color-red-48: #d33724;
+$diaper-color-red-49: #d73925;
+$diaper-color-red-54: #dc4735;
+$diaper-color-red-55: #dd4b39;
+$diaper-color-red-65: #e47365;
+$diaper-color-red-93: #ffdddd;
+
+// greens
+$diaper-color-green-23: #00733e;
+$diaper-color-green-26: #008749;
+$diaper-color-green-28: #008d4c;
+$diaper-color-green-32: #00a157;
+$diaper-color-green-33: #00a65a;
+$diaper-color-green-37: #368763;
+$diaper-color-green-42: #3d9970;
+$diaper-color-green-45: #00e765;
+$diaper-color-green-50: #01ff70;
+$diaper-color-green-55: #ff851b;
+$diaper-color-green-93: #ddffdd;
+
+// oranges
+$diaper-color-orange-40: #00ca6d;
+$diaper-color-orange-41: #c87f0a;
+$diaper-color-orange-45: #db8b0b;
+$diaper-color-orange-46: #e08e0b;
+$diaper-color-orange-50: #ff7701;
+$diaper-color-orange-51: #f39c12;
+$diaper-color-orange-67: #f7bc60;
+
+// yellows
+$diaper-color-yellow-50: #f39a0d;
+
+// teal
+$diaper-color-teal-46: #30bbbb;
+$diaper-color-teal-51: #39cccc;
+$diaper-color-teal-67: #7adddd;
+
+// pink
+$diaper-color-pink-45: #ca195a;
+$diaper-color-pink-46: #db0ead;
+$diaper-color-pink-48: #d81b60;
+$diaper-color-pink-51: #f012be;
+$diaper-color-pink-58: #e73f7c;
+
+// purple
+$diaper-color-purple-45: #545096;
+$diaper-color-purple-46: #555299;
+$diaper-color-purple-50: #5d59a6;
+$diaper-color-purple-51: #605ca8;
+$diaper-color-purple-67: #9491c4;
+
+//Abstract color values to meaningful, semantic names
+// interactive
+$diaper-text-color-interactive-default: $diaper-color-blue-49;
+$diaper-text-color-interactive-hover: $diaper-color-blue-64;
+
+// notifcations
+$diaper-notifcation-color-error-default: $diaper-color-red-55;
+$diaper-notifcation-color-warning-default: $diaper-color-orange-51;
+$diaper-notifcation-color-success-default: $diaper-color-green-33;
+//Fonts
+$diaper-font-family-sans-serif-default: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$diaper-font-family-sans-serif-alt: "Helvetica Neue", Helvetica, Arial, sans-serif;

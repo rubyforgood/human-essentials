@@ -1,30 +1,50 @@
+# Provides limited R/W to a scope-limited organization resource (member-routes-only)
 class OrganizationsController < ApplicationController
+  before_action :authorize_admin, except: [:show]
+  before_action :authorize_user, only: [:show]
+
+  def show
+    @organization = current_organization
+  end
+
   def edit
     @organization = current_organization
   end
 
   def update
     @organization = current_organization
-
-    if @organization.update_attributes(organization_params)
-      redirect_to edit_organization_path(organization_id: current_organization.to_param), notice: 'Updated organization!'
+    if @organization.update(organization_params)
+      redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
-      flash[:alert] = 'Failed to update organization'
+      flash[:error] = "Failed to update your organization."
       render :edit
     end
   end
 
-  # TODO: who should be able to arrive here and how?
-  def new
+  def invite_user
+    User.invite!(email: params[:email], name: params[:name], organization_id: params[:org])
+    redirect_to organization_path, notice: "User invited to organization!"
   end
 
-  # TODO: who should be able to arrive here and how?
-  def create
+  def resend_user_invitation
+    user = User.find(params[:user_id])
+    user.invite!
+    redirect_to organization_path, notice: "User re-invited to organization!"
+  end
+
+  def promote_to_org_admin
+    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user.update(organization_admin: true)
+    redirect_to organization_path, notice: "User has been promoted!"
   end
 
   private
 
+  def authorize_user
+    verboten! unless current_user.super_admin? || (current_organization.id == current_user.organization_id)
+  end
+
   def organization_params
-    params.require(:organization).permit(:name, :short_name, :address, :email, :url, :logo, :intake_location)
+    params.require(:organization).permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :invitation_text, :reminder_day, :deadline_day)
   end
 end

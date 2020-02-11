@@ -1,0 +1,72 @@
+<%= simple_form_for @purchase do |f| %>
+  <div class="box-body">
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :vendor,
+                          collection: @vendors,
+                          label_method: lambda { |x| "#{x.try(:business_name) }"},
+                          label: "Vendor #{purchased_from(@purchase)}",
+                          error: "Which vendor was this from?",
+                          wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :storage_location,
+                          collection: @storage_locations,
+                          label: "Storage Location",
+                          error: "Where is it being stored?",
+                          selected: current_organization.intake_location,
+                          wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6">
+        <%= f.input :amount_spent_in_dollars,
+                    label: "Purchase Total",
+                    wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6">
+        <%= f.input :comment,
+                    wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :issued_at,
+                    label: "Issued on",
+                    as: :date,
+                    html5: true,
+                    wrapper: :vertical_input_group %>
+      </div>
+    </div>
+
+    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+      <legend>Items in this purchase</legend>
+      <div id="purchase_line_items" data-capture-barcode="true">
+
+        <%= f.simple_fields_for :line_items do |item| %>
+          <%= render 'line_items/line_item_fields', f: item %>
+        <% end %>
+      </div>
+
+      <div class="row links">
+        <div class="col-xs-12">
+          <%= add_line_item_button f, "#purchase_line_items" %>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="box-footer">
+      <%= submit_button %>
+    </div>
+  </div><!-- /.box-body.container -->
+<% end %>

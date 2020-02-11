@@ -1,52 +1,64 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Transfers - New" %>
+<section class="content-header">
+<% content_for :title, "New - Transfers - Inventory - #{current_organization.name}" %>
+  <h1>
+    New Inventory Transfer
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "Inventory Transfers", (transfers_path) %></li>
+    <li class="active"> New Transfer</li>
+  </ol>
+</section>
 
-<h1 class="medium-offset-3 medium-6">Transfer inventory</h1>
+<!-- Main content -->
+<section class="content">
 
-<p class="medium-offset-3 medium-6">
-  Create a <strong>Transfer</strong> to move quantities of inventory from one
-  storage location to another.
-</p>
-<%= simple_form_for @transfer do |f| %>
-
-  <%= f.association :from,
-    collection: @storage_locations,
-    label: "From storage location",
-    error: "Which location are you moving inventory from?",
-    input_html: {
-      data: {
-        storage_location_inventory_path: inventory_storage_location_path(
-          organization_id: current_organization,
-          id: ":id",
-          format: :json
-        )
-      }
-    }
-  %>
-
-  <%= f.association :to,
-    collection: @storage_locations,
-    label: "To storage location",
-    error: "Which location is receiving this?" %>
-
-  <%= f.input :comment %>
-
-  <%= f.simple_fields_for :line_items do |item| %>
-    <div id="transfer_line_items" data-capture-barcode="true">
-      <%= render 'line_item_fields', f: item %>
-    </div>
-    <div class="row links">
-      <div class="medium-offset-3 medium-6 columns">
-        <%= link_to_add_association "add line item", f, :line_items,
-          data: {
-            association_insertion_node: "#transfer_line_items",
-            association_insertion_method: "append"
-          }, id: "__add_line_item"
-        %>
-      </div>
-    </div>
-  <% end %>
-
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <p class="box-title">Create a <strong>Transfer</strong> to move quantities of inventory from one storage location to another.</p>
   </div>
-<% end %>
+
+
+  <div class="box-body">
+
+  <%= simple_form_for @transfer, html: { class: "storage-location-required" } do |f| %>
+    <%= render partial: "storage_locations/source", object: f, locals: { label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from } %>
+
+    <%= f.association :to,
+      collection: @storage_locations,
+      label: "To storage location",
+      error: "Which location is receiving this?" %>
+
+    <%= f.input :comment %>
+
+    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+      <legend>Items in this donation</legend>
+      <%= f.simple_fields_for :line_items do |item| %>
+        <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
+          <%= render 'line_items/line_item_fields', f: item %>
+        </div>
+      <% end %>
+      <div class="row links">
+        <div class="col-xs-12">
+          <%= add_line_item_button f, "#transfer_line_items" %>
+        </div>
+      </div>
+
+    </fieldset>
+      
+    <div class="box-footer">
+      <%= submit_button %>
+    </div>
+  </div>
+  <% end %>
+</div>
+<!-- /.box -->
+
+<%= render partial: "barcode_items/barcode_modal" %>
+
+</section>

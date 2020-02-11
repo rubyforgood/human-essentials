@@ -1,61 +1,91 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Items - #{@item.name}" %>
+<section class="content-header">
+  <% content_for :title, "Items - #{@item.name} - Inventory - #{current_organization.name}" %>
+  <h1>
+    Item Information
+    <small>for <%= @item.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "All Item Types", (items_path) %></li>  
+    <li class="active"> <%= @item.name %></li>
+  </ol>
+</section>
 
-<h1><%= @item.name %></h1>
+<!-- Main content -->
+<section class="content">
 
-<p>Found in category: <%= @item.category %></p>
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title"><%= @item.name %>  <%= dollar_value(@item.value_in_cents, ', value per Item (in cents): ') %></h3>
+    <small class="box-subtitle">
+      Value per item: <%= @item.value_in_cents ? @item.value_in_cents : 0 %> | 
+      Distribution quantity: <%= @item.distribution_quantity ? @item.distribution_quantity : 0 %> |
+      Package size: <%= @item.package_size ? @item.package_size : 0 %>
+    </small>
+  </div>
+  <div class="box-body">
 
 <% if @storage_locations_containing.present? %>
-<h2>This item is contained in these inventories</h2>
-<table id="inventories">
-  <thead>
-    <tr>
-      <th>Storage location</th>
-      <th>Quantity</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% total = 0; @storage_locations_containing.each do |storage|
-       total += storage.item_total(@item) %>
-      <tr>
-        <td><%= link_to storage.name, storage_location_path(storage) %></td>
-        <td><%= storage.item_total(@item) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td>Total</td>
-      <td><%= total %></td>
-    </tr>
-  </tfoot>
-</table>
-<% end %>
+<h4>This item is contained in these inventories</h4>
 
-<% if @barcodes_for.present? %>
-<h2>Barcodes Associated with this Item</h2>
-<table id="barcode_items">
-  <thead>
-    <tr>
+
+  <div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover striped">
+        <tr>
+          <th>Storage location</th>
+          <th class="numeric">Quantity</th>
+        </tr>
+          <% total = 0; @storage_locations_containing.each do |storage|
+            total += storage.item_total(@item) %>
+          <tr>
+            <td><%= link_to storage.name, storage_location_path(storage) %></td>
+            <td class="numeric"><%= storage.item_total(@item) %></td>
+          </tr>
+          <% end %>
+        <tr>
+          <td>Total</td>
+          <td class="numeric"><%= total %></td>
+        </tr>               
+        </table>
+      <!-- /.box-body -->
+      <% end %>
+      </div>
+    <!-- /.box -->
+    </div>
+  </div>
+ <% if @barcodes_for.present? %>  
+  <div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <h2>Barcodes Associated with this Item</h2>
+
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover striped">
+        <tr>
       <th>Barcode value</th>
       <th>Quantity</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @barcodes_for.each do |barcode_item| %>
-      <tr>
-        <td><%= link_to barcode_item.value, barcode_item_path(barcode_item) %></td>
-        <td><%= barcode_item.quantity %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<% end %>
+        </tr>
+      <% @barcodes_for.each do |barcode_item| %>
+        <tr>
+          <td><%= link_to barcode_item.value, barcode_item_path(barcode_item) %></td>
+          <td><%= barcode_item.quantity %></td>
+        </tr>
+      <% end %>      
+        </table>
+      <!-- /.box-body -->
 
-<% if @items_in_category.present? %>
-<h2>Other items in this category</h2>
-<ul id="category">
-  <% @items_in_category.each do |item| %>
-    <li><%= link_to item.name, item_path(item) %></li>
-  <% end %>
-</ul>
+      </div>
+    <!-- /.box -->
+    </div>
+  </div>
 <% end %>
+  </div>
+</div>
+</section>

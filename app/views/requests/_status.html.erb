@@ -1,0 +1,10 @@
+<% case status %>
+<% when "pending" %>
+    <span class="label label-default">Pending</span>
+<% when "started" %>
+    <span class="label label-primary">Started</span>
+<% when "fulfilled" %>
+    <span class="label label-success">Fulfilled</span>
+<% else %>
+    <span class="label label-warning">Errored</span>
+<% end %>

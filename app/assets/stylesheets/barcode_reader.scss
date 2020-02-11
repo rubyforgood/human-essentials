@@ -1,0 +1,24 @@
+.barcode-scanner {
+  padding: 5px;
+  border: solid 1px gray;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-items-container {
+  font-weight: bold;
+}
+
+@media only screen and (max-width: 1000px) {
+  .barcode-scanner {
+    width: 50%;
+    padding: 5px;
+    background-color: lightgreen;
+    font-size: 2em !important;
+    padding: 5px 10px;
+    border: solid 1px gray;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+

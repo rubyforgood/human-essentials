@@ -1,50 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <%= csrf_meta_tags %>
+  <%= javascript_include_tag 'application' %>
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+  <%= javascript_pack_tag 'application' %>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
 
-    <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
-    <%= stylesheet_link_tag    "application" %>
-    <%= javascript_include_tag "application", 'data-turbolinks-track' => true %>
-
-    <%= csrf_meta_tags %>
-  </head>
-
-  <body id="<%= params[:controller] || "" %>" class="<%= params[:action] || "" %>">
-    <% if params[:controller].include?("admins") %>
-    <%= render partial: "layouts/admin_navbar" %>
-    <% else %>
-    <%= render partial: "layouts/navbar" %>
+  <header class="main-header">
+    <!-- Logo -->
+    <% if user_signed_in? %>
+      <a href="<%= root_path %>" class="logo">
     <% end %>
-    <%= display_flash_messages %>
+    <!-- mini logo for sidebar mini 50x50 pixels -->
+    <span class="logo-mini"><img src="/img/diaper-base-logo-icon.svg" alt="DiaperBase Logo (icon)" title="DiaperBase">
+    </span>
+    <!-- logo for regular state and mobile devices -->
+    <span class="logo-lg"><%= image_tag "/img/diaper-base-logo-words-white.svg", alt: "DiaperBase Logo", id: "logo" %></span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
 
-    <div class="row">
-      <% if content_for?(:sidebar) %>
-        <div class="primary medium-4 large-3 columns"><%= yield :sidebar %></div>
-        <div class="primary medium-8 large-9 columns"><%= yield %></div>
+      <% if user_signed_in? && current_organization.present? %>
+        <% if admin_namespace? %>
+          <%= render partial: "layouts/lte_admin_navbar" %>
+        <% else %>
+          <%= render partial: "layouts/lte_navbar" %>
+        <% end %>
       <% else %>
-        <div class="primary medium-12 large-12 columns"><%= yield %></div>
+        <div class="navbar-custom-menu">
+         <ul class="nav navbar-nav">
+          <li class="user user-menu">
+           <%= delete_button_to destroy_user_session_path(organization_id: nil), { text: "Log out", icon: "sign-out", no_confirm: true, size: "md" } %>
+          </li>
+         </ul>
+        </div>
       <% end %>
+    </nav>
+  </header>
+
+  <!-- =============================================== -->
+  <% # If there's no organization set, most of these routes won't work. %>
+  <% if user_signed_in? %>
+    <% if admin_namespace? %>
+      <%= render partial: "layouts/lte_admin_sidebar" %>
+    <% else %>
+      <%= render partial: "layouts/lte_sidebar" %>
+    <% end %>
+  <% end %>
+
+
+  <!-- =============================================== -->
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div id="flash-message-container">
+      <%= render partial: "shared/flash"  %>
     </div>
+    <%= yield %>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
 
-  </body>
+  <footer class="main-footer">
+    <div class="pull-right hidden-xs">
+    </div>
+    <strong>Diaperbase was built with <i class="fa fa-heart"></i> by <a href="http://rubyforgood.org">Ruby for Good</a>.</strong>
+  </footer>
+
+
+</div>
+</div>
+</aside>
+<!-- /.control-sidebar -->
+<!-- Add the sidebar's background. This div must be placed
+     immediately after the control sidebar -->
+<div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+<script>
+    $(document).ready(function () {
+        $('.sidebar-menu').tree()
+    })
+</script>
+</body>
+<div class="modal fade" id="modal_new" role="dialog"></div>
 </html>
-

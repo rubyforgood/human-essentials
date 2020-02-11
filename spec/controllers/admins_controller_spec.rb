@@ -1,9 +1,10 @@
-require 'rails_helper'
+=begin
+require "rails_helper"
 
 RSpec.describe AdminsController, type: :controller do
-  let(:default_params) {
+  let(:default_params) do
     { organization_id: @organization.id }
-  }
+  end
 
   context "When logged in as an organization admin" do
     before do
@@ -53,10 +54,9 @@ RSpec.describe AdminsController, type: :controller do
     end
 
     describe "DELETE #destroy" do
-      it "does not exist" do
-        expect {
-          delete :destroy, params: { id: @organization.id }
-        }.to raise_exception(ActionController::UrlGenerationError)
+      it "redirects" do
+        delete :destroy, params: { id: @organization.id }
+        expect(response).to be_redirect
       end
     end
   end
@@ -101,5 +101,5 @@ RSpec.describe AdminsController, type: :controller do
       end
     end
   end
-
 end
+=end

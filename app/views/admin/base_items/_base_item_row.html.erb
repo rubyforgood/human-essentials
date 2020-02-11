@@ -1,0 +1,8 @@
+<tr id="base-item-row-<%= base_item_row.to_param %>">
+  <td><%= base_item_row.name %></td>
+  <td><%= base_item_row.item_count %></td>
+  <td class="text-right">
+    <%= view_button_to admin_base_item_path(base_item_row) %>
+    <%= edit_button_to edit_admin_base_item_path(base_item_row) %>
+  </td>
+</tr>

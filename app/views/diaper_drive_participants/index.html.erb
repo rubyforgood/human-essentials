@@ -1,49 +1,65 @@
-<% content_for :title, "#{current_organization.name} - Agencies - Diaper Drive Participants" %>
-
-<div class="header-action">
-  <%= link_to "New Diaper Drive Participant", new_diaper_drive_participant_path(organization_id: current_organization), class: "button float-right" %>
-</div>
-
-
-<% if @diaper_drive_participants.empty? %>
-
-<div class="reveal" id="addStorageLocationModal" data-reveal>
-  <h2 id="modalTitle">Import Diaper Drive Participants</h2>
-  <p class="lead">Instructions:</p>
-    <ol>
-      <li><%= link_to "Download example csv", "/diaper_drive_participants.csv", :format => :csv, :class => "btn btn-info" %>.</li>
-      <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-      <li>Delete the sample data and enter the diaper drive participant names, emails and phone numbers in the appropriate columns.</li>
-      <li>Save the file as a csv file.</li>
-      <li>Click the choose file button and navigate to the saved file and select it.</li>
-      <li>Then click the Import CSV button to import your storage locations.</li>
-    </ol>
-    <p class="help-text">Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</p>
-
-    <%= form_tag import_csv_diaper_drive_participants_path, multipart: true do %>
-        <%= file_field_tag :file, :accept => 'text/csv' %>
-        <%= submit_tag "Import CSV", :class => "btn btn-white" %>
+<section class="content-header">
+  <% content_for :title, "Diaper Drive Participants - Agencies - #{current_organization.name}" %>
+  <h1>
+    Diaper Drive Participants
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
     <% end %>
-</div>
-<br/>
-<p><a class="button success" data-open="addStorageLocationModal">Import Diaper Drive Participants</a></p>
+    </li>
+    <li><a href="#">Diaper Drive Participants</a></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+      <section id="filters">
+        <div class="pull-right">
+          <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Diaper Drive Participants", size: "lg"}) if @diaper_drive_participants.empty? %>
+          <%= download_button_to(csv_path(format: :csv, type: "DiaperDriveParticipant"), { text: "Export Participants", size: "lg" }) if @diaper_drive_participants.any? %>
+          <%= new_button_to new_diaper_drive_participant_path(organization_id: current_organization), text: "New Diaper Drive Participant" %>
+        </div>
+      </section>
+    </div>
+    <div class="box-body">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover striped">
+              <thead>
+                <tr>
+                  <th>Business Name</th>
+                  <th>Contact Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th class="numeric">Total Diapers</th>
+                  <th class="pull-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "diaper_drive_participant_row", collection: @diaper_drive_participants %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section><!-- /.content -->
+
+<%= render(
+  layout: "shared/csv_import_modal",
+  locals: {
+    title: "Import Diaper Drive Participants",
+    csv_template_url: "/diaper_drive_participants.csv",
+    csv_import_url: import_csv_diaper_drive_participants_path
+  }
+) do %>
+  <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+  <li>Delete the sample data and enter the diaper drive participant names, emails and phone numbers in the appropriate columns.</li>
+  <li>Save the file as a csv file.</li>
 <% end %>
-
-
-<h1>Diaper Drive Participants</h1>
-
-<table id="diaper_drive_participants">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Email</th>
-      <th>Volume</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <%= render partial: "diaper_drive_participant_row", collection: @diaper_drive_participants %>
-  </tbody>
-</table>

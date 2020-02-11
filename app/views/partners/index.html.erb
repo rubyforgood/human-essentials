@@ -1,46 +1,67 @@
-<% content_for :title, "#{current_organization.name} - Agencies - Partners" %>
-
-
-<div class="header-action">
-  <%= link_to "New Partner Agency", new_partner_path(organization_id: current_organization), class: "button float-right" %>
-</div>
-
-
-<% if @partners.empty? %>
-
-<div class="reveal" id="addStorageLocationModal" data-reveal>
-  <h2 id="modalTitle">Import Partners</h2>
-  <p class="lead">Instructions:</p>
-    <ol>
-      <li><%= link_to "Download example csv", "/partners.csv", :format => :csv, :class => "btn btn-info" %>.</li>
-      <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-      <li>Delete the sample data and enter your partner agency names and addresses in the appropriate columns.</li>
-      <li>Save the file as a csv file.</li>
-      <li>Click the choose file button and navigate to the saved file and select it.</li>
-      <li>Then click the Import CSV button to import your storage locations.</li>
-    </ol>
-    <p class="help-text">Note: You're only able to run the import one time to prevent accidental imports or writing over existing locations!</p>
-
-    <%= form_tag import_csv_partners_path, multipart: true do %>
-        <%= file_field_tag :file, :accept => 'text/csv' %>
-        <%= submit_tag "Import CSV", :class => "btn btn-white" %>
+<section class="content-header">
+  <% content_for :title, "Partners - Agencies - #{current_organization.name}" %>
+  <h1>
+    Partner Agencies
+    <small>for <%= current_organization.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
     <% end %>
-</div>
-<br/>
-<p><a class="button success" data-open="addStorageLocationModal">Import Partners</a></p>
+    </li>
+    <li><a href="#">Partner Agencies</a></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="box">
+    <div class="box-header with-border bg-gray">
+      <section id="filters">
+        <div class="pull-right">
+          <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "lg" }) if @partners.empty? %>
+          <%= download_button_to(csv_path(format: :csv, type: "Partner"), { text: "Export Partner Agencies", size: "lg" }) if @partners.any? %>
+          <%= new_button_to new_partner_path(organization_id: current_organization), { text: "New Partner Agency" } %>
+        </div>
+      </section><!-- /#filters -->
+    </div><!-- /.box-header -->
+    <div class="box-body">
+      <%= render partial: "statuses", object: @unfiltered_partners_for_statuses, as: :partners %>
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover striped">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>E-mail</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                  <!-- <th title="This field is currently mock data">Approved?</th> -->
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "partner_row", collection: @partners %>
+              </tbody>
+            </table>
+          </div><!-- /.box-body.table-responsive -->
+        </div><!-- /.col-xs-12 -->
+      </div><!-- /.row -->
+    </div><!-- /.box-body -->
+  </div><!-- /.box -->
+</section><!-- /.content -->
+
+<%= render(
+  layout: "shared/csv_import_modal",
+  locals: {
+    title: "Import Partners Instructions:",
+    csv_template_url: "/partners.csv",
+    csv_import_url: import_csv_partners_path
+  }
+) do %>
+  <li>Open the csv file with excel <br>or your favourite spreadsheet program.</li>
+  <li>Delete the sample data and <br>enter your partner agency names and <br>addresses in the appropriate columns.</li>
+  <li>Save the file as a csv file.</li>
 <% end %>
-
-<h1>Partner Agencies</h1>
-
-<table id="partners">
-  <thead>
-    <tr>
-      <th>Partner</th>
-      <th>E-mail</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render partial: "partner_row", collection: @partners %>
-  </tbody>
-</table>

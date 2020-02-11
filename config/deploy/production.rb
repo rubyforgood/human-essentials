@@ -9,13 +9,13 @@
 set :stage, :production
 set :rails_env, :production
 
-role :app, "deploy@45.79.146.211"
+role :app, "deploy@104.45.147.100"
 
-server '45.79.146.211', roles: %w{web app db}, primary: true,
-  ssh_options: {
-  	forward_agent: true,
-  	keys: ["~/.ssh/id_rsa"],
-  }
+server "104.45.147.100", roles: %w{web app db}, primary: true,
+                         ssh_options: {
+                           forward_agent: true,
+                           keys: ["~/.ssh/id_rsa"]
+                         }
 
 # role-based syntax
 # ==================
@@ -29,7 +29,6 @@ server '45.79.146.211', roles: %w{web app db}, primary: true,
 # role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
 # role :db,  %w{deploy@example.com}
 
-
 # Configuration
 # =============
 # You can set any configuration variable like in config/deploy.rb
@@ -38,9 +37,8 @@ server '45.79.146.211', roles: %w{web app db}, primary: true,
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
 
-set :rbenv_type, :user
-set :rbenv_ruby, '2.4.1'
-
+set :rvm_type, :user
+set :rvm_ruby_version, "2.6.4"
 # Custom SSH Options
 # ==================
 # You may pass any option but keep in mind that net/ssh understands a
@@ -56,7 +54,7 @@ set :rbenv_ruby, '2.4.1'
 #    user: 'deploy'
 # }
 
-set :pty, true
+set :pty, false
 #
 # The server-based syntax can be used to override options:
 # ------------------------------------

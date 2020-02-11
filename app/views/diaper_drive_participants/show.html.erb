@@ -1,30 +1,68 @@
-<% content_for :title, "#{current_organization.name} - Agencies - Diaper Drive Participants - #{@diaper_drive_participant.name}" %>
-
-<h1><%= @diaper_drive_participant.name %></h1>
-
-<ul>
-<% if @diaper_drive_participant.phone.present? %>
-  <li><%= @diaper_drive_participant.phone %></li>
-<% end %>
-<% if @diaper_drive_participant.email.present? %>
-  <li><%= link_to @diaper_drive_participant.email, "mailto:#{@diaper_drive_participant.email}" %></li>
-<% end %>
-</ul>
-
-<table id="diaper_drive_participants">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Volume</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @diaper_drive_participant.donations.each do |donation| %>
-      <tr>
-        <td><%= donation.created_at %></td>
-        <td><%= donation.line_items.total %></td>
-      </tr>
+<section class="content-header">
+  <% content_for :title, "Diaper Drive Participants - #{@diaper_drive_participant.contact_name} - Agencies - #{current_organization.name}" %>
+  <h1>
+    Diaper Drive Participant Information
+    <small>for <%= @diaper_drive_participant.contact_name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
     <% end %>
-  </tbody>
-</table>
+    </li>
+    <li><%= link_to "Diaper Drive Participants", (diaper_drive_participants_path) %></li>
+    <li class="active"> <%= @diaper_drive_participant.contact_name %></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title"><%= @diaper_drive_participant.contact_name %></h3>
+  </div>
+  <div class="box-body">
+
+    <p>Business name: <%= @diaper_drive_participant.business_name %></p>
+    <p>Contact Name: <%= @diaper_drive_participant.contact_name %></p>
+
+  <% if @diaper_drive_participant.phone.present? %>
+    <p>Phone: <%= @diaper_drive_participant.phone %></p>
+  <% end %>
+  <% if @diaper_drive_participant.email.present? %>
+    <p>Email: <%= link_to @diaper_drive_participant.email, "mailto:#{@diaper_drive_participant.email}" %></p>
+  <% end %>
+    <p>Address: <%= @diaper_drive_participant.address %></p>
+  <% if @diaper_drive_participant.present? %>
+
+  <h4>Past Diaper Drives with this Partner</h4>
+  <div class="row">
+  <div class="col-xs-12">
+      <!-- /.box-header -->
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-hover striped">
+        <tr>
+          <th class="date">Date</th>
+          <th class="numeric">Volume</th>
+          <th>Details</th>
+        </tr>
+
+        <% @diaper_drive_participant.donations.each do |donation| %>
+            <tr>
+              <td class="date"><%= donation.created_at.strftime("%m/%d/%Y") %></td>
+              <td class="numeric"><%= donation.line_items.total %></td>
+              <td><%= view_button_to donation, { text: "View donation details" } %></td>
+          </tr>
+          <% end %>
+        </table>
+      <!-- /.box-body -->
+
+      </div>
+    <!-- /.box -->
+    </div>
+  </div>
+  <% end %>
+  </div>
+</div>
+</section>

@@ -1,11 +1,11 @@
 <div class="row">
-  <div class="large-8 columns">
+  <div class="pull-left">
     <%= link_to distribution do %>
-      <%= distribution.line_items.total %> items shipped to
+      <%= distribution.line_items.total %> items distributed to
       <%= distribution.partner_name %>
     <% end %>
   </div>
-  <div class="large-4 columns">
+  <div class="pull-right">
     <%= distance_of_time_in_words_to_now distribution.created_at %> ago
   </div>
 </div>

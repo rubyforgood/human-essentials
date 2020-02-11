@@ -1,11 +1,18 @@
 <h2><%= t 'devise.invitations.edit.header' %></h2>
-
+<p>Welcome to Diaperbase! Before we get started, please set a new password for yourself.</p>
+<p>We recommend a password that is:</p>
+<ul>
+  <li>Memorable to you</li>
+  <li>At least 10 characters long</li>
+  <li>Uses some mix of letters, punctuation, numbers, spaces, etc.</li>
+</ul>
+<p>An easy one would be to pick a line from a poem or a favorite quote!</p>
 <%= simple_form_for resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put } do |f| %>
   <%= devise_error_messages! %>
   <%= f.hidden_field :invitation_token %>
 
   <%= f.input :password %>
-  <%= f.input :password_confirmation %>
+  <%= f.input :password_confirmation, label: "Type the same password again" %>
 
-  <%= f.button :submit, t("devise.invitations.edit.submit_button") %>
+  <%= f.button :submit, t("devise.invitations.edit.submit_button"), class: "btn-success" %>
 <% end %>

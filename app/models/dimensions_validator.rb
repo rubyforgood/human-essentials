@@ -1,3 +1,5 @@
+# TODO: Move this out of models
+# Validates that an organization logo is the correct size
 class DimensionsValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     if record.send("#{attribute}?".to_sym)

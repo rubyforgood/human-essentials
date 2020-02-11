@@ -1,20 +1,31 @@
-<%= simple_form_for form do |f| %>
+<%= simple_form_for form, html: { role: "form" } do |f| %>
+  <div class="box-body ">
 
-  <%= f.input :quantity,
-    label: "Quantity",
-    error: "Please enter a quantity for this package" %>
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
+          <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+          <%= f.input_field :quantity, class: "form-control" %>
+        <% end %>
+      </div><!-- ./col-xs-8 -->
+    </div><!-- /.row -->
 
-  <%= f.association :item,
-    collection: @items,
-    label: "Item",
-    error: "Choose an item from the list" %>
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :barcodeable, collection: @items, label: "Item" %>
+      </div>
+    </div>
 
-  <%= f.input :value,
-    label: "Barcode",
-    error: "You must scan a barcode for this" %>
-
-  <div class="medium-offset-3 medium-6">
-    <%= f.button :submit %>
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
+          <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
+          <%= f.input_field :value, class: "form-control" %>
+        <% end %>
+      </div><!-- ./col-xs-8 -->
+    </div><!-- /.row -->
+  </div><!-- /.box-body -->
+  <div class="box-footer">
+    <%= submit_button %>
   </div>
-
-<% end %>
+<% end #form %>

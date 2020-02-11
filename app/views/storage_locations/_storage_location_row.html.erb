@@ -1,9 +1,11 @@
 <tr>
   <td><%= storage_location.name %></td>
   <td><%= storage_location.address %></td>
-  <td><%= storage_location.size %></td>
-  <td><%= link_to "View", storage_location, class: "button" %>
-  <%= link_to "Edit", edit_storage_location_path(storage_location), class: "button" %>
-  <%= link_to "Delete", storage_location, method: :delete, class: "button alert", data: { confirm: "Are you sure?" } %>
+  <td class="numeric"><%= storage_location.size %></td>
+  <td class="numeric"><%= number_to_currency(storage_location.inventory_total_value_in_dollars) %></td>
+  <td class="text-right">
+    <%= view_button_to storage_location %>
+    <%= edit_button_to edit_storage_location_path(storage_location) %>
+    <%= delete_button_to storage_location, { confirm: confirm_delete_msg(storage_location.name) } %>
   </td>
 </tr>

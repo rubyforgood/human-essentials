@@ -1,3 +1,4 @@
+# Organizations can now have their own custom logo
 class AddLogoToOrganizations < ActiveRecord::Migration[5.0]
   def up
     add_attachment :organizations, :logo

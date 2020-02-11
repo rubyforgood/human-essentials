@@ -1,0 +1,23 @@
+<div class="box">
+  <div class="box-body">
+
+
+  <% content_for :title, "New - Users" %>
+
+  <h1> Edit user <%= @user.name %></h1>
+
+  <%= simple_form_for @user, url: admin_user_path do |f| %>
+    <%= f.error_notification %>
+    <div class="form-inputs">
+      <%= f.input :organization_id, label: "Organization", wrapper: :vertical_input_group, required: true, autofocus: true do %>
+        <span class="input-group-addon"><%= fa_icon "building" %></span>
+        <%= f.input_field :organization_id, collection: @organizations, class: "form-control" %>
+      <% end %>
+      <%= render 'admin/users/user_form_fields', f: f %>
+    </div>
+    <div class="form-actions">
+      <%= submit_button %>
+    </div>
+  <% end %>
+  </div>
+</div>

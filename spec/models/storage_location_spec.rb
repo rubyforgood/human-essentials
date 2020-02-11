@@ -2,11 +2,13 @@
 #
 # Table name: storage_locations
 #
-#  id              :integer          not null, primary key
-#  name            :string
+#  id              :bigint           not null, primary key
 #  address         :string
-#  created_at      :datetime
-#  updated_at      :datetime
+#  latitude        :float
+#  longitude       :float
+#  name            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #  organization_id :integer
 #
 
@@ -21,10 +23,6 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Filtering >" do
-    it "can filter" do
-      expect(subject.class).to respond_to :filter
-    end
-
     it "->containing yields only inventories that have that item" do
       item = create(:item)
       item2 = create(:item)
@@ -37,6 +35,78 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Methods >" do
+    let!(:item) { create(:item) }
+    subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization) }
+
+    describe "increase_inventory" do
+      context "With existing inventory" do
+        let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: @organization) }
+
+        it "increases inventory quantities from an itemizable object" do
+          expect do
+            subject.increase_inventory(donation.to_a)
+          end.to change { subject.size }.by(66)
+        end
+      end
+
+      context "when providing a new item that does not yet exist" do
+        let(:mystery_item) { create(:item, organization: @organization) }
+        let(:donation_with_new_items) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: mystery_item) }
+
+        it "creates those new inventory items in the storage location" do
+          expect do
+            subject.increase_inventory(donation_with_new_items.to_a)
+          end.to change { subject.inventory_items.count }.by(1)
+        end
+      end
+
+      context "when increasing with an inactive item" do
+        let(:inactive_item) { create(:item, active: false, organization: @organization) }
+        let(:donation_with_inactive_item) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: inactive_item) }
+
+        it "re-activates the item as part of the creation process" do
+          expect do
+            subject.increase_inventory(donation_with_inactive_item.to_a)
+          end.to change { subject.inventory_items.count }.by(1)
+                                                         .and change { Item.count }.by(1)
+        end
+      end
+    end
+
+    describe "decrease_inventory" do
+      let(:item) { create(:item) }
+      let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66) }
+
+      it "decreases inventory quantities from an itemizable object" do
+        storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: @organization)
+        expect do
+          storage_location.decrease_inventory(distribution.to_a)
+        end.to change { storage_location.size }.by(-66)
+      end
+
+      context "when there is insufficient inventory available" do
+        let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001) }
+
+        it "gives informative errors" do
+          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
+          expect do
+            storage_location.decrease_inventory(distribution_but_too_much.to_a).errors
+          end.to raise_error(Errors::InsufficientAllotment)
+        end
+
+        it "does not change inventory quantities if there is an error" do
+          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
+          starting_size = storage_location.size
+          begin
+            storage_location.decrease_inventory(distribution.to_a)
+          rescue Errors::InsufficientAllotment
+          end
+          storage_location.reload
+          expect(storage_location.size).to eq(starting_size)
+        end
+      end
+    end
+
     describe "StorageLocation.item_total" do
       it "gathers the final total of a single item across all inventories" do
         item = create(:item)
@@ -75,105 +145,52 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "intake!" do
-      it "adds items to a storage location even if none exist" do
+    describe "inventory_total_value_in_dollars" do
+      it "returns total value of all items in this storage location" do
         storage_location = create(:storage_location)
-        donation = create(:donation, :with_item, item_quantity: 10)
-        expect{
-          storage_location.intake!(donation)
-          storage_location.items.reload
-        }.to change{storage_location.items.count}.by(1)
-        expect(storage_location.size).to eq(10)
+        item1 = create(:item, value_in_cents: 1_00)
+        item2 = create(:item, value_in_cents: 2_00)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 10)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 10)
+        expect(storage_location.inventory_total_value_in_dollars).to eq(30)
       end
 
-      it "adds items to the storage location total if that item already exists in inventory" do
-        storage_location = create(:storage_location, :with_items, item_quantity: 10)
-        donation = create(:donation, :with_item, item_quantity: 10, item_id: storage_location.inventory_items.first.item.id)
-        storage_location.intake!(donation)
-
-        expect(storage_location.inventory_items.count).to eq(1)
-        expect(storage_location.inventory_items.where(item_id: donation.line_items.first.item.id).first.quantity).to eq(20)
-      end
-    end
-
-    describe "remove!" do
-      let(:storage_location) { create(:storage_location) }
-      let(:donation)         { create(:donation, :with_item, item_quantity: 10) }
-
-      before(:each) do
-        storage_location.intake!(donation)
-        storage_location.items.reload
-
-        expect(storage_location.size).to eq(10)
-        expect(storage_location.items.count).to eq(1)
-      end
-
-      it "removes items from a storage location" do
-        storage_location.remove!(donation)
-        storage_location.items.reload
-
-        expect(storage_location.size).to eq(0)
-        expect(storage_location.items.count).to eq(0)
-      end
-
-      it "removes the inventory item from the DB if the item's removal results in a 0 count" do
-        expect(InventoryItem.count).to eq(1)
-
-        storage_location.remove!(donation)
-        storage_location.items.reload
-
-        expect(InventoryItem.count).to eq(0)
-      end
-    end
-
-
-    describe "distribute!" do
-      it "distrbutes items from storage location" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = build :distribution, :with_items, storage_location: storage_location, item_quantity: 50
-        storage_location.distribute!(distribution)
-        expect(storage_location.inventory_items.first.quantity).to eq 250
-      end
-
-      it "raises error when distribution exceeds storage location inventory" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = build :distribution, :with_items, storage_location: storage_location, item_quantity: 350
-        item = distribution.line_items.first.item
-        expect {
-          storage_location.distribute!(distribution)
-        }.to raise_error do |error|
-          expect(error).to be_a Errors::InsufficientAllotment
-          expect(error.insufficient_items).to include({
-            item_id: item.id,
-            item_name: item.name,
-            quantity_on_hand: 300,
-            quantity_requested: 350
-          })
-        end
+      it "returns 0 when there are no items in this storage location" do
+        storage_location = create(:storage_location)
+        expect(storage_location.inventory_total_value_in_dollars).to eq(0)
       end
     end
 
     describe "import_csv" do
       it "imports storage locations from a csv file" do
-        organization = create(:organization)
-        import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv").read
-        StorageLocation.import_csv(import_file_path, organization.id)
-        expect(StorageLocation.count).to eq 3
+        before_import = StorageLocation.count
+        import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv")
+        data = File.read(import_file_path, encoding: "BOM|UTF-8")
+        csv = CSV.parse(data, headers: true)
+        StorageLocation.import_csv(csv, @organization.id)
+        expect(StorageLocation.count).to eq before_import + 1
       end
     end
 
-    describe "move_inventory!" do
-      pending "removes inventory from a storage location and adds them to another storage location"
-
-      pending "raises error when distribution exceeds inventory in a storage facility"
+    describe "import_inventory" do
+      it "imports storage locations from a csv file" do
+        donations_count = Donation.count
+        storage_location = create(:storage_location, organization_id: @organization.id)
+        import_file_path = Rails.root.join("spec", "fixtures", "inventory.csv").read
+        StorageLocation.import_inventory(import_file_path, @organization.id, storage_location.id)
+        expect(storage_location.size).to eq 14_842
+        expect(donations_count).to eq Donation.count
+        expect(@organization.adjustments.last.user_id).to eq(@organization.users.find_by(organization_admin: true).id)
+      end
     end
 
-    describe "reclaim!" do
-      it "adds distribution items back to storage location" do
-        storage_location = create :storage_location, :with_items, item_quantity: 300
-        distribution = create :distribution, :with_items, storage_location: storage_location, item_quantity: 50
-        storage_location.reclaim!(distribution)
-        expect(storage_location.inventory_items.first.quantity).to eq 350
+    describe "geocode" do
+      it "adds coordinates to the database" do
+        storage_location = build(:storage_location,
+                                 "address" => "1500 Remount Road, Front Royal, VA 22630")
+        storage_location.save
+        expect(storage_location.latitude).not_to eq(nil)
+        expect(storage_location.longitude).not_to eq(nil)
       end
     end
   end

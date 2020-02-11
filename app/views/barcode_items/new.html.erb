@@ -1,5 +1,25 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Barcode Items - New" %>
+<section class="content-header">
+	<% content_for :title, "New - Barcode Items - Inventory - #{current_organization.name}" %>
+  <h1>
+    New Barcode Item
+    <small>for <%= current_organization.name %></small>
+  </h1>
+	<ol class="breadcrumb">
+	<li><%= link_to(dashboard_path) do %>
+	    <i class="fa fa-dashboard"></i> Home
+	  <% end %>
+	  </li>
+	  <li><%= link_to "Barcode Items", (barcode_items_path) %></li>
+	  <li class="active"> New Barcode</li>
+	</ol>
+</section>
 
-<h1 class="medium-offset-3 medium-6">New Barcode Item</h1>
+<!-- Main content -->
+<section class="content">
 
-<%= render partial: "form", object: @barcode_item %>
+	<!-- Default box -->
+	<div class="box">
+		<%= render partial: "form", object: @barcode_item %>
+	</div><!-- /.box -->
+
+</section>

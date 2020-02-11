@@ -1,0 +1,9 @@
+<div class="box-body">
+  <%= simple_form_for form, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
+    <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
+      <span class="input-group-addon"><i class="fa fa-suitcase"></i></span>
+      <%= f.input_field :name, class: "form-control" %>
+    <% end %>
+    <%= submit_button({ id: "manufacturer-submit" }) %>
+  <% end %>
+</div>

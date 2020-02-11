@@ -188,66 +188,56 @@ class Scale extends React.Component {
     } = this.state;
 
     return (
-      <main>
-        <h1>
-          Scale {connected ? "Online" : "Offline"}
-        </h1>
-
-        {!navigator.usb &&
-          <p>
-            Please enable chrome://flags/#enable-experimental-web-platform-features
-          </p>}
-
-        {errorMsg &&
-          <p>
-            {errorMsg}
-          </p>}
-
-        {connected &&
-          !shouldRead &&
-          <button onClick={this.getWeight}>▶</button>}
-
-        {shouldRead && <button onClick={this.stopWeight}>⏸</button>}
-
-        {!device && <button onClick={this.connect}>Register Device</button>}
-
-        {connected &&
-          <span className="scale">
-            <small>{scaleState}</small>
-            <p id="scale_reading">{weight}</p>
-            <small>{unit}</small>
-          </span>}
-          <br/>
-          <br/>
-          <br/>
-          <div className="large-6 small-centered">
-            Manual Scale Weight Reading (g):<input type="text" className="" value={this.state.manualWeight} onChange={this.handleChange} />
-          </div>
-          <br/>
-      Diaper Type
+      <div className="box">
+        <div className="box-body">
+            <h1>Scale {connected ? "Online" : "Offline"}</h1>
+            {!navigator.usb && <p>Please enable chrome://flags/#enable-experimental-web-platform-features</p>}
+            {errorMsg && <p> {errorMsg}</p>}
+            {connected &&
+              !shouldRead &&
+              <button onClick={this.getWeight}>▶</button>}
+            {shouldRead && <button onClick={this.stopWeight}>⏸</button>}
+            {!device && <button onClick={this.connect} className="btn btn-success">Register Device</button>}
+            {connected &&
+              <span className="scale">
+                <small>{scaleState}</small>
+                <p id="scale_reading">{weight}</p>
+                <small>{unit}</small>
+              </span>}
+            <br/>
+            <br/>
+            <br/>
+            {!connected &&
+              <div className="large-6 small-centered">
+                Manual Scale Weight Reading (g): <input type="text" className="" value={this.state.manualWeight} onChange={this.handleChange} />
+              </div>}
+            <br/>
+            <div onChange={event => this.getDiaper(event)} style={{textAlign: 'left'}} className="row">
+              <div className="col-xs-8"><strong>Diaper Type</strong></div>
+              <div className="col-xs-4"><strong>Total</strong></div>
+              <div className="col-xs-4">
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="31.18" label={this.props.pu_2t_3t} name="diap"/> Kids Pull-Ups (2T-3T)</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="34.02" label={this.props.pu_3t_4t} name="diap"/> Kids Pull-Ups (3T-4T)</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="34.02" label={this.props.pu_4t_5t} name="diap"/> Kids Pull-Ups (4T-5T)</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="11.34" label={this.props.k_preemie} name="diap"/> Kids (Preemie)</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="17.84" label={this.props.k_newborm} name="diap"/> Kids (Newborn)</label>
+              </div>
+              <div className="col-xs-4">
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="22.68" label={this.props.k_size1} name="diap"/> Kids Size 1</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="22.68" label={this.props.k_size2} name="diap"/> Kids Size 2</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="25.51" label={this.props.k_size3} name="diap"/> Kids Size 3</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="36.85" label={this.props.k_size4} name="diap"/> Kids Size 4</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="36.69" label={this.props.k_size5} name="diap"/> Kids Size 5</label><br/>
+                <label style={{fontWeight: 'normal'}}><input type="radio" value="36.69" label={this.props.k_size6} name="diap"/> Kids Size 6</label>
+              </div>
+              <div className="col-xs-4">
+                <h5>{diaperCount} Diapers!</h5>
                 <br/>
-
-      <div onChange={event => this.getDiaper(event)}>
-        <input type="radio" value="31.18" label={this.props.pu_2t_3t} name="diap"/> Kids Pull-Ups (2T-3T) &nbsp;
-        <input type="radio" value="34.02" label={this.props.pu_3t_4t} name="diap"/> Kids Pull-Ups (3T-4T) &nbsp;
-        <input type="radio" value="34.02" label={this.props.pu_4t_5t} name="diap"/> Kids Pull-Ups (4T-5T) &nbsp;
-        <br/>
-        <input type="radio" value="11.34" label={this.props.k_preemie} name="diap"/> Kids (Preemie) &nbsp;
-        <input type="radio" value="17.84" label={this.props.k_newborm} name="diap"/> Kids (Newborn) &nbsp;
-        <input type="radio" value="22.68" label={this.props.k_size1} name="diap"/> Kids Size 1 &nbsp;        
-        <input type="radio" value="22.68" label={this.props.k_size2} name="diap"/> Kids Size 2 &nbsp;
-        <br/>
-        <input type="radio" value="25.51" label={this.props.k_size3} name="diap"/> Kids Size 3 &nbsp;
-        <input type="radio" value="36.85" label={this.props.k_size4} name="diap"/> Kids Size 4 &nbsp;
-        <input type="radio" value="36.69" label={this.props.k_size5} name="diap"/> Kids Size 5 &nbsp;
-        <input type="radio" value="36.69" label={this.props.k_size6} name="diap"/> Kids Size 6 &nbsp;
-      </div>
-      <div>
-        {diaperCount} Diapers!
-      </div>
-
-      <button onClick={() => this.postDiaperCount()} className='button large primary'>Add To Inventory</button>
-      </main>
+                <button onClick={() => this.postDiaperCount()} className='btn btn-primary'>Add To Inventory</button>
+              </div>
+            </div>
+          </div>
+        </div>
     );
   }
 }

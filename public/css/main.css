@@ -188,8 +188,6 @@
 }
 
 
-
-
 h1.superbar {
 	color:#fff;
     text-shadow:
@@ -200,12 +198,9 @@ h1.superbar {
 }
 
 h2.superbar {
-	color:#fff;
-    text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000; 
+	color:#fffbfb;
+  padding-top: 2rem;
+  margin-top: 2rem;
 }
 
 
@@ -542,14 +537,6 @@ header .top-bar-section li:not(.has-form) a:not(.button):hover{
 }
 
 
-
-
-
-
-
-
-
-
 /*    Testimonials    */
 
 .testimonials{
@@ -560,11 +547,16 @@ header .top-bar-section li:not(.has-form) a:not(.button):hover{
 
 .testimonials .tesimonial{
 	max-width: 670px;
-	height: auto;
+  height: auto;
 	margin: 0 auto;
 	padding: 0 20px;
 	text-align: center;
 	float: left;
+} 
+
+.testimonials .tesimonial img {
+  width: 100px;
+  height: 100px;
 } 
 
 .slider_container{

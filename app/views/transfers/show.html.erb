@@ -1,34 +1,53 @@
-<% content_for :title, "#{current_organization.name} - Inventory - Transfers - #{@transfer.from.name} to #{@transfer.to.name}" %>
+<section class="content-header">
+  <% content_for :title, "Transfers - #{@transfer.from.name} to #{@transfer.to.name} - Inventory - #{current_organization.name}" %>
+  <h1>
+    Inventory Transfer
+    <small>for <%= @transfer.from.name %> to <%= @transfer.to.name %></small>
+  </h1>
+  <ol class="breadcrumb">
+  <li><%= link_to(dashboard_path) do %>
+      <i class="fa fa-dashboard"></i> Home
+    <% end %>
+    </li>
+    <li><%= link_to "All Transfers", (transfers_path) %></li>
+    <li class="active"><%= @transfer.from.name %> to <%= @transfer.to.name %></li>
+  </ol>
+</section>
 
-<h1>Transfer from <%= @transfer.from.name %> to <%= @transfer.to.name %></h1>
+<!-- Main content -->
+<section class="content">
 
-<% if @transfer.comment.present? %>
-  <p><%= @transfer.comment %></p>
-<% end %>
+<!-- Default box -->
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">Transfer from <%= @transfer.from.name %> to <%= @transfer.to.name %> on <%= @transfer.created_at.strftime("%m/%d/%Y") %></h3>
+  </div>
+  <div class="box-body">
 
-<table id="manifest">
-  <thead>
-    <tr>
-      <th>Item</th>
-      <th>Quantity</th>
-    </tr>
-  </thead>
+  <% if @transfer.comment.present? %>
+    <p><%= @transfer.comment %></p>
+  <% end %>
 
-  <tbody>
+        <!-- /.box-header -->
+    <div class="box-body table-responsive no-padding">
+      <table class="table table-hover striped">
+      <tr>
+        <th>Item</th>
+        <th class="numeric">Quantity</th>
+      </tr>
     <% @line_items.each do |line_item| %>
       <tr>
         <td><%= line_item.item.name %></td>
-        <td><%= line_item.quantity %></td>
+        <td class="numeric"><%= line_item.quantity %></td>
       </tr>
     <% end %>
-  </tbody>
-
-  <tfoot>
-    <tr>
-      <td>Total:</td>
-      <td><%= @total %></td>
-    </tr>
-  </tfoot>
-</table>
-
-<%= link_to 'Back', transfers_path %>
+        <tr>
+        <td>Total:</td>
+        <td class="numeric"><%= @total %></td>
+      </tr>
+      </table>
+    <!-- /.box-body -->
+    </div>
+  </div>
+</div>
+</section>

@@ -1,20 +1,38 @@
-<% content_for :title, "#{current_organization.name} - Users - New" %>
+<div class="box">
+  <div class="box-body">
 
-<h1>Add a user to <%= current_organization.name %></h1>
 
-<%= simple_form_for(@user) do |f| %>
-  <%= f.error_notification %>
+  <% content_for :title, "New - Users - #{current_organization.name}" %>
 
-  <div class="form-inputs">
-    <%= f.input :name, required: true, autofocus: true %>
-    <%= f.input :email, required: true %>
-    <%= f.input :password, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) %>
-    <%= f.input :password_confirmation, required: true %>
-  </div>
+  <h1>Add a user to <%= current_organization.name %></h1>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Create user" %>
-  </div>
-<% end %>
+  <%= simple_form_for(@user) do |f| %>
+    <%= f.error_notification %>
+    <div class="form-inputs">
+      <%= f.input :name, label: "Name", wrapper: :vertical_input_group, required: true, autofocus: true do %>
+        <span class="input-group-addon"><%= fa_icon "user" %></span>
+        <%= f.input_field :name, class: "form-control" %>
+      <% end %>
+      <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group, required: true do %>
+        <span class="input-group-addon"><%= fa_icon "envelope" %></span>
+        <%= f.input_field :email, class: "form-control" %>
+      <% end %>
+      <%= f.input :password, label: "Password", wrapper: :vertical_input_group, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) do %>
+        <span class="input-group-addon"><%= fa_icon "lock" %></span>
+        <%= f.input_field :password, class: "form-control" %>
+      <% end %>
+      <%= f.input :password_confirmation, label: "Confirm Password", wrapper: :vertical_input_group, required: true do %>
+        <span class="input-group-addon"><%= fa_icon "check" %></span>
+        <%= f.input_field :password_confirmation, class: "form-control" %>
+      <% end %>
+    </div>
 
-<%= link_to "Back", :back %>
+    <div class="form-actions">
+      <%= submit_button %>
+    </div>
+
+  <% end %>
+
+
+</div>
+</div>

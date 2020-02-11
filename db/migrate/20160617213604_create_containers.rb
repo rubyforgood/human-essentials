@@ -1,3 +1,4 @@
+# Creates the initial "Containers" table, a polymorphic that is later renamed "LineItems"
 class CreateContainers < ActiveRecord::Migration[5.0]
   def change
     create_table :containers do |t|
