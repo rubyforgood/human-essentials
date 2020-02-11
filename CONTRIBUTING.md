@@ -49,3 +49,8 @@ We try to stick with "Rails Way" philosophies as much as possible, and also keep
  4. The PR description should describe what you're doing in it. If there's any noteworthy decisions you made or things you weren't expecting, note those in the description. We have a PR template, but you can free-form your description as long as it's thorough enough. The description should let us know what to focus on in the review.
  5. At this point you're waiting on us–we'll try to respond to your PR quickly. We may suggest some changes or improvements or alternatives.
 
+## Test Coverage
+
+This project uses the `simplecov` gem to generate a test coverage report. This report is generated when the tests are run (as previously mentioned, with `bundle exec rspec`).
+
+The report can then be viewed by opening `coverage/index.html` in a browser.
