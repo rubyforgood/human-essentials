@@ -169,4 +169,12 @@
       </ul>
     </li>
   <% end %>
+
+  <% if current_user.organization_admin %>
+    <li class="nav-item">
+      <%= link_to(dashboard_path(organization_id: current_user.organization), class: "nav-link") do %>
+        <i class="nav-icon fas fa-home"></i> <span>My Organization</span>
+      <% end %>
+    </li>
+  <% end %>
 </ul>
