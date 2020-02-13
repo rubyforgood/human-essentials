@@ -1,0 +1,59 @@
+require 'rails_helper'
+
+RSpec.describe "DonationSites", type: :request do
+    let(:default_params) do
+        { organization_id: @organization.to_param }
+    end
+
+    context "while signed in" do
+        before do
+            sign_in(@user)
+        end
+
+        describe "GET #index" do
+            it "returns http success" do
+                get donation_sites_path(default_params)
+                expect(response).to be_successful
+
+                expect(response).to render_template(:index)
+            end
+        end
+
+        describe "GET #new" do
+            it "returns http success" do
+                get new_donation_site_path(default_params)
+                expect(response).to be_successful
+                
+                expect(response).to render_template(:new)
+            end
+        end
+
+        describe "POST #create" do
+            it "succesfully creates donation site" do
+                new_site_params = { name: "Plain old site", address: "123 Test Rd, Bayfield, CO 81122"}
+                new_params = default_params.merge(donation_site: new_site_params)
+                
+                post donation_sites_path(new_params)
+                expect(response).to be_successful
+                expect(response).to redirect_to(donation_sites_path)
+            end
+
+
+            
+        end 
+
+        describe "GET #edit" do
+            it "returns http success" do
+                editable = default_params.merge(id: create(:donation_site, organization: @organization))
+                get edit_donation_site_path(editable) 
+                expect(response).to be_successful
+            end
+        end
+
+    end
+
+    context "While not signed in" do
+        let(:object) { create(:donation_site) }
+        include_examples "requiring authorization"
+    end
+end
