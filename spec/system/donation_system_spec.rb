@@ -25,7 +25,7 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it "Displays Total quantity on the index page" do
-        expect(page.find(:css, "table.table-hover", visible: true)).to have_content("20")
+        expect(page.find(:css, "table", visible: true)).to have_content("20")
       end
 
       it "doesn't die when an inactive item is in a donation" do
