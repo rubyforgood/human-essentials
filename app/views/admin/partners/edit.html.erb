@@ -33,25 +33,23 @@
           <div class="card card-primary">
             <!-- /.card-header -->
             <!-- form start -->
-            <form role="form" id="quickForm">
-              <div class="card-body">
-                <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
-                  <span class="input-group-text"><i class="fa fa-user"></i></span>
-                  <%= f.input_field :name, class: "form-control" %>
-                <% end %>
-                <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
-                  <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                  <%= f.input_field :email, class: "form-control" %>
-                <% end %>
-                <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :vertical_input_group do %>
-                  <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
-                <% end %>
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
-                <%= submit_button %>
-              </div>
-            </form>
+            <div class="card-body">
+              <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                <%= f.input_field :name, class: "form-control" %>
+              <% end %>
+              <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                <%= f.input_field :email, class: "form-control" %>
+              <% end %>
+              <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :vertical_input_group do %>
+                <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
+              <% end %>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
           </div>
           <!-- /.card -->
         </div>

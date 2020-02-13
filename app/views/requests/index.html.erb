@@ -34,23 +34,21 @@
           </div>
           <!-- /.card-header -->
           <!-- form start -->
-          <form role="form" id="quickForm">
-            <div class="card-body">
-              <%= form_tag(requests_path, method: :get) do |f| %>
-                <div class="row">
-                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "Date Range" %>
-                    <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
-                  </div>
+          <div class="card-body">
+            <%= form_tag(requests_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
                 </div>
-                </div>
-                <div class="card-footer">
-                  <%= filter_button %>
-                  <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
-                </div>
-              <% end # form %>
-              </form>
-        </div>
+              </div>
+              </div>
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
+              </div>
+            <% end # form %>
+            </div>
         <!-- /.card -->
       </div>
       <!--/.col (left) -->

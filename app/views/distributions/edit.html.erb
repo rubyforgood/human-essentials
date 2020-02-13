@@ -47,7 +47,7 @@
             <div class="box">
               <div class="box-body">
 
-                <%= simple_form_for @distribution, html: {class: "storage-location-required", id: "quickForm"} do |f| %>
+                <%= simple_form_for @distribution, html: {class: "storage-location-required"} do |f| %>
 
                   <%= f.association :partner,
                                     collection: current_organization.partners.alphabetized,

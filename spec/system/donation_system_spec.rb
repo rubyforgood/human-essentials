@@ -522,7 +522,6 @@ RSpec.describe "Donations", type: :system, js: true do
       it "Does not default a selection if item lookup fails" do
         total_quantity = find("#donation_quantity").text
         expect(total_quantity).to_not eq "0"
-
         click_on "View"
         expect(page).to have_content "Rare Candy"
 

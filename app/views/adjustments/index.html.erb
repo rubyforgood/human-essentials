@@ -29,36 +29,34 @@
           <div class="card-header">
             <h3 class="card-title">Barcode Filters</h3>
           </div>
-          <form role="form" id="quickForm">
-            <div class="card-body">
-              <%= form_tag(adjustments_path, method: :get) do |f| %>
-                <div class="row">
-                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "Filter by Storage Location" %>
-                    <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }, class: "form-control") %>
-                  </div>
-                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "Filter by User" %>
-                    <%= collection_select(:filters, :by_user, @users || {}, :id, :name, { include_blank: true, selected: @selected_user }, class: "form-control") %>
-                  </div>
-                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "Date Range" %>
-                    <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
-                  </div>
+          <div class="card-body">
+            <%= form_tag(adjustments_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter by Storage Location" %>
+                  <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_location}, class: "form-control") %>
                 </div>
-                <div class="card-footer">
-                  <%= filter_button %>
-                  <%= cancel_button_to adjustments_path, size: "md", text: "Clear Filters" %>
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter by User" %>
+                  <%= collection_select(:filters, :by_user, @users || {}, :id, :name, {include_blank: true, selected: @selected_user}, class: "form-control") %>
+                </div>
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                </div>
+              </div>
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to adjustments_path, size: "md", text: "Clear Filters" %>
 
-                  <span class="float-right">
-                <%= download_button_to(csv_path(format: :csv, type: "Adjustment"), { text: "Export Adjustments" }) if @adjustments.length > 0 %>
+                <span class="float-right">
+                <%= download_button_to(csv_path(format: :csv, type: "Adjustment"), {text: "Export Adjustments"}) if @adjustments.length > 0 %>
 
-                    <%= new_button_to new_adjustment_path(organization_id: current_organization), { text: "New Adjustment"} %>
+                  <%= new_button_to new_adjustment_path(organization_id: current_organization), {text: "New Adjustment"} %>
                   </span>
-                </div>
-              <% end # form %>
-            </div>
-          </form>
+              </div>
+            <% end # form %>
+          </div>
         </div>
 
         <!-- /.card -->
@@ -87,7 +85,9 @@
               <tbody>
               <% @paginated_adjustments.each do |adjustment| %>
                 <tr>
-                  <td class="date"><time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y") %></time></td>
+                  <td class="date">
+                    <time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y") %></time>
+                  </td>
                   <td><%= adjustment.organization.name %></td>
                   <td><%= adjustment.storage_location.name %></td>
                   <td><%= adjustment.comment %></td>

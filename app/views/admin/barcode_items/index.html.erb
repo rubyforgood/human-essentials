@@ -30,29 +30,27 @@
           <div class="card-header">
             <h3 class="card-title">Barcode Filters</h3>
           </div>
-          <form role="form" id="quickForm">
-            <div class="card-body">
-              <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
-                <div class="row">
-                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "Filter By Item Category" %>
-                    <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "form-control") %>
-                  </div>
+          <div class="card-body">
+            <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter By Item Category" %>
+                  <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "form-control") %>
                 </div>
-                <div class="card-footer">
-                  <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
-                    <i class="fa fa-filter"></i> Filter
-                  <% end %>
-                  <%= link_to admin_barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
-                    <i class="fa fa-ban"></i> Clear Filters
-                  <% end %>
-                  <span class="float-right">
+              </div>
+              <div class="card-footer">
+                <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+                  <i class="fa fa-filter"></i> Filter
+                <% end %>
+                <%= link_to admin_barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
+                  <i class="fa fa-ban"></i> Clear Filters
+                <% end %>
+                <span class="float-right">
                     <%= modal_button_to("#newBarcode", {text: "Add New Barcode", icon: "check-circle", size: "md", type: "success"}) %>
                   </span>
-                </div>
-              <% end # form %>
-            </div>
-          </form>
+              </div>
+            <% end # form %>
+          </div>
         </div>
 
         <!-- /.card -->

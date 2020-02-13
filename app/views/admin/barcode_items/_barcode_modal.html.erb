@@ -10,7 +10,7 @@
         <div class="box-body ">
           <div class="row">
             <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
-              <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+              <span class="input-group-text"><i class="fa fa-sort-numeric-desc"></i></span>
               <%= f.input_field :quantity, class: "form-control" %>
               <% end %>
           </div><!-- /.row -->
@@ -20,7 +20,7 @@
           <div class="row">
             <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
               <%= f.input_field :value, class: "form-control" %>
-              <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner input-group-addon"> </div>
+              <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner input-group-text"> </div>
             <% end %>
           </div><!-- /.row -->
           <%= submit_button %>

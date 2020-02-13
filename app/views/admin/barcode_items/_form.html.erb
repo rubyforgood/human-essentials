@@ -1,4 +1,4 @@
-<%= simple_form_for form, html: { role: "form" } do |f| %>
+<%= simple_form_for form, html: {role: "form"} do |f| %>
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -12,23 +12,21 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form role="form" id="quickForm">
-              <div class="card-body">
-                <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
-                  <span class="input-group-text"><i class="fa fa-sort-numeric-desc"></i></span>
-                  <%= f.input_field :quantity, class: "form-control" %>
-                <% end %>
-                <%= f.association :barcodeable, collection: @items, label: "Item", wrapper: :vertical_input_group %>
-                <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
-                  <span class="input-group-text"><i class="fa fa-barcode"></i></span>
-                  <%= f.input_field :value, class: "form-control" %>
-                <% end %>
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
-                <%= submit_button %>
-              </div>
-            </form>
+            <div class="card-body">
+              <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
+                <span class="input-group-text"><i class="fa fa-sort-numeric-desc"></i></span>
+                <%= f.input_field :quantity, class: "form-control" %>
+              <% end %>
+              <%= f.association :barcodeable, collection: @items, label: "Item", wrapper: :vertical_input_group %>
+              <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
+                <span class="input-group-text"><i class="fa fa-barcode"></i></span>
+                <%= f.input_field :value, class: "form-control" %>
+              <% end %>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
           </div>
           <!-- /.card -->
         </div>

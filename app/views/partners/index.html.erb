@@ -29,20 +29,18 @@
           <div class="card-header">
             <h3 class="card-title">Partner Filters</h3>
           </div>
-          <form role="form" id="quickForm">
-            <div class="card-body">
-                <div class="row">
-                  <%= render partial: "statuses", object: @unfiltered_partners_for_statuses, as: :partners %>
-                </div>
-                <div class="card-footer">
-                  <div class="pull-right">
-                    <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "md" }) if @partners.empty? %>
-                    <%= download_button_to(csv_path(format: :csv, type: "Partner"), { text: "Export Partner Agencies", size: "md" }) if @partners.any? %>
-                    <%= new_button_to new_partner_path(organization_id: current_organization), { text: "New Partner Agency" } %>
-                  </div>
-                </div>
+          <div class="card-body">
+            <div class="row">
+              <%= render partial: "statuses", object: @unfiltered_partners_for_statuses, as: :partners %>
             </div>
-          </form>
+            <div class="card-footer">
+              <div class="pull-right">
+                <%= modal_button_to("#csvImportModal", {text: "Import Partners", icon: "upload", size: "md"}) if @partners.empty? %>
+                <%= download_button_to(csv_path(format: :csv, type: "Partner"), {text: "Export Partner Agencies", size: "md"}) if @partners.any? %>
+                <%= new_button_to new_partner_path(organization_id: current_organization), {text: "New Partner Agency"} %>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- /.card -->
       </div>
@@ -84,7 +82,8 @@
           }
       ) do %>
     <li>Open the csv file with excel <br>or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and <br>enter your partner agency names and <br>addresses in the appropriate columns.</li>
+    <li>Delete the sample data and <br>enter your partner agency names and <br>addresses in the appropriate columns.
+    </li>
     <li>Save the file as a csv file.</li>
   <% end %>
 

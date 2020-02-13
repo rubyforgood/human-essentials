@@ -8,26 +8,24 @@
           <div class="card card-primary">
             <!-- /.card-header -->
             <!-- form start -->
-            <form role="form" id="quickForm">
-              <div class="card-body">
-                <%= simple_form_for form, html: {class: 'form-horizontal'} do |f| %>
-                  <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
-                    <span class="input-group-text"><i class="fa fa-user"></i></span>
-                    <%= f.input_field :name, class: "form-control" %>
-                  <% end %>
-
-                  <%= f.input :address, label: "Address", wrapper: :vertical_input_group do %>
-                    <span class="input-group-text"><i class="fa fa-address-card-o"></i></span>
-                    <%= f.input_field :address, class: "form-control" %>
-                  <% end %>
-                  </div>
-                  <!-- /.card-body -->
-                  <div class="card-footer">
-                    <%= submit_button %>
-                  </div>
+            <div class="card-body">
+              <%= simple_form_for form, html: {class: 'form-horizontal'} do |f| %>
+                <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
+                  <span class="input-group-text"><i class="fa fa-user"></i></span>
+                  <%= f.input_field :name, class: "form-control" %>
                 <% end %>
-                </form>
-          </div>
+
+                <%= f.input :address, label: "Address", wrapper: :vertical_input_group do %>
+                  <span class="input-group-text"><i class="fa fa-address-card-o"></i></span>
+                  <%= f.input_field :address, class: "form-control" %>
+                <% end %>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <%= submit_button %>
+                </div>
+              <% end %>
+              </div>
           <!-- /.card -->
         </div>
 

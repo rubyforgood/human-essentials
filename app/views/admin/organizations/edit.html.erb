@@ -35,92 +35,90 @@
               <h3>Update record for <%= @organization.name %></h3>
             </div>
             <!-- form start -->
-            <form role="form" id="quickForm">
-              <div class="card-body">
+            <div class="card-body">
 
-                <div class="form-inputs">
-                  <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
-                    <span class="input-group-text"><i class="fa fa-user"></i></span>
-                    <%= f.input_field :name, class: "form-control" %>
-                  <% end %>
-                  <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
-                    <span class="input-group-text"><i class="fa fa-desktop"></i></span>
-                    <%= f.input_field :short_name, disabled: true, class: "form-control" %>
-                  <% end %>
-                  <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group do %>
-                    <span class="input-group-text"><i class="fa fa-link"></i></span>
-                    <%= f.input_field :url, class: "form-control" %>
-                  <% end %>
-                  <%= f.input :email, wrapper: :vertical_input_group do %>
-                    <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                    <%= f.input_field :email, class: "form-control" %>
-                  <% end %>
+              <div class="form-inputs">
+                <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+                  <span class="input-group-text"><i class="fa fa-user"></i></span>
+                  <%= f.input_field :name, class: "form-control" %>
+                <% end %>
+                <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+                  <span class="input-group-text"><i class="fa fa-desktop"></i></span>
+                  <%= f.input_field :short_name, disabled: true, class: "form-control" %>
+                <% end %>
+                <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group do %>
+                  <span class="input-group-text"><i class="fa fa-link"></i></span>
+                  <%= f.input_field :url, class: "form-control" %>
+                <% end %>
+                <%= f.input :email, wrapper: :vertical_input_group do %>
+                  <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                  <%= f.input_field :email, class: "form-control" %>
+                <% end %>
 
-                  <%= f.input :address do %>
-                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
-                    <%= f.input_field :street, class: "form-control", placeholder: "street" %>
-                    <%= f.input_field :city, class: "form-control", placeholder: "city" %>
-                    <%= f.input_field :state, collection: us_states, class: "form-control", placeholder: "state" %>
-                    <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
-                  <% end %>
+                <%= f.input :address do %>
+                  <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                  <%= f.input_field :street, class: "form-control", placeholder: "street" %>
+                  <%= f.input_field :city, class: "form-control", placeholder: "city" %>
+                  <%= f.input_field :state, collection: us_states, class: "form-control", placeholder: "state" %>
+                  <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
+                <% end %>
 
-                  <%= f.input :reminder_day, wrapper: :vertical_input_group do %>
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    <%= f.input_field :reminder_day, class: "form-control", placeholder: "Reminder day" %>
-                  <% end %>
+                <%= f.input :reminder_day, wrapper: :vertical_input_group do %>
+                  <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                  <%= f.input_field :reminder_day, class: "form-control", placeholder: "Reminder day" %>
+                <% end %>
 
-                  <%= f.input :deadline_day, wrapper: :vertical_input_group do %>
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    <%= f.input_field :deadline_day, class: "form-control", placeholder: "Deadline day" %>
-                  <% end %>
+                <%= f.input :deadline_day, wrapper: :vertical_input_group do %>
+                  <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                  <%= f.input_field :deadline_day, class: "form-control", placeholder: "Deadline day" %>
+                <% end %>
 
-                  <%= f.input :intake_location, :collection => @organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :vertical_input_group %>
+                <%= f.input :intake_location, :collection => @organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :vertical_input_group %>
 
-                  <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :vertical_input_group do %>
-                    <%= f.text_area :invitation_text, class: "form-control" %>
-                  <% end %>
+                <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :vertical_input_group do %>
+                  <%= f.text_area :invitation_text, class: "form-control" %>
+                <% end %>
 
-                  <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails" do %>
-                    <%= f.rich_text_area :default_email_text %>
-                  <% end %>
+                <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails" do %>
+                  <%= f.rich_text_area :default_email_text %>
+                <% end %>
 
 
-                  <%= f.input :logo, wrapper: :vertical_input_group do %>
+                <%= f.input :logo, wrapper: :vertical_input_group do %>
 
-                    <% if @organization.logo.attached? %>
-                      <div>
-                        <p>
-                          <%= image_tag @organization.logo %>
-                        </p>
-                        <p>
-                          <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
-                            View Original
-                          </a>
-                        </p>
-                        <div id="showTheLogo" class="modal fade">
-                          <div class="modal-dialog">
-                            <%= image_tag @organization.logo, class: "thumbnail" %>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          </div>
+                  <% if @organization.logo.attached? %>
+                    <div>
+                      <p>
+                        <%= image_tag @organization.logo %>
+                      </p>
+                      <p>
+                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+                          View Original
+                        </a>
+                      </p>
+                      <div id="showTheLogo" class="modal fade">
+                        <div class="modal-dialog">
+                          <%= image_tag @organization.logo, class: "thumbnail" %>
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                       </div>
-                      <label class="control-label">Update Logo</label>
-                    <% end %>
-
-                    <%= f.input_field :logo, as: :file %>
-                    <p class="help-block">
-                      Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
-                      Only jpeg/png format is supported.
-                    </p>
-
+                    </div>
+                    <label class="control-label">Update Logo</label>
                   <% end %>
-                </div>
+
+                  <%= f.input_field :logo, as: :file %>
+                  <p class="help-block">
+                    Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
+                    Only jpeg/png format is supported.
+                  </p>
+
+                <% end %>
               </div>
-              <!-- /.card-body -->
-              <div class="card-footer">
-                <%= submit_button %>
-              </div>
-            </form>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
           </div>
         </div>
         <!-- /.card -->

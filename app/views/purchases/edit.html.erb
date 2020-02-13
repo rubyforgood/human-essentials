@@ -15,7 +15,8 @@
             <% end %>
           </li>
           <li class="breadcrumb-item"><%= link_to "Purchases", (purchases_path) %></li>
-          <li class="breadcrumb-item"><a href="#">Editing <%= @purchase.purchased_from_view %> on <%= @purchase.created_at.to_s(:distribution_date) %></a></li>
+          <li class="breadcrumb-item"><a href="#">Editing <%= @purchase.purchased_from_view %>
+            on <%= @purchase.created_at.to_s(:distribution_date) %></a></li>
         </ol>
       </div>
     </div>
@@ -31,12 +32,10 @@
         <div class="card card-primary">
           <!-- /.card-header -->
           <!-- form start -->
-          <form role="form" id="quickForm">
-            <div class="card-body">
-              <%= render partial: "purchase_form", object: @purchase %>
-              <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"}  %>
-            </div><!-- /.box -->
-          </form>
+          <div class="card-body">
+            <%= render partial: "purchase_form", object: @purchase %>
+            <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
+          </div><!-- /.box -->
         </div>
       </div>
     </div>

@@ -33,38 +33,36 @@
           </div>
           <!-- /.card-header -->
           <!-- form start -->
-          <form role="form" id="quickForm">
-            <div class="card-body">
-              <%= form_tag(purchases_path, method: :get) do |f| %>
-                <div class="row">
-                  <% if @storage_locations.present? %>
-                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                      <%= label_tag "by Storage Location" %>
-                      <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_storage_location}, class: "form-control") %>
-                    </div>
-                  <% end %>
-                  <% if @vendors.present? %>
-                    <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                      <%= label_tag "by Vendors" %>
-                      <%= collection_select(:filters, :from_vendor, @vendors || {}, :id, :business_name, {include_blank: true, selected: @selected_vendor}, class: "form-control") %>
-                    </div>
-                  <% end %>
+          <div class="card-body">
+            <%= form_tag(purchases_path, method: :get) do |f| %>
+              <div class="row">
+                <% if @storage_locations.present? %>
                   <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "Date Range" %>
-                    <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                    <%= label_tag "by Storage Location" %>
+                    <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_storage_location}, class: "form-control") %>
                   </div>
-                </div><!-- /.row -->
-                <div class="card-footer">
-                  <%= filter_button %>
-                  <%= cancel_button_to purchases_path, {text: "Clear Filters"} %>
-                  <span class="float-right">
-                    <%= download_button_to(csv_path(format: :csv, type: "Purchase"), {text: "Export Purchases"}) if @purchases.any? %>
-                    <%= new_button_to new_purchase_path(organization_id: current_organization), {text: "New Purchase"} %>
-                    </span>
+                <% end %>
+                <% if @vendors.present? %>
+                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <%= label_tag "by Vendors" %>
+                    <%= collection_select(:filters, :from_vendor, @vendors || {}, :id, :business_name, {include_blank: true, selected: @selected_vendor}, class: "form-control") %>
+                  </div>
+                <% end %>
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
                 </div>
-              <% end %>
-            </div>
-          </form>
+              </div><!-- /.row -->
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to purchases_path, {text: "Clear Filters"} %>
+                <span class="float-right">
+                    <%= download_button_to(csv_path(format: :csv, type: "Purchase"), {text: "Export Purchases"}) if @purchases.any? %>
+                  <%= new_button_to new_purchase_path(organization_id: current_organization), {text: "New Purchase"} %>
+                    </span>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
