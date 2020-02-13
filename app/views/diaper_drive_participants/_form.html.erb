@@ -1,4 +1,4 @@
-<%= simple_form_for form, html: {role: "form"} do |f| %>
+<%= simple_form_for form, remote: request.xhr?, html: { class: 'form' } do |f| %>
   <section class="content">
     <div class="container-fluid">
       <div class="row">

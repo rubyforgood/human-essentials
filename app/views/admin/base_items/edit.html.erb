@@ -35,7 +35,7 @@
           <!-- /.card-header -->
           <!-- form start -->
           <div class="card-body">
-            <%= simple_form_for [:admin, @base_item], html: {class: 'form-horizontal', id: 'quickForm'}, url: admin_base_item_path(@base_item) do |f| %>
+            <%= simple_form_for [:admin, @base_item], html: {class: 'form-horizontal'}, url: admin_base_item_path(@base_item) do |f| %>
               <%= render partial: "form", object: f %>
               </div>
               <!-- /.card-body -->

@@ -1,17 +1,16 @@
-<%= simple_form_for @purchase, html: { id: "quickForm" } do |f| %>
+<%= simple_form_for @purchase do |f| %>
   <div class="box-body">
 
     <div class="row">
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :vendor,
                           collection: @vendors,
-                          label_method: lambda { |x| "#{x.try(:business_name) }"},
+                          label_method: lambda { |x| "#{x.try(:business_name) }" },
                           label: "Vendor #{purchased_from(@purchase)}",
                           error: "Which vendor was this from?",
                           wrapper: :vertical_input_group %>
       </div>
     </div>
-
 
     <div class="row">
       <div class="col-xs-8 col-md-6 col-lg-3">
@@ -59,7 +58,7 @@
       </div>
 
       <div class="row links">
-        <div class="col-xs-12">
+        <div class="col-xs-12 p-3">
           <%= add_line_item_button f, "#purchase_line_items" %>
         </div>
       </div>
