@@ -29,16 +29,36 @@ RSpec.describe "DonationSites", type: :request do
         end
 
         describe "POST #create" do
-            it "succesfully creates donation site" do
-                new_site_params = { name: "Plain old site", address: "123 Test Rd, Bayfield, CO 81122"}
-                new_params = default_params.merge(donation_site: new_site_params)
-                
+            xit "succesfully creates donation site" do
+                Geocoder.configure(:lookup => :test)
+                # new_address = Geocoder::Lookup::Test.add_stub("Bayfield, CO", [{ "name" => "Plain old site",
+                #                         "address" => "123 Somewhere St, Bayfield, CO 81122"}])
+
+                new_address =   Geocoder::Lookup::Test.add_stub(
+                                "Los Angeles, CA", [{
+                                                        "latitude"    => 34.052363,
+                                                        "longitude"    => -118.256551,
+                                                        "address"      => 'Los Angeles, CA, USA',
+                                                        "state"        => 'California',
+                                                        "state_code"   => 'CA',
+                                                        "country"      => 'United States',
+                                                        "country_code" => 'US'
+                                                    }]
+
+                                                    )
+                new_params = default_params.merge(donation_site: new_address[0])
+                binding.pry
                 post donation_sites_path(new_params)
                 expect(response).to be_successful
-                expect(response).to redirect_to(donation_sites_path)
             end
 
+            it "flashes an error" do
+                new_params = default_params.merge(donation_site: { name: "Plain old site"})
 
+                post donation_sites_path(new_params)
+                expect(response).to be_successful
+                expect(response).to have_error(/try again?/i)
+            end
             
         end 
 
