@@ -303,7 +303,7 @@ RSpec.feature "Distributions", type: :system do
   context "When creating a distrubition from a request" do
     before do
       items = @storage_location.items.pluck(:id).sample(2)
-      request_items = [{"item_id" => items[0], "quantity" => 10}, {"item_id" => items[1], "quantity" => 10}]
+      request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: @organization, request_items: request_items
 
       visit @url_prefix + "/requests/#{@request.id}"
