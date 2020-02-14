@@ -1,6 +1,7 @@
 require 'csv'
+require 'rails_helper'
 
-RSpec.describe DataExportsController, type: :controller do
+RSpec.describe "DataExports", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -12,13 +13,13 @@ RSpec.describe DataExportsController, type: :controller do
 
     describe "GET #csv" do
       it "return empty data when no type is passed" do
-        get :csv, format: "csv", params: default_params
+        get csv_path(default_params, format: "csv")
         expect(response.parsed_body).to be_empty
       end
 
       it "returns data when a valid type is requested" do
         DataExport::SUPPORTED_TYPES.each do |type|
-          get :csv, format: "csv", params: default_params.merge(type: type)
+          get csv_path(default_params.merge(type: type, format: "csv"))
           expect(response.parsed_body).to_not be_empty
         end
       end
