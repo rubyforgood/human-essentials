@@ -1,21 +1,22 @@
 require "rails_helper"
 
-RSpec.describe StaticController, type: :controller do
+RSpec.describe "Static", type: :request do
   describe "Not signed in" do
     describe "GET #index" do
-      subject { get :index }
       it "returns http success" do
-        expect(subject).to be_successful
+        get root_path
+        expect(response).to be_successful
       end
       it "renders the static index" do
-        expect(subject).to render_template :index
+        get root_path
+        expect(response).to render_template :index
       end
     end
 
     describe "GET #page/register" do
-      subject { get :register }
       it "renders the contact page" do
-        expect(subject).to render_template :register
+        get register_path
+        expect(response).to render_template :register
       end
     end
   end
@@ -26,9 +27,9 @@ RSpec.describe StaticController, type: :controller do
     end
 
     describe "GET #index" do
-      subject { get :index }
       it "redirects to organization dashboard" do
-        expect(subject).to redirect_to(dashboard_url(@organization))
+        get root_path
+        expect(response).to redirect_to(dashboard_url(@organization))
       end
     end
   end
@@ -39,9 +40,9 @@ RSpec.describe StaticController, type: :controller do
     end
 
     describe "GET #index" do
-      subject { get :index }
       it "redirects to admin dashboard" do
-        expect(subject).to redirect_to(admin_dashboard_url)
+        get root_path
+        expect(response).to redirect_to(admin_dashboard_url(@admin))
       end
     end
   end
