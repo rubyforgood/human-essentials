@@ -19,7 +19,7 @@
     <div class="box-header with-border bg-gray">
       <section id="filters">
         <div class="pull-right">
-          <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "lg" }) if @partners.empty? %>
+          <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "lg" }) %>
           <%= download_button_to(csv_path(format: :csv, type: "Partner"), { text: "Export Partner Agencies", size: "lg" }) if @partners.any? %>
           <%= new_button_to new_partner_path(organization_id: current_organization), { text: "New Partner Agency" } %>
         </div>
