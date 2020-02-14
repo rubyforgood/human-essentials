@@ -47,7 +47,10 @@
             <div class="box">
               <div class="box-body">
 
-                <%= simple_form_for @distribution, html: {class: "storage-location-required"} do |f| %>
+                <%= simple_form_for @distribution, html: {class: "storage-location-required"}, 
+                  wrapper_mappings: {
+                    datetime: :custom_multi_select
+                  } do |f| %>
 
                   <%= f.association :partner,
                                     collection: current_organization.partners.alphabetized,
@@ -55,13 +58,12 @@
                                     error: "Which partner is this distribution going to?" %>
 
                   <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date" %>
-                  <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send Email Reminder The Day Before?" %>
+                  <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
                   <%= f.input :agency_rep, label: "Agency representative" %>
 
                   <%= render partial: "storage_locations/source", object: f %>
 
                   <%= f.input :comment, label: "Comment" %>
-
 
                   <fieldset style="margin-bottom: 2rem;" class="form-inline">
                     <legend>Items in this distribution</legend>

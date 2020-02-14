@@ -34,7 +34,10 @@
           <div class="card-body">
             <!-- Default box -->
             <div class="box">
-              <%= simple_form_for @distribution, method: :post do |f| %>
+              <%= simple_form_for @distribution, method: :post, 
+                wrapper_mappings: {
+                  datetime: :custom_multi_select
+                } do |f| %>
                 <div class="box-body">
                   <%= f.simple_fields_for :request do |r| %>
                     <%= r.input :id, as: :hidden %>
@@ -45,7 +48,7 @@
                                     error: "Which partner is this distribution going to?" %>
 
                   <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date" %>
-                  <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send Email Reminder The Day Before?" %>
+                  <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
                   <%= f.input :agency_rep, label: "Agency representative" %>
 
                   <%= render partial: "storage_locations/source", object: f %>
