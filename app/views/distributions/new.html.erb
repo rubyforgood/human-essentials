@@ -34,7 +34,7 @@
           <div class="card-body">
             <!-- Default box -->
             <div class="box">
-              <%= simple_form_for @distribution, html: {class: "storage-location-required" }, method: :post do |f| %>
+              <%= simple_form_for @distribution, method: :post do |f| %>
                 <div class="box-body">
                   <%= f.simple_fields_for :request do |r| %>
                     <%= r.input :id, as: :hidden %>
@@ -60,7 +60,7 @@
                       </div>
                     <% end %>
                     <div class="row links">
-                      <div class="col-xs-12">
+                      <div class="col-xs-12 p-3">
                         <%= add_line_item_button f, "#distribution_line_items" %>
                       </div>
                     </div>
