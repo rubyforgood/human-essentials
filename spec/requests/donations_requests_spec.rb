@@ -253,13 +253,12 @@ RSpec.describe "Donations", type: :request do
 
             it "redirects the user to the sign-in page for Donation specific actions" do
                 single_params = { organization_id: object.organization.to_param, id: object.id }
-                binding.pry
+
                 patch add_item_donation_path(single_params)
                 expect(response).to have_http_status(200)
 
                 patch remove_item_donation_path(single_params)
                 expect(response).to have_http_status(200)
-                expect(response).to be_redirect
             end
         end
 
