@@ -19,9 +19,11 @@ class ItemsController < ApplicationController
   end
 
   def create
-    @item = current_organization.items.new(item_params)
-    if @item.save
-      redirect_to items_path, notice: "#{@item.name} added!"
+    create = ItemCreateService.new(organization_id: current_organization.id, item_params: item_params)
+    result = create.call
+
+    if result.success?
+      redirect_to items_path, notice: "#{result.item.name} added!"
     else
       @base_items = BaseItem.alphabetized
       flash[:error] = "Something didn't work quite right -- try again?"
