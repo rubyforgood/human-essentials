@@ -53,7 +53,9 @@ We try to stick with "Rails Way" philosophies as much as possible, and also keep
 
 This project uses the `simplecov` gem to generate a test coverage report. This report is generated when the tests are run (as previously mentioned, with `bundle exec rspec`). The report can then be viewed by opening `coverage/index.html` in a browser.
 
-To view the most recent test coverage statistics online, you can go to [https://codeclimate.com/github/rubyforgood/diaper/code?sort=test_coverage](https://codeclimate.com/github/rubyforgood/diaper/code?sort=test_coverage) for file-by-file statistics, and [https://codeclimate.com/github/rubyforgood/diaper](https://codeclimate.com/github/rubyforgood/diaper) for the overall test coverage percentage (in addition to other information).
+The most recent test coverage statistics are available online at the Code Climate web site:
 
+* [file-by-file](https://codeclimate.com/github/rubyforgood/diaper/code?sort=test_coverage)
+* [aggregate, including other kinds of information](https://codeclimate.com/github/rubyforgood/diaper)
 
-Of the two, the local page is better organized and has more test coverage information. Sample screenshots can be seen in the simplecov [readme](https://github.com/colszowka/simplecov#example-output).
+Of the two (local and cloud), the local page is better organized and has more test coverage information. Sample screenshots can be seen in the simplecov [readme](https://github.com/colszowka/simplecov#example-output).
