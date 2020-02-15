@@ -35,9 +35,10 @@ RSpec.describe ItemCreateService, type: :service do
     end
 
     context 'when there are no issues' do
-      it 'should return an OpenStruct with success? set to true' do
+      it 'should return an OpenStruct with success? set to true and the item' do
         expect(subject).to be_a_kind_of(OpenStruct)
         expect(subject.success?).to eq(true)
+        expect(subject.item).to eq(fake_organization_item)
       end
 
       it 'should execute the expected methods' do

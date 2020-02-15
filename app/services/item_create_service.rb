@@ -6,8 +6,9 @@ class ItemCreateService
   end
 
   def call
+    new_item = organization.items.new(item_params)
+
     organization.transaction do
-      new_item = organization.items.new(item_params)
       new_item.save!
 
       organization.storage_locations.each do |sl|
@@ -19,7 +20,7 @@ class ItemCreateService
       end
     end
 
-    OpenStruct.new(success?: true)
+    OpenStruct.new(success?: true, item: new_item)
   rescue StandardError => e
     OpenStruct.new(success?: false, error: e)
   end
