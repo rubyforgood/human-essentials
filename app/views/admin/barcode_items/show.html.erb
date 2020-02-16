@@ -1,43 +1,58 @@
 <section class="content-header">
-	<% content_for :title, "Admin - Inventory - Barcode Items - #{@barcode_item.item.name}" %>
-  <h1>
-    Barcode Information
-    <small>for <%=  @barcode_item.item.name %></small>
-  </h1>
-	<ol class="breadcrumb">
-	<li><%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-lock"></i> Admin
-    <% end %>
-    </li>
-	  <li><%= link_to "All Barcodes", (admin_barcode_items_path) %></li>  
-	  <li class="active">Viewing Barcode</li>
-	</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Admin - Inventory - Barcode Items - #{@barcode_item.item.name}" %>
+        <h1>
+          Barcode Information
+          <small>for <%=  @barcode_item.item.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Barcodes", (admin_barcode_items_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Viewing Barcode</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
+
 <section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= @barcode_item.item.name %></h3>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h2 class="card-title"><%= @barcode_item.item.name %></h2>
+          </div>
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Quantity</th>
+                <th>Barcode</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td><%= @barcode_item.quantity %></td>
+                <td><%= @barcode_item.value %></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
   </div>
-  <div class="box-body">
-
-	<dl>
-	    <dt>Quantity</dt>
-		<dd><%= @barcode_item.quantity %></dd>
-
-		<dt>Barcode</dt>
-		<dd><%= @barcode_item.value %></dd>
-	</dl>
-
-  <p>This could be expanded to include summary data about its usage throughout the app.</p>
-
-  </div>
-</div>
-
-
-
-
-
+</section>

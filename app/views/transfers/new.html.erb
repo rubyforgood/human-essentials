@@ -1,64 +1,80 @@
 <section class="content-header">
-<% content_for :title, "New - Transfers - Inventory - #{current_organization.name}" %>
-  <h1>
-    New Inventory Transfer
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Inventory Transfers", (transfers_path) %></li>
-    <li class="active"> New Transfer</li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - Transfers - Inventory - #{current_organization.name}" %>
+        <h1>
+          New Inventory Transfer
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Inventory Transfers", (transfers_path) %></li>
+          <li class="breadcrumb-item"><a href="#">New Transfer</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+            <div class="card-body">
+              <!-- Default box -->
+              <div class="box">
+                <div class="box-header with-border">
+                  <p class="box-title">Create a <strong>Transfer</strong> to move quantities of inventory from one
+                    storage location to another.</p>
+                </div>
+                <div class="box-body">
 
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <p class="box-title">Create a <strong>Transfer</strong> to move quantities of inventory from one storage location to another.</p>
-  </div>
+                  <%= simple_form_for @transfer, html: { class: "storage-location-required", id: 'new_transfer' } do |f| %>
+                    <%= render partial: "storage_locations/source", object: f, locals: {label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from} %>
 
+                    <%= f.association :to,
+                                      collection: @storage_locations,
+                                      label: "To storage location",
+                                      error: "Which location is receiving this?" %>
 
-  <div class="box-body">
+                    <%= f.input :comment %>
 
-  <%= simple_form_for @transfer, html: { class: "storage-location-required" } do |f| %>
-    <%= render partial: "storage_locations/source", object: f, locals: { label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from } %>
+                    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+                      <legend>Items in this donation</legend>
+                      <%= f.simple_fields_for :line_items do |item| %>
+                        <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
+                          <%= render 'line_items/line_item_fields', f: item %>
+                        </div>
+                      <% end %>
+                      <div class="row links">
+                        <div class="col-xs-12">
+                          <%= add_line_item_button f, "#transfer_line_items" %>
+                        </div>
+                      </div>
 
-    <%= f.association :to,
-      collection: @storage_locations,
-      label: "To storage location",
-      error: "Which location is receiving this?" %>
+                    </fieldset>
 
-    <%= f.input :comment %>
-
-    <fieldset style="margin-bottom: 2rem;" class="form-inline">
-      <legend>Items in this donation</legend>
-      <%= f.simple_fields_for :line_items do |item| %>
-        <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
-          <%= render 'line_items/line_item_fields', f: item %>
-        </div>
-      <% end %>
-      <div class="row links">
-        <div class="col-xs-12">
-          <%= add_line_item_button f, "#transfer_line_items" %>
+                    </div>
+                    <div class="card-footer">
+                      <%= submit_button %>
+                    </div>
+                  <% end %>
+                  </div>
+            </div><!-- /.box -->
         </div>
       </div>
-
-    </fieldset>
-      
-    <div class="box-footer">
-      <%= submit_button %>
     </div>
   </div>
-  <% end %>
-</div>
-<!-- /.box -->
-
-<%= render partial: "barcode_items/barcode_modal" %>
-
+  <%= render partial: "barcode_items/barcode_modal" %>
 </section>

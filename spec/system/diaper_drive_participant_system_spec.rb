@@ -37,7 +37,7 @@ RSpec.describe "Diaper Drive Participant", type: :system, js: true do
 
       it "allows single Diaper Drive Participants to show semi-detailed stats about donations from that diaper drive" do
         visit url_prefix + "/diaper_drive_participants/#{diaper_drive_participant.to_param}"
-        expect(page).to have_xpath("//tr", count: 3)
+        expect(page).to have_xpath("//table/tbody/tr", count: 3)
       end
     end
   end

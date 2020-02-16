@@ -1,30 +1,46 @@
 <section class="content-header">
-  <% content_for :title, "New - Donations - #{current_organization.name}" %>
-
-  <h1>
-    Start a new donation
-    <small>for <%= current_organization.name %></small>
-  </h1>
-
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Donations", (donations_path) %></li>
-    <li class="active"> New Donation</li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - Donations - #{current_organization.name}" %>
+        <h1>
+          Start a new donation
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Donations", (donations_path) %></li>
+          <li class="breadcrumb-item"><a href="#">New Donation</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
 <!-- Main content -->
 <section class="content">
-	<!-- Default box -->
-	<div class="box">
-    <%= render partial: "donation_form", object: @donation %>
-    <%= link_to "Add diaper drive", new_diaper_drive_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_diaper_drive", "style" => "display: none;"}  %>
-    <%= link_to "Add diaper drive participant", new_diaper_drive_participant_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_participant", "style" => "display: none;"}  %>
-    <%= link_to "Add manufacturer", new_manufacturer_path, {:remote => true, "data-toggle" =>  "modal", "data-target" => "#modal-window", id: "new_manufacturer", "style" => "display: none;"}  %>
-	</div><!-- /.box -->
-
-  <%= render partial: "barcode_items/barcode_modal" %>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= render partial: "donation_form", object: @donation %>
+            <%= link_to "Add diaper drive", new_diaper_drive_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_diaper_drive", "style" => "display: none;"} %>
+            <%= link_to "Add diaper drive participant", new_diaper_drive_participant_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_participant", "style" => "display: none;"} %>
+            <%= link_to "Add manufacturer", new_manufacturer_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_manufacturer", "style" => "display: none;"} %>
+          </div><!-- /.box -->
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
+<%= render partial: "barcode_items/barcode_modal" %>

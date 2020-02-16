@@ -15,7 +15,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       create(:barcode_item, organization_id: @organization.id)
       create(:global_barcode_item)
       visit subject
-      expect(page).to have_css("table#tbl_barcode_items tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 1)
     end
 
     it "can have a user filter the #index by barcode value" do

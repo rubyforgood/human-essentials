@@ -12,8 +12,8 @@
  *
  *= require toastr
  *= require font-awesome
+ *= require fontawesome
  *= require ionicons
- *= require bootstrap.min
  *= require fullcalendar
  *= require actiontext
  *= require barcode_reader
@@ -28,8 +28,9 @@
 
  // import other stylesheets after variables
 @import 'AdminLTE';
-@import '_all-skins';
-@import 'scale';
+@import 'bootstrap';
+@import 'simple_form-bootstrap/simple_form-bootstrap';
+@import 'font-awesome';
 @import 'progress_stepper';
 @import 'admin_layout';
 @import 'audits';
@@ -44,6 +45,18 @@
   thead {background: $light-grey}
 }
 
+.fade.in {
+  opacity: 1;
+}
+.modal.in .modal-dialog {
+  -webkit-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
+  transform: translate(0, 0);
+}
+.modal-backdrop.in {
+  opacity: 0.5;
+}
+
 table .numeric {
   text-align: right;
 }
@@ -56,4 +69,59 @@ table .date {
   color: gray;
   height: 5px;
   background-color: gray;
+}
+
+.main_logo {
+  max-width: 100%;
+}
+
+.btn-group-xs > .btn, .btn-xs {
+  padding: .25rem .4rem;
+  font-size: .875rem;
+  line-height: .5;
+  border-radius: .2rem;
+}
+span.help-block {
+  color: red;
+}
+
+tr.positive {
+  background-color: #95faab;
+}
+
+tr.negative {
+  background-color: #f2969f;
+}
+
+.fa-beat {
+  -webkit-animation: fa-beat 1s infinite linear;
+  animation: fa-beat 1s infinite linear;
+}
+@-webkit-keyframes fa-beat {
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+@keyframes fa-beat {
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
 }

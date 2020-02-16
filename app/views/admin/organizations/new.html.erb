@@ -1,63 +1,77 @@
 <section class="content-header">
-<% content_for :title, "New - Organizations" %>
-<h1>
-New Organization
-<small></small>
-</h1>
-<ol class="breadcrumb">
-  <li>
-    <%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-  </li>
-  <li><%= link_to "Administration", new_admin_organization_path %></li>
-  <li><a href="#">New Organization</a></li>
-</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - Organizations" %>
+        <h1>
+          New Organization
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Administration", (admin_organizations_path) %></li>
+          <li class="breadcrumb-item"><a href="#">New Organization</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
-<section class="content">
-
-<!-- Default box -->
-<div class="box">
-<div class="box-header with-border">
-  <h3 class="box-title">Add New Diaperbase Organization</h3>
-</div>
-<div class="box-body">
 <%= simple_form_for @organization, url: admin_organizations_path do |f| %>
 
-<div class="form-inputs">
-  <%= f.input :name, required: true, autofocus: true %>
-  <%= f.input :short_name, required: true, autofocus: true %>
-  <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
-  <%= f.input :email %>
-  <%= f.input :street %>
-  <%= f.input :city %>
-  <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
-  <%= f.input :zipcode %>
-  <%= f.input :reminder_day, class: "form-control", placeholder: "Reminder day" %>
-  <%= f.input :deadline_day, class: "form-control", placeholder: "Deadline day" %>
-  <%= f.rich_text_area :default_email_text %>
-  <%= f.input :logo %>
-  <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
-    Only jpeg/png format is supported.
-  </p>
-  <h1>Add a user</h1>
-  <%= f.simple_fields_for :users do |user| %>
-    <%= render 'admin/users/user_form_fields', f: user %>
-    <%= user.input :organization_admin, label: "Organization Admin?", wrapper: :vertical_input_group do %>
-      <%= user.check_box :organization_admin %>
-    <% end %>
-  <% end %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- jquery validation -->
+          <div class="card card-primary card-outline">
+            <!-- /.card-header -->
+            <div class="card-header">
+              <h3>Create New Organization</h3>
+            </div>
+            <!-- form start -->
+            <div class="card-body">
 
-  <%= submit_button %>
-</div>
+              <div class="form-inputs">
+                <%= f.input :name, required: true, autofocus: true %>
+                <%= f.input :short_name, required: true, autofocus: true %>
+                <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
+                <%= f.input :email %>
+                <%= f.input :street %>
+                <%= f.input :city %>
+                <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
+                <%= f.input :zipcode %>
+                <%= f.input :reminder_day, class: "form-control", placeholder: "Reminder day" %>
+                <%= f.input :deadline_day, class: "form-control", placeholder: "Deadline day" %>
+                <%= f.rich_text_area :default_email_text %>
+                <%= f.input :logo %>
+                <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188
+                  pixels).
+                  Only jpeg/png format is supported.
+                </p>
+                <h1>Add a user</h1>
+                <%= f.simple_fields_for :users do |user| %>
+                  <%= render 'admin/users/user_form_fields', f: user %>
+                  <%= user.input :organization_admin, label: "Organization Admin?", wrapper: :input_group do %>
+                    <%= user.check_box :organization_admin %>
+                  <% end %>
+                <% end %>
 
-</div>
+              </div>
+            </div>
 
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </section>
 <% end %>
-</div>
-</div>
-<!-- /.box -->
-
-</section>

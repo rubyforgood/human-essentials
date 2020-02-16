@@ -1,60 +1,67 @@
 <section class="content-header">
-  <% content_for :title, "Users" %>
-  <h1>
-    Users
-  </h1>
-  <ol class="breadcrumb">
-    <li>
-      <%= link_to(admin_dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><a href="#">All users</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Users" %>
+        <h1>
+          Users
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">All users</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-body">
-      <div class="text-right">
-        <%= new_button_to new_admin_user_path, { text: "Invite a new user" } %>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-header">
+            <div class="float-right">
+              <h2 class="card-title">
+                <%= new_button_to new_admin_user_path, {text: "Invite a new user"} %>
+              </h2>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
               <tr>
                 <th>Organization</th>
                 <th>Name</th>
                 <th>Email</th>
-                <th class="pull-right">Actions</th>
+                <th class="text-right">Actions</th>
               </tr>
               </thead>
               <tbody>
               <% @users.each do |user| %>
                 <tr>
-                <td><%= user.organization&.name %></td>
-                <td><%= user.name %></td>
-                <td><%= user.email %></td>
-                <td class="text-right">
-                  <%= edit_button_to edit_admin_user_path(user) %>
-                  <%= delete_button_to(admin_user_path(user), { confirm: "Are you sure you want to permanently remove this user?" }) unless user == current_user %>
-                </td>
+                  <td><%= user.organization&.name %></td>
+                  <td><%= user.name %></td>
+                  <td><%= user.email %></td>
+                  <td class="text-right">
+                    <%= edit_button_to edit_admin_user_path(user) %>
+                    <%= delete_button_to(admin_user_path(user), {confirm: "Are you sure you want to permanently remove this user?"}) unless user == current_user %>
+                  </td>
               <% end %>
-              </td>
               </tr>
               </tbody>
             </table>
-            <!-- /.box-body -->
           </div>
         </div>
-        <!-- /.box -->
+        <!-- /.card -->
       </div>
     </div>
   </div>
 </section>
+

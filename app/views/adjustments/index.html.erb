@@ -1,87 +1,108 @@
 <section class="content-header">
-  <% content_for :title, "Adjustments - Inventory - #{current_organization.name}" %>
-  <h1>
-    Inventory Adjustments
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Adjustments</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Adjustments - Inventory - #{current_organization.name}" %>
+        <h1>
+          Inventory Adjustments
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Adjustments</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(adjustments_path, method: :get) do |f| %>
-          <div class="row">
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter by Storage Location" %>
-              <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }, class: "form-control") %>
-            </div>
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter by User" %>
-              <%= collection_select(:filters, :by_user, @users || {}, :id, :name, { include_blank: true, selected: @selected_user }, class: "form-control") %>
-            </div>
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Date Range" %>
-              <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
-            </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Barcode Filters</h3>
           </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <%= filter_button %>
-              <%= cancel_button_to adjustments_path, size: "md", text: "Clear Filters" %>
-
-              <div class="btn-group pull-right">
-                <p>
-                <%= download_button_to(csv_path(format: :csv, type: "Adjustment"), { size: "lg", text: "Export Adjustments" }) if @adjustments.length > 0 %>
-
-                <%= new_button_to new_adjustment_path(organization_id: current_organization), { text: "New Adjustment"} %>
-                </p>
+          <div class="card-body">
+            <%= form_tag(adjustments_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter by Storage Location" %>
+                  <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_location}, class: "form-control") %>
+                </div>
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter by User" %>
+                  <%= collection_select(:filters, :by_user, @users || {}, :id, :name, {include_blank: true, selected: @selected_user}, class: "form-control") %>
+                </div>
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                </div>
               </div>
-            </div>
-          </div><!-- /.row -->
-        <% end %>
-      </section>
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped records">
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to adjustments_path, size: "md", text: "Clear Filters" %>
+
+                <span class="float-right">
+                <%= download_button_to(csv_path(format: :csv, type: "Adjustment"), {text: "Export Adjustments"}) if @adjustments.length > 0 %>
+
+                  <%= new_button_to new_adjustment_path(organization_id: current_organization), {text: "New Adjustment"} %>
+                  </span>
+              </div>
+            <% end # form %>
+          </div>
+        </div>
+
+        <!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
-                <tr>
-                  <th class="date">Created</th>
-                  <th>Organization</th>
-                  <th>Storage location</th>
-                  <th>Comment</th>
-                  <th>Summary</th>
-                  <th>&nbsp;</th>
-                </tr>
+              <tr>
+                <th>Created</th>
+                <th>Organization</th>
+                <th>Storage location</th>
+                <th>Comment</th>
+                <th>Summary</th>
+                <th>&nbsp;</th>
+              </tr>
               </thead>
               <tbody>
-                <% @paginated_adjustments.each do |adjustment| %>
-                  <tr>
-                    <td class="date"><time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y") %></time></td>
-                    <td><%= adjustment.organization.name %></td>
-                    <td><%= adjustment.storage_location.name %></td>
-                    <td><%= adjustment.comment %></td>
-                    <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
-                    <td class="text-right"><%= view_button_to adjustment %></td>
-                  </tr>
-                <% end %>
+              <% @paginated_adjustments.each do |adjustment| %>
+                <tr>
+                  <td class="date">
+                    <time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y") %></time>
+                  </td>
+                  <td><%= adjustment.organization.name %></td>
+                  <td><%= adjustment.storage_location.name %></td>
+                  <td><%= adjustment.comment %></td>
+                  <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
+                  <td class="text-right"><%= view_button_to adjustment %></td>
+                </tr>
+              <% end %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-  <%= paginate @paginated_adjustments %>
-</section><!-- /.content -->
+          </div>
+          <div class="card-footer clearfix">
+            <%= paginate @paginated_adjustments %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

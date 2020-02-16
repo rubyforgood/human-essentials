@@ -37,7 +37,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       date_range = "#{Time.zone.local(1919, 7, 1).strftime("%m/%d/%Y")} - #{Time.zone.local(2019, 7, 31).strftime("%m/%d/%Y")}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
-      expect(page).to have_css("table.records tbody tr", count: 3)
+      expect(page).to have_css("table tbody tr", count: 3)
     end
   end
 
@@ -59,7 +59,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       date_range = "#{Time.zone.local(2019, 7, 1).strftime("%m/%d/%Y")} - #{Time.zone.local(2019, 7, 31).strftime("%m/%d/%Y")}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
-      expect(page).to have_css("table.records tbody tr", count: 2)
+      expect(page).to have_css("table tbody tr", count: 2)
     end
   end
 
@@ -69,7 +69,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       date_range = "#{Time.zone.local(2019, 7, 22).strftime("%m/%d/%Y")} - #{Time.zone.local(2019, 7, 28).strftime("%m/%d/%Y")}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
-      expect(page).to have_css("table.records tbody tr", count: 1)
+      expect(page).to have_css("table tbody tr", count: 1)
     end
   end
 end

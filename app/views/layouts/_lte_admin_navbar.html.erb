@@ -1,13 +1,6 @@
 <div class="navbar-custom-menu">
   <ul class="nav navbar-nav">
     <!-- User Account: style can be found in dropdown.less -->
-    <% if (current_user.organization.present?) %>
-      <li class="user user-menu">
-        <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
-          <%= fa_icon "dashboard" %> Back to Dashboard
-        <% end %>
-      </li>
-    <% end %>
     <li class="dropdown user user-menu">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         <span class="hidden-xs"><%= current_user.name %></span>

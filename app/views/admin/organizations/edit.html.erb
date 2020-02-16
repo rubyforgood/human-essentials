@@ -1,67 +1,128 @@
 <section class="content-header">
-<% content_for :title, "Edit - Organizations - #{current_organization.name}" %>
-<h1>
-Editing
-<small><%= @organization.name %></small>
-</h1>
-<ol class="breadcrumb">
-  <li>
-    <%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-  </li>
-  <li><%= link_to "Administration", (admin_organizations_path) %></li>
-  <li><a href="#">Editing <%= @organization.name %></a></li>
-</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Edit - Organizations - #{@organization.name}" %>
+        <h1>
+          Editing
+          <small><%= @organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Administration", (admin_organizations_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Editing <%= @organization.name %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
-<section class="content">
-
-<!-- Default box -->
-<div class="box">
-<div class="box-header with-border">
-  <h3 class="box-title">Update record for <%= current_organization.name %></h3>
-</div>
-<div class="box-body">
 <%= simple_form_for @organization, url: admin_organization_path do |f| %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- jquery validation -->
+          <div class="card card-primary card-outline">
+            <!-- /.card-header -->
+            <div class="card-header">
+              <h3>Update record for <%= @organization.name %></h3>
+            </div>
+            <!-- form start -->
+            <div class="card-body">
 
-<div class="form-inputs">
-  <%= f.input :name, required: true, autofocus: true %>
-  <%= f.input :short_name, required: true, autofocus: true %>
-  <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>
-  <%= f.input :email %>
-  <%= f.input :street %>
-  <%= f.input :city %>
-  <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
-  <%= f.input :zipcode %>
-  <%= f.input :intake_location, collection: current_organization.storage_locations.alphabetized, label_method: :name, value_method: :id, label: "Default Intake Location" , include_blank: true %>
-  <%= f.rich_text_area :default_email_text %>
-  <%= f.input :logo %>
-  <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
-    Only jpeg/png format is supported.</p>
+              <div class="form-inputs">
+                <%= f.input :name, required: true, autofocus: true, wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-user"></i></span>
+                  <%= f.input_field :name, class: "form-control" %>
+                <% end %>
+                <%= f.input :short_name, required: true, autofocus: true, wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-desktop"></i></span>
+                  <%= f.input_field :short_name, disabled: true, class: "form-control" %>
+                <% end %>
+                <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-link"></i></span>
+                  <%= f.input_field :url, class: "form-control" %>
+                <% end %>
+                <%= f.input :email, wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                  <%= f.input_field :email, class: "form-control" %>
+                <% end %>
 
-<% if @organization.logo.attached? %>
-    <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">Preview Current Logo</a>
+                <%= f.input :address do %>
+                  <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                  <%= f.input_field :street, class: "form-control", placeholder: "street" %>
+                  <%= f.input_field :city, class: "form-control", placeholder: "city" %>
+                  <%= f.input_field :state, collection: us_states, class: "form-control", placeholder: "state" %>
+                  <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
+                <% end %>
 
-    <!-- Button HTML (to Trigger Modal) -->
-    <!-- Modal HTML -->
-    <div id="showTheLogo" class="modal fade">
-        <div class="modal-dialog">
+                <%= f.input :reminder_day, wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                  <%= f.input_field :reminder_day, class: "form-control", placeholder: "Reminder day" %>
+                <% end %>
 
-                  <%= image_tag @organization.logo %>
+                <%= f.input :deadline_day, wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                  <%= f.input_field :deadline_day, class: "form-control", placeholder: "Deadline day" %>
+                <% end %>
+
+                <%= f.input :intake_location, :collection => @organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
+
+                <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
+                  <%= f.text_area :invitation_text, class: "form-control" %>
+                <% end %>
+
+                <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails" do %>
+                  <%= f.rich_text_area :default_email_text %>
+                <% end %>
+
+
+                <%= f.input :logo, wrapper: :input_group do %>
+
+                  <% if @organization.logo.attached? %>
+                    <div>
+                      <p>
+                        <%= image_tag @organization.logo %>
+                      </p>
+                      <p>
+                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+                          View Original
+                        </a>
+                      </p>
+                      <div id="showTheLogo" class="modal fade">
+                        <div class="modal-dialog">
+                          <%= image_tag @organization.logo, class: "thumbnail" %>
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                    <label class="control-label">Update Logo</label>
+                  <% end %>
+
+                  <%= f.input_field :logo, as: :file %>
+                  <p class="help-block">
+                    Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
+                    Only jpeg/png format is supported.
+                  </p>
+
+                <% end %>
+              </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
+          </div>
         </div>
+        <!-- /.card -->
+      </div>
     </div>
-
-  <% end %>
-    <%= submit_button %>
-</div>
-
-</div>
-
 <% end %>
-</div>
-</div>
-<!-- /.box -->
-
 </section>

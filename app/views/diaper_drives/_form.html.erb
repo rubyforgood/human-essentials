@@ -1,36 +1,43 @@
- <%= simple_form_for @diaper_drive, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
-  <%= f.error_notification %>
+<%= simple_form_for @diaper_drive, remote: request.xhr?, html: {class: 'form-horizontal'} do |f| %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- jquery validation -->
+          <div class="card card-primary">
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div class="card-body">
+              <div class="form-group">
+                <%= f.input :name %>
+              </div>
+              <div class="form-group">
+                <%= f.input :start_date,
+                            label: "Start Date",
+                            as: :date,
+                            html5: true %>
+              </div>
+              <div class="form-group">
+                <%= f.input :end_date,
+                            label: "End Date",
+                            as: :date,
+                            html5: true %>
+              </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= f.button :submit, :class => 'diaper-drive-submit btn btn-primary', :id => 'diaper_drive_submit' %>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+        <div class="col-md-6">
 
-<div class="box-body" style="margin-left: 1rem">
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-      <%= f.input :name %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-      <%= f.input :start_date,
-        label: "Start Date",
-        as: :date,
-        html5: true,
-        wrapper: :vertical_input_group %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-      <%= f.input :end_date,
-        label: "End Date",
-        as: :date,
-        html5: true,
-        wrapper: :vertical_input_group %>
-    </div>
-  </div>
-
-  <div class="form-actions" style="margin-left: -1.5rem; margin-top: 1rem">
-    <%= f.button :submit, :class => 'diaper-drive-submit', :id => 'diaper_drive_submit' %>
-  </div>
-</div>
-
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
 <% end %>

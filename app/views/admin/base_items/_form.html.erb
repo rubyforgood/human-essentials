@@ -1,9 +1,9 @@
-    <%= form.input :name, label: "Name", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-tag"></i></span>
+    <%= form.input :name, label: "Name", wrapper: :input_group do %>
+      <span class="input-group-text"><i class="fa fa-tag"></i></span>
       <%= form.input_field :name, class: "form-control" %>
     <% end %>
 
-    <%= form.input :partner_key, label: "Key (for Partner Requests)", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-key"></i></span>
+    <%= form.input :partner_key, label: "Key (for Partner Requests)", wrapper: :input_group do %>
+      <span class="input-group-text"><i class="fa fa-key"></i></span>
       <%= form.input_field :partner_key, class: "form-control" %>
     <% end %>

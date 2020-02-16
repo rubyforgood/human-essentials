@@ -1,30 +1,49 @@
-<div class="box-body">
-  <%= simple_form_for form, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
-    <%= f.input :business_name, label: "Business Name", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-suitcase"></i></span>
-      <%= f.input_field :business_name, class: "form-control" %>
-    <% end %>
+<%= simple_form_for form, remote: request.xhr?, html: {role: 'form', class: 'form-horizontal'} do |f| %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- jquery validation -->
+          <div class="card card-primary">
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div class="card-body">
+              <%= f.input :business_name, label: "Business Name", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-suitcase"></i></span>
+                <%= f.input_field :business_name, class: "form-control" %>
+              <% end %>
 
-    <%= f.input :contact_name, label: "Contact Name", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-user"></i></span>
-      <%= f.input_field :contact_name, class: "form-control" %>
-    <% end %>
+              <%= f.input :contact_name, label: "Contact Name", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                <%= f.input_field :contact_name, class: "form-control" %>
+              <% end %>
 
-    <%= f.input :phone, label: "Phone", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-phone"></i></span>
-      <%= f.input_field :phone, class: "form-control" %>
-    <% end %>
+              <%= f.input :phone, label: "Phone", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                <%= f.input_field :phone, class: "form-control" %>
+              <% end %>
 
-    <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-      <%= f.input_field :email, class: "form-control" %>
-    <% end %>
+              <%= f.input :email, label: "E-mail", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                <%= f.input_field :email, class: "form-control" %>
+              <% end %>
 
-    <%= f.input :address, label: "Address", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-home"></i></span>
-      <%= f.input_field :address, class: "form-control" %>
-    <% end %>
+              <%= f.input :address, label: "Address", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-home"></i></span>
+                <%= f.input_field :address, class: "form-control" %>
+              <% end %>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button({id: "vendor-submit"}) %>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
 
-    <%= submit_button({ id: "vendor-submit" }) %>
-  <% end %>
-</div>
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+<% end %>
