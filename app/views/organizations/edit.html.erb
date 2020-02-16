@@ -41,19 +41,19 @@
 
 
               <div class="form-inputs">
-                <%= f.input :name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+                <%= f.input :name, required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-user"></i></span>
                   <%= f.input_field :name, class: "form-control" %>
                 <% end %>
-                <%= f.input :short_name, required: true, autofocus: true, wrapper: :vertical_input_group do %>
+                <%= f.input :short_name, required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-desktop"></i></span>
                   <%= f.input_field :short_name, disabled: true, class: "form-control" %>
                 <% end %>
-                <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :vertical_input_group do %>
+                <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-link"></i></span>
                   <%= f.input_field :url, class: "form-control" %>
                 <% end %>
-                <%= f.input :email, wrapper: :vertical_input_group do %>
+                <%= f.input :email, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                   <%= f.input_field :email, class: "form-control" %>
                 <% end %>
@@ -66,19 +66,19 @@
                   <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
                 <% end %>
 
-                <%= f.input :reminder_day, wrapper: :vertical_input_group do %>
+                <%= f.input :reminder_day, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                   <%= f.input_field :reminder_day, class: "form-control", placeholder: "Reminder day" %>
                 <% end %>
 
-                <%= f.input :deadline_day, wrapper: :vertical_input_group do %>
+                <%= f.input :deadline_day, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                   <%= f.input_field :deadline_day, class: "form-control", placeholder: "Deadline day" %>
                 <% end %>
 
-                <%= f.input :intake_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :vertical_input_group %>
+                <%= f.input :intake_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
-                <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :vertical_input_group do %>
+                <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
                   <%= f.text_area :invitation_text, class: "form-control" %>
                 <% end %>
 
@@ -87,7 +87,7 @@
                 <% end %>
 
 
-                <%= f.input :logo, wrapper: :vertical_input_group do %>
+                <%= f.input :logo, wrapper: :input_group do %>
 
                   <% if current_organization.logo.attached? %>
                     <div>

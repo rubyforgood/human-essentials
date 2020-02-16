@@ -35,15 +35,15 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-6">
-                <%= f.input :name, label: "Name:", required: true, autofocus: true, wrapper: :vertical_input_group do %>
+                <%= f.input :name, label: "Name:", required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-user"></i></span>
                   <%= f.input_field :name, class: "form-control" %>
                 <% end %>
-                <%= f.input :email, label: "Email:", wrapper: :vertical_input_group do %>
+                <%= f.input :email, label: "Email:", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                   <%= f.input_field :email, class: "form-control" %>
                 <% end %>
-                <%= f.input :current_password, label: "Current Password:", wrapper: :vertical_input_group do %>
+                <%= f.input :current_password, label: "Current Password:", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-lock"></i></span>
                   <%= f.input_field :current_password, class: "form-control" %>
                 <% end %>
@@ -66,11 +66,11 @@
                   <div class="card-body">
                     <p class="help-block" id="password-help">Leave this blank if you don't want to change it</p>
 
-                    <%= f.input :password, label: "New Password:", wrapper: :vertical_input_group do %>
+                    <%= f.input :password, label: "New Password:", wrapper: :input_group do %>
                       <span class="input-group-text"><%= fa_icon "lock" %></span>
                       <%= f.input_field :password, class: "form-control" %>
                     <% end %>
-                    <%= f.input :password_confirmation, label: "New Password Confirmation:", wrapper: :vertical_input_group do %>
+                    <%= f.input :password_confirmation, label: "New Password Confirmation:", wrapper: :input_group do %>
                       <span class="input-group-text"><%= fa_icon "check" %></span>
                       <%= f.input_field :password_confirmation, class: "form-control" %>
                     <% end %>
