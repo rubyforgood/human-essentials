@@ -60,19 +60,16 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
       click_on "View", match: :first
 
-      within "ul.nav-tabs" do
-        click_on "Inventory coming in"
-      end
-      within "table#sectionB tbody" do
+      find("#custom-tabs-inventory-in-tab").click
+
+      within "#custom-tabs-inventory-in" do
         expect(page).to have_content("Needle")
         expect(page).to have_content(100)
       end
 
-      within "ul.nav-tabs" do
-        click_on "Inventory"
-      end
+      find("#custom-tabs-inventory-tab").click
 
-      within "table#sectionA tbody" do
+      within "#custom-tabs-inventory" do
         expect(page).to have_content("Needle")
         expect(page).to have_content(100)
       end
@@ -116,17 +113,17 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
     it "Items in (adjustments)" do
       visit subject
-      click_link "Inventory coming in"
+      find("#custom-tabs-inventory-in-tab").click
 
-      expect(page.find("table#sectionB.table.table-hover", visible: true)).to have_content "100"
+      expect(page.find("#custom-tabs-inventory-in", visible: true)).to have_content "100"
     end
 
     it "Items out (distributions)" do
       create(:distribution, :with_items, storage_location: storage_location)
       visit subject
-      click_on "Inventory going out"
+      find("#custom-tabs-inventory-out-tab").click
 
-      expect(page.find("table#sectionC.table.table-hover", visible: true)).to have_content "100"
+      expect(page.find("#custom-tabs-inventory-out", visible: true)).to have_content "100"
     end
   end
 end

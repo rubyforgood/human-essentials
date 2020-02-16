@@ -1,87 +1,109 @@
 <section class="content-header">
-  <% content_for :title, "Distributions - #{current_organization.name}" %>
-  <h1>
-    Distributions
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Distributions</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Distributions - #{current_organization.name}" %>
+        <h1>
+          Distributions
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Distributions</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
-
 <!-- Main content -->
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <!-- TBA -- style after other #index views -->
-        <%= form_tag(distributions_path, method: :get) do |f| %>
-          <div class="row">
-            <% if @items.present? %>
-              <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                <%= label_tag "by Item" %>
-                <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Distribution Filters</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= form_tag(distributions_path, method: :get) do |f| %>
+              <div class="row">
+                <% if @items.present? %>
+                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <%= label_tag "by Item" %>
+                    <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
+                  </div>
+                <% end %>
+                <% if @partners.present? %>
+                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <%= label_tag "by Partner" %>
+                    <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
+                  </div>
+                <% end %>
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                </div>
+              </div><!-- /.row -->
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to distributions_path, {text: "Clear Filters"} %>
+                <span class="float-right">
+                  <%= download_button_to(csv_path(format: :csv, type: "Distribution"), text: "Export Distributions") if @distributions.length > 0 %>
+                  <%= new_button_to new_distribution_path(organization_id: current_organization), {text: "New Distribution"} %>
+                    </span>
               </div>
-            <% end %>
-            <% if @partners.present? %>
-              <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                <%= label_tag "by Partner" %>
-                <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
-              </div>
-            <% end %>
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Date Range" %>
-              <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
-            </div>
-          </div><!-- /.row -->
-          <div class="row">
-            <div class="col-xs-12">
-              <%= filter_button %>
-              <%= cancel_button_to distributions_path, { text: "Clear Filters" } %>
-            </div>
-          </div><!-- /.row -->
-        <% end %>
-      </section><!-- /#filters -->
-        <div class="btn-group pull-right">
-          <p>
-            <%= download_button_to(csv_path(format: :csv, type: "Distribution"), text: "Export Distributions", size: "lg") if @distributions.length > 0 %>
-
-            <%=  new_button_to new_distribution_path(organization_id: current_organization), { text: "New Distribution" } %>
-          <p>
+            <% end # form %>
+          </div>
+        </div>
       </div>
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-            <!-- /.box-header -->
-            <div class="box-body table-responsive no-padding">
-              <table class="table table-hover striped records">
-                <thead>
-                  <tr>
-                    <th>Partner</th>
-                    <th class="date">Date of Distribution</th>
-                    <th>Source Inventory</th>
-                    <th class="numeric">Total items</th>
-                    <th class="numeric">Total value</th>
-                    <th>State</th>
-                    <th class="pull-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <%= render partial: "distribution_row", collection: @paginated_distributions %>
-                </tbody>
-                <tfoot>
-                  <%= render partial: "distribution_total" %>
-                </tfoot>
-              </table>
-            </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-  <%= paginate @paginated_distributions %>
-</section><!-- /.content -->
+    </div><!-- /.container-fluid -->
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>Partner</th>
+                <th class="date">Date of Distribution</th>
+                <th>Source Inventory</th>
+                <th class="numeric">Total items</th>
+                <th class="numeric">Total value</th>
+                <th>State</th>
+                <th class="text-right" style="width: 400px">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: "distribution_row", collection: @paginated_distributions %>
+              </tbody>
+              <tfoot>
+              <%= render partial: "distribution_total" %>
+              </tfoot>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            <%= paginate @paginated_distributions %>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>

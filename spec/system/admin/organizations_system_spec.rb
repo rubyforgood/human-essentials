@@ -7,7 +7,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
     it "creates a new organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path
-      click_link "Add New Organization"
       org_params = attributes_for(:organization)
       fill_in "organization_name", with: org_params[:name]
       fill_in "organization_short_name", with: org_params[:short_name]
@@ -50,7 +49,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
     it "creates a new organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path
-      click_link "Add New Organization"
       org_params = attributes_for(:organization)
       fill_in "organization_name", with: org_params[:name]
       fill_in "organization_short_name", with: org_params[:short_name]

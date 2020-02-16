@@ -8,7 +8,7 @@ end
 ruby "2.6.4"
 
 gem "api-auth", "~> 2.3"
-gem "bootstrap-sass"
+gem 'bootstrap', '~> 4.4.1'
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
@@ -32,6 +32,7 @@ gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
 gem "paperclip"
+gem 'popper_js'
 gem "pg", "~> 1.2.2"
 gem "prawn-rails"
 gem "puma"

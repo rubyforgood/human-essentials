@@ -1,31 +1,57 @@
-<div class="box-body">
-  <%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
-    <%= render partial: "base_items/dropdown", object: f %>
-    <%= f.input :name, label: "Name", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-tag"></i></span>
-      <%= f.input_field :name, class: "form-control" %>
-    <% end %>
-    <%= f.input :name, label: "Value per item", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-money"></i></span>
-      <%= f.input_field :value_in_dollars, class: "form-control" %>
-    <% end %>
-    <%= f.input :name, label: "Distribution quantity", wrapper: :vertical_input_group do %>
-      <%= f.input_field :distribution_quantity, class: "form-control" %>
-    <% end %>
+<%= simple_form_for @item, remote: request.xhr?, html: {class: 'form-horizontal'} do |f| %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- jquery validation -->
+          <div class="card card-primary">
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div class="card-body">
+              <%= render partial: "base_items/dropdown", object: f %>
+              <%= f.input :name, label: "Name", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-tag"></i></span>
+                <%= f.input_field :name, class: "form-control" %>
+              <% end %>
+              <%= f.input :name, label: "Value per item", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-money"></i></span>
+                <%= f.input_field :value_in_dollars, class: "form-control" %>
+              <% end %>
 
-    <% if current_user.organization_admin? %>
-      <%= f.input :name, label: "On hand minimum quantity", wrapper: :vertical_input_group do %>
-        <%= f.input_field :on_hand_minimum_quantity, input_html: { value: 0 }, class: "form-control" %>
-      <% end %>
-      <%= f.input :name, label: "On hand recommended quantity", wrapper: :vertical_input_group do %>
-        <%= f.input_field :on_hand_recommended_quantity, class: "form-control" %>
-      <% end %>
-    <% end %>
+              <%= f.input :name, label: "Distribution quantity", wrapper: :input_group do %>
+                <%= f.input_field :distribution_quantity, class: "form-control" %>
+              <% end %>
 
-    <%= f.input :name, label: "Package size", wrapper: :vertical_input_group do %>
-      <%= f.input_field :package_size, class: "form-control" %>
-    <% end %>
+              <% if current_user.organization_admin? %>
+                <%= f.input :name, label: "On hand minimum quantity", wrapper: :input_group do %>
+                  <%= f.input_field :on_hand_minimum_quantity, input_html: {value: 0}, class: "form-control" %>
+                <% end %>
+                <%= f.input :name, label: "On hand recommended quantity", wrapper: :input_group do %>
+                  <%= f.input_field :on_hand_recommended_quantity, class: "form-control" %>
+                <% end %>
+              <% end %>
 
-    <%= submit_button %>
-  <% end %>
-</div>
+              <%= f.input :name, label: "Package size", wrapper: :input_group do %>
+                <%= f.input_field :package_size, class: "form-control" %>
+              <% end %>
+
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-6">
+
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+<% end %>

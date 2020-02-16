@@ -1,23 +1,46 @@
-<%= simple_form_for @audit, html: { class: "storage-location-required" } do |f| %>
-  <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: true } %>
-  <fieldset style="margin-bottom: 2rem;" class="form-inline">
-    <legend>Items in this audit</legend>
-    <%= f.simple_fields_for :line_items do |item| %>
-      <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">
-        <%= render 'line_items/line_item_fields', f: item %>
-      </div>
-    <% end %>
-    <div class="row links">
-      <div class="col-xs-12">
-        <%= add_line_item_button f, "#audit_line_items" %>
-      </div>
-    </div>
-  </fieldset>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <!-- Default box -->
+            <div class="box">
+              <div class="box-header with-border">
+              </div>
+              <div class="box-body">
+                <%= simple_form_for @audit, html: {class: "storage-location-required"} do |f| %>
+                  <%= render partial: "storage_locations/source", object: f, locals: {include_inactive_items: true} %>
+                  <fieldset style="margin-bottom: 2rem;" class="form-inline">
+                    <legend>Items in this audit</legend>
+                    <%= f.simple_fields_for :line_items do |item| %>
+                      <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">
+                        <%= render 'line_items/line_item_fields', f: item %>
+                      </div>
+                    <% end %>
+                    <div class="row links">
+                      <div class="col-xs-12 p-3">
+                        <%= add_line_item_button f, "#audit_line_items" %>
+                      </div>
+                    </div>
 
-  <div class="row">
-    <div class="col-xs-12 pull-right">
-      <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'sm'}, {confirm: 'Are you sure?'}) %>
-      <%= submit_button({ text: 'Save Progress', name: 'save_progress', size: 'md' }) %>
+                  </fieldset>
+
+                  </div>
+                  <div class="card-footer">
+                    <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'md'}, {confirm: 'Are you sure?'}) %>
+                    <%= submit_button({text: 'Save Progress', name: 'save_progress', size: 'md'}) %>
+                  </div>
+                <% end %>
+                </div>
+          </div><!-- /.box -->
+        </div>
+      </div>
     </div>
   </div>
-<% end %>
+  <%= render partial: "barcode_items/barcode_modal" %>
+</section>

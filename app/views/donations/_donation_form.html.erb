@@ -1,114 +1,111 @@
 <%= simple_form_for @donation do |f| %>
-<div class="box-body">
+  <div class="box-body">
 
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-    <%= f.input :source,
-      collection: Donation::SOURCES.values,
-      label: "Source",
-      error: "What effort or initiative did this donation come from?",
-      wrapper: :vertical_input_group %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-    <%= f.association :donation_site,
-      required: true,
-      collection: @donation_sites,
-      label: "Donation Site",
-      error: "Where was this donation dropped off?",
-      wrapper: :vertical_input_group %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-      <%= f.association :diaper_drive,
-        collection: @diaper_drives,
-        label_method: lambda { |x| "#{x.try(:name) }"},
-        label: "Diaper Drive",
-        error: "Which diaper drive was this from?",
-        wrapper: :vertical_input_group %>
-    </div>
-    <div class="col-xs-8 col-md-6 col-lg-3">
-      <%= f.association :diaper_drive_participant,
-        collection: @diaper_drive_participants,
-        label_method: lambda { |x| "#{x.try(:business_name) }"},
-        label: "Diaper Drive Participant",
-        error: "Which diaper drive participant was this from?",
-        wrapper: :vertical_input_group %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-    <%= f.association :manufacturer,
-      collection: @manufacturers,
-      prompt: "Choose one...",
-      label_method: lambda { |x| "#{x.try(:name) }"},
-      label: "Manufacturer",
-      error: "Which Manufacturer was this from?",
-      wrapper: :vertical_input_group %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-    <%= f.association :storage_location,
-      collection: @storage_locations,
-      label: "Storage Location",
-      error: "Where is it being stored?",
-      selected: current_organization.intake_location,
-      wrapper: :vertical_input_group %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-      <%= f.input :money_raised_in_dollars, as: :money_raised_in_dollars, wrapper: :vertical_input_group do %>
-        <span class="input-group-addon"><i class="fa fa-usd"></i></span>
-        <%= f.input_field :money_raised_in_dollars, class: "form-control" %>
-      <% end %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-8 col-md-6">
-    <%= f.input :comment,
-      wrapper: :vertical_input_group %>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xs-8 col-md-6 col-lg-3">
-    <%= f.input :issued_at,
-       label: "Issued on",
-       as: :date,
-       html5: true,
-       wrapper: :vertical_input_group %>
-    </div>
-  </div>
-
-  <fieldset style="margin-bottom: 2rem;" class="form-inline">
-    <legend>Items in this donation</legend>
-    <div id="donation_line_items" data-capture-barcode="true">
-
-      <%= f.simple_fields_for :line_items do |item| %>
-        <%= render 'line_items/line_item_fields', f: item %>
-      <% end %>
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :source,
+                    collection: Donation::SOURCES.values,
+                    label: "Source",
+                    error: "What effort or initiative did this donation come from?",
+                    wrapper: :input_group %>
+      </div>
     </div>
 
-    <div class="row links">
-        <div class="col-xs-12">
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :donation_site,
+                          collection: @donation_sites,
+                          label: "Donation Site",
+                          error: "Where was this donation dropped off?",
+                          wrapper: :input_group %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :diaper_drive,
+                          collection: @diaper_drives,
+                          label_method: lambda { |x| "#{x.try(:name) }" },
+                          label: "Diaper Drive",
+                          error: "Which diaper drive was this from?",
+                          wrapper: :input_group %>
+      </div>
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :diaper_drive_participant,
+                          collection: @diaper_drive_participants,
+                          label_method: lambda { |x| "#{x.try(:business_name) }" },
+                          label: "Diaper Drive Participant",
+                          error: "Which diaper drive participant was this from?",
+                          wrapper: :input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :manufacturer,
+                          collection: @manufacturers,
+                          prompt: "Choose one...",
+                          label_method: lambda { |x| "#{x.try(:name) }" },
+                          label: "Manufacturer",
+                          error: "Which Manufacturer was this from?",
+                          wrapper: :input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.association :storage_location,
+                          collection: @storage_locations,
+                          label: "Storage Location",
+                          error: "Where is it being stored?",
+                          selected: current_organization.intake_location,
+                          wrapper: :input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :money_raised_in_dollars, as: :money_raised_in_dollars, wrapper: :input_group do %>
+          <span class="input-group-text"><i class="fa fa-usd"></i></span>
+          <%= f.input_field :money_raised_in_dollars, class: "form-control" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6">
+        <%= f.input :comment,
+                    wrapper: :input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6 col-lg-3">
+        <%= f.input :issued_at,
+                    label: "Issued on",
+                    as: :date,
+                    html5: true,
+                    wrapper: :input_group %>
+      </div>
+    </div>
+
+    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+      <legend>Items in this donation</legend>
+      <div id="donation_line_items" data-capture-barcode="true">
+
+        <%= f.simple_fields_for :line_items do |item| %>
+          <%= render 'line_items/line_item_fields', f: item %>
+        <% end %>
+      </div>
+
+      <div class="row links">
+        <div class="col-xs-12 p-3">
           <%= add_line_item_button f, "#donation_line_items", {} %>
         </div>
       </div>
-  </fieldset>
-  <div class="row">
-    <div class="col-xs-12">
+    </fieldset>
+
+    <div class="card-footer">
       <%= submit_button %>
     </div>
   </div>
-</div><!-- /.box-body.container -->
-
 <% end %>

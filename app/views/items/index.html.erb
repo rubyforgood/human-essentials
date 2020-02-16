@@ -1,36 +1,99 @@
 <section class="content-header">
-  <% content_for :title, "Items - Inventory - #{current_organization.name}" %>
-  <h1>
-    Item Types
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">All Items</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Items - Inventory - #{current_organization.name}" %>
+        <h1>
+          Item Types
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">All Items</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-  <div class="box">
-    <%= render partial: 'header' %>
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a data-toggle="tab" href="#sectionA">Item List</a></li>
-            <li role="presentation"><a data-toggle="tab" href="#sectionB">Items, Quantity, and Location</a></li>
-          </ul>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Item Filter</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= form_tag(items_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter by Base Item" %>
+                  <%= collection_select(:filters, :by_base_item, BaseItem.alphabetized, :partner_key, :name, {include_blank: true, selected: @selected_base_item}, class: "form-control") %>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= check_box_tag("include_inactive_items", 1, @include_inactive_items) %>
+                  <%= label_tag "Also include inactive items" %>
+                </div>
+              </div>
+              </div>
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to items_path, {text: "Clear Filters"} %>
+                <span class="float-right">
 
-          <div class="tab-content">
-            <%= render partial: 'item_list' %>
-            <%= render partial: 'items_quantity_and_location' %>
-          </div><!-- /.tab-content -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+                  <%= download_button_to(csv_path(format: :csv, type: "Item"), {text: "Export Items"}) if @items.any? %>
+                  <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+                  </span>
+              </div>
+            <% end # form %>
+            </div>
+        <!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-primary card-outline card-outline-tabs">
+          <div class="card-header p-0 border-bottom-0">
+            <ul class="nav nav-tas" id="custom-tabs-three-tab" role="tablist">
+              <li class="nav-item" class="active">
+                <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Item
+                  List</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Items,
+                  Quantity, and Location</a>
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <div class="tab-content" id="custom-tabs-three-tabContent">
+
+              <%= render partial: 'item_list' %>
+
+              <%= render partial: 'items_quantity_and_location' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

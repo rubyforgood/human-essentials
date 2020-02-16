@@ -1,64 +1,89 @@
 <section class="content-header">
-<% content_for :title, "Donation Sites - #{@donation_site.name} - Agencies - #{current_organization.name}" %>
-<h1>
-  Donation Site Information
-  <small>for <%= @donation_site.name %></small>
-</h1>
-<ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
-  </li>
-  <li><%= link_to "Donation Sites", (donation_sites_path) %></li>  
-  <li class="active"><%= @donation_site.name %></li>
-</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Donation Sites - #{@donation_site.name} - Agencies - #{current_organization.name}" %>
+        <h1>
+          Donation Site Information
+          <small>for <%= @donation_site.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Donation Sites", (donation_sites_path) %></li>
+          <li class="breadcrumb-item"><%= @donation_site.name %></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= @donation_site.name %></h3>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th><h3>Donation Site Name</h3></th>
+                <th><h3>Donation Site Address</h3></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td><h4><%= @donation_site.name %></h4></td>
+                <td><h4><%= @donation_site.address %></h4></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
   </div>
-  <div class="box-body">
+</section>
 
-  <p><%= @donation_site.address %></p>
-  
-  <% if @donation_site.donations.present? %>
-  <h4>Past Donations Received at this Location</h3>
-  <div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover striped">
-        <tr>
-	      <th>Storage Location</th>
-	      <th class="numeric">Quantity of Items</th>
-	      <th class="numeric">Variety of Items</th>
-	      <th>Source</th>
-        </tr>
-
-        <% @donation_site.donations.each do |donation| %>  
-            <tr>
-					  <td><%= donation.storage_location&.name %></td>
-  					<td class="numeric"><%= donation.line_items.total %></td>
-  					<td class="numeric"><%= donation.line_items.size %></td>
-  					<td><%= link_to "View donation details", donation %></td>
-          </tr>
-          <% end %>        
-        </table>
-      <!-- /.box-body -->
-
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Storage Location</th>
+                <th>Quantity of Items</th>
+                <th>Variety of Items</th>
+                <th>Source</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @donation_site.donations.each do |donation| %>
+                <tr>
+                  <td><%= donation.storage_location&.name %></td>
+                  <td><%= donation.line_items.total %></td>
+                  <td><%= donation.line_items.size %></td>
+                  <td><%= link_to "View donation details", donation %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
   </div>
-    <!-- /.box -->
-  </div>
-  </div>
-  <% end %>
-
-  </div>
-</div>
-
-
-
+</section>

@@ -252,7 +252,7 @@ end
   { value: "311917152226",   name: "Kids (Size 4)",         quantity: 82 },
 ].each do |item|
   BarcodeItem.find_or_create_by!(value: item[:value]) do |barcode|
-    barcode.item = Item.find_by(name: item[:name])
+    barcode.item = pdx_org.items.find_by(name: item[:name])
     barcode.quantity = item[:quantity]
     barcode.organization = pdx_org
   end

@@ -1,67 +1,91 @@
 <section class="content-header">
-  <% content_for :title, "Storage Locations - Inventory - #{current_organization.name}" %>
-  <h1>
-    Storage Locations
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Partner Agencies</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Storage Locations - Inventory - #{current_organization.name}" %>
+        <h1>
+          Storage Locations
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Storage Locations</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(storage_locations_path, method: :get) do |f| %>
-          <div class="row">
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter by Item Category" %>
-              <%= collection_select(:filters, :containing, @items || {}, :id, :name, { include_blank: true }, class: "form-control") %>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <%= filter_button %>
-              <%= cancel_button_to storage_locations_path, { text: "Clear Filters" } %>
 
-              <div class="pull-right">
-                <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Storage Locations", size: "lg" }) if @storage_locations.empty? %>
-                <%= download_button_to(csv_path(format: :csv, type: "StorageLocation"), { text: "Export Locations", size: "lg"}) if @storage_locations.any? %>
-                <%= new_button_to new_storage_location_path(organization_id: current_organization), { text: "New Storage Location" } %>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Item Filters</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= form_tag(storage_locations_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter by Item Category" %>
+                  <%= collection_select(:filters, :containing, @items || {}, :id, :name, {include_blank: true}, class: "form-control") %>
+                </div>
               </div>
-            </div>
-          </div><!-- /.row -->
-        <% end %>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to storage_locations_path, {text: "Clear Filters"} %>
+                <span class="float-right">
+                <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Storage Locations"}) if @storage_locations.empty? %>
+                  <%= download_button_to(csv_path(format: :csv, type: "StorageLocation"), {text: "Export Locations"}) if @storage_locations.any? %>
+                  <%= new_button_to new_storage_location_path(organization_id: current_organization), {text: "New Storage Location"} %>
+                  </span>
+              </div>
+            <% end # form %>
+          </div>
+        </div>
+
+        <!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th class="numeric">Total Inventory</th>
-                  <th class="numeric">Fair Market Value</th>
-                  <th class="pull-right">Actions</th>
-                </tr>
+              <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Total Inventory</th>
+                <th>Fair Market Value</th>
+                <th class="text-center">Actions</th>
+              </tr>
               </thead>
               <tbody>
-                <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
+              <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <%= render(
           layout: "shared/csv_import_modal",
           locals: {

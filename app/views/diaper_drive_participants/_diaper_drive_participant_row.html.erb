@@ -3,8 +3,8 @@
   <td><%= diaper_drive_participant_row&.contact_name %></td>
   <td><%= diaper_drive_participant_row&.phone %></td>
   <td><%= diaper_drive_participant_row&.email %></td>
-  <td class="numeric"><%= diaper_drive_participant_row&.volume %></td>
-  <td class="text-right">
+  <td><%= diaper_drive_participant_row&.volume %></td>
+  <td class="text-center">
     <%= view_button_to diaper_drive_participant_row %>
     <%= edit_button_to edit_diaper_drive_participant_path(diaper_drive_participant_row) %>
   </td>

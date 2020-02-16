@@ -1,19 +1,29 @@
 <section class="content-header">
-  <% content_for :title, "Admin Dashboard" %>
-  <h1>
-    Admin Dashboard
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Admin</a></li>
-    <li><a href="#">Dashboard</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Admin Dashboard" %>
+        <h1>
+          Dashboard
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Dashboard
+            <% end %>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
 <section class="content">
   <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
-        <span class="info-box-icon bg-aqua"><i class="fa fa-gratipay"></i></span>
+        <span class="info-box-icon bg-blue"><i class="fa fa-gratipay"></i></span>
 
         <div class="info-box-content">
           <span class="info-box-text">Donations</span>
@@ -60,154 +70,178 @@
   <div class="row">
     <div class="col-md-6">
       <!-- USERS LIST -->
-      <div class="box box-success">
-        <div class="box-header with-border">
-          <h3 class="box-title">Recently Added Users</h3>
+      <div class="card">
+        <div class="card-header border-transparent">
+          <h3 class="card-title"><strong>Recently Added Users</strong></h3>
 
-          <div class="box-tools pull-right">
-            <span class="label label-danger"><%= pluralize(@recent_users.count, "New User") %></span>
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+          <div class="card-tools">
+            <span class="badge badge-danger"><%= pluralize(@recent_users.count, "New User") %></span>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
             </button>
-            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
             </button>
           </div>
         </div>
-        <!-- /.box-header -->
-        <div class="box-body no-padding">
+        <!-- /.card-header -->
+        <div class="card-body users-list p-0">
+          <!-- /.table-responsive -->
           <ul class="users-list clearfix">
-            <% @recent_users.each do |user| %>
+
+          <% @recent_users.each do |user| %>
             <li>
               <%= image_tag gravatar_url(user.email, 32) %>
               <%= link_to user.name, admin_user_path(user), class: "users-list-name" %>
               <span class="users-list-date"><%= time_ago_in_words(user.created_at) %></span>
             </li>
-            <% end %>
+          <% end %>
           </ul>
-          <!-- /.users-list -->
+          <br>
+          <div class="text-center">
+          </div>
         </div>
-        <!-- /.box-body -->
-        <div class="box-footer text-center">
-          <%= link_to "View All Users", admin_users_path %>
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+          <%= link_to "View All Users", admin_users_path, class:"btn btn-sm btn-info float-left" %>
+          <a href="#" class="btn btn-sm btn-secondary float-right">View All Orders</a>
         </div>
-        <!-- /.box-footer -->
+        <!-- /.card-footer -->
       </div>
-      <!--/.box -->
+
     </div>
+
     <div class="col-md-6">
       <!-- USERS LIST -->
-      <div class="box box-info">
-        <div class="box-header with-border">
-          <h3 class="box-title">Recently Added Organizations</h3>
+      <div class="card">
+        <div class="card-header border-transparent">
+          <h3 class="card-title"><strong>Recently Added Organizations</strong></h3>
 
-          <div class="box-tools pull-right">
-            <span class="label label-danger"><%= pluralize(@recent_organizations.count, "New Organization") %></span>
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+          <div class="card-tools">
+            <span class="badge badge-danger"><%= pluralize(@recent_organizations.count, "New Organization") %></span>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
             </button>
-            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
             </button>
           </div>
         </div>
-        <!-- /.box-header -->
-        <div class="box-body no-padding">
+        <!-- /.card-header -->
+        <div class="card-body users-list p-0">
+          <!-- /.table-responsive -->
           <ul class="users-list clearfix">
             <% @recent_organizations.each do |org| %>
-            <li>
-              <%#= image_tag(org&.logo)
-              %>
-              <%= link_to org.name, admin_organization_path(org.id), class: "users-list-name" %>
-              <span class="users-list-date"><%= time_ago_in_words(org.created_at) %></span>
-            </li>
+              <li>
+                <%#= image_tag(org&.logo)
+                %>
+                <%= link_to org.name, admin_organization_path(org.id), class: "users-list-name" %>
+                <span class="users-list-date"><%= time_ago_in_words(org.created_at) %></span>
+              </li>
             <% end %>
           </ul>
-          <!-- /.users-list -->
+          <br>
+          <div class="text-center">
+          </div>
         </div>
-        <!-- /.box-body -->
-        <div class="box-footer text-center">
-          <%= link_to "View All Organizations", admin_organizations_path %>
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+          <%= link_to "View All Organizations", admin_organizations_path, class:"btn btn-sm btn-info float-left" %>
+
+          <a href="#" class="btn btn-sm btn-secondary float-right">View All Orders</a>
         </div>
-        <!-- /.box-footer -->
       </div>
-      <!--/.box -->
     </div>
   </div>
-  <div class="col-md-14">
-    <div class="box box-info">
-      <div class="box-header with-border">
-        <h3 class="box-title">Top 10 Uses of Other</h3>
 
-        <div class="box-tools pull-right">
-          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+
+
+  <div class="col-md-14">
+    <div class="card">
+      <div class="card-header border-transparent">
+        <h3 class="card-title"><strong>Top 10 Uses of Other</strong></h3>
+
+        <div class="card-tools">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
           </button>
-          <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          <button type="button" class="btn btn-tool" data-card-widget="remove">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
       </div>
-      <!-- /.box-header -->
-      <div class="box-body">
-        <div class="table-responsive">
-          <table class="table no-margin">
-            <thead>
-            <tr>
-              <th>Name</th>
-              <th>Occurrence</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% @top_10_other.each do |other| %>
+      <!-- /.card-header -->
+      <div class="card-body users-list p-0">
+        <!-- /.table-responsive -->
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Occurrence</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @top_10_other.each do |other| %>
             <tr>
               <td><%= other[0] %></td>
               <td><%= other[1] %></td>
             </tr>
-            <% end %>
-            </tbody>
-          </table>
+          <% end %>
+          </tbody>
+        </table>
+        <div class="text-center">
         </div>
-        <!-- /.table-responsive -->
       </div>
-      <!-- /.box-body -->
-      <div class="box-footer clearfix">
-        <%= link_to "View All Items", admin_base_items_path %>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+        <%= link_to "View All Items", admin_base_items_path, class:"btn btn-sm btn-info float-left" %>
       </div>
-      <!-- /.box-footer -->
     </div>
   </div>
   <div class="col-md-14">
-    <div class="box box-warning">
-      <div class="box-header with-border">
-        <h3 class="box-title">Users Active Within Past Week</h3>
+    <div class="card">
+      <div class="card-header border-transparent">
+        <h3 class="card-title"><strong>Recently Active Users</strong></h3>
 
-        <div class="box-tools pull-right">
-          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+        <div class="card-tools">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
           </button>
-          <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          <button type="button" class="btn btn-tool" data-card-widget="remove">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
       </div>
-      <!-- /.box-header -->
-      <div class="box-body">
-        <div class="table-responsive">
-          <table class="table no-margin">
-            <thead>
-            <tr>
-              <th>User</th>
-              <th>Email</th>
-              <th>Organization</th>
-              <th>Last Active</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% @active_users.each do |user| %>
-              <tr>
-                <td><%= user.name %></td>
-                <td><%= user.email %></td>
-                <td><%= user.organization&.name %></td>
-                <td><%= time_ago_in_words user.last_request_at %></td>
-              </tr>
-            <% end %>
-            </tbody>
-          </table>
-        </div>
+      <!-- /.card-header -->
+      <div class="card-body users-list p-0">
         <!-- /.table-responsive -->
+        <table class="table">
+          <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Organization</th>
+            <th>Last Active</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @active_users.each do |user| %>
+            <tr>
+              <td><%= user.name %></td>
+              <td><%= user.email %></td>
+              <td><%= user.organization&.name %></td>
+              <td><%= time_ago_in_words user.last_request_at %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <div class="text-center">
+        </div>
       </div>
-      <!-- /.box-footer -->
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+        <%= link_to "View All Items", admin_base_items_path, class:"btn btn-sm btn-info float-left" %>
+      </div>
     </div>
   </div>
 </section>
