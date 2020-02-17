@@ -43,8 +43,8 @@ class AdjustmentsController < ApplicationController
         @adjustment.storage_location.increase_inventory increasing_adjustment
         @adjustment.storage_location.decrease_inventory decreasing_adjustment
       end
-
-      redirect_to adjustment_path(@adjustment), notice: "Adjustment was successful."
+      flash[:notice] = "Adjustment was successful."
+      redirect_to adjustment_path(@adjustment)
     else
       flash[:error] = @adjustment.errors.collect { |model, message| "#{model}: " + message }.join("<br />".html_safe)
       load_form_collections

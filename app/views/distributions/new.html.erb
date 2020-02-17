@@ -1,69 +1,84 @@
 <section class="content-header">
-  <% content_for :title, "New - Distributions - #{current_organization.name}" %>
-  <h1>
-    New Distribution
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Distributions", (distributions_path) %></li>
-    <li class="active"> New Distribution</li>
-  </ol>
-</section>
-
-<!-- Main content -->
-<section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-body">
-
-  <%= simple_form_for @distribution, html: { class: "storage-location-required" } do |f| %>
-    <%= f.simple_fields_for :request do |r| %>
-      <%= r.input :id, as: :hidden %>
-    <% end %>
-
-    <%= f.association :partner,
-      collection: current_organization.partners.alphabetized,
-      label: "Partner",
-      error: "Which partner is this distribution going to?" %>
-
-      <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date" %>
-      <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send Email Reminder The Day Before?" %>
-      <%= f.input :agency_rep, label: "Agency representative" %>
-
-    <%= render partial: "storage_locations/source", object: f %>
-
-    <%= f.input :comment, label: "Comment" %>
-
-
-    <fieldset style="margin-bottom: 2rem;" class="form-inline">
-      <legend>Items in this distribution</legend>
-      <%= f.simple_fields_for :line_items do |item| %>
-        <div id="distribution_line_items" data-capture-barcode="true">
-          <%= render 'line_items/line_item_fields', f: item %>
-        </div>
-      <% end %>
-      <div class="row links">
-        <div class="col-xs-12">
-          <%= add_line_item_button f, "#distribution_line_items" %>
-        </div>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - Distributions - #{current_organization.name}" %>
+        <h1>
+          New Distribution
+          <small>for <%= current_organization.name %></small>
+        </h1>
       </div>
-
-    </fieldset>
-      <div class="row">
-        <div class="col-xs-12">
-          <%= submit_button %>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
+          <li class="breadcrumb-item"><a href="#">New Distribution</a></li>
+        </ol>
       </div>
     </div>
-  <% end %>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <!-- Default box -->
+            <div class="box">
+              <%= simple_form_for @distribution, method: :post, 
+                wrapper_mappings: {
+                  datetime: :custom_multi_select
+                } do |f| %>
+                <div class="box-body">
+                  <%= f.simple_fields_for :request do |r| %>
+                    <%= r.input :id, as: :hidden %>
+                  <% end %>
+                  <%= f.association :partner,
+                                    collection: current_organization.partners.alphabetized,
+                                    label: "Partner",
+                                    error: "Which partner is this distribution going to?" %>
+
+                  <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date" %>
+                  <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
+                  <%= f.input :agency_rep, label: "Agency representative" %>
+
+                  <%= render partial: "storage_locations/source", object: f %>
+
+                  <%= f.input :comment, label: "Comment" %>
+
+                  <fieldset style="margin-bottom: 2rem;" class="form-inline">
+                    <legend>Items in this distribution</legend>
+                    <%= f.simple_fields_for :line_items do |item| %>
+                      <div id="distribution_line_items" data-capture-barcode="true">
+                        <%= render 'line_items/line_item_fields', f: item %>
+                      </div>
+                    <% end %>
+                    <div class="row links">
+                      <div class="col-xs-12 p-3">
+                        <%= add_line_item_button f, "#distribution_line_items" %>
+                      </div>
+                    </div>
+
+                  </fieldset>
+                  </div>
+                  <div class="card-footer">
+                    <%= submit_button %>
+                  </div>
+                </div>
+              <% end %>
+          </div><!-- /.box -->
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-<!-- /.box -->
-
-<%= render partial: "barcode_items/barcode_modal" %>
-
+  <%= render partial: "barcode_items/barcode_modal" %>
 </section>

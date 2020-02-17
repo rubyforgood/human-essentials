@@ -1,67 +1,88 @@
 <section class="content-header">
-  <% content_for :title, "Admin - Barcode Items" %>
-  <h1>
-    Barcode Items - Global
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-lock"></i> Admin
-    <% end %>
-    </li>
-    <li><a href="#">Barcode Items</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Admin - Barcode Items" %>
+        <h1>
+          Barcode Items - Global
+
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Barcode Items</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
+
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
-          <div class="row">
-            <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter By Base Item Category" %>
-              <%= collection_select(:filters, :barcodeable_id, @base_items.order('name'), :id, :name, { include_blank: true }, class: "form-control") %>
-            </div>
-          </div><!-- /.row -->
-          <div class="row">
-            <div class="col-xs-12">
-              <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
-                <i class="fa fa-filter"></i> Filter
-              <% end %>
-              <%= link_to admin_barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
-                <i class="fa fa-ban"></i> Clear Filters
-              <% end %>
-              <div class="btn-group pull-right">
-                <%= modal_button_to("#newBarcode", { text: "Add New Barcode", icon: "check-circle", size: "lg", type: "success" }) %>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Barcode Filters</h3>
+          </div>
+          <div class="card-body">
+            <%= form_tag(admin_barcode_items_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter By Item Category" %>
+                  <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "form-control") %>
+                </div>
               </div>
-            </div>
-          </div><!-- /.row -->
-        <% end #form %>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table id="tbl_barcode_items" class="table table-hover striped">
+              <div class="card-footer">
+                <%= button_tag type: "submit", class: "btn btn-primary btn-md" do %>
+                  <i class="fa fa-filter"></i> Filter
+                <% end %>
+                <%= link_to admin_barcode_items_path, class: "btn btn-outline-primary btn-md" do %>
+                  <i class="fa fa-ban"></i> Clear Filters
+                <% end %>
+                <span class="float-right">
+                    <%= modal_button_to("#newBarcode", {text: "Add New Barcode", icon: "check-circle", size: "md", type: "success"}) %>
+                  </span>
+              </div>
+            <% end # form %>
+          </div>
+        </div>
+
+        <!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
-                <tr>
-                  <th>Item Type</th>
-                  <th class="numeric">Quantity in the Box</th>
-                  <th class="numeric">Barcode</th>
-                  <th class="pull-right">Actions</th>
-                </tr>
+              <tr>
+                <th>Item Type</th>
+                <th>Quantity in the Box</th>
+                <th>Barcode</th>
+                <th class="text-right">Actions</th>
+              </tr>
               </thead>
               <tbody>
-                <%= render partial: "barcode_item_row", collection: @barcode_items %>
+              <%= render partial: "barcode_item_row", collection: @barcode_items %>
               </tbody>
             </table>
-          </div><!-- /.box-body -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<%= render partial: "admin/barcode_items/barcode_modal", locals: { remote: false, url: admin_barcode_items_path } %>
+<%= render partial: "admin/barcode_items/barcode_modal", locals: {remote: false, url: admin_barcode_items_path} %>

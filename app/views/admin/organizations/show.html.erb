@@ -1,53 +1,88 @@
 <section class="content-header">
-	<% content_for :title, "Organizations - #{@organization.name}" %>
-<h1>
-  Organization info
-  <small>for <%= @organization.name %></small>
-</h1>
-<ol class="breadcrumb">
-  <li>
-    <%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-  </li>
-  <li class="active"><%= @organization.name %></li>
-</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Organizations - #{@organization.name}" %>
+        <h1>
+          Organization info
+          <small>for <%= @organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= @organization.name %></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
-<section class="content">
 
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= @organization.name %></h3>
-    <div class="box-tools pull-right">
-      Created <%=  @organization.created_at.strftime("%F") %>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h5 class="card-title"><%= @organization.name %></h5>
+          </div>
+
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div>
+                  <h4>Contact Info</h4>
+                  <p><%= fa_icon "envelope" %> <%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
+                  <address><%= fa_icon "map-marker" %> <%= @organization.address %></address>
+                </div>
+                <div>
+                  <h4>Reminder day</h4>
+                  <p><%= fa_icon "calendar" %>
+                    <%= @organization.reminder_day.blank? ? 'Not defined' : "The #{@organization.reminder_day.ordinalize} of each month" %>
+                  </p>
+                  <h4>Deadline day</h4>
+                  <p><%= fa_icon "calendar" %>
+                    <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} of each month" %>
+                  </p>
+                </div>
+              </div>
+              <!-- /.col -->
+              <div class="col-md-8">
+                <table class="table border">
+                  <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Last Sign in</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <%= render partial: "/users/organization_user", collection: @organization.users.alphabetized, as: :user %>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-4">
+                <h4>Default email text:</h4>
+                <%= @organization.default_email_text %>
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- ./card-body -->
+          <!-- /.card-footer -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
     </div>
   </div>
-  <div class="box-body">
-    <div class="col-md-4">
-      <h4>Contact Info</h4>
-      <p><%= fa_icon "envelope" %> <%= link_to @organization.email, "mailto:#{@organization.email}" %></p>
-      <address><%= fa_icon "map-marker" %> <%= @organization.address %></address>
-    </div>
-    <div class="col-md-8">
-      <h4>Users</h4>
-      <table class="table table-hover striped">
-        <thead>
-          <tr>
-            <th>Name</th><th>Email</th><th>Role</th><th>Last Sign in</th><th>Status</th><th></th><th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render partial: "/users/organization_user", collection: @organization.users.alphabetized, as: :user %>
-        </tbody>
-      </table>
-    </div>
-    <div class="col-md-4">
-      <h4>Default email text</h4>
-      <%= @organization.default_email_text %>
-    </div>
-  </div>
-</div>
 </section>

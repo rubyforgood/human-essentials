@@ -1,122 +1,119 @@
-<!-- Left side column. contains the sidebar -->
-<aside class="main-sidebar">
-  <!-- sidebar: style can be found in sidebar.less -->
-  <section class="sidebar">
-    <!-- sidebar menu: : style can be found in sidebar.less -->
-    <ul class="sidebar-menu" data-widget="tree">
-      <li class="header all-caps">Main Navigation</li>
-      <li class="<%= active_class(['dashboard']) %>">
-        <%= link_to(admin_dashboard_path) do %>
-          <i class="fa fa-dashboard"></i> <span>Admin Dashboard</span>
+<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+  <li class="nav-item">
+    <%= link_to(admin_dashboard_path, class: "nav-link #{active_class(['dashboard'])}") do %>
+      <i class="nav-icon fas fa-tachometer-alt"></i> <span>Admin Dashboard</span>
+    <% end %>
+  </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['barcode_items']) %>">
+    <a href="#" class="nav-link <%= active_class(['barcode_items']) %>">
+      <i class="nav-icon fa fa-barcode"></i>
+      <p>Barcode Items
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(admin_barcode_items_path) %>">
+        <%= link_to(admin_barcode_items_path, class: "nav-link #{"active" if current_page?(admin_barcode_items_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> All Barcodes
         <% end %>
       </li>
-      <li class="<%= active_class(['barcode_items']) %> treeview">
-        <a href="#">
-          <i class="fa fa-barcode"></i>
-          <span>Barcode Items</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(admin_barcode_items_path) %>">
-            <%= link_to(admin_barcode_items_path) do %>
-              <i class="fa fa-circle-o"></i> All Barcodes
-            <% end %>
-          </li>
-          <li class="<%= 'active' if current_page?(new_admin_barcode_item_path) %>">
-            <%= link_to(new_admin_barcode_item_path) do %>
-              <i class="fa fa-plus-circle"></i> New Barcoded Item
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= active_class(['base_items']) %> treeview">
-        <a href="#">
-          <i class="fa fa-people-sitemap"></i>
-          <span>Base Items</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(admin_base_items_path) %>">
-            <%= link_to(admin_base_items_path) do %>
-              <i class="fa fa-circle-o"></i> All Base Items
-            <% end %>
-          </li>
-          <li class="<%= 'active' if current_page?(new_admin_base_item_path) %>">
-            <%= link_to(new_admin_base_item_path) do %>
-              <i class="fa fa-plus-circle"></i> New Base Item
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li>
-      <li class="<%= active_class(['organizations']) %> treeview">
-        <a href="#">
-          <i class="fa fa-people-carry"></i>
-          <span>Organizations</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(admin_organizations_path) %>">
-            <%= link_to(admin_organizations_path) do %>
-              <i class="fa fa-circle-o"></i> <span>Organizations</span>
-            <% end %>
-          </li>
-          <li class="<%= 'active' if current_page?(new_admin_organization_path) %>">
-            <%= link_to(new_admin_organization_path) do %>
-              <i class="fa fa-plus-circle"></i> <span>Add New Organization</span>
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= active_class(['partners']) %> treeview">
-        <a href="#">
-          <i class="fa fa-people-carry"></i>
-          <span>Partners</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(admin_partners_path) %>">
-            <%= link_to(admin_partners_path) do %>
-              <i class="fa fa-circle-o"></i> <span>All Partners</span>
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= active_class(['users']) %> treeview">
-        <a href="#">
-          <i class="fa fa-users"></i>
-          <span>Users</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(admin_users_path) %>">
-            <%= link_to(admin_users_path) do %>
-              <i class="fa fa-circle-o"></i> All Users
-            <% end %>
-          </li>
-          <li class="<%= 'active' if current_page?(new_admin_user_path) %>">
-            <%= link_to(new_admin_user_path) do %>
-              <i class="fa fa-plus-circle"></i> New User
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= active_class(['feedback_messages']) %>">
-        <%= link_to(admin_feedback_messages_path) do %>
-          <i class="fa fa-sticky-note"></i> User Feedback
+      <li class="nav-item <%= 'active' if current_page?(new_admin_barcode_item_path) %>">
+        <%= link_to(new_admin_barcode_item_path, class: "nav-link #{"active" if current_page?(new_admin_barcode_item_path)}") do %>
+          <i class="nav-icon fa fa-plus-circle"></i> New Barcode Item
         <% end %>
       </li>
     </ul>
-  </section>
-  <!-- /.sidebar -->
-</aside>
+  </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['base_items']) %>">
+    <a href="#" class="nav-link <%= active_class(['base_items']) %>">
+      <i class="nav-icon fas fa-box"></i>
+      <p>Base Items
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(admin_base_items_path) %>">
+        <%= link_to(admin_base_items_path, class: "nav-link #{"active" if current_page?(admin_base_items_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> All Base Items
+        <% end %>
+      </li>
+      <li class="nav-item <%= 'active' if current_page?(new_admin_base_item_path) %>">
+        <%= link_to(new_admin_base_item_path, class: "nav-link #{"active" if current_page?(new_admin_base_item_path)}") do %>
+          <i class="nav-icon fa fa-plus-circle"></i> New Base Item
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['organizations']) %>">
+    <a href="#" class="nav-link <%= active_class(['organizations']) %>">
+      <i class="nav-icon fas fa-sitemap"></i>
+      <p>Organizations
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(admin_organizations_path) %>">
+        <%= link_to(admin_organizations_path, class: "nav-link #{"active" if current_page?(admin_organizations_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> All Organizations
+        <% end %>
+      </li>
+      <li class="nav-item <%= 'active' if current_page?(new_admin_organization_path) %>">
+        <%= link_to(new_admin_organization_path, class: "nav-link #{"active" if current_page?(new_admin_organization_path)}") do %>
+          <i class="nav-icon fa fa-plus-circle"></i> New Organization
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['partners']) %>">
+    <a href="#" class="nav-link <%= active_class(['partners']) %>">
+      <i class="nav-icon fas fa-people-carry"></i>
+      <p>Partners
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(admin_partners_path) %>">
+        <%= link_to(admin_partners_path, class: "nav-link #{"active" if current_page?(admin_partners_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> All Partners
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['users']) %>">
+    <a href="#" class="nav-link <%= active_class(['purchases']) %>">
+      <i class="nav-icon fas fa-users"></i>
+      <p>Users
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(admin_users_path) %>">
+        <%= link_to(admin_users_path, class: "nav-link #{"active" if current_page?(admin_users_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> All Users
+        <% end %>
+      </li>
+      <li class="nav-item <%= 'active' if current_page?(new_admin_user_path) %>">
+        <%= link_to(new_admin_user_path, class: "nav-link #{"active" if current_page?(new_admin_user_path)}") do %>
+          <i class="nav-icon fa fa-plus-circle"></i> New User
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="nav-item <%= active_class(['feedback_messages']) %>">
+    <%= link_to(admin_feedback_messages_path, class: "nav-link #{"active" if current_page?(admin_feedback_messages_path)}") do %>
+      <i class="nav-icon fa fa-sticky-note"></i> User Feedback
+    <% end %>
+  </li>
+
+
+  <% if (current_user.organization.present?) %>
+    <li class="nav-item">
+      <%= link_to(dashboard_path(organization_id: current_user.organization), class: "nav-link") do %>
+        <i class="nav-icon fas fa-home"></i> <span>My Organization</span>
+      <% end %>
+    </li>
+  <% end %>
+
+</ul>

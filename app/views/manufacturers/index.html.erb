@@ -1,60 +1,82 @@
+<!-- Content Header (Page header) -->
 <section class="content-header">
-  <% content_for :title, "Manufacturers - Agencies - #{current_organization.name}" %>
-  <h1>
-    Manufacturers
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Manufacturers</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Manufacturers - Agencies - #{current_organization.name}" %>
+        <h1>
+          Manufacturers
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Manufacturers</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <div class="pull-right">
-          <%= new_button_to new_manufacturer_path(organization_id: current_organization), text: "New Manufacturer" %>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-footer">
+            <div class="pull-right">
+              <%= new_button_to new_manufacturer_path(organization_id: current_organization), text: "New Manufacturer" %>
+            </div>
+          </div>
         </div>
-      </section>
+        <!-- /.card -->
+      </div>
+      <!--/.col (left) -->
+
     </div>
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
-                <tr>
-                  <th>Name</th>
-                  <th class="numeric">Total Diapers</th>
-                  <th class="pull-right">Actions</th>
-                </tr>
+              <tr>
+                <th>Name</th>
+                <th>Total Diapers</th>
+                <th class="text-center">Actions</th>
+              </tr>
               </thead>
               <tbody>
-                <%= render partial: "manufacturer_row", collection: @manufacturers %>
+              <%= render partial: "manufacturer_row", collection: @manufacturers %>
               </tbody>
             </table>
-          </div><!-- /.box-body -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
-
-<%= render(
-  layout: "shared/csv_import_modal",
-  locals: {
-    title: "Import Manufacturers",
-    csv_template_url: "/manufacturers.csv",
-    csv_import_url: import_csv_manufacturers_path
-  }
-) do %>
-  <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-  <li>Delete the sample data and enter the Manufacturer names, emails and phone numbers in the appropriate columns.</li>
-  <li>Save the file as a csv file.</li>
-<% end %>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+  <%= render(
+          layout: "shared/csv_import_modal",
+          locals: {
+              title: "Import Manufacturers",
+              csv_template_url: "/manufacturers.csv",
+              csv_import_url: import_csv_manufacturers_path
+          }
+      ) do %>
+    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter the Manufacturer names, emails and phone numbers in the appropriate columns.</li>
+    <li>Save the file as a csv file.</li>
+  <% end %>
+</section>

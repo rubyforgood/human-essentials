@@ -1,8 +1,7 @@
 <%
-   remote ||= true
-   url ||= barcode_items_path
+  remote ||= true
+  url ||= barcode_items_path
 %>
-
 <div id="newBarcode" class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -11,27 +10,27 @@
         <h2 class="modal-title">Add New Barcode</h2>
       </div>
       <div class="modal-body">
-      <%= simple_form_for BarcodeItem.new, url: url, html: { role: "form" }, remote: remote do |f| %>
-        <div class="box-body ">
-          <div class="row">
-            <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
-              <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
-              <%= f.input_field :quantity, class: "form-control", autofocus: true %>
+        <%= simple_form_for BarcodeItem.new, url: url, html: {role: "form"}, remote: remote do |f| %>
+          <div class="box-body ">
+            <div class="row">
+              <%= f.input :quantity, label: "Quantity" do %>
+                <span class="input-group-text"><i class="fa fa-sort-numeric-desc"></i></span>
+                <%= f.input_field :quantity, class: "form-control" %>
               <% end %>
-          </div><!-- /.row -->
-          <div class="row">
-            <%= f.association :barcodeable, collection: @items, label: "Item" %>
-          </div>
-          <div class="row">
-            <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
-              <%= f.input_field :value, class: "form-control" %>
-              <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner input-group-addon"> </div>
-            <% end %>
-          </div><!-- /.row -->
-          <%= submit_button %>
-        </div><!-- /.box-body -->
+            </div><!-- /.row -->
+            <div class="row">
+              <%= f.association :barcodeable, collection: @items, label: "Item" %>
+            </div>
+            <div class="row">
+              <%= f.input :value, label: "Barcode" do %>
+                <%= f.input_field :value, class: "form-control" %>
+                <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner input-group-text"></div>
+              <% end %>
+            </div><!-- /.row -->
+            <%= submit_button %>
+          </div><!-- /.box-body -->
         <% end #form %>
-        <input type="hidden" value="" id="trigger-field-id" />
+        <input type="hidden" value="" id="trigger-field-id"/>
       </div>
     </div>
   </div>

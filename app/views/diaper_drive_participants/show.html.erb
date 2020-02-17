@@ -1,68 +1,93 @@
 <section class="content-header">
-  <% content_for :title, "Diaper Drive Participants - #{@diaper_drive_participant.contact_name} - Agencies - #{current_organization.name}" %>
-  <h1>
-    Diaper Drive Participant Information
-    <small>for <%= @diaper_drive_participant.contact_name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Diaper Drive Participants", (diaper_drive_participants_path) %></li>
-    <li class="active"> <%= @diaper_drive_participant.contact_name %></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Diaper Drive Participants - #{@diaper_drive_participant.contact_name} - Agencies - #{current_organization.name}" %>
+        <h1>
+          Diaper Drive Participant Information
+          <small>for <%= @diaper_drive_participant.contact_name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Diaper Drive Participants", (diaper_drive_participants_path) %></li>
+          <li class="breadcrumb-item"><%= @diaper_drive_participant.contact_name %></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= @diaper_drive_participant.contact_name %></h3>
-  </div>
-  <div class="box-body">
-
-    <p>Business name: <%= @diaper_drive_participant.business_name %></p>
-    <p>Contact Name: <%= @diaper_drive_participant.contact_name %></p>
-
-  <% if @diaper_drive_participant.phone.present? %>
-    <p>Phone: <%= @diaper_drive_participant.phone %></p>
-  <% end %>
-  <% if @diaper_drive_participant.email.present? %>
-    <p>Email: <%= link_to @diaper_drive_participant.email, "mailto:#{@diaper_drive_participant.email}" %></p>
-  <% end %>
-    <p>Address: <%= @diaper_drive_participant.address %></p>
-  <% if @diaper_drive_participant.present? %>
-
-  <h4>Past Diaper Drives with this Partner</h4>
-  <div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover striped">
-        <tr>
-          <th class="date">Date</th>
-          <th class="numeric">Volume</th>
-          <th>Details</th>
-        </tr>
-
-        <% @diaper_drive_participant.donations.each do |donation| %>
-            <tr>
-              <td class="date"><%= donation.created_at.strftime("%m/%d/%Y") %></td>
-              <td class="numeric"><%= donation.line_items.total %></td>
-              <td><%= view_button_to donation, { text: "View donation details" } %></td>
-          </tr>
-          <% end %>
-        </table>
-      <!-- /.box-body -->
-
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Business Name</th>
+                <th>Contact Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td><%= @diaper_drive_participant.business_name %></td>
+                <td><%= @diaper_drive_participant.contact_name %></td>
+                <td><%= @diaper_drive_participant.phone %></td>
+                <td><%= @diaper_drive_participant.email %></td>
+                <td><%= @diaper_drive_participant.address %></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
       </div>
-    <!-- /.box -->
     </div>
   </div>
-  <% end %>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Date</th>
+                <th>Volume</th>
+                <th>Details</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @diaper_drive_participant.donations.each do |donation| %>
+                <tr>
+                  <td><%= donation.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= donation.line_items.total %></td>
+                  <td><%= view_button_to donation, { text: "View donation details" } %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
   </div>
-</div>
 </section>

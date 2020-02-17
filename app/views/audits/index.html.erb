@@ -1,76 +1,102 @@
+<!-- Content Header (Page header) -->
 <section class="content-header">
-  <% content_for :title, "Audits - Inventory - #{current_organization.name}" %>
-  <h1>
-    Inventory Audits
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><a href="#">Audits</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Audits - Inventory - #{current_organization.name}" %>
+        <h1>
+          Inventory Audits
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Audits</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
-
 <!-- Main content -->
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(audits_path, method: :get) do |f| %>
-          <div class="row">
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Filter by Storage Location" %>
-              <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, { include_blank: true, selected: @selected_location }, class: "form-control") %>
-            </div>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Audit Filters</h3>
           </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <%= filter_button %>
-              <%= cancel_button_to audits_path, size: "md", text: "Clear Filters" %>
-
-              <div class="btn-group pull-right">
-                <p>
-                  <%= new_button_to new_audit_path(organization_id: current_organization), { text: "New Audit"} %>
-                </p>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= form_tag(audits_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Filter by Storage Location" %>
+                  <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_location}, class: "form-control") %>
+                </div>
               </div>
+              </div>
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to audits_path, size: "md", text: "Clear Filters" %>
+
+                <div class="btn-group pull-right">
+                  <%= new_button_to new_audit_path(organization_id: current_organization), {text: "New Audit"} %>
+                </div>
+            <% end # form %>
             </div>
-          </div><!-- /.row -->
-        <% end %>
-      </section>
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+            </div>
+        <!-- /.card -->
+      </div>
+      <!--/.col (left) -->
+      <!-- right column -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
               <tr>
-                <th class="date">Created</th>
+                <th>Created</th>
                 <th>Organization</th>
                 <th>Storage location</th>
                 <th>Summary</th>
                 <th>Status</th>
-                <th class="pull-right">Actions</th>
+                <th class="text-center">Actions</th>
               </tr>
               </thead>
               <tbody>
               <% @audits.each do |audit| %>
                 <tr class="<%= (audit.finalized?) ? 'positive' : (audit.in_progress?) ? 'negative' : 'highlight' %>">
-                  <td class="date"><time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y") %></time></td>
+                  <td>
+                    <time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y") %></time>
+                  </td>
                   <td><%= audit.organization.name %></td>
                   <td><%= audit.storage_location.name %></td>
                   <td><%= pluralize(audit.line_items.count, 'item') %></td>
                   <td><%= audit.status.titleize %></td>
-                  <td class="text-right"><%= view_button_to audit %></td>
+                  <td class="text-center"><%= view_button_to audit %></td>
                 </tr>
               <% end %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,44 +1,44 @@
-// admin shared styles
-
-#logo img {
-max-height: 100%;
-max-width: 100%;
-}
-
-.header-action {
-  float: right;
-  padding-top: 15px;
-}
-
-/** HAX **/
-.row div.primary {
-  margin-top: 16px;
-}
-
-img#logo {
-  max-height: 40px;
-}
-
-#toast-container{
-  top: 70px;
-}
-
-.nav li.active {
-  background-color: $diaper-color-blue-94;
-}
-
-tr.negative {
-  background-color: $diaper-color-red-93;
-}
-tr.positive {
-  background-color: $diaper-color-green-93;
-}
-tr.highlight {
-  background-color: $diaper-color-blue-95;
-}
-
-.fc-dist-complete {
-  background-color: $diaper-color-green-32;
-  border-color: $diaper-color-green-32;
-  text-decoration: line-through;
-}
+//// admin shared styles
+//
+//#logo img {
+//max-height: 100%;
+//max-width: 100%;
+//}
+//
+//.header-action {
+//  float: right;
+//  padding-top: 15px;
+//}
+//
+///** HAX **/
+//.row div.primary {
+//  margin-top: 16px;
+//}
+//
+//img#logo {
+//  max-height: 40px;
+//}
+//
+//#toast-container{
+//  top: 70px;
+//}
+//
+//.nav li.active {
+//  background-color: $diaper-color-blue-94;
+//}
+//
+//tr.negative {
+//  background-color: $diaper-color-red-93;
+//}
+//tr.positive {
+//  background-color: $diaper-color-green-93;
+//}
+//tr.highlight {
+//  background-color: $diaper-color-blue-95;
+//}
+//
+//.fc-dist-complete {
+//  background-color: $diaper-color-green-32;
+//  border-color: $diaper-color-green-32;
+//  text-decoration: line-through;
+//}

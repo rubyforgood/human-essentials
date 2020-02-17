@@ -1,74 +1,88 @@
 <section class="content-header">
-  <% content_for :title, "Transfers - Inventory - #{current_organization.name}" %>
-  <h1>
-    Inventory Transfers
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Transfers</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Transfers - Inventory - #{current_organization.name}" %>
+        <h1>
+          Inventory Transfers
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Transfers</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(transfers_path, method: :get) do |f| %>
-          <div class="row">
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "From this Storage Location" %>
-              <%= collection_select(:filters, :from_location, @from_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_from) }, class: "form-control") %>
-            </div>
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "To this Storage Location" %>
-              <%= collection_select(:filters, :to_location, @to_storage_locations || {}, :id, :name, { include_blank: true, selected: (@selected_to) }, class: "form-control") %>
-            </div>
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Date Range" %>
-              <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
-            </div>
-          </div><!-- /.row -->
-          <div class="row">
-            <div class="col-xs-12">
-              <%= filter_button %>
-              <%= cancel_button_to transfers_path, { text: "Clear Filters" } %>
-
-              <div class="pull-right">
-                <%= download_button_to(csv_path(format: :csv, type: "Transfer"), { text: "Export Transfers", size: "lg" }) if @transfers.any? %>
-                <%= new_button_to new_transfer_path(organization_id: current_organization), { text: "New Transfer" } %>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Barcode Filters</h3>
+          </div>
+          <div class="card-body">
+            <%= form_tag(transfers_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "From this Storage Location" %>
+                  <%= collection_select(:filters, :from_location, @from_storage_locations || {}, :id, :name, {include_blank: true, selected: (@selected_from)}, class: "form-control") %>
+                </div>
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "To this Storage Location" %>
+                  <%= collection_select(:filters, :to_location, @to_storage_locations || {}, :id, :name, {include_blank: true, selected: (@selected_to)}, class: "form-control") %>
+                </div>
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                </div>
+              </div><!-- /.row -->
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to transfers_path, {text: "Clear Filters"} %>
+                <span class="float-right">
+                <%= download_button_to(csv_path(format: :csv, type: "Transfer"), {text: "Export Transfers"}) if @transfers.any? %>
+                  <%= new_button_to new_transfer_path(organization_id: current_organization), {text: "New Transfer"} %>
+                  </span>
               </div>
-            </div>
-          </div><!-- /.row -->
-        <% end %>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped records">
+            <% end # form %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
-                <tr>
-                  <th>From</th>
-                  <th>To</th>
-                  <th>Date</th>
-                  <th>Comment</th>
-                  <th class="numeric">Total Moved</th>
-                  <th>&nbsp;</th>
-                </tr>
+              <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Date</th>
+                <th>Comment</th>
+                <th>Total Moved</th>
+                <th>&nbsp;</th>
+              </tr>
               </thead>
               <tbody>
-                <%= render partial: "transfer_row", collection: @transfers %>
+              <%= render partial: "transfer_row", collection: @transfers %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

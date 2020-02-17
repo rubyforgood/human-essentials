@@ -1,25 +1,17 @@
-<div id="sectionA" class="tab-pane fade in active">
+<div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Base Item</th>
+      <th>Fair Market Value (per item)</th>
+      <th class="text-center">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <%= render partial: "item_row", collection: @items, as: :item_row %>
+    </tbody>
+  </table>
+</div><!-- /.box-body.table-responsive -->
 
-  <div class="row">
-    <div class="col-xs-12">
-
-      <div class="box-body table-responsive no-padding">
-        <table id="tbl_items" class="table table-hover striped">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Base Item</th>
-              <th class="numeric">Fair Market Value (per item)</th>
-              <th class="pull-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= render partial: "item_row", collection: @paginated_items, as: :item_row %>
-          </tbody>
-        </table>
-      </div><!-- /.box-body.table-responsive -->
-    </div><!-- /.col-xs-12 -->
-  </div><!-- /.row -->
-  <%= paginate @paginated_items %>
-</div><!-- /#sectionA -->
 
