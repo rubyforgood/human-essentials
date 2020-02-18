@@ -26,6 +26,11 @@ class ItemsController < ApplicationController
       redirect_to items_path, notice: "#{result.item.name} added!"
     else
       @base_items = BaseItem.alphabetized
+      # Define a @item to be used in the `new` action to be rendered with
+      # the provided parameters. This is required to render the page again
+      # with the error + the invalid parameters
+      @item = current_organization.items.new(item_params)
+
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
@@ -94,9 +99,14 @@ class ItemsController < ApplicationController
   end
 
   def item_params
+    # Memoize the value of this to prevent trying to
+    # clean the values again which would result in an
+    # error.
+    return @item_params if @item_params
+
     clean_item_value_in_cents
     clean_item_value_in_dollars
-    params.require(:item).permit(
+    @item_params = params.require(:item).permit(
       :name,
       :partner_key,
       :value_in_cents,

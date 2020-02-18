@@ -2,14 +2,13 @@ require 'spec_helper'
 require_relative '../support/env_helper'
 
 RSpec.describe ItemCreateService, type: :service do
-
   describe '#call' do
     subject { described_class.new(organization_id: organization_id, item_params: item_params).call }
     let(:organization_id) { organization.id }
     let(:item_params) { { fake: 'param' } }
     let(:organization) { create(:organization) }
     let(:fake_organization_items) { instance_double('organization.items') }
-    let(:fake_organization_item) { instance_double(Item, id: 99999, save!: ->{}) }
+    let(:fake_organization_item) { instance_double(Item, id: 99_999, save!: -> {}) }
     let(:fake_organization_storage_locations) do
       [
         instance_double(StorageLocation, id: 'fake-id-1'),
@@ -48,11 +47,11 @@ RSpec.describe ItemCreateService, type: :service do
         # Assert that the service object calls the expected method.
         expect(fake_organization_item).to have_received(:save!)
         fake_organization_storage_locations.each do |sl|
-          expect(InventoryItem).to have_received(:create!).with({
+          expect(InventoryItem).to have_received(:create!).with(
             storage_location_id: sl.id,
             item_id: fake_organization_item.id,
             quantity: 0
-          })
+          )
         end
       end
     end
@@ -88,11 +87,11 @@ RSpec.describe ItemCreateService, type: :service do
         let(:fake_error) { StandardError.new('random-error') }
 
         before do
-          allow(InventoryItem).to receive(:create!).with({
+          allow(InventoryItem).to receive(:create!).with(
             storage_location_id: fake_organization_storage_locations.first.id,
             item_id: fake_organization_item.id,
             quantity: 0
-          }).and_raise(fake_error)
+          ).and_raise(fake_error)
         end
 
         it 'should return a OpenStruct with the raised error' do
@@ -100,7 +99,6 @@ RSpec.describe ItemCreateService, type: :service do
           expect(subject.success?).to eq(false)
           expect(subject.error).to eq(fake_error)
         end
-
       end
     end
   end
