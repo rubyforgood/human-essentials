@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe UsersController, type: :controller do
+RSpec.describe "Users", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -11,14 +11,14 @@ RSpec.describe UsersController, type: :controller do
 
   describe "GET #index" do
     it "returns http success" do
-      get :index, params: default_params
+      get users_path(default_params)
       expect(response).to be_successful
     end
   end
 
   describe "GET #new" do
     it "returns http success" do
-      get :new, params: default_params
+      get new_user_path(default_params)
       expect(response).to be_successful
     end
   end
