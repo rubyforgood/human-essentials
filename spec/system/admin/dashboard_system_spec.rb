@@ -9,8 +9,13 @@ RSpec.describe "Dashboard", type: :system, js: true do
       visit subject
     end
 
-    it "displays a link to return to their organization" do
-      expect(page).to have_link("My Organization")
+    it "displays a link to return to their organization dashboard on both the side and top nav" do
+      within "section.sidebar" do
+        expect(page).to have_xpath("//li/a[@href='#{dashboard_path(@organization.short_name)}']")
+      end
+      within "nav.navbar" do
+        expect(page).to have_xpath("//li/a[@href='#{dashboard_path(@organization.short_name)}']")
+      end
     end
   end
 
@@ -22,8 +27,13 @@ RSpec.describe "Dashboard", type: :system, js: true do
       visit subject
     end
 
-    it "DOES NOT have a link to the organization" do
-      expect(page).not_to have_link("My Organization")
+    it "DOES NOT have a link to the organization dashboard in the side and top navs" do
+      within "section.sidebar" do
+        expect(page).not_to have_xpath("//li/a[@href='#{dashboard_path(@organization.short_name)}']")
+      end
+      within "nav.navbar" do
+        expect(page).not_to have_xpath("//li/a[@href='#{dashboard_path(@organization.short_name)}']")
+      end
     end
   end
 end

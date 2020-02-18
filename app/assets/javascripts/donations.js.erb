@@ -49,7 +49,7 @@ $(document).on("change", diaper_drive_id, function(evt) {
       .filter(":selected")
       .text();
     if (selection === create_new_diaper_drive_text) {
-      document.getElementById("new_diaper_drive").click()
+      $("#new_diaper_drive").click();
     }
   });
 
@@ -59,7 +59,7 @@ $(document).on("change", diaper_drive_id, function(evt) {
       .text();
 
     if (selection === create_new_diaper_drive_participant_text) {
-      document.getElementById("new_participant").click()
+      $("#new_participant").click();
     }
   });
 
@@ -69,7 +69,7 @@ $(document).on("change", diaper_drive_id, function(evt) {
       .text();
 
     if (selection === create_new_manufacturer_text) {
-      document.getElementById("new_manufacturer").click()
+      $("#new_manufacturer").click();
     }
   });
 

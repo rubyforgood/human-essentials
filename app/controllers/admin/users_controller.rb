@@ -9,8 +9,7 @@ class Admin::UsersController < AdminController
   def update
     @user = User.find_by(id: params[:id])
     if @user.update(user_params)
-      flash[:notice] = "#{@user.name} updated!"
-      redirect_to admin_users_path
+      redirect_to admin_users_path, notice: "#{@user.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -30,8 +29,7 @@ class Admin::UsersController < AdminController
 
     if @user.save
       @user.invite!(@user)
-      flash[:notice] = "Created a new user!"
-      redirect_to admin_users_path
+      redirect_to admin_users_path, notice: "Created a new user!"
     else
       flash[:error] = "Failed to create user"
       render "admin/users/new"
