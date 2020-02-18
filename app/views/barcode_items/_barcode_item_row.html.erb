@@ -1,7 +1,7 @@
 <tr>
   <td><%= barcode_item_row.barcodeable.name %></td>
-  <td><%= barcode_item_row.quantity %></td>
-  <td><%= barcode_item_row.value %></td>
+  <td class=numeric><%= barcode_item_row.quantity %></td>
+  <td class=numeric><%= barcode_item_row.value %></td>
   <td class="text-right">
       <%= view_button_to barcode_item_path(barcode_item_row) %>
   		<%= edit_button_to edit_barcode_item_path(barcode_item_row) %>
