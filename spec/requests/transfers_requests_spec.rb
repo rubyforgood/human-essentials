@@ -1,4 +1,8 @@
-RSpec.describe TransfersController, type: :controller do
+RSpec.describe "Transfers", type: :request do
+  let(:valid_params) do
+    { organization_id: @organization.short_name }
+  end
+
   context "While signed in" do
     before do
       sign_in(@user)
@@ -11,9 +15,10 @@ RSpec.describe TransfersController, type: :controller do
         travel_back
       end
 
-      subject { get :index, params: { organization_id: @organization.short_name } }
+      subject { get transfers_path(valid_params) }
       it "returns http success" do
-        expect(subject).to be_successful
+        subject
+        expect(response).to be_successful
       end
 
       context 'when filtering by date' do
@@ -24,14 +29,14 @@ RSpec.describe TransfersController, type: :controller do
           it 'only returns the correct obejects' do
             start_date = 3.days.ago.strftime "%m/%d/%Y"
             end_date = Time.zone.today.strftime "%m/%d/%Y"
-            get :index, params: { organization_id: @organization.short_name, filters: { date_range: "#{start_date} - #{end_date}" } }
+            get  transfers_path(valid_params.merge(filters: { date_range: "#{start_date} - #{end_date}" }))
             expect(assigns(:transfers)).to eq([new_transfer])
           end
         end
 
         context 'when date parameters are not supplied' do
           it 'returns all objects' do
-            get :index, params: { organization_id: @organization.short_name }
+            get  transfers_path(valid_params)
             expect(assigns(:transfers)).to eq([old_transfer, new_transfer])
           end
         end
@@ -47,12 +52,12 @@ RSpec.describe TransfersController, type: :controller do
           from_id: create(:storage_location, organization: @organization).id
         )
 
-        post :create, params: { organization_id: @organization.short_name, transfer: attributes }
+        post transfers_path(valid_params.merge(transfer: attributes))
         expect(response).to redirect_to(transfers_path)
       end
 
       it "renders to #new when failing" do
-        post :create, params: { organization_id: @organization.short_name, transfer: { from_id: nil, to_id: nil } }
+        post transfers_path(valid_params.merge(transfer: { from_id: nil, to_id: nil }))
         expect(response).to be_successful # Will render :new
         expect(response).to render_template("new")
         expect(flash.keys).to match_array(['error'])
@@ -60,23 +65,25 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "GET #new" do
-      subject { get :new, params: { organization_id: @organization.short_name } }
+      subject { get new_transfer_path(valid_params) }
       it "returns http success" do
-        expect(subject).to be_successful
+        subject
+        expect(response).to be_successful
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: { organization_id: @organization.short_name, id: create(:transfer, organization: @organization) } }
+      subject { get transfer_path(valid_params.merge(id: create(:transfer, organization: @organization))) }
       it "returns http success" do
-        expect(subject).to be_successful
+        subject
+        expect(response).to be_successful
       end
     end
 
     describe 'DELETE #destroy' do
-      subject { delete :destroy, params: { organization_id: @organization.short_name, id: transfer_id } }
       let(:transfer_id) { create(:transfer, organization: @organization).id.to_s }
       let(:fake_destroy_service) { instance_double(TransferDestroyService) }
+      subject { delete transfer_path(valid_params.merge(id: transfer_id)) }
       before do
         allow(TransferDestroyService).to receive(:new).with(transfer_id: transfer_id).and_return(fake_destroy_service)
       end
