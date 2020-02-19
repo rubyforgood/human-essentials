@@ -1,13 +1,13 @@
 <tr>
-  <td><strong>Total:</strong></td>
+  <td class="overall-total-label"><strong>Total:</strong></td>
   <td></td>
   <td></td>
-  <td class="overall-total-items text-right">
+  <td class="overall-total-items">
     <%= number_with_delimiter(@total_items_all_distributions, :delimiter => ',') %> (Total)
   <br />
     <%= number_with_delimiter(@total_items_paginated_distributions, :delimiter => ',') %> (This page)
   </td>
-  <td class="overall-total-value text-right">
+  <td class="overall-total-value">
     <strong><%= dollar_value(@total_value_all_distributions) %></strong> (Total)
   <br/>
     <strong><%= dollar_value(@total_value_paginated_distributions) %></strong> (This page)
