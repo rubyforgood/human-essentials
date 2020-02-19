@@ -102,29 +102,15 @@ RSpec.describe "Items", type: :request do
             let!(:item_params) do
                 {
                     item: {
-                    name: "Really Good Item",
-                    partner_key: create(:base_item).partner_key,
-                    value_in_cents: 1001,
-                    package_size: 5,
-                    distribution_quantity: 30,
-                    on_hand_minimum_quantity: 15,
-                    on_hand_recommended_quantity: 10,
-                    authenticity_token: "jbgIdPnOGb76v6kO6z+PpnY7bqYurSFAduJNTL94sh+BHH7OOAfc4SmyMj8xyvMDwonje21TP1K79fl8mGr7wg=="
-                    # DO I FAKE THE ABOVE?
+                        name: "Really Good Item",
+                        partner_key: create(:base_item).partner_key,
+                        value_in_cents: 1001,
+                        package_size: 5,
+                        distribution_quantity: 30,
+                        on_hand_minimum_quantity: 15,
+                        on_hand_recommended_quantity: 10
                     }
                 }
-            end
-
-
-
-            xit "should create an item" do
-                # binding.pry
-                expect do
-                    params = default_params.merge(item_params)
-                    post items_path(params)
-                end.to change { Item.count }.by(1)
-
-                expect(response).to have_http_status(302)
             end
 
             it "should accept params with dollar signs, periods, and commas" do
@@ -132,30 +118,6 @@ RSpec.describe "Items", type: :request do
                 params = default_params.merge(item_params)
                 post items_path(params)
                 expect(response).not_to have_error
-            end
-
-            xit "should redirect to the item page" do
-                params = default_params.merge(item_params)
-                post items_path(params)
-                expect(response).to redirect_to items_path
-                expect(response).to have_notice
-            end
-
-        end
-
-        
-
-       
-
-        context "with invalid params" do
-            let!(:bad_params) do
-                { item: { bad: "params" } }
-            end
-
-            xit "should show an error" do
-                params = default_params.merge(bad_params)
-                post items_path(params)
-                expect(response).to have_error
             end
         end
 
