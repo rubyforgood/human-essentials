@@ -5,10 +5,9 @@
   <td>
     <% case status %>
     <% when "uninvited" %>
-      <button class="btn btn-xs bg-teal">Uninvited</button>
+      <%= view_button_to "#", { text: "Uninvited", icon: "exclamation-circle" } %>
     <% when "invited" %>
       <%= view_button_to "#", { text: "#{status.humanize}", icon: "check" } %>
-
     <% when "awaiting_review" %>
       <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "warning" } %>
     <% when "approved" %>
