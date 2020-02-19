@@ -1,38 +1,52 @@
 <section class="content-header">
-  <% content_for :title, "Edit - Items - #{@base_item.name} - Inventory" %>
-<h1>
-  Editing Base Item
-</h1>
-<ol class="breadcrumb">
-  <li>
-    <%= link_to(admin_dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-  </li>
-  <li><%= link_to "All Base Items", (admin_base_items_path) %></li>
-  <li class="active">Editing <%= @base_item.name %></li>
-</ol>
-</section>
-
-<!-- Main content -->
-<section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title">Update <%= @base_item.name %></h3>
-  </div>
-  <div class="box-body">
-    <div class="box-body">
-      <%= simple_form_for [:admin, @base_item], html: { class: 'form-horizontal' },  url: admin_base_item_path(@base_item) do |f| %>
-        <%= render partial: "form", object: f %>
-        <%= submit_button %>
-      <% end %>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Edit - Items - #{@base_item.name} - Inventory" %>
+        <h1>
+          Editing Base Item
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Base Items", (admin_base_items_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Editing <%= @base_item.name %></a></li>
+        </ol>
+      </div>
     </div>
-  </div>
-</div>
-<!-- /.box -->
-
+  </div><!-- /.container-fluid -->
 </section>
 
-
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h5 class="card-title">Update <%= @base_item.name %>
+            </h5>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= simple_form_for [:admin, @base_item], html: {class: 'form-horizontal'}, url: admin_base_item_path(@base_item) do |f| %>
+              <%= render partial: "form", object: f %>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <%= submit_button %>
+              </div>
+              </div>
+            <% end %>
+            <!-- /.card -->
+            </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>

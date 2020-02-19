@@ -9,12 +9,12 @@
         <div class="box-body">
           <%= form_tag invite_user_organization_path do %>
             <div class="input-group">
-              <span class="input-group-addon" id="spn_usr_fa_icon"><%= fa_icon "user" %></span>
+              <span class="input-group-text" id="spn_usr_fa_icon"><%= fa_icon "user" %></span>
               <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="spn_usr_fa_icon">
             </div>
             <br>
             <div class="input-group">
-              <span class="input-group-addon" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
+              <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
               <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
             </div>
             <%= hidden_field_tag :org , current_organization.id %><br>

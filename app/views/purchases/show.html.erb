@@ -1,62 +1,77 @@
 <section class="content-header">
-  <% content_for :title, "Purchases - #{@purchase.purchased_from} - #{current_organization.name}" %>
-  <h1>
-    Purchase
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Purchases", (purchases_path) %></li>
-    <li class="active"> <%= @purchase.purchased_from_view %> on <%= @purchase.created_at.to_s(:distribution_date) %></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Purchases - #{@purchase.purchased_from} - #{current_organization.name}" %>
+        <h1>
+          Purchase
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Purchases", (purchases_path) %></li>
+          <li class="breadcrumb-item"><a href="#"><%= @purchase.purchased_from_view %> on <%= @purchase.created_at.to_s(:distribution_date) %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
+
 <section class="content">
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <fieldset>
-        <p>This donation was started on <%= @purchase.created_at.to_s(:distribution_date) %>:</p>
-        <ul class="list-group">
-          <li class="list-group-item">It was bought from: <%= @purchase.purchased_from_view %></li>
-          <li class="list-group-item">It will be stored at: <%= @purchase.storage_view %></li>
-        </ul>
-
-        <section id="line_items">
-          <!-- /.box-header -->
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="box-body table-responsive no-padding">
-                <table class="table table-hover striped">
-                  <thead>
-                    <th>Item</th>
-                    <th class="numeric">Quantity</th>
-                  </thead>
-
-                  <tbody>
-                    <%= render partial: "purchase_item_row", collection: @line_items %>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>This donation was started on:</th>
+                <th>It was bought from:</th>
+                <th>It will be stored at:</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+              <td><%= @purchase.created_at.to_s(:distribution_date) %></td>
+              <td><%= @purchase.purchased_from_view %></td>
+              <td><%= @purchase.storage_view %></td>
+              </tr>
+            </table>
           </div>
-        <!--
-        TODO: What's the best way to do this? Should we use a new workflow?
-        -->
-        </section>
-      </fieldset>
-
+        </div>
+      </div>
     </div>
-    <div class="box-footer">
-      <%= edit_button_to edit_purchase_path(@purchase), { text: "Make a correction", size: "lg" } %>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: "purchase_item_row", collection: @line_items %>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <%= edit_button_to edit_purchase_path(@purchase), { text: "Make a correction", size: "md" } %>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
-
-
-
-
-

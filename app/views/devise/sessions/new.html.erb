@@ -1,36 +1,72 @@
-<div class="medium-offset-3 medium-6">
-	<h2>Sign In</h2>
-</div>
+<%= render partial: "shared/flash" %>
 <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <div class="login-box">
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">Sign in to start your session</p>
 
-  <%= render partial: "shared/flash"  %>
+          <div class="form-inputs">
+            <%= f.input :email, autofocus: true %>
+          </div>
+          <div class="form-inputs">
+            <%= f.input :password, autofocus: true %>
+          </div>
 
-  <div class="form-inputs">
-    <%= f.input :email, label: "E-mail:", autofocus: true, wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-      <%= f.input_field :email, class: "form-control" %>
-    <% end %>    
-    <%= f.input :password, label: "Password:", wrapper: :vertical_input_group do %>
-      <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-      <%= f.input_field :password, class: "form-control" %>
-    <% end %>
-    <%= f.input :remember_me, label: " Remember me", as: :boolean if devise_mapping.rememberable? %>
-  </div>
-  <div class="medium-offset-3 medium-6">
-    <div class="form-actions">
-      <%= f.button :submit, "Log in" %>
+
+        <!--        <div class="input-group mb-3">-->
+<!--          <input type="email" class="form-control" placeholder="Email">-->
+<!--          <div class="input-group-append">-->
+<!--            <div class="input-group-text">-->
+<!--              <span class="fas fa-envelope"></span>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="input-group mb-3">-->
+<!--          <input type="password" class="form-control" placeholder="Password">-->
+<!--          <div class="input-group-append">-->
+<!--            <div class="input-group-text">-->
+<!--              <span class="fas fa-lock"></span>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+        <%#= f.input :email, label: "E-mail:", autofocus: true, wrapper: :input_group do %>
+<!--          <span class="input-group-text"><i class="fa fa-envelope"></i></span>-->
+          <%#= f.input_field :email, class: "form-control" %>
+        <%# end %>
+        <%#= f.input :password, label: "Password:", wrapper: :input_group do %>
+<!--          <span class="input-group-text"><i class="fa fa-lock"></i></span>-->
+          <%#= f.input_field :password, class: "form-control" %>
+        <%# end %>
+<!--        <div class="row">-->
+          <div class="col-12 text-center">
+            <%= f.button :submit, "Log in", class: "btn btn-primary btn-block" %>
+          </div>
+          <!-- /.col -->
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-3">
+          </div>
+          <div class="col-9">
+            <p class="mb-1">
+              <%= render "devise/shared/links" %>
+            </p>
+          </div>
+
+        </div>
+      </div>
+      <!-- /.login-card-body -->
     </div>
-
-    <%= render "devise/shared/links" %>
   </div>
 <% end %>
 <script>
-    $(document).ready(function() {
+  $(document).ready(function () {
 
-        if (document.URL == "https://diaperbase.org/users/sign_in") {
-            $('#exampleModal').modal('show');
-        }
-    });
+    if (document.URL == "https://diaperbase.org/users/sign_in") {
+      $('#exampleModal').modal('show');
+    }
+  });
 </script>
 
 <!-- Modal -->
@@ -41,7 +77,8 @@
         <h3 class="modal-title" id="exampleModalLabel">Demo Site Reminder</h3>
       </div>
       <div class="modal-body">
-        Please be aware that diaperbase.org is a demo/test server for <a href="https://diaper.app">diaper.app</a>. Multiple people have access to the test accounts so please do not save or upload any sensitive data.
+        Please be aware that diaperbase.org is a demo/test server for <a href="https://diaper.app">diaper.app</a>.
+        Multiple people have access to the test accounts so please do not save or upload any sensitive data.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">I Understand</button>

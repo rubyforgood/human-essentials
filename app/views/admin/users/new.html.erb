@@ -1,23 +1,61 @@
-<div class="box">
-  <div class="box-body">
-
-
-  <% content_for :title, "New - Users" %>
-
-  <h1>Add a user</h1>
-
-  <%= simple_form_for @user, url: admin_users_path do |f| %>
-    <%= f.error_notification %>
-    <div class="form-inputs">
-      <%= f.input :organization_id, label: "Organization", wrapper: :vertical_input_group, required: true, autofocus: true do %>
-        <span class="input-group-addon"><%= fa_icon "building" %></span>
-        <%= f.input_field :organization_id, collection: @organizations, class: "form-control" %>
-      <% end %>
-      <%= render 'admin/users/user_form_fields', f: f %>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - User" %>
+        <h1>
+          Add a User
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Admin Dashboard
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">New Users</a></li>
+        </ol>
+      </div>
     </div>
-    <div class="form-actions">
-      <%= submit_button %>
+  </div><!-- /.container-fluid -->
+</section>
+
+
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+            <div class="card-body">
+              <!-- Default box -->
+              <div class="box">
+                <div class="box-header with-border">
+                </div>
+                <div class="box-body">
+
+                  <%= simple_form_for @user, url: admin_users_path do |f| %>
+                    <div class="form-inputs">
+                      <%= f.input :organization_id, label: "Organization", wrapper: :input_group, required: true, autofocus: true do %>
+                        <span class="input-group-text"><%= fa_icon "building" %></span>
+                        <%= f.input_field :organization_id, collection: @organizations, class: "form-control" %>
+                      <% end %>
+                      <%= render 'admin/users/user_form_fields', f: f %>
+
+                    </div>
+                    <div class="card-footer">
+                      <%= submit_button %>
+                    </div>
+                  <% end %>
+                </div>
+              </div><!-- /.box -->
+            </div>
+        </div>
+      </div>
     </div>
-  <% end %>
   </div>
-</div>
+</section>

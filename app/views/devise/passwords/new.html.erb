@@ -1,15 +1,54 @@
-<h2>Forgot your password?</h2>
+<%= render partial: "shared/flash" %>
+<%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: {method: :post}) do |f| %>
+  <div class="login-box">
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
+        <h2 class="login-box-msg">Forgot your password?</h2>
 
-<%= simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= f.error_notification %>
+        <div class="form-inputs">
+          <%= f.input :email, autofocus: true %>
+        </div>
 
-  <div class="form-inputs">
-    <%= f.input :email, required: true, autofocus: true %>
-  </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Send me reset password instructions" %>
+        <div class="row">
+          <div class="col-12 text-center">
+            <%= f.button :submit, "Send me reset password instructions", class: "btn btn-info btn-block" %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-12 text-center">
+            <%= link_to "Return to log in page", new_session_path(resource_name), class: "btn btn-primary btn-block" %>
+          </div>
+        </div>
+      </div>
+      <!-- /.login-card-body -->
+    </div>
   </div>
 <% end %>
+<script>
+  $(document).ready(function () {
 
-<%= render "devise/shared/links" %>
+    if (document.URL == "https://diaperbase.org/users/sign_in") {
+      $('#exampleModal').modal('show');
+    }
+  });
+</script>
+
+<!-- Modal -->
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalLabel">Demo Site Reminder</h3>
+      </div>
+      <div class="modal-body">
+        Please be aware that diaperbase.org is a demo/test server for <a href="https://diaper.app">diaper.app</a>.
+        Multiple people have access to the test accounts so please do not save or upload any sensitive data.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">I Understand</button>
+      </div>
+    </div>
+  </div>
+</div>

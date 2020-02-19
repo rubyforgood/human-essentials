@@ -1,68 +1,74 @@
 <section class="content-header">
-  <% content_for :title, "Audits - Inventory - #{current_organization.name}" %>
-  <h1>
-    Inventory Audit
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><%= link_to "All Adjustments", (audits_path) %></li>
-    <li class="active">Audit (<%= @audit.created_at.strftime("%m/%d/%Y") %>)</li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Audits - Inventory - #{current_organization.name}" %>
+        <h1>
+          Inventory Audit
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Audits", (audits_path) %></li>
+          <li class="breadcrumb-item">Audit (<%= @audit.created_at.strftime("%m/%d/%Y") %>) - <%= @audit.status.titleize %></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title">
-        Audit (<%= @audit.created_at.strftime("%m/%d/%Y") %>) - <%= @audit.status.titleize %>
-      </h3>
-    </div>
-    <div class="box-body">
-
-      <p>
-        <strong>Organization:</strong>
-        <%= @audit.organization.name %>
-      </p>
-
-      <p>
-        <strong>Storage location:</strong>
-        <%= @audit.storage_location.name %>
-      </p>
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover striped">
-          <tr>
-            <th>Item</th>
-            <th>Audit Quantity</th>
-            <th>Quantity in Records</th>
-          </tr>
-          <% @inventory_items.each do |inventory_item|  %>
-            <% line_item = @audit.line_items.find_by(item: inventory_item.item) %>
-            <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
-              <td><%= inventory_item.item.name %></td>
-              <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
-              <td><%= inventory_item.quantity %></td>
-            </tr>
-          <% end %>
-        </table>
-        <!-- /.box-body -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-header border-0">
+            <h3 class="card-title">
+                <p>
+                  <strong>Organization:</strong>
+                <%= @audit.organization.name %>
+                </p>
+              <p>
+                <strong>Storage location:</strong>
+                <%= @audit.storage_location.name %>
+              </p>
+            </h3>
+          </div>
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Item</th>
+                <th>Audit Quantity</th>
+                <th>Quantity in Records</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @inventory_items.each do |inventory_item|  %>
+                <% line_item = @audit.line_items.find_by(item: inventory_item.item) %>
+                <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
+                  <td><%= inventory_item.item.name %></td>
+                  <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
+                  <td><%= inventory_item.quantity %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-footer-->
+          <div class="card-footer text-right">
+            <%= edit_button_to :edit_audit, {text: 'Resume Audit', size: 'md'} if @audit.in_progress? %>
+            <%= delete_button_to :audit, {text: 'Delete Audit', size: 'md'} if @audit.in_progress? || @audit.confirmed? %>
+            <%= submit_button_to audit_finalize_path(@audit.id), {text: 'Finalize Audit', size: 'md'}, {data: {confirm: 'This will adjust the inventory permanently. Are you sure that you want to submit this?'}} if @audit.confirmed? %>          </div>
+        </div>
+        <!-- /.card -->
       </div>
-
-      <div class="box-footer text-center">
-        <%= edit_button_to :edit_audit, {text: 'Resume Audit', size: 'sm'} if @audit.in_progress? %>
-        <%= delete_button_to :audit, {text: 'Delete Audit', size: 'sm'} if @audit.in_progress? || @audit.confirmed? %>
-        <%= submit_button_to audit_finalize_path(@audit.id), {text: 'Finalize Audit', size: 'sm'}, {data: {confirm: 'This will adjust the inventory permanently. Are you sure that you want to submit this?'}} if @audit.confirmed? %>
-      </div>
-      <!-- /.box-footer -->
-
-      <!-- /.box -->
     </div>
   </div>
 </section>

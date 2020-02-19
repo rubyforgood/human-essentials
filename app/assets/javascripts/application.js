@@ -10,9 +10,10 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require rails-ujs
 //= require jquery
-//= require jquery_ujs
-//= require bootstrap.min
+//= require bootstrap
+// require jquery_ujs
 //= require fastclick
 //= require adminlte.min
 //= require cocoon
@@ -29,7 +30,7 @@
 window.setTimeout(function() {
     // When the user is given an error message, we should not auto-hide it so that
     // they can fully read it and potentially copy/paste it into an issue.
-    $(".alert").not(".alert-danger, .alert-warning").fadeTo(1000, 0).slideUp(1000, function(){
+    $(".alert").fadeTo(1000, 0).slideUp(1000, function(){
         $(this).remove();
     });
 }, 2500);
@@ -102,3 +103,4 @@ function order_by_occurrence(arr) {
     }
   };
   $(document).on('turbolinks:load', load_quagga);
+

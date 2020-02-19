@@ -57,7 +57,7 @@ RSpec.describe "Item management", type: :system do
     visit url_prefix + "/items"
     select BaseItem.first.name, from: "filters_by_base_item"
     click_button "Filter"
-    within "#tbl_items" do
+    within ".table" do
       expect(page).to have_css("tbody tr", count: 1)
     end
   end
@@ -123,7 +123,7 @@ RSpec.describe "Item management", type: :system do
         visit url_prefix + "/items"
         check "include_inactive_items"
         click_on "Filter"
-        within "#tbl_items" do
+        within ".table" do
           expect(page).to have_content(item.name)
         end
 
@@ -156,13 +156,13 @@ RSpec.describe "Item management", type: :system do
     end
     # Consolidated these into one to reduce the setup/teardown
     it "should display items in separate tabs", js: true do
-      tab_items_only_text = page.find("table#tbl_items", visible: true).text
+      tab_items_only_text = page.find(".table", visible: true).text
       expect(tab_items_only_text).not_to have_content "Quantity"
       expect(tab_items_only_text).to have_content item_pullups.name
       expect(tab_items_only_text).to have_content item_tampons.name
 
       click_link "Items, Quantity, and Location" # href="#sectionC"
-      tab_items_quantity_location_text = page.find("table#tbl_items_location", visible: true).text
+      tab_items_quantity_location_text = page.find(".table-items-location", visible: true).text
       expect(tab_items_quantity_location_text).to have_content "Quantity"
       expect(tab_items_quantity_location_text).to have_content storage_name
       expect(tab_items_quantity_location_text).to have_content num_pullups_in_donation

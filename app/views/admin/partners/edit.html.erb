@@ -1,26 +1,79 @@
-<div class="box">
-  <div class="box-body">
-
-
-  <% content_for :title, "Edit - Partners" %>
-
-  <h1> Edit partner <%= @partner.name %></h1>
-
-  <%= simple_form_for @partner, url: admin_partner_path do |f| %>
-    <%= f.error_notification %>
-    <div class="form-inputs">
-      <%= f.input :name, label: "Name", wrapper: :vertical_input_group, required: true, autofocus: true do %>
-        <span class="input-group-addon"><%= fa_icon "building" %></span>
-        <%= f.input_field :name, class: "form-control" %>
-      <% end %>
-      <%= f.input :email, label: "E-mail", wrapper: :vertical_input_group, required: true do %>
-        <span class="input-group-addon"><%= fa_icon "envelope" %></span>
-        <%= f.input_field :email, class: "form-control" %>
-      <% end %>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Partners - #{@partner.name} - #{@partner.organization.name}" %>
+        <h1>
+          Updating Partner Information
+          <small>for <%= @partner.name %></small></h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Partners", (admin_partners_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Updating Partner</a></li>
+        </ol>
+      </div>
     </div>
-    <div class="form-actions">
-      <%= submit_button %>
-    </div>
-  <% end %>
-  </div>
-</div>
+  </div><!-- /.container-fluid -->
+</section>
+
+
+
+<%= simple_form_for @partner, url: admin_partner_path do |f| %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- jquery validation -->
+          <div class="card card-primary">
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div class="card-body">
+              <%= f.input :name, label: "Name", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                <%= f.input_field :name, class: "form-control" %>
+              <% end %>
+              <%= f.input :email, label: "E-mail", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                <%= f.input_field :email, class: "form-control" %>
+              <% end %>
+              <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :input_group do %>
+                <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
+              <% end %>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+<% end %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

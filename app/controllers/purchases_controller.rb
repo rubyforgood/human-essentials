@@ -24,6 +24,7 @@ class PurchasesController < ApplicationController
     @purchase = current_organization.purchases.new(purchase_params)
     if @purchase.save
       @purchase.storage_location.increase_inventory @purchase
+      flash[:notice] = "New Purchase logged!"
       redirect_to purchases_path
     else
       load_form_collections

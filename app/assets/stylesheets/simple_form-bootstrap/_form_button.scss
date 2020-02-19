@@ -1,0 +1,6 @@
+// Source: http://simple-form-bootstrap.plataformatec.com.br/documentation
+
+// apply primary button style to buttons with only `btn` class
+[class="btn"] {
+  @extend .btn-primary;
+}

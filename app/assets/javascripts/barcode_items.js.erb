@@ -78,6 +78,7 @@ $(document).ready(function() {
 
       if (data['src'] != $(line_item).closest('.__barcode_item_lookup').context) {
           $(data['src']).closest('.nested-fields').remove();
+          $('.line-item-separator:last').remove();
       }
     // This will facilitate serial barcode inputs.
     // First trigger the "add new line item"

@@ -1,23 +1,43 @@
+<!-- Content Header (Page header) -->
 <section class="content-header">
-  <% content_for :title, "Distribution Pick-Ups - #{current_organization.name}" %>
-  <h1>
-    Pick-Ups Schedule
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><%= link_to "Distributions", (distributions_path) %></li>
-    <li class="active"> Pick-Ups</li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Distribution Pick-Ups - #{current_organization.name}" %>
+        <h1>
+          Pick-Up Schedule
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#"><%= link_to "Distributions", (distributions_path) %></a></li>
+          <li class="breadcrumb-item active"><a href="#">Pick-Ups</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
+
 <section class="content">
-  <!-- Default box -->
-  <div class="box box-primary">
-    <div class="box-body">
-      <div id="calendar" class="fc fc-unthemed fc-ltr"></div>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- Main content -->
+        <div class="card card-primary">
+          <div class="card-body p-0">
+            <!-- THE CALENDAR -->
+            <div id="calendar" class="fc fc-ltr fc-unthemed" style="">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>

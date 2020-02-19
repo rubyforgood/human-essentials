@@ -1,7 +1,5 @@
-<div class="row">
-  <div class="pull-left">
+  <div class="float-center">
     <%= link_to donation do %>
       <%= donation.line_items.total %> from <%= donation.diaper_drive&.name || donation.diaper_drive_participant.business_name %>
     <% end %>
   </div>
-</div>

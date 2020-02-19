@@ -1,82 +1,96 @@
 <section class="content-header">
-  <% content_for :title, "Edit - Users" %>
-<h1>
-  Editing
-  <small>your profile</small>
-</h1>
-<ol class="breadcrumb">
-  <li>
-    <%= link_to(dashboard_path_from_user) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-  </li>
-    <li><a href="#">Editing <%= current_user.name %></a></li>
-</ol>
-</section>
-
-<!-- Main content -->
-<section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= current_user.name %></h3>
-  </div>
-  <%= simple_form_for(resource, as: resource_name, url: user_registration_path, html: { method: :put }) do |f| %>
-    <div class="box-body">
-    <%= f.error_notification %>
-
-    <div class="col-md-6">
-      <%= f.input :name, label: "Name:", required: true, autofocus: true, wrapper: :vertical_input_group do %>
-        <span class="input-group-addon"><i class="fa fa-user"></i></span>
-        <%= f.input_field :name, class: "form-control" %>
-      <% end %>
-      <%= f.input :email, label: "Email:", wrapper: :vertical_input_group do %>
-        <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-        <%= f.input_field :email, class: "form-control" %>
-      <% end %>
-      <%= f.input :current_password, label: "Current Password:", wrapper: :vertical_input_group do %>
-        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-        <%= f.input_field :current_password, class: "form-control" %>
-      <% end %>
-      <p class="help-block" id="password-confirmation-help">we need your current password to confirm your changes</p>
-      <br>
-    </div>
-
-    <div class="col-md-6">
-      <div class="box box-primary collapsed-box">
-        <div class="box-header with-border">
-          <h3 class="box-title">Change Password</h3>
-          <div class="box-tools pull-left">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-              <i class="fa fa-plus"></i>
-            </button>
-          </div>
-        </div>
-        <div class="box-body">
-          <p class="help-block" id="password-help">leave it blank if you don't want to change it</p>
-          <%= f.input :password, label: "New Password:", wrapper: :vertical_input_group do %>
-            <span class="input-group-addon"><%= fa_icon "lock" %></span>
-            <%= f.input_field :password, class: "form-control" %>
-          <% end %>
-          <%= f.input :password_confirmation, label: "New Password Confirmation:", wrapper: :vertical_input_group do %>
-            <span class="input-group-addon"><%= fa_icon "check" %></span>
-            <%= f.input_field :password_confirmation, class: "form-control" %>
-          <% end %>
-        </div>
-        <!-- /.box-body -->
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Edit - Users" %>
+        <h1>
+          Editing
+          <small>your profile</small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item">Editing <%= current_user.name %></li>
+        </ol>
       </div>
     </div>
+  </div><!-- /.container-fluid -->
+</section>
 
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title"><%= current_user.name %></h5>
+          </div>
+          <%= simple_form_for(resource, as: resource_name, url: user_registration_path, html: {method: :put}) do |f| %>
+
+        <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <%= f.input :name, label: "Name:", required: true, autofocus: true, wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-user"></i></span>
+                  <%= f.input_field :name, class: "form-control" %>
+                <% end %>
+                <%= f.input :email, label: "Email:", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                  <%= f.input_field :email, class: "form-control" %>
+                <% end %>
+                <%= f.input :current_password, label: "Current Password:", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                  <%= f.input_field :current_password, class: "form-control" %>
+                <% end %>
+                <p class="help-block" id="password-confirmation-help"><em>We need your current password to confirm your
+                  changes</em></p>
+                <!-- /.chart-responsive -->
+              </div>
+              <!-- /.col -->
+              <div class="col-md-6">
+                <div class="card card-primary card-outline collapsed-card">
+                  <div class="card-header">
+                    <h5 class="m-0">Change Password</h5>
+                    <span class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </span>
+
+                  </div>
+                  <div class="card-body">
+                    <p class="help-block" id="password-help">Leave this blank if you don't want to change it</p>
+
+                    <%= f.input :password, label: "New Password:", wrapper: :input_group do %>
+                      <span class="input-group-text"><%= fa_icon "lock" %></span>
+                      <%= f.input_field :password, class: "form-control" %>
+                    <% end %>
+                    <%= f.input :password_confirmation, label: "New Password Confirmation:", wrapper: :input_group do %>
+                      <span class="input-group-text"><%= fa_icon "check" %></span>
+                      <%= f.input_field :password_confirmation, class: "form-control" %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+            <div class="card-footer text-right">
+              <%= submit_button %>
+            </div>
+          <!-- ./card-body -->
+          <!-- /.card-footer -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
     </div>
-    <!-- /.box-body -->
-
-    <div class="form-actions col-md-12 box-footer">
-      <%= submit_button %>
-    </div>
-
-  <% end %>
-</div>
-<!-- /.box -->
-
+<% end %>
+  </div>
 </section>
