@@ -1,118 +1,147 @@
 <section class="content-header">
-  <% content_for :title, "Storage Locations - #{@storage_location.name} - Inventory - #{current_organization.name}" %>
-<h1>
-  Storage Location Info
-  <small>for <%= @storage_location.name %></small>
-</h1>
-<ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-    <i class="fa fa-dashboard"></i> Home
-  <% end %>
-  </li>
-  <li><%= link_to "Storage Locations", (storage_locations_path) %></li>  
-  <li class="active"><%= @storage_location.name %></li>
-</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Storage Locations - #{@storage_location.name} - Inventory - #{current_organization.name}" %>
+        <h1>
+          Storage Location Info
+          <small>for <%= @storage_location.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Storage Locations", (storage_locations_path) %></li>
+          <li class="breadcrumb-item"><a href="#"><%= @storage_location.name %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border bg-gray">
-    <div class="pull-right">
-      <%= modal_button_to("#csvImportModal", { text: "Import Baseline Inventory", icon: "upload" }) if @storage_location.items.empty? %>
-    </div>
-  </div>
-  <div class="box-body">
-    <h3 class="box-title"><%= @storage_location.name %></h3>
-    <p><%= @storage_location.address %></p>
-  
-  <div class="row">
-    <div class="col-xs-12">
-      <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a data-toggle="tab" href="#sectionA">Inventory</a></li>
-        <li role="presentation"><a data-toggle="tab" href="#sectionB">Inventory coming in</a></li>
-        <li role="presentation"><a data-toggle="tab" href="#sectionC">Inventory going out</a></li>
-      </ul>
-      <div class="tab-content">
-        <div id="sectionA" class="tab-pane fade in active">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table id="sectionA" class="table table-hover striped">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
-                <tr>
-                  <th>Item</th>
-                  <th class="numeric">Quantity</th>
-                </tr>
+              <tr>
+                <th>Storage Location</th>
+                <th>Address</th>
+              </tr>
               </thead>
               <tbody>
-                <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
+              <tr>
+                <td><%= @storage_location.name %></td>
+                <td><%= @storage_location.address %></td>
+              </tr>
               </tbody>
-              <tfoot>
-                <tr>
-                  <td>Total</td>
-                  <td class="numeric"><%= @storage_location.size %></td>
-                </tr>
-              </tfoot>
             </table>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
-        </div><!-- /#sectionA -->
-        <div id="sectionB" class="tab-pane fade info">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table id="sectionB" class="table table-hover striped">
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th class="numeric">Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "line_item_row", collection: @items_in %>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td>Total</td>
-                  <td class="numeric"><%= @items_in_total %></td>
-                </tr>
-              </tfoot>
-            </table>
-            <!-- /.box-body -->
+          <!-- /.card-body -->
+          <div class="card-footer">
+          <%= modal_button_to("#csvImportModal", { text: "Import Baseline Inventory", icon: "upload" }) if @storage_location.items.empty? %>
           </div>
-          <!-- /.box -->
-        </div>
-        <div id="sectionC" class="tab-pane fade">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table id="sectionC" class="table table-hover striped">
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th class="numeric">Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "line_item_row", collection: @items_out %>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td>Total</td>
-                  <td class="numeric"><%= @items_out_total %></td>
-                </tr>
-              </tfoot>
-            </table>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
         </div>
       </div>
+    </div>
   </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-primary card-outline card-outline-tabs">
+          <div class="card-header p-0 border-bottom-0">
+            <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+              <li class="nav-item" class="active">
+                <a class="nav-link active" id="custom-tabs-inventory-tab" data-toggle="pill" href="#custom-tabs-inventory" role="tab" aria-controls="custom-tabs-inventory" aria-selected="true">Inventory</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="custom-tabs-inventory-in-tab" data-toggle="pill" href="#custom-tabs-inventory-in" role="tab" aria-controls="custom-tabs-inventory-in" aria-selected="false">Inventory Coming In</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="custom-tabs-inventory-out-tab" data-toggle="pill" href="#custom-tabs-inventory-out" role="tab" aria-controls="custom-tabs-inventory-out" aria-selected="false">Inventory Going Out</a>
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <div class="tab-content" id="custom-tabs-three-tabContent">
+
+              <div class="tab-pane fade show active" id="custom-tabs-inventory" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <td>Total</td>
+                    <td><%= @storage_location.size %></td>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div><!-- /.box-body.table-responsive -->
+
+
+              <div class="tab-pane fade show active" id="custom-tabs-inventory-in" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <%= render partial: "line_item_row", collection: @items_in %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <td>Total</td>
+                    <td><%= @items_in_total %></td>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div><!-- /.box-body.table-responsive -->
+
+              <div class="tab-pane fade show active" id="custom-tabs-inventory-out" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <%= render partial: "line_item_row", collection: @items_out %>
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                    <td>Total</td>
+                    <td><%= @items_out_total %></td>
+                  </tr>
+                  </tfoot>
+                </table>
+              </div><!-- /.box-body.table-responsive -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  </div>
-</div>
 </section>
 
 <%= render(

@@ -1,62 +1,79 @@
 <section class="content-header">
-<% content_for :title, "New - Adjustments - Inventory - #{current_organization.name}" %>
-  <h1>
-    New Inventory Adjustment
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Inventory Adjustments", (adjustments_path) %></li>
-    <li class="active"> New Adjustment</li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - Adjustments - Inventory - #{current_organization.name}" %>
+        <h1>
+          New Inventory Adjustment
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Inventory Adjustments", (adjustments_path) %></li>
+          <li class="breadcrumb-item"><a href="#">New Adjustment</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+            <div class="card-body">
+              <!-- Default box -->
+              <div class="box">
+                <div class="box-header with-border">
+                  <p class="box-title">Create an <strong>Adjustment</strong> to manually increase (+) or decrease (-)
+                    the amount of inventory in a particular storage location.</p>
+                </div>
+                <div class="box-body">
+                  <p class="help">Enter a negative (-) amount for <code>quantity</code> if you want to subtract that
+                    kind of item.</p>
+                  <p class="help">Simply enter an amount for <code>quantity</code> if you want to add that kind of item.
+                  </p>
+                  <%= simple_form_for @adjustment, html: { class: "storage-location-required", id: 'new_adjustment'} do |f| %>
 
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <p class="box-title">Create an <strong>Adjustment</strong> to manually increase (+) or decrease (-) the amount of inventory in a particular storage location.</p>
-  </div>
+                    <%= render partial: "storage_locations/source", object: f %>
 
-  <div class="box-body">
-<p class="help">Enter a negative (-) amount for <code>quantity</code> if you want to subtract that kind of item.</p>
-<p class="help">Simply enter an amount for <code>quantity</code> if you want to add that kind of item.</p>
-<%= simple_form_for @adjustment, html: { class: "storage-location-required" } do |f| %>
+                    <%= f.input :comment %>
 
-  <%= render partial: "storage_locations/source", object: f %>
+                    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+                      <legend>Items in this adjustment</legend>
+                      <%= f.simple_fields_for :line_items do |item| %>
+                        <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
+                          <%= render 'line_items/line_item_fields', f: item %>
+                        </div>
+                      <% end %>
+                      <div class="row links">
+                        <div class="col-xs-12">
+                          <%= add_line_item_button f, "#adjustment_line_items" %>
+                        </div>
+                      </div>
 
-  <%= f.input :comment %>
+                    </fieldset>
 
-
-    <fieldset style="margin-bottom: 2rem;" class="form-inline">
-      <legend>Items in this adjustment</legend>
-      <%= f.simple_fields_for :line_items do |item| %>
-        <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
-          <%= render 'line_items/line_item_fields', f: item %>
-        </div>
-      <% end %>
-      <div class="row links">
-        <div class="col-xs-12">
-          <%= add_line_item_button f, "#adjustment_line_items" %>
+                    </div>
+                    <div class="card-footer">
+                      <%= submit_button %>
+                    </div>
+                  <% end %>
+              </div>
+            </div><!-- /.box -->
         </div>
       </div>
-
-    </fieldset>
-      <div class="row">
-        <div class="col-xs-12 pull-right">
-          <%= submit_button %>
-       </div>
-     </div>
-  <% end %>
+    </div>
   </div>
-</div>
-<!-- /.box -->
-
-<%= render partial: "barcode_items/barcode_modal" %>
-
+  <%= render partial: "barcode_items/barcode_modal" %>
 </section>

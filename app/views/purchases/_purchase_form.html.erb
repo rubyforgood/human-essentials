@@ -5,13 +5,12 @@
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :vendor,
                           collection: @vendors,
-                          label_method: lambda { |x| "#{x.try(:business_name) }"},
+                          label_method: lambda { |x| "#{x.try(:business_name) }" },
                           label: "Vendor #{purchased_from(@purchase)}",
                           error: "Which vendor was this from?",
-                          wrapper: :vertical_input_group %>
+                          wrapper: :input_group %>
       </div>
     </div>
-
 
     <div class="row">
       <div class="col-xs-8 col-md-6 col-lg-3">
@@ -20,7 +19,7 @@
                           label: "Storage Location",
                           error: "Where is it being stored?",
                           selected: current_organization.intake_location,
-                          wrapper: :vertical_input_group %>
+                          wrapper: :input_group %>
       </div>
     </div>
 
@@ -28,14 +27,14 @@
       <div class="col-xs-8 col-md-6">
         <%= f.input :amount_spent_in_dollars,
                     label: "Purchase Total",
-                    wrapper: :vertical_input_group %>
+                    wrapper: :input_group %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-xs-8 col-md-6">
         <%= f.input :comment,
-                    wrapper: :vertical_input_group %>
+                    wrapper: :input_group %>
       </div>
     </div>
 
@@ -45,7 +44,7 @@
                     label: "Issued on",
                     as: :date,
                     html5: true,
-                    wrapper: :vertical_input_group %>
+                    wrapper: :input_group %>
       </div>
     </div>
 
@@ -59,13 +58,13 @@
       </div>
 
       <div class="row links">
-        <div class="col-xs-12">
+        <div class="col-xs-12 p-3">
           <%= add_line_item_button f, "#purchase_line_items" %>
         </div>
       </div>
     </fieldset>
 
-    <div class="box-footer">
+    <div class="card-footer">
       <%= submit_button %>
     </div>
   </div><!-- /.box-body.container -->

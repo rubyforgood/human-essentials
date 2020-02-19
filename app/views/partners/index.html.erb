@@ -1,67 +1,90 @@
 <section class="content-header">
-  <% content_for :title, "Partners - Agencies - #{current_organization.name}" %>
-  <h1>
-    Partner Agencies
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Partner Agencies</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Partners - Agencies - #{current_organization.name}" %>
+        <h1>
+          Partner Agencies
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Partner Agencies</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <div class="pull-right">
-          <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "lg" }) %>
-          <%= download_button_to(csv_path(format: :csv, type: "Partner"), { text: "Export Partner Agencies", size: "lg" }) if @partners.any? %>
-          <%= new_button_to new_partner_path(organization_id: current_organization), { text: "New Partner Agency" } %>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">Partner Filters</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <%= render partial: "statuses", object: @unfiltered_partners_for_statuses, as: :partners %>
+            </div>
+            <div class="card-footer">
+              <div class="pull-right">
+                <%= modal_button_to("#csvImportModal", {text: "Import Partners", icon: "upload", size: "md"}) if @partners.empty? %>
+                <%= download_button_to(csv_path(format: :csv, type: "Partner"), {text: "Export Partner Agencies", size: "md"}) %>
+                <%= new_button_to new_partner_path(organization_id: current_organization), {text: "New Partner Agency"} %>
+              </div>
+            </div>
+          </div>
         </div>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <%= render partial: "statuses", object: @unfiltered_partners_for_statuses, as: :partners %>
+        <!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
 
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
-                <tr>
-                  <th>Partner</th>
-                  <th>E-mail</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                  <!-- <th title="This field is currently mock data">Approved?</th> -->
-                  <th>&nbsp;</th>
-                </tr>
+              <tr>
+                <th>Partner</th>
+                <th>E-mail</th>
+                <th>Status</th>
+                <th>Action</th>
+                <th>&nbsp;</th>
+              </tr>
               </thead>
               <tbody>
-                <%= render partial: "partner_row", collection: @partners %>
+              <%= render partial: "partner_row", collection: @partners %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-</section><!-- /.content -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= render(
+          layout: "shared/csv_import_modal",
+          locals: {
+              title: "Import Partners Instructions:",
+              csv_template_url: "/partners.csv",
+              csv_import_url: import_csv_partners_path
+          }
+      ) do %>
+    <li>Open the csv file with excel <br>or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and <br>enter your partner agency names and <br>addresses in the appropriate columns.
+    </li>
+    <li>Save the file as a csv file.</li>
+  <% end %>
 
-<%= render(
-  layout: "shared/csv_import_modal",
-  locals: {
-    title: "Import Partners Instructions:",
-    csv_template_url: "/partners.csv",
-    csv_import_url: import_csv_partners_path
-  }
-) do %>
-  <li>Open the csv file with excel <br>or your favourite spreadsheet program.</li>
-  <li>Delete the sample data and <br>enter your partner agency names and <br>addresses in the appropriate columns.</li>
-  <li>Save the file as a csv file.</li>
-<% end %>
+</section>

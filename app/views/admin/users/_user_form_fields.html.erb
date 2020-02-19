@@ -1,19 +1,19 @@
-<%= f.input :name, label: "Name", wrapper: :vertical_input_group, required: true, autofocus: true do %>
-  <span class="input-group-addon"><%= fa_icon "user" %></span>
+<%= f.input :name, label: "Name", wrapper: :input_group, required: true, autofocus: true do %>
+  <span class="input-group-text"><%= fa_icon "user" %></span>
   <%= f.input_field :name, class: "form-control" %>
 <% end %>
-<%= f.input :email, label: "E-mail", wrapper: :vertical_input_group, required: true do %>
-  <span class="input-group-addon"><%= fa_icon "envelope" %></span>
+<%= f.input :email, label: "E-mail", wrapper: :input_group, required: true do %>
+  <span class="input-group-text"><%= fa_icon "envelope" %></span>
   <%= f.input_field :email, class: "form-control" %>
 <% end %>
 <!-- Only display password fields when not nested within organization form -->
 <% if @organization.nil? %>
-  <%= f.input :password, label: "Password", wrapper: :vertical_input_group, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) do %>
-    <span class="input-group-addon"><%= fa_icon "lock" %></span>
+  <%= f.input :password, label: "Password", wrapper: :input_group, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) do %>
+    <span class="input-group-text"><%= fa_icon "lock" %></span>
     <%= f.input_field :password, class: "form-control" %>
   <% end %>
-  <%= f.input :password_confirmation, label: "Confirm Password", wrapper: :vertical_input_group, required: true do %>
-    <span class="input-group-addon"><%= fa_icon "check" %></span>
+  <%= f.input :password_confirmation, label: "Confirm Password", wrapper: :input_group, required: true do %>
+    <span class="input-group-text"><%= fa_icon "check" %></span>
     <%= f.input_field :password_confirmation, class: "form-control" %>
   <% end %>
 <% end %>

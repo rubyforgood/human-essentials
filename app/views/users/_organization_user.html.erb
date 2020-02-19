@@ -2,12 +2,12 @@
   <td><%= user.name %></td>
   <td><%= user.email %></td>
   <td><%= user.kind %> </td>
-  <td><%= user.current_sign_in_at %></td>
+  <td><%= user.current_sign_in_at&.strftime('%Y/%m/%d') %></td>
   <td><%= user.invitation_status %></td>
-  <td><%= reinvite_user_link(user) %></td>
-  <td><%= edit_button_to promote_to_org_admin_organization_path(user_id: user.id),
+  <td nowrap><%= reinvite_user_link(user) %></td>
+  <td nowrap><%= edit_button_to promote_to_org_admin_organization_path(user_id: user.id),
     {text: 'Make admin'},
-    {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?'}} unless user.super_admin? or user.organization_admin? %></td>
+    {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}} unless user.super_admin? or user.organization_admin? %></td>
 </tr>
 
 

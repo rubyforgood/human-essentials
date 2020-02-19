@@ -1,206 +1,180 @@
-<!-- Left side column. contains the sidebar -->
-<aside class="main-sidebar">
-  <!-- sidebar: style can be found in sidebar.less -->
-  <section class="sidebar">
-    <!-- sidebar menu: : style can be found in sidebar.less -->
-    <ul class="sidebar-menu" data-widget="tree">
-      <li class="header all-caps">Main Navigation</li>
-      <li class="<%= active_class(['dashboard']) %>">
-        <%= link_to(dashboard_path(organization_id: current_user.organization)) do %>
-          <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+  <li class="nav-item">
+    <%= link_to(dashboard_path(organization_id: current_user.organization), class: "nav-link #{active_class(['dashboard'])}") do %>
+      <i class="nav-icon fas fa-tachometer-alt"></i> <span>Dashboard</span>
+    <% end %>
+  </li>
+  <li class="nav-item has-treeview <%= menu_open?(['diaper_drives']) %>">
+    <a href="#" class="nav-link <%= active_class(['diaper_drives']) %>">
+      <i class="nav-icon fas fa-trophy"></i>
+      <p>Diaper Drives
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(diaper_drives_path) %>">
+        <%= link_to(diaper_drives_path, class: "nav-link #{"active" if current_page?(diaper_drives_path(organization_id: current_user.organization))}") do %>
+          <i class="nav-icon far fa-circle"></i>
+          <p>All Diaper Drives</p>
         <% end %>
       </li>
-      <li class="<%= active_class(['diaper_drives']) %> treeview">
-        <a href="#">
-          <i class="fa fa-trophy"></i>
-          <span>Diaper Drives</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-          </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(diaper_drives_path) %>">
-            <%= link_to(diaper_drives_path) do %>
-              <i class="fa fa-circle-o"></i> All Diaper Drives
-            <% end %>
-          </li>
-          <li class="<%= 'active' if current_page?(new_diaper_drive_path) %>">
-            <%= link_to(new_diaper_drive_path) do %>
-              <i class="fa fa-circle-o"></i> New Diaper Drive
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= active_class(['donations']) %> treeview">
-        <a href="#">
-          <i class="fa fa-gratipay"></i>
-          <span>Donations</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-          </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(donations_path(organization_id: current_user.organization)) %>">
-            <%= link_to(donations_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> All Donations
-            <% end %>
-          </li>
-          <li class="<%= 'active' if current_page?(new_donation_path(organization_id: current_user.organization)) %>">
-            <%= link_to(new_donation_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> New Donation
-            <% end %>
-          </li>
-          <!-- NOTE(chaserx): temporarily removing repackaged donation from the nav
-          <li class="<%#= 'active' if current_page?(scale_donations_path(organization_id: current_user.organization)) %>">
-            <%#= link_to(scale_donations_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Repackaged Donation
-            <%# end %>
-          </li>ra
-          -->
-        </ul>
-      </li>
-      <li class="<%= active_class(['purchases']) %> treeview">
-        <a href="#">
-          <i class="fa fa-money"></i>
-          <span>Purchases</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-          </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= 'active' if current_page?(purchases_path(organization_id: current_user.organization)) %>">
-            <%= link_to(purchases_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> All Purchases
-            <% end %>
-          </li>
-          <li class="<%= 'active' if current_page?(new_purchase_path(organization_id: current_user.organization)) %>">
-            <%= link_to(new_purchase_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> New Purchase
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= active_class(['distributions']) %> treeview">
-        <a href="#">
-          <i class="fa fa-circle-o"></i> 
-          <span>Distributions</span>
-          <span class="pull-right-container">
-            <i class="fa fa-angle-left pull-right"></i>
-          </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= active_class(['items']) %>">
-            <%= link_to(distributions_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> All Distributions
-            <% end %>
-          </li>
-          <li class="<%= active_class(['items']) %>">
-            <%= link_to(new_distribution_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> New Distribution
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= 'active' if current_page?(requests_path) %>">
-        <%= link_to(requests_path) do %>
-          <i class="fa fa-file-text"></i> <span>Requests</span>
+      <li class="nav-item <%= 'active' if current_page?(new_diaper_drive_path) %>">
+        <%= link_to(new_diaper_drive_path, class: "nav-link #{"active" if current_page?(new_diaper_drive_path)}") do %>
+          <i class="nav-icon far fa-circle"></i>
+          <p>New Diaper Drive</p>
         <% end %>
       </li>
-      <li class="<%= 'active' if current_page?(pick_ups_distributions_path) %>">
-        <%= link_to(pick_ups_distributions_path) do %>
-          <i class="fa fa-calendar-o"></i> <span>Pick Ups</span>
-        <% end %>
-      </li>
-      <li class="<%= active_class(['items','barcode_items','storage_locations','adjustments','transfers']) %> treeview">
-        <a href="#">
-          <i class="fa fa-pie-chart"></i>
-          <span>Inventory</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-          </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= active_class(['items']) %>">
-            <%= link_to(items_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Items &amp; Inventory
-            <% end %>
-          </li>
-          <li class="<%= active_class(['barcode_items']) %>">
-            <%= link_to(barcode_items_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Barcode Items
-            <% end %>
-          </li>
-          <li class="<%= active_class(['storage_locations']) %>">
-            <%= link_to(storage_locations_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Storage Locations
-            <% end %>
-          </li>
-          <li class="<%= active_class(['adjustments']) %>">
-            <%= link_to(adjustments_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Inventory Adjustments
-            <% end %>
-          </li>
-          <li class="<%= active_class(['transfers']) %>">
-            <%= link_to(transfers_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Transfers
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <li class="<%= active_class(['partners','donation_sites','diaper_drive_participants','manufacturers','vendors']) %> treeview">
-        <a href="#">
-          <i class="fa fa-laptop"></i>
-          <span>Community</span>
-          <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-        </a>
-        <ul class="treeview-menu">
-          <li class="<%= active_class(['donation_sites']) %>">
-            <%= link_to(donation_sites_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Donation Sites
-            <% end %>
-          </li>
-          <li class="<%= active_class(['partners']) %>">
-            <%= link_to(partners_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Partner Agencies
-            <% end %>
-          </li>
-          <li class="<%= active_class(['diaper_drive_participants']) %>">
-            <%= link_to(diaper_drive_participants_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Diaper Drive Participants
-            <% end %>
-          </li>
-          <li class="<%= active_class(['manufacturers']) %>">
-            <%= link_to(manufacturers_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Manufacturers
-            <% end %>
-          </li>
-          <li class="<%= active_class(['vendors']) %>">
-            <%= link_to(vendors_path(organization_id: current_user.organization)) do %>
-              <i class="fa fa-circle-o"></i> Vendors
-            <% end %>
-          </li>
-        </ul>
-      </li>
-      <% if current_user.organization_admin %>
-        <li class="<%= active_class(['audits']) %> treeview">
-          <a href="#">
-            <i class="fa fa-tasks"></i>
-            <span>Reporting & Auditing</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li class="<%= active_class(['audits']) %>">
-              <%= link_to(audits_path(organization_id: current_user.organization)) do %>
-                <i class="fa fa-circle-o"></i> Annual Audit
-              <% end %>
-            </li>
-          </ul>
-        </li>
-      <% end %>
     </ul>
-  </section>
-</aside>
+
+  <li class="nav-item has-treeview <%= menu_open?(['donations']) %>">
+    <a href="#" class="nav-link <%= active_class(['donations']) %>">
+      <i class="nav-icon fa fa-gratipay"></i>
+      <p>Donations
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(donations_path) %>">
+        <%= link_to(donations_path(organization_id: current_user.organization), class: "nav-link #{"active" if current_page?(donations_path(organization_id: current_user.organization))}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> All Donations
+        <% end %>
+      </li>
+      <li class="nav-item <%= 'active' if current_page?(new_donation_path(organization_id: current_user.organization)) %>">
+        <%= link_to(new_donation_path(organization_id: current_user.organization), class: "nav-link #{"active" if current_page?(new_donation_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> New Donation
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['purchases']) %>">
+    <a href="#" class="nav-link <%= active_class(['purchases']) %>">
+      <i class="nav-icon fa fa-money"></i>
+      <p>Purchases
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(donations_path) %>">
+        <%= link_to(purchases_path(organization_id: current_user.organization), class: "nav-link #{"active" if current_page?(purchases_path(organization_id: current_user.organization))}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> All Purchases
+        <% end %>
+      </li>
+      <li class="nav-item <%= 'active' if current_page?(new_purchase_path(organization_id: current_user.organization)) %>">
+        <%= link_to(new_purchase_path(organization_id: current_user.organization), class: "nav-link #{"active" if current_page?(new_purchase_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> New Purchase
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="nav-item <%= 'active' if current_page?(requests_path) %>">
+    <%= link_to(requests_path, class: "nav-link #{active_class(['requests'])}") do %>
+      <i class="nav-icon fa fa-file-text"></i> Requests
+    <% end %>
+  </li>
+
+  <li class="nav-item <%= 'active' if current_page?(distributions_path) %>">
+    <%= link_to(distributions_path, class: "nav-link #{"active" if current_page?(distributions_path)}") do %>
+      <i class="nav-icon fa fa-shopping-cart"></i>Distributions
+    <% end %>
+  </li>
+
+  <li class="nav-item <%= 'active' if current_page?(pick_ups_distributions_path) %>">
+    <%= link_to(pick_ups_distributions_path, class: "nav-link #{"active" if current_page?(pick_ups_distributions_path)}") do %>
+      <i class="nav-icon fa fa-calendar-o"></i> Pick Ups
+    <% end %>
+  </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['items', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
+    <a href="#" class="nav-link <%= active_class(['items', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
+      <i class="nav-icon fa fa-pie-chart"></i>
+      <p>Inventory
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= active_class(['items']) %>">
+        <%= link_to(items_path(organization_id: current_user.organization), class: "nav-link #{active_class(['items'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Items &amp; Inventory
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['barcode_items']) %>">
+        <%= link_to(barcode_items_path(organization_id: current_user.organization), class: "nav-link #{active_class(['barcode_items'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Barcode Items
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['storage_locations']) %>">
+        <%= link_to(storage_locations_path(organization_id: current_user.organization), class: "nav-link #{active_class(['storage_locations'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Storage Locations
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['adjustments']) %>">
+        <%= link_to(adjustments_path(organization_id: current_user.organization), class: "nav-link #{active_class(['adjustments'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Inventory Adjustments
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['transfers']) %>">
+        <%= link_to(transfers_path(organization_id: current_user.organization), class: "nav-link #{active_class(['transfers'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Transfers
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['partners', 'donation_sites', 'diaper_drive_participants', 'manufacturers', 'vendors']) %>">
+    <a href="#" class="nav-link <%= active_class(['partners', 'donation_sites', 'diaper_drive_participants', 'manufacturers', 'vendors']) %>">
+      <i class="nav-icon fa fa-laptop"></i>
+      <p>Community
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= active_class(['donation_sites']) %>">
+        <%= link_to(donation_sites_path(organization_id: current_user.organization), class: "nav-link #{active_class(['donation_sites'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donation Sites
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['partners']) %>">
+        <%= link_to(partners_path(organization_id: current_user.organization), class: "nav-link #{active_class(['partners'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Partner Agencies
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['diaper_drive_participants']) %>">
+        <%= link_to(diaper_drive_participants_path(organization_id: current_user.organization), class: "nav-link #{active_class(['diaper_drive_participants'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Diaper Drive Participants
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['manufacturers']) %>">
+        <%= link_to(manufacturers_path(organization_id: current_user.organization), class: "nav-link #{active_class(['manufacturers'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Manufacturers
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['vendors']) %>">
+        <%= link_to(vendors_path(organization_id: current_user.organization), class: "nav-link #{active_class(['vendors'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Vendors
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <% if current_user.organization_admin %>
+    <li class="nav-item has-treeview <%= menu_open?(['audits']) %>">
+      <a href="#" class="nav-link <%= active_class(['audits']) %>">
+        <i class="nav-icon fa fa-tasks"></i>
+        <p>Reporting & Auditing
+          <i class="fas fa-angle-left right"></i></p>
+      </a>
+      <ul class="nav nav-treeview">
+        <li class="nav-item <%= active_class(['audits']) %>">
+          <%= link_to(audits_path(organization_id: current_user.organization), class: "nav-link #{active_class(['audits'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> Annual Audit
+          <% end %>
+        </li>
+      </ul>
+    </li>
+  <% end %>
+
+  <% if current_user.organization_admin %>
+    <li class="nav-item">
+      <%= link_to(organization_path, class: "nav-link") do %>
+        <i class="nav-icon fas fa-home"></i> <span>My Organization</span>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

@@ -1,65 +1,82 @@
 <section class="content-header">
-  <% content_for :title, "Purchases - #{current_organization.name}" %>
-  <h1>
-    Purchases
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><a href="#">Purchases</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Purchases - #{current_organization.name}" %>
+        <h1>
+          Purchases
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Purchases</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <%= form_tag(purchases_path, method: :get) do |f| %>
-          <div class="row">
-            <% if @storage_locations.present? %>
-              <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                <%= label_tag "by Storage Location" %>
-                <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_storage_location}, class: "form-control") %>
-              </div>
-            <% end %>
-            <% if @vendors.present? %>
-              <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                <%= label_tag "by Vendors" %>
-                <%= collection_select(:filters, :from_vendor, @vendors || {}, :id, :business_name, {include_blank: true, selected: @selected_vendor}, class: "form-control") %>
-              </div>
-            <% end %>
-          </div><!-- /.row -->
-          <div class="row">
-            <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-              <%= label_tag "Date Range" %>
-              <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
-            </div>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Distribution Filters</h3>
           </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <%= filter_button %>
-              <%= cancel_button_to purchases_path, {text: "Clear Filters"} %>
-
-              <div class="pull-right">
-                <%= download_button_to(csv_path(format: :csv, type: "Purchase"), {text: "Export Purchases", size: "lg"}) if @purchases.any? %>
-                <%= new_button_to new_purchase_path(organization_id: current_organization), {text: "New Purchase"} %>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= form_tag(purchases_path, method: :get) do |f| %>
+              <div class="row">
+                <% if @storage_locations.present? %>
+                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <%= label_tag "by Storage Location" %>
+                    <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_storage_location}, class: "form-control") %>
+                  </div>
+                <% end %>
+                <% if @vendors.present? %>
+                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <%= label_tag "by Vendors" %>
+                    <%= collection_select(:filters, :from_vendor, @vendors || {}, :id, :business_name, {include_blank: true, selected: @selected_vendor}, class: "form-control") %>
+                  </div>
+                <% end %>
+                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                </div>
+              </div><!-- /.row -->
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to purchases_path, {text: "Clear Filters"} %>
+                <span class="float-right">
+                    <%= download_button_to(csv_path(format: :csv, type: "Purchase"), {text: "Export Purchases"}) if @purchases.any? %>
+                  <%= new_button_to new_purchase_path(organization_id: current_organization), {text: "New Purchase"} %>
+                    </span>
               </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
 
-            </div>
-          </div><!-- /.row -->
-        <% end # form %>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-
-    <div class="box-body">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped records">
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
               <tr>
                 <th>Purchases from</th>
@@ -68,32 +85,37 @@
                 <th>Variety of Items</th>
                 <th>Amount spent</th>
                 <th>Purchased Date</th>
-                <th class="pull-right">Actions</th>
+                <th class="text-right">Actions</th>
               </tr>
               </thead>
               <tbody>
               <%= render partial: "purchase_row", collection: @purchases %>
               </tbody>
               <tfoot>
-                <tr>
-                  <td colspan="2" style="text-align: left"><strong>Total</strong></td>
-                  <td class="numeric">
-                    <strong id="purchase_quantity">
-                      <%= @purchases_quantity %> (Total)
-                    </strong>
-                    <br/>
-                    <%= @paginated_purchases_quantity %> (This page)
-                  </td>
-                  <td></td>
-                  <td class="numeric"><strong><%= dollar_value(@total_value_all_purchases) %></strong></td>
-                  <td></td>
-                </tr>
+              <tr>
+                <td colspan="2" style="text-align: left"><strong>Total</strong></td>
+                <td class="numeric">
+                  <strong id="purchase_quantity">
+                    <%= @purchases_quantity %> (Total)
+                  </strong>
+                  <br/>
+                  <%= @paginated_purchases_quantity %> (This page)
+                </td>
+                <td></td>
+                <td class="numeric"><strong><%= dollar_value(@total_value_all_purchases) %></strong></td>
+                <td></td>
+              </tr>
               </tfoot>
             </table>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer clearfix">
             <%= paginate @paginated_purchases %>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
 </section>

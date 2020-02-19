@@ -1,13 +1,16 @@
 <tr>
   <td><%= barcode_item_row.barcodeable.name %></td>
-  <td class="numeric"><%= barcode_item_row.quantity %></td>
-  <td class="numeric"><%= barcode_item_row.value %></td>
+  <td><%= barcode_item_row.quantity %></td>
+  <td><%= barcode_item_row.value %></td>
   <td class="text-right">
-  		<%= link_to "View", admin_barcode_item_path(barcode_item_row), class: "btn btn-primary btn-xs" %>
-      <%= link_to edit_admin_barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" do %>
-        <i class="fa fa-edit"></i> Edit
-      <% end %>
-      <%= link_to admin_barcode_item_path(barcode_item_row), method: :delete, class: "btn btn-danger btn-xs", data: { confirm: confirm_delete_msg(barcode_item_row.item.name) } do %>
-        <i class="fa fa-trash"></i> Delete
-      <% end %>
+    <%= link_to admin_barcode_item_path(barcode_item_row), class: "btn btn-primary btn-xs" do %>
+      <i class="fa fa-search"></i> View
+    <% end %>
+    <%= link_to edit_admin_barcode_item_path(barcode_item_row), class: "btn btn-info btn-xs" do %>
+      <i class="fa fa-edit"></i> Edit
+    <% end %>
+    <%= link_to admin_barcode_item_path(barcode_item_row), method: :delete, class: "btn btn-danger btn-xs", data: {confirm: confirm_delete_msg(barcode_item_row.item.name)} do %>
+      <i class="fa fa-trash"></i> Delete
+    <% end %>
+  </td>
 </tr>

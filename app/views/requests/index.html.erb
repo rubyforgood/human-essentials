@@ -1,61 +1,94 @@
+<!-- Content Header (Page header) -->
 <section class="content-header">
-    <% content_for :title, "Requests - #{current_organization.name}" %>
-    <h1>
-        Requests
-        <small>for <%= current_organization.name %></small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><%= link_to(dashboard_path) do %>
-            <i class="fa fa-dashboard"></i> Home
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Requests - #{current_organization.name}" %>
+        <h1>
+          Requests
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
             <% end %>
-        </li>
-        <li><a href="#">Requests</a></li>
-    </ol>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Requests</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
-
 <!-- Main content -->
 <section class="content">
-    <div class="box">
-        <div class="box-header with-border bg-gray">
-            <section id="filters">
-                <%= form_tag(requests_path, method: :get) do |f| %>
-                  <div class="row">
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                      <%= label_tag "Date Range" %>
-                      <%= render partial: "shared/date_range_picker", locals: { css_class: "form-control" } %>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-xs-12">
-                      <%= filter_button %>
-                      <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
-                    </div>
-                  </div><!-- /.row -->
-                <% end # form %>
-            </section><!-- /#filters -->
-        </div><!-- /.box-header -->
-        <div class="box-body">
-            <div class="row">
-                <div class="col-xs-12">
-                    <!-- /.box-header -->
-                    <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover striped records">
-                            <thead>
-                                <tr>
-                                    <th class="date">Date</th>
-                                    <th>Requester</th>
-                                    <th>Status</th>
-                                    <th class="pull-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <%= render partial: "request_row", collection: @paginated_requests %>
-                            </tbody>
-                        </table>
-                    </div><!-- /.box-body.table-responsive -->
-                </div><!-- /.col-xs-12 -->
-            </div><!-- /.row -->
-        </div><!-- /.box-body -->
-    </div><!-- /.box -->
-    <%= paginate @paginated_requests %>
-</section><!-- /.content -->
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Request Filter</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= form_tag(requests_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                </div>
+              </div>
+              </div>
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
+              </div>
+            <% end # form %>
+            </div>
+        <!-- /.card -->
+      </div>
+      <!--/.col (left) -->
+      <!-- right column -->
+      <div class="col-md-6">
+
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th style="width: 10px">Date</th>
+                <th>Requestor</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: "request_row", collection: @paginated_requests %>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer clearfix">
+            <%= paginate @paginated_requests %>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>

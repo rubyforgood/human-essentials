@@ -1,77 +1,83 @@
 <section class="content-header">
-  <% content_for :title, "Donations - #{@donation.source} - #{current_organization.name}" %>
-  <h1>
-    Donation
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "Donations", (donations_path) %></li>
-    <li class="active"> <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Donations - #{@donation.source} - #{current_organization.name}" %>
+        <h1>
+          Donation
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Donations", (donations_path) %></li>
+          <li class="breadcrumb-item"><a href="#"><%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
+
 <section class="content">
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <fieldset>
-        <div class="box-body table-responsive no-padding large-table" style="margin-bottom: 4rem;">
-          <table class="table table-bordered striped">
-            <thead>
-              <th class="date">Date</th>
-              <th>Source</th>
-              <th>Donation Site</th>
-              <th>Storage Location</th>
-            </thead>
-            <tbody>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
               <tr>
-                <td class="date"><%= @donation.created_at.to_s(:distribution_date) %></td>
-                <td><%= @donation.source %></td>
-                <td><%= @donation.donation_site_view %></td>
-                <td><%= @donation.storage_view %></td>
+                <th>Date</th>
+                <th>Source</th>
+                <th>Donation Site</th>
+                <th>Storage Location</th>
               </tr>
-            </tbody>
-          </table>
-       </div>
-
-
-        <section id="line_items">
-          <!-- /.box-header -->
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="box-body table-responsive no-padding">
-                <table class="table table-hover striped">
-                  <thead>
-                    <th>Item</th>
-                    <th class="numeric">Quantity</th>
-                    <th class="numeric">In Kind Value</th>
-                  </thead>
-                  <tbody>
-                    <%= render partial: "donation_item_row", collection: @line_items %>
-                    <tr>
-                      <td><strong>Total</strong></td>
-                      <td></td>
-                      <td><strong><%= dollar_value(@donation.value_per_itemizable) %></strong></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+              </thead>
+              <tbody>
+              <td><%= @donation.created_at.to_s(:distribution_date) %></td>
+              <td><%= @donation.source %></td>
+              <td><%= @donation.donation_site_view %></td>
+              <td><%= @donation.storage_view %></td>              </tbody>
+            </table>
           </div>
-        <!--
-        TODO: What's the best way to do this? Should we use a new workflow?
-        -->
-        </section>
-      </fieldset>
+        </div>
+      </div>
     </div>
-    <div class="box-footer">
-      <%= edit_button_to edit_donation_path(@donation), { text: "Make a correction", size: "lg" } %>
-      <%= new_button_to new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
-      <%= delete_button_to donation_path(@donation), { size: "lg", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.organization_admin? %>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>In Kind Value</th>
+              </thead>
+              <tbody>
+              <%= render partial: "donation_item_row", collection: @line_items %>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td></td>
+                <td><strong><%= dollar_value(@donation.value_per_itemizable) %></strong></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <%= edit_button_to edit_donation_path(@donation), { text: "Make a correction", size: "md" } %>
+            <%= new_button_to new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
+            <%= delete_button_to donation_path(@donation), { size: "md", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.organization_admin? %>
+          </div>
+          </div>
+      </div>
     </div>
   </div>
 </section>

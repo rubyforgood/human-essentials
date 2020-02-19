@@ -1,31 +1,34 @@
-<%= simple_form_for form, html: { role: "form" } do |f| %>
-  <div class="box-body ">
+<%= simple_form_for form, html: {role: "form"} do |f| %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- jquery validation -->
+          <div class="card card-primary">
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div class="card-body">
+              <%= f.input :quantity, label: "Quantity", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-sort-numeric-desc"></i></span>
+                <%= f.input_field :quantity, class: "form-control" %>
+              <% end %>
+              <%= f.association :barcodeable, collection: @items, label: "Item", wrapper: :input_group %>
+              <%= f.input :value, label: "Barcode", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-barcode"></i></span>
+                <%= f.input_field :value, class: "form-control" %>
+              <% end %>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
 
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.input :quantity, label: "Quantity", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
-          <%= f.input_field :quantity, class: "form-control" %>
-        <% end %>
-      </div><!-- ./col-xs-8 -->
-    </div><!-- /.row -->
-
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.association :barcodeable, collection: @items, label: "Item" %>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.input :value, label: "Barcode", wrapper: :vertical_input_group do %>
-          <span class="input-group-addon"><i class="fa fa-barcode"></i></span>
-          <%= f.input_field :value, class: "form-control" %>
-        <% end %>
-      </div><!-- ./col-xs-8 -->
-    </div><!-- /.row -->
-  </div><!-- /.box-body -->
-  <div class="box-footer">
-    <%= submit_button %>
-  </div>
-<% end #form %>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+<% end %>

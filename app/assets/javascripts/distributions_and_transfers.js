@@ -78,7 +78,7 @@ $(function() {
       request_storage_location_and_populate_item($("select", insertedItem));
       insertedItem
         .find("#_barcode-lookup-new_line_items")
-        .attr("id", `_barcode-lookup-${$(".nested-fields").size() - 1}`);
+        .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`);
       control = $("select.storage-location-source");
       $.ajax({
         url: control

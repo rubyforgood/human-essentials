@@ -1,32 +1,40 @@
 <section class="content-header">
-  <% content_for :title, "Admin - Organizations" %>
-  <h1>
-    All Diaperbase Organizations
-    <small></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li>
-      <%= link_to(admin_dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><a href="#">All Diaperbase organizations</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Admin - Organizations" %>
+        <h1>
+          All Diaperbase Organizations
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">All Diaperbase Organizations</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-body">
-      <div class="text-right">
-        <%= new_button_to new_admin_organization_path, { text: "Add New Organization" } %>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-header">
+            <div class="float-right">
+              <h2 class="card-title">
+                <%= new_button_to new_admin_organization_path, { text: "Add New Organization" } %>
+              </h2>
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <table class="table">
               <thead>
               <tr>
                 <th>Organization</th>
@@ -37,12 +45,12 @@
               </thead>
               <tbody>
               <%= render partial: "organization_row", collection: @organizations %>
+
               </tbody>
             </table>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
         </div>
+        <!-- /.card -->
       </div>
     </div>
   </div>

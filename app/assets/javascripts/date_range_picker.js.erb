@@ -8,25 +8,27 @@ $(document).ready(function() {
       $('#filters_date_range').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
       $('#filters_date_range_label').val(label);
     }
+    if ($('#filters_date_range').length > 0) {
+      $('#filters_date_range').daterangepicker({
+          linkedCalendars: false,
+          autoApply: true,
+          ranges: {
+             'All Time': [moment(rails_right_now).subtract(100, 'years'), moment(rails_right_now)],
+             'Today': [moment(rails_right_now), moment(rails_right_now)],
+             'Yesterday': [moment(rails_right_now).subtract(1, 'days'), moment(rails_right_now).subtract(1, 'days')],
+             'Last 7 Days': [moment(rails_right_now).subtract(6, 'days'), moment(rails_right_now)],
+             'Last 30 Days': [moment(rails_right_now).subtract(29, 'days'), moment(rails_right_now)],
+             'This Month': [moment(rails_right_now).startOf('month'), moment(rails_right_now).endOf('month')],
+             'Last Month': [moment(rails_right_now).subtract(1, 'month').startOf('month'), moment(rails_right_now).subtract(1, 'month').endOf('month')],
+             'This Year': [moment(rails_right_now).startOf('year'), moment(rails_right_now).endOf('year')]
+          }
+      }, callback);
 
-    $('#filters_date_range').daterangepicker({
-        linkedCalendars: false,
-        autoApply: true,
-        ranges: {
-           'All Time': [moment(rails_right_now).subtract(100, 'years'), moment(rails_right_now)],
-           'Today': [moment(rails_right_now), moment(rails_right_now)],
-           'Yesterday': [moment(rails_right_now).subtract(1, 'days'), moment(rails_right_now).subtract(1, 'days')],
-           'Last 7 Days': [moment(rails_right_now).subtract(6, 'days'), moment(rails_right_now)],
-           'Last 30 Days': [moment(rails_right_now).subtract(29, 'days'), moment(rails_right_now)],
-           'This Month': [moment(rails_right_now).startOf('month'), moment(rails_right_now).endOf('month')],
-           'Last Month': [moment(rails_right_now).subtract(1, 'month').startOf('month'), moment(rails_right_now).subtract(1, 'month').endOf('month')],
-           'This Year': [moment(rails_right_now).startOf('year'), moment(rails_right_now).endOf('year')]
-        }
-    }, callback);
-
-    start_date = $('#filters_date_range').data("initial-start-date");
-    end_date = $('#filters_date_range').data("initial-end-date");
-    $('#filters_date_range').data('daterangepicker').setStartDate(start_date);
-    $('#filters_date_range').data('daterangepicker').setEndDate(end_date);
+      start_date = $('#filters_date_range').data("initial-start-date");
+      end_date = $('#filters_date_range').data("initial-end-date");
+      
+      $('#filters_date_range').data('daterangepicker').setStartDate(start_date);
+      $('#filters_date_range').data('daterangepicker').setEndDate(end_date);
+    };
   });
 });
