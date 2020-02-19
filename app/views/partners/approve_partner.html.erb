@@ -1,154 +1,161 @@
 <section class="content-header">
-  <% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
-  <h1>
-    Partner Approval Request
-    <small>for <%= @partner.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><%= link_to "Partners", (partners_path) %></li>
-    <li class="active">Approval for <%= @partner.name %></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
+        <h1>
+          Partner Approval Request
+          <small>for <%= @partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Partners", (partners_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Approval for <%= @partner.name %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title"><%= @partner.name %></h3>
-    </div>
-    <div class="box-body">
-
-      <p><%= link_to @partner.email, "mailto:#{@partner.email}" %></p>
-
-      <h1>Partner Application Details</h1>
-      <hr>
-      <div class="row">
-
-        <div class="col-xs-6">
-          <!-- /.box-header -->
-          <h2>Agency Information</h2>
-          <p>Name: <%= @agency[:name] %></p>
-          <p>Distributor Type <%= @agency[:distributor_type] %></p>
-          <p>Agency Type: <% @agency[:agency_type] %></p>
-          <p>Proof of Agency Status (Link): <%= link_to File.basename(@agency[:proof_of_agency_status]), documentation_url(@agency[:proof_of_agency_status]), target: :_blank %></p>
-          <p>Agency Mission: <%= @agency[:agency_mission] %></p>
-          <p>Address <%= @agency[:address1] %></p>
-          <p>Address <%= @agency[:address2] %></p>
-          <p>City: <%= @agency[:city] %></p>
-          <p>State: <%= @agency[:state] %></p>
-          <p>Zip Code: <%= @agency[:zip_code] %></p>
-          <br>
-          <h2>Media Information</h2>
-          <p>Website: <%= @agency[:media][:website] %></p>
-          <p>Facebook: <%= @agency[:media][:facebook] %></p>
-          <p>Twitter: <%= @agency[:media][:twitter] %></p>
-          <br>
-          <h2>Agency Stability</h2>
-          <p>Founded <%= @agency[:stability][:founded] %></p>
-          <p>Form 990: <%= @agency[:stability][:form_990] ? 'Yes' : 'No' %></p>
-          <p>Form 990 Link: <%= link_to File.basename(@agency[:stability][:form_990_link]), documentation_url(@agency[:stability][:form_990_link]), target: :_blank %></p>
-          <p>Program Name <%= @agency[:stability][:program_name] %></p>
-          <p>Program Description <%= @agency[:stability][:program_description] %></p>
-          <p>Program Age <%= @agency[:stability][:program_age] %></p>
-          <p>Case Management: <%= @agency[:stability][:case_management] %></p>
-          <p>Evidence Based: <%= @agency[:stability][:evidence_based] %></p>
-          <p>Evidence Based Description: <%= @agency[:stability][:evidence_based_description] %></p>
-          <p>Program Client Improvement: <%= @agency[:stability][:program_client_example] %></p>
-          <p>Diaper Use: <%= @agency[:stability][:diaper_use] %></p>
-          <p>Other Diaper Use: <%= @agency[:stability][:other_diaper_use] %></p>
-          <p>Currently Provide Diapers: <%= @agency[:stability][:currently_provide_diapers] %></p>
-          <p>Turn Away Child Care: <%= @agency[:stability][:turn_away_child_care] %></p>
-          <br>
-          <h3>Program Address</h3>
-          <p>Program Address: <%= @agency[:program_address][:program_address1]%></p>
-          <p>Program Address: <%= @agency[:program_address][:program_address2]%></p>
-          <p>Program City: <%= @agency[:program_address][:program_city]%></p>
-          <p>Program State: <%= @agency[:program_address][:program_state]%></p>
-          <p>Program Zip Code: <%= @agency[:program_address][:program_zip_code]%></p>
-          <br>
-          <h2>Organizational Capacity</h2>
-          <p>Max Serve <%= @agency[:capacity][:max_serve]%></p>
-          <p>Incorporate Plan: <%= @agency[:capacity][:incorporate_plan]%></p>
-          <p>Responsible Staff Position: <%= @agency[:capacity][:responsible_staff_position]%></p>
-          <p>Storage Space: <%= @agency[:capacity][:storage_space]%></p>
-          <p>Storage Space Description: <%= @agency[:capacity][:storage_space_description]%></p>
-          <p>Trusted Pickup:</p>
-          <br>
-          <h2>Population Served</h2>
-          <p>Income Requirement Description: <%= @agency[:population_served][:income_requirement_description] %></p>
-          <p>Serve Income Circumstances: <%= @agency[:population_served][:serve_income_circumstances] %></p>
-          <p>Income Verification: <%= @agency[:population_served][:income_verification] %></p>
-          <p>Internal DB: <%= @agency[:population_served][:internal_db] %></p>
-          <p>MAAC: <%= @agency[:population_served][:maac] %></p>
-          <br>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Default box -->
+        <div class="card card-info card-outline">
+          <div class="card-header">
+            <h1 class="card-title"><strong><%= @partner.name %> - Application Details - <%= link_to @partner.email, "mailto:#{@partner.email}" %></strong></h1>
+          </div>
+          <div class="card-body p-6">
+            <div class="row">
+              <div class="col-md-6">
+                <!-- /.box-header -->
+                <h2>Agency Information</h2>
+                <p>Name: <%= @agency[:name] %></p>
+                <p>Distributor Type <%= @agency[:distributor_type] %></p>
+                <p>Agency Type: <% @agency[:agency_type] %></p>
+                <p>Proof of Agency Status (Link): <%= link_to File.basename(@agency[:proof_of_agency_status]), documentation_url(@agency[:proof_of_agency_status]), target: :_blank %></p>
+                <p>Agency Mission: <%= @agency[:agency_mission] %></p>
+                <p>Address <%= @agency[:address1] %></p>
+                <p>Address <%= @agency[:address2] %></p>
+                <p>City: <%= @agency[:city] %></p>
+                <p>State: <%= @agency[:state] %></p>
+                <p>Zip Code: <%= @agency[:zip_code] %></p>
+                <br>
+                <h2>Media Information</h2>
+                <p>Website: <%= @agency[:media][:website] %></p>
+                <p>Facebook: <%= @agency[:media][:facebook] %></p>
+                <p>Twitter: <%= @agency[:media][:twitter] %></p>
+                <br>
+                <h2>Agency Stability</h2>
+                <p>Founded <%= @agency[:stability][:founded] %></p>
+                <p>Form 990: <%= @agency[:stability][:form_990] ? 'Yes' : 'No' %></p>
+                <p>Form 990 Link: <%= link_to File.basename(@agency[:stability][:form_990_link]), documentation_url(@agency[:stability][:form_990_link]), target: :_blank %></p>
+                <p>Program Name <%= @agency[:stability][:program_name] %></p>
+                <p>Program Description <%= @agency[:stability][:program_description] %></p>
+                <p>Program Age <%= @agency[:stability][:program_age] %></p>
+                <p>Case Management: <%= @agency[:stability][:case_management] %></p>
+                <p>Evidence Based: <%= @agency[:stability][:evidence_based] %></p>
+                <p>Evidence Based Description: <%= @agency[:stability][:evidence_based_description] %></p>
+                <p>Program Client Improvement: <%= @agency[:stability][:program_client_example] %></p>
+                <p>Diaper Use: <%= @agency[:stability][:diaper_use] %></p>
+                <p>Other Diaper Use: <%= @agency[:stability][:other_diaper_use] %></p>
+                <p>Currently Provide Diapers: <%= @agency[:stability][:currently_provide_diapers] %></p>
+                <p>Turn Away Child Care: <%= @agency[:stability][:turn_away_child_care] %></p>
+                <br>
+                <h3>Program Address</h3>
+                <p>Program Address: <%= @agency[:program_address][:program_address1]%></p>
+                <p>Program Address: <%= @agency[:program_address][:program_address2]%></p>
+                <p>Program City: <%= @agency[:program_address][:program_city]%></p>
+                <p>Program State: <%= @agency[:program_address][:program_state]%></p>
+                <p>Program Zip Code: <%= @agency[:program_address][:program_zip_code]%></p>
+                <br>
+                <h2>Organizational Capacity</h2>
+                <p>Max Serve <%= @agency[:capacity][:max_serve]%></p>
+                <p>Incorporate Plan: <%= @agency[:capacity][:incorporate_plan]%></p>
+                <p>Responsible Staff Position: <%= @agency[:capacity][:responsible_staff_position]%></p>
+                <p>Storage Space: <%= @agency[:capacity][:storage_space]%></p>
+                <p>Storage Space Description: <%= @agency[:capacity][:storage_space_description]%></p>
+                <p>Trusted Pickup:</p>
+                <br>
+                <h2>Population Served</h2>
+                <p>Income Requirement Description: <%= @agency[:population_served][:income_requirement_description] %></p>
+                <p>Serve Income Circumstances: <%= @agency[:population_served][:serve_income_circumstances] %></p>
+                <p>Income Verification: <%= @agency[:population_served][:income_verification] %></p>
+                <p>Internal DB: <%= @agency[:population_served][:internal_db] %></p>
+                <p>MAAC: <%= @agency[:population_served][:maac] %></p>
+                <br>
+              </div>
+              <div class="col-md-6">
+                <h3>Ethnic Composition of Those Served</h3>
+                <p>African American: <%= @agency[:population_served][:enthnic_composition][:african_american] %></p>
+                <p>Caucasian: <%= @agency[:population_served][:enthnic_composition][:caucasian] %></p>
+                <p>Hispanic: <%= @agency[:population_served][:enthnic_composition][:hispanic] %></p>
+                <p>Asian: <%= @agency[:population_served][:enthnic_composition][:asian] %></p>
+                <p>American Indian: <%= @agency[:population_served][:enthnic_composition][:american_indain] %></p>
+                <p>Pacific Island: <%= @agency[:population_served][:enthnic_composition][:pacific_island] %></p>
+                <p>Multi-Racial: <%= @agency[:population_served][:enthnic_composition][:multi_racial] %></p>
+                <p>Other: <%= @agency[:population_served][:enthnic_composition][:other] %></p>
+                <br>
+                <h3>Zip Codes Served</h3>
+                <p>Zips: <%= @agency[:population_served][:zip_codes_served] %></p>
+                <br>
+                <h3>Poverty Information of Those Served</h3>
+                <p>At FPL or Below: <%= @agency[:population_served][:poverty_information][:at_fpl_or_below] %></p>
+                <p>Above 1-2 times FPL: <%= @agency[:population_served][:poverty_information][:above_1_2_times_fpl] %></p>
+                <p>Greater 2 times FPL: <%= @agency[:population_served][:poverty_information][:greater_2_times_fpl] %></p>
+                <p>Poverty Unknown: <%= @agency[:population_served][:poverty_information][:poverty_unknown] %></p>
+                <br>
+                <h3>Ages Served</h3>
+                <p>Ages: <%= @agency[:population_served][:ages_served] %></p>
+                <br>
+                <h2>Executive Director</h2>
+                <p>Executive Director Name: <%= @agency[:executive_director][:name] %></p>
+                <p>Executive Director Phone: <%= @agency[:executive_director][:phone] %></p>
+                <p>Executive Director Email: <%= @agency[:executive_director][:email] %></p>
+                <br>
+                <h2>Program Contact Person</h2>
+                <p>Program Contact Name: <%= @agency[:contact_person][:name] %></p>
+                <p>Program Contact Phone: <%= @agency[:contact_person][:phone] %></p>
+                <p>Program Contact Mobile: <%= @agency[:contact_person][:mobile] %></p>
+                <p>Program Contact Email: <%= @agency[:contact_person][:email] %> </p>
+                <br>
+                <h2>Diaper Pick Up Person</h2>
+                <p>Pick Up Method: <%= @agency[:pick_up_person][:method] %></p>
+                <p>Pick Up Name: <%= @agency[:pick_up_person][:name] %></p>
+                <p>Pick Up Phone: <%= @agency[:pick_up_person][:phone] %></p>
+                <p>Pick Up Email: <%= @agency[:pick_up_person][:email] %></p>
+                <br>
+                <h2>Agency Distribution Information</h2>
+                <p>Distribution Times: <%= @agency[:distribution][:distribution_times] %> </p>
+                <p>New Client Times: <%= @agency[:distribution][:new_client_times] %></p>
+                <p>More Docs Required: <%= @agency[:distribution][:more_docs_required] %></p>
+                <br>
+                <h2>Sources of Funding</h2>
+                <p>Sources of Funding: <%= @agency[:funding][:source] %></p>
+                <p>Sources of Diapers: <%= @agency[:funding][:diapers] %> </p>
+                <p>Diaper Budget:<%= @agency[:funding][:budget] %></p>
+                <p>Diaper Funding Source: <%= @agency[:funding][:diaper_funding_source] %></p>
+                <h2>Other Documents</h2>
+                <ul>
+                  <% @agency[:documents].each do |document| %>
+                    <li><%= link_to File.basename(document[:document_link]), documentation_url(document[:document_link]), target: :_blank %></li>
+                  <% end %>
+                </ul>
+              </div>
+              <!-- /.box -->
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md" } if @partner.awaiting_review? %>
+          </div>
         </div>
-        <div class="col-xs-6">
-          <h3>Ethnic Composition of Those Served</h3>
-          <p>African American: <%= @agency[:population_served][:enthnic_composition][:african_american] %></p>
-          <p>Caucasian: <%= @agency[:population_served][:enthnic_composition][:caucasian] %></p>
-          <p>Hispanic: <%= @agency[:population_served][:enthnic_composition][:hispanic] %></p>
-          <p>Asian: <%= @agency[:population_served][:enthnic_composition][:asian] %></p>
-          <p>American Indian: <%= @agency[:population_served][:enthnic_composition][:american_indain] %></p>
-          <p>Pacific Island: <%= @agency[:population_served][:enthnic_composition][:pacific_island] %></p>
-          <p>Multi-Racial: <%= @agency[:population_served][:enthnic_composition][:multi_racial] %></p>
-          <p>Other: <%= @agency[:population_served][:enthnic_composition][:other] %></p>
-          <br>
-          <h3>Zip Codes Served</h3>
-          <p>Zips: <%= @agency[:population_served][:zip_codes_served] %></p>
-          <br>
-          <h3>Poverty Information of Those Served</h3>
-          <p>At FPL or Below: <%= @agency[:population_served][:poverty_information][:at_fpl_or_below] %></p>
-          <p>Above 1-2 times FPL: <%= @agency[:population_served][:poverty_information][:above_1_2_times_fpl] %></p>
-          <p>Greater 2 times FPL: <%= @agency[:population_served][:poverty_information][:greater_2_times_fpl] %></p>
-          <p>Poverty Unknown: <%= @agency[:population_served][:poverty_information][:poverty_unknown] %></p>
-          <br>
-          <h3>Ages Served</h3>
-          <p>Ages: <%= @agency[:population_served][:ages_served] %></p>
-          <br>
-          <h2>Executive Director</h2>
-          <p>Executive Director Name: <%= @agency[:executive_director][:name] %></p>
-          <p>Executive Director Phone: <%= @agency[:executive_director][:phone] %></p>
-          <p>Executive Director Email: <%= @agency[:executive_director][:email] %></p>
-          <br>
-          <h2>Program Contact Person</h2>
-          <p>Program Contact Name: <%= @agency[:contact_person][:name] %></p>
-          <p>Program Contact Phone: <%= @agency[:contact_person][:phone] %></p>
-          <p>Program Contact Mobile: <%= @agency[:contact_person][:mobile] %></p>
-          <p>Program Contact Email: <%= @agency[:contact_person][:email] %> </p>
-          <br>
-          <h2>Diaper Pick Up Person</h2>
-          <p>Pick Up Method: <%= @agency[:pick_up_person][:method] %></p>
-          <p>Pick Up Name: <%= @agency[:pick_up_person][:name] %></p>
-          <p>Pick Up Phone: <%= @agency[:pick_up_person][:phone] %></p>
-          <p>Pick Up Email: <%= @agency[:pick_up_person][:email] %></p>
-          <br>
-          <h2>Agency Distribution Information</h2>
-          <p>Distribution Times: <%= @agency[:distribution][:distribution_times] %> </p>
-          <p>New Client Times: <%= @agency[:distribution][:new_client_times] %></p>
-          <p>More Docs Required: <%= @agency[:distribution][:more_docs_required] %></p>
-          <br>
-          <h2>Sources of Funding</h2>
-          <p>Sources of Funding: <%= @agency[:funding][:source] %></p>
-          <p>Sources of Diapers: <%= @agency[:funding][:diapers] %> </p>
-          <p>Diaper Budget:<%= @agency[:funding][:budget] %></p>
-          <p>Diaper Funding Source: <%= @agency[:funding][:diaper_funding_source] %></p>
-          <h2>Other Documents</h2>
-          <ul>
-            <% @agency[:documents].each do |document| %>
-              <li><%= link_to File.basename(document[:document_link]), documentation_url(document[:document_link]), target: :_blank %></li>
-            <% end %>
-          </ul>
-        </div>
-        <!-- /.box -->
-      </div>
-      <div class="box-footer">
-        <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "lg" } if @partner.awaiting_review? %>
       </div>
     </div>
   </div>

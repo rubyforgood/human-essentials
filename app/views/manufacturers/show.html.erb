@@ -1,58 +1,85 @@
 <section class="content-header">
-  <% content_for :title, "Manufacturers - #{@manufacturer.name} - Agencies -
-  #{current_organization.name}" %>
-  <h1>
-    Manufacturer Information
-    <small>for <%= @manufacturer.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li>
-      <%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home <% end %>
-    </li>
-    <li><%= link_to "Manufacturers", (manufacturers_path) %></li>
-    <li class="active"><%= @manufacturer.name %></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Manufacturers - #{@manufacturer.name} - Agencies - #{current_organization.name}" %>
+        <h1>
+          Manufacturer Information
+          <small>for <%= @manufacturer.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Manufacturers", (manufacturers_path) %></li>
+          <li class="breadcrumb-item"><%= @manufacturer.name %></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
+
 <section class="content">
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title"><%= @manufacturer.name %></h3>
-    </div>
-    <div class="box-body">
-      <p>Business name: <%= @manufacturer.name %></p>
-      <h4>Past Donations from this Manufacturer</h4>
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-header border-0 bg-gradient-info">
+            <h3 class="card-title">Past Donations from <%= @manufacturer.name %>
+            </h3>
+          </div>
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
               <tr>
-                <th class="date">Date</th>
-                <th class="numeric">Volume</th>
+                <th>Date</th>
+                <th>Volume</th>
                 <th>Details</th>
               </tr>
-
+              </thead>
+              <tbody>
               <% @manufacturer.donations.each do |donation| %>
-              <tr>
-                <td class="date"><%= donation.created_at.strftime("%m/%d/%Y") %></td>
-                <td class="numeric"><%= donation.line_items.total %></td>
-                <td>
-                  <%= view_button_to donation, { text: "View donation details" }
-                  %>
-                </td>
-              </tr>
+                <tr>
+                  <td><%= donation.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= donation.line_items.total %></td>
+                  <td>
+                    <%= view_button_to donation, { text: "View donation details" }
+                    %>
+                  </td>
+                </tr>
               <% end %>
+              </tbody>
             </table>
-
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
+          <!-- /.card-footer-->
         </div>
+        <!-- /.card -->
       </div>
     </div>
   </div>
 </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

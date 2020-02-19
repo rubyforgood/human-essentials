@@ -1,72 +1,105 @@
+<!-- Content Header (Page header) -->
 <section class="content-header">
-  <% content_for :title, "Donation Sites - Agencies - #{current_organization.name}" %>
-  <h1>
-    Donation Sites
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><a href="#">Donation Sites</a></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Donation Sites - Agencies - #{current_organization.name}" %>
+        <h1>
+          Donation Sites
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Donation Sites</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
-<section class="content">
-  <div class="box">
-    <div class="box-header with-border bg-gray">
-      <section id="filters">
-        <!-- TBA; replicate HTML from other #index views -->
-        <div class="pull-right">
-          <!-- Button HTML (to Trigger Modal) -->
-          <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Donation Sites", size: "lg" }) if @donation_sites.empty? %>
-          <%= download_button_to(csv_path(format: :csv, type: "DonationSite"), { text: "Export Donation Sites", size: "lg" }) if @donation_sites.any? %>
-          <%= new_button_to new_donation_site_path(organization_id: current_organization), { text: "New Donation Site" } %>
-        </div>
-      </section><!-- /#filters -->
-    </div><!-- /.box-header -->
-    <div class="box-body">
-      <% if @donation_sites.empty? %>
 
-      <% end %>
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped index">
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Donation Sites</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <table class="table">
               <thead>
-                <tr>
-                  <th>Donation Site</th>
-                  <th>Address</th>
-                  <th>&nbsp;</th>
-                </tr>
-                <%= render partial: 'shared/table_row_form',
-                           object:  @donation_site,
-                           locals: {columns: [{name: :text_field}, {address: :text_field}]}
-                %>
+              <tr>
+                <th>Donation Site</th>
+                <th>Address</th>
+                <th>&nbsp;</th>
+              </tr>
+              <%= render partial: 'shared/table_row_form',
+                         object: @donation_site,
+                         locals: {columns: [{name: :text_field}, {address: :text_field}]}
+              %>
+              </thead>
+            </table>
+          </div>
+          <div class="card-footer">
+            <div class="pull-right">
+              <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Donation Sites", size: "md"}) if @donation_sites.empty? %>
+              <%= download_button_to(csv_path(format: :csv, type: "DonationSite"), {text: "Export Donation Sites", size: "md"}) if @donation_sites.any? %>
+              <%= new_button_to new_donation_site_path(organization_id: current_organization), {text: "New Donation Site"} %>
+            </div>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+      <!--/.col (left) -->
+
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table index">
+              <thead>
+              <tr>
+                <th>Donation Site</th>
+                <th>Address</th>
+                <th>&nbsp;</th>
+              </tr>
               </thead>
               <tbody>
-                <%= render partial: "donation_site_row", collection: @donation_sites %>
+              <%= render partial: "donation_site_row", collection: @donation_sites %>
               </tbody>
             </table>
-          </div><!-- /.box-body.table-responsive -->
-        </div><!-- /.col-xs-12 -->
-      </div><!-- /.row -->
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
-
-<%= render(
-    layout: "shared/csv_import_modal",
-    locals: {
-      title: 'Import Donation Sites',
-      csv_template_url: "/donation_sites.csv",
-      csv_import_url: import_csv_donation_sites_path
-    }
-  ) do %>
-  <li>Open the csv file with excel or your favourite spreadsheet program.</li>
-  <li>Delete the sample data and enter your donation site names and addresses in the appropriate columns.</li>
-  <li>Save the file as a csv file.</li>
-<% end %>
-
-</section><!-- /.content -->
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+  <%= render(
+          layout: "shared/csv_import_modal",
+          locals: {
+              title: 'Import Donation Sites',
+              csv_template_url: "/donation_sites.csv",
+              csv_import_url: import_csv_donation_sites_path
+          }
+      ) do %>
+    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter your donation site names and addresses in the appropriate columns.</li>
+    <li>Save the file as a csv file.</li>
+  <% end %>
+</section>

@@ -1,31 +1,24 @@
 <section class="content-header">
-	<% content_for :title, "Edit - Barcode Items - #{@barcode_item.item.name} - Inventory - #{current_organization.name}" %>
-	<h1>
-	  Editing Barcode
-	  <small>for <%= current_organization.name %></small>
-	</h1>
-	<ol class="breadcrumb">
-	<li><%= link_to(dashboard_path) do %>
-	    <i class="fa fa-dashboard"></i> Home
-	  <% end %>
-	  </li>
-	  <li><%= link_to "All Barcodes", (barcode_items_path) %></li>  
-	  <li class="active">Editing Barcode</li>
-	</ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Edit - Barcode Items - #{@barcode_item.item.name} - Inventory - #{current_organization.name}" %>
+        <h1>
+          Editing Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Barcodes", (barcode_items_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Editing Barcode</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
-<section class="content">
-
-<!-- Default box -->
-	<div class="box">
-	  <div class="box-header with-border">
-	    <h3 class="box-title">Barcode for <%= @barcode_item.quantity %> of <%= @barcode_item.item.name %></h3>
-	  </div>
-	  <div class="box-body">
-			<%= render partial: "form", object: @barcode_item %>
-	  </div>
-	</div>
-	<!-- /.box -->
-
-</section>
+<%= render partial: "form", object: @barcode_item %>

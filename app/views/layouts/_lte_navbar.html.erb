@@ -1,147 +1,107 @@
-<div class="navbar-custom-menu">
-  <ul class="nav navbar-nav">
-    <% if current_user.super_admin? %>
-      <li class="dropdown user user-menu">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          <i class="fa fa-lock"></i> Administration
-        </a>
-        <ul class="dropdown-menu">
-          <li>
-            <%= navigation_link_to "Dashboard", admin_dashboard_path %>
-          </li>
-          <li>
-            <%= navigation_link_to "Organizations", admin_organizations_path %>
-          </li>
-          <li>
-            <%= navigation_link_to "Base items", admin_base_items_path %>
-          </li>
-          <li>
-            <%= navigation_link_to "Users", admin_users_path %>
-          </li>
-        </ul>
+<% if current_user.super_admin? %>
+  <li class="nav-item dropdown">
+    <a class="nav-link" data-toggle="dropdown" href="#">
+      <i class="fa fa-lock"></i> Administration
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <%= navigation_link_to "Dashboard", admin_dashboard_path %>
       </li>
-    <% end %>
+      <li>
+        <%= navigation_link_to "Organizations", admin_organizations_path %>
+      </li>
+      <li>
+        <%= navigation_link_to "Base items", admin_base_items_path %>
+      </li>
+      <li>
+        <%= navigation_link_to "Users", admin_users_path %>
+      </li>
+    </ul>
+  </li>
+<% end %>
 
-
-    <li class="dropdown notifications-menu">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <i class="fa fa-bug"></i>
-      </a>
-      <ul class="dropdown-menu">
-        <li>
-          <ul class="menu">
-            <li>
-              <a href="#">
-                <%= simple_form_for :feedback_message, :url => "/feedback_message" do |f| %>
-                  <div class="form-group">
-                    <%= f.label "Submit Your Bug/Message/Input" %>
-                    <%= f.text_area :message, class: 'form-control', required: true %>
-                  </div>
-                  <div class="form-actions">
-                    <%= submit_button({ text: "Send Message", icon: "envelope", size: "md", align: 'pull-left' }) %>
-                  </div>
-                <% end %>
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-
-    <li class="dropdown notifications-menu">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <i class="fa fa-calendar"></i>
-        <% # TODO: Replace this with an ActionView::Component %>
-        <span class="label label-danger"><%= current_organization.distributions.upcoming.count.to_s.gsub(/^0$/,'') %></span>
-      </a>
-      <ul class="dropdown-menu">
-        <li>
-          <!-- inner menu: contains the actual data -->
-          <ul class="menu">
-            <li>
-              <a href="#">
-                <i class="fa fa-users text-aqua"></i> <%= current_organization.distributions.upcoming.count %> Pick-ups
-                remaining this week
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="footer"><%= link_to_if current_organization.id.present?, "View Calendar", pick_ups_distributions_path(organization_id: current_organization.to_param) %></li>
-      </ul>
-    </li>
-    <li class="dropdown notifications-menu">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <i class="fa fa-bell-o"></i>
-        <% if current_organization && (current_organization.requests.status_pending.size > 0 || current_organization.partners.awaiting_review.size > 0) %>
-          <span class="label label-warning"><%= (current_organization.requests.status_pending.size + current_organization.partners.awaiting_review.size) %></span>
-        <% end %>
-      </a>
-      <ul class="dropdown-menu">
-        <li>
-          <!-- inner menu: contains the actual data -->
-          <ul class="menu">
-            <li>
-              <%= link_to(requests_path) do %>
-                <i class="fa fa-file-text text-aqua"></i> <%= current_organization&.requests.status_pending.size rescue "0" %>
-                Diaper Requests
-              <% end %>
-            </li>
-            <li>
-              <%= link_to(partners_path) do %>
-                <i class="fa fa-file-text text-aqua"></i> <%= current_organization&.partners.awaiting_review.size rescue "0" %>
-                Partner Agencies Pending Review
-              <% end %>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <!-- User Account: style can be found in dropdown.less -->
-    <li class="dropdown user user-menu">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <span class="hidden-xs"><%= current_user.name %></span>
-      </a>
-      <ul class="dropdown-menu">
-        <!-- User image -->
-        <li class="user-body">
-          <p class="text-center">
-            <b><%= current_user.name %></b>
-          </p>
-        </li>
-        <!-- Menu Body -->
-        <li class="user-body">
-
-            <ul class="list-group">
-              <li class="list-group-item">
-                <%= fa_icon "cog" %> <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>
-              </li>
-            <% if current_organization.id.present? &&
-              (current_user.super_admin? ||
-                  (current_user.organization_admin? &&
-                   current_organization.id == current_user.organization_id)) %>
-              <% with_options organization_id: current_user.organization.to_param do |with_org| %>
-                <li class="list-group-item">
-                  <%= fa_icon "users" %> <%= navigation_link_to "My co-workers", with_org.users_path %>
-                </li>
-                <li class="list-group-item">
-                  <%= fa_icon "sitemap" %> <%= navigation_link_to "My organization", with_org.organization_path %>
-                </li>
-              <% end %>
-            <% end %>
-            </ul>
-
-          <!-- /.row -->
-        </li>
-        <!-- Menu Footer-->
-        <li class="user-footer">
-          <div class="pull-left">
-            <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
-          </div>
-          <div class="pull-right">
-            <%= delete_button_to destroy_user_session_path(organization_id: nil), { text: "Log out", icon: "sign-out", no_confirm: true, size: "md" } %>
-          </div>
-        </li>
-      </ul>
-    </li>
+<li class="nav-item dropdown">
+  <a class="nav-link" data-toggle="dropdown" href="#">
+    <i class="fas fa-bug"></i>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <a href="#" class="dropdown-item">
+      <%= simple_form_for :feedback_message, :url => "/feedback_message" do |f| %>
+        <div class="form-group">
+          <%= f.label "Submit Your Bug/Message/Input" %>
+          <%= f.text_area :message, class: 'form-control', required: true %>
+        </div>
+        <div class="form-actions">
+          <%= submit_button({text: "Send Message", icon: "envelope", size: "md"}) %>
+        </div>
+      <% end %>
+    </a>
   </ul>
-</div>
+</li>
+
+<li class="nav-item dropdown">
+  <a class="nav-link" data-toggle="dropdown" href="#">
+    <i class="fa fa-calendar"></i>
+    <span class="badge badge-danger navbar-badge" style="background-color: #007bff"><%= current_organization.distributions.upcoming.count.to_s.gsub(/^0$/, '') %></span>
+  </a>
+  <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <a href="#" class="dropdown-item">
+      <i class="fas fa-file mr-2"></i> <%= current_organization.distributions.upcoming.count %> Pick-ups
+      remaining this week
+    </a>
+    <div class="dropdown-divider"></div>
+    <%= link_to_if current_organization.id.present?, "View Calendar", pick_ups_distributions_path(organization_id: current_organization.to_param), class: "dropdown-item dropdown-footer" %>
+  </div>
+</li>
+
+<li class="nav-item dropdown">
+  <a class="nav-link" data-toggle="dropdown" href="#">
+    <i class="fa fa-bell-o"></i>
+    <% if current_organization && (current_organization.requests.status_pending.size > 0 || current_organization.partners.awaiting_review.size > 0) %>
+      <span class="badge badge-warning navbar-badge" style="background-color: #ffc107"><%= (current_organization.requests.status_pending.size + current_organization.partners.awaiting_review.size) %></span>
+    <% end %>
+  </a>
+  <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <%= link_to(requests_path, class: "dropdown-item") do %>
+    <i class="fa fa-file-text text-aqua"></i> <%= current_organization&.requests.status_pending.size rescue "0" %>
+    Diaper Requests
+    <% end %>
+    <div class="dropdown-divider"></div>
+    <%= link_to(partners_path, class: "dropdown-item") do %>
+    <i class="fa fa-file-text text-aqua"></i> <%= current_organization&.partners.awaiting_review.size rescue "0" %>
+    Partner Agencies Pending Review
+    <% end %>
+  </div>
+</li>
+
+<li class="nav-item dropdown">
+  <a class="nav-link" data-toggle="dropdown" href="#">
+    <%= current_user.name %>
+  </a>
+  <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <%= link_to edit_user_registration_path(organization_id: nil), class:"dropdown-item" do %>
+      <i class="fa fa-cog text-aqua"></i> Account Settings
+    <% end %>
+    <% if current_organization.id.present? &&
+        (current_user.super_admin? ||
+            (current_user.organization_admin? &&
+                current_organization.id == current_user.organization_id)) %>
+      <% with_options organization_id: current_user.organization.to_param do |with_org| %>
+
+        <div class="dropdown-divider"></div>
+        <%= link_to with_org.users_path, class:"dropdown-item" do %>
+          <i class="fas fa-users mr-2"></i> My Co-Workers
+        <% end %>
+        <div class="dropdown-divider"></div>
+        <%= link_to with_org.organization_path, class:"dropdown-item" do %>
+          <i class="fas fa-sitemap mr-2"></i> My Organization
+        <% end %>
+      <% end %>
+    <% end %>
+    <div class="dropdown-divider"></div>
+    <%= link_to destroy_user_session_path(organization_id: nil), class:"dropdown-item dropdown-footer", method: :delete do %>
+      <i class="fa fa-sign-out mr-2"></i> Log Out
+    <% end %>
+  </div>
+</li>
+

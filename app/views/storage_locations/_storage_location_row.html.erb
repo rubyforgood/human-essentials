@@ -1,8 +1,8 @@
 <tr>
   <td><%= storage_location.name %></td>
   <td><%= storage_location.address %></td>
-  <td class="numeric"><%= storage_location.size %></td>
-  <td class="numeric"><%= number_to_currency(storage_location.inventory_total_value_in_dollars) %></td>
+  <td><%= storage_location.size %></td>
+  <td><%= number_to_currency(storage_location.inventory_total_value_in_dollars) %></td>
   <td class="text-right">
     <%= view_button_to storage_location %>
     <%= edit_button_to edit_storage_location_path(storage_location) %>

@@ -1,243 +1,306 @@
-<section class="content-header">
-  <% content_for :title, "Dashboard - #{current_organization.name}" %>
-  <h1>
-    Dashboard
-    <small>for <%= current_organization.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li><a href="#">Dashboard</a></li>
-    <li class="active"><%= current_organization.name %></li>
-  </ol>
-</section>
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark"><%= current_organization.name %> - Dashboard</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active"><%= current_organization.name %></li>
+        </ol>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
 
-<!-- Main content -->
-<section class="content">
-  <div class="row">
-    <%= render partial: "getting_started_prompt", locals: {org_stats: @org_stats} %>
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card" id="summary">
+          <div class="card-header">
+            <h5 class="card-title"><%= current_organization.name %></h5>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row">
+              <%= render partial: "getting_started_prompt", locals: {org_stats: @org_stats} %>
 
-    <div class="col-md-12">
-      <div id="summary" class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title"><%= current_organization.name %></h3>
-          <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-            </button>
-          </div>
-        </div>
-        <div class="box-body">
-          <div class="col-xlg 7 col-md-6 col-sm-12">
-            <div class="logo">
-              <%== display_logo_or_name %>
-            </div>
-          </div>
-          <div class="col-xlg-3 col-xlg-offset-2 col-md-4 col-sm-12">
-            <div class="text-center">
-              <h3 class="text-center"><%= total_on_hand(@total_inventory) %> items on-hand</h3>
+              <div class="col-md-8">
+                <%== display_logo_or_name %>
+              </div>
+              <!-- /.col -->
+              <div class="col-md-4">
 
-              <div class="inventory-actions">
-                <%= new_button_to new_transfer_path, {text: "Make a transfer", size: "xs"} %>
-                <%= new_button_to new_adjustment_path, {text: "Make an adjustment", size: "xs"} %>
               </div>
+              <!-- /.col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <div class="card-footer">
+            <div class="row">
+              <div class="col-sm-3 col-6">
+                <div class="description-block border-right">
+                  <%= simple_form_for :filters, url: dashboard_path(current_organization), method: :get do |f| %>
+                    <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %><br>
+                    <%= filter_button %>
+                  <% end %>
+                </div>
+                <!-- /.description-block -->
+              </div>
+              <!-- /.col -->
+              <div class="col-sm-3 col-6">
+                <div class="description-block border-right">
+                  <h3>Items on-hand:</h3>
+                  <h5 style="color:purple"><%= total_on_hand(@total_inventory) %> </h5>
+                </div>
+                <!-- /.description-block -->
+              </div>
+              <!-- /.col -->
+              <div class="col-sm-3 col-6">
+                <div class="description-block border-right">
+                  <%= new_button_to new_transfer_path, {text: "Make a transfer", size: "md"} %>
+                </div>
+                <!-- /.description-block -->
+              </div>
+              <!-- /.col -->
+              <div class="col-sm-3 col-6">
+                <div class="description-block">
+                  <%= new_button_to new_adjustment_path, {text: "Make an adjustment", size: "md"} %>
 
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="box-header with-border bg-gray">
-        <div class="box-body row">
-          <section id="filters" class="col-md-offset-6 col-md-6 col-sm-offset-4 col-sm-8 col-xs-12">
-            <%= simple_form_for :filters, url: dashboard_path(current_organization), method: :get do |f| %>
-              <%= render partial: "shared/date_range_picker" %>
-              <%= filter_button %>
-            <% end %>
-          </section><!-- /#filters -->
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
-          <div id="distributions" class="box box-primary">
-            <div class="box-header with-border">
-              <h3 class="box-title">Distribution
-                <small><%= @selected_date_range %></small>
-              </h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
               </div>
-            </div>
-            <div class="box-body text-center float-center">
-              <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
-              <h3 class="text-center"><%= total_distributed %> items distributed <%= @selected_date_range_label %></h3>
-              <h4 class="text-center">(<%= future_distributed %> items scheduled for future distribution)</h4>
-              <div class="box-body">
-                <h4>Recent distributions</h4>
-                <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
-              </div>
-            </div>
-            <div class="box-footer text-center">
-              <%= link_to "See more...", distributions_path %>
-            </div>
-          </div>
-          <% if Flipper.enabled?(:itemized_distributions, current_user) %>
-          <div id="itemized_distributions" class="box box-warning">
-            <div class="box-header with-border">
-              <h3 class="box-title">Itemized Distributions
-                <small><%= @selected_date_range %></small>
-              </h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body table-responsive no-padding">
-              <%= render partial: "itemized_distribution", object: @itemized_distributions, as: :distribution %>
-            </div>
-          </div>
-          <% end %>
-          <div class="box box-danger">
-            <div class="box-header with-border">
-              <h3 class="box-title">Activity</h3>
-              <div class="box-tools">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body text-center">
-              <h5 class="text-center"><%= @selected_date_range_label %></h5>
-              <%= bar_chart received_distributed_data %>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div id="donations" class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">Donations (All Sources)
-                <small><%= @selected_date_range %></small>
-              </h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body text-center float-center">
-              <%= new_button_to new_donation_path, {text: "New Donation"} %>
-              <h3 class="text-center"><%= total_received_donations %> items
-                received <%= @selected_date_range_label %></h3>
-              <% if total_received_money_donations > 0 %>
-                <h3 class="text-center"><%= dollar_value(total_received_money_donations) %>
-                  raised <%= @selected_date_range_label %></h3>
-              <% end %>
-              <div class="box-body">
-                <h4>Recent donations</h4>
-                <%= render partial: "donation", collection: @recent_donations, as: :donation %>
-              </div>
-            </div>
-            <div class="box-footer text-center">
-              <%= link_to "See more...", donations_path %>
-            </div>
-          </div>
-          <div id="diaper_drives" class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">Diaper Drives <small><%= @selected_date_range %></small></h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body text-center float-center">
-              <h3 class="text-center"><%= @donations.by_source(:diaper_drive).map(&:diaper_drive_participant).uniq.size %>
-                Diaper Drive Participants <%= @selected_date_range_label %> for a total
-                of <%= total_received_from_diaper_drives %> items collected</h3>
-            </div>
-            <div class="box-body">
-              <div class="box-body text-center float-center">
-                <h4>Recent Donations from Diaper Drives</h4>
-                <%= render partial: "diaper_drive", collection: @recent_donations.by_source(:diaper_drive), as: :donation %>
-              </div>
-            </div>
-            <div class="box-footer text-center">
-              <%= link_to "See more...", donations_path(
-                  filters: {
-                      by_source: "Diaper Drive"
-                  }) %>
-            </div>
-          </div>
-          <div id="manufacturers" class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">Manufacturer Donations <small><%= @selected_date_range %></small></h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body text-center float-center">
-              <h3 class="text-center"><%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }) %>
-                items donated <%= @selected_date_range_label %>
-                by <%= pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, 'Manufacturer') %></h3>
-            </div>
-            <div class="box-body">
-              <div class="box-body text-center float-center">
-                <h4>Top Manufacturer Donations</h4>
-                <%= render partial: "manufacturer", collection: @top_manufacturers, as: :manufacturer %>
-              </div>
-            </div>
-            <div class="box-footer text-center">
-              <%= link_to "See more...", donations_path(
-                  filters: {
-                      by_source: "Manufacturer"
-                  }) %>
-            </div>
-          </div>
-          <div id="purchases" class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">Purchases <small><%= @selected_date_range %></small></h3>
-              <div class="box-tools pull-right">
-                <button
-                  type="button"
-                  class="btn btn-box-tool"
-                  data-widget="collapse">
-                  <i class="fa fa-minus"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-box-tool"
-                  data-widget="remove">
-                  <i class="fa fa-times"></i>
-                </button>
-              </div>
-            </div>
-            <div class="box-body text-center float-center">
-              <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
-              <h3 class="text-center">
-                <%= total_purchased %> items purchased <%= @selected_date_range_label %>
-              </h3>
-              <% if @purchases.sum(&:amount_spent_in_cents) > 0 %>
-                <h3>
-                  <%= dollar_value(@purchases.sum(&:amount_spent_in_cents)) %>
-                  spent
-                  <%= @selected_date_range_label %>
-                </h3>
-              <% end %>
-              <div class="box-body">
-                <h4>Recent purchases</h4>
-                <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>
-              </div>
-            </div>
-            <div class="box-footer text-center">
-              <%= link_to "See more...", purchases_path %>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</section>
+</div>
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-6">
+
+        <div class="card" id="distributions">
+          <div class="card-header border-0 bg-gradient-info">
+            <h3 class="card-title">Distributions
+              <small><%= @selected_date_range %></small></h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="position-relative mb-4">
+              <div class="box-body text-center float-center">
+                <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
+                <h3 class="text-center"><%= total_distributed %> items
+                  distributed <%= @selected_date_range_label %></h3>
+                <h4 class="text-center">(<%= future_distributed %> items scheduled for future distribution)</h4>
+                <div class="box-body">
+                  <h4>Recent distributions</h4>
+                  <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer text-center">
+            <%= link_to "See more...", distributions_path %>
+          </div>
+        </div>
+
+        <% if Flipper.enabled?(:itemized_distributions, current_user) %>
+          <div class="card">
+            <div class="card-header border-0 bg-gradient-success">
+              <h3 class="card-title">Itemized Distributions
+                <small><%= @selected_date_range %></small></h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body table-responsive no-padding">
+              <%= render partial: "itemized_distribution", object: @itemized_distributions, as: :distribution %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="card">
+          <div class="card-header border-0 bg-gradient-warning">
+            <h3 class="card-title">Activity <%= @selected_date_range_label %></h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="position-relative mb-4">
+              <div class="box-body text-center float-center">
+                <div class="box-body">
+                  <div class="box-body text-center">
+                    <h5 class="text-center"></h5>
+                    <%= bar_chart received_distributed_data %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+
+        <div class="card" id="donations">
+          <div class="card-header border-0 bg-gradient-primary">
+            <h3 class="card-title">Donations (All Sources)
+              <small><%= @selected_date_range %></small></h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="position-relative mb-4">
+              <div class="box-body text-center float-center">
+                <%= new_button_to new_donation_path, {text: "New Donation"} %>
+                <h3 class="text-center"><%= dollar_value(total_received_money_donations) %> items
+                  received <%= @selected_date_range_label %></h3>
+                <h4 class="text-center">$<%= total_received_money_donations %>
+                  raised  <%= @selected_date_range_label %></h4>
+                <div class="box-body">
+                  <h4>Recent Donations</h4>
+                  <%= render partial: "donation", collection: @recent_donations, as: :donation %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer text-center">
+            <%= link_to "See more...", donations_path %>
+          </div>
+        </div>
+
+        <div class="card" id="diaper_drives">
+          <div class="card-header border-0 bg-gradient-info">
+            <h3 class="card-title">Diaper Drives <small><%= @selected_date_range %></small></h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="position-relative mb-4">
+              <div class="box-body text-center float-center">
+                <h3 class="text-center"><%= total_received_donations %> items
+                  received <%= @selected_date_range_label %></h3>
+                <h4 class="text-center">$<%= total_received_money_donations %>
+                  raised  <%= @selected_date_range_label %></h4>
+                <div class="box-body">
+                  <h4>Recent Donations from Diaper Drives</h4>
+                  <%= render partial: "diaper_drive", collection: @recent_donations.by_source(:diaper_drive), as: :donation %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer text-center">
+            <%= link_to "See more...", donations_path(
+                filters: {
+                    by_source: "Diaper Drive"
+                }) %>
+          </div>
+        </div>
+
+        <div class="card" id="manufacturers">
+          <div class="card-header border-0 bg-gradient-success">
+            <h3 class="card-title">Manufacturer Donations <small><%= @selected_date_range %></small></h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="position-relative mb-4">
+              <div class="box-body text-center float-center">
+                <h3 class="text-center"><%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }) %>
+                  items donated <%= @selected_date_range_label %>
+                  by <%= pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, 'Manufacturer') %></h3>
+                <div class="box-body">
+                  <h4>Top Manufacturer Donations</h4>
+                  <%= render partial: "manufacturer", collection: @top_manufacturers, as: :manufacturer %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer text-center">
+            <%= link_to "See more...", donations_path(
+                filters: {
+                    by_source: "Manufacturer"
+                }) %>
+          </div>
+        </div>
+
+        <div class="card" id="purchases">
+          <div class="card-header border-0 bg-gradient-secondary">
+            <h3 class="card-title">Purchases <small><%= @selected_date_range %></small></h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="position-relative mb-4">
+              <div class="box-body text-center float-center">
+                <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
+                <h3 class="text-center"><%= dollar_value(@purchases.sum(&:amount_spent_in_cents)) %>
+                  spent
+                  <%= @selected_date_range_label %></h3>
+                <div class="box-body">
+                  <h4>Recent purchases</h4>
+                  <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer text-center">
+            <%= link_to "See more...", purchases_path %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

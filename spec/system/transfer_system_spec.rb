@@ -14,8 +14,8 @@ RSpec.describe "Transfer management", type: :system do
       fill_in "Comment", with: "something"
       select item.name, from: "transfer_line_items_attributes_0_item_id"
       fill_in "transfer_line_items_attributes_0_quantity", with: amount
-      click_on "Save"
     end
+    click_on "Save"
   end
 
   it "Does not include inactive items in the line item fields" do

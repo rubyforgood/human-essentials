@@ -20,7 +20,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     it "edits an existing user" do
       visit admin_users_path
       click_link "Edit", match: :first
-      expect(page).to have_content("Edit user #{@organization_admin.name}")
+      expect(page).to have_content("Update #{@organization_admin.name}")
       fill_in "user_name", with: "TestUser"
       fill_in "user_password", with: "123password"
       fill_in "user_password_confirmation", with: "123password"

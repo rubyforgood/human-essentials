@@ -1,66 +1,87 @@
 <section class="content-header">
-  <% content_for :title, "#{@distribution.storage_location.name} - Distributions - #{current_organization.name}" %>
-  <h1>
-    Distribution
-    <small>for <%= @distribution.storage_location.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><%= link_to(dashboard_path) do %>
-        <i class="fa fa-dashboard"></i> Home
-      <% end %>
-    </li>
-    <li><%= link_to "Distributions", (distributions_path) %></li>
-    <li class="active"> <%= @distribution.partner.name %>
-      <% if !@distribution.new_record? %>
-        <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})" %></li>
-      <% end %>
-      </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "#{@distribution.storage_location.name} - Distributions - #{current_organization.name}" %>
+        <h1>
+          Distribution
+          <small>for <%= @distribution.storage_location.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
+          <li class="breadcrumb-item"><a href="#"><%= @distribution.partner.name %>
+            <% if !@distribution.new_record? %>
+              <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})" %></li>
+            <% end %></a></li>
+            </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
+
 <section class="content">
-
-  <!-- Default box -->
-  <div class="box">
-    <div class="box-header with-border">
-      <h3 class="box-title">Distribution Manifest for <%= @distribution.distributed_at %>
-        to <%= @distribution.partner.name %></h3>
-    </div>
-    <div class="box-body">
-
-      <p>Source location: <%= @distribution.storage_location.name %></p>
-      <p>Agency representative: <%= @distribution.agency_rep %></p>
-      <p>State: <%= @distribution.state&.humanize %>
-      <h4>Total Items Distributed</h4>
-      <div class="row">
-        <div class="col-xs-12">
-          <!-- /.box-header -->
-          <div class="box-body table-responsive no-padding">
-            <table class="table table-hover striped">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
               <tr>
-                <th><b>Item</b></th>
-                <th class="numeric"><b>Value per item</b></th>
-                <th class="numeric"><b>Total value</b></th>
-                <th class="numeric"><b>Quantity</b></th>
-                <th class="numeric"><b>Package count</b></th>
+                <th>Source location:</th>
+                <th>Agency representative:</th>
+                <th>State:</th>
               </tr>
-              <%= render partial: "distribution_item_row", collection: @line_items %>
-              <%= render partial: "distribution_item_total" %>
+              </thead>
+              <tbody>
+              <tr>
+                <td><%= @distribution.storage_location.name %></td>
+                <td><%= @distribution.agency_rep %></td>
+                <td><%= @distribution.state&.humanize %></td>
+              </tr>
             </table>
-            <!-- /.box-body -->
-
           </div>
-          <!-- /.box -->
         </div>
       </div>
     </div>
-    <div class="box-footer with-border">
-      <%= update_button_to picked_up_distribution_path(@distribution), {text: "Pick up Complete", size: "lg"} if @distribution.scheduled? %>
-      <% if @distribution.future? || current_user.organization_admin? %>
-        <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "lg"} %>
-      <% end %>
-      <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "lg"} %>
-    </div>
   </div>
 
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Item</th>
+                <th>Value per item</th>
+                <th>Total value</th>
+                <th>Quantity</th>
+                <th>Package count</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: "distribution_item_row", collection: @line_items %>
+              <%= render partial: "distribution_item_total" %>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <%= update_button_to picked_up_distribution_path(@distribution), {text: "Pick up Complete", size: "md"} if @distribution.scheduled? %>
+            <% if @distribution.future? || current_user.organization_admin? %>
+              <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "md"} %>
+            <% end %>
+            <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>                        </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

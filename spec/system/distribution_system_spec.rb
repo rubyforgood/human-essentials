@@ -261,8 +261,8 @@ RSpec.feature "Distributions", type: :system do
       it "User creates a distribution from a donation then edits it" do
         within "#edit_distribution_#{@distribution.to_param}" do
           first(".numeric").set 13
-          click_on "Save"
         end
+        click_on "Save"
         expect(page).to have_content "Distribution updated!"
         expect(page).to have_content 13
       end
@@ -270,8 +270,8 @@ RSpec.feature "Distributions", type: :system do
       it "User creates a distribution from a donation then tries to make the quantity too big", js: true do
         within "#edit_distribution_#{@distribution.to_param}" do
           first(".numeric").set 999_999
-          click_on "Save"
         end
+        click_on "Save"
         expect(page).to have_no_content "Distribution updated!"
         expect(page).to have_content(/Distribution could not be updated/i)
         expect(page).to have_no_content 999_999
@@ -356,8 +356,8 @@ RSpec.feature "Distributions", type: :system do
 
   context "when filtering on the index page" do
     subject { @url_prefix + "/distributions" }
-    let(:item1)    { create(:item, name: "Good item") }
-    let(:item2)    { create(:item, name: "Crap item") }
+    let(:item1) { create(:item, name: "Good item") }
+    let(:item2) { create(:item, name: "Crap item") }
     let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
     let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com") }
 

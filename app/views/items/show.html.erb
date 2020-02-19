@@ -1,91 +1,134 @@
 <section class="content-header">
-  <% content_for :title, "Items - #{@item.name} - Inventory - #{current_organization.name}" %>
-  <h1>
-    Item Information
-    <small>for <%= @item.name %></small>
-  </h1>
-  <ol class="breadcrumb">
-  <li><%= link_to(dashboard_path) do %>
-      <i class="fa fa-dashboard"></i> Home
-    <% end %>
-    </li>
-    <li><%= link_to "All Item Types", (items_path) %></li>  
-    <li class="active"> <%= @item.name %></li>
-  </ol>
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Items - #{@item.name} - Inventory - #{current_organization.name}" %>
+        <h1>
+          Item Information
+          <small>for <%= @item.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Item Types", (items_path) %></li>
+          <li class="breadcrumb-item"><a href="#"><%= @item.name %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
 </section>
 
-<!-- Main content -->
 <section class="content">
-
-<!-- Default box -->
-<div class="box">
-  <div class="box-header with-border">
-    <h3 class="box-title"><%= @item.name %>  <%= dollar_value(@item.value_in_cents, ', value per Item (in cents): ') %></h3>
-    <small class="box-subtitle">
-      Value per item: <%= @item.value_in_cents ? @item.value_in_cents : 0 %> | 
-      Distribution quantity: <%= @item.distribution_quantity ? @item.distribution_quantity : 0 %> |
-      Package size: <%= @item.package_size ? @item.package_size : 0 %>
-    </small>
-  </div>
-  <div class="box-body">
-
-<% if @storage_locations_containing.present? %>
-<h4>This item is contained in these inventories</h4>
-
-
-  <div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover striped">
-        <tr>
-          <th>Storage location</th>
-          <th class="numeric">Quantity</th>
-        </tr>
-          <% total = 0; @storage_locations_containing.each do |storage|
-            total += storage.item_total(@item) %>
-          <tr>
-            <td><%= link_to storage.name, storage_location_path(storage) %></td>
-            <td class="numeric"><%= storage.item_total(@item) %></td>
-          </tr>
-          <% end %>
-        <tr>
-          <td>Total</td>
-          <td class="numeric"><%= total %></td>
-        </tr>               
-        </table>
-      <!-- /.box-body -->
-      <% end %>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Value Per Item</th>
+                <th>Distribution Quantity</th>
+                <th>Package Size</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td><%= @item.value_in_cents ? @item.value_in_cents : 0 %></td>
+                <td><%= @item.distribution_quantity ? @item.distribution_quantity : 0 %></td>
+                <td><%= @item.package_size ? @item.package_size : 0 %></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
       </div>
-    <!-- /.box -->
     </div>
   </div>
- <% if @barcodes_for.present? %>  
-  <div class="row">
-  <div class="col-xs-12">
-      <!-- /.box-header -->
-      <h2>Barcodes Associated with this Item</h2>
+</section>
 
-      <div class="box-body table-responsive no-padding">
-        <table class="table table-hover striped">
-        <tr>
-      <th>Barcode value</th>
-      <th>Quantity</th>
-        </tr>
-      <% @barcodes_for.each do |barcode_item| %>
-        <tr>
-          <td><%= link_to barcode_item.value, barcode_item_path(barcode_item) %></td>
-          <td><%= barcode_item.quantity %></td>
-        </tr>
-      <% end %>      
-        </table>
-      <!-- /.box-body -->
-
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-info">
+          <div class="card-header">
+            <h2 class="card-title">This Item Is Contained In These Inventories</h2>
+          </div>
+          <div class="card-body p-0">
+            <% if @storage_locations_containing.present? %>
+              <h4></h4>
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Storage location</th>
+                  <th>Quantity</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% total = 0; @storage_locations_containing.each do |storage|
+                  total += storage.item_total(@item)   %>
+                  <tr>
+                    <td><%= link_to storage.name, storage_location_path(storage) %></td>
+                    <td class="text-left"><%= storage.item_total(@item) %></td>
+                  </tr>
+                <% end %>
+                <tr>
+                  <td class="text-left">Total</td>
+                  <td class="text-left"><%= total %></td>
+                </tr>
+                </tbody>
+              </table>
+            <% end %>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
       </div>
-    <!-- /.box -->
     </div>
   </div>
+</section>
+
+<% if @barcodes_for.present? %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h2 class="card-title">Barcodes Associated With This Item</h2>
+            </div>
+            <div class="card-body p-0">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Barcode value</th>
+                  <th>Quantity</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @barcodes_for.each do |barcode_item| %>
+                  <tr>
+                    <td><%= link_to barcode_item.value, barcode_item_path(barcode_item) %></td>
+                    <td><%= barcode_item.quantity %></td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
 <% end %>
-  </div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section>
