@@ -29,28 +29,6 @@ RSpec.describe "DonationSites", type: :request do
         end
 
         describe "POST #create" do
-            xit "succesfully creates donation site" do
-                Geocoder.configure(:lookup => :test)
-                # new_address = Geocoder::Lookup::Test.add_stub("Bayfield, CO", [{ "name" => "Plain old site",
-                #                         "address" => "123 Somewhere St, Bayfield, CO 81122"}])
-
-                new_address =   Geocoder::Lookup::Test.add_stub(
-                                "Los Angeles, CA", [{
-                                                        "latitude"    => 34.052363,
-                                                        "longitude"    => -118.256551,
-                                                        "address"      => 'Los Angeles, CA, USA',
-                                                        "state"        => 'California',
-                                                        "state_code"   => 'CA',
-                                                        "country"      => 'United States',
-                                                        "country_code" => 'US'
-                                                    }]
-
-                                                    )
-                new_params = default_params.merge(donation_site: new_address[0])
-
-                post donation_sites_path(new_params)
-                expect(response).to be_successful
-            end
 
             it "flashes an error" do
                 new_params = default_params.merge(donation_site: { name: "Plain old site"})
@@ -89,10 +67,9 @@ RSpec.describe "DonationSites", type: :request do
             
             it "returns http success" do
                 delete_soon = default_params.merge(id: create(:donation_site, organization: @organization))
-
                 delete donation_site_path(delete_soon)
-                expect(response).to have_http_status(302)
 
+                expect(response).to have_http_status(302)
                 expect(response).to redirect_to(donation_sites_path)
             end
         end
