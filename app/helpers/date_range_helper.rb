@@ -37,11 +37,11 @@ module DateRangeHelper
   def selected_range_described
     start_date, end_date = selected_interval
     if start_date == Time.zone.today
-      return ""
+      ""
     elsif end_date == Time.zone.today
-      return "since #{start_date}"
+      "since #{start_date}"
     else
-      return "during the period #{start_date.to_s(:short)} to #{end_date.to_s(:short)}"
+      "during the period #{start_date.to_s(:short)} to #{end_date.to_s(:short)}"
     end
   end
 end

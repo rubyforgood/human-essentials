@@ -24,7 +24,7 @@ AllCops:
   UseCache: false
 Bundler/OrderedGems:
   Enabled: false
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
   Description: 'Checks trailing blank lines and final newline.'
   StyleGuide: '#newline-eof'
   Enabled: false
@@ -44,7 +44,7 @@ Naming/PredicateName:
   - is_
   - has_
   - have_
-  NamePrefixBlacklist:
+  ForbiddenPrefixes:
   - is_
   Exclude:
   - spec/**/*
@@ -199,7 +199,7 @@ Metrics/PerceivedComplexity:
     reader.
   Enabled: false
   Max: 7
-Metrics/LineLength:
+Layout/LineLength:
   # This one metric can't be ratcheted via .rubocop_todo.yml :(
   # So instead, make a single PR that changes back to 100 and fix all violations
   Max: 1000
@@ -280,7 +280,7 @@ Lint/AmbiguousBlockAssociation:
 Lint/EachWithObjectArgument:
   Description: Check for immutable argument given to each_with_object.
   Enabled: true
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Description: Don't suppress exception.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#dont-hide-exceptions
   Enabled: false
