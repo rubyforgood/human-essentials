@@ -82,7 +82,7 @@ GEM
       sassc-rails (>= 2.0.0)
     bootstrap-daterangepicker-rails (3.0.4)
       railties (>= 4.0)
-    bugsnag (6.10.0)
+    bugsnag (6.13.0)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
     capistrano (3.12.0)
