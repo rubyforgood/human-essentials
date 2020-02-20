@@ -36,7 +36,7 @@ gem 'popper_js'
 gem "pg", "~> 1.2.2"
 gem "prawn-rails"
 gem "puma"
-gem "rails", "~> 6.0.0"
+gem "rails", "~> 6.0.2"
 gem "sass-rails"
 gem "sidekiq"
 gem "simple_form"
