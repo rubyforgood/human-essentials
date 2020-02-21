@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PurchasesController, type: :controller do
+RSpec.describe "Purchases", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -11,16 +11,16 @@ RSpec.describe PurchasesController, type: :controller do
     end
 
     describe "GET #index" do
-      subject { get :index, params: default_params }
       it "returns http success" do
-        expect(subject).to be_successful
+        get purchases_path(default_params)
+        expect(response).to be_successful
       end
     end
 
     describe "GET #new" do
-      subject { get :new, params: default_params }
       it "returns http success" do
-        expect(subject).to be_successful
+        get new_purchase_path(default_params)
+        expect(response).to be_successful
       end
     end
 
@@ -39,13 +39,13 @@ RSpec.describe PurchasesController, type: :controller do
         end
 
         it "redirects to GET#edit" do
-          post :create, params: default_params.merge(purchase: purchase)
+          post purchases_path(default_params.merge(purchase: purchase))
           expect(response).to redirect_to(purchases_path)
         end
 
         it "accepts :amount_spent_in_cents with dollar signs, commas, and periods" do
           formatted_purchase = purchase.merge(amount_spent_in_cents: "$1,000.54")
-          post :create, params: default_params.merge(purchase: formatted_purchase)
+          post purchases_path(default_params.merge(purchase: formatted_purchase))
 
           expect(Purchase.last.amount_spent_in_cents).to eq 100_054
         end
@@ -53,7 +53,7 @@ RSpec.describe PurchasesController, type: :controller do
 
       context "on failure" do
         it "renders GET#new with error" do
-          post :create, params: default_params.merge(purchase: { storage_location_id: nil, amount_spent_in_cents: nil })
+          post purchases_path(default_params.merge(purchase: { storage_location_id: nil, amount_spent_in_cents: nil }))
           expect(response).to be_successful # Will render :new
           expect(response).to have_error(/error/i)
         end
@@ -63,7 +63,7 @@ RSpec.describe PurchasesController, type: :controller do
     describe "PUT#update" do
       it "redirects to index after update" do
         purchase = create(:purchase, purchased_from: "Google")
-        put :update, params: default_params.merge(id: purchase.id, purchase: { purchased_from: "Google" })
+        put purchase_path(default_params.merge(id: purchase.id, purchase: { purchased_from: "Google" }))
         expect(response).to redirect_to(purchases_path)
       end
 
@@ -80,7 +80,7 @@ RSpec.describe PurchasesController, type: :controller do
         }
         purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
         expect do
-          put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+          put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
         end.to change { purchase.storage_location.inventory_items.first.quantity }.by(5)
       end
 
@@ -97,7 +97,7 @@ RSpec.describe PurchasesController, type: :controller do
           }
           purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
           expect do
-            put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+            put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
           end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
         end
 
@@ -114,7 +114,7 @@ RSpec.describe PurchasesController, type: :controller do
             }
           }
           purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
-          put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+          put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
           expect { inventory_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
@@ -135,7 +135,7 @@ RSpec.describe PurchasesController, type: :controller do
           }
           purchase_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
-            put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+            put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
           end.to change { original_storage_location.size }.by(-10) # removes the whole purchase of 10
           expect(new_storage_location.size).to eq 8
         end
@@ -161,7 +161,7 @@ RSpec.describe PurchasesController, type: :controller do
           }
           purchase_params = { storage_location: new_storage_location, line_items_attributes: line_item_params }
           expect do
-            put :update, params: default_params.merge(id: purchase.id, purchase: purchase_params)
+            put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
           end.to raise_error(Errors::InsufficientAllotment)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
@@ -171,23 +171,23 @@ RSpec.describe PurchasesController, type: :controller do
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:purchase, organization: @organization)) }
       it "returns http success" do
-        expect(subject).to be_successful
+        get edit_purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
+        expect(response).to be_successful
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:purchase, organization: @organization)) }
       it "returns http success" do
-        expect(subject).to be_successful
+        get purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
+        expect(response).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:purchase, organization: @organization)) }
       it "redirects to the index" do
-        expect(subject).to redirect_to(purchases_path)
+        delete purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
+        expect(response).to redirect_to(purchases_path)
       end
     end
   end
