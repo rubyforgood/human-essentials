@@ -17,7 +17,7 @@
     <% end %>
     <div class="tile">
       <h3><%= current_partner.name %> Families Served</h3>
-
+      <%= link_to 'Add New Family', new_family_path, style: "margin-bottom: 10px;", class: "btn btn-sm btn-info" %>
       <table class="table table-striped">
         <thead>
         <tr>
@@ -42,7 +42,6 @@
         </tbody>
       </table>
       <hr>
-      <%= link_to 'Add New Family', new_family_path, class: "btn btn-sm btn-info" %>
     </div>
   </div>
 </div>
