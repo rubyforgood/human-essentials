@@ -35,6 +35,15 @@
 @import 'admin_layout';
 @import 'audits';
 @import 'modal-dialog';
+@import 'custom';
+
+.main-header {
+  height: #{$diaper-navbar-height}px
+}
+
+.main-footer {
+  height: #{$diaper-footer-height}px
+}
 
   // TODO: this should be added to a separate file
 .striped {

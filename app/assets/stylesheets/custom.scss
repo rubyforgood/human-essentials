@@ -1,0 +1,31 @@
+@mixin for-desktop {
+    @media (min-width: 992px) and (min-height: 769px) { 
+        @content;
+    }
+}
+
+.full-height {
+    height: 'auto';
+    @include for-desktop { 
+        height: calc(100vh - #{$diaper-navbar-height}px - #{$diaper-footer-height}px);
+    }
+}
+
+#calendar {
+    background-color: #ffffff;
+    width: 100%
+}
+
+#pick-ups-header {
+    height: 'auto';
+    @include for-desktop { 
+        height: 10%;        
+    }
+}
+
+#pick-ups-calendar {
+    height: 'auto';
+    @include for-desktop { 
+        height: 90%;        
+    }
+}
