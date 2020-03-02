@@ -22,6 +22,10 @@
 <!-- Site wrapper -->
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <a href="#" data-widget="pushmenu" data-auto-collapse-size="992">
+      <i class="fa fa-bars"></i>
+    </a>
+
     <ul class="navbar-nav ml-auto">
       <% if user_signed_in? && current_organization.present? %>
         <% if admin_namespace? %>
