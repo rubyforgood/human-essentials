@@ -71,6 +71,20 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "Scopes >" do
+    describe "->alphabetized" do
+      let!(:z_name_user) { create(:user, name: 'Zachary') }
+      let!(:a_name_user) { create(:user, name: 'Amanda') }
+
+      it "retrieves users in the correct order" do
+        alphabetized_list = described_class.alphabetized
+
+        expect(alphabetized_list.first).to eq(a_name_user)
+        expect(alphabetized_list.last).to eq(z_name_user)
+      end
+    end
+  end
+
   context "Methods >" do
     it "#most_recent_sign_in" do
       expect(build(:user, current_sign_in_at: Time.zone.parse("2018-10-23 00:00:00"), last_sign_in_at: Time.zone.parse("2018-10-20 00:00:00 UTC")).most_recent_sign_in).to eq("2018-10-23 00:00:00 UTC")
