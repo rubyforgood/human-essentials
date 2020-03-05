@@ -1,4 +1,6 @@
-RSpec.describe Admin::PartnersController, type: :controller do
+require 'rails_helper'
+
+RSpec.describe "Admin::Partners", type: :request do
   context "When logged in as a super admin" do
     before do
       sign_in(@super_admin)
@@ -8,40 +10,41 @@ RSpec.describe Admin::PartnersController, type: :controller do
 
     describe "GET #index" do
       it "returns http success" do
-        get :index
+        get admin_partners_path
         expect(response).to be_successful
       end
     end
 
     describe "GET #show" do
       it "returns http success" do
-        get :show, params: { id: partner.id }
+        get admin_partner_path(id: partner.id)
         expect(response).to be_successful
       end
     end
 
     describe "GET #edit" do
       it "returns http success" do
-        get :edit, params: { id: partner.id }
+        get edit_admin_partner_path(id: partner.id)
         expect(response).to be_successful
       end
     end
 
     describe "PUT #update" do
       context "successful save" do
-        subject { put :update, params: { id: partner.id, partner: { name: "Bar" } } }
+        subject { put admin_partner_path(id: partner.id, partner: { name: "Bar" }) }
 
         it "updates partner" do
           expect { subject }.to change { partner.reload.name }.to "Bar"
         end
 
         it "redirects" do
-          expect(subject).to be_redirect
+          subject
+          expect(response).to be_redirect
         end
       end
 
       context "unsuccessful save due to empty params" do
-        subject { put :update, params: { id: partner.id, partner: { name: "" } } }
+        subject { put admin_partner_path(id: partner.id, partner: { name: "" }) }
 
         it "renders #edit template with error message" do
           expect(subject).to render_template(:edit)
