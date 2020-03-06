@@ -8,6 +8,7 @@ class DistributionCreateService
   def call
     @distribution.transaction do
       @distribution.save!
+      @distribution.scheduled!
       @distribution.storage_location.decrease_inventory @distribution
       @distribution.reload
       @request&.update!(distribution_id: @distribution.id, status: 'fulfilled')

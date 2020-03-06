@@ -20,7 +20,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 rvm:
-  - 2.6.4
+  - 2.7.0
 script:
   - bundle exec rubocop
   - export RAILS_ENV=test
