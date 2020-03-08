@@ -9,7 +9,7 @@ If you're new here, here are some things you should know:
  - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
 Please feel free to join us on Slack! You can sign up at https://rubyforgood.org -- click on the Slack icon at the top to get an invite. We're in #diaper
- 
+
 The core team leads are: @armahillo @seanmarcia @mdworken @benreyn
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
@@ -51,6 +51,7 @@ If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplie
 
 ### Database Configuration
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.
+Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called `database.yml.example` as an example and just change the credentials.
 
 ## Seed the database
 From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
@@ -105,7 +106,7 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 
 Run all the tests with:
 
-  `bundle exec rspec`            
+  `bundle exec rspec`
 
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
