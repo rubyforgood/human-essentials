@@ -38,7 +38,7 @@ server "104.45.147.100", roles: %w{web app db}, primary: true,
 # Feel free to add new variables to customise your setup.
 
 set :rvm_type, :user
-set :rvm_ruby_version, "2.6.4"
+set :rvm_ruby_version, "2.7.0"
 # Custom SSH Options
 # ==================
 # You may pass any option but keep in mind that net/ssh understands a
