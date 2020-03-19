@@ -278,7 +278,7 @@ GEM
     parser (2.7.0.3)
       ast (~> 2.4.0)
     pdf-core (0.7.0)
-    pg (1.2.2)
+    pg (1.2.3)
     popper_js (1.16.0)
     prawn (2.2.2)
       pdf-core (~> 0.7.0)
@@ -545,7 +545,7 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri (>= 1.10.4)
   paperclip
-  pg (~> 1.2.2)
+  pg (~> 1.2.3)
   popper_js
   prawn-rails
   pry-nav

@@ -33,7 +33,7 @@ gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
 gem "paperclip"
 gem 'popper_js'
-gem "pg", "~> 1.2.2"
+gem "pg", "~> 1.2.3"
 gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 6.0.2"
