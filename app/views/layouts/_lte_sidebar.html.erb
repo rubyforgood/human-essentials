@@ -1,7 +1,7 @@
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
   <li class="nav-item">
     <%= link_to(dashboard_path(organization_id: current_user.organization), class: "nav-link #{active_class(['dashboard'])}") do %>
-      <i class="nav-icon fas fa-tachometer-alt"></i> <span>Dashboard</span>
+      <i class="nav-icon fas fa-tachometer-alt"></i> <p>Dashboard</p>
     <% end %>
   </li>
   <li class="nav-item has-treeview <%= menu_open?(['diaper_drives']) %>">
@@ -67,19 +67,19 @@
 
   <li class="nav-item <%= 'active' if current_page?(requests_path) %>">
     <%= link_to(requests_path, class: "nav-link #{active_class(['requests'])}") do %>
-      <i class="nav-icon fa fa-file-text"></i> Requests
+      <i class="nav-icon fa fa-file-text"></i> <p>Requests</p>
     <% end %>
   </li>
 
   <li class="nav-item <%= 'active' if current_page?(distributions_path) %>">
     <%= link_to(distributions_path, class: "nav-link #{"active" if current_page?(distributions_path)}") do %>
-      <i class="nav-icon fa fa-shopping-cart"></i>Distributions
+      <i class="nav-icon fa fa-shopping-cart"></i><p>Distributions</p>
     <% end %>
   </li>
 
   <li class="nav-item <%= 'active' if current_page?(pick_ups_distributions_path) %>">
     <%= link_to(pick_ups_distributions_path, class: "nav-link #{"active" if current_page?(pick_ups_distributions_path)}") do %>
-      <i class="nav-icon fa fa-calendar-o"></i> Pick Ups
+      <i class="nav-icon fa fa-calendar-o"></i> <p>Pick Ups</p>
     <% end %>
   </li>
 
