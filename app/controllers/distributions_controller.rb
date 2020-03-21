@@ -103,12 +103,12 @@ class DistributionsController < ApplicationController
   end
 
   def update
-    old_distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
 
-    result = DistributionUpdateService.new(old_distribution, distribution_params).call
+    result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
-      @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+      @distribution.reload
       @line_items = @distribution.line_items
 
       if result.resend_notification?
@@ -120,8 +120,11 @@ class DistributionsController < ApplicationController
       flash[:notice] = "Distribution updated!"
       render :show
     else
-      flash[:error] = insufficient_error_message(result.error)
-      redirect_to action: :edit
+      flash[:error] = insufficient_error_message(result.error.message)
+      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @items = current_organization.items.alphabetized
+      @storage_locations = current_organization.storage_locations.alphabetized
+      render :edit
     end
   end
 
@@ -147,7 +150,7 @@ class DistributionsController < ApplicationController
     @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
 
-  # TODO: This shouldl probably be private
+  # NOTE: Is this even used anymore?
   def insufficient_amount!
     respond_to do |format|
       format.html { render template: "errors/insufficient", layout: "layouts/application", status: :ok }
