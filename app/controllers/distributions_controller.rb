@@ -25,12 +25,12 @@ class DistributionsController < ApplicationController
     result = DistributionDestroyService.new(params[:id]).call
 
     if result.success?
-      flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
-      redirect_to distributions_path
+       flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
     else
       flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
-      redirect_to action: :edit
     end
+
+    redirect_to distributions_path
   end
 
   def index
@@ -58,9 +58,8 @@ class DistributionsController < ApplicationController
     result = DistributionCreateService.new(distribution_params.merge(organization: current_organization), request_id).call
 
     if result.success?
-      flash[:notice] = "Distribution created!"
       session[:created_distribution_id] = result.distribution.id
-      redirect_to(distributions_path) && return
+      redirect_to(distributions_path, notice: "Distribution created!") && return
     else
       @distribution = result.distribution
       flash[:error] = insufficient_error_message(result.error.message)
@@ -96,9 +95,8 @@ class DistributionsController < ApplicationController
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
     else
-      flash[:error] = 'To edit a distribution,
+      redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
-      redirect_to distributions_path
     end
   end
 
@@ -108,8 +106,7 @@ class DistributionsController < ApplicationController
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
-      @distribution.reload
-      @line_items = @distribution.line_items
+      #@line_items = @distribution.line_items
 
       if result.resend_notification?
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
@@ -117,8 +114,7 @@ class DistributionsController < ApplicationController
 
       schedule_reminder_email(@distribution.id)
 
-      flash[:notice] = "Distribution updated!"
-      render :show
+      redirect_to @distribution, notice: "Distribution updated!"
     else
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.count.zero?
