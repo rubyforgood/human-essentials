@@ -63,7 +63,8 @@ class DistributionsController < ApplicationController
       redirect_to(distributions_path) && return
     else
       @distribution = result.distribution
-      flash[:error] = "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{result.error}"
+      flash[:error] = insufficient_error_message(result.error.message)
+      # NOTE: Can we just do @distribution.line_items.build, regardless?
       @distribution.line_items.build if @distribution.line_items.count.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
@@ -119,7 +120,7 @@ class DistributionsController < ApplicationController
       flash[:notice] = "Distribution updated!"
       render :show
     else
-      flash[:error] = "Distribution could not be updated! Are you sure there are enough items in inventory to update this distribution?"
+      flash[:error] = insufficient_error_message(result.error)
       redirect_to action: :edit
     end
   end
@@ -162,6 +163,10 @@ class DistributionsController < ApplicationController
 
     request = Request.find(request_atts[:id])
     request.update(distribution_id: distribution_id, status: 'fulfilled')
+  end
+
+  def insufficient_error_message(details)
+    "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{details}"
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')

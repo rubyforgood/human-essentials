@@ -1,7 +1,7 @@
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 
-const new_option = function(item, selected) {
+function new_option(item, selected) {
   if (selected == null) {
     selected = false;
   }
@@ -21,7 +21,7 @@ const new_option = function(item, selected) {
   return content;
 };
 
-const populate_dropdowns = (objects, inventory) =>
+function populate_dropdowns(objects, inventory) {
   objects.each(function(index, element) {
     const selected = Number(
       $(element)
@@ -39,7 +39,9 @@ const populate_dropdowns = (objects, inventory) =>
       .end()
       .append(options);
   });
-const request_storage_location_and_populate_item = function(item_to_populate) {
+}
+
+function request_storage_location_and_populate_item(item_to_populate) {
   const control = $("select.storage-location-source");
   if (control.length > 0 && control.val() !== "") {
     return $.ajax({
@@ -48,7 +50,7 @@ const request_storage_location_and_populate_item = function(item_to_populate) {
         .replace(":id", control.val()),
       dataType: "json",
       success(data) {
-        return populate_dropdowns(item_to_populate, data);
+        return populate_dropdowns($(item_to_populate), data);
       }
     });
   }
