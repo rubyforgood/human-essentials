@@ -1,15 +1,74 @@
-version: 2.1
-orbs:
-  ruby: circleci/ruby@0.1.2 
-
+version: 2
 jobs:
   build:
+    parallelism: 3
     docker:
-      - image: circleci/ruby:2.6.3-stretch-node
-    executor: ruby/default
+      - image: circleci/ruby:2.7.0-node
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_RETRY: 3
+          BUNDLE_PATH: vendor/bundle
+          PGHOST: 127.0.0.1
+          PGUSER: circleci-demo-ruby
+          RAILS_ENV: test
+      - image: circleci/postgres:9.6
+        environment:
+          POSTGRES_USER: circleci-demo-ruby
+          POSTGRES_DB: rails_blog
+          POSTGRES_PASSWORD: ""
     steps:
       - checkout
+
+      - run:
+          name: install dependencies
+          command: |
+            gem install bundler -v 2.1.4
+
       - run:
           name: Which bundler?
           command: bundle -v
-      - ruby/bundle-install
+          
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+
+      - restore_cache:
+          keys:
+            - rails-demo-yarn-{{ checksum "yarn.lock" }}
+            - rails-demo-yarn-
+
+      - run:
+          name: Yarn Install
+          command: yarn install --cache-folder ~/.cache/yarn
+
+      - save_cache:
+          key: rails-demo-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - node_modules
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Database setup
+          command: bin/rails db:create; bin/rails db:schema:load --trace
+
+      - run:
+          name: Rubocop for linting goodness
+          command: bundle exec rubocop
+
+      - run:
+          name: Brakeman
+          command: ./scripts/brakeman
+
+      - run:
+          name: Run rspec in parallel
+          command: |
+            bundle exec rspec --profile 10 \
+                              --format progress \
+                              $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+
+      - store_test_results:
+          path: test_results
