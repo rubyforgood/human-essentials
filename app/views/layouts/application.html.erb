@@ -72,7 +72,7 @@
     <% flash.each do |key, value| %>
       <div class="alert alert-<%= flash_class(key) %> alert-dismissible fade show" role="alert">
         <a href="#" class="close" data-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-        <%= raw value %>
+        <%= value %>
       </div>
     <% end %>
     <%= yield %>

@@ -63,7 +63,7 @@ class DistributionsController < ApplicationController
       redirect_to(distributions_path) && return
     else
       @distribution = result.distribution
-      flash[:error] = "Sorry, we weren't able to save the distribution. #{@distribution.errors.full_messages.join(', ')} #{result.error.message}"
+      flash[:error] = "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{result.error}"
       @distribution.line_items.build if @distribution.line_items.count.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
