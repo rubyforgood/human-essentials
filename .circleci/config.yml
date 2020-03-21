@@ -15,7 +15,7 @@ jobs:
         environment:
           POSTGRES_USER: circleci-demo-ruby
           POSTGRES_DB: rails_blog
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: PASSWORD
     steps:
       - checkout
 
