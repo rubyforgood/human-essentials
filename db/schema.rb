@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_21_155337) do
+ActiveRecord::Schema.define(version: 2020_03_24_181621) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -255,6 +255,7 @@ ActiveRecord::Schema.define(version: 2019_10_21_155337) do
     t.integer "reminder_day"
     t.integer "deadline_day"
     t.text "invitation_text"
+    t.integer "default_storage_location"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -265,8 +266,8 @@ ActiveRecord::Schema.define(version: 2019_10_21_155337) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
-    t.boolean "send_reminders", default: false, null: false
     t.integer "status", default: 0
+    t.boolean "send_reminders", default: false, null: false
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 

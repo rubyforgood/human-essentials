@@ -2,23 +2,24 @@
 #
 # Table name: organizations
 #
-#  id              :bigint           not null, primary key
-#  city            :string
-#  deadline_day    :integer
-#  email           :string
-#  intake_location :integer
-#  invitation_text :text
-#  latitude        :float
-#  longitude       :float
-#  name            :string
-#  reminder_day    :integer
-#  short_name      :string
-#  state           :string
-#  street          :string
-#  url             :string
-#  zipcode         :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  id                       :integer          not null, primary key
+#  city                     :string
+#  deadline_day             :integer
+#  default_storage_location :integer
+#  email                    :string
+#  intake_location          :integer
+#  invitation_text          :text
+#  latitude                 :float
+#  longitude                :float
+#  name                     :string
+#  reminder_day             :integer
+#  short_name               :string
+#  state                    :string
+#  street                   :string
+#  url                      :string
+#  zipcode                  :string
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
 #
 
 class Organization < ApplicationRecord
