@@ -59,6 +59,20 @@ $(document).ready(function () {
     height: isMobile || isShortHeight ? 'auto' : 'parent',
     defaultView: isMobile ? 'listWeek' : 'month'
   });
+
+});
+
+$(document).ready(function () {
+  const feedbackSubmitButton = $('.feedback_message button');
+  feedbackSubmitButton.addClass('disabled');
+
+  $('#feedback_message_message').keyup(e => {
+    if (!e.target.value) {
+      feedbackSubmitButton.addClass('disabled');
+    } else {
+      feedbackSubmitButton.removeClass('disabled');
+    }
+  })
 });
 
 function order_by_occurrence(arr) {
