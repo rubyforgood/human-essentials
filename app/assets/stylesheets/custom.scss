@@ -29,3 +29,12 @@
         height: 90%;        
     }
 }
+
+.wrapper-form-feedback {
+    @extend .dropdown-item;
+
+    &:active {
+        color: inherit;
+        background-color: #f8f9fa;
+    }
+}
