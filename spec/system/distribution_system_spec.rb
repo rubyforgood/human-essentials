@@ -69,6 +69,13 @@ RSpec.feature "Distributions", type: :system do
         expect(page.find(".alert")).to have_content "exceed"
       end
     end
+    context "when there is a default storage location" do
+      it "automatically selects the default storage location" do
+        @organization.default_storage_location = @storage_location.id
+        visit @url_prefix + "/distributions/new"
+        expect(find("#distribution_storage_location_id").text).to eq(@storage_location.name)
+      end
+    end
   end
 
   it "Does not include inactive items in the line item fields" do

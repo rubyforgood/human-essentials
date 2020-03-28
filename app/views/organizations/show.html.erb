@@ -49,6 +49,16 @@
                     <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} of each month" %>
                   </p>
                 </div>
+                <div>
+                  <h4>Default Intake Location</h4>
+                  <p><%= fa_icon "building" %>
+                    <%= @organization.intake_location.blank? ? 'Not defined' : StorageLocation.find(@organization.intake_location).name %>
+                  </p>
+                  <h4>Default Storage Location</h4>
+                  <p><%= fa_icon "building-o" %>
+                    <%= @organization.default_storage_location.blank? ? 'Not defined' : StorageLocation.find(@organization.default_storage_location).name %>
+                  </p>
+                </div>
               </div>
               <!-- /.col -->
               <div class="col-md-8">
