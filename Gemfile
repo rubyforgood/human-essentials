@@ -31,7 +31,6 @@ gem "kaminari"
 gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
-gem "paperclip"
 gem 'popper_js'
 gem "pg", "~> 1.2.3"
 gem "prawn-rails"
