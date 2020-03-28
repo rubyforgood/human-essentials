@@ -2,23 +2,24 @@
 #
 # Table name: organizations
 #
-#  id              :bigint           not null, primary key
-#  city            :string
-#  deadline_day    :integer
-#  email           :string
-#  intake_location :integer
-#  invitation_text :text
-#  latitude        :float
-#  longitude       :float
-#  name            :string
-#  reminder_day    :integer
-#  short_name      :string
-#  state           :string
-#  street          :string
-#  url             :string
-#  zipcode         :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  id                       :integer          not null, primary key
+#  city                     :string
+#  deadline_day             :integer
+#  default_storage_location :integer
+#  email                    :string
+#  intake_location          :integer
+#  invitation_text          :text
+#  latitude                 :float
+#  longitude                :float
+#  name                     :string
+#  reminder_day             :integer
+#  short_name               :string
+#  state                    :string
+#  street                   :string
+#  url                      :string
+#  zipcode                  :string
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
 #
 
 RSpec.describe Organization, type: :model do
@@ -257,6 +258,22 @@ RSpec.describe Organization, type: :model do
     it "adds coordinates to the database" do
       expect(organization.latitude).to be_a(Float)
       expect(organization.longitude).to be_a(Float)
+    end
+  end
+
+  describe 'default storage location' do
+    it 'returns nil when not set' do
+      expect(Organization.new.default_storage_location).to be_nil
+    end
+
+    it 'associates the default storage location with a storage location' do
+      storage_location = FactoryBot.build(:storage_location)
+      org = Organization.new(default_storage_location: storage_location.id,
+                             street: '123 Main St.',
+                             city: 'Anytown',
+                             state: 'KS',
+                             zipcode: '12345')
+      expect(org.default_storage_location).to eq(storage_location.id)
     end
   end
 

@@ -11,6 +11,7 @@ RSpec.describe "Organization management", type: :system, js: true do
     end
   end
   context "while signed in as an organization admin" do
+    let!(:store) { create(:storage_location) }
     before do
       sign_in(@organization_admin)
     end
@@ -41,6 +42,13 @@ RSpec.describe "Organization management", type: :system, js: true do
 
         click_on "Save"
         expect(page.find(".alert.alert-danger.alert-dismissible")).to have_content "Failed to update"
+      end
+
+      it 'can set a default storage location on the organization' do
+        select(store.name, from: 'Default Storage Location')
+
+        click_on "Save"
+        expect(page).to have_content(store.name)
       end
     end
 
