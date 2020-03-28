@@ -52,7 +52,6 @@ gem 'bootstrap-daterangepicker-rails'
 
 group :development, :test do
   gem "awesome_print"
-  gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "pry-rails"
   gem "pry-remote"
@@ -88,11 +87,12 @@ group :test do
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "factory_bot_rails"
+  gem "fakeredis", require: "fakeredis/rspec"
   gem "launchy"
   gem "rails-controller-testing"
-  gem "webmock", "~> 3.8"
   gem 'simplecov'
   gem 'webdrivers', '~> 4.2'
+  gem "webmock", "~> 3.8"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
