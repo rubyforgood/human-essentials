@@ -9,6 +9,8 @@
   collection: storage_locations,
   label: label,
   error: error,
+  selected: source.object.storage_location&.id || current_organization.default_storage_location,
+  include_blank: true,
   input_html: {
     data: {
       storage_location_inventory_path: inventory_storage_location_path(
@@ -21,3 +23,4 @@
     class: "storage-location-source"
   }
 %>
+
