@@ -82,7 +82,7 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 3.31"
+  gem "capybara", "~> 3.32"
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "factory_bot_rails"
