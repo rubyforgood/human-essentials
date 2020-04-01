@@ -265,7 +265,7 @@ GEM
       shellany (~> 0.0)
     orm_adapter (0.5.0)
     parallel (1.19.1)
-    parser (2.7.0.3)
+    parser (2.7.0.5)
       ast (~> 2.4.0)
     pdf-core (0.7.0)
     pg (1.2.3)
@@ -376,7 +376,8 @@ GEM
       rexml
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.7)
-    rubocop-rails (2.4.2)
+    rubocop-rails (2.5.0)
+      activesupport
       rack (>= 1.1)
       rubocop (>= 0.72.0)
     ruby-graphviz (1.2.4)
