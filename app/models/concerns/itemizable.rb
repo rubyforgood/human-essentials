@@ -15,7 +15,7 @@ module Itemizable
 
     has_many :line_items, as: :itemizable, inverse_of: :itemizable do
       def assign_insufficiency_errors(insufficiency_hash)
-        insufficiency_hash = insufficiency_hash.map { |i| [i[:item_id], i] }.to_h
+        insufficiency_hash = insufficiency_hash.index_by { |i| i[:item_id] }
         each do |line_item|
           next unless insufficiency = insufficiency_hash.fetch(line_item.item_id)
 
