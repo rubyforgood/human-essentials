@@ -6,7 +6,6 @@ class DistributionCreateService
     @request = Request.find(request_id) if request_id
     @organization = @distribution.organization
     @error = nil
-
   end
 
   def call

@@ -66,8 +66,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
       fill_in "organization_users_attributes_0_email", with: admin_user_params[:email]
       check "organization_users_attributes_0_organization_admin"
-      
-      pending("This is currently failing because a button isn't clickable and it's unclear why")
+
       click_on "Save"
 
       expect(page).to have_content("All Diaperbase Organizations")
@@ -84,7 +83,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       expect(page).to have_content(admin_user_params[:name])
       expect(page).to have_content(admin_user_params[:email])
       expect(page).to have_content("invited")
-      pending("This is currently failing because a button isn't clickable and it's unclear why")
     end
   end
 end

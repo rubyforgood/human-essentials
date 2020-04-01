@@ -301,7 +301,6 @@ RSpec.feature "Distributions", type: :system do
         select(diaper_type, from: second_item_name_field)
         find_all(".numeric")[1].set 3
 
-        pending("This spec is failing because it can't click on the save button, unclear why")
         first("button", text: "Save").click
 
         expect(page).to have_css "td"
@@ -324,7 +323,6 @@ RSpec.feature "Distributions", type: :system do
       click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
-        pending("This spec is failing because it can't click on the save button, unclear why")
         click_on "Save"
       end
 

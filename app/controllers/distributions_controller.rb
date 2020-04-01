@@ -25,7 +25,7 @@ class DistributionsController < ApplicationController
     result = DistributionDestroyService.new(params[:id]).call
 
     if result.success?
-       flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
+      flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
     else
       flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
     end
@@ -106,7 +106,7 @@ class DistributionsController < ApplicationController
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
-      #@line_items = @distribution.line_items
+      # @line_items = @distribution.line_items
 
       if result.resend_notification?
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
