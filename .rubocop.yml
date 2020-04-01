@@ -312,3 +312,5 @@ Rails/UnknownEnv:
     - test
 Style/SymbolArray:
   Enabled: false
+Rails/UniqueValidationWithoutIndex: # We use multiple unique validations where the uniqueness is scoped
+  Enabled: false
