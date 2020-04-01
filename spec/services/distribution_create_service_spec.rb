@@ -36,7 +36,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
     context "when there's not sufficient inventory" do
       let(:too_much_params) { { organization_id: @organization.id, partner_id: @partner.id, storage_location_id: storage_location.id, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } } } }
-      
+
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_params).call
         expect(result.error).to be_instance_of(Errors::InsufficientAllotment)
@@ -46,7 +46,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
     context "when it fails to save" do
       let(:bad_params) { { organization_id: @organization.id, storage_location_id: storage_location.id, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } } } }
-      
+
       it "preserves the error and is unsuccessful" do
         result = subject.new(bad_params).call
         expect(result.error).to be_instance_of(ActiveRecord::RecordInvalid)
