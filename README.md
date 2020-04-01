@@ -74,7 +74,7 @@ To login to the web application, use these default credentials:
 
 Depending on the issues or features you decided to undertake, you may need to get both the `diaper` and `partner` app running locally. This is true if you want to build a feature that depends on code changes in both repositories.
 
-Please follow this [guide]() to get your local environment setup properly.
+Please follow this [guide](connecting-the-partner-and-diaper.md) to get your local environment setup properly.
 
 ## Contributing
 
