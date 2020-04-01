@@ -17,7 +17,7 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
             organization_id: organization.id,
             partner_id: partner.id,
             comments: "please and thank you",
-            request_items: random_keys(3).collect { |k| [k, rand(3..10)] }.to_h
+            request_items: random_keys(3).index_with { |_k| rand(3..10) }
           }
         }
 
@@ -46,7 +46,7 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
             organization_id: organization.id,
             partner_id: partner.id,
             comments: "please and thank you",
-            request_items: random_keys(3).collect { |k| [k, rand(3..10)] }.to_h
+            request_items: random_keys(3).index_with { |_k| rand(3..10) }
           }
         }
 
