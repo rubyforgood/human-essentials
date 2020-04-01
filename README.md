@@ -69,6 +69,12 @@ To login to the web application, use these default credentials:
     User
       Email: user_1@example.com
       Password: password
+      
+## Connecting Diaper & Partner Apps Together Locally
+
+Depending on the issues or features you decided to undertake, you may need to get both the `diaper` and `partner` app running locally. This is true if you want to build a feature that depends on code changes in both repositories.
+
+Please follow this [guide](connecting-the-partner-and-diaper.md) to get your local environment setup properly.
 
 ## Contributing
 
