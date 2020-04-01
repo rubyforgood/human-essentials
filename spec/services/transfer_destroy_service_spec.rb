@@ -1,6 +1,3 @@
-require 'spec_helper'
-require_relative '../support/env_helper'
-
 RSpec.describe TransferDestroyService, type: :service do
   describe '#call' do
     subject { described_class.new(transfer_id: transfer_id).call }
