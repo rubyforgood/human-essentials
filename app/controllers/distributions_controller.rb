@@ -6,7 +6,6 @@
 class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
-  rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
     @distribution = Distribution.find(params[:id])
@@ -146,23 +145,7 @@ class DistributionsController < ApplicationController
     @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
 
-  # NOTE: Is this even used anymore?
-  def insufficient_amount!
-    respond_to do |format|
-      format.html { render template: "errors/insufficient", layout: "layouts/application", status: :ok }
-      format.json { render nothing: true, status: :ok }
-    end
-  end
-
   private
-
-  # If a request id is provided, update the request with the newly created distribution's id
-  def update_request(request_atts, distribution_id)
-    return if request_atts.blank?
-
-    request = Request.find(request_atts[:id])
-    request.update(distribution_id: distribution_id, status: 'fulfilled')
-  end
 
   def insufficient_error_message(details)
     "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{details}"
