@@ -31,7 +31,6 @@ RSpec.describe "Organization management", type: :system, js: true do
       it "can set a reminder and a deadline day" do
         fill_in "organization_reminder_day", with: 12
         fill_in "organization_deadline_day", with: 16
-
         click_on "Save"
         expect(page.find(".alert")).to have_content "Updated"
       end
@@ -39,7 +38,6 @@ RSpec.describe "Organization management", type: :system, js: true do
       it "cannot set a reminder day after deadline day" do
         fill_in "organization_reminder_day", with: 12
         fill_in "organization_deadline_day", with: 1
-
         click_on "Save"
         expect(page.find(".alert.alert-danger.alert-dismissible")).to have_content "Failed to update"
       end

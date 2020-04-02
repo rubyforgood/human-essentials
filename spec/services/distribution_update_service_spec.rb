@@ -1,6 +1,3 @@
-require 'spec_helper'
-require_relative '../support/env_helper'
-
 RSpec.describe DistributionUpdateService, type: :service do
   describe "call" do
     # TODO: this function was extracted to the service object - do we need a parallel test?

@@ -1,6 +1,3 @@
-require 'spec_helper'
-require_relative '../support/env_helper'
-
 RSpec.describe DiaperPartnerClient, type: :service do
   before do
     stub_env('PARTNER_REGISTER_URL', 'https://partner-register.com')

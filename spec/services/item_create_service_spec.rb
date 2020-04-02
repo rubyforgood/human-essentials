@@ -1,6 +1,3 @@
-require 'spec_helper'
-require_relative '../support/env_helper'
-
 RSpec.describe ItemCreateService, type: :service do
   describe '#call' do
     subject { described_class.new(organization_id: organization_id, item_params: item_params).call }

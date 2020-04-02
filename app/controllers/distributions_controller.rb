@@ -6,7 +6,6 @@
 class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
-  rescue_from Errors::InsufficientAllotment, with: :insufficient_amount!
 
   def print
     @distribution = Distribution.find(params[:id])
@@ -26,11 +25,11 @@ class DistributionsController < ApplicationController
 
     if result.success?
       flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
-      redirect_to distributions_path
     else
       flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
-      redirect_to action: :edit
     end
+
+    redirect_to distributions_path
   end
 
   def index
@@ -58,12 +57,12 @@ class DistributionsController < ApplicationController
     result = DistributionCreateService.new(distribution_params.merge(organization: current_organization), request_id).call
 
     if result.success?
-      flash[:notice] = "Distribution created!"
       session[:created_distribution_id] = result.distribution.id
-      redirect_to(distributions_path) && return
+      redirect_to(distributions_path, notice: "Distribution created!") && return
     else
       @distribution = result.distribution
-      flash[:error] = "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{result.error}"
+      flash[:error] = insufficient_error_message(result.error.message)
+      # NOTE: Can we just do @distribution.line_items.build, regardless?
       @distribution.line_items.build if @distribution.line_items.count.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
@@ -95,32 +94,30 @@ class DistributionsController < ApplicationController
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
     else
-      flash[:error] = 'To edit a distribution,
+      redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
-      redirect_to distributions_path
     end
   end
 
   def update
-    old_distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
 
-    result = DistributionUpdateService.new(old_distribution, distribution_params).call
+    result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
-      @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-      @line_items = @distribution.line_items
-
       if result.resend_notification?
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
       end
 
       schedule_reminder_email(@distribution.id)
 
-      flash[:notice] = "Distribution updated!"
-      render :show
+      redirect_to @distribution, notice: "Distribution updated!"
     else
-      flash[:error] = "Distribution could not be updated! Are you sure there are enough items in inventory to update this distribution?"
-      redirect_to action: :edit
+      flash[:error] = insufficient_error_message(result.error.message)
+      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @items = current_organization.items.alphabetized
+      @storage_locations = current_organization.storage_locations.alphabetized
+      render :edit
     end
   end
 
@@ -146,22 +143,10 @@ class DistributionsController < ApplicationController
     @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
 
-  # TODO: This shouldl probably be private
-  def insufficient_amount!
-    respond_to do |format|
-      format.html { render template: "errors/insufficient", layout: "layouts/application", status: :ok }
-      format.json { render nothing: true, status: :ok }
-    end
-  end
-
   private
 
-  # If a request id is provided, update the request with the newly created distribution's id
-  def update_request(request_atts, distribution_id)
-    return if request_atts.blank?
-
-    request = Request.find(request_atts[:id])
-    request.update(distribution_id: distribution_id, status: 'fulfilled')
+  def insufficient_error_message(details)
+    "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{details}"
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')

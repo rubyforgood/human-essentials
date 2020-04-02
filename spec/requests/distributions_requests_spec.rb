@@ -142,7 +142,7 @@ RSpec.describe "Distributions", type: :request do
 
       it "returns a 200" do
         patch distribution_path(distribution_params)
-        expect(response.status).to eq(200)
+        expect(response.status).to redirect_to(distribution_path(distribution.to_param))
       end
 
       describe "when changing storage location" do

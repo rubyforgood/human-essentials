@@ -76,7 +76,7 @@ RSpec.describe "Item management", type: :system do
   end
 
   describe "destroying items" do
-    subject { create(:item, name: "DELETEME", organization: @user.organization) }
+    subject { create(:item, name: "AAA DELETEME", organization: @user.organization) }
     context "when an item has history" do
       before do
         create(:donation, :with_items, item: subject)
@@ -116,7 +116,7 @@ RSpec.describe "Item management", type: :system do
   end
 
   describe "restoring items" do
-    let!(:item) { create(:item, :inactive, name: "DELETED") }
+    let!(:item) { create(:item, :inactive, name: "AAA DELETED") }
 
     it "allows a user to restore the item" do
       expect do
