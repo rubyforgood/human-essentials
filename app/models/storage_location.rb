@@ -146,7 +146,6 @@ class StorageLocation < ApplicationRecord
         quantity_requested: item_hash[:quantity]
       }
     end
-
     # NOTE: Could this be handled by a validation instead?
     # If we found any insufficiencies
     unless insufficient_items.empty?

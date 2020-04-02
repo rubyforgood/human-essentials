@@ -1,5 +1,6 @@
 # Base Controller. There is some magic in here that handles organization-scoping for routes
 class ApplicationController < ActionController::Base
+  add_flash_types :error
   include DateHelper
 
   protect_from_forgery with: :exception

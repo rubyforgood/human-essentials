@@ -1,3 +1,6 @@
+# 1 Apr 2020 [AMH] : Deprecation warnings have been VERY verbose lately. This hides them.
+Warning[:deprecated] = false
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
