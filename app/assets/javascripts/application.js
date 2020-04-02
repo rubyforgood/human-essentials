@@ -37,7 +37,7 @@ function isShortHeightScreen() {
 window.setTimeout(function() {
   // When the user is given an error message, we should not auto-hide it so that
   // they can fully read it and potentially copy/paste it into an issue.
-  $(".alert").not(".error").fadeTo(1000, 0).slideUp(1000, function(){
+  $(".alert").not(".error").fadeTo(1000, 0).slideUp(1000, function() {
     $(this).remove();
   });
 }, 2500);
