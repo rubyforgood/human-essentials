@@ -255,7 +255,7 @@ RSpec.feature "Distributions", type: :system do
       end
     end
 
-    it "it completes successfully" do
+    it "completes successfully" do
       expect(page).to have_content "Distributions"
       expect(page.find(".alert-info")).to have_content "reated"
       expect(Distribution.first.line_items.count).to eq 1
@@ -314,7 +314,7 @@ RSpec.feature "Distributions", type: :system do
 
   # TODO: This should probably be in the Request resource specs, not Distribution
   context "When creating a distrubition from a request" do
-    it "it sets the distribution id and fulfilled status on the request" do
+    it "sets the distribution id and fulfilled status on the request" do
       items = @storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: @organization, request_items: request_items
@@ -338,7 +338,7 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/distributions/new"
     end
 
-    it "a user can add items via scanning them in by barcode", js: true do
+    it "allows users to add items via scanning them in by barcode", js: true do
       Barcode.boop(@existing_barcode.value)
       # the form should update
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
