@@ -105,8 +105,6 @@ class DistributionsController < ApplicationController
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
-      # @line_items = @distribution.line_items
-
       if result.resend_notification?
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
       end
