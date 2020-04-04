@@ -6,11 +6,11 @@ class UpdateDiaperPartnerJob
   def perform(partner_id)
     @partner = Partner.find(partner_id)
     @invitation_message = @partner.organization.invitation_text
-    @response = DiaperPartnerClient.post(partner_attributes, @invitation_message) if Flipper.enabled?(:email_active)
+    @response = DiaperPartnerClient.post(partner_attributes(@partner), @invitation_message) if Flipper.enabled?(:email_active)
     @partner.invited!
   end
 
-  def partner_attributes
-    @partner.attributes
+  def partner_attributes(partner)
+    partner.attributes
   end
 end
