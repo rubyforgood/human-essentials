@@ -11,7 +11,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
         with_features email_active: true do
           Sidekiq::Testing.inline! do
             expect do
-              UpdateDiaperPartnerJob.perform_async(@partner.id)
+              UpdateDiaperPartnerJob.perform_later(@partner.id)
               @partner.reload
             end
             expect(@partner.status).to eq("uninvited")
@@ -32,7 +32,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
         with_features email_active: true do
           Sidekiq::Testing.inline! do
             expect do
-              UpdateDiaperPartnerJob.perform_async(@partner.id)
+              UpdateDiaperPartnerJob.perform_later(@partner.id)
               @partner.reload
             end.to change { @partner.status }.to("error")
           end
@@ -47,7 +47,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
 
             expect(DiaperPartnerClient).to receive(:post)
 
-            UpdateDiaperPartnerJob.perform_async(partner.id)
+            UpdateDiaperPartnerJob.perform_later(partner.id)
           end
         end
       end

@@ -1,6 +1,4 @@
-class ReminderDeadlineJob
-  include Sidekiq::Worker
-
+class ReminderDeadlineJob < ApplicationJob
   def perform
     if Flipper.enabled?(:reminders_active)
       organizations = Organization.where('reminder_day = ? and deadline_day is not null', Date.current.day)
