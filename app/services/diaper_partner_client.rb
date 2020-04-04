@@ -29,6 +29,7 @@ module DiaperPartnerClient
   def self.get(attributes)
     id = attributes[:id]
     uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{id}")
+    uri.query = URI.encode_www_form(attributes[:query_params]) unless attributes[:query_params].blank?
     req = Net::HTTP::Get.new(uri, "Content-Type" => "application/json")
 
     req["Content-Type"] = "application/json"

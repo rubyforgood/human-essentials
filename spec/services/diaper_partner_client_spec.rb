@@ -29,6 +29,26 @@ RSpec.describe DiaperPartnerClient, type: :service do
       result = DiaperPartnerClient.get(id: 123)
       expect(result).to eq 'success'
     end
+
+    context 'with query_params' do
+      let(:query_params) { { additional_details: true } }
+
+      it 'performs a GET request' do
+        stub_partner_request(:get, 'https://partner-register.com/123?additional_details=true')
+        result = DiaperPartnerClient.get(id: 123, query_params: query_params)
+        expect(result).to eq 'success'
+      end
+    end
+
+    context 'with random params' do
+      let(:random_params) { { something: 'weird' } }
+
+      it 'performs a GET request' do
+        stub_partner_request(:get, 'https://partner-register.com/123')
+        result = DiaperPartnerClient.get(id: 123, random_params: random_params)
+        expect(result).to eq 'success'
+      end
+    end
   end
 
   describe '::put' do
