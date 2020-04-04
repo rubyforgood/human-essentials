@@ -11,6 +11,6 @@ class UpdateDiaperPartnerJob
   end
 
   def partner_attributes(partner)
-    partner.attributes
+    partner.attributes.merge({ organization_email: partner.organization.email }).with_indifferent_access
   end
 end

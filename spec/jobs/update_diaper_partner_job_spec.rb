@@ -58,7 +58,8 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
     it "includes the organization_email in the output" do
       @partner = create(:partner)
       organization_email = @partner.organization.email
-      expect(UpdateDiaperPartnerJob.new.partner_attributes(@partner)).to have_value(organization_email)
+      update_partner_job = UpdateDiaperPartnerJob.new
+      expect(update_partner_job.partner_attributes(@partner)).to have_value(organization_email)
     end
   end
 end
