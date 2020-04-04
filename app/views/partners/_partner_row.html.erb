@@ -14,6 +14,8 @@
       <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "success" } %>
     <% when "recertification_required" %>
       <%= view_button_to "#", { text: "#{status.humanize}", icon: "minus", type: "danger" } %>
+    <% when "deactivated" %>
+      <%= view_button_to "#", { text: "#{status.humanize}", icon: "minus", type: "secondary" } %>
     <% else %>
       <span class="label label-teal">Errored</span>
     <% end %>
