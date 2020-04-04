@@ -13,9 +13,9 @@ Ensure that you are able to run both `partner` and `diaper` repos individually b
 
 Please verify the following before continuing
 
--[ ]  You are using Linux or MacOSX
--[ ]  You went through the setup instructions in the `partner` and `diaper` README
--[ ]  You are able to run and access `partner` and `diaper` individually.
+- [ ]  You are using Linux or MacOSX
+- [ ]  You went through the setup instructions in the `partner` and `diaper` README
+- [ ]  You are able to run and access `partner` and `diaper` individually.
 
 # Configure Applications
 
