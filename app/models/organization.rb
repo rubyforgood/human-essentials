@@ -82,10 +82,9 @@ class Organization < ApplicationRecord
   has_many :users, dependent: :destroy
   has_many :requests, dependent: :destroy
   has_many :audits, dependent: :destroy
-  before_update :update_partner_sections
+  before_update :update_partner_sections, if: :partner_form_fields_changed?
 
   ALL_PARTIALS = [
-    ['Agency Information', 'agency_information'],
     ['Media Information', 'media_information'],
     ['Agency Stability', 'agency_stability'],
     ['Organizational Capacity', 'organizational_capacity'],
@@ -201,7 +200,7 @@ class Organization < ApplicationRecord
   private
 
   def update_partner_sections
-    PartnerFieldsJob.perform_async(id) if partner_form_fields_changed?
+    PartnerFieldsJob.perform_async(id)
   end
 
   def correct_logo_mime_type

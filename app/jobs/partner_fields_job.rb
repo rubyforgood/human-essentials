@@ -4,6 +4,6 @@ class PartnerFieldsJob
 
   def perform(organization_id)
     @organization = Organization.find(organization_id)
-    PartnerFormClient.post(@organization.attributes) # if Flipper.enabled?(:email_active)
+    PartnerFormClient.post(@organization.attributes)
   end
 end

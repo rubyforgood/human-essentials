@@ -17,7 +17,6 @@
 // require jquery_ujs
 //= require bootstrap-select
 //= require bootstrap/alert
-//= require bootstrap/dropdown
 //= require fastclick
 //= require adminlte.min
 //= require cocoon
