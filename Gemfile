@@ -9,6 +9,7 @@ ruby "2.7.0"
 
 gem "api-auth", "~> 2.3"
 gem 'bootstrap', '~> 4.4.1'
+gem 'bootstrap-select-rails'
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
@@ -31,8 +32,8 @@ gem "kaminari"
 gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
-gem 'popper_js'
 gem "pg", "~> 1.2.3"
+gem 'popper_js'
 gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 6.0.2"
@@ -74,6 +75,7 @@ group :development do
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
+  gem "fakeredis", require: "fakeredis/rspec"
   gem "listen", "~> 3.2.1"
   gem "rails-erd"
   gem "spring"

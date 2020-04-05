@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id                       :bigint           not null, primary key
+#  id                       :integer          not null, primary key
 #  city                     :string
 #  deadline_day             :integer
 #  default_storage_location :integer
@@ -12,6 +12,7 @@
 #  latitude                 :float
 #  longitude                :float
 #  name                     :string
+#  partner_form_fields      :text             default([]), is an Array
 #  reminder_day             :integer
 #  short_name               :string
 #  state                    :string
@@ -81,6 +82,21 @@ class Organization < ApplicationRecord
   has_many :users, dependent: :destroy
   has_many :requests, dependent: :destroy
   has_many :audits, dependent: :destroy
+  before_update :update_partner_sections
+
+  ALL_PARTIALS = [
+      ['Agency Information', 'agency_information'],
+      ['Media Information','media_information'],
+      ['Agency Stability', 'agency_stability'],
+      ['Organizational Capacity','organizational_capacity'],
+      ['Sources of Funding','sources_of_funding'],
+      ['Population Served','population_served'],
+      ['Executive Director','executive_director'],
+      ['Diaper Pickup Person','diaper_pick_up_person'],
+      ['Agency Distribution Information','agency_distribution_information'],
+      ['Attached Documents','attached_documents']
+  ].freeze
+
 
   has_rich_text :default_email_text
 
@@ -184,6 +200,10 @@ class Organization < ApplicationRecord
   end
 
   private
+
+  def update_partner_sections
+    PartnerFieldsJob.perform_async(id) if partner_form_fields_changed?
+  end
 
   def correct_logo_mime_type
     if logo.attached? && !logo.content_type
