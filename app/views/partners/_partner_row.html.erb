@@ -32,6 +32,8 @@
       <%= button_to recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" do %>
         <i class="fa fa-refresh"></i> Request Recertification
       <% end %>
+    <% when "deactivated" %>
+      <%= view_button_to reactivate_partner_path(partner_row), { text: "Reactivate Partner", icon: "check" } %>
     <% else %>
       &nbsp;
     <% end %>
