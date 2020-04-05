@@ -18,7 +18,7 @@ RSpec.describe DistributionCreateService, type: :service do
     end
 
     it "Sends a PartnerMailer" do
-      expect(PartnerMailerJob).to receive(:perform_async).once
+      expect(PartnerMailerJob).to receive(:perform_now).once
       allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
       subject.new(distribution_params).call
     end
