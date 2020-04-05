@@ -36,7 +36,6 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
 
       it "posts via DiaperPartnerClient" do
         with_features email_active: true do
-          allow(Flipper).to receive(:enabled?) { true }
           expect(DiaperPartnerClient).to receive(:post)
           UpdateDiaperPartnerJob.perform_now(@partner.id)
         end
