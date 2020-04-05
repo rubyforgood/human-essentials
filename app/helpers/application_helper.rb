@@ -62,6 +62,10 @@ module ApplicationHelper
     "Are you sure you want to delete #{resource}?"
   end
 
+  def confirm_deactivate_msg(resource)
+    "Are you sure you want to deactivate #{resource}?"
+  end
+
   def confirm_restore_msg(resource)
     "Are you sure you want to restore #{resource}?"
   end

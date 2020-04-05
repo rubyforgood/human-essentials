@@ -95,6 +95,13 @@ class PartnersController < ApplicationController
       redirect_to partners_path, error: "#{@partner.name} failed to update partner records"
     end
   end
+  
+  def deactivate
+    @partner = current_organization.partners.find(params[:id])
+    @partner.status = "deactivated"
+    @partner.save!
+    redirect_to partners_path, notice: "#{@partner.name} successfully deactivated!"
+  end
 
   private
 
@@ -103,7 +110,7 @@ class PartnersController < ApplicationController
   end
 
   def partner_params
-    params.require(:partner).permit(:name, :email, :send_reminders)
+    params.require(:partner).permit(:name, :email, :send_reminders, :status)
   end
 
   def filter_params
