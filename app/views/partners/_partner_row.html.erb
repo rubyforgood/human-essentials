@@ -22,7 +22,7 @@
   </td>
   <td>
     <% case status %>
-     <% when "uninvited" %>
+    <% when "uninvited" %>
       <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
     <% when "invited" %>
       <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
@@ -33,7 +33,7 @@
         <i class="fa fa-refresh"></i> Request Recertification
       <% end %>
     <% when "deactivated" %>
-      <%= view_button_to reactivate_partner_path(partner_row), { text: "Reactivate Partner", icon: "check" } %>
+      <%= reactivate_button_to reactivate_partner_path(partner_row), {confirm: confirm_reactivate_msg(partner_row.name)} %>
     <% else %>
       &nbsp;
     <% end %>
