@@ -4,7 +4,7 @@ RSpec.describe DistributionCreateService, type: :service do
     let!(:storage_location) { create(:storage_location, :with_items) }
     let!(:distribution_params) { { organization_id: @organization.id, partner_id: @partner.id, storage_location_id: storage_location.id, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 5 } } } }
 
-    it "replaces a big distribution with a smaller one, resulting in increased stored quantities" do
+    it "creates a new distribution, adjusting storage location quantities" do
       expect do
         subject.new(distribution_params).call
       end.to change { storage_location.reload.size }.by(-5)

@@ -3,7 +3,9 @@ class DistributionUpdateService
 
   def initialize(old_distribution, new_distribution_params)
     @distribution = old_distribution
-    @params = new_distribution_params
+    @old_issued_at = old_distribution.issued_at
+    @params = new_distribution_params.with_indifferent_access
+    @new_issued_at = @params.fetch(:issued_at, @old_issued_at)
     @organization = @distribution.organization
     @error = nil
   end
@@ -11,7 +13,6 @@ class DistributionUpdateService
   # FIXME: This doesn't allow for the storage location to be changed.
   def call
     @distribution.transaction do
-      @old_issued_at = @distribution.issued_at
       @distribution.storage_location.increase_inventory(@distribution.to_a)
 
       # Delete the line items -- they'll be replaced later
@@ -30,6 +31,7 @@ class DistributionUpdateService
     @error = e
   rescue StandardError => e
     Rails.logger.error "[!] DistributionsController#update failed to update distribution for #{@distribution.organization.short_name}: #{@distribution.errors.full_messages} [#{e.inspect}]"
+    @error = e
   ensure
     return self
   end
@@ -39,6 +41,6 @@ class DistributionUpdateService
   end
 
   def resend_notification?
-    @old_issued_at.to_date != @new_issued_at.to_date
+    @old_issued_at != @new_issued_at
   end
 end
