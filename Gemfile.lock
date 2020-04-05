@@ -379,7 +379,7 @@ GEM
       rexml
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
-    rubocop-rails (2.5.0)
+    rubocop-rails (2.5.1)
       activesupport
       rack (>= 1.1)
       rubocop (>= 0.72.0)
@@ -456,7 +456,7 @@ GEM
     toastr-rails (1.0.3)
       railties (>= 3.1.0)
     ttfunk (1.5.1)
-    tzinfo (1.2.6)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)

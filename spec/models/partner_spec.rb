@@ -49,6 +49,11 @@ RSpec.describe Partner, type: :model do
         create(:partner, status: :approved)
         expect(Partner.by_status('invited').count).to eq(1)
       end
+      it "yields deactivated partner when deactivated status provided" do
+        create(:partner, status: :deactivated)
+        create(:partner, status: :approved)
+        expect(Partner.by_status('deactivated').count).to eq(1)
+      end
     end
   end
   # context "Callbacks >" do
