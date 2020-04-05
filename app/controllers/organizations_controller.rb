@@ -46,10 +46,11 @@ class OrganizationsController < ApplicationController
 
   def organization_params
     params.require(:organization).permit(
-        :name, :short_name, :street, :city, :state,
-        :zipcode, :email, :url, :logo, :intake_location,
-        :default_storage_location, :default_email_text,
-        :invitation_text, :reminder_day, :deadline_day,
-        partner_form_fields: [])
+      :name, :short_name, :street, :city, :state,
+      :zipcode, :email, :url, :logo, :intake_location,
+      :default_storage_location, :default_email_text,
+      :invitation_text, :reminder_day, :deadline_day,
+      partner_form_fields: []
+    )
   end
 end

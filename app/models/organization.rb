@@ -85,18 +85,17 @@ class Organization < ApplicationRecord
   before_update :update_partner_sections
 
   ALL_PARTIALS = [
-      ['Agency Information', 'agency_information'],
-      ['Media Information','media_information'],
-      ['Agency Stability', 'agency_stability'],
-      ['Organizational Capacity','organizational_capacity'],
-      ['Sources of Funding','sources_of_funding'],
-      ['Population Served','population_served'],
-      ['Executive Director','executive_director'],
-      ['Diaper Pickup Person','diaper_pick_up_person'],
-      ['Agency Distribution Information','agency_distribution_information'],
-      ['Attached Documents','attached_documents']
+    ['Agency Information', 'agency_information'],
+    ['Media Information', 'media_information'],
+    ['Agency Stability', 'agency_stability'],
+    ['Organizational Capacity', 'organizational_capacity'],
+    ['Sources of Funding', 'sources_of_funding'],
+    ['Population Served', 'population_served'],
+    ['Executive Director', 'executive_director'],
+    ['Diaper Pickup Person', 'diaper_pick_up_person'],
+    ['Agency Distribution Information', 'agency_distribution_information'],
+    ['Attached Documents', 'attached_documents']
   ].freeze
-
 
   has_rich_text :default_email_text
 

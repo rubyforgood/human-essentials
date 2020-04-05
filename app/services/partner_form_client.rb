@@ -14,7 +14,6 @@ module PartnerFormClient
     response.body
   end
 
-
   def self.https(uri)
     Net::HTTP.new(uri.host, uri.port).tap do |http|
       http.use_ssl = true
