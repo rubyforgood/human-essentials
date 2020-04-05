@@ -34,6 +34,12 @@ module UiHelper
     _link_to link, { icon: "trash", type: "danger", text: "Delete", size: "xs" }.merge(options), properties
   end
 
+  def deactivate_button_to(link, options = {})
+    data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
+    properties = { method: :put, rel: "nofollow" }.merge(data)
+    _link_to link, { icon: "ban", type: "danger", text: "Deactivate", size: "xs" }.merge(options), properties
+  end
+
   def restore_button_to(link, options = {})
     data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
     properties = { rel: "nofollow", method: :patch }.merge(data)

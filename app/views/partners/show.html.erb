@@ -37,7 +37,7 @@
           <div class="card-footer">
             <%= view_button_to approve_partner_partner_path(@partner) %>
             <%= edit_button_to edit_partner_path(@partner) %>
-            <%= delete_button_to partner_path(@partner), {confirm: confirm_delete_msg(@partner.name)} %>
+            <%= deactivate_button_to deactivate_partner_path(@partner), {confirm: confirm_deactivate_msg(@partner.name)} %>
             <%= modal_button_to("#addUserModal", {text: "Add/Remind Partner", size: "xs"}) if can_administrate? %>
             <%= print_button_to approve_application_partner_path(@partner), {text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "xs"} if can_administrate? %>
           </div>
