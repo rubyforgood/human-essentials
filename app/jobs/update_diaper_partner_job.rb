@@ -10,6 +10,8 @@ class UpdateDiaperPartnerJob
     @partner.invited!
   end
 
+  private
+
   def partner_attributes(partner)
     partner.attributes.merge({ organization_email: partner.organization.email }).with_indifferent_access
   end
