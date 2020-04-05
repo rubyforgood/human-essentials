@@ -19,17 +19,17 @@ RSpec.describe "Partners", type: :request do
     let(:fake_get_return) do
       {
         family_count: Faker::Number.number
-      }
+      }.to_json
     end
 
     before do
-      allow(DiaperPartnerClient).to receive(:get).with(id: partner.to_param, query_params: { impact_metrics: true }).and_return(fake_get_return)
+      allow(DiaperPartnerClient).to receive(:get).with({id: partner.to_param}, query_params: { impact_metrics: true }).and_return(fake_get_return)
     end
 
     it "returns http success" do
       get partner_path(default_params.merge(id: partner))
       expect(response).to be_successful
-      expect(assigns[:impact_metrics]).to eq(fake_get_return)
+      expect(assigns[:impact_metrics]).to eq(JSON.parse(fake_get_return))
     end
   end
 
