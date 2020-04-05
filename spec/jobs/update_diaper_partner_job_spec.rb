@@ -4,7 +4,6 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
     let(:partner_id) { Faker::Number.number }
 
     context 'when the email feature is active' do
-      # I'am only going handle the branch of logic when it email is active
       let(:fake_partner) { instance_double(Partner, attributes: { fake: 'data' }) }
 
       before do
