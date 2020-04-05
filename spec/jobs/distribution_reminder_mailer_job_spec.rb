@@ -14,22 +14,22 @@ RSpec.describe DistributionReminderJob, type: :job do
 
     it "does not send mail for past distributions" do
       DistributionReminderJob.perform_now(past_distribution.id)
-      expect(DistributionMailer.method :reminder_email).not_to be_delayed(past_distribution)
+      expect(DistributionMailer.method(:reminder_email)).not_to be_delayed(past_distribution)
     end
 
     it "sends mail for future distributions" do
       DistributionReminderJob.perform_now(future_distribution.id)
-      expect(DistributionMailer.method :reminder_email).to be_delayed(future_distribution).until future_distribution.issued_at - 1.day 
+      expect(DistributionMailer.method(:reminder_email)).to be_delayed(future_distribution).until future_distribution.issued_at - 1.day
     end
 
     it "does not send mail for future distributions if the partner wants no reminders" do
       DistributionReminderJob.perform_now(distribution_without_reminder.id)
-      expect(DistributionMailer.method :reminder_email).not_to be_delayed(distribution_without_reminder)
+      expect(DistributionMailer.method(:reminder_email)).not_to be_delayed(distribution_without_reminder)
     end
 
     it "sends mail for future distributions where the partner wants reminders" do
       DistributionReminderJob.perform_now(distribution_with_reminder.id)
-      expect(DistributionMailer.method :reminder_email).to be_delayed(distribution_with_reminder).until distribution_with_reminder.issued_at - 1.day       
+      expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution_with_reminder).until distribution_with_reminder.issued_at - 1.day
     end
   end
 end

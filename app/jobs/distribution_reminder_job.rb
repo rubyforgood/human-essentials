@@ -5,6 +5,7 @@ class DistributionReminderJob < ApplicationJob
 
     # NOTE: This is being also checked in the DistributionMailer itself
     return if distribution.past? || !distribution.partner.send_reminders
+
     DistributionMailer.delay_until(distribution.issued_at - 1.day).reminder_email(distribution)
   end
 end
