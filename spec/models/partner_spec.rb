@@ -102,7 +102,7 @@ RSpec.describe Partner, type: :model do
     end
 
     it "not send emails after importing a csv file" do
-      expect(UpdateDiaperPartnerJob).not_to receive(:perform_async)
+      expect(UpdateDiaperPartnerJob).not_to receive(:perform_now)
 
       import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")

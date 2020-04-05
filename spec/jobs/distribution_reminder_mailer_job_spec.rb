@@ -1,27 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe DistributionReminderJob, type: :job do
-  describe '#perform' do
-    let(:organization) { create :organization }
-    let(:distribution) { create :distribution }
-
-    it 'adds job to the queue' do
-      Sidekiq::Testing.fake! do
-        expect do
-          DistributionReminderJob.perform_async(distribution.id)
-        end.to change(DistributionReminderJob.jobs, :size).by(1)
-      end
-    end
-
-    it 'sends an email' do
-      Sidekiq::Testing.inline! do
-        expect do
-          DistributionReminderJob.perform_async(distribution.id)
-        end .to change { ActionMailer::Base.deliveries.count }.by(1)
-      end
-    end
-  end
-
   describe "conditionally sending the emails" do
     let(:organization) { create :organization }
 
@@ -34,35 +13,23 @@ RSpec.describe DistributionReminderJob, type: :job do
     let(:distribution_with_reminder) { create(:distribution, partner: partner_with_reminders) }
 
     it "does not send mail for past distributions" do
-      Sidekiq::Testing.inline! do
-        expect do
-          DistributionReminderJob.perform_async(past_distribution.id)
-        end.to_not change { ActionMailer::Base.deliveries.count }
-      end
+      DistributionReminderJob.perform_now(past_distribution.id)
+      expect(DistributionMailer.method(:reminder_email)).not_to be_delayed(past_distribution)
     end
 
     it "sends mail for future distributions" do
-      Sidekiq::Testing.inline! do
-        expect do
-          DistributionReminderJob.perform_async(future_distribution.id)
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
-      end
+      DistributionReminderJob.perform_now(future_distribution.id)
+      expect(DistributionMailer.method(:reminder_email)).to be_delayed(future_distribution).until future_distribution.issued_at - 1.day
     end
 
     it "does not send mail for future distributions if the partner wants no reminders" do
-      Sidekiq::Testing.inline! do
-        expect do
-          DistributionReminderJob.perform_async(distribution_without_reminder.id)
-        end.to_not change { ActionMailer::Base.deliveries.count }
-      end
+      DistributionReminderJob.perform_now(distribution_without_reminder.id)
+      expect(DistributionMailer.method(:reminder_email)).not_to be_delayed(distribution_without_reminder)
     end
 
     it "sends mail for future distributions where the partner wants reminders" do
-      Sidekiq::Testing.inline! do
-        expect do
-          DistributionReminderJob.perform_async(distribution_with_reminder.id)
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
-      end
+      DistributionReminderJob.perform_now(distribution_with_reminder.id)
+      expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution_with_reminder).until distribution_with_reminder.issued_at - 1.day
     end
   end
 end
