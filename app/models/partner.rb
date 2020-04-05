@@ -59,11 +59,11 @@ class Partner < ApplicationRecord
   end
 
   def register_on_partnerbase
-    UpdateDiaperPartnerJob.perform_async(id)
+    UpdateDiaperPartnerJob.perform_now(id)
   end
 
   def add_user_on_partnerbase(options = {})
-    AddDiaperPartnerJob.perform_async(id, options)
+    AddDiaperPartnerJob.perform_now(id, options)
   end
 
   def quantity_year_to_date

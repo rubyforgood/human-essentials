@@ -62,13 +62,13 @@ RSpec.describe "Distributions", type: :request do
         expect(partner).to be_valid
         expect(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        jobs_count = PartnerMailerJob.jobs.count
+        expect do
+          post distributions_path(params)
 
-        post distributions_path(params)
-        expect(response).to have_http_status(:redirect)
+          expect(response).to have_http_status(:redirect)
 
-        expect(response).to redirect_to(distributions_path)
-        expect(PartnerMailerJob.jobs.count).to eq(jobs_count + 1)
+          expect(response).to redirect_to(distributions_path)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
       it "renders #new again on failure, with notice" do
@@ -201,11 +201,16 @@ RSpec.describe "Distributions", type: :request do
 
         before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 
-        it { expect { subject }.not_to change { PartnerMailerJob.jobs.count } }
+        it "does not send an e-mail" do
+          expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
+        end
 
         context "sending" do
           let(:issued_at) { distribution.issued_at + 1.day }
-          it { expect { subject }.to change { PartnerMailerJob.jobs.count } }
+
+          it "does send an e-mail" do
+            expect { subject }.to change { ActionMailer::Base.deliveries.count }.by(1)
+          end
         end
       end
     end
