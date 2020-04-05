@@ -99,8 +99,12 @@ class PartnersController < ApplicationController
   def deactivate
     @partner = current_organization.partners.find(params[:id])
     @partner.status = "deactivated"
-    @partner.save!
-    redirect_to partners_path, notice: "#{@partner.name} successfully deactivated!"
+
+    if @partner.save
+      redirect_to partners_path, notice: "#{@partner.name} successfully deactivated!"
+    else
+      redirect_to partners_path, error: "#{@partner.name} failed to deactivate!"
+    end
   end
 
   private
