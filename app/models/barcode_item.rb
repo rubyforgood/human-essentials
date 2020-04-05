@@ -4,7 +4,6 @@
 #
 #  id               :integer          not null, primary key
 #  barcodeable_type :string           default("Item")
-#  global           :boolean          default(FALSE)
 #  quantity         :integer
 #  value            :string
 #  created_at       :datetime         not null
