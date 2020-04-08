@@ -20,7 +20,7 @@
             <%= collection_select(:filters, :from_children, @children || {}, :id, :first_name, { include_blank: true, selected: @selected_children_first_name }, class: "form-control") %>
           </div>
         <% end %>
-        <div class="col-xs-12 col-sm-6">
+        <div class="col-xs-12 col-sm-6 mt-3">
           <%= filter_button %>
           <%= cancel_button_to children_path %>
         </div><!-- /.row -->
