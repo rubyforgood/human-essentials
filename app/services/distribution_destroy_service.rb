@@ -30,5 +30,4 @@ class DistributionDestroyService
   def success?
     @error.nil?
   end
-
 end

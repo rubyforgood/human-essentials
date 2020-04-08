@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe DistributionDestroyService do
-
   describe '#call' do
     subject { described_class.new(distribution_id).call }
     let(:distribution_id) { Faker::Number.number }
@@ -25,9 +24,9 @@ describe DistributionDestroyService do
       before do
         # Use this approach to so that I can force outcomes on the
         # instance of distribution that the service object is using.
-        allow(Distribution).to receive(:find).
-          with(distribution_id).
-          and_return(distribution)
+        allow(Distribution).to receive(:find)
+          .with(distribution_id)
+          .and_return(distribution)
       end
 
       context 'and the operations suceed' do
