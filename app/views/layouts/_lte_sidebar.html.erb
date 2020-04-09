@@ -83,6 +83,12 @@
     <% end %>
   </li>
 
+  <li class="nav-item <%= 'active' if current_page?(partners_path) %>">
+    <%= link_to(partners_path, class: "nav-link #{"active" if current_page?(partners_path)}") do %>
+      <i class="nav-icon fas fa-user-friends"></i> <p>Partner Agencies</p>
+    <% end %>
+  </li>
+
   <li class="nav-item has-treeview <%= menu_open?(['items', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
     <a href="#" class="nav-link <%= active_class(['items', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
       <i class="nav-icon fa fa-pie-chart"></i>
@@ -118,8 +124,8 @@
     </ul>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['partners', 'donation_sites', 'diaper_drive_participants', 'manufacturers', 'vendors']) %>">
-    <a href="#" class="nav-link <%= active_class(['partners', 'donation_sites', 'diaper_drive_participants', 'manufacturers', 'vendors']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['donation_sites', 'diaper_drive_participants', 'manufacturers', 'vendors']) %>">
+    <a href="#" class="nav-link <%= active_class(['donation_sites', 'diaper_drive_participants', 'manufacturers', 'vendors']) %>">
       <i class="nav-icon fa fa-laptop"></i>
       <p>Community
         <i class="fas fa-angle-left right"></i></p>
@@ -130,11 +136,7 @@
           <i class="nav-icon fa fa-circle-o"></i> Donation Sites
         <% end %>
       </li>
-      <li class="nav-item <%= active_class(['partners']) %>">
-        <%= link_to(partners_path(organization_id: current_user.organization), class: "nav-link #{active_class(['partners'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Partner Agencies
-        <% end %>
-      </li>
+
       <li class="nav-item <%= active_class(['diaper_drive_participants']) %>">
         <%= link_to(diaper_drive_participants_path(organization_id: current_user.organization), class: "nav-link #{active_class(['diaper_drive_participants'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Diaper Drive Participants
