@@ -4,9 +4,16 @@ class DistributionReminder
     distribution = Distribution.find_by(id: dist_id)
 
     # NOTE: This is being also checked in the DistributionMailer itself
-    return if distribution.nil? || distribution.past? || !distribution.partner.send_reminders
+    return unless self.send_reminder?(distribution)
 
     DistributionMailer.delay_until(distribution.issued_at - 1.day).reminder_email(distribution)
   end
+
+  private
+
+  def self.send_reminder?(distribution)
+    !(distribution.nil? || distribution.past? || !distribution.partner.send_reminders)
+  end
+
 end
 
