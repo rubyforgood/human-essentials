@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id                       :bigint           not null, primary key
+#  id                       :integer          not null, primary key
 #  city                     :string
 #  deadline_day             :integer
 #  default_storage_location :integer
@@ -12,6 +12,7 @@
 #  latitude                 :float
 #  longitude                :float
 #  name                     :string
+#  partner_form_fields      :text             default([]), is an Array
 #  reminder_day             :integer
 #  short_name               :string
 #  state                    :string
@@ -203,6 +204,20 @@ RSpec.describe Organization, type: :model do
     it "can only contain valid characters" do
       expect(build(:organization, short_name: "asdf")).to be_valid
       expect(build(:organization, short_name: "Not Legal!")).to_not be_valid
+    end
+  end
+
+  describe 'updating partner fields' do
+    it 'does not update the partner application when the partner_form_fields do not change' do
+      expect do
+        organization.save
+      end.to change(PartnerFieldsJob.jobs, :size).by(0)
+    end
+
+    it 'does update the partner application when the partner_form_fields do not change' do
+      expect do
+        organization.update(partner_form_fields: ["test"])
+      end.to change(PartnerFieldsJob.jobs, :size).by(1)
     end
   end
 
