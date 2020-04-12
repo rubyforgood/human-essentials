@@ -154,7 +154,7 @@ class DistributionsController < ApplicationController
   end
 
   def schedule_reminder_email(dist)
-    DistributionReminderJob.perform_now(dist)
+    DistributionReminder.perform(dist)
   end
 
   def distribution_params
