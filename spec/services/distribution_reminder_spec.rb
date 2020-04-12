@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe DistributionReminderJob, type: :job do
+RSpec.describe DistributionReminder do
   describe "conditionally sending the emails" do
     let(:organization) { create :organization }
 
@@ -12,24 +12,32 @@ RSpec.describe DistributionReminderJob, type: :job do
     let(:distribution_without_reminder) { create(:distribution, partner: partner_with_no_reminders) }
     let(:distribution_with_reminder) { create(:distribution, partner: partner_with_reminders) }
 
+    context 'when the distribution_id does not match any Distribution' do
+      it "does not send mail for non existent distributions" do
+        DistributionReminder.perform(0)
+        expect(DistributionMailer.method(:reminder_email)).not_to be_delayed
+      end
+    end
+
     it "does not send mail for past distributions" do
-      DistributionReminderJob.perform_now(past_distribution.id)
+      DistributionReminder.perform(past_distribution.id)
       expect(DistributionMailer.method(:reminder_email)).not_to be_delayed(past_distribution)
     end
 
     it "sends mail for future distributions" do
-      DistributionReminderJob.perform_now(future_distribution.id)
+      DistributionReminder.perform(future_distribution.id)
       expect(DistributionMailer.method(:reminder_email)).to be_delayed(future_distribution).until future_distribution.issued_at - 1.day
     end
 
     it "does not send mail for future distributions if the partner wants no reminders" do
-      DistributionReminderJob.perform_now(distribution_without_reminder.id)
+      DistributionReminder.perform(distribution_without_reminder.id)
       expect(DistributionMailer.method(:reminder_email)).not_to be_delayed(distribution_without_reminder)
     end
 
     it "sends mail for future distributions where the partner wants reminders" do
-      DistributionReminderJob.perform_now(distribution_with_reminder.id)
+      DistributionReminder.perform(distribution_with_reminder.id)
       expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution_with_reminder).until distribution_with_reminder.issued_at - 1.day
     end
   end
 end
+
