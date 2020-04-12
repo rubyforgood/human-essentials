@@ -2,7 +2,7 @@
 #
 # Table name: users
 #
-#  id                     :bigint           not null, primary key
+#  id                     :integer          not null, primary key
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :inet
 #  email                  :string           default(""), not null
@@ -26,7 +26,7 @@
 #  super_admin            :boolean          default(FALSE)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  invited_by_id          :bigint
+#  invited_by_id          :integer
 #  organization_id        :integer
 #
 

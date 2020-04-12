@@ -2,7 +2,7 @@
 #
 # Table name: donation_sites
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  address         :string
 #  latitude        :float
 #  longitude       :float
