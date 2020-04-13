@@ -108,7 +108,6 @@ class DistributionsController < ApplicationController
       if result.resend_notification?
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
       end
-
       schedule_reminder_email(@distribution)
 
       redirect_to @distribution, notice: "Distribution updated!"
