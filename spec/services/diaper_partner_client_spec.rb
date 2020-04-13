@@ -33,10 +33,10 @@ RSpec.describe DiaperPartnerClient, type: :service do
     end
 
     context 'with query_params' do
-      let(:query_params) { { additional_details: true } }
+      let(:query_params) { { impact_metrics: true } }
 
       it 'performs a GET request' do
-        stub_partner_request(:get, "https://partner-register.com/#{fake_random_id}?additional_details=true")
+        stub_partner_request(:get, "https://partner-register.com/#{fake_random_id}?impact_metrics=true")
         result = DiaperPartnerClient.get({ id: fake_random_id }, query_params: query_params)
         expect(result).to eq 'success'
       end

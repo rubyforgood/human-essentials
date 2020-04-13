@@ -12,8 +12,11 @@
 //
 //= require rails-ujs
 //= require jquery
+//= require popper
 //= require bootstrap
 // require jquery_ujs
+//= require bootstrap-select
+//= require bootstrap/alert
 //= require fastclick
 //= require adminlte.min
 //= require cocoon
