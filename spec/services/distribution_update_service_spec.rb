@@ -1,8 +1,8 @@
 RSpec.describe DistributionUpdateService, type: :service do
   subject { DistributionUpdateService }
-  let!(:storage_location) { create(:storage_location, :with_items) }
-  let!(:distribution) { FactoryBot.create(:distribution, :with_items, item_quantity: 10) }
-  let!(:new_attributes) { { line_items_attributes: { "0": { item_id: distribution.line_items.first.item_id, quantity: 2 } } } }
+  let(:storage_location) { create(:storage_location, :with_items) }
+  let(:distribution) { FactoryBot.create(:distribution, :with_items, item_quantity: 10) }
+  let(:new_attributes) { { line_items_attributes: { "0": { item_id: distribution.line_items.first.item_id, quantity: 2 } } } }
 
   describe "call" do
     it "replaces a big distribution with a smaller one, resulting in increased stored quantities" do
