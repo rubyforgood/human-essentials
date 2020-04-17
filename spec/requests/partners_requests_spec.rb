@@ -101,7 +101,7 @@ RSpec.describe "Partners", type: :request do
     context "successful save" do
       partner_params = { partner: { name: "A Partner", email: "partner@example.com", send_reminders: "false" } }
 
-      it "creates a new partner" do
+      it "updates partner" do
         post partners_path(default_params.merge(partner_params))
         expect(response).to have_http_status(:found)
       end
@@ -122,6 +122,34 @@ RSpec.describe "Partners", type: :request do
     end
   end
 
+  describe "POST #update" do
+    context "successful save" do
+      partner_params = { name: "A Partner", email: "partner@example.com", send_reminders: "false" }
+
+      it "creates a new partner" do
+        partner = create(:partner, organization: @organization)
+        put partner_path(default_params.merge(id: partner, partner: partner_params))
+        expect(response).to have_http_status(:found)
+      end
+
+      it "redirects to #index" do
+        partner = create(:partner, organization: @organization)
+        put partner_path(default_params.merge(id: partner, partner: partner_params))
+        expect(response).to redirect_to(partners_path)
+      end
+    end
+
+    context "unsuccessful save due to empty params" do
+      partner_params = { partner: { name: nil, email: nil } }
+
+      it "renders :edit" do
+        partner = create(:partner, organization: @organization)
+        put partner_path(default_params.merge(id: partner, partner: partner_params))
+        expect(response).to redirect_to(partners_path)
+      end
+    end
+  end
+
   describe "DELETE #destroy" do
     it "redirects to #index" do
       delete partner_path(default_params.merge(id: create(:partner, organization: @organization)))
@@ -133,6 +161,20 @@ RSpec.describe "Partners", type: :request do
     it "send the invite" do
       expect(UpdateDiaperPartnerJob).to receive(:perform_now)
       post invite_partner_path(default_params.merge(id: create(:partner, organization: @organization)))
+      expect(response).to have_http_status(:found)
+    end
+  end
+
+  describe "GET #approve_application" do
+    partner_params = { name: "A Partner", email: "partner@example.com", send_reminders: "false" }
+    let(:partner) { create(:partner, organization: @organization) }
+
+    before do
+      allow(DiaperPartnerClient).to receive(:put).with({ partner_id: partner.id, status: "approved" }).and_return(Net::HTTPSuccess)
+    end
+
+    it "returns http found" do
+      get approve_application_partner_path(default_params.merge(id: partner, partner: partner_params))
       expect(response).to have_http_status(:found)
     end
   end
