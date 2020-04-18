@@ -108,8 +108,7 @@ class DistributionsController < ApplicationController
       if result.resend_notification?
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
       end
-
-      schedule_reminder_email(@distribution.id)
+      schedule_reminder_email(@distribution)
 
       redirect_to @distribution, notice: "Distribution updated!"
     else
@@ -153,8 +152,10 @@ class DistributionsController < ApplicationController
     PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
-  def schedule_reminder_email(dist)
-    DistributionReminder.perform(dist)
+  def schedule_reminder_email(distribution)
+    return if distribution.past? || !distribution.partner.send_reminders
+
+    DistributionMailer.delay_until(distribution.issued_at - 1.day).reminder_email(distribution)
   end
 
   def distribution_params
