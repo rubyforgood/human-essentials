@@ -13,17 +13,15 @@ RSpec.describe AddDiaperPartnerJob, job: true do
       end
 
       it "invokes add method on diaper partner client with proper arguments" do
-        Sidekiq::Testing.inline! do
-          AddDiaperPartnerJob.perform_async(partner.id, email: 'test@test.com')
+        AddDiaperPartnerJob.perform_now(partner.id, email: 'test@test.com')
 
-          expect(DiaperPartnerClient).to have_received(:add) do |partner_data, invitation_text|
-            expect(invitation_text).to eq 'Invitation'
-            expect(partner_data).to include('email' => 'test@test.com',
-                                            'name' => partner.name,
-                                            'organization_id' => partner.organization_id,
-                                            'status' => partner.status,
-                                            'send_reminders' => partner.send_reminders)
-          end
+        expect(DiaperPartnerClient).to have_received(:add) do |partner_data, invitation_text|
+          expect(invitation_text).to eq 'Invitation'
+          expect(partner_data).to include('email' => 'test@test.com',
+                                          'name' => partner.name,
+                                          'organization_id' => partner.organization_id,
+                                          'status' => partner.status,
+                                          'send_reminders' => partner.send_reminders)
         end
       end
     end
