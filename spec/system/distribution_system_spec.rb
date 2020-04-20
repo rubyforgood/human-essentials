@@ -122,6 +122,17 @@ RSpec.feature "Distributions", type: :system do
       end.to change { distribution.agency_rep }.to("SOMETHING DIFFERENT")
     end
 
+    it "sends an email if reminders are enabled" do
+      with_features email_active: true do
+        visit @url_prefix + "/distributions"
+        click_on "Edit", match: :first
+        fill_in "Agency representative", with: "SOMETHING DIFFERENT"
+        click_on "Save", match: :first
+        distribution.reload
+        expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution)
+      end
+    end
+
     it "allows the user can change the issued_at date" do
       click_on "Edit", match: :first
       expect do
