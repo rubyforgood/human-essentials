@@ -20,11 +20,13 @@ RSpec.feature "Distributions", type: :system do
         fill_in "Comment", with: "Take my wipes... please"
 
         expect do
-          click_button "Save", match: :first
+          accept_alert do
+            click_button "Save", match: :first
+          end
+          expect(page.find(".alert-info")).to have_content "created"
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
 
         expect(page).to have_content "Distributions"
-        expect(page.find(".alert-info")).to have_content "reated"
       end
     end
 
@@ -37,7 +39,10 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         expect do
-          click_button "Save"
+          accept_alert do
+            click_button "Save"
+          end
+          page.find('.alert')
         end.not_to change { ActionMailer::Base.deliveries.count }
 
         # verify line items appear on reload
@@ -61,7 +66,9 @@ RSpec.feature "Distributions", type: :system do
         fill_in "distribution_line_items_attributes_0_quantity", with: quantity * 2
 
         expect do
-          click_button "Save", match: :first
+          accept_alert do
+            click_button "Save", match: :first
+          end
           page.find('.alert')
         end.not_to change { Distribution.count }
 
@@ -100,7 +107,9 @@ RSpec.feature "Distributions", type: :system do
     select @partner.name, from: "Partner"
     select "", from: "From storage location"
 
-    click_button "Save", match: :first
+    accept_alert do
+      click_button "Save", match: :first
+    end
     page.find('.alert')
     expect(page).to have_css('.alert.error', text: /storage location/i)
   end
@@ -262,7 +271,9 @@ RSpec.feature "Distributions", type: :system do
       click_on "Start a new Distribution"
       within "#new_distribution" do
         select @partner.name, from: "Partner"
-        click_button "Save"
+        accept_alert do
+          click_button "Save"
+        end
       end
     end
 
@@ -324,7 +335,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   # TODO: This should probably be in the Request resource specs, not Distribution
-  context "When creating a distrubition from a request" do
+  context "When creating a distribution from a request" do
     it "sets the distribution id and fulfilled status on the request" do
       items = @storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
@@ -337,6 +348,7 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save"
       end
 
+      expect(page.find(".alert-info")).to have_content "created"
       @distribution = Distribution.last
       expect(@request.reload.distribution_id).to eq @distribution.id
       expect(@request.reload).to be_status_fulfilled

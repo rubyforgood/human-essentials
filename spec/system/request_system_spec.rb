@@ -55,6 +55,7 @@ RSpec.describe "Requests", type: :system, js: true do
           select @storage_location.name, from: "From storage location"
           fill_in "Comment", with: "Take my wipes... please"
           click_on "Save"
+
           expect(page).to have_content "Distributions"
           expect(page).to have_content "Distribution created"
           expect(@request.reload.distribution_id).to eq Distribution.last.id
