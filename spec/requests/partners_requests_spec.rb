@@ -166,16 +166,42 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "GET #approve_application" do
-    partner_params = { name: "A Partner", email: "partner@example.com", send_reminders: "false" }
     let(:partner) { create(:partner, organization: @organization) }
 
-    before do
-      allow(DiaperPartnerClient).to receive(:put).with({ partner_id: partner.id, status: "approved" }).and_return(Net::HTTPSuccess)
+    context "successful approval in partner app" do
+      before do
+        stub_env('PARTNER_REGISTER_URL', 'https://partner-register.com')
+        stub_env('PARTNER_KEY', 'partner-key')
+        stub_request(:put, "https://partner-register.com/#{partner.id}").to_return({ status: 200, body: 'success', headers: {} })
+      end
+
+      it "responds with found status" do
+        get approve_application_partner_path(default_params.merge(id: partner.id))
+        expect(response).to have_http_status(:found)
+      end
+
+      it "redirects to #index" do
+        get approve_application_partner_path(default_params.merge(id: partner.id))
+        expect(response).to redirect_to(partners_path)
+      end
+
+      it "updates partner status to approved" do
+        get approve_application_partner_path(default_params.merge(id: partner.id))
+        expect(response).to redirect_to(partners_path)
+        expect(partner.reload.status).to eq('approved')
+      end
     end
 
-    it "returns http found" do
-      get approve_application_partner_path(default_params.merge(id: partner, partner: partner_params))
-      expect(response).to have_http_status(:found)
+    context "failed approval in partner app" do
+      before do
+        response = double("Response", value: Net::HTTPNotFound)
+        allow(DiaperPartnerClient).to receive(:put).and_return(response)
+      end
+
+      it "redirects to #index" do
+        get approve_application_partner_path(default_params.merge(id: partner.id))
+        expect(response).to redirect_to(partners_path)
+      end
     end
   end
 end
