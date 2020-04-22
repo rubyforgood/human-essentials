@@ -22,14 +22,14 @@ function new_option(item, selected) {
 };
 
 function populate_dropdowns(objects, inventory) {
-  objects.each(function(index, element) {
+  objects.each(function (index, element) {
     const selected = Number(
       $(element)
         .find(":selected")
         .val()
     );
     let options = "";
-    $.each(inventory, function(index) {
+    $.each(inventory, function (index) {
       const item_id = Number(inventory[index].item_id);
       options += new_option(inventory[index], selected === item_id);
     });
@@ -56,13 +56,13 @@ function request_storage_location_and_populate_item(item_to_populate) {
   }
 };
 
-$(function() {
+$(function () {
   let control = $("select.storage-location-source");
   const storage_location_required =
     $("form.storage-location-required").length > 0;
   const default_item = $(".line-item-fields select");
 
-  $(document).on("change", "select.storage-location-source", function() {
+  $(document).on("change", "select.storage-location-source", function () {
     if (storage_location_required && !control.val()) {
       $("#__add_line_item").addClass("disabled");
     }
@@ -76,7 +76,7 @@ $(function() {
   $(document).on(
     "cocoon:after-insert",
     "form.storage-location-required",
-    function(e, insertedItem) {
+    function (e, insertedItem) {
       request_storage_location_and_populate_item($("select", insertedItem));
       insertedItem
         .find("#_barcode-lookup-new_line_items")
@@ -94,11 +94,39 @@ $(function() {
     }
   );
 
-  $(function() {
+  $(function () {
     if (storage_location_required && !control.val()) {
       $("#__add_line_item").addClass("disabled");
     }
 
     request_storage_location_and_populate_item(default_item);
   });
+
+  $('#new_distribution').submit(function (e) {
+    e.preventDefault();
+
+    const year = $('select#distribution_issued_at_1i option:selected').val();
+    const month = $('select#distribution_issued_at_2i option:selected').val();
+    const day = $('select#distribution_issued_at_3i option:selected').val();
+
+    if (year && month && day) {
+      let submit;
+      const asked = $(this).data('asked');
+
+      const selectedDate = new Date(year, month - 1, day);
+      const defaultDateInput = new Date();
+
+      defaultDateInput.setHours(0, 0, 0, 0);
+
+      if (selectedDate.getTime() === defaultDateInput.getTime() && !asked) {
+        submit = confirm('Continue with default date?');
+        $(this).data('asked', true);
+      } else {
+        submit = true;
+      }
+
+      if (submit || asked) this.submit();
+    }
+  })
+
 });
