@@ -13,4 +13,6 @@
 
 class FeedbackMessage < ApplicationRecord
   belongs_to :user
+
+  validates :message, presence: true, length: { minimum: 10, maximum: 200 }
 end
