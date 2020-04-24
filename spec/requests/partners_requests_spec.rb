@@ -101,7 +101,7 @@ RSpec.describe "Partners", type: :request do
     context "successful save" do
       partner_params = { partner: { name: "A Partner", email: "partner@example.com", send_reminders: "false" } }
 
-      it "updates partner" do
+      it "creates a new partner" do
         post partners_path(default_params.merge(partner_params))
         expect(response).to have_http_status(:found)
       end
@@ -126,7 +126,7 @@ RSpec.describe "Partners", type: :request do
     context "successful save" do
       partner_params = { name: "A Partner", email: "partner@example.com", send_reminders: "false" }
 
-      it "creates a new partner" do
+      it "update partner" do
         partner = create(:partner, organization: @organization)
         put partner_path(default_params.merge(id: partner, partner: partner_params))
         expect(response).to have_http_status(:found)
@@ -200,6 +200,46 @@ RSpec.describe "Partners", type: :request do
 
       it "redirects to #index" do
         get approve_application_partner_path(default_params.merge(id: partner.id))
+        expect(response).to redirect_to(partners_path)
+      end
+    end
+  end
+
+  describe "POST #recertify_partner" do
+    let(:partner) { create(:partner, organization: @organization) }
+
+    context "successful approval in partner app" do
+      before do
+        stub_env('PARTNER_REGISTER_URL', 'https://partner-register.com')
+        stub_env('PARTNER_KEY', 'partner-key')
+        stub_request(:put, "https://partner-register.com/#{partner.id}").to_return({ status: 200, body: 'success', headers: {} })
+      end
+
+      it "responds with found status" do
+        post recertify_partner_partner_path(default_params.merge(id: partner.id))
+        expect(response).to have_http_status(:found)
+      end
+
+      it "redirects to #index" do
+        post recertify_partner_partner_path(default_params.merge(id: partner.id))
+        expect(response).to redirect_to(partners_path)
+      end
+
+      it "require partner recertification" do
+        post recertify_partner_partner_path(default_params.merge(id: partner.id))
+        expect(response).to redirect_to(partners_path)
+        expect(partner.reload.status).to eq('recertification_required')
+      end
+    end
+
+    context "failed to update partner records" do
+      before do
+        response = double("Response", value: Net::HTTPNotFound)
+        allow(DiaperPartnerClient).to receive(:put).and_return(response)
+      end
+
+      it "redirects to #index" do
+        post recertify_partner_partner_path(default_params.merge(id: partner.id))
         expect(response).to redirect_to(partners_path)
       end
     end
