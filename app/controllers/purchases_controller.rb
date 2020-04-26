@@ -1,5 +1,7 @@
 # Provides full CRUD for Purchases, which are a way for Diaperbanks to track inventory that they purchase from vendors
 class PurchasesController < ApplicationController
+  before_action :authorize_admin, only: [:destroy]
+
   def index
     setup_date_range_picker
     @purchases = current_organization.purchases
