@@ -5,7 +5,7 @@ RSpec.describe "Purchases", type: :request do
     { organization_id: @organization.to_param }
   end
 
-  context "While signed in >" do
+  context "While signed in as a user >" do
     before do
       sign_in(@user)
     end
@@ -185,9 +185,45 @@ RSpec.describe "Purchases", type: :request do
     end
 
     describe "DELETE #destroy" do
+      # normal users are not authorized
+      it "redirects to the dashboard" do
+        delete purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
+        expect(response).to redirect_to(dashboard_path)
+      end
+
+      it "does not delete a purchase" do
+        purchase = create(:purchase, purchased_from: "Google")
+        expect { delete purchase_path(default_params.merge(id: purchase.id)) }.to_not change(Purchase, :count)
+      end
+    end
+  end
+
+  context "While signed in as an organizational admin" do
+    before do
+      sign_in(@organization_admin)
+    end
+
+    describe "DELETE #destroy" do
       it "redirects to the index" do
         delete purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
         expect(response).to redirect_to(purchases_path)
+      end
+
+      it "decreases storage location inventory" do
+        purchase = create(:purchase, :with_items, item_quantity: 10)
+        storage_location = purchase.storage_location
+        expect { delete purchase_path(default_params.merge(id: purchase.id)) }.to change { storage_location.size }.by(-10)
+      end
+
+      it "deletes a purchase" do
+        purchase = create(:purchase, purchased_from: "Google")
+        expect { delete purchase_path(default_params.merge(id: purchase.id)) }.to change(Purchase, :count).by(-1)
+      end
+
+      it "displays the proper flash notice" do
+        purchase_id = create(:purchase, purchased_from: "Google").id.to_s
+        delete purchase_path(default_params.merge(id: purchase_id))
+        expect(response).to have_notice "Purchase #{purchase_id} has been removed!"
       end
     end
   end
