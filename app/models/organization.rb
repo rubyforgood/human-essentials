@@ -188,7 +188,7 @@ class Organization < ApplicationRecord
   end
 
   def valid_items
-    items.map do |item|
+    items.active.map do |item|
       {
         id: item.id,
         partner_key: item.partner_key,

@@ -325,6 +325,12 @@ RSpec.describe Organization, type: :model do
       expect(organization.valid_items.count).to eq(organization.items.count)
       expect(organization.valid_items).to include(expected)
     end
+    it 'only shows active valid items' do
+      intial_count = organization.valid_items.count
+      organization.items.last.update(active: false)
+      final_count = organization.valid_items.count
+      expect(intial_count).to_not eq(final_count)
+    end
   end
   describe 'reminder_day' do
     it "can only contain numbers 1-14" do
