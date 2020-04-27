@@ -130,8 +130,8 @@ RSpec.describe "Partners", type: :request do
 
     context "when the partner successfully deactivates" do
       it 'performs a PUT request' do
-        expect(partner.status).not_to eq("deactivated")
-        response = double("Response", value: Net::HTTPSuccess)
+        response = double
+        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(true)
         allow(DiaperPartnerClient).to receive(:put).and_return(response)
         put deactivate_partner_path(default_params.merge(id: partner.id))
 
@@ -142,57 +142,31 @@ RSpec.describe "Partners", type: :request do
     end
   end
 
-  # describe "PUT #reactivate" do
-  #   let(:partner) { create(:partner, organization: @organization) }
+  describe "PUT #reactivate" do
 
-  #   context "when the partner successfully reactivates" do
-  #     before do
-  #       stub_env('PARTNER_REGISTER_URL', 'https://partner-register.com')
-  #       stub_env('PARTNER_KEY', 'partner-key')
-  #     end
+    context "when the partner successfully reactivates" do
+      let(:partner) { create(:partner, organization: @organization, status: "deactivated") }
+      it 'performs a PUT request' do
+        response = double
+        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(true)
+        allow(DiaperPartnerClient).to receive(:put).and_return(response)
 
-  #     it 'performs a PUT request' do
-  #       attributes = { partner_id: partner.id, status: 'reactivated' }
-  #       expected_body = {
-  #         partner: {
-  #           diaper_partner_id: attributes[:partner_id],
-  #           status: attributes[:status]
-  #         }
-  #       }.to_json
-  #       stub_partner_request(:put, "https://partner-register.com/#{partner.id}", body: expected_body)
-  #       response = DiaperPartnerClient.put(attributes)
+        put reactivate_partner_path(default_params.merge(id: partner.id))
 
-  #       allow(response.body).to eq 'success'
-  #     end
-  #   end
-  # end
+        expect(partner.reload.status).to eq("awaiting_review")
+        expect(response).to redirect_to(partners_path)
+        expect(flash[:notice]).to eq("#{partner.name} successfully reactivated!")
+      end
+    end
+    context "When partner is not deactivated" do
+      let(:partner) { create(:partner, organization: @organization, status: "approved") }
+      it 'does not perform a PUT request' do
+        allow(DiaperPartnerClient).to receive(:put)
+
+        put reactivate_partner_path(default_params.merge(id: partner.id))
+
+        expect(DiaperPartnerClient).not_to have_received(:put)
+      end
+    end
+  end
 end
-# ????????????????????????????????
-#       context "when the partner successfully deactivates" do
-#         it "sets the status of a partner to deactivated and redirects to partners_path" do
-#           expect(partner.status).not_to eq("deactivated")
-
-#           put :deactivate, params: default_params.merge(id: partner.id)
-
-#           expect(partner.reload.status).to eq("deactivated")
-#           expect(response).to redirect_to(partners_path)
-#           expect(flash[:notice]).to eq("#{partner.name} successfully deactivated!")
-#         end
-#       end
-
-#       context "when the partner does not successfully deactivate" do
-#         before do
-#           allow_any_instance_of(Partner).to receive(:save).and_return(false)
-#         end
-
-#         it "provides an error message if the partner fails to deactivate and redirects to partners_path" do
-#           put :deactivate, params: default_params.merge(id: partner.id)
-#           expect(partner.reload.status).not_to eq("deactivated")
-#           expect(response).to redirect_to(partners_path)
-#           expect(flash[:error]).to eq("#{partner.name} failed to deactivate!")
-#         end
-#       end
-
-#     end
-#   end
-# end
