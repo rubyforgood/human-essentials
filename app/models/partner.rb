@@ -46,7 +46,7 @@ class Partner < ApplicationRecord
       hash_rows = Hash[row.to_hash.map { |k, v| [k.downcase, v] }]
       loc = Partner.new(hash_rows)
       loc.organization_id = organization_id
-      loc.save!
+      loc.save
     end
   end
 
