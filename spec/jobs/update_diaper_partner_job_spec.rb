@@ -24,7 +24,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
         # match what is actually happening.
         allow(DiaperPartnerClient).to receive(:post)
           .with(fake_partner.attributes.merge({ organization_email: fake_organization_email }), fake_invitation_text)
-          .and_return(Net::HTTPSuccess)
+          .and_return(Net::HTTPOK.new(1.1, 200,{}))
 
         allow(fake_partner).to receive(:invited!)
       end
