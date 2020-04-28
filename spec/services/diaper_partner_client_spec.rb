@@ -19,7 +19,7 @@ RSpec.describe DiaperPartnerClient, type: :service do
       }.to_json
       stub_partner_request(:post, 'https://partner-register.com/', body: expected_body)
       result = DiaperPartnerClient.post(attributes, invitation_text)
-      expect(result.kind_of?(Net::HTTPSuccess)).to eq(true)
+      expect(result.is_a?(Net::HTTPSuccess)).to eq(true)
     end
   end
 
