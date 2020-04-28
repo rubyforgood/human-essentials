@@ -11,7 +11,7 @@ module DiaperPartnerClient
 
     response = https(uri).request(req)
 
-    response.body
+    response
   end
 
   def self.add(attributes, invitation_message)

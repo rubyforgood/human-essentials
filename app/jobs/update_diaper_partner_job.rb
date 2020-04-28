@@ -5,7 +5,7 @@ class UpdateDiaperPartnerJob < ApplicationJob
     @invitation_message = @partner.organization.invitation_text
 
     @response = DiaperPartnerClient.post(partner_attributes(@partner), @invitation_message) if Flipper.enabled?(:email_active)
-    if @response == Net::HTTPSuccess
+    if @response.kind_of?(Net::HTTPSuccess)
       @partner.invited!
     else
       @partner.error!
