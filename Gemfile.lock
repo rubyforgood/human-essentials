@@ -69,7 +69,7 @@ GEM
       execjs
     awesome_print (1.8.0)
     bcrypt (3.1.13)
-    better_errors (2.6.0)
+    better_errors (2.7.0)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
@@ -152,10 +152,10 @@ GEM
     et-orbi (1.2.2)
       tzinfo
     execjs (2.7.0)
-    factory_bot (5.1.1)
+    factory_bot (5.2.0)
       activesupport (>= 4.2.0)
-    factory_bot_rails (5.1.1)
-      factory_bot (~> 5.1.0)
+    factory_bot_rails (5.2.0)
+      factory_bot (~> 5.2.0)
       railties (>= 4.2.0)
     faker (2.11.0)
       i18n (>= 1.6, < 2)
