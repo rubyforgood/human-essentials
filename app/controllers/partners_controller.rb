@@ -111,7 +111,6 @@ class PartnersController < ApplicationController
     if @partner.status != "deactivated"
       redirect_to(partners_path, error: "#{@partner.name} is not deactivated!") and return
     end
-
     response = DiaperPartnerClient.put(partner_id: @partner.id, status: "awaiting_review")
     if response.is_a?(Net::HTTPSuccess) && @partner.update_column(:status, "awaiting_review")
       redirect_to partners_path, notice: "#{@partner.name} successfully reactivated!"
