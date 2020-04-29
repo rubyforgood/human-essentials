@@ -15,7 +15,7 @@ class DistributionCreateService
       @distribution.storage_location.decrease_inventory @distribution
       @distribution.reload
       @request&.update!(distribution_id: @distribution.id, status: 'fulfilled')
-      PartnerMailerJob.perform_now(@organization.id, @distribution.id, 'Your Distribution') if Flipper.enabled?(:email_active)
+      send_notification if @distribution.partner&.send_reminders
     end
   rescue Errors::InsufficientAllotment => e
     @distribution.line_items.assign_insufficiency_errors(e.insufficient_items)
@@ -30,5 +30,11 @@ class DistributionCreateService
 
   def success?
     @error.nil?
+  end
+
+  private
+
+  def send_notification
+    PartnerMailerJob.perform_now(@organization.id, @distribution.id, 'Your Distribution') if Flipper.enabled?(:email_active)
   end
 end
