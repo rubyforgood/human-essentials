@@ -167,7 +167,7 @@ RSpec.describe "Partners", type: :request do
       let(:partner) { create(:partner, organization: @organization, status: "deactivated") }
       before do
         response = double
-        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(false)
+        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(true)
         allow(DiaperPartnerClient).to receive(:put).and_return(response)
       end
       it "changes the partner status to reactivated and redirects with flash" do
