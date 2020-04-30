@@ -212,6 +212,15 @@ RSpec.describe "Distributions", type: :request do
             expect { subject }.to change { ActionMailer::Base.deliveries.count }.by(1)
           end
         end
+
+        context "partner reminder sending switched off" do
+          let(:issued_at) { distribution.issued_at + 1.day }
+          before { partner.update!(send_reminders: false) }
+
+          it "does not send the e-mail" do
+            expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
+          end
+        end
       end
     end
   end
