@@ -17,7 +17,8 @@ class DistributionMailer < ApplicationMailer
     mail(to: @partner.email, from: @from_email, subject: "#{subject} from #{current_organization.name}")
   end
 
-  def reminder_email(distribution)
+  def reminder_email(distribution_id)
+    distribution = Distribution.find(distribution_id)
     @partner = distribution.partner
     @distribution = distribution
     return if @distribution.past? || !@partner.send_reminders

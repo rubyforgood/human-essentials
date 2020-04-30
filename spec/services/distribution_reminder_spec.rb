@@ -26,7 +26,7 @@ RSpec.describe DistributionReminder do
 
     it "sends mail for future distributions" do
       DistributionReminder.perform(future_distribution.id)
-      expect(DistributionMailer.method(:reminder_email)).to be_delayed(future_distribution).until future_distribution.issued_at - 1.day
+      expect(DistributionMailer.method(:reminder_email)).to be_delayed(future_distribution.id).until future_distribution.issued_at - 1.day
     end
 
     it "does not send mail for future distributions if the partner wants no reminders" do
@@ -36,7 +36,7 @@ RSpec.describe DistributionReminder do
 
     it "sends mail for future distributions where the partner wants reminders" do
       DistributionReminder.perform(distribution_with_reminder.id)
-      expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution_with_reminder).until distribution_with_reminder.issued_at - 1.day
+      expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution_with_reminder.id).until distribution_with_reminder.issued_at - 1.day
     end
   end
 end

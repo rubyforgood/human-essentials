@@ -129,7 +129,7 @@ RSpec.feature "Distributions", type: :system do
         fill_in "Agency representative", with: "SOMETHING DIFFERENT"
         click_on "Save", match: :first
         distribution.reload
-        expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution)
+        expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution.id)
       end
     end
 
