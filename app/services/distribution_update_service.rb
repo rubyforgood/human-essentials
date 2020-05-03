@@ -1,5 +1,4 @@
 class DistributionUpdateService < DistributionService
-
   def initialize(old_distribution, new_distribution_params)
     @distribution = old_distribution
     @params = new_distribution_params

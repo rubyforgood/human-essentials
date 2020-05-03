@@ -1,5 +1,4 @@
 class DistributionDestroyService < DistributionService
-
   def initialize(distribution_id)
     @distribution_id = distribution_id
   end
@@ -10,5 +9,4 @@ class DistributionDestroyService < DistributionService
       @distribution.storage_location.increase_inventory(@distribution)
     end
   end
-
 end

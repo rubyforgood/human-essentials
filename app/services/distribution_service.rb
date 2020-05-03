@@ -1,5 +1,5 @@
 class DistributionService
-  attr_reader :error, :distribution_id
+  attr_reader :error
 
   def perform_distribution_service(&block)
     distribution.transaction do
@@ -48,9 +48,8 @@ class DistributionService
     @distribution_organization ||= distribution&.organization
   end
 
-  def set_error(e)
-    @error = e
+  def set_error(error)
+    @error = error
   end
-
 end
 
