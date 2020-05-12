@@ -1,4 +1,6 @@
 class DistributionCreateService < DistributionService
+  attr_reader :distribution
+
   def initialize(distribution_params, request_id = nil)
     @distribution = Distribution.new(distribution_params)
     @request = Request.find(request_id) if request_id
