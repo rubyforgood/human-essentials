@@ -7,7 +7,7 @@ end
 
 ruby "2.7.1"
 
-gem "api-auth", "~> 2.3"
+gem "api-auth", "~> 2.4"
 gem 'bootstrap', '~> 4.4.1'
 gem 'bootstrap-select-rails'
 gem "bugsnag"
@@ -36,7 +36,7 @@ gem "pg", "~> 1.2.3"
 gem 'popper_js'
 gem "prawn-rails"
 gem "puma"
-gem "rails", "~> 6.0.2"
+gem "rails", "~> 6.0.3"
 gem "sass-rails"
 gem "sidekiq"
 gem "simple_form"
