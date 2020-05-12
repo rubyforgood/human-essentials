@@ -23,6 +23,16 @@ class DistributionService
     error.nil?
   end
 
+  private
+
+  def distribution_organization
+    @distribution_organization ||= distribution&.organization
+  end
+
+  def set_error(error)
+    @error = error
+  end
+
   def distribution
     # Return distribution if it has already been defined
     return @distribution if @distribution
@@ -40,16 +50,6 @@ class DistributionService
     if distribution.present?
       @distribution_id = distribution.id
     end
-  end
-
-  private
-
-  def distribution_organization
-    @distribution_organization ||= distribution&.organization
-  end
-
-  def set_error(error)
-    @error = error
   end
 end
 
