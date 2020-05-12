@@ -1,5 +1,5 @@
 <% hash = Hash.new(0) %>
-<% distribution.map { |d| d.line_items.map { |i| [i.item.name, i.quantity] } }.flatten(1).map { |a_i| hash[a_i[0]] += a_i[1] } %>
+<% item_to_itemize.map { |d| d.line_items.map { |i| [i.item.name, i.quantity] } }.flatten(1).map { |a_i| hash[a_i[0]] += a_i[1] } %>
 <table class="table table-hover striped">
   <thead>
   <tr>

@@ -136,7 +136,7 @@
               </div>
             </div>
             <div class="box-body table-responsive no-padding">
-              <%= render partial: "itemized_distribution", object: @itemized_distributions, as: :distribution %>
+              <%= render partial: "itemized_partial", object: @itemized_distributions, as: :item_to_itemize %>
             </div>
           </div>
         <% end %>
@@ -299,6 +299,24 @@
             <%= link_to "See more...", purchases_path %>
           </div>
         </div>
+
+
+        <% if Flipper.enabled?(:itemized_donations, current_user) %>
+          <div class="card">
+            <div class="card-header border-0 bg-gradient-warning">
+              <h3 class="card-title">Itemized Donations
+                <small><%= @selected_date_range %></small></h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="box-body table-responsive no-padding">
+              <%= render partial: "itemized_partial", object: @donations, as: :item_to_itemize %>
+            </div>
+          </div>
+        <% end %>
 
       </div>
     </div>
