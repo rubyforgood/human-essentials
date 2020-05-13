@@ -83,7 +83,7 @@ GEM
     bootstrap-daterangepicker-rails (3.0.4)
       railties (>= 4.0)
     bootstrap-select-rails (1.13.8)
-    bugsnag (6.13.0)
+    bugsnag (6.13.1)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
     capistrano (3.12.0)
