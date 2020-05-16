@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_05_164501) do
+ActiveRecord::Schema.define(version: 2020_05_16_060545) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -168,6 +168,15 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
 
+  create_table "dropoff_locations", id: :serial, force: :cascade do |t|
+    t.string "name"
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "organization_id"
+    t.index ["organization_id"], name: "index_dropoff_locations_on_organization_id"
+  end
+
   create_table "feedback_messages", force: :cascade do |t|
     t.bigint "user_id"
     t.string "message"
@@ -269,6 +278,7 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
     t.integer "organization_id"
     t.integer "status", default: 0
     t.boolean "send_reminders", default: false, null: false
+    t.string "status_in_diaper_base"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 

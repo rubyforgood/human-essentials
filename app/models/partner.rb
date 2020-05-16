@@ -2,14 +2,15 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
-#  email           :string
-#  name            :string
-#  send_reminders  :boolean          default(FALSE), not null
-#  status          :integer          default("uninvited")
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :integer
+#  id                    :integer          not null, primary key
+#  email                 :string
+#  name                  :string
+#  send_reminders        :boolean          default(FALSE), not null
+#  status                :integer          default("uninvited")
+#  status_in_diaper_base :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  organization_id       :integer
 #
 
 class Partner < ApplicationRecord
