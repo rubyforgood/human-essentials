@@ -1,5 +1,4 @@
-class AddDiaperPartnerJob
-  include Sidekiq::Worker
+class AddDiaperPartnerJob < ApplicationJob
   include DiaperPartnerClient
 
   def perform(partner_id, options = {})

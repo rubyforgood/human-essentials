@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id                       :bigint           not null, primary key
+#  id                       :integer          not null, primary key
 #  city                     :string
 #  deadline_day             :integer
 #  default_storage_location :integer
@@ -12,6 +12,7 @@
 #  latitude                 :float
 #  longitude                :float
 #  name                     :string
+#  partner_form_fields      :text             default([]), is an Array
 #  reminder_day             :integer
 #  short_name               :string
 #  state                    :string

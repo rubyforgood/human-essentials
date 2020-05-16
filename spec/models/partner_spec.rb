@@ -2,7 +2,7 @@
 #
 # Table name: partners
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  email           :string
 #  name            :string
 #  send_reminders  :boolean          default(FALSE), not null
@@ -83,16 +83,21 @@ RSpec.describe Partner, type: :model do
   describe "import_csv" do
     let(:organization) { create(:organization) }
 
-    it "imports storage locations from a csv file" do
+    it "imports partners from a csv file and prevents multiple imports" do
       before_import = Partner.count
       import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       Partner.import_csv(csv, organization.id)
       expect(Partner.count).to eq before_import + 3
+      import_file_path2 = Rails.root.join("spec", "fixtures", "partners_with_duplicates.csv")
+      data2 = File.read(import_file_path2, encoding: "BOM|UTF-8")
+      csv2 = CSV.parse(data2, headers: true)
+      Partner.import_csv(csv2, organization.id)
+      expect(Partner.count).to eq before_import + 4
     end
 
-    it "imports storage locations from a csv file with BOM encodings" do
+    it "imports partners from a csv file with BOM encodings" do
       import_file_path = Rails.root.join("spec", "fixtures", "partners_with_bom_encoding.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
@@ -102,7 +107,7 @@ RSpec.describe Partner, type: :model do
     end
 
     it "not send emails after importing a csv file" do
-      expect(UpdateDiaperPartnerJob).not_to receive(:perform_async)
+      expect(UpdateDiaperPartnerJob).not_to receive(:perform_now)
 
       import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")

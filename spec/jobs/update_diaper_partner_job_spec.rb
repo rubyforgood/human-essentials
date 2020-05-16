@@ -24,7 +24,7 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
         # match what is actually happening.
         allow(DiaperPartnerClient).to receive(:post)
           .with(fake_partner.attributes.merge({ organization_email: fake_organization_email }), fake_invitation_text)
-          .and_return({})
+          .and_return(Net::HTTPOK.new(1.1, 200, {}))
 
         allow(fake_partner).to receive(:invited!)
       end
@@ -46,18 +46,16 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
 
       it "checks the partner status is default set to pending" do
         with_features email_active: true do
-          Sidekiq::Testing.inline! do
-            expect do
-              UpdateDiaperPartnerJob.perform_async(@partner.id)
-              @partner.reload
-            end
-            expect(@partner.status).to eq("uninvited")
+          expect do
+            UpdateDiaperPartnerJob.perform_now(@partner.id)
+            @partner.reload
           end
+          expect(@partner.status).to eq("uninvited")
         end
       end
     end
 
-    context "with a unsuccessful POST response" do
+    context "with an unsuccessful POST response" do
       before do
         @partner = create(:partner)
         response = double("Response", value: nil)
@@ -65,27 +63,18 @@ RSpec.describe UpdateDiaperPartnerJob, job: true do
       end
 
       it "sets the partner status to error" do
-        pending
         with_features email_active: true do
-          Sidekiq::Testing.inline! do
-            expect do
-              UpdateDiaperPartnerJob.perform_async(@partner.id)
-              @partner.reload
-            end.to change { @partner.status }.to("error")
-          end
+          expect do
+            UpdateDiaperPartnerJob.perform_now(@partner.id)
+            @partner.reload
+          end.to change { @partner.status }.to("error")
         end
       end
 
       it "posts via DiaperPartnerClient" do
         with_features email_active: true do
-          Sidekiq::Testing.inline! do
-            partner = create(:partner)
-            allow(Flipper).to receive(:enabled?) { true }
-
-            expect(DiaperPartnerClient).to receive(:post)
-
-            UpdateDiaperPartnerJob.perform_async(partner.id)
-          end
+          expect(DiaperPartnerClient).to receive(:post)
+          UpdateDiaperPartnerJob.perform_now(@partner.id)
         end
       end
     end

@@ -36,6 +36,9 @@
                 <%= f.input_field :package_size, class: "form-control" %>
               <% end %>
 
+              <%= f.input :active, label: "Item is Active?", wrapper: :input_group do %>
+                <%= f.check_box :active, {class: "input-group-text", id: "active"}, "true", "false" %>
+              <% end %>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
