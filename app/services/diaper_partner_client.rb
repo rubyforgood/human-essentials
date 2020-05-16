@@ -70,9 +70,10 @@ module DiaperPartnerClient
 
   def self.partner_json(attributes, invitation_message)
     { partner:
-          { diaper_bank_id: attributes["organization_id"],
-            diaper_partner_id: attributes["id"],
-            invitation_text: invitation_message,
-            email: attributes["email"] } }.to_json
+      { diaper_bank_id: attributes["organization_id"],
+        diaper_partner_id: attributes["id"],
+        invitation_text: invitation_message,
+        email: attributes["email"],
+        organization_email: attributes[:organization_email] } }.to_json
   end
 end
