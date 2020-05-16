@@ -74,6 +74,6 @@ module DiaperPartnerClient
         diaper_partner_id: attributes["id"],
         invitation_text: invitation_message,
         email: attributes["email"],
-        organization_email: attributes[:organization_email] } }.to_json
+        organization_email: attributes["organization_email"] } }.to_json
   end
 end
