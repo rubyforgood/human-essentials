@@ -65,7 +65,7 @@ GEM
       rake (>= 10.4, < 14.0)
     api-auth (2.4.0)
     ast (2.4.0)
-    autoprefixer-rails (9.5.1)
+    autoprefixer-rails (9.7.6)
       execjs
     awesome_print (1.8.0)
     bcrypt (3.1.13)
@@ -76,7 +76,7 @@ GEM
     bindex (0.8.1)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    bootstrap (4.4.1)
+    bootstrap (4.5.0)
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 1.14.3, < 2)
       sassc-rails (>= 2.0.0)
@@ -161,7 +161,7 @@ GEM
       i18n (>= 1.6, < 2)
     fakeredis (0.8.0)
       redis (~> 4.1)
-    ffi (1.12.1)
+    ffi (1.12.2)
     flipper (0.17.2)
     flipper-active_record (0.17.2)
       activerecord (>= 4.2, < 7)
@@ -249,7 +249,7 @@ GEM
     mini_portile2 (2.4.0)
     mini_racer (0.2.10)
       libv8 (> 7.3)
-    minitest (5.14.0)
+    minitest (5.14.1)
     momentjs-rails (2.20.1)
       railties (>= 3.1)
     nenv (0.3.0)
@@ -392,9 +392,8 @@ GEM
     safe_yaml (1.0.5)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
-    sassc (2.2.1)
+    sassc (2.3.0)
       ffi (~> 1.9)
-      rake
     sassc-rails (2.1.2)
       railties (>= 4.0.0)
       sassc (>= 2.0)
@@ -497,7 +496,7 @@ DEPENDENCIES
   awesome_print
   better_errors
   binding_of_caller
-  bootstrap (~> 4.4.1)
+  bootstrap (~> 4.5.0)
   bootstrap-daterangepicker-rails
   bootstrap-select-rails
   bugsnag

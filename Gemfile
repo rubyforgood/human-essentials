@@ -8,7 +8,7 @@ end
 ruby "2.7.1"
 
 gem "api-auth", "~> 2.4"
-gem 'bootstrap', '~> 4.4.1'
+gem 'bootstrap', '~> 4.5.0'
 gem 'bootstrap-select-rails'
 gem "bugsnag"
 gem "chartkick"
