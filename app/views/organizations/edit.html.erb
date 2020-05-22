@@ -97,7 +97,7 @@
                   <% if current_organization.logo.attached? %>
                     <div>
                       <p>
-                        <%= image_tag current_organization.logo %>
+                        <%= image_tag current_organization.logo, class: "main_logo" %>
                       </p>
                       <p>
                         <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">

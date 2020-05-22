@@ -37,6 +37,19 @@
 @import 'modal-dialog';
 @import 'custom';
 
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+
+.thumbnail {
+  max-width: 80vw;
+}
+
 .main-header {
   height: #{$diaper-navbar-height}px
 }
