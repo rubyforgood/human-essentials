@@ -36,24 +36,6 @@ class DonationsController < ApplicationController
     @selected_manufacturer = filter_params[:from_manufacturer]
   end
 
-  def scale
-    @donation = Donation.new(issued_at: Time.zone.today)
-    @donation.line_items.build
-    load_form_collections
-  end
-
-  def scale_intake
-    @donation = Donation.create(organization: current_organization,
-                                source: "Misc. Donation",
-                                storage_location_id: current_organization.intake_location,
-                                issued_at: Time.zone.today,
-                                line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
-                                                                  "quantity" => params["number_of_diapers"],
-                                                                  "_destroy" => "false" } })
-    @donation.storage_location.increase_inventory @donation
-    render status: :ok, json: @donation.to_json
-  end
-
   def create
     @donation = current_organization.donations.new(donation_params)
 

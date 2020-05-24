@@ -137,22 +137,6 @@ class Organization < ApplicationRecord
     inventory_items.sum(:quantity) || 0
   end
 
-  def scale_values
-    {
-      pu_2t_3t: items.find_by(name: "Kids Pull-Ups (2T-3T)").id,
-      pu_3t_4t: items.find_by(name: "Kids Pull-Ups (3T-4T)").id,
-      pu_4t_5t: items.find_by(name: "Kids Pull-Ups (4T-5T)").id,
-      k_preemie: items.find_by(name: "Kids (Preemie)").id,
-      k_newborm: items.find_by(name: "Kids (Newborn)").id,
-      k_size1: items.find_by(name: "Kids (Size 1)").id,
-      k_size2: items.find_by(name: "Kids (Size 2)").id,
-      k_size3: items.find_by(name: "Kids (Size 3)").id,
-      k_size4: items.find_by(name: "Kids (Size 4)").id,
-      k_size5: items.find_by(name: "Kids (Size 5)").id,
-      k_size6: items.find_by(name: "Kids (Size 6)").id
-    }
-  end
-
   def self.seed_items(organization = Organization.all)
     base_items = BaseItem.all.map(&:to_h)
     Array.wrap(organization).each do |org|
