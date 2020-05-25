@@ -24,5 +24,4 @@ class DistributionUpdateService < DistributionService
   def resend_notification?
     @old_issued_at != @new_issued_at
   end
-  
 end
