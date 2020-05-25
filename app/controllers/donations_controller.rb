@@ -1,8 +1,5 @@
 # Provides CRUD+ for Donations, which are digital representations of one of the ways Diaperbanks take in new inventory
 class DonationsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: %i(scale_intake scale)
-  skip_before_action :authenticate_user!, only: %i(scale_intake scale)
-  skip_before_action :authorize_user, only: %i(scale_intake scale)
   before_action :authorize_admin, only: [:destroy]
 
   def index
