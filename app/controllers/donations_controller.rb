@@ -1,8 +1,5 @@
 # Provides CRUD+ for Donations, which are digital representations of one of the ways Diaperbanks take in new inventory
 class DonationsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: %i(scale_intake scale)
-  skip_before_action :authenticate_user!, only: %i(scale_intake scale)
-  skip_before_action :authorize_user, only: %i(scale_intake scale)
   before_action :authorize_admin, only: [:destroy]
 
   def index
@@ -34,24 +31,6 @@ class DonationsController < ApplicationController
     @selected_diaper_participant_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
-  end
-
-  def scale
-    @donation = Donation.new(issued_at: Time.zone.today)
-    @donation.line_items.build
-    load_form_collections
-  end
-
-  def scale_intake
-    @donation = Donation.create(organization: current_organization,
-                                source: "Misc. Donation",
-                                storage_location_id: current_organization.intake_location,
-                                issued_at: Time.zone.today,
-                                line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
-                                                                  "quantity" => params["number_of_diapers"],
-                                                                  "_destroy" => "false" } })
-    @donation.storage_location.increase_inventory @donation
-    render status: :ok, json: @donation.to_json
   end
 
   def create
