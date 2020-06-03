@@ -92,7 +92,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% @partner.distributions.each do |dist| %>
+                <% @partner_distributions.each do |dist| %>
                   <tr>
                     <td><%= dist.created_at.strftime("%m/%d/%Y") %></td>
                     <td><%= dist.storage_location.name %></td>
