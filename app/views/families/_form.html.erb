@@ -1,155 +1,108 @@
-<%= form_with(model: family, local: true) do |form| %>
-  <div class="row">
-    <div class="col-md-12">
-      <% if family.errors.any? %>
-          <div id="error_explanation">
-            <h2><%= pluralize(family.errors.count, "error") %> prohibited this family from being saved:</h2>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= simple_form_for family, html: {role: 'form', class: 'form-horizontal'} do |f| %>
+              <%= f.input :guardian_first_name, label: "Guardian First Name", class: "form-control", wrapper: :input_group %>
 
-            <ul>
-            <% family.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-            </ul>
-          </div>
-        <% end %>
+              <%= f.input :guardian_last_name, label: "Guardian Last Name", class: "form-control", wrapper: :input_group %>
 
-        <div class="tile">
-          <h3 class="tile-title">Family Information</h3>
+              <%= f.input :guardian_zip_code, label: "Guardian Zip Code", class: "form-control", wrapper: :input_group %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_first_name, class: "control-label col-md-3" %>
-              <%= form.text_field :guardian_first_name, class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              <%= f.label :guardian_country, "Guardian County" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_country, class: "form-control" %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_last_name, class: "control-label col-md-3" %>
-              <%= form.text_field :guardian_last_name, class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              <%= f.label :guardian_phone, "Guardian Phone" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_phone, class: "form-control" %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_zip_code, class: "control-label col-md-3" %>
-              <%= form.text_field :guardian_zip_code, class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              <%= f.label :agency_guardian_id, "Agency Care Manager" %>
+              <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Person at the agency who is assigned to this family."></i>
+              <%= f.text_field :agency_guardian_id, class: "form-control" %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_country, "Guardian County", class: "control-label col-md-3" %>
-              <%= form.text_field :guardian_country, class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              <%= f.label :home_adult_count, "Number of Adults Living In The Home" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.number_field :home_adult_count, class: "form-control" %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_phone, class: "control-label col-md-3" %>
-              <%= form.text_field :guardian_phone , class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              <%= f.label :home_child_count, 'How Many Children (5-17) Live In The Home?' %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.number_field :home_child_count, class: "form-control" %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :agency_guardian_id, "Agency Care Manager", class: "control-label col-md-3" %>
-              <%= form.text_field :agency_guardian_id, class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              <%= f.label :home_young_child_count, 'How Many Children (under 5) Live In The Home?' %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.number_field :home_young_child_count, class: "form-control" %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :home_adult_count, "Number of Adults Living In The Home", class: "control-label col-md-3" %>
-              <%= form.number_field :home_adult_count, class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :home_child_count, 'How Many Children (5-17) Live In the Home?', class: "control-label col-md-3" %>
-              <%= form.number_field :home_child_count, class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :home_young_child_count, 'How Many Children (under 5) Live in the Home?', class: "control-label col-md-3" %>
-              <%= form.number_field :home_young_child_count, class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :sources_of_income, class: "control-label col-md-3"%>
+              <%= f.label :sources_of_income, "Sources of Income" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <br>
               <% Family::INCOME_TYPES.each do |a_value| %>
-                <%= form.check_box(:sources_of_income, { :multiple => true }, a_value, nil) %>
-                <%= form.label "#{a_value}" %>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box(:sources_of_income, {:multiple => true}, a_value, nil) %>
+                <%= f.label "#{a_value}", "#{a_value}" %>
               <% end %>
-            </div>
-          </div>
+              <br>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_employed, "Is The Parent/Guardian Employed?", class: "control-label col-md-3" %>
-              <%= form.radio_button :guardian_employed, 'Yes' %>
-              <%= label :guardian_employed, 'Yes' %>
-              <%= form.radio_button :guardian_employed, 'No' %>
+              <%= f.label :guardian_employed, "Is The Parent/Guardian Employed?" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_employed, 'Yes' %>
+              <%= label :guardian_employed, 'Yes' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_employed, 'No' %>
               <%= label :guardian_employed, 'No' %>
-            </div>
-          </div>
+              <br>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_employment_type, "Full-Time or Part-Time", class: "control-label col-md-3" %>
-              <%= form.radio_button :guardian_employment_type, 'Full-Time' %>
-              <%= label :guardian_employment_type, 'Full-Time' %>
-              <%= form.radio_button :guardian_employment_type, 'Part-Time' %>
-              <%= label :guardian_employment_type, 'Part-Time' %>
-              <%= form.radio_button :guardian_employment_type, 'N/A' %>
-              <%= label :guardian_employment_type, 'N/A' %>
-            </div>
-          </div>
+              <%= f.label :guardian_employment_type, "Guardian Employed Full-Time or Part-Time" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_employment_type, 'Full-Time' %>
+              <%= label :guardian_employment_type, 'Full-Time' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_employment_type, 'Part-Time' %>
+              <%= label :guardian_employment_type, 'Part-Time' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_employment_type, 'N/A' %>
+              <%= label :guardian_employment_type, 'N/A', 'N/A' %>
+              <br>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_monthly_pay, class: "control-label col-md-3" %>
-              <%= form.text_field :guardian_monthly_pay, class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              <%= f.label :guardian_monthly_pay, "Guardian's Monthly Income" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_monthly_pay, class: "form-control" %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :guardian_health_insurance, class: "control-label col-md-3"%>
-              <%= form.radio_button :guardian_health_insurance, 'Private Insurance' %>
-              <%= label :guardian_health_insurance, 'Private Insurance' %>
-              <%= form.radio_button :guardian_health_insurance, 'Medicaid' %>
-              <%= label :guardian_health_insurance, 'Medicaid' %>
-              <%= form.radio_button :guardian_health_insurance, 'Uninsured' %>
+              <%= f.label :guardian_health_insurance, "Guardian's Health Insurance Status" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_health_insurance, 'Private Insurance' %>
+              <%= label :guardian_health_insurance, 'Private Insurance' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_health_insurance, 'Medicaid' %>
+              <%= label :guardian_health_insurance, 'Medicaid' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_health_insurance, 'Uninsured' %>
               <%= label :guardian_health_insurance, 'Uninsured' %>
-            </div>
-          </div>
+              <br>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :military, "Military Family", class: "control-label col-md-3" %>
-                <%= form.radio_button :military, true %> Yes
-                &nbsp;
-                <%= form.radio_button :military, false %> No
+              <%= f.label :military, "Military Family" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, true %> <strong>Yes</strong>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, false %> <strong>No</strong>
+              <br>
+              <%= f.label :comments %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_area :comments, class: "form-control" %>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <%= f.submit(class: 'btn btn-primary') %>
+              </div>
+            <% end %>
             </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :comments, class: "control-label col-md-3" %>
-              <%= form.text_area :comments, class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-        <div class="actions">
-          <%= form.submit(class: 'btn btn-primary') %>
-        </div>
+        <!-- /.card -->
       </div>
+
     </div>
-  </div>
-<% end %>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>
