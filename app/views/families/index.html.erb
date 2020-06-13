@@ -1,47 +1,84 @@
-<div class="app-title">
-  <div>
-    <h1><i class="fa fa-users"></i>&nbsp;&nbsp;Families </h1><%= link_to 'Export a CSV file', families_path(nil, format: :csv) %>
-  </div>
-  <ul class="app-breadcrumb breadcrumb">
-    <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-    <li class="breadcrumb-item"><a href="#">All Families</a></li>
-  </ul>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <% if notice %>
-      <div class="alert alert-dismissible alert-success">
-        <button class="close" type="button" data-dismiss="alert">×</button>
-        <p><%= notice %><a class="alert-link" href="#"></a></p>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Families - #{current_partner.name}" %>
+        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
+          Families
+          <small>for <%= current_partner.name %></small>
+        </h1>
       </div>
-    <% end %>
-    <div class="tile">
-      <h3><%= current_partner.name %> Families Served</h3>
-      <%= link_to 'Add New Family', new_family_path, style: "margin-bottom: 10px;", class: "btn btn-sm btn-info" %>
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th scope="col">Guardian last name</th>
-          <th scope="col">Guardian first name</th>
-          <th scope="col">Agency guardian</th>
-          <th scope="col">Comments</th>
-          <th scope="col"></th>
-          <th scope="col"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <% @families.each do |family| %>
-          <tr>
-            <td><%= family.guardian_last_name %></td>
-            <td><%= family.guardian_first_name %></td>
-            <td><%= family.agency_guardian_id %></td>
-            <td><%= family.comments %></td>
-            <td><%= link_to 'View Family', family, class: "btn btn-sm btn-info pull-right" %></td>
-            <td><%= link_to 'Edit Family Details', edit_family_path(family), class: "btn btn-sm btn-success pull-right" %></td>
-        <% end %>
-        </tbody>
-      </table>
-      <hr>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Familes</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-footer">
+            <%= link_to 'Export a CSV file', families_path(nil, format: :csv), class: "btn btn-primary" %>
+            <div class="pull-right">
+              <%= link_to 'Add New Family', new_family_path, class: "btn btn-info" %>
+            </div>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+      <!--/.col (left) -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">Guardian last name</th>
+                <th scope="col">Guardian first name</th>
+                <th scope="col">Agency guardian</th>
+                <th scope="col">Comments</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @families.each do |family| %>
+                <tr>
+                  <td><%= family.guardian_last_name %></td>
+                  <td><%= family.guardian_first_name %></td>
+                  <td><%= family.agency_guardian_id %></td>
+                  <td><%= family.comments %></td>
+                  <td><%= link_to 'View Family', family, class: "btn btn-sm btn-info pull-right" %></td>
+                  <td><%= link_to 'Edit Family Details', edit_family_path(family), class: "btn btn-sm btn-success pull-right" %></td>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+
