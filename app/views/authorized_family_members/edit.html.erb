@@ -1,13 +1,26 @@
-<div class="app-title">
-  <div>
-    <h1><i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;Edit Authorized Family Member</h1>
-  </div>
-  <ul class="app-breadcrumb breadcrumb">
-    <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-    <li class="breadcrumb-item"><a href="<%= family_path(@authorized_family_member.family) %>">The <%= "#{@authorized_family_member.family.guardian_last_name}" %> Family</a></li>
-    <li class="breadcrumb-item"><a href="<%= authorized_family_member_path(@authorized_family_member) %>">View Authorized Family Member</a></li>
-    <li class="breadcrumb-item"><a href="#">Edit</a></li>
-  </ul>
-</div>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Families - #{current_partner.name}" %>
+        <h1><i class="fa fa-user"></i>&nbsp;&nbsp;
+          Edit Authorized Family Member
+          <small>for <%= current_partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-home fa-lg"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="<%= family_path(@authorized_family_member.family) %>">The <%= "#{@authorized_family_member.family.guardian_last_name}" %> Family</a></li>
+          <li class="breadcrumb-item"><a href="<%= authorized_family_member_path(@authorized_family_member) %>">View Authorized Family Member</a></li>
+          <li class="breadcrumb-item"><a href="#">Edit</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
 
 <%= render 'form', authorized_family_member: @authorized_family_member %>
