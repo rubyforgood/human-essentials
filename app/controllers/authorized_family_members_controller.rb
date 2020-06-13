@@ -31,6 +31,14 @@ class AuthorizedFamilyMembersController < ApplicationController
     end
   end
 
+  def destroy
+    @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
+    if @authorized_family_member.present?
+      @authorized_family_member.destroy
+      redirect_back fallback_location: families_url, notice: "Authorized family member removed."
+    end
+  end
+
   private
 
   def family
