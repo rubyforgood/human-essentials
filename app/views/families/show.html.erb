@@ -1,24 +1,31 @@
-<div class="app-title">
-  <div>
-    <h1><i class="fa fa-users"></i>&nbsp;&nbsp;Family Details</h1>
-  </div>
-  <ul class="app-breadcrumb breadcrumb">
-    <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-    <li class="breadcrumb-item"><a href="<%= families_path %>">All Families</a></li>
-    <li class="breadcrumb-item"><a href="#">The <%= "#{@family.guardian_last_name}" %> Family</a></li>
-  </ul>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <% if notice %>
-      <div class="alert alert-dismissible alert-success">
-        <button class="close" type="button" data-dismiss="alert">×</button>
-        <p><%= notice %><a class="alert-link" href="#"></a></p>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Families - #{current_partner.name}" %>
+        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
+          Family Details
+          <small>for <%= current_partner.name %></small>
+        </h1>
       </div>
-    <% end %>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-home fa-lg"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="<%= families_path %>">All Families</a></li>
+          <li class="breadcrumb-item"><a href="#">The <%= "#{@family.guardian_last_name}" %> Family</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
 
+<section class="content">
+  <div class="container-fluid">
     <div class="row">
-      <div class="col-12">
+      <div class="col-md-12">
         <div class="card mb-4">
           <h5 class="card-header bg-primary text-white">Family Information
             <%= link_to 'Add An Authorized Member To This Family', new_authorized_family_member_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right", style: "margin-left:10px;" %>
@@ -26,109 +33,132 @@
           </h5>
           <div class="card-body">
             <dl>
-              <dt>Guardian first name:</dt>
+              <dt>Guardian First Name:</dt>
               <dd><%= @family.guardian_first_name %></dd>
 
-              <dt>Guardian last name:</dt>
+              <dt>Guardian Last Name:</dt>
               <dd><%= @family.guardian_last_name %></dd>
 
-              <dt>Guardian zip code:</dt>
+              <dt>Guardian Zip Code:</dt>
               <dd><%= @family.guardian_zip_code %></dd>
 
-              <dt>Guardian county:</dt>
+              <dt>Guardian County:</dt>
               <dd><%= @family.guardian_country %></dd>
 
-              <dt>Guardian phone:</dt>
+              <dt>Guardian Phone:</dt>
               <dd><%= @family.guardian_phone %></dd>
 
               <dt>Agency Care Manager:</dt>
               <dd><%= @family.agency_guardian_id %></dd>
 
-              <dt>Home adult count:</dt>
+              <dt>Home Adult Count:</dt>
               <dd><%= @family.home_adult_count %></dd>
 
-              <dt>Home child count:</dt>
+              <dt>Number of Children Aged 5-17 in the Home:</dt>
               <dd><%= @family.home_child_count %></dd>
 
-              <dt>Home young child count:</dt>
+              <dt>Number of Children Under Age 5 in the Home:</dt>
               <dd><%= @family.home_young_child_count %></dd>
 
-              <dt>Sources of income:</dt>
+              <dt>Sources of Income:</dt>
               <dd><%= @family.sources_of_income.join(', ') %></dd>
 
-              <dt>Guardian employed:</dt>
-              <dd><%= @family.guardian_employed %></dd>
+              <dt>Guardian Employed:</dt>
+              <dd><%= @family.guardian_employed ? "Yes" : "No" %></dd>
 
-              <dt>Guardian employment type:</dt>
+              <dt>Guardian Employment Type:</dt>
               <dd><%= @family.guardian_employment_type %></dd>
 
-              <dt>Guardian monthly pay:</dt>
+              <dt>Guardian Monthly Pay:</dt>
               <dd><%= @family.guardian_monthly_pay %></dd>
 
-              <dt>Guardian health insurance:</dt>
+              <dt>Guardian Health Insurance:</dt>
               <dd><%= @family.guardian_health_insurance %></dd>
 
-              <dt>Military family:</dt>
-              <dd><%= @family.military %></dd>
+              <dt>Military Family:</dt>
+              <dd><%= @family.military ? "Yes" : "No" %></dd>
 
               <dt>Comments:</dt>
               <dd><%= @family.comments %></dd>
             </dl>
-
+          </div>
+          <div class="card-footer">
             <%= link_to 'Edit This Family', edit_family_path(@family), class: "btn btn-sm btn-primary" %>
             <%= link_to 'Back to Families', families_path, class: "btn btn-sm btn-info pull-right" %>
             <%= link_to 'Add Child To This Family', new_child_path(family_id: @family.id), class: "btn btn-sm btn-success" %>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <div class="row">
-          <div class="col-12">
-            <div class="card mb-4">
-            <h5 class="card-header bg-primary text-white">Children Information</h5>
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Date of birth</th>
-                    <th scope="col">Gender</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @family.children.each do |child| %>
-                    <tr>
-                      <td><%= child.display_name %></td>
-                      <td><%= child.date_of_birth %></td>
-                      <td><%= child.gender %></td>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="card mb-4">
-            <h5 class="card-header bg-primary text-white">Authorized Members for Pick Up</h5>
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th scope="col">First name</th>
-                    <th scope="col">Last name</th>
-                    <th scope="col">Date of birth</th>
-                    <th scope="col">Comments</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @family.authorized_family_members.each do |member| %>
-                    <tr>
-                      <td><%= member.first_name %></td>
-                      <td><%= member.last_name %></td>
-                      <td><%= member.date_of_birth %></td>
-                      <td><%= member.comments %></td>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-          </div>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mb-4">
+          <h5 class="card-header bg-primary text-white">Children Information</h5>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th style="width: 13.33%">First Name</th>
+              <th style="width: 13.33%">Last Name</th>
+              <th style="width: 13.33%">Date of Birth</th>
+              <th style="width: 45%">Gender</th>
+              <th style="width: 15%">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @family.children.each do |child| %>
+              <tr>
+                <td><%= child.first_name %></td>
+                <td><%= child.last_name %></td>
+                <td><%= child.date_of_birth %></td>
+                <td><%= child.gender %></td>
+                <td><%= link_to 'Edit', edit_child_path(child), class: "btn btn-sm btn-outline-primary" %></td>
+            <% end %>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mb-4">
+          <h5 class="card-header bg-primary text-white">Authorized Members for Pick Up</h5>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th style="width: 13.33%">First Name</th>
+              <th style="width: 13.33%">Last Name</th>
+              <th style="width: 13.33%">Date of Birth</th>
+              <th style="width: 45%">Comments</th>
+              <th style="width: 15%">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @family.authorized_family_members.each do |member| %>
+              <tr>
+                <td><%= member.first_name %></td>
+                <td><%= member.last_name %></td>
+                <td><%= member.date_of_birth %></td>
+                <td><%= member.comments %></td>
+                <td>
+                  <%= link_to 'Edit', edit_authorized_family_member_path(member), class: "btn btn-sm btn-outline-primary" %>
+                  <%= link_to 'View', authorized_family_member_path(member), class: "btn btn-sm btn-outline-info" %>
+                  <%= link_to 'Delete', authorized_family_member_path(member), class: "btn btn-sm btn-outline-danger",
+                       data: { confirm: "Are you sure?" }, method: :delete%>
+                </td>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
