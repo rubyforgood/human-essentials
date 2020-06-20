@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe ReminderDeadlineJob, type: :job do
   let(:todays_day) { 10 }
   let(:not_today) { 11 }

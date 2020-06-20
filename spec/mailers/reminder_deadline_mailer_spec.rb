@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe ReminderDeadlineMailer do
   describe 'notify deadline' do
     let(:organization) { create :organization }
