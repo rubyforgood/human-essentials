@@ -9,7 +9,7 @@ RSpec.describe "Layout", type: :system do
 
       distribution = create(:distribution)
       visit url_prefix + "/distributions/#{distribution.id}/edit"
-	  expect(page).to have_css("body#distributions.edit")
+      expect(page).to have_css("body#distributions.edit")
     end
   end
 end
