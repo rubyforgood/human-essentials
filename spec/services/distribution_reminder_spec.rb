@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe DistributionReminder do
   describe "conditionally sending the emails" do
     let(:organization) { create :organization }
