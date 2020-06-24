@@ -63,7 +63,7 @@ GEM
     annotate (3.1.1)
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 14.0)
-    api-auth (2.4.0)
+    api-auth (2.4.1)
     ast (2.4.1)
     autoprefixer-rails (9.7.6)
       execjs
