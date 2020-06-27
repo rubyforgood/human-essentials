@@ -31,10 +31,10 @@ class DonationDestroyService
   end
 
   private
+
   attr_reader :organization_id, :donation_id
 
   def set_error(error)
     @error = error
   end
-
 end
