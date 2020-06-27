@@ -81,11 +81,11 @@ class DonationsController < ApplicationController
 
     if service.success?
       flash[:notice] = "Donation #{params[:id]} has been removed!"
-      redirect_to donations_path
     else
       flash[:error] = "Donation #{params[:id]} failed to be removed becuase #{service.error}"
-      redirect_to donations_path
     end
+
+    redirect_to donations_path
   end
 
   private
