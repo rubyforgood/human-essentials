@@ -33,7 +33,7 @@
           </div>
           <div class="card-body p-0">
             <div class="row">
-              <div class="col-sm-4 col-4">
+              <div class="col-sm-3 col-3">
                 <div class="description-block border-right">
                   <h1 style="color:purple"><%= total_on_hand(@impact_metrics.dig("agency", "families_served") || 0) %> </h1>
                   <h5>Families served</h5>
@@ -41,7 +41,7 @@
                 <!-- /.description-block -->
               </div>
               <!-- /.col -->
-              <div class="col-sm-4 col-4">
+              <div class="col-sm-3 col-3">
                 <div class="description-block border-right">
                   <h1 style="color:purple"><%= total_on_hand(@impact_metrics.dig("agency", "children_served") || 0) %> </h1>
                   <h5>Children served</h5>
@@ -49,10 +49,17 @@
                 <!-- /.description-block -->
               </div>
               <!-- /.col -->
-              <div class="col-sm-4 col-4">
+              <div class="col-sm-3 col-3">
                 <div class="description-block border-right">
                   <h1 style="color:purple"><%= total_on_hand(@impact_metrics.dig("agency", "family_zipcodes") || 0) %> </h1>
                   <h5>Zipcodes served</h5>
+                </div>
+                <!-- /.description-block -->
+              </div>
+              <div class="col-sm-3 col-3">
+                <div class="description-block border-right">
+                  <h3 style="color:purple"><%= total_on_hand(@impact_metrics.dig("agency", "family_zipcodes_list")&.join(", ") || 0) %> </h3>
+                  <h5>List of zipcodes served</h5>
                 </div>
                 <!-- /.description-block -->
               </div>
