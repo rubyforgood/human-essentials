@@ -76,13 +76,15 @@ class DonationsController < ApplicationController
   end
 
   def destroy
-    ActiveRecord::Base.transaction do
-      donation = current_organization.donations.find(params[:id])
-      donation.storage_location.decrease_inventory(donation)
-      donation.destroy!
+    service = DonationDestroyService.new(organization_id: current_organization.id, donation_id: params[:id])
+    service.call
+
+    if service.success?
+      flash[:notice] = "Donation #{params[:id]} has been removed!"
+    else
+      flash[:error] = "Donation #{params[:id]} failed to be removed because #{service.error}"
     end
 
-    flash[:notice] = "Donation #{params[:id]} has been removed!"
     redirect_to donations_path
   end
 
