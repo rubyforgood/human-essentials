@@ -3,8 +3,16 @@ class FamiliesController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @families = current_partner.families.order(:guardian_last_name)
+    # @families = current_partner.families.order(:guardian_last_name)
+    @filterrific = initialize_filterrific(
+      current_partner.families
+          .order(:guardian_last_name),
+      params[:filterrific]
+    ) || return
+    @families = @filterrific.find.page(params[:page])
+
     respond_to do |format|
+      format.js
       format.html
       format.csv do
         render(csv: @families.map(&:to_csv))
