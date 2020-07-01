@@ -28,13 +28,44 @@
       <!-- left column -->
       <div class="col-md-12">
         <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-footer">
-            <%= link_to 'Export a CSV file', families_path(nil, format: :csv), class: "btn btn-primary" %>
-            <div class="pull-right">
-              <%= link_to 'Add New Family', new_family_path, class: "btn btn-info" %>
-            </div>
+        <div class="card">
+          <div class="card-header bg-primary">
+            <h3 class="card-title">Filters</h3>
           </div>
+          <div class="card-body">
+            <%= form_for_filterrific @filterrific, remote: true do |f| %>
+              <div class="row">
+                <div class="col-3">
+                  <%= f.label :search_guardian_names, "Search By Guardian Name" %>
+                  <%= f.text_field(
+                          :search_guardian_names,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= f.label :search_agency_guardians, "Search By Agency Guardian" %>
+                  <%= f.text_field(
+                          :search_agency_guardians,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= render_filterrific_spinner %>
+                </div>
+              </div>
+              </div><!-- /.row -->
+              <div class="card-footer">
+                <%= link_to(
+                        'Reset Search',
+                        reset_filterrific_url,
+                        class: 'btn btn-danger'
+                    ) %>
+                <span class="float-right">
+                  <%= link_to 'Export a CSV file', families_path(nil, format: :csv), class: "btn btn-primary" %>
+                  <%= link_to 'Add New Family', new_family_path, class: "btn btn-info" %>
+                </span>
+            <% end %>
+            </div>
         </div>
         <!-- /.card -->
       </div>
@@ -50,29 +81,12 @@
         <!-- Default box -->
         <div class="card">
           <div class="card-body">
-            <table class="table table-striped">
-              <thead>
-              <tr>
-                <th scope="col">Guardian last name</th>
-                <th scope="col">Guardian first name</th>
-                <th scope="col">Agency guardian</th>
-                <th scope="col">Comments</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-              </tr>
-              </thead>
-              <tbody>
-              <% @families.each do |family| %>
-                <tr>
-                  <td><%= family.guardian_last_name %></td>
-                  <td><%= family.guardian_first_name %></td>
-                  <td><%= family.agency_guardian_id %></td>
-                  <td><%= family.comments %></td>
-                  <td><%= link_to 'View Family', family, class: "btn btn-sm btn-info pull-right" %></td>
-                  <td><%= link_to 'Edit Family Details', edit_family_path(family), class: "btn btn-sm btn-success pull-right" %></td>
-              <% end %>
-              </tbody>
-            </table>
+            <div id="filterrific_results">
+              <%= render(
+                      partial: 'families/list',
+                      locals: {families: @families}
+                  ) %>
+            </div>
           </div>
         </div>
         <!-- /.card -->
