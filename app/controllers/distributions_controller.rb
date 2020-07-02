@@ -50,7 +50,7 @@ class DistributionsController < ApplicationController
     @total_items_all_distributions = total_items(@distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
-    @partners = @distributions.collect(&:partner).uniq.sort
+    @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
   end
 
   def create
