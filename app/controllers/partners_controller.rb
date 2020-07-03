@@ -131,7 +131,7 @@ class PartnersController < ApplicationController
   end
 
   def partner_params
-    params.require(:partner).permit(:name, :email, :send_reminders)
+    params.require(:partner).permit(:name, :email, :send_reminders, :note, :distribution_limit)
   end
 
   def filter_params

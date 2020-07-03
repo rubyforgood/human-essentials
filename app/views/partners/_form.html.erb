@@ -17,6 +17,12 @@
                 <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                 <%= f.input_field :email, class: "form-control" %>
               <% end %>
+              <%= f.input :note, label: "Notes", wrapper: :input_group do %>
+                <%= f.text_area :note, class: "form-control" %>
+              <% end %>
+              <%= f.input :distribution_limit, label: "Distribution Limit", wrapper: :input_group do %>
+                <%= f.input_field :distribution_limit, class: "form-control" %>
+              <% end %>
               <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :input_group do %>
                 <%= f.check_box :send_reminders, {class: "input-group-text", id: "send_reminders"}, "true", "false" %>
               <% end %>
