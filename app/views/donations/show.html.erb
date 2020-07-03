@@ -65,7 +65,7 @@
               <%= render partial: "donation_item_row", collection: @line_items %>
               <tr>
                 <td><strong>Total</strong></td>
-                <td></td>
+                <td><strong><%= @line_items.pluck(:quantity).sum %></strong></td>
                 <td><strong><%= dollar_value(@donation.value_per_itemizable) %></strong></td>
               </tr>
               </tbody>
