@@ -40,8 +40,7 @@
                 <h2>Agency Information</h2>
                 <p>Name: <%= @agency[:name] %></p>
                 <p>Distributor Type <%= @agency[:distributor_type] %></p>
-                <p>Agency Type:
-                  <% @agency[:agency_type] %></p>
+                <p>Agency Type: <%= @agency[:agency_type] %></p>
                 <p>Proof of Agency Status
                   (Link): <%= link_to File.basename(@agency[:proof_of_agency_status]), documentation_url(@agency[:proof_of_agency_status]), target: :_blank %></p>
                 <p>Agency Mission: <%= @agency[:agency_mission] %></p>
