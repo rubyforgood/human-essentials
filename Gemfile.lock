@@ -152,10 +152,10 @@ GEM
     et-orbi (1.2.2)
       tzinfo
     execjs (2.7.0)
-    factory_bot (6.0.0)
+    factory_bot (6.1.0)
       activesupport (>= 5.0.0)
-    factory_bot_rails (6.0.0)
-      factory_bot (~> 6.0.0)
+    factory_bot_rails (6.1.0)
+      factory_bot (~> 6.1.0)
       railties (>= 5.0.0)
     faker (2.13.0)
       i18n (>= 1.6, < 2)
@@ -489,7 +489,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yajl-ruby (1.4.1)
-    zeitwerk (2.3.0)
+    zeitwerk (2.3.1)
 
 PLATFORMS
   ruby
