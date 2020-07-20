@@ -152,10 +152,10 @@ GEM
     et-orbi (1.2.2)
       tzinfo
     execjs (2.7.0)
-    factory_bot (6.0.0)
+    factory_bot (6.1.0)
       activesupport (>= 5.0.0)
-    factory_bot_rails (6.0.0)
-      factory_bot (~> 6.0.0)
+    factory_bot_rails (6.1.0)
+      factory_bot (~> 6.1.0)
       railties (>= 5.0.0)
     faker (2.13.0)
       i18n (>= 1.6, < 2)
