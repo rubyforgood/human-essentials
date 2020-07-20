@@ -258,7 +258,7 @@ GEM
     net-ssh (6.0.2)
     newrelic_rpm (6.12.0.367)
     nio4r (2.5.2)
-    nokogiri (1.10.9)
+    nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     notiffany (0.1.3)
       nenv (~> 0.1)
