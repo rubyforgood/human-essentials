@@ -3,7 +3,7 @@
 # Table name: partners
 #
 #  id                 :integer          not null, primary key
-#  distribution_limit :integer
+#  distribution_limit :integer          default(0)
 #  email              :string
 #  name               :string
 #  note               :text
