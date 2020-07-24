@@ -33,7 +33,7 @@ module ApplicationHelper
   # wraps link_to_unless_current to provide Foundation6 friendly <a> tags
   def navigation_link_to(*args)
     link_to_unless_current(*args) do
-      content_tag(:a, args.first, class: "active", disabled: true)
+      tag.a(args.first, class: "active", disabled: true)
     end
   end
 
