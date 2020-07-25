@@ -2,7 +2,7 @@
 #
 # Table name: partners
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  email           :string
 #  name            :string
 #  send_reminders  :boolean          default(FALSE), not null
@@ -50,7 +50,7 @@ class Partner < ApplicationRecord
       hash_rows = Hash[row.to_hash.map { |k, v| [k.downcase, v] }]
       loc = Partner.new(hash_rows)
       loc.organization_id = organization_id
-      loc.save!
+      loc.save
     end
   end
 
@@ -63,11 +63,11 @@ class Partner < ApplicationRecord
   end
 
   def register_on_partnerbase
-    UpdateDiaperPartnerJob.perform_async(id)
+    UpdateDiaperPartnerJob.perform_now(id)
   end
 
   def add_user_on_partnerbase(options = {})
-    AddDiaperPartnerJob.perform_async(id, options)
+    AddDiaperPartnerJob.perform_now(id, options)
   end
 
   def quantity_year_to_date

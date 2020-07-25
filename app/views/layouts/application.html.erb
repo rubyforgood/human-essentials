@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/,'_') %>" class="<%= params.fetch(:action, '') %> hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">

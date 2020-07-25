@@ -50,7 +50,7 @@ class DistributionsController < ApplicationController
     @total_items_all_distributions = total_items(@distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
-    @partners = @distributions.collect(&:partner).uniq.sort
+    @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
   end
 
   def create
@@ -105,11 +105,10 @@ class DistributionsController < ApplicationController
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
-      if result.resend_notification?
+      if result.resend_notification? && @distribution.partner&.send_reminders
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
       end
-
-      schedule_reminder_email(@distribution.id)
+      schedule_reminder_email(@distribution)
 
       redirect_to @distribution, notice: "Distribution updated!"
     else
@@ -150,11 +149,13 @@ class DistributionsController < ApplicationController
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
-  def schedule_reminder_email(dist)
-    DistributionReminderJob.perform_async(dist)
+  def schedule_reminder_email(distribution)
+    return if distribution.past? || !distribution.partner.send_reminders
+
+    DistributionMailer.delay_until(distribution.issued_at - 1.day).reminder_email(distribution.id)
   end
 
   def distribution_params

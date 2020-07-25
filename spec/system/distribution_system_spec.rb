@@ -21,7 +21,7 @@ RSpec.feature "Distributions", type: :system do
 
         expect do
           click_button "Save", match: :first
-        end.to change { PartnerMailerJob.jobs.size }.by(1)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
 
         expect(page).to have_content "Distributions"
         expect(page.find(".alert-info")).to have_content "reated"
@@ -38,7 +38,7 @@ RSpec.feature "Distributions", type: :system do
         select @partner.name, from: "Partner"
         expect do
           click_button "Save"
-        end.not_to change { PartnerMailerJob.jobs.size }
+        end.not_to change { ActionMailer::Base.deliveries.count }
 
         # verify line items appear on reload
         expect(page).to have_content "New Distribution"
@@ -120,6 +120,17 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save", match: :first
         distribution.reload
       end.to change { distribution.agency_rep }.to("SOMETHING DIFFERENT")
+    end
+
+    it "sends an email if reminders are enabled" do
+      with_features email_active: true do
+        visit @url_prefix + "/distributions"
+        click_on "Edit", match: :first
+        fill_in "Agency representative", with: "SOMETHING DIFFERENT"
+        click_on "Save", match: :first
+        distribution.reload
+        expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution.id)
+      end
     end
 
     it "allows the user can change the issued_at date" do

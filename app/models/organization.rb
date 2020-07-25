@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id                       :bigint           not null, primary key
+#  id                       :integer          not null, primary key
 #  city                     :string
 #  deadline_day             :integer
 #  default_storage_location :integer
@@ -12,6 +12,7 @@
 #  latitude                 :float
 #  longitude                :float
 #  name                     :string
+#  partner_form_fields      :text             default([]), is an Array
 #  reminder_day             :integer
 #  short_name               :string
 #  state                    :string
@@ -81,6 +82,19 @@ class Organization < ApplicationRecord
   has_many :users, dependent: :destroy
   has_many :requests, dependent: :destroy
   has_many :audits, dependent: :destroy
+  before_update :update_partner_sections, if: :partner_form_fields_changed?
+
+  ALL_PARTIALS = [
+    ['Media Information', 'media_information'],
+    ['Agency Stability', 'agency_stability'],
+    ['Organizational Capacity', 'organizational_capacity'],
+    ['Sources of Funding', 'sources_of_funding'],
+    ['Population Served', 'population_served'],
+    ['Executive Director', 'executive_director'],
+    ['Diaper Pickup Person', 'diaper_pick_up_person'],
+    ['Agency Distribution Information', 'agency_distribution_information'],
+    ['Attached Documents', 'attached_documents']
+  ].freeze
 
   has_rich_text :default_email_text
 
@@ -123,22 +137,6 @@ class Organization < ApplicationRecord
     inventory_items.sum(:quantity) || 0
   end
 
-  def scale_values
-    {
-      pu_2t_3t: items.find_by(name: "Kids Pull-Ups (2T-3T)").id,
-      pu_3t_4t: items.find_by(name: "Kids Pull-Ups (3T-4T)").id,
-      pu_4t_5t: items.find_by(name: "Kids Pull-Ups (4T-5T)").id,
-      k_preemie: items.find_by(name: "Kids (Preemie)").id,
-      k_newborm: items.find_by(name: "Kids (Newborn)").id,
-      k_size1: items.find_by(name: "Kids (Size 1)").id,
-      k_size2: items.find_by(name: "Kids (Size 2)").id,
-      k_size3: items.find_by(name: "Kids (Size 3)").id,
-      k_size4: items.find_by(name: "Kids (Size 4)").id,
-      k_size5: items.find_by(name: "Kids (Size 5)").id,
-      k_size6: items.find_by(name: "Kids (Size 6)").id
-    }
-  end
-
   def self.seed_items(organization = Organization.all)
     base_items = BaseItem.all.map(&:to_h)
     Array.wrap(organization).each do |org|
@@ -174,7 +172,7 @@ class Organization < ApplicationRecord
   end
 
   def valid_items
-    items.map do |item|
+    items.active.map do |item|
       {
         id: item.id,
         partner_key: item.partner_key,
@@ -184,6 +182,10 @@ class Organization < ApplicationRecord
   end
 
   private
+
+  def update_partner_sections
+    PartnerFieldsJob.perform_async(id)
+  end
 
   def correct_logo_mime_type
     if logo.attached? && !logo.content_type

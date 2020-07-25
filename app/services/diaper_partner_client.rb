@@ -11,7 +11,7 @@ module DiaperPartnerClient
 
     response = https(uri).request(req)
 
-    response.body
+    response
   end
 
   def self.add(attributes, invitation_message)
@@ -26,9 +26,10 @@ module DiaperPartnerClient
     response.body
   end
 
-  def self.get(attributes)
+  def self.get(attributes, query_params: {})
     id = attributes[:id]
     uri = URI(ENV["PARTNER_REGISTER_URL"] + "/#{id}")
+    uri.query = URI.encode_www_form(query_params) if query_params.present?
     req = Net::HTTP::Get.new(uri, "Content-Type" => "application/json")
 
     req["Content-Type"] = "application/json"
@@ -69,9 +70,10 @@ module DiaperPartnerClient
 
   def self.partner_json(attributes, invitation_message)
     { partner:
-          { diaper_bank_id: attributes["organization_id"],
-            diaper_partner_id: attributes["id"],
-            invitation_text: invitation_message,
-            email: attributes["email"] } }.to_json
+      { diaper_bank_id: attributes["organization_id"],
+        diaper_partner_id: attributes["id"],
+        invitation_text: invitation_message,
+        email: attributes["email"],
+        organization_email: attributes["organization_email"] } }.to_json
   end
 end
