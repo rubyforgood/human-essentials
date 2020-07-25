@@ -165,15 +165,17 @@ RSpec.describe "Partners", type: :request do
   describe "PUT #reactivate" do
     context "when the partner successfully reactivates" do
       let(:partner) { create(:partner, organization: @organization, status: "deactivated") }
+
       before do
         response = double
         allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(true)
         allow(DiaperPartnerClient).to receive(:put).and_return(response)
       end
-      it "changes the partner status to reactivated and redirects with flash" do
+
+      it "changes the partner status to approved, partner status on partner app to verified, and redirects with flash" do
         put reactivate_partner_path(default_params.merge(id: partner.id))
 
-        expect(partner.reload.status).to eq("awaiting_review")
+        expect(partner.reload.status).to eq("approved")
         expect(response).to redirect_to(partners_path)
         expect(flash[:notice]).to eq("#{partner.name} successfully reactivated!")
       end

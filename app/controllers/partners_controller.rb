@@ -106,13 +106,15 @@ class PartnersController < ApplicationController
     end
   end
 
-  def reactivate 
+  def reactivate
     @partner = current_organization.partners.find(params[:id])
+
     if @partner.status != "deactivated"
       redirect_to(partners_path, error: "#{@partner.name} is not deactivated!") and return
     end
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "awaiting_review")
-    if response.is_a?(Net::HTTPSuccess) && @partner.update_column(:status, "awaiting_review")
+
+    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "verified")
+    if response.is_a?(Net::HTTPSuccess) && @partner.update_column(:status, "approved")
       redirect_to partners_path, notice: "#{@partner.name} successfully reactivated!"
     else
       redirect_to partners_path, error: "#{@partner.name} failed to reactivate!"

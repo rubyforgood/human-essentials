@@ -77,8 +77,34 @@ RSpec.describe Partner, type: :model do
   #       expect(WebMock).to have_requested(:post, callback_url)
   #         .with(headers: headers, body: body).once
   #     end
+  #
   #   end
   # end
+
+  describe '#deactivated?' do
+    subject { partner.deactivated? }
+    let(:partner) { build(:partner) }
+
+    context "when the status is 'deactivated'" do
+      before do
+        partner.status = 'deactivated'
+      end
+
+      it 'should return true' do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when the status is not 'deactivated'" do
+      before do
+        partner.status = 'invited'
+      end
+
+      it 'should return false' do
+        expect(subject).to eq(false)
+      end
+    end
+  end
 
   describe "import_csv" do
     let(:organization) { create(:organization) }
