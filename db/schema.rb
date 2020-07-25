@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_24_181621) do
+ActiveRecord::Schema.define(version: 2020_04_05_164501) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -256,6 +256,7 @@ ActiveRecord::Schema.define(version: 2020_03_24_181621) do
     t.integer "deadline_day"
     t.text "invitation_text"
     t.integer "default_storage_location"
+    t.text "partner_form_fields", default: [], array: true
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end

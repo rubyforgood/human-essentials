@@ -18,6 +18,7 @@ There are numerous other folks that can chime in and answer questions -- please 
 [![Maintainability](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/maintainability)](https://codeclimate.com/github/rubyforgood/diaper/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/test_coverage)](https://codeclimate.com/github/rubyforgood/diaper/test_coverage)
 [![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=master)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
 
 ## About
 
@@ -36,7 +37,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 The `installation.md` file ([https://github.com/rubyforgood/diaper/blob/master/installation.md](https://github.com/rubyforgood/diaper/blob/master/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
 
 ### Ruby Version
-This app uses Ruby version 2.7.0, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
+This app uses Ruby version 2.7.1, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
 
 ### Yarn Installation
 If you don't have Yarn installed, you can install with Homebrew on macOS `brew install yarn` or visit [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install). Be sure to run `yarn install` after installing Yarn. NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.
@@ -160,3 +161,7 @@ Users that are frequent contributors and are involved in discussion (join the sl
 # Acknowledgements
 
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_large)

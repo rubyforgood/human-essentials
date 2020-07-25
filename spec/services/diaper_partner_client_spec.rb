@@ -6,7 +6,7 @@ RSpec.describe DiaperPartnerClient, type: :service do
 
   describe '::post' do
     it 'performs a POST request' do
-      attributes = { 'id' => 123, 'organization_id' => 456, 'email' => 'foo@bar.com' }
+      attributes = { 'id' => 123, 'organization_id' => 456, 'email' => 'foo@bar.com', 'organization_email' => 'fake@example.com' }
       invitation_text = 'invitation'
       expected_body = {
         partner:
@@ -14,20 +14,33 @@ RSpec.describe DiaperPartnerClient, type: :service do
           diaper_bank_id: attributes["organization_id"],
           diaper_partner_id: attributes["id"],
           invitation_text: invitation_text,
-          email: attributes["email"]
+          email: attributes["email"],
+          organization_email: attributes["organization_email"]
         }
       }.to_json
       stub_partner_request(:post, 'https://partner-register.com/', body: expected_body)
       result = DiaperPartnerClient.post(attributes, invitation_text)
-      expect(result).to eq 'success'
+      expect(result.is_a?(Net::HTTPSuccess)).to eq(true)
     end
   end
 
   describe '::get' do
+    let(:fake_random_id) { Faker::Number.number }
+
     it 'performs a GET request' do
-      stub_partner_request(:get, 'https://partner-register.com/123')
-      result = DiaperPartnerClient.get(id: 123)
+      stub_partner_request(:get, "https://partner-register.com/#{fake_random_id}")
+      result = DiaperPartnerClient.get(id: fake_random_id)
       expect(result).to eq 'success'
+    end
+
+    context 'with query_params' do
+      let(:query_params) { { impact_metrics: true } }
+
+      it 'performs a GET request' do
+        stub_partner_request(:get, "https://partner-register.com/#{fake_random_id}?impact_metrics=true")
+        result = DiaperPartnerClient.get({ id: fake_random_id }, query_params: query_params)
+        expect(result).to eq 'success'
+      end
     end
   end
 

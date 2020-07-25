@@ -2,7 +2,7 @@
 #
 # Table name: transfers
 #
-#  id              :bigint           not null, primary key
+#  id              :integer          not null, primary key
 #  comment         :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -13,9 +13,9 @@
 
 class Transfer < ApplicationRecord
   belongs_to :organization, inverse_of: :transfers
-  belongs_to :from, class_name: "StorageLocation", foreign_key: :from_id,
+  belongs_to :from, class_name: "StorageLocation",
                     inverse_of: :transfers_from
-  belongs_to :to, class_name: "StorageLocation", foreign_key: :to_id, inverse_of: :transfers_to
+  belongs_to :to, class_name: "StorageLocation", inverse_of: :transfers_to
 
   include Itemizable
   alias_attribute :storage_location, :from # to make it play nice with Itemizable

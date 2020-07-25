@@ -113,7 +113,8 @@ class ItemsController < ApplicationController
       :package_size,
       :on_hand_minimum_quantity,
       :on_hand_recommended_quantity,
-      :distribution_quantity
+      :distribution_quantity,
+      :active
     )
   end
 

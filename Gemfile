@@ -5,10 +5,11 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "2.7.0"
+ruby "2.7.1"
 
-gem "api-auth", "~> 2.3"
-gem 'bootstrap', '~> 4.4.1'
+gem "api-auth", "~> 2.4"
+gem 'bootstrap', '~> 4.5.0'
+gem 'bootstrap-select-rails'
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
@@ -31,18 +32,19 @@ gem "kaminari"
 gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
-gem 'popper_js'
+gem "paperclip" # needed for legacy migrations
 gem "pg", "~> 1.2.3"
+gem 'popper_js'
 gem "prawn-rails"
 gem "puma"
-gem "rails", "~> 6.0.2"
+gem "rails", "~> 6.0.3"
 gem "sass-rails"
 gem "sidekiq"
 gem "simple_form"
 gem "skylight"
-gem "sprockets", "~> 3.7.2"
+gem "sprockets", "~> 4.0.2"
 gem "uglifier", ">= 1.3.0"
-gem "mini_racer", "~> 0.2.9"
+gem "mini_racer", "~> 0.3.1"
 gem "yajl-ruby"
 gem "toastr-rails"
 gem "webpacker", "> 4.0"
@@ -51,14 +53,15 @@ gem 'bootstrap-daterangepicker-rails'
 
 group :development, :test do
   gem "awesome_print"
+  gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
   gem 'rb-readline', '~> 0.5.3'
-  gem "rspec-rails", "~> 4.0.0"
+  gem "rspec-rails", "~> 4.0.1"
   gem "rubocop"
-  gem "rubocop-rails"
+  gem "rubocop-rails", "~> 2.7.0"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "faker"
@@ -82,15 +85,15 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 3.32"
+  gem "capybara", "~> 3.33"
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "factory_bot_rails"
-  gem "fakeredis", require: "fakeredis/rspec"
   gem "launchy"
   gem "rails-controller-testing"
+  gem "rspec-sidekiq"
   gem 'simplecov'
-  gem 'webdrivers', '~> 4.2'
+  gem 'webdrivers', '~> 4.4'
   gem "webmock", "~> 3.8"
 end
 

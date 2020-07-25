@@ -13,9 +13,9 @@ Ensure that you are able to run both `partner` and `diaper` repos individually b
 
 Please verify the following before continuing
 
--[ ]  You are using Linux or MacOSX
--[ ]  You went through the setup instructions in the `partner` and `diaper` README
--[ ]  You are able to run and access `partner` and `diaper` individually.
+- [ ]  You are using Linux or MacOSX
+- [ ]  You went through the setup instructions in the `partner` and `diaper` README
+- [ ]  You are able to run and access `partner` and `diaper` individually.
 
 # Configure Applications
 
@@ -27,6 +27,7 @@ PARTNER_KEY="secretpassword"
 PARTNER_REGISTER_URL="https://partner.test/api/v1/partners"
 PARTNER_ADD_URL="https://partner.test/api/v1/add_partners"
 PARTNER_APPROVAL_URL="https://partner.test/api/v1/approve"
+PARTNER_FORM_URL="https://partner.test/api/v1/partner_forms"
 PARTNER_BASE_URL="partner.test"
 FLIPPER_USERNAME="admin"
 FLIPPER_PASSWORD="password"
