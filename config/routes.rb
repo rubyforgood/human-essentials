@@ -127,6 +127,8 @@ Rails.application.routes.draw do
         post :invite
         post :re_invite
         post :recertify_partner
+        put :deactivate
+        put :reactivate
       end
     end
 
