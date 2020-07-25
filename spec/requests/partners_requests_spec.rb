@@ -70,7 +70,6 @@ RSpec.describe "Partners", type: :request do
     end
 
     context "csv file with wrong headers" do
-
       let(:file) { fixture_file_upload("wrong_headers.csv", "text/csv") }
       subject { post import_csv_partners_path(default_params), params: { file: file } }
 
