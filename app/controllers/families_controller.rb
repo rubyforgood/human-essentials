@@ -1,12 +1,12 @@
 require "csv"
 class FamiliesController < ApplicationController
   before_action :authenticate_user!
+  helper_method :sort_column, :sort_direction
 
   def index
-    # @families = current_partner.families.order(:guardian_last_name)
     @filterrific = initialize_filterrific(
       current_partner.families
-          .order(:guardian_last_name),
+          .order(sort_column + ' ' + sort_direction),
       params[:filterrific]
     ) || return
     @families = @filterrific.find.page(params[:page])
@@ -82,5 +82,13 @@ class FamiliesController < ApplicationController
       :military,
       sources_of_income: []
     )
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+  end
+
+  def sort_column
+    Family.column_names.include?(params[:sort]) ? params[:sort] : "guardian_last_name"
   end
 end
