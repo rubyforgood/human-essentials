@@ -200,7 +200,7 @@ RSpec.describe "Partners", type: :request do
       end
     end
   end
-  
+
   describe "GET #approve_application" do
     let(:partner) { create(:partner, organization: @organization) }
 
@@ -272,7 +272,7 @@ RSpec.describe "Partners", type: :request do
       end
     end
   end
-          
+
   describe "POST #recertify_partner" do
     let(:partner) { create(:partner, organization: @organization) }
 
