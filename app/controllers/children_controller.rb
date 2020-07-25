@@ -1,12 +1,13 @@
 require "csv"
 class ChildrenController < ApplicationController
   before_action :authenticate_user!
+  helper_method :sort_column, :sort_direction
 
   def index
     @filterrific = initialize_filterrific(
       current_partner.children
           .includes(:family)
-          .order(active: :desc, last_name: :asc),
+          .order(sort_column + ' ' + sort_direction),
       params[:filterrific]
     ) || return
     @children = @filterrific.find.page(params[:page])
@@ -93,5 +94,13 @@ class ChildrenController < ApplicationController
       :archived,
       child_lives_with: []
     )
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+  end
+
+  def sort_column
+    Child.column_names.include?(params[:sort]) ? params[:sort] : "last_name"
   end
 end
