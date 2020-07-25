@@ -40,6 +40,10 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
+  def deactivated?
+    status == 'deactivated'
+  end
+
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
     csv.each do |row|
