@@ -42,7 +42,7 @@ class AuthorizedFamilyMembersController < ApplicationController
   private
 
   def family
-    @_family ||= current_partner.families.find_by(params[:family_id])
+    @_family ||= current_partner.families.find_by(id: params[:family_id])
   end
 
   def authorized_family_member_params
