@@ -187,7 +187,7 @@ GEM
     geocoder (1.6.3)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    groupdate (5.0.0)
+    groupdate (5.1.0)
       activesupport (>= 5)
     guard (2.15.1)
       formatador (>= 0.2.4)
@@ -540,7 +540,7 @@ DEPENDENCIES
   font-ionicons-rails
   fullcalendar-rails
   geocoder
-  groupdate (~> 5.0)
+  groupdate (~> 5.1)
   guard-rspec
   image_processing
   jbuilder
