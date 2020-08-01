@@ -27,27 +27,27 @@
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <div class="float-right">
-              <h2 class="card-title">
-                <%= new_button_to new_admin_organization_path, { text: "Add New Organization" } %>
-              </h2>
-            </div>
+            <%= form_for_filterrific @filterrific, remote: true do |f| %>
+              <div class="row flex-row justify-content-between align-items-center">
+                <div class='col-3'>
+                  <%= f.label :search_name, "Search By Organization Name" %>
+                  <%= f.text_field(:search_name, class: 'filterrific-periodically-observed form-control') %>
+                </div>
+                <div class="col-3">
+                  <%= render_filterrific_spinner %>
+                </div>
+                <div clas="col-9">
+                  <div class="float-right">
+                    <%= new_button_to new_admin_organization_path, { text: "Add New Organization" } %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           </div>
           <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Organization</th>
-                <th>Contact E-mail</th>
-                <th class="date">Added On</th>
-                <th class="text-right">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <%= render partial: "organization_row", collection: @organizations %>
-
-              </tbody>
-            </table>
+            <div id="filterrific_results">
+              <%= render( partial: 'list', locals: { organizations: @organizations }) %>
+            </div>
           </div>
         </div>
         <!-- /.card -->

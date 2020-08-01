@@ -15,6 +15,7 @@
 //= require popper
 //= require bootstrap
 // require jquery_ujs
+//= require filterrific/filterrific-jquery
 //= require bootstrap-select
 //= require bootstrap/alert
 //= require fastclick
@@ -62,7 +63,10 @@ $(document).ready(function () {
     height: isMobile || isShortHeight ? 'auto' : 'parent',
     defaultView: isMobile ? 'listWeek' : 'month'
   });
+});
 
+$(document).ready(function() {
+  Filterrific.init();
 });
 
 $(document).ready(function () {
