@@ -16,6 +16,7 @@ gem "cocoon"
 gem "devise", '>= 4.7.1'
 gem "devise_invitable"
 gem "dotenv-rails"
+gem "filterrific"
 gem "flipper"
 gem "flipper-active_record"
 gem "flipper-ui"

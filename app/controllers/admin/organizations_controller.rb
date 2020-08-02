@@ -15,7 +15,17 @@ class Admin::OrganizationsController < AdminController
   end
 
   def index
-    @organizations = Organization.alphabetized.all
+    @filterrific = initialize_filterrific(
+      Organization.alphabetized,
+      params[:filterrific]
+    ) || return
+
+    @organizations = @filterrific.find.page(params[:page])
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def new

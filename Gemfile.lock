@@ -163,6 +163,7 @@ GEM
     fakeredis (0.8.0)
       redis (~> 4.1)
     ffi (1.12.2)
+    filterrific (5.2.1)
     flipper (0.18.0)
     flipper-active_record (0.18.0)
       activerecord (>= 5.0, < 7)
@@ -533,6 +534,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   fakeredis
+  filterrific
   flipper
   flipper-active_record
   flipper-ui
