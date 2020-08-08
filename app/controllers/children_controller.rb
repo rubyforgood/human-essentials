@@ -65,14 +65,6 @@ class ChildrenController < ApplicationController
     end
   end
 
-  def destroy
-    child = current_partner.children.find_by(id: params[:id])
-    if child.present?
-      child.destroy
-      redirect_to children_url, notice: "Child was successfully destroyed."
-    end
-  end
-
   private
 
   def family
