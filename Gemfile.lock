@@ -420,6 +420,8 @@ GEM
       rubyzip (>= 1.2.2)
     semantic_range (2.3.0)
     shellany (0.0.1)
+    shoulda-matchers (4.3.0)
+      activesupport (>= 4.2.0)
     sidekiq (5.2.9)
       connection_pool (~> 2.2, >= 2.2.2)
       rack (~> 2.0)
@@ -572,6 +574,7 @@ DEPENDENCIES
   rubocop
   rubocop-rails (~> 2.7.1)
   sass-rails
+  shoulda-matchers (~> 4.0)
   sidekiq
   sidekiq-scheduler
   simple_form
