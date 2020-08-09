@@ -16,7 +16,7 @@ FactoryBot.define do
     sequence(:email) { Faker::Internet.unique.email }
     organization_name { Faker::Company.name }
     organization_website { Faker::Internet.domain_name }
-    request_details { Faker::Lorem.paragraphs }
+    request_details { Faker::Lorem.paragraphs.join(", ") }
   end
 end
 

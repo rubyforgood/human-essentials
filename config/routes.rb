@@ -166,5 +166,7 @@ Rails.application.routes.draw do
 
   get "pages/:name", to: "static#page"
   get "/register", to: "static#register"
+  resources :account_requests, only: [:new, :create, :show]
+
   root "static#index"
 end
