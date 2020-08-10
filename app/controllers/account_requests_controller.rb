@@ -9,6 +9,9 @@ class AccountRequestsController < ApplicationController
   def confirmation
   end
 
+  def invalid_token
+  end
+
   def new
     @account_request = AccountRequest.new
   end
@@ -27,6 +30,13 @@ class AccountRequestsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_account_request_from_token
     @account_request = AccountRequest.find_by_identity_token(params[:token])
+
+    if @account_request.nil?
+      redirect_to invalid_token_account_requests_path(token: params[:token])
+      return
+    end
+
+    @account_request
   end
 
   # Only allow a list of trusted parameters through.

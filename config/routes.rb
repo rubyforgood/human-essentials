@@ -169,6 +169,7 @@ Rails.application.routes.draw do
   resources :account_requests, only: [:new, :create] do
     collection do
       get 'confirmation'
+      get 'invalid_token'
     end
   end
 

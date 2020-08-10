@@ -19,12 +19,13 @@ RSpec.describe "/account_requests", type: :request do
       end
     end
 
-    context 'when a invalid code query parameter' do
-      it 'should render a error that says that is code provided is invalid' do
-        get confirmed_account_request_url(token: 'not-a-real-token')
+    context 'when given a invalid token' do
+      let(:fake_token) { 'not-a-real-token' }
 
-        # TODO - redirect to page that lets them know the token is invalid
-        expect(response).to render_template(:confirmation)
+      it 'should render a error that says that is code provided is invalid' do
+        get confirmation_account_requests_url(token: fake_token)
+
+        expect(response).to redirect_to(invalid_token_account_requests_url(token: fake_token))
       end
     end
   end
