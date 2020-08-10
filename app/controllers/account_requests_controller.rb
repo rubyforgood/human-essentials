@@ -2,11 +2,11 @@ class AccountRequestsController < ApplicationController
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
 
-  before_action :set_account_request, only: [:show]
+  before_action :set_account_request_from_token, only: [:confirmation]
 
   layout 'devise'
 
-  def show
+  def confirmation
   end
 
   def new
@@ -17,7 +17,7 @@ class AccountRequestsController < ApplicationController
     @account_request = AccountRequest.new(account_request_params)
 
     if @account_request.save
-      redirect_to @account_request, notice: 'Account request was successfully created.'
+      redirect_to confirmation_account_requests_path(token: @account_request.identity_token), notice: 'Account request was successfully created.'
     else
       render :new
     end
@@ -25,8 +25,8 @@ class AccountRequestsController < ApplicationController
 
   private
   # Use callbacks to share common setup or constraints between actions.
-  def set_account_request
-    @account_request = AccountRequest.find(params[:id])
+  def set_account_request_from_token
+    @account_request = AccountRequest.find_by_identity_token(params[:token])
   end
 
   # Only allow a list of trusted parameters through.

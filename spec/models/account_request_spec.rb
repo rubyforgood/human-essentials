@@ -56,4 +56,48 @@ RSpec.describe AccountRequest, type: :model do
       end
     end
   end
+
+  describe '.find_by_identity_token' do
+    subject { described_class.find_by_identity_token(identity_token) }
+
+    context 'when the identity_token provided does not match any AccountRequest' do
+      let(:identity_token) { 'not-a-real-token' }
+
+      it 'should return nil' do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context 'when the identity_token corresponds to an existing AccountRequest' do
+      let!(:account_request) { FactoryBot.create(:account_request) }
+      let(:identity_token) { account_request.identity_token }
+
+      it 'should return the corresponding AccountRequest' do
+        expect(subject).to eq(account_request)
+      end
+    end
+
+  end
+
+  describe '#identity_token' do
+    subject { account_request.identity_token }
+    let(:account_request) { FactoryBot.create(:account_request) }
+
+    context 'when the account_request is not persisted' do
+      before do
+        allow(account_request).to receive(:persisted?).and_return(false)
+      end
+
+      it 'should raise an error' do
+        expect { subject }.to raise_error('must have an id')
+      end
+    end
+
+    it 'should return a JWT token that contains the id of the account_request_id' do
+      token = subject
+      decoded_token = JWT.decode(token, Rails.application.secrets[:secret_key_base], true, { algorithm: 'HS256' })
+      expect(decoded_token[0]["account_request_id"]).to eq(account_request.id)
+    end
+  end
+
 end

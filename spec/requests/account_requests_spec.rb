@@ -9,15 +9,22 @@ RSpec.describe "/account_requests", type: :request do
     end
   end
 
-  describe 'GET #show' do
-    context 'when a invalid code query parameter' do
-      it 'should render a error that says that is code provided is invalid' do
+  describe 'GET #confirmation' do
+    context 'when given a valid token' do
+      let!(:account_request) { FactoryBot.create(:account_request) }
+
+      it 'should the confirmation template' do
+        get confirmation_account_requests_url(token: account_request.identity_token)
+        expect(response).to render_template(:confirmation)
       end
     end
 
-    context 'when no code query paramter is provided' do
-      it 'should render a error that says that the code provided is invalid' do
+    context 'when a invalid code query parameter' do
+      it 'should render a error that says that is code provided is invalid' do
+        get confirmed_account_request_url(token: 'not-a-real-token')
 
+        # TODO - redirect to page that lets them know the token is invalid
+        expect(response).to render_template(:confirmation)
       end
     end
   end
@@ -32,8 +39,11 @@ RSpec.describe "/account_requests", type: :request do
         }.to change(AccountRequest, :count).by(1)
       end
 
-      it "redirects to the created account_request" do
+      it "redirects to the created account_request confirmation" do
         post account_requests_url, params: { account_request: valid_create_attributes }
+
+        identity_token = AccountRequest.last.identity_token
+        expect(response).to redirect_to(confirmation_account_requests_url(token: identity_token))
       end
     end
 

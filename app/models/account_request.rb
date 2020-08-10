@@ -18,6 +18,22 @@ class AccountRequest < ApplicationRecord
   validate :email_not_already_used_by_organization
   validate :email_not_already_used_by_user
 
+  def self.find_by_identity_token(identity_token)
+    decrypted_token = JWT.decode(identity_token, Rails.application.secrets[:secret_key_base], true, { algorithm: 'HS256' })
+    account_request_id = decrypted_token[0]["account_request_id"]
+
+    AccountRequest.find_by(id: account_request_id)
+  rescue
+    # The identity_token was determined to not be valid
+    # and returns nil to indicate no match found.
+    return nil
+  end
+
+  def identity_token
+    raise 'must have an id' unless self.persisted?
+    JWT.encode({ account_request_id: self.id }, Rails.application.secrets[:secret_key_base], 'HS256')
+  end
+
   private
 
   def email_not_already_used_by_organization

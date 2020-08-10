@@ -1,0 +1,14 @@
+<%= simple_form_for(@account_request) do |f| %>
+  <%= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.input :email %>
+    <%= f.input :organization_name %>
+    <%= f.input :organization_website %>
+    <%= f.input :request_details %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
