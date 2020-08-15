@@ -32,7 +32,7 @@ class AccountRequestsController < ApplicationController
 
     if @account_request.save
       # Check that this works later.
-      AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_now
+      AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_later
 
       redirect_to confirmation_account_requests_path(token: @account_request.identity_token), notice: 'Account request was successfully created.'
     else

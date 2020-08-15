@@ -48,9 +48,9 @@ RSpec.describe "/account_requests", type: :request do
       end
 
       it 'delivers the queue' do
-        post account_requests_url, params: { account_request: valid_create_attributes }
-        # TODO add a test to make sure the email gets sent
-        # expect(AccountRequestMailer.method(:confirmation)).to be_delayed
+        expect {
+          post account_requests_url, params: { account_request: valid_create_attributes }
+        }.to have_enqueued_job.on_queue('mailers')
       end
     end
 
