@@ -4,6 +4,38 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       sign_in(@super_admin)
     end
 
+    it "filters by organizations by name in organizations index page" do
+      foo_org = FactoryBot.create(:organization, name: 'foo')
+      bar_org = FactoryBot.create(:organization, name: 'bar')
+      baz_org = FactoryBot.create(:organization, name: 'baz')
+
+      visit admin_organizations_path
+
+      # All organizations listed on load
+      [foo_org, bar_org, baz_org].each do |o|
+        expect(page).to have_content(o.name)
+      end
+
+      # Searching by 'ba' should remove the 'foo' organization
+      # from the organizations list but keep the 'bar' and 'baz'
+      # organization listed.
+      fill_in "filterrific_search_name", with: "ba"
+
+      expect(page).not_to have_content(foo_org.name)
+      [bar_org, baz_org].each do |o|
+        expect(page).to have_content(o.name)
+      end
+
+      # Searching by 'bar' should only have the 'bar' organization
+      # listed.
+      fill_in "filterrific_search_name", with: "bar"
+      [foo_org, baz_org].each do |o|
+        expect(page).not_to have_content(o.name)
+      end
+
+      expect(page).to have_content(bar_org.name)
+    end
+
     it "creates a new organization" do
       allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path

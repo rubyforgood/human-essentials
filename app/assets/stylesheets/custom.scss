@@ -1,3 +1,6 @@
+@import 'base/_variables';
+@import 'AdminLTE';
+
 @mixin for-desktop {
     @media (min-width: 992px) and (min-height: 769px) { 
         @content;

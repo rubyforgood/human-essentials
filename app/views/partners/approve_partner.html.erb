@@ -40,16 +40,15 @@
                 <h2>Agency Information</h2>
                 <p>Name: <%= @agency[:name] %></p>
                 <p>Distributor Type <%= @agency[:distributor_type] %></p>
-                <p>Agency Type:
-                  <% @agency[:agency_type] %></p>
+                <p>Agency Type: <%= @agency[:agency_type] %></p>
                 <p>Proof of Agency Status
                   (Link): <%= link_to File.basename(@agency[:proof_of_agency_status]), documentation_url(@agency[:proof_of_agency_status]), target: :_blank %></p>
                 <p>Agency Mission: <%= @agency[:agency_mission] %></p>
-                <p>Address <%= @agency[:address1] %></p>
-                <p>Address <%= @agency[:address2] %></p>
-                <p>City: <%= @agency[:city] %></p>
-                <p>State: <%= @agency[:state] %></p>
-                <p>Zip Code: <%= @agency[:zip_code] %></p>
+                <p>Address Line 1: <%= @agency[:address][:address1] %></p>
+                <p>Address Line 2: <%= @agency[:address][:address2] %></p>
+                <p>City: <%= @agency[:address][:city] %></p>
+                <p>State: <%= @agency[:address][:state] %></p>
+                <p>Zip Code: <%= @agency[:address][:zip_code] %></p>
                 <br>
                 <% if @fields.include?('media_information') || @fields.empty? %>
                   <h2>Media Information</h2>
