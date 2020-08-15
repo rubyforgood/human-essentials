@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1> We've just received a confirmed account request from <%= @account_request.organization_name %> </h1>
+
+    <h3> Here are their details </h3>
+    <% @account_request.attributes.each do |ar, val| %>
+      <span><%= ar.humanize %> : <%= val %></span>
+      <br>
+    <% end %>
+
+
+
+
+
+
+
+
+
+    <%= link_to 'Create This Organization', new_admin_organization(token: @account_request.identity_token) %>
+
+  </body>
+</html>

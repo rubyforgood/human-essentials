@@ -30,7 +30,20 @@ class Admin::OrganizationsController < AdminController
 
   def new
     @organization = Organization.new
-    @organization.users.build(organization_admin: true)
+    account_request = params[:token] && AccountRequest.find_by_identity_token(params[:token])
+
+    if account_request.present?
+      @organization.assign_attributes({
+        name: account_request.organization_name,
+        url: account_request.organization_website,
+        email: account_request.email
+      })
+
+      # Add name instead of this.
+      @organization.users.build(organization_admin: true, email: account_request.email)
+    else
+      @organization.users.build(organization_admin: true)
+    end
   end
 
   def create
@@ -66,4 +79,5 @@ class Admin::OrganizationsController < AdminController
           .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text,
                   users_attributes: %i(name email organization_admin))
   end
+
 end

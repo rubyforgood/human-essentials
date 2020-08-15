@@ -46,6 +46,12 @@ RSpec.describe "/account_requests", type: :request do
         identity_token = AccountRequest.last.identity_token
         expect(response).to redirect_to(confirmation_account_requests_url(token: identity_token))
       end
+
+      it 'delivers the queue' do
+        post account_requests_url, params: { account_request: valid_create_attributes }
+        # TODO add a test to make sure the email gets sent
+        # expect(AccountRequestMailer.method(:confirmation)).to be_delayed
+      end
     end
 
     context "with invalid parameters" do

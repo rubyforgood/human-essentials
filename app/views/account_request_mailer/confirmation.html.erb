@@ -7,6 +7,8 @@
     <p>Greetings from the Diaperbase Team,</p>
     <h1> TODO CHANGE THE COPY FROM GIA </h1>
 
+    <%= link_to 'Confirm', confirm_account_requests_url(token: @account_request.identity_token) %>
+
     <p>
       We're delighted to hear from you and hope you're all staying well!
     </p>
