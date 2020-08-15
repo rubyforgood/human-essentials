@@ -17,13 +17,12 @@ RSpec.describe "Partners", type: :request do
   describe "GET #show" do
     let(:partner) { create(:partner, organization: @organization) }
     let(:fake_get_return) do
-      {"agency"=>{
-        "families_served"=>Faker::Number.number,
-        "children_served"=>Faker::Number.number,
-        "family_zipcodes"=>Faker::Number.number,
-        "family_zipcodes_list"=>[Faker::Number.number]
-        }
-      }.to_json
+      { "agency" => {
+        "families_served" => Faker::Number.number,
+        "children_served" => Faker::Number.number,
+        "family_zipcodes" => Faker::Number.number,
+        "family_zipcodes_list" => [Faker::Number.number]
+      } }.to_json
     end
 
     before do
