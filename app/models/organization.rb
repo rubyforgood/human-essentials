@@ -104,7 +104,14 @@ class Organization < ApplicationRecord
 
   include Geocodable
 
+  filterrific(
+    available_filters: [
+      :search_name
+    ]
+  )
+
   scope :alphabetized, -> { order(:name) }
+  scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param

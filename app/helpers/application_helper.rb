@@ -33,7 +33,7 @@ module ApplicationHelper
   # wraps link_to_unless_current to provide Foundation6 friendly <a> tags
   def navigation_link_to(*args)
     link_to_unless_current(*args) do
-      content_tag(:a, args.first, class: "active", disabled: true)
+      tag.a(args.first, class: "active", disabled: true)
     end
   end
 
@@ -60,6 +60,14 @@ module ApplicationHelper
 
   def confirm_delete_msg(resource)
     "Are you sure you want to delete #{resource}?"
+  end
+
+  def confirm_deactivate_msg(resource)
+    "Are you sure you want to deactivate #{resource}?"
+  end
+
+  def confirm_reactivate_msg(resource)
+    "Are you sure you want to reactivate #{resource}?"
   end
 
   def confirm_restore_msg(resource)
