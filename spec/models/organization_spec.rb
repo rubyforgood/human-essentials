@@ -332,6 +332,19 @@ RSpec.describe Organization, type: :model do
       expect(intial_count).to_not eq(final_count)
     end
   end
+
+  describe 'from_email' do
+    it 'returns email when present' do
+      expect(organization.from_email).to eq(organization.email)
+    end
+
+    it 'returns admin email when not present' do
+      org = create(:organization, email: nil)
+      admin = create(:organization_admin, organization: org)
+      expect(org.from_email).to eq(admin.email)
+    end
+  end
+
   describe 'reminder_day' do
     it "can only contain numbers 1-14" do
       expect(build(:organization, reminder_day: 14)).to be_valid
