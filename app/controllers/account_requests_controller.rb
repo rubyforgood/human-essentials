@@ -14,11 +14,7 @@ class AccountRequestsController < ApplicationController
   end
 
   def confirm_last
-    # Show a different message if they were already confirmed.
-    #
-    # Send email to us with a link that lets us register them via
-    # a link.
-    AccountRequestMailer.approval_request(account_request_id: @account_request.id).deliver_now
+    AccountRequestMailer.approval_request(account_request_id: @account_request.id).deliver_later
   end
 
   def invalid_token
@@ -32,9 +28,7 @@ class AccountRequestsController < ApplicationController
     @account_request = AccountRequest.new(account_request_params)
 
     if @account_request.save
-      # Not ideal because mailer actions should be in a async job as it could cause
-      # the web connection to stall.
-      AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_now
+      AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_later
 
       redirect_to confirmation_account_requests_path(token: @account_request.identity_token),
         notice: 'Account request was successfully created.'

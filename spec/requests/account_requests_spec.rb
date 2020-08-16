@@ -47,10 +47,10 @@ RSpec.describe "/account_requests", type: :request do
         expect(response).to redirect_to(confirmation_account_requests_url(token: identity_token))
       end
 
-      it 'delivers the queue' do
+      it 'delivers the confirmation email via default queue' do
         expect {
           post account_requests_url, params: { account_request: valid_create_attributes }
-        }.to have_enqueued_job.on_queue('mailers')
+        }.to have_enqueued_job.on_queue('default')
       end
     end
 
