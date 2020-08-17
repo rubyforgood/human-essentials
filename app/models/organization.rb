@@ -188,6 +188,10 @@ class Organization < ApplicationRecord
     end
   end
 
+  def from_email
+    email || get_admin_email
+  end
+
   private
 
   def update_partner_sections
@@ -206,5 +210,9 @@ class Organization < ApplicationRecord
     return if deadline_day.blank? || reminder_day.blank?
 
     errors.add(:deadline_day, "must be after the reminder date") if deadline_day < reminder_day
+  end
+
+  def get_admin_email
+    User.where(organization_id: id, organization_admin: true).sample.email
   end
 end
