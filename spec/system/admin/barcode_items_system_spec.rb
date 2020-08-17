@@ -5,22 +5,20 @@ RSpec.describe "Barcode Items Admin", type: :system do
     end
 
     context "user visits the index page" do
-      before do
-        visit admin_barcode_items_path
-      end
-
       let!(:item) { create(:item) }
       let!(:base_item) { create(:base_item) }
       let!(:barcode_item) { create(:global_barcode_item) }
 
+      before do
+        visit admin_barcode_items_path
+      end
+
       it 'shows the barcode item' do
-        page.refresh # not sure what is making it need this
         expect(page).to have_content(barcode_item.barcodeable.name)
         expect(page).to have_content(barcode_item.value)
       end
 
       it "deletes a global barcode" do
-        page.refresh # not sure what is making it need this
         expect(accept_confirm { click_on "Delete" }).to include "Are you sure you want to delete"
         expect(page).to have_no_content "\n#{barcode_item.base_item.name}"
       end
