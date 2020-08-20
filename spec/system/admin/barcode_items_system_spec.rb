@@ -38,13 +38,14 @@ RSpec.describe "Barcode Items Admin", type: :system do
     end
 
     context "user visits the new page" do
+      let!(:item) { create(:item) }
+      let!(:base_item) { create(:base_item) }
+
       before do
         visit new_admin_barcode_item_path
       end
 
       it 'creates a new global barcode item' do
-        skip "`@items` is not being set in `new` action"
-
         fill_in "Quantity", with: 100
         select item.base_item.name, from: "barcode_item_barcodeable_id"
         fill_in "Barcode", with: 66_666
@@ -57,6 +58,8 @@ RSpec.describe "Barcode Items Admin", type: :system do
     end
 
     context "user visits the edit page" do
+      let!(:item) { create(:item) }
+      let!(:base_item) { create(:base_item) }
       let!(:barcode_item) { create(:global_barcode_item) }
 
       before do
@@ -64,8 +67,6 @@ RSpec.describe "Barcode Items Admin", type: :system do
       end
 
       it 'updates the barcode item' do
-        skip "`@items` is not being set in `edit` action"
-
         fill_in "Quantity", with: 100
         select item.base_item.name, from: "barcode_item_barcodeable_id"
         fill_in "Barcode", with: 66_666
