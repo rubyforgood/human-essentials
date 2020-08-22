@@ -10,7 +10,8 @@ class ChildrenController < ApplicationController
           .order(sort_column + ' ' + sort_direction),
       params[:filterrific]
     ) || return
-    @children = @filterrific.find.page(params[:page])
+
+    @children = @filterrific.find
 
     respond_to do |format|
       format.js
