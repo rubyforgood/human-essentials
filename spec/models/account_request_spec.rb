@@ -3,6 +3,7 @@
 # Table name: account_requests
 #
 #  id                   :bigint           not null, primary key
+#  confirmed_at         :datetime
 #  email                :string           not null
 #  name                 :string           not null
 #  organization_name    :string           not null
@@ -108,7 +109,32 @@ RSpec.describe AccountRequest, type: :model do
     end
   end
 
-  context '#processed?' do
+  describe '#confirmed?' do
+    subject { account_request.confirmed? }
+    let(:account_request) { FactoryBot.create(:account_request) }
+
+    context 'when confirmed_at is blank' do
+      before do
+        expect(account_request.confirmed_at).to eq(nil)
+      end
+
+      it 'should return false' do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context 'when confirmed_at is not blank' do
+      before do
+        account_request.update_column(:confirmed_at, Time.current)
+      end
+
+      it 'should return true' do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe '#processed?' do
     subject { account_request.processed? }
     let(:account_request) { FactoryBot.create(:account_request) }
 

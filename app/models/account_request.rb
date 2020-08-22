@@ -3,6 +3,7 @@
 # Table name: account_requests
 #
 #  id                   :bigint           not null, primary key
+#  confirmed_at         :datetime
 #  email                :string           not null
 #  name                 :string           not null
 #  organization_name    :string           not null
@@ -36,6 +37,10 @@ class AccountRequest < ApplicationRecord
   def identity_token
     raise 'must have an id' unless self.persisted?
     JWT.encode({ account_request_id: self.id }, Rails.application.secrets[:secret_key_base], 'HS256')
+  end
+
+  def confirmed?
+    confirmed_at.present?
   end
 
   def processed?

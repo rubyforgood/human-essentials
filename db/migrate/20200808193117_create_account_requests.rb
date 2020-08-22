@@ -5,6 +5,7 @@ class CreateAccountRequests < ActiveRecord::Migration[6.0]
       t.string :email, null: false, unique: true
       t.string :organization_name, null: false
       t.string :organization_website
+      t.datetime :confirmed_at
       t.text :request_details, null: false
 
       t.timestamps

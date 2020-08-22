@@ -7,13 +7,13 @@ class AccountRequestsController < ApplicationController
   layout 'devise'
 
   def received
-    # Maybe better would be the word 'received'
   end
 
   def confirmation
   end
 
   def confirm
+    @account_request.update!(confirmed_at: Time.current)
     AccountRequestMailer.approval_request(account_request_id: @account_request.id).deliver_later
   end
 
@@ -43,7 +43,7 @@ class AccountRequestsController < ApplicationController
     @account_request = AccountRequest.find_by_identity_token(params[:token])
 
     # Use confirmation timestamp instead
-    if @account_request.nil? || @account_request.processed?
+    if @account_request.nil? || @account_request.confirmed? || @account_request.processed?
       redirect_to invalid_token_account_requests_path(token: params[:token])
       return
     end

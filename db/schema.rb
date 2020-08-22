@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 2020_08_08_193117) do
     t.string "email", null: false
     t.string "organization_name", null: false
     t.string "organization_website"
+    t.datetime "confirmed_at"
     t.text "request_details", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
