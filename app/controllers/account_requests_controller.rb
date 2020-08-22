@@ -42,7 +42,8 @@ class AccountRequestsController < ApplicationController
   def set_account_request_from_token
     @account_request = AccountRequest.find_by_identity_token(params[:token])
 
-    if @account_request.nil?
+    # Use confirmation timestamp instead
+    if @account_request.nil? || @account_request.processed?
       redirect_to invalid_token_account_requests_path(token: params[:token])
       return
     end

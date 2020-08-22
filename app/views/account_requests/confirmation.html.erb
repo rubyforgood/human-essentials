@@ -1,4 +1,10 @@
-<h1> Are you sure you that you want an account with us? </h1>
+<div class="card">
+  <div class="card-body text-center">
+    <div class='card-text'>
+      <h3> Are you sure you that you want an account with us? </h3>
 
-<span> Click Confirm To Proceed </span>
-<%= link_to "Confirm", confirm_account_requests_path(token: @account_request.identity_token) %></li>
+      <%= link_to "Confirm", confirm_account_requests_path(token: @account_request.identity_token) %></li>
+    </div>
+  </div>
+</div>
+

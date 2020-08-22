@@ -1,26 +1,9 @@
-<p id="notice"><%= notice %></p>
+<div class="card">
+  <div class="card-body text-center">
+    <div class='card-text'>
+      <h2> Request Received! </h2>
+      <p> We've sent you a email with instructions on next steps at <strong><%= @account_request.email %></strong>! </p>
+    </div>
+  </div>
+</div>
 
-<p>
-  <strong>Name:</strong>
-  <%= @account_request.name %>
-</p>
-
-<p>
-  <strong>Email:</strong>
-  <%= @account_request.email %>
-</p>
-
-<p>
-  <strong>Organization name:</strong>
-  <%= @account_request.organization_name %>
-</p>
-
-<p>
-  <strong>Organization website:</strong>
-  <%= @account_request.organization_website %>
-</p>
-
-<p>
-  <strong>Request details:</strong>
-  <%= @account_request.request_details %>
-</p>

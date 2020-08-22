@@ -38,6 +38,10 @@ class AccountRequest < ApplicationRecord
     JWT.encode({ account_request_id: self.id }, Rails.application.secrets[:secret_key_base], 'HS256')
   end
 
+  def processed?
+    organization.present?
+  end
+
   private
 
   def email_not_already_used_by_organization

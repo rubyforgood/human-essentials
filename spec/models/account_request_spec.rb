@@ -108,4 +108,30 @@ RSpec.describe AccountRequest, type: :model do
     end
   end
 
+  context '#processed?' do
+    subject { account_request.processed? }
+    let(:account_request) { FactoryBot.create(:account_request) }
+
+    context 'when the account request has no associated organization' do
+      before do
+        expect(account_request.organization).to eq(nil)
+      end
+
+      it 'should return false' do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context 'when the account request has a associated organization' do
+      before do
+        FactoryBot.create(:organization, account_request_id: account_request.id)
+      end
+
+      it 'should return true' do
+        expect(subject).to eq(true)
+      end
+    end
+
+  end
+
 end
