@@ -53,7 +53,7 @@ RSpec.describe "/account_requests", type: :request do
     context 'when given a valid token' do
       let!(:account_request) { FactoryBot.create(:account_request) }
 
-      it 'should the confirmation template' do
+      it 'should render the confirmation template' do
         get confirmation_account_requests_url(token: account_request.identity_token)
         expect(response).to render_template(:confirmation)
       end
@@ -87,7 +87,7 @@ RSpec.describe "/account_requests", type: :request do
     context 'when given a valid token' do
       let!(:account_request) { FactoryBot.create(:account_request) }
 
-      it 'should the confirmation template' do
+      it 'should render the received template' do
         get received_account_requests_url(token: account_request.identity_token)
         expect(response).to render_template(:received)
       end
