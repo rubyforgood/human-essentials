@@ -9,6 +9,46 @@ RSpec.describe "/account_requests", type: :request do
     end
   end
 
+  describe 'GET #confirm' do
+    context 'when given a valid token' do
+      let!(:account_request) { FactoryBot.create(:account_request) }
+
+      it 'should the update confirmed_at on the account_request, queue confirmation email and render confirm template' do
+        expect(account_request.confirmed_at).to eq(nil)
+
+        expect {
+          get confirm_account_requests_url(token: account_request.identity_token)
+        }.to have_enqueued_job.on_queue('default')
+
+        expect(account_request.reload.confirmed_at).not_to eq(nil)
+        expect(response).to render_template(:confirm)
+      end
+    end
+
+    context 'when given a invalid token' do
+      let(:fake_token) { 'not-a-real-token' }
+
+      it 'should render a error that says that is code provided is invalid' do
+        get confirm_account_requests_url(token: fake_token)
+
+        expect(response).to redirect_to(invalid_token_account_requests_url(token: fake_token))
+      end
+    end
+
+    context 'when given a token that has already been confirmed' do
+      let!(:account_request) { FactoryBot.create(:account_request) }
+      before do
+        FactoryBot.create(:organization, account_request_id: account_request.id)
+      end
+
+      it 'should render a error that says that is code provided is invalid' do
+        get confirm_account_requests_url(token: account_request.identity_token)
+
+        expect(response).to redirect_to(invalid_token_account_requests_url(token: account_request.identity_token))
+      end
+    end
+  end
+
   describe 'GET #confirmation' do
     context 'when given a valid token' do
       let!(:account_request) { FactoryBot.create(:account_request) }
@@ -24,6 +64,40 @@ RSpec.describe "/account_requests", type: :request do
 
       it 'should render a error that says that is code provided is invalid' do
         get confirmation_account_requests_url(token: fake_token)
+
+        expect(response).to redirect_to(invalid_token_account_requests_url(token: fake_token))
+      end
+    end
+
+    context 'when given a token that has already been confirmed' do
+      let!(:account_request) { FactoryBot.create(:account_request) }
+      before do
+        FactoryBot.create(:organization, account_request_id: account_request.id)
+      end
+
+      it 'should render a error that says that is code provided is invalid' do
+        get confirmation_account_requests_url(token: account_request.identity_token)
+
+        expect(response).to redirect_to(invalid_token_account_requests_url(token: account_request.identity_token))
+      end
+    end
+  end
+
+  describe 'GET #received' do
+    context 'when given a valid token' do
+      let!(:account_request) { FactoryBot.create(:account_request) }
+
+      it 'should the confirmation template' do
+        get received_account_requests_url(token: account_request.identity_token)
+        expect(response).to render_template(:received)
+      end
+    end
+
+    context 'when given a invalid token' do
+      let(:fake_token) { 'not-a-real-token' }
+
+      it 'should render a error that says that is code provided is invalid' do
+        get received_account_requests_url(token: fake_token)
 
         expect(response).to redirect_to(invalid_token_account_requests_url(token: fake_token))
       end
