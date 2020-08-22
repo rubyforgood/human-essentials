@@ -1,21 +1,4 @@
-<p id="notice"><%= notice %></p>
+<h1> Are you sure you that you want an account with us? </h1>
 
-<p>
-  <strong>Email:</strong>
-  <%= @account_request.email %>
-</p>
-
-<p>
-  <strong>Organization name:</strong>
-  <%= @account_request.organization_name %>
-</p>
-
-<p>
-  <strong>Organization website:</strong>
-  <%= @account_request.organization_website %>
-</p>
-
-<p>
-  <strong>Request details:</strong>
-  <%= @account_request.request_details %>
-</p>
+<span> Click Confirm To Proceed </span>
+<%= link_to "Confirm", confirm_account_requests_path(token: @account_request.identity_token) %></li>

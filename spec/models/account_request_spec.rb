@@ -4,6 +4,7 @@
 #
 #  id                   :bigint           not null, primary key
 #  email                :string           not null
+#  name                 :string           not null
 #  organization_name    :string           not null
 #  organization_website :string
 #  request_details      :text             not null
@@ -13,9 +14,16 @@
 require 'rails_helper'
 
 RSpec.describe AccountRequest, type: :model do
+
+  describe 'associations' do
+    it { should have_one(:organization).class_name('Organization') }
+  end
+
   describe 'validations' do
     subject { account_request }
     let(:account_request) { FactoryBot.build(:account_request) }
+
+    it { should validate_presence_of(:name) }
 
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email) }

@@ -2,18 +2,18 @@ class AccountRequestsController < ApplicationController
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
 
-  before_action :set_account_request_from_token, only: [:confirmation, :confirm, :confirm_last]
+  before_action :set_account_request_from_token, only: [:received, :confirmation, :confirm]
 
   layout 'devise'
 
-  def confirmation
+  def received
     # Maybe better would be the word 'received'
   end
 
-  def confirm
+  def confirmation
   end
 
-  def confirm_last
+  def confirm
     AccountRequestMailer.approval_request(account_request_id: @account_request.id).deliver_later
   end
 
@@ -30,7 +30,7 @@ class AccountRequestsController < ApplicationController
     if @account_request.save
       AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_later
 
-      redirect_to confirmation_account_requests_path(token: @account_request.identity_token),
+      redirect_to received_account_requests_path(token: @account_request.identity_token),
         notice: 'Account request was successfully created.'
     else
       render :new
@@ -52,6 +52,6 @@ class AccountRequestsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def account_request_params
-    params.require(:account_request).permit(:email, :organization_name, :organization_website, :request_details)
+    params.require(:account_request).permit(:name, :email, :organization_name, :organization_website, :request_details)
   end
 end

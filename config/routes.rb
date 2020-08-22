@@ -168,9 +168,9 @@ Rails.application.routes.draw do
   get "/register", to: "static#register"
   resources :account_requests, only: [:new, :create] do
     collection do
-      get 'confirm'
-      get 'confirm_last'
       get 'confirmation'
+      get 'confirm'
+      get 'received'
 
       get 'invalid_token'
     end

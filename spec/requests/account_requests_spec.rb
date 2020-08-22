@@ -44,7 +44,7 @@ RSpec.describe "/account_requests", type: :request do
         post account_requests_url, params: { account_request: valid_create_attributes }
 
         identity_token = AccountRequest.last.identity_token
-        expect(response).to redirect_to(confirmation_account_requests_url(token: identity_token))
+        expect(response).to redirect_to(received_account_requests_url(token: identity_token))
       end
 
       it 'delivers the confirmation email via default queue' do

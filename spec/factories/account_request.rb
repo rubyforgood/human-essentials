@@ -13,6 +13,7 @@
 
 FactoryBot.define do
   factory :account_request do
+    name { Faker::Name.unique.name }
     sequence(:email) { Faker::Internet.unique.email }
     organization_name { Faker::Company.name }
     organization_website { Faker::Internet.domain_name }

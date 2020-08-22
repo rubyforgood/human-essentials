@@ -16,6 +16,7 @@ ActiveRecord::Schema.define(version: 2020_08_08_193117) do
   enable_extension "plpgsql"
 
   create_table "account_requests", force: :cascade do |t|
+    t.string "name", null: false
     t.string "email", null: false
     t.string "organization_name", null: false
     t.string "organization_website"
@@ -266,6 +267,7 @@ ActiveRecord::Schema.define(version: 2020_08_08_193117) do
     t.text "invitation_text"
     t.integer "default_storage_location"
     t.text "partner_form_fields", default: [], array: true
+    t.integer "account_request_id"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -390,6 +392,7 @@ ActiveRecord::Schema.define(version: 2020_08_08_193117) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "manufacturers", "organizations"
+  add_foreign_key "organizations", "account_requests"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

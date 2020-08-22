@@ -40,7 +40,7 @@ class Admin::OrganizationsController < AdminController
       })
 
       # Add name instead of this.
-      @organization.users.build(organization_admin: true, email: account_request.email)
+      @organization.users.build(organization_admin: true, email: account_request.email, name: account_request.name)
     else
       @organization.users.build(organization_admin: true)
     end
