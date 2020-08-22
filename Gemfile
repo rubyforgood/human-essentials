@@ -55,7 +55,7 @@ gem 'bootstrap-daterangepicker-rails'
 
 group :development, :test do
   gem "awesome_print"
-  # gem "fakeredis", require: "fakeredis/rspec"
+  gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "pry-rails"
   gem "pry-remote"
