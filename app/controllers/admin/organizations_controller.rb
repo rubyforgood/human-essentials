@@ -32,17 +32,19 @@ class Admin::OrganizationsController < AdminController
     @organization = Organization.new
     account_request = params[:token] && AccountRequest.find_by_identity_token(params[:token])
 
-    if account_request.present?
+    if account_request.blank?
+      @organization.users.build(organization_admin: true)
+    elsif account_request.processed?
+      flash[:error] = "The account request had already been processed and cannot be used again"
+      @organization.users.build(organization_admin: true)
+    else
       @organization.assign_attributes({
         name: account_request.organization_name,
         url: account_request.organization_website,
         email: account_request.email,
         account_request_id: account_request.id
       })
-
       @organization.users.build(organization_admin: true, email: account_request.email, name: account_request.name)
-    else
-      @organization.users.build(organization_admin: true)
     end
   end
 
@@ -77,7 +79,7 @@ class Admin::OrganizationsController < AdminController
 
   def organization_params
     params.require(:organization)
-          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text,
+          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id,
                   users_attributes: %i(name email organization_admin))
   end
 
