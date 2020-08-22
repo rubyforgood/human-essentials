@@ -9,5 +9,4 @@ class AccountRequestMailerPreview < ActionMailer::Preview
     ar = AccountRequest.last || FactoryBot.create(:account_request)
     AccountRequestMailer.approval_request(account_request_id: ar.id)
   end
-
 end

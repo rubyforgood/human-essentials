@@ -1,5 +1,4 @@
 RSpec.describe "Account request flow", type: :system, js: true do
-
   it 'should allow prospect users to request an account via a form. And that request form data gets used to create an organization' do
     visit root_path
 

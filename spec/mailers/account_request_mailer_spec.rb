@@ -1,5 +1,4 @@
 RSpec.describe AccountRequestMailer, type: :mailer do
-
   describe '#confirmation' do
     let(:mail) { AccountRequestMailer.confirmation(account_request_id: account_request_id) }
     let(:account_request_id) { account_request.id }
@@ -26,11 +25,11 @@ RSpec.describe AccountRequestMailer, type: :mailer do
     end
 
     it 'should include the staging/demo account information' do
-      expect(mail.body.encoded).to match(/<a href='https:\/\/diaperbase.org\/'>DiaperBase<\/a>/)
+      expect(mail.body.encoded).to match(%r{<a href='https://diaperbase.org/'>DiaperBase</a>})
       expect(mail.body.encoded).to match('Username: org_admin1@example.com')
       expect(mail.body.encoded).to match('Password: password')
 
-      expect(mail.body.encoded).to match(/<a href='https:\/\/partnerbase.org\/'>PartnerBase<\/a>/)
+      expect(mail.body.encoded).to match(%r{<a href='https://partnerbase.org/'>PartnerBase</a>})
       expect(mail.body.encoded).to match('Username: verified@example.com')
       expect(mail.body.encoded).to match('Password: password')
     end
@@ -78,6 +77,5 @@ RSpec.describe AccountRequestMailer, type: :mailer do
         new_admin_organization_url(token: account_request.identity_token)
       )
     end
-
   end
 end

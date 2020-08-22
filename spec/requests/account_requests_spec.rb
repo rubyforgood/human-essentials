@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "/account_requests", type: :request do
-
   describe "GET #new" do
     it "renders a successful response" do
       get new_account_request_url
@@ -16,9 +15,9 @@ RSpec.describe "/account_requests", type: :request do
       it 'should the update confirmed_at on the account_request, queue confirmation email and render confirm template' do
         expect(account_request.confirmed_at).to eq(nil)
 
-        expect {
+        expect do
           get confirm_account_requests_url(token: account_request.identity_token)
-        }.to have_enqueued_job.on_queue('default')
+        end.to have_enqueued_job.on_queue('default')
 
         expect(account_request.reload.confirmed_at).not_to eq(nil)
         expect(response).to render_template(:confirm)
@@ -109,9 +108,9 @@ RSpec.describe "/account_requests", type: :request do
       let(:valid_create_attributes) { FactoryBot.attributes_for(:account_request) }
 
       it "creates a new AccountRequest" do
-        expect {
+        expect do
           post account_requests_url, params: { account_request: valid_create_attributes }
-        }.to change(AccountRequest, :count).by(1)
+        end.to change(AccountRequest, :count).by(1)
       end
 
       it "redirects to the created account_request confirmation" do
@@ -122,19 +121,19 @@ RSpec.describe "/account_requests", type: :request do
       end
 
       it 'delivers the confirmation email via default queue' do
-        expect {
+        expect do
           post account_requests_url, params: { account_request: valid_create_attributes }
-        }.to have_enqueued_job.on_queue('default')
+        end.to have_enqueued_job.on_queue('default')
       end
     end
 
     context "with invalid parameters" do
-      let(:invalid_attributes) { { } }
+      let(:invalid_attributes) { {} }
 
       it "does not create a new AccountRequest" do
-        expect {
+        expect do
           post account_requests_url, params: { account_request: invalid_attributes }
-        }.to change(AccountRequest, :count).by(0)
+        end.to change(AccountRequest, :count).by(0)
       end
 
       it "renders a successful response (i.e. to display the 'new' template)" do

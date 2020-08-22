@@ -16,27 +16,28 @@ class AccountRequest < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :request_details, presence: true, length: { minimum: 50 }
-  validates_format_of :email, with: URI::MailTo::EMAIL_REGEXP
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   validate :email_not_already_used_by_organization
   validate :email_not_already_used_by_user
 
-  has_one :organization
+  has_one :organization, dependent: :nullify
 
-  def self.find_by_identity_token(identity_token)
+  def self.get_by_identity_token(identity_token)
     decrypted_token = JWT.decode(identity_token, Rails.application.secrets[:secret_key_base], true, { algorithm: 'HS256' })
     account_request_id = decrypted_token[0]["account_request_id"]
 
     AccountRequest.find_by(id: account_request_id)
-  rescue
+  rescue StandardError
     # The identity_token was determined to not be valid
     # and returns nil to indicate no match found.
-    return nil
+    nil
   end
 
   def identity_token
-    raise 'must have an id' unless self.persisted?
-    JWT.encode({ account_request_id: self.id }, Rails.application.secrets[:secret_key_base], 'HS256')
+    raise 'must have an id' unless persisted?
+
+    JWT.encode({ account_request_id: id }, Rails.application.secrets[:secret_key_base], 'HS256')
   end
 
   def confirmed?
@@ -50,15 +51,14 @@ class AccountRequest < ApplicationRecord
   private
 
   def email_not_already_used_by_organization
-    if Organization.find_by(email: self.email)
+    if Organization.find_by(email: email)
       errors.add(:email, 'already used by an existing Organization')
     end
   end
 
   def email_not_already_used_by_user
-    if User.find_by(email: self.email)
+    if User.find_by(email: email)
       errors.add(:email, 'already used by an existing User')
     end
   end
-
 end

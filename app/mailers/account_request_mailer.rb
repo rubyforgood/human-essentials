@@ -1,5 +1,4 @@
 class AccountRequestMailer < ApplicationMailer
-
   def confirmation(account_request_id:)
     @account_request = AccountRequest.find(account_request_id)
 
@@ -17,5 +16,4 @@ class AccountRequestMailer < ApplicationMailer
       subject: "[Account Request] #{@account_request.organization_name}"
     )
   end
-
 end

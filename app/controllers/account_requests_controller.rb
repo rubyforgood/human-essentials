@@ -6,19 +6,16 @@ class AccountRequestsController < ApplicationController
 
   layout 'devise'
 
-  def received
-  end
+  def received; end
 
-  def confirmation
-  end
+  def confirmation; end
 
   def confirm
     @account_request.update!(confirmed_at: Time.current)
     AccountRequestMailer.approval_request(account_request_id: @account_request.id).deliver_later
   end
 
-  def invalid_token
-  end
+  def invalid_token; end
 
   def new
     @account_request = AccountRequest.new
@@ -31,16 +28,17 @@ class AccountRequestsController < ApplicationController
       AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_later
 
       redirect_to received_account_requests_path(token: @account_request.identity_token),
-        notice: 'Account request was successfully created.'
+                  notice: 'Account request was successfully created.'
     else
       render :new
     end
   end
 
   private
+
   # Use callbacks to share common setup or constraints between actions.
   def set_account_request_from_token
-    @account_request = AccountRequest.find_by_identity_token(params[:token])
+    @account_request = AccountRequest.get_by_identity_token(params[:token])
 
     # Use confirmation timestamp instead
     if @account_request.nil? || @account_request.confirmed? || @account_request.processed?

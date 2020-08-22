@@ -15,7 +15,6 @@
 require 'rails_helper'
 
 RSpec.describe AccountRequest, type: :model do
-
   describe 'associations' do
     it { should have_one(:organization).class_name('Organization') }
   end
@@ -43,10 +42,10 @@ RSpec.describe AccountRequest, type: :model do
       it 'should not allow the email' do
         expect(subject.valid?).to eq(false)
         expect(subject.errors.messages).to include({
-          email: [
-            "already used by an existing Organization"
-          ]
-        })
+                                                     email: [
+                                                       "already used by an existing Organization"
+                                                     ]
+                                                   })
       end
     end
 
@@ -58,16 +57,16 @@ RSpec.describe AccountRequest, type: :model do
       it 'should not allow the email' do
         expect(subject.valid?).to eq(false)
         expect(subject.errors.messages).to include({
-          email: [
-            "already used by an existing User"
-          ]
-        })
+                                                     email: [
+                                                       "already used by an existing User"
+                                                     ]
+                                                   })
       end
     end
   end
 
-  describe '.find_by_identity_token' do
-    subject { described_class.find_by_identity_token(identity_token) }
+  describe '.get_by_identity_token' do
+    subject { described_class.get_by_identity_token(identity_token) }
 
     context 'when the identity_token provided does not match any AccountRequest' do
       let(:identity_token) { 'not-a-real-token' }
@@ -85,7 +84,6 @@ RSpec.describe AccountRequest, type: :model do
         expect(subject).to eq(account_request)
       end
     end
-
   end
 
   describe '#identity_token' do
@@ -125,7 +123,7 @@ RSpec.describe AccountRequest, type: :model do
 
     context 'when confirmed_at is not blank' do
       before do
-        account_request.update_column(:confirmed_at, Time.current)
+        account_request.update!(confirmed_at: Time.current)
       end
 
       it 'should return true' do
@@ -157,7 +155,5 @@ RSpec.describe AccountRequest, type: :model do
         expect(subject).to eq(true)
       end
     end
-
   end
-
 end
