@@ -1,6 +1,6 @@
 RSpec.describe "Account request flow", type: :system, js: true do
 
-  it 'should allow prospect users to request an account via form. And their inputs get used to create an organization' do
+  it 'should allow prospect users to request an account via a form. And that request form data gets used to create an organization' do
     visit root_path
 
     click_button "Click here to request an account with us"
@@ -11,7 +11,7 @@ RSpec.describe "Account request flow", type: :system, js: true do
     fill_in "Email", with: account_request_attrs[:email]
     fill_in "Organization name", with: account_request_attrs[:organization_name]
     fill_in "Organization website", with: account_request_attrs[:organization_website]
-    fill_in "Request Details (min 50 characters) *", with: account_request_attrs[:request_details]
+    fill_in "Request Details (min 50 characters)", with: account_request_attrs[:request_details]
 
     expect(AccountRequest.all.count).to eq(0)
 
@@ -37,11 +37,21 @@ RSpec.describe "Account request flow", type: :system, js: true do
     expect(page).to have_content("We will be processing your request now.")
 
     # Access link within email sent to admin user to process the request.
-
     sign_in(@super_admin)
-    visit new_admin_organization_url(token: created_account_request.identity_token)
+    visit new_admin_organization_path(token: created_account_request.identity_token)
 
-    binding.pry
+    fill_in "Short name", with: 'fakeshortname'
+
+    click_button 'Save'
+
+    # Expect to see the a new organization with the name provided
+    # originally in the AccountRequest
+    expect(page).to have_content('All Diaperbase Organizations')
+    expect(page).to have_content(created_account_request.organization_name)
+    expect(page).to have_content(created_account_request.email)
+
+    # Ensure the AccountRequest is not considered processed
+    expect(created_account_request.reload.processed?).to eq(true)
   end
 end
 

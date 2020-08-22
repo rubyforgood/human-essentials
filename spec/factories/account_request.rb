@@ -16,7 +16,7 @@ FactoryBot.define do
     name { Faker::Name.unique.name }
     sequence(:email) { Faker::Internet.unique.email }
     organization_name { Faker::Company.name }
-    organization_website { Faker::Internet.domain_name }
+    organization_website { Faker::Internet.url }
     request_details { Faker::Lorem.paragraphs.join(", ") }
   end
 end
