@@ -36,10 +36,10 @@ class Admin::OrganizationsController < AdminController
       @organization.assign_attributes({
         name: account_request.organization_name,
         url: account_request.organization_website,
-        email: account_request.email
+        email: account_request.email,
+        account_request_id: account_request.id
       })
 
-      # Add name instead of this.
       @organization.users.build(organization_admin: true, email: account_request.email, name: account_request.name)
     else
       @organization.users.build(organization_admin: true)
@@ -47,8 +47,9 @@ class Admin::OrganizationsController < AdminController
   end
 
   def create
-    @organization = Organization.create(organization_params)
-    @organization.users.last.update(password: SecureRandom.uuid)
+    @organization = Organization.new(organization_params)
+    @organization.users.last.assign_attributes(password: SecureRandom.uuid)
+
     if @organization.save
       Organization.seed_items(@organization)
       @organization.users.last.invite!
