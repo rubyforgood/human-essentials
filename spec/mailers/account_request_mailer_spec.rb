@@ -40,7 +40,7 @@ RSpec.describe AccountRequestMailer, type: :mailer do
 
     it 'should include the button to confirm the request' do
       expect(mail.body.encoded).to include(
-        confirm_account_requests_url(token: account_request.identity_token)
+        confirmation_account_requests_url(token: account_request.identity_token)
       )
     end
   end
@@ -68,7 +68,8 @@ RSpec.describe AccountRequestMailer, type: :mailer do
 
     it 'should include details of the account request' do
       account_request.attributes.each do |ar, value|
-        expect(mail.body.encoded).to include("#{ar.humanize} : #{value}")
+        expect(mail.body.encoded).to include(ar.humanize)
+        expect(mail.body.encoded).to include(value.to_s)
       end
     end
 
