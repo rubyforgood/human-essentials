@@ -128,7 +128,7 @@ RSpec.describe "/account_requests", type: :request do
     end
 
     context "with invalid parameters" do
-      let(:invalid_attributes) { { name: Faker::Name.name} }
+      let(:invalid_attributes) { { name: Faker::Name.name } }
 
       it "does not create a new AccountRequest" do
         expect do
