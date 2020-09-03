@@ -139,6 +139,7 @@ class DistributionsController < ApplicationController
 
   def pickup_day
     @pick_ups = current_organization.distributions.during(pickup_date).order(issued_at: :asc)
+    @daily_items = daily_items(@pick_ups)
     @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
 
@@ -172,6 +173,17 @@ class DistributionsController < ApplicationController
 
   def total_value(distributions)
     distributions.sum(&:value_per_itemizable)
+  end
+
+  def daily_items(pick_ups)
+    item_groups = LineItem.where(itemizable_type: "Distribution", itemizable_id: pick_ups.pluck(:id)).group_by(&:item_id)
+    item_groups.map do |_id, items|
+      {
+        name: items.first.item.name,
+        quantity: items.sum(&:quantity),
+        package_count: items.sum { |item| item.package_count.to_i }
+      }
+    end
   end
 
   def filter_params
