@@ -17,7 +17,7 @@ module Itemizable
       def assign_insufficiency_errors(insufficiency_hash)
         insufficiency_hash = insufficiency_hash.index_by { |i| i[:item_id] }
         each do |line_item|
-          next unless insufficiency = insufficiency_hash.fetch(line_item.item_id)
+          next unless insufficiency = insufficiency_hash[line_item.item_id]
 
           line_item.errors.add(:quantity, :insufficient, message: "too high. Change to #{insufficiency[:quantity_on_hand]} or less")
         end
