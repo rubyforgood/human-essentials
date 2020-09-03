@@ -48,3 +48,40 @@
     </div>
   </div>
 </section>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          Item totals for <%= @selected_date.strftime("%B %e, %Y") %>
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Number of Packages</th>
+              </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "daily_item_row", collection: @daily_items%>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -114,6 +114,36 @@ RSpec.describe "Distributions", type: :request do
         get pickup_day_distributions_path(default_params)
         expect(response).to be_successful
       end
+
+      it "correctly sums the item counts from distributions" do
+        first_item = create(:item)
+        second_item = create(:item)
+        first_distribution = create(:distribution)
+        second_distribution = create(:distribution)
+
+        create(:line_item, :distribution, item_id: first_item.id, itemizable_id: first_distribution.id, quantity: 7)
+        create(:line_item, :distribution, item_id: first_item.id, itemizable_id: second_distribution.id, quantity: 4)
+        create(:line_item, :distribution, item_id: second_item.id, itemizable_id: second_distribution.id, quantity: 5)
+        get pickup_day_distributions_path(default_params)
+        expect(assigns(:daily_items).detect { |item| item[:name] == first_item.name }[:quantity]).to eq(11)
+        expect(assigns(:daily_items).detect { |item| item[:name] == second_item.name }[:quantity]).to eq(5)
+        expect(assigns(:daily_items).sum { |item| item[:quantity] }).to eq(16)
+      end
+
+      it "correctly sums the item package counts from distributions" do
+        first_item = create(:item, package_size: 2)
+        second_item = create(:item, package_size: 3)
+        first_distribution = create(:distribution)
+        second_distribution = create(:distribution)
+
+        create(:line_item, :distribution, item_id: first_item.id, itemizable_id: first_distribution.id, quantity: 7)
+        create(:line_item, :distribution, item_id: first_item.id, itemizable_id: second_distribution.id, quantity: 4)
+        create(:line_item, :distribution, item_id: second_item.id, itemizable_id: second_distribution.id, quantity: 6)
+        get pickup_day_distributions_path(default_params)
+        expect(assigns(:daily_items).detect { |item| item[:name] == first_item.name }[:package_count]).to eq(5)
+        expect(assigns(:daily_items).detect { |item| item[:name] == second_item.name }[:package_count]).to eq(2)
+        expect(assigns(:daily_items).sum { |item| item[:package_count] }).to eq(7)
+      end
     end
 
     context "Looking at a different organization" do
