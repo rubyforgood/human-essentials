@@ -27,7 +27,15 @@ set :sidekiq_processes, 2
 
 ## Defaults:
 # set :scm,           :git
-set :branch, ENV["BRANCH"] || :master
+set :branch do
+  if ENV["TAG"] && ENV["BRANCH"]
+    raise "You can only specify either TAG or BRANCH"
+  elsif ENV["TAG"]
+    ENV["TAG"]
+  elsif ENV["BRANCH"]
+    ENV["BRANCH"]
+  end
+end
 # set :format,        :pretty
 # set :log_level,     :debug
 # set :keep_releases, 5
@@ -52,9 +60,8 @@ namespace :deploy do
   desc "Make sure local git is in sync with remote."
   task :check_revision do
     on roles(:app) do
-      unless `git rev-parse HEAD` == `git rev-parse origin/master`
-        puts "WARNING: HEAD is not the same as origin/master"
-        puts "Run `git push` to sync changes."
+      if fetch(:branch).nil?
+        puts "You must provide either a TAG or a BRANCH. Example: 'TAG=2.2.0 cap <environment> deploy'"
         exit
       end
     end
