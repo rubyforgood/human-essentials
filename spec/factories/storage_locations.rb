@@ -38,8 +38,7 @@ FactoryBot.define do
           create_list(:inventory_item, 1,
                       storage_location: storage_location,
                       quantity: evaluator.item_quantity,
-                      item: item,
-                    )
+                      item: item,)
         end
       end
     end

@@ -59,7 +59,18 @@ RSpec.describe DistributionCreateService, type: :service do
     end
 
     context "when there's multiple line items and one has insufficient inventory" do
-      let(:too_much_params) { { organization_id: @organization.id, partner_id: @partner.id, storage_location_id: storage_location.id, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 2 }, "1": { item_id: storage_location.items.last.id, quantity: 500 } } } }
+      let(:too_much_params) do
+        {
+          organization_id: @organization.id,
+          partner_id: @partner.id,
+          storage_location_id: storage_location.id,
+          line_items_attributes:
+            {
+              "0": { item_id: storage_location.items.first.id, quantity: 2 },
+              "1": { item_id: storage_location.items.last.id, quantity: 500 }
+            }
+          }
+      end
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_params).call
