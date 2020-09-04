@@ -69,7 +69,7 @@ RSpec.describe DistributionCreateService, type: :service do
               "0": { item_id: storage_location.items.first.id, quantity: 2 },
               "1": { item_id: storage_location.items.last.id, quantity: 500 }
             }
-          }
+        }
       end
 
       it "preserves the Insufficiency error and is unsuccessful" do
