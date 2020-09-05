@@ -55,7 +55,6 @@ RSpec.describe "Distributions", type: :request do
       let(:distribution) do
         { distribution: { storage_location_id: storage_location.id, partner_id: partner.id } }
       end
-      # ruby -I test test/unit/my_model_test.rb -n test_name
 
       it "redirects to #show on success" do
         params = default_params.merge(distribution)
