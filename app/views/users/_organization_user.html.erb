@@ -13,7 +13,7 @@
   <td>
       <% unless user.super_admin? || user.organization_admin? %>
         <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <button class="btn btn-default dropdown-toggle" type="button" id=<%= dom_id(user, "dropdownMenu") %> data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             Actions
             <span class="caret"></span>
           </button>

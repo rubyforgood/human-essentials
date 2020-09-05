@@ -72,6 +72,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       user = create(:user, name: "User to be deactivated")
       visit url_prefix + "/organization"
       accept_confirm do
+        click_button dom_id(user, "dropdownMenu")
         click_link dom_id(user)
       end
 
@@ -83,6 +84,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       user = create(:user, :deactivated)
       visit url_prefix + "/organization"
       accept_confirm do
+        click_button dom_id(user, "dropdownMenu")
         click_link dom_id(user)
       end
 
