@@ -9,10 +9,17 @@
     {text: 'Make admin'},
     {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}} unless user.super_admin? or user.organization_admin? %></td>
   <td nowrap>
-    <%= edit_button_to deactivate_user_organization_path(user_id: user.id),
-      {text: 'Deactivate'},
-      {id: dom_id(user), method: :post, class: 'deactivate', rel: "nofollow", data: {confirm: 'This will deactivate the user. Are you sure that you want to submit this?', size: 'xs'}} unless user.super_admin? or user.organization_admin?
-    %>
+    <% if user.kept? %>
+      <%= edit_button_to deactivate_user_organization_path(user_id: user.id),
+        {text: 'Deactivate'},
+        {id: dom_id(user), method: :post, class: 'deactivate', rel: "nofollow", data: {confirm: 'This will deactivate the user. Are you sure that you want to submit this?', size: 'xs'}} unless user.super_admin? or user.organization_admin?
+      %>
+    <% else %>
+      <%= edit_button_to reactivate_user_organization_path(user_id: user.id),
+        {text: 'Reactivate'},
+        {id: dom_id(user), method: :post, class: 'reactivate', rel: "nofollow", data: {confirm: 'This will reactivate the user. Are you sure that you want to submit this?', size: 'xs'}} unless user.super_admin? or user.organization_admin?
+      %>
+    <% end %>
   </td>
 </tr>
 

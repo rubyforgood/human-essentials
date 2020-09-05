@@ -44,6 +44,12 @@ class OrganizationsController < ApplicationController
     redirect_to organization_path, notice: "User has been deactivated."
   end
 
+  def reactivate_user
+    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user.undiscard!
+    redirect_to organization_path, notice: "User has been reactivated."
+  end
+
   private
 
   def authorize_user
