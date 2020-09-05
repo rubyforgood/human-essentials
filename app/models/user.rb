@@ -5,6 +5,7 @@
 #  id                     :integer          not null, primary key
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :inet
+#  discarded_at           :datetime
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  invitation_accepted_at :datetime
@@ -31,6 +32,7 @@
 #
 
 class User < ApplicationRecord
+  include Discard::Model
   belongs_to :organization, optional: proc { |u| u.super_admin? }
   has_many :feedback_messages, dependent: :destroy
   # Include default devise modules. Others available are:
