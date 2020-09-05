@@ -91,7 +91,11 @@ class Donation < ApplicationRecord
   end
 
   def source_view
-    from_diaper_drive? ? format_drive_name : source
+    if from_diaper_drive?
+      format_drive_name
+    else
+      source
+    end
   end
 
   def self.daily_quantities_by_source(start, stop)
