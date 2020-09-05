@@ -74,7 +74,7 @@ RSpec.describe User, type: :model do
 
   describe "Scopes >" do
     describe "->alphabetized" do
-      let(:discarded_at) { Time.now }
+      let(:discarded_at) { Time.zone.now }
 
       let!(:z_name_user) { create(:user, name: 'Zachary') }
       let!(:a_name_user) { create(:user, name: 'Amanda') }

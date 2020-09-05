@@ -56,7 +56,7 @@ FactoryBot.define do
     end
 
     trait :deactivated do
-      discarded_at { Time.now }
+      discarded_at { Time.zone.now }
     end
   end
 end
