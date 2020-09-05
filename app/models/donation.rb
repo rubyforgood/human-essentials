@@ -94,16 +94,6 @@ class Donation < ApplicationRecord
     from_diaper_drive? ? format_drive_name : source
   end
 
-  def format_drive_name
-    if !diaper_drive_participant.nil? && diaper_drive_participant.contact_name.present?
-      "#{diaper_drive_participant.contact_name} (participant)"
-    elsif !diaper_drive.nil? && diaper_drive.name.present?
-      "#{diaper_drive.name} (diaper drive)"
-    else
-      source
-    end
-  end
-
   def self.daily_quantities_by_source(start, stop)
     joins(:line_items).includes(:line_items)
                       .between(start, stop)
@@ -177,4 +167,15 @@ class Donation < ApplicationRecord
   def combine_duplicates
     line_items.combine!
   end
+
+  def format_drive_name
+    if !diaper_drive_participant.nil? && diaper_drive_participant.contact_name.present?
+      "#{diaper_drive_participant.contact_name} (participant)"
+    elsif !diaper_drive.nil? && diaper_drive.name.present?
+      "#{diaper_drive.name} (diaper drive)"
+    else
+      source
+    end
+  end
+
 end
