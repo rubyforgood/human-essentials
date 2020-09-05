@@ -62,8 +62,7 @@ class DistributionsController < ApplicationController
     else
       @distribution = result.distribution
       flash[:error] = insufficient_error_message(result.error.message)
-      # NOTE: Can we just do @distribution.line_items.build, regardless?
-      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
       render :new
