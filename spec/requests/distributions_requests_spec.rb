@@ -67,8 +67,8 @@ RSpec.describe "Distributions", type: :request do
           post distributions_path(params)
 
           expect(response).to have_http_status(:redirect)          
-          distribution = Distribution.where(distribution).first
-          expect(response).to redirect_to(distribution_path(distribution))
+          last_distribution = Distribution.last
+          expect(response).to redirect_to(distribution_path(last_distribution))
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
