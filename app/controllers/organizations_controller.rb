@@ -39,13 +39,13 @@ class OrganizationsController < ApplicationController
   end
 
   def deactivate_user
-    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user = User.with_discarded.find_by!(id: params[:user_id], organization_id: current_organization.id)
     user.discard!
     redirect_to organization_path, notice: "User has been deactivated."
   end
 
   def reactivate_user
-    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user = User.with_discarded.find_by!(id: params[:user_id], organization_id: current_organization.id)
     user.undiscard!
     redirect_to organization_path, notice: "User has been reactivated."
   end

@@ -44,7 +44,8 @@ class User < ApplicationRecord
 
   validates :name, :email, presence: true
 
-  scope :alphabetized, -> { order(:name) }
+  default_scope -> { kept }
+  scope :alphabetized, -> { order(discarded_at: :desc, name: :asc) }
 
   def invitation_status
     return "joined" if current_sign_in_at.present?

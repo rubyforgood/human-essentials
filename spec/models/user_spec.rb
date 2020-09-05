@@ -74,14 +74,28 @@ RSpec.describe User, type: :model do
 
   describe "Scopes >" do
     describe "->alphabetized" do
+      let(:discarded_at) { Time.now }
+
       let!(:z_name_user) { create(:user, name: 'Zachary') }
       let!(:a_name_user) { create(:user, name: 'Amanda') }
+      let!(:deactivated_a_name_user) { create(:user, name: 'Alice', discarded_at: discarded_at) }
+      let!(:deactivated_z_name_user) { create(:user, name: 'Zeke', discarded_at: discarded_at) }
 
       it "retrieves users in the correct order" do
-        alphabetized_list = described_class.alphabetized
+        alphabetized_list = described_class.with_discarded.alphabetized
 
-        expect(alphabetized_list.first).to eq(a_name_user)
-        expect(alphabetized_list.last).to eq(z_name_user)
+        expect(alphabetized_list).to eq(
+          [
+            a_name_user,
+            @organization_admin,
+            @super_admin,
+            @super_admin_no_org,
+            @user,
+            z_name_user,
+            deactivated_a_name_user,
+            deactivated_z_name_user
+          ]
+        )
       end
     end
   end

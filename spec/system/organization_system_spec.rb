@@ -75,6 +75,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         click_link dom_id(user)
       end
 
+      expect(page).to have_content("User has been deactivated")
       expect(user.reload.discarded_at).to be_present
     end
 
