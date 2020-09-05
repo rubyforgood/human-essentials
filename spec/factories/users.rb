@@ -55,7 +55,7 @@ FactoryBot.define do
       organization_id { nil }
     end
 
-    trait :discarded do
+    trait :deactivated do
       discarded_at { Time.now }
     end
   end

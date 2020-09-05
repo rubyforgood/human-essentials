@@ -106,7 +106,7 @@ RSpec.describe User, type: :model do
     end
 
     it "discarded?" do
-      expect(build(:user, :discarded).discarded?).to be true
+      expect(build(:user, :deactivated).discarded?).to be true
     end
   end
 end
