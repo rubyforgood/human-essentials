@@ -53,5 +53,9 @@ FactoryBot.define do
       super_admin { true }
       organization_id { nil }
     end
+
+    trait :discarded do
+      discarded_at { Time.now }
+    end
   end
 end

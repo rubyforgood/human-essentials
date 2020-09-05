@@ -103,5 +103,9 @@ RSpec.describe User, type: :model do
       expect(build(:user, invitation_sent_at: Time.current - 6.days).reinvitable?).to be false
       expect(build(:user, invitation_sent_at: Time.current - 7.days, invitation_accepted_at: Time.current - 7.days).reinvitable?).to be false
     end
+
+    it "discarded?" do
+      expect(build(:user, :discarded).discarded?).to be true
+    end
   end
 end
