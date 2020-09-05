@@ -56,7 +56,7 @@ RSpec.describe "Distributions", type: :request do
         { distribution: { storage_location_id: storage_location.id, partner_id: partner.id } }
       end
 
-      it "redirects to #index on success" do
+      it "redirects to #show on success" do
         params = default_params.merge(distribution)
         expect(storage_location).to be_valid
         expect(partner).to be_valid
@@ -66,8 +66,8 @@ RSpec.describe "Distributions", type: :request do
           post distributions_path(params)
 
           expect(response).to have_http_status(:redirect)
-
-          expect(response).to redirect_to(distributions_path)
+          last_distribution = Distribution.last
+          expect(response).to redirect_to(distribution_path(last_distribution))
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
