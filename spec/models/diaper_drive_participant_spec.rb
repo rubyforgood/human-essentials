@@ -44,13 +44,13 @@ RSpec.describe DiaperDriveParticipant, type: :model do
     end
 
     describe "donation_source_view" do
-      let!(:ddp) { create(:diaper_drive_participant, contact_name: contact_name) }
+      let!(:participant) { create(:diaper_drive_participant, contact_name: contact_name) }
 
       context "contact name present" do
         let(:contact_name) { "Contact Name" }
 
         it do
-          expect(ddp.donation_source_view).to eq("Contact Name (participant)")
+          expect(participant.donation_source_view).to eq("Contact Name (participant)")
         end
       end
 
@@ -58,7 +58,7 @@ RSpec.describe DiaperDriveParticipant, type: :model do
         let(:contact_name) { nil }
 
         it do
-          expect(ddp.donation_source_view).to be_nil
+          expect(participant.donation_source_view).to be_nil
         end
       end
     end
