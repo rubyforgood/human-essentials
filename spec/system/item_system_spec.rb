@@ -56,7 +56,7 @@ RSpec.describe "Item management", type: :system do
     uncheck "visible_to_partners"
     click_button "Save"
 
-    expect(item.visible_to_partners).to be false
+    expect(item.reload.visible_to_partners).to be false
   end
 
   it "can filter the #index by base item as a user" do
