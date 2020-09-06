@@ -52,8 +52,6 @@ class DiaperDrive < ApplicationRecord
   end
 
   def donation_source_view
-    return unless name.present?
-
     "#{name} (diaper drive)"
   end
 
