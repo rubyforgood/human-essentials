@@ -85,10 +85,8 @@ RSpec.describe DiaperDrive, type: :model do
   end
 
   describe "donation_source_view" do
-
     it "returns formatted text" do
       expect(diaper_drive.donation_source_view).to eq("Test Drive (diaper drive)")
     end
-
   end
 end

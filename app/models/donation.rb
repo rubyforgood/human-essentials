@@ -169,5 +169,4 @@ class Donation < ApplicationRecord
   def combine_duplicates
     line_items.combine!
   end
-
 end

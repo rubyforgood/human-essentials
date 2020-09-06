@@ -216,9 +216,7 @@ RSpec.describe Donation, type: :model do
             it "returns drive display name" do
               expect(donation.source_view).to eq("Test Drive (diaper drive)")
             end
-
           end
-
         end
 
         context "unknown participant" do
@@ -239,7 +237,6 @@ RSpec.describe Donation, type: :model do
         it "returns source" do
           expect(donation.source_view).to eq(source)
         end
-
       end
     end
   end

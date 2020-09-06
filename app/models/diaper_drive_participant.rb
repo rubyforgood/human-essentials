@@ -32,9 +32,8 @@ class DiaperDriveParticipant < ApplicationRecord
   end
 
   def donation_source_view
-    return unless contact_name.present?
+    return if contact_name.blank?
 
     "#{contact_name} (participant)"
   end
-
 end
