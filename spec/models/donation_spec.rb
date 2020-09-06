@@ -193,15 +193,16 @@ RSpec.describe Donation, type: :model do
     describe "source_view" do
       let!(:donation) { create(:donation, source: source, diaper_drive_participant: diaper_drive_participant, diaper_drive: diaper_drive) }
 
-      context "when source is Diaper Drive" do
+      context "from a diaper drive" do
         let(:source) { "Diaper Drive" }
 
-        let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
+        let(:diaper_drive) { create(:diaper_drive, name: drive_name) }
+        let(:drive_name) { "Test Drive" }
 
-        context "when participant exists" do
+        context "participant known" do
           let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: contact_name) }
 
-          context "when contact name is known" do
+          context "contact name is known" do
             let(:contact_name) { "Contact Name" }
 
             it "returns participant display name" do
@@ -209,7 +210,7 @@ RSpec.describe Donation, type: :model do
             end
           end
 
-          context "when contact name is empty" do
+          context "contact name is empty" do
             let(:contact_name) { "" }
 
             it "returns drive display name" do
@@ -218,7 +219,7 @@ RSpec.describe Donation, type: :model do
 
           end
 
-          context "when contact name is spaces" do
+          context "contact name is spaces" do
             let(:contact_name) { "     " }
 
             it "returns drive display name" do
@@ -227,7 +228,7 @@ RSpec.describe Donation, type: :model do
 
           end
 
-          context "when contact name is nil" do
+          context "contact name is nil" do
             let(:contact_name) { nil }
 
             it "returns drive display name" do
@@ -238,14 +239,13 @@ RSpec.describe Donation, type: :model do
 
         end
 
-        context "when no drive participant" do
+        context "unknown participant" do
           let(:diaper_drive_participant) { nil }
 
           it "returns drive display name" do
             expect(donation.source_view).to eq("Test Drive (diaper drive)")
           end
         end
-
       end
     end
   end
