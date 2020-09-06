@@ -2,17 +2,19 @@
 #
 # Table name: distributions
 #
-#  id                     :integer          not null, primary key
-#  agency_rep             :string
-#  comment                :text
-#  issued_at              :datetime
-#  reminder_email_enabled :boolean          default(FALSE), not null
-#  state                  :integer          default("started"), not null
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  organization_id        :integer
-#  partner_id             :integer
-#  storage_location_id    :integer
+#  id                          :integer          not null, primary key
+#  agency_rep                  :string
+#  comment                     :text
+#  issued_at                   :datetime
+#  issued_at_end               :datetime
+#  issued_at_timeframe_enabled :boolean          default(FALSE)
+#  reminder_email_enabled      :boolean          default(FALSE), not null
+#  state                       :integer          default("started"), not null
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  organization_id             :integer
+#  partner_id                  :integer
+#  storage_location_id         :integer
 #
 
 FactoryBot.define do
