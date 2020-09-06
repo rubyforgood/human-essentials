@@ -52,6 +52,7 @@ RSpec.describe "Requests", type: :system, js: true do
       context "when save the distribution" do
         it "should change request to fulfilled", js: true do
           expect(page).to have_content "started"
+          select "Delivery", from: "Delivery method"
           select @storage_location.name, from: "From storage location"
           fill_in "Comment", with: "Take my wipes... please"
           click_on "Save"

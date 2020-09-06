@@ -16,6 +16,7 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
+        select "Pick up", from: "Delivery method"
 
         fill_in "Comment", with: "Take my wipes... please"
         expect(PartnerMailerJob).to receive(:perform_async)
@@ -51,6 +52,7 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
+        select "Delivery", from: "Delivery method"
 
         fill_in "Comment", with: "Take my wipes... please"
 
@@ -261,6 +263,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Start a new Distribution"
       within "#new_distribution" do
         select @partner.name, from: "Partner"
+        select "Pick up", from: "Delivery method"
         click_button "Save"
       end
     end
@@ -322,7 +325,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   # TODO: This should probably be in the Request resource specs, not Distribution
-  context "When creating a distrubition from a request" do
+  context "When creating a distribution from a request" do
     it "sets the distribution id and fulfilled status on the request" do
       items = @storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
@@ -332,6 +335,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
+        select "Delivery", from: "Delivery method"
         click_on "Save"
       end
 
