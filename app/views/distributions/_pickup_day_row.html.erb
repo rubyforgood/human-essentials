@@ -1,6 +1,13 @@
 <tr>
   <td><%= pickup_day_row.partner.name %></td>
-  <td><%= pickup_day_row.issued_at.strftime("%l:%M %p") %> </td>
+  <% if pickup_day_row.issued_at_timeframe_enabled%>
+    <td>
+      <%= pickup_day_row.issued_at.strftime("%l:%M %p") %> - 
+      <%= pickup_day_row.issued_at_end.strftime("%l:%M %p") %>
+    </td>
+  <% else %>
+    <td><%= pickup_day_row.issued_at.strftime("%l:%M %p") %> </td>
+  <% end %>
   <td><%= pickup_day_row.storage_location.name %></td>
   <td><%= pickup_day_row.line_items.total %></td>
   <td>
