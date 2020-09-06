@@ -97,9 +97,13 @@ class Donation < ApplicationRecord
     drive_name = diaper_drive&.name
 
     if contact_name.present?
-      "#{contact_name} (participant)"
+      kind = "participant"
+
+      "#{contact_name} (#{kind})"
     elsif drive_name.present?
-      "#{drive_name} (diaper drive)"
+      kind = "diaper drive"
+
+      "#{drive_name} (#{kind})"
     else
       source
     end
