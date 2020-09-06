@@ -58,7 +58,25 @@ class DistributionsController < ApplicationController
 
     if result.success?
       session[:created_distribution_id] = result.distribution.id
-      redirect_to(distribution_path(result.distribution), notice: "Distribution created!") && return
+      @distribution = result.distribution
+      @storage_location = @distribution.storage_location
+
+      items_below_minimum_quantity = []
+      @distribution.line_items.each do |line_item|
+        item = line_item.item
+        inventory_item = item.inventory_items.where(storage_location_id: @storage_location.id).first
+
+        if inventory_item.quantity < item.on_hand_minimum_quantity
+          items_below_minimum_quantity << item
+        end
+      end
+
+      unless items_below_minimum_quantity.empty?
+        flash[:alert] = "The following items have fallen below the minimum on hand quantity: #{items_below_minimum_quantity.map(&:name).join(", ")}"
+      end
+
+      flash[:notice] = "Distribution created!"
+      redirect_to(distribution_path(result.distribution)) && return
     else
       @distribution = result.distribution
       flash[:error] = insufficient_error_message(result.error.message)
