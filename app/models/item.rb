@@ -36,6 +36,7 @@ class Item < ApplicationRecord
 
   include Filterable
   scope :active, -> { where(active: true) }
+  scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }

@@ -80,6 +80,24 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
         end
       end
 
+      context "with invisible items" do
+        it "should only return items that are visible" do
+          org = create(:organization, skip_items: true)
+          item_1 = create(:item, organization: org, visible_to_partners: true)
+          item_2 = create(:item, organization: org, visible_to_partners: false)
+          item_3 = create(:item, organization: org, visible_to_partners: true)
+          expected_item_1 = {id: item_1.id, partner_key: item_1.partner_key, name: item_1.name}.with_indifferent_access
+          expected_item_3 = {id: item_3.id, partner_key: item_3.partner_key, name: item_3.name}.with_indifferent_access
+
+          get api_v1_partner_request_path(org.id), headers: headers
+
+          expect(response).to be_successful
+          expect(JSON.parse(response.body).length).to eq(2)
+          expect(JSON.parse(response.body)[0]).to eq(expected_item_1)
+          expect(JSON.parse(response.body)[1]).to eq(expected_item_3)
+        end
+      end
+
       context "without a valid organization id" do
         headers = {
           "ACCEPT" => "application/json",
