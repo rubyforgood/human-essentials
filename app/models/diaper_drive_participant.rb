@@ -30,4 +30,14 @@ class DiaperDriveParticipant < ApplicationRecord
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)
   end
+
+  def source_view
+    contact_display = if contact_name.present?
+      name = contact_name
+      kind = "participant"
+
+      "#{name} (#{kind})"
+    end
+  end
+
 end
