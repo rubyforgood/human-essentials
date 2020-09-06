@@ -53,9 +53,8 @@ class DiaperDrive < ApplicationRecord
 
   def source_view
     return unless name.present?
-    kind = "diaper drive"
 
-    "#{name} (#{kind})"
+    "#{name} (diaper drive)"
   end
 
   def self.search_date_range(dates)
