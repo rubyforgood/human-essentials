@@ -205,6 +205,15 @@ RSpec.describe Donation, type: :model do
           end
         end
 
+        context "when drive participant exists" do
+          let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: "Contact Name") }
+          let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
+
+          it "returns participant display name" do
+            expect(donation.source_view).to eq("Contact Name (participant)")
+          end
+        end
+
       end
     end
   end
