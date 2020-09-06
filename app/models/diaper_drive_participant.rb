@@ -31,7 +31,7 @@ class DiaperDriveParticipant < ApplicationRecord
     donations.map { |d| d.line_items.total }.reduce(:+)
   end
 
-  def source_view
+  def donation_source_view
     return unless contact_name.present?
 
     "#{contact_name} (participant)"

@@ -94,8 +94,8 @@ class Donation < ApplicationRecord
     return source unless from_diaper_drive?
 
     [
-      diaper_drive_participant&.source_view,
-      diaper_drive&.source_view,
+      diaper_drive_participant&.donation_source_view,
+      diaper_drive&.donation_source_view,
       source
     ].detect(&:present?)
 

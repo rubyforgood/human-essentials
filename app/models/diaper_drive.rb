@@ -51,7 +51,7 @@ class DiaperDrive < ApplicationRecord
     donations.sum(&:value_per_itemizable)
   end
 
-  def source_view
+  def donation_source_view
     return unless name.present?
 
     "#{name} (diaper drive)"
