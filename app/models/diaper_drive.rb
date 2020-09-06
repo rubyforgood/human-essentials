@@ -51,6 +51,14 @@ class DiaperDrive < ApplicationRecord
     donations.sum(&:value_per_itemizable)
   end
 
+  def source_view
+    drive_display = if name.present?
+      kind = "diaper drive"
+
+      "#{name} (#{kind})"
+    end
+  end
+
   def self.search_date_range(dates)
     dates = dates.split(" - ")
     @search_date_range = { start_date: dates[0], end_date: dates[1] }
