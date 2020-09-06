@@ -196,21 +196,22 @@ RSpec.describe Donation, type: :model do
       context "when source is Diaper Drive" do
         let(:source) { "Diaper Drive" }
 
-        context "when no drive participant" do
-          let(:diaper_drive_participant) { nil }
-          let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
+        let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
 
-          it "returns diaper drive display name" do
-            expect(donation.source_view).to eq("Test Drive (diaper drive)")
-          end
-        end
-
-        context "when drive participant exists" do
+        context "when participant exists" do
           let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: "Contact Name") }
-          let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
 
           it "returns participant display name" do
             expect(donation.source_view).to eq("Contact Name (participant)")
+          end
+
+        end
+
+        context "when no drive participant" do
+          let(:diaper_drive_participant) { nil }
+
+          it "returns drive display name" do
+            expect(donation.source_view).to eq("Test Drive (diaper drive)")
           end
         end
 
