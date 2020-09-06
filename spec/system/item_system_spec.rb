@@ -55,7 +55,9 @@ RSpec.describe "Item management", type: :system do
     visit url_prefix + "/items/#{item.id}/edit"
     uncheck "visible_to_partners"
     click_button "Save"
+    visit url_prefix + "/items/#{item.id}/edit"
 
+    expect(find_by_id("visible_to_partners").checked?).to be false
     expect(item.reload.visible_to_partners).to be false
   end
 
