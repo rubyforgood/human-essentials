@@ -94,21 +94,22 @@ class Donation < ApplicationRecord
     return source unless from_diaper_drive?
 
     contact_name = diaper_drive_participant&.contact_name
-    drive_name = diaper_drive&.name
-
-    if contact_name.present?
+    contact_display = if contact_name.present?
       name = contact_name
       kind = "participant"
 
       "#{name} (#{kind})"
-    elsif drive_name.present?
+    end
+
+    drive_name = diaper_drive&.name
+    drive_display = if drive_name.present?
       name = drive_name
       kind = "diaper drive"
 
       "#{name} (#{kind})"
-    else
-      source
     end
+
+    contact_display || drive_display || source
   end
 
   def self.daily_quantities_by_source(start, stop)
