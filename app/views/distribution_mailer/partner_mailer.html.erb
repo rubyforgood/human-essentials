@@ -343,7 +343,12 @@
                   <td>
                     <p><%= @partner.name %>,</p>
                     <p>Your diaper request has been approved and you can find attached to this email a copy of the distribution you will be receiving.</p>
-                    <p>Your distribution has been set to be picked up on <%= @distribution.issued_at.strftime("%m/%d/%Y") %>.</p>
+                    <% if @distribution.issued_at_timeframe_enabled%>
+                      <p>Your distribution has been set to be picked up on <%= @distribution.issued_at.strftime("%m/%d/%Y") %>.</p>
+                    <% else %>
+                      <p>Your distribution has been set to be picked up between <%= @distribution.issued_at.strftime("%m/%d/%Y") %> and 
+                      <%= @distribution.issued_at_end.strftime("%m/%d/%Y") %>.</p>
+                    <% end %>
                     <p>See you soon!</p>
                   </td>
                 <tr>
