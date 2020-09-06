@@ -191,10 +191,9 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "source_view" do
-      let!(:donation) { create(:donation, source: source, diaper_drive_participant: diaper_drive_participant, diaper_drive: diaper_drive) }
 
       context "from a drive" do
-        let(:source) { "Diaper Drive" }
+        let!(:donation) { create(:diaper_drive_donation, diaper_drive_participant: diaper_drive_participant, diaper_drive: diaper_drive) }
 
         let(:diaper_drive) { create(:diaper_drive, name: drive_name) }
         let(:drive_name) { "Test Drive" }
@@ -229,13 +228,10 @@ RSpec.describe Donation, type: :model do
       end
 
       context "not from a drive" do
-        let(:source) { "Misc. Donation" }
-
-        let(:diaper_drive_participant) { nil }
-        let(:diaper_drive) { nil }
+        let!(:donation) { create(:manufacturer_donation) }
 
         it "returns source" do
-          expect(donation.source_view).to eq(source)
+          expect(donation.source_view).to eq(donation.source)
         end
       end
     end
