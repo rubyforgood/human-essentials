@@ -93,7 +93,7 @@ class Donation < ApplicationRecord
   def source_view
     return source unless from_diaper_drive?
 
-    diaper_drive_participant&.donation_source_view || diaper_drive&.donation_source_view
+    diaper_drive_participant&.donation_source_view || diaper_drive.donation_source_view
   end
 
   def self.daily_quantities_by_source(start, stop)
