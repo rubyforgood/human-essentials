@@ -93,8 +93,9 @@ class Donation < ApplicationRecord
   def source_view
     return source unless from_diaper_drive?
 
-    if diaper_drive_participant&.contact_name.present?
-      "#{diaper_drive_participant.contact_name} (participant)"
+    contact_name = diaper_drive_participant&.contact_name
+    if contact_name.present?
+      "#{contact_name} (participant)"
     elsif diaper_drive&.name.present?
       "#{diaper_drive.name} (diaper drive)"
     else
