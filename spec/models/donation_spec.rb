@@ -189,6 +189,15 @@ RSpec.describe Donation, type: :model do
         end
       end
     end
+
+    describe "source_view" do
+      let!(:donation) { create(:donation) }
+
+      it do
+        expect(donation.source_view).to eq(donation.source)
+      end
+
+    end
   end
 
   describe "SOURCES" do
