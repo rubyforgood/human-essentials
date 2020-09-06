@@ -191,12 +191,10 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "source_view" do
-
       context "from a drive" do
         let!(:donation) { create(:diaper_drive_donation, diaper_drive_participant: diaper_drive_participant, diaper_drive: diaper_drive) }
 
-        let(:diaper_drive) { create(:diaper_drive, name: drive_name) }
-        let(:drive_name) { "Test Drive" }
+        let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
 
         context "participant known" do
           let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: contact_name) }
