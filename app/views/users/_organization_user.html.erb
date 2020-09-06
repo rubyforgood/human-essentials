@@ -5,9 +5,14 @@
   <td><%= user.current_sign_in_at&.strftime('%Y/%m/%d') %></td>
   <td><%= user.invitation_status %></td>
   <td nowrap><%= reinvite_user_link(user) %></td>
-  <td nowrap><%= edit_button_to promote_to_org_admin_organization_path(user_id: user.id),
-    {text: 'Make admin'},
-    {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}} unless user.super_admin? or user.organization_admin? %></td>
+  <td nowrap>
+    <%= edit_button_to promote_to_org_admin_organization_path(user_id: user.id),
+       {text: 'Make admin'},
+       {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}} unless user.super_admin? or user.organization_admin? %>
+    <%= edit_button_to demote_to_user_organization_path(user_id: user.id),
+       {text: 'Make User'},
+       {method: :post, rel: "nofollow", data: {confirm: 'This will demote the admin to user status. Are you sure that you want to submit this?', size: 'xs'}} if current_user.organization_admin? and user.organization_admin? %>
+  </td>
 </tr>
 
 

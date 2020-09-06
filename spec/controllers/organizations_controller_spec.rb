@@ -69,6 +69,21 @@ RSpec.describe OrganizationsController, type: :controller do
       end
     end
 
+    describe "POST #demote_to_user" do
+      let(:admin_user) do
+        create(:user, organization: @organization, name: "ADMIN USER")
+      end
+
+      subject { post :demote_to_user, params: default_params.merge(user_id: admin_user.id) }
+
+      it "demotes the user to user" do
+        expect(subject).to have_http_status(:redirect)
+
+        admin_user.reload
+        expect(admin_user.kind).to eq("normal")
+      end
+    end
+
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do
