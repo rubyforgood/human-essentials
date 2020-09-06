@@ -51,6 +51,7 @@ gem "toastr-rails"
 gem "webpacker", "> 4.0"
 gem 'sidekiq-scheduler'
 gem 'bootstrap-daterangepicker-rails'
+gem 'discard', '~> 1.2'
 
 group :development, :test do
   gem "awesome_print"

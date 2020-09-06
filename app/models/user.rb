@@ -5,6 +5,7 @@
 #  id                     :integer          not null, primary key
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :inet
+#  discarded_at           :datetime
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  invitation_accepted_at :datetime
@@ -31,6 +32,7 @@
 #
 
 class User < ApplicationRecord
+  include Discard::Model
   belongs_to :organization, optional: proc { |u| u.super_admin? }
   has_many :feedback_messages, dependent: :destroy
   # Include default devise modules. Others available are:
@@ -42,7 +44,8 @@ class User < ApplicationRecord
 
   validates :name, :email, presence: true
 
-  scope :alphabetized, -> { order(:name) }
+  default_scope -> { kept }
+  scope :alphabetized, -> { order(discarded_at: :desc, name: :asc) }
 
   def invitation_status
     return "joined" if current_sign_in_at.present?
