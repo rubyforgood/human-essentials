@@ -44,6 +44,15 @@ RSpec.describe Distribution, type: :model do
       d.line_items << build(:line_item, item: item_missing)
       expect(d).not_to be_valid
     end
+    it "ensures the issued at end time is after the issued at start time" do
+      d = build(:distribution)
+      start_time = Time.now
+      end_time = Time.now - 2.hours
+      d.issued_at = start_time
+      d.issued_at_end = end_time
+      d.issued_at_timeframe_enabled = true
+      expect(d).not_to be_valid
+    end
   end
 
   context "Scopes >" do
