@@ -202,7 +202,7 @@ RSpec.describe Donation, type: :model do
         context "participant known" do
           let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: contact_name) }
 
-          context "contact name is known" do
+          context "contact name present" do
             let(:contact_name) { "Contact Name" }
 
             it "returns participant display name" do
@@ -210,25 +210,7 @@ RSpec.describe Donation, type: :model do
             end
           end
 
-          context "contact name is empty" do
-            let(:contact_name) { "" }
-
-            it "returns drive display name" do
-              expect(donation.source_view).to eq("Test Drive (diaper drive)")
-            end
-
-          end
-
-          context "contact name is spaces" do
-            let(:contact_name) { "     " }
-
-            it "returns drive display name" do
-              expect(donation.source_view).to eq("Test Drive (diaper drive)")
-            end
-
-          end
-
-          context "contact name is nil" do
+          context "no contact name" do
             let(:contact_name) { nil }
 
             it "returns drive display name" do
@@ -250,6 +232,7 @@ RSpec.describe Donation, type: :model do
 
       context "not from a drive" do
         let(:source) { "Misc. Donation" }
+
         let(:diaper_drive_participant) { nil }
         let(:diaper_drive) { nil }
 
