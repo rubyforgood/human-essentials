@@ -1,5 +1,16 @@
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
+function toggle_end_date() {
+  const endDate = $(".form-group.distribution_issued_at_end");
+  let checked = $('input[name="distribution[issued_at_timeframe_enabled]"]').is(
+    ":checked"
+  );
+  if (checked) {
+    endDate.show();
+  } else {
+    endDate.hide();
+  }
+}
 
 function new_option(item, selected) {
   if (selected == null) {
@@ -101,4 +112,10 @@ $(function() {
 
     request_storage_location_and_populate_item(default_item);
   });
+  toggle_end_date();
+  $('input[name="distribution[issued_at_timeframe_enabled]"').change(
+    function () {
+      toggle_end_date();
+    }
+  );
 });
