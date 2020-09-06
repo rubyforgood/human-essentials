@@ -199,10 +199,41 @@ RSpec.describe Donation, type: :model do
         let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
 
         context "when participant exists" do
-          let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: "Contact Name") }
+          let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: contact_name) }
 
-          it "returns participant display name" do
-            expect(donation.source_view).to eq("Contact Name (participant)")
+          context "when contact name is known" do
+            let(:contact_name) { "Contact Name" }
+
+            it "returns participant display name" do
+              expect(donation.source_view).to eq("Contact Name (participant)")
+            end
+          end
+
+          context "when contact name is empty" do
+            let(:contact_name) { "" }
+
+            it "returns drive display name" do
+              expect(donation.source_view).to eq("Test Drive (diaper drive)")
+            end
+
+          end
+
+          context "when contact name is spaces" do
+            let(:contact_name) { "     " }
+
+            it "returns drive display name" do
+              expect(donation.source_view).to eq("Test Drive (diaper drive)")
+            end
+
+          end
+
+          context "when contact name is nil" do
+            let(:contact_name) { nil }
+
+            it "returns drive display name" do
+              expect(donation.source_view).to eq("Test Drive (diaper drive)")
+            end
+
           end
 
         end
