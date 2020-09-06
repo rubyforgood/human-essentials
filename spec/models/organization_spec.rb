@@ -340,7 +340,7 @@ RSpec.describe Organization, type: :model do
       let!(:item4) { create(:item, organization: organization, active: false, visible_to_partners: false) }
 
       it 'only shows active and visible items' do
-        expect(organization.valid_items).to eq([{id: item1.id, partner_key: item1.partner_key, name: item1.name}])
+        expect(organization.valid_items).to eq([{ id: item1.id, partner_key: item1.partner_key, name: item1.name }])
       end
     end
   end
