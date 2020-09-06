@@ -32,12 +32,11 @@ class DiaperDriveParticipant < ApplicationRecord
   end
 
   def source_view
-    contact_display = if contact_name.present?
-      name = contact_name
-      kind = "participant"
+    return unless contact_name.present?
+    name = contact_name
+    kind = "participant"
 
-      "#{name} (#{kind})"
-    end
+    "#{name} (#{kind})"
   end
 
 end
