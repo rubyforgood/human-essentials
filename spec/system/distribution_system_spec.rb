@@ -46,6 +46,23 @@ RSpec.feature "Distributions", type: :system do
       end
     end
 
+    context "when the quantity is lower than the on hand minminum quantity" do
+      it "should display an alert" do
+        visit @url_prefix + "/distributions/new"
+        item = @storage_location.inventory_items.first.item
+        item.update!(on_hand_minimum_quantity: 5)
+        @storage_location.inventory_items.first.update!(quantity: 20)
+
+        select @partner.name, from: "Partner"
+        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        fill_in "distribution_line_items_attributes_0_quantity", with: 18
+
+        click_button "Save"
+
+        expect(page).to have_content("The inventory has falled below the on hand minimum quantity.")
+      end
+    end
+
     context "when there is insufficient inventory to fulfill the Distribution" do
       it "gracefully handles the error" do
         visit @url_prefix + "/distributions/new"
