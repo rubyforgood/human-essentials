@@ -1,4 +1,5 @@
 RSpec.describe "Organization management", type: :system, js: true do
+  include ActionView::RecordIdentifier
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
   context "while signed in as a normal user" do
@@ -65,6 +66,30 @@ RSpec.describe "Organization management", type: :system, js: true do
       create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
       visit url_prefix + "/organization"
       expect(page).to have_xpath("//i[@alt='Re-send invitation']")
+    end
+
+    it "can deactivate a user in the organization" do
+      user = create(:user, name: "User to be deactivated")
+      visit url_prefix + "/organization"
+      accept_confirm do
+        click_button dom_id(user, "dropdownMenu")
+        click_link dom_id(user)
+      end
+
+      expect(page).to have_content("User has been deactivated")
+      expect(user.reload.discarded_at).to be_present
+    end
+
+    it "can re-activate a user in the organization" do
+      user = create(:user, :deactivated)
+      visit url_prefix + "/organization"
+      accept_confirm do
+        click_button dom_id(user, "dropdownMenu")
+        click_link dom_id(user)
+      end
+
+      expect(page).to have_content("User has been reactivated")
+      expect(user.reload.discarded_at).to be_nil
     end
   end
 end
