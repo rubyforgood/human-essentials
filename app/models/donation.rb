@@ -92,7 +92,13 @@ class Donation < ApplicationRecord
 
   def source_view
     if from_diaper_drive?
-      format_drive_name
+      if !diaper_drive_participant.nil? && diaper_drive_participant.contact_name.present?
+        "#{diaper_drive_participant.contact_name} (participant)"
+      elsif !diaper_drive.nil? && diaper_drive.name.present?
+        "#{diaper_drive.name} (diaper drive)"
+      else
+        source
+      end
     else
       source
     end
@@ -170,16 +176,6 @@ class Donation < ApplicationRecord
 
   def combine_duplicates
     line_items.combine!
-  end
-
-  def format_drive_name
-    if !diaper_drive_participant.nil? && diaper_drive_participant.contact_name.present?
-      "#{diaper_drive_participant.contact_name} (participant)"
-    elsif !diaper_drive.nil? && diaper_drive.name.present?
-      "#{diaper_drive.name} (diaper drive)"
-    else
-      source
-    end
   end
 
 end
