@@ -94,10 +94,12 @@ class Donation < ApplicationRecord
     return source unless from_diaper_drive?
 
     contact_name = diaper_drive_participant&.contact_name
+    drive_name = diaper_drive&.name
+
     if contact_name.present?
       "#{contact_name} (participant)"
-    elsif diaper_drive&.name.present?
-      "#{diaper_drive.name} (diaper drive)"
+    elsif drive_name.present?
+      "#{drive_name} (diaper drive)"
     else
       source
     end
