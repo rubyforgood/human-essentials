@@ -5,6 +5,7 @@
 #  id                     :integer          not null, primary key
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :inet
+#  discarded_at           :datetime
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  invitation_accepted_at :datetime
@@ -52,6 +53,10 @@ FactoryBot.define do
       name { "Administrative User No Org" }
       super_admin { true }
       organization_id { nil }
+    end
+
+    trait :deactivated do
+      discarded_at { Time.zone.now }
     end
   end
 end
