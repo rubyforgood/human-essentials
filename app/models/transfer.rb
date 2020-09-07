@@ -88,7 +88,7 @@ class Transfer < ApplicationRecord
       item.quantity > quantity_by_id.fetch(item.item_id, 0)
     end
 
-    names = insufficient.map { |i| i.item.name }
+    names = insufficient.map(&:name)
 
     if names.any?
       errors.add :from, "location has insufficient inventory for #{names.join(', ')}"
