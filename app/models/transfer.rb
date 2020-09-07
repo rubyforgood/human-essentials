@@ -85,10 +85,13 @@ class Transfer < ApplicationRecord
     end
 
     insufficient_items = []
-    line_items.each do |line_item|
-      if line_item.quantity > quantity_by_id.fetch(line_item.item_id, 0)
-        insufficient_items << line_item.item.name
-      end
+
+    filtered = line_items.select do |item|
+      item.quantity > quantity_by_id.fetch(item.item_id, 0)
+    end
+
+    filtered.each do |line_item|
+      insufficient_items << line_item.item.name
     end
 
     if insufficient_items.any?
