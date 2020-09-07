@@ -35,5 +35,4 @@ class LineItem < ApplicationRecord
   def package_count
     format("%g", has_packages) if has_packages
   end
-
 end
