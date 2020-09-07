@@ -80,17 +80,20 @@ class Transfer < ApplicationRecord
   def from_storage_locations_must_have_enough_to_transfer_out
     return if organization.nil? || from.nil?
 
-    inventory_items = from.inventory_items.reduce({}) do |memo, inventory_item|
+    quantity_by_id = from.inventory_items.reduce({}) do |memo, inventory_item|
       memo.merge(inventory_item.item_id => inventory_item.quantity)
     end
+
     insufficient_items = []
     line_items.each do |line_item|
-      if line_item.quantity > inventory_items.fetch(line_item.item_id, 0)
+      if line_item.quantity > quantity_by_id.fetch(line_item.item_id, 0)
         insufficient_items << line_item.item.name
       end
     end
+
     if insufficient_items.any?
       errors.add :from, "location has insufficient inventory for #{insufficient_items.join(', ')}"
     end
   end
+
 end
