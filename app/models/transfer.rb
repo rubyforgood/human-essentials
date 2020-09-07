@@ -80,8 +80,8 @@ class Transfer < ApplicationRecord
   def from_storage_locations_must_have_enough_to_transfer_out
     return if organization.nil? || from.nil?
 
-    inventory_items = from.inventory_items.each_with_object({}) do |inventory_item, memo|
-      memo[inventory_item.item_id] = inventory_item.quantity
+    inventory_items = from.inventory_items.reduce({}) do |memo, inventory_item|
+      memo.merge(inventory_item.item_id => inventory_item.quantity)
     end
     insufficient_items = []
     line_items.each do |line_item|
