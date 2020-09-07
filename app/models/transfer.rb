@@ -40,7 +40,7 @@ class Transfer < ApplicationRecord
   validate :line_item_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
   validate :storage_locations_must_be_different
-  validate :from_storage_locations_must_have_enough_to_transfer_out
+  validate :from_storage_quantities
 
   def self.csv_export_headers
     ["From", "To", "Comment", "Total Moved"]
@@ -77,7 +77,7 @@ class Transfer < ApplicationRecord
     end
   end
 
-  def from_storage_locations_must_have_enough_to_transfer_out
+  def from_storage_quantities
     return if organization.nil? || from.nil?
 
     names = insufficient_items.map(&:name)
