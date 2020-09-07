@@ -69,6 +69,29 @@ RSpec.describe OrganizationsController, type: :controller do
       end
     end
 
+    describe "POST #deactivate_user" do
+      subject { post :deactivate_user, params: default_params.merge(user_id: @user.id) }
+
+      it "deactivates the user" do
+        expect(subject).to have_http_status(:redirect)
+
+        @user.reload
+        expect(@user.discarded_at).to be_present
+      end
+    end
+
+    describe "POST #reactivate_user" do
+      subject { post :reactivate_user, params: default_params.merge(user_id: @user.id) }
+
+      it "reactivates the user" do
+        @user.discard!
+        expect(subject).to have_http_status(:redirect)
+
+        @user.reload
+        expect(@user.discarded_at).to be_nil
+      end
+    end
+
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do

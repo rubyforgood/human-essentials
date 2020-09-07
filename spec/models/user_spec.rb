@@ -5,6 +5,7 @@
 #  id                     :integer          not null, primary key
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :inet
+#  discarded_at           :datetime
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  invitation_accepted_at :datetime
@@ -73,14 +74,28 @@ RSpec.describe User, type: :model do
 
   describe "Scopes >" do
     describe "->alphabetized" do
+      let(:discarded_at) { Time.zone.now }
+
       let!(:z_name_user) { create(:user, name: 'Zachary') }
       let!(:a_name_user) { create(:user, name: 'Amanda') }
+      let!(:deactivated_a_name_user) { create(:user, name: 'Alice', discarded_at: discarded_at) }
+      let!(:deactivated_z_name_user) { create(:user, name: 'Zeke', discarded_at: discarded_at) }
 
       it "retrieves users in the correct order" do
-        alphabetized_list = described_class.alphabetized
+        alphabetized_list = described_class.with_discarded.alphabetized
 
-        expect(alphabetized_list.first).to eq(a_name_user)
-        expect(alphabetized_list.last).to eq(z_name_user)
+        expect(alphabetized_list).to eq(
+          [
+            a_name_user,
+            @organization_admin,
+            @super_admin,
+            @super_admin_no_org,
+            @user,
+            z_name_user,
+            deactivated_a_name_user,
+            deactivated_z_name_user
+          ]
+        )
       end
     end
   end
@@ -102,6 +117,10 @@ RSpec.describe User, type: :model do
       expect(build(:user, invitation_sent_at: Time.current - 7.days).reinvitable?).to be true
       expect(build(:user, invitation_sent_at: Time.current - 6.days).reinvitable?).to be false
       expect(build(:user, invitation_sent_at: Time.current - 7.days, invitation_accepted_at: Time.current - 7.days).reinvitable?).to be false
+    end
+
+    it "discarded?" do
+      expect(build(:user, :deactivated).discarded?).to be true
     end
   end
 end

@@ -75,7 +75,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <%= render partial: "/users/organization_user", collection: @organization.users.alphabetized, as: :user %>
+                  <%= render partial: "/users/organization_user", collection: @organization.users.with_discarded.alphabetized, as: :user %>
                   </tbody>
                 </table>
               </div>
