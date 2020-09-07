@@ -84,14 +84,11 @@ class Transfer < ApplicationRecord
       memo.merge(inventory_item.item_id => inventory_item.quantity)
     end
 
-
     insufficient = line_items.select do |item|
       item.quantity > quantity_by_id.fetch(item.item_id, 0)
     end
 
-    names = insufficient.map do |line_item|
-      line_item.item.name
-    end
+    names = insufficient.map { |line_item| line_item.item.name }
 
     if names.any?
       errors.add :from, "location has insufficient inventory for #{names.join(', ')}"
