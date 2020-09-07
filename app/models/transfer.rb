@@ -80,12 +80,8 @@ class Transfer < ApplicationRecord
   def from_storage_locations_must_have_enough_to_transfer_out
     return if organization.nil? || from.nil?
 
-    quantity_by_id = from.inventory_items.reduce({}) do |memo, item|
-      memo.merge(item.item_id => item.quantity)
-    end
-
     insufficient = line_items.select do |item|
-      item.quantity > quantity_by_id.fetch(item.item_id, 0)
+      item.quantity > from.item_total(item.item_id)
     end
 
     names = insufficient.map(&:name)
