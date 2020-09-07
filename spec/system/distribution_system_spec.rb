@@ -274,6 +274,7 @@ RSpec.feature "Distributions", type: :system do
 
     context "when editing that distribution" do
       before do
+        click_on "Distributions", match: :first
         click_on "Edit", match: :first
         @distribution = Distribution.last
       end
