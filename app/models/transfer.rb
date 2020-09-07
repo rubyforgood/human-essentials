@@ -88,6 +88,6 @@ class Transfer < ApplicationRecord
   end
 
   def insufficient_items
-    line_items.select { |i| i.quantity > (from.item_total(i.item_id) || 0) }
+    line_items.select { |i| i.quantity > from.item_total(i.item_id) }
   end
 end
