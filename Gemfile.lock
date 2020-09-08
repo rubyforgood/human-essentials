@@ -190,7 +190,7 @@ GEM
     geocoder (1.6.3)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    groupdate (5.1.0)
+    groupdate (5.2.0)
       activesupport (>= 5)
     guard (2.15.1)
       formatador (>= 0.2.4)
@@ -256,7 +256,7 @@ GEM
     mini_portile2 (2.4.0)
     mini_racer (0.3.1)
       libv8 (~> 8.4.255)
-    minitest (5.14.1)
+    minitest (5.14.2)
     momentjs-rails (2.20.1)
       railties (>= 3.1)
     nenv (0.3.0)
@@ -545,7 +545,7 @@ DEPENDENCIES
   font-ionicons-rails
   fullcalendar-rails
   geocoder
-  groupdate (~> 5.1)
+  groupdate (~> 5.2)
   guard-rspec
   image_processing
   jbuilder
