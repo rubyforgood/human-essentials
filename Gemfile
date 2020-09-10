@@ -9,11 +9,13 @@ ruby "2.7.1"
 
 gem "api-auth", "~> 2.4"
 gem 'bootstrap', '~> 4.5.2'
+gem 'bootstrap-daterangepicker-rails'
 gem 'bootstrap-select-rails'
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
 gem "devise", '>= 4.7.1'
+gem 'discard', '~> 1.2'
 gem "devise_invitable"
 gem "dotenv-rails"
 gem "filterrific"
@@ -30,28 +32,26 @@ gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "kaminari"
+gem "mini_racer", "~> 0.3.1"
 gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
 gem "paperclip" # needed for legacy migrations
 gem "pg", "~> 1.2.3"
+gem "simple_form"
 gem 'popper_js'
 gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 6.0.3"
 gem "sass-rails"
 gem "sidekiq"
-gem "simple_form"
+gem 'sidekiq-scheduler'
 gem "skylight"
 gem "sprockets", "~> 4.0.2"
-gem "uglifier", ">= 1.3.0"
-gem "mini_racer", "~> 0.3.1"
-gem "yajl-ruby"
 gem "toastr-rails"
+gem "uglifier", ">= 1.3.0"
 gem "webpacker", "> 4.0"
-gem 'sidekiq-scheduler'
-gem 'bootstrap-daterangepicker-rails'
-gem 'discard', '~> 1.2'
+gem "yajl-ruby"
 
 group :development, :test do
   gem "awesome_print"
