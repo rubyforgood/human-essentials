@@ -124,7 +124,7 @@ GEM
     childprocess (3.0.0)
     choice (0.2.0)
     climate_control (0.2.0)
-    cocoon (1.2.14)
+    cocoon (1.2.15)
     coderay (1.1.2)
     concurrent-ruby (1.1.7)
     connection_pool (2.2.3)
