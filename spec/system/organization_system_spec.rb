@@ -74,6 +74,7 @@ RSpec.describe "Organization management", type: :system, js: true do
     end
 
     it "can see 'Make user' button for admins" do
+      create(:organization_admin)
       visit url_prefix + "/organization"
       expect(page.find(".table.border")).to have_content "Make User"
     end
