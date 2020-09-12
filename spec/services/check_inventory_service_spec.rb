@@ -19,9 +19,9 @@ RSpec.describe InventoryCheckService, type: :service do
 
         result = subject.new(distribution.reload).call
 
-        expect(result.alert).to include("The following items have fallen below the minimum on hand quantity")
-        expect(result.alert).to include(item1.name)
-        expect(result.alert).to include(item2.name)
+        expect(result.error).to include("The following items have fallen below the minimum on hand quantity")
+        expect(result.error).to include(item1.name)
+        expect(result.error).to include(item2.name)
       end
     end
   end

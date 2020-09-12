@@ -1,9 +1,9 @@
 class InventoryCheckService
-  attr_reader :alert, :distribution
+  attr_reader :error, :distribution
 
   def initialize(distribution)
     @distribution = distribution
-    @alert = nil
+    @error = nil
   end
 
   def call
@@ -20,7 +20,7 @@ class InventoryCheckService
     end
 
     unless items_below_minimum_quantity.empty?
-      @alert = "The following items have fallen below the minimum " \
+      @error = "The following items have fallen below the minimum " \
         "on hand quantity: #{items_below_minimum_quantity.map(&:name).join(", ")}"
     end
 

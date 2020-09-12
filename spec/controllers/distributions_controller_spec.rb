@@ -28,14 +28,14 @@ RSpec.describe DistributionsController, type: :controller do
 
         subject { post :create, params: params }
 
-        it "redirects with a flash warning" do
+        it "redirects with a flash notice and a flash error" do
           expect(subject).to have_http_status(:redirect)
           expect(flash[:notice]).to eq("Distribution created!")
-          expect(flash[:alert]).to eq("The following items have fallen below the minimum on hand quantity: Item 1")
+          expect(flash[:error]).to eq("The following items have fallen below the minimum on hand quantity: Item 1")
         end
       end
 
-      context "multiple line_items that have inventory quantity blow minimum quantity" do
+      context "multiple line_items that have inventory quantity below minimum quantity" do
         let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5) }
         let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_minimum_quantity: 5) }
         let(:storage_location) do
@@ -62,10 +62,10 @@ RSpec.describe DistributionsController, type: :controller do
 
         subject { post :create, params: params }
 
-        it "redirects with a flash warning" do
+        it "redirects with a flash notice and a flash error" do
           expect(subject).to have_http_status(:redirect)
           expect(flash[:notice]).to eq("Distribution created!")
-          expect(flash[:alert]).to eq("The following items have fallen below the minimum on hand quantity: Item 1, Item 2")
+          expect(flash[:error]).to eq("The following items have fallen below the minimum on hand quantity: Item 1, Item 2")
         end
       end
 
