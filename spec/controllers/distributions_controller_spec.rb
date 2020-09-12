@@ -66,6 +66,7 @@ RSpec.describe DistributionsController, type: :controller do
           expect(subject).to have_http_status(:redirect)
           expect(flash[:notice]).to eq("Distribution created!")
           expect(flash[:error]).to eq("The following items have fallen below the minimum on hand quantity: Item 1, Item 2")
+          expect(flash[:alert]).to be_nil
         end
       end
 
