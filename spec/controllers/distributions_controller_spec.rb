@@ -105,5 +105,42 @@ RSpec.describe DistributionsController, type: :controller do
       end
 
     end
+
+    describe "PUT #update" do
+      context "when distribution causes inventory quantity to be below minimum quantity" do
+        let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_recommended_quantity: 5) }
+        let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_recommended_quantity: 5) }
+        let(:storage_location) do
+          storage_location = create(:storage_location)
+          create(:inventory_item, storage_location: storage_location, item: item1, quantity: 20)
+          create(:inventory_item, storage_location: storage_location, item: item2, quantity: 20)
+
+          storage_location
+        end
+        let(:distribution) { create(:distribution, :with_items, storage_location: storage_location, item_quantity: 10) }
+        let(:params) do
+          {
+            organization_id: @organization.id,
+            id: distribution.id,
+            distribution: {
+              storage_location_id: distribution.storage_location.id,
+              line_items_attributes:
+                {
+                  "0": { item_id: item1.id, quantity: 18 },
+                  "1": { item_id: item2.id, quantity: 18 }
+                }
+            }
+          }
+        end
+
+        subject { put :update, params: params }
+
+        it "redirects with a flash notice and a flash error" do
+          expect(subject).to have_http_status(:redirect)
+          expect(flash[:notice]).to eq("Distribution updated!")
+          expect(flash[:alert]).to eq("The following items have fallen below the recommended on hand quantity: Item 1, Item 2")
+        end
+      end
+    end
   end
 end
