@@ -11,4 +11,20 @@ RSpec.describe DistributionUpdateService, type: :service do
       end.to change { distribution.storage_location.size }.by(8)
     end
   end
+
+  describe "resend_notification?" do
+    let!(:distribution) { FactoryBot.create(:distribution, :with_items, item_quantity: 10) }
+
+    it "changes the issue_date, resulting in resend_notification? = true" do
+      service = DistributionUpdateService.new(distribution, {issued_at: distribution.issued_at + 1.day})
+      service.call
+      assert service.resend_notification?
+    end
+
+    it "changes the delivery_method, resulting in resend_notification? = true" do
+      service = DistributionUpdateService.new(distribution, {delivery_method: :delivery})
+      service.call
+      assert service.resend_notification?
+    end
+  end
 end

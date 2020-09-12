@@ -8,6 +8,7 @@ class DistributionUpdateService < DistributionService
   def call
     perform_distribution_service do
       @old_issued_at = distribution.issued_at
+      @old_delivery_method = distribution.delivery_method
       distribution.storage_location.increase_inventory(distribution.to_a)
       # Delete the line items -- they'll be replaced later
       distribution.line_items.each(&:destroy!)
@@ -16,12 +17,13 @@ class DistributionUpdateService < DistributionService
       distribution.update! @params
       distribution.reload
       @new_issued_at = distribution.issued_at
+      @new_delivery_method = distribution.delivery_method
       # Apply the new changes to the storage location inventory
       distribution.storage_location.decrease_inventory(distribution.to_a)
     end
   end
 
   def resend_notification?
-    @old_issued_at.to_date != @new_issued_at.to_date
+    @old_issued_at.to_date != @new_issued_at.to_date || @old_delivery_method != @new_delivery_method
   end
 end
