@@ -10,19 +10,20 @@ class InventoryCheckService
   def call
     items_below_minimum_quantity = []
     items_below_recommended_quantity = []
+
     storage_location = @distribution.storage_location
 
-    @distribution.line_items.each do |line_item|
-      item = line_item.item
-      inventory_item = item.inventory_items.where(storage_location_id: storage_location.id).first
+    items_below_minimum_quantity = @distribution.line_items.select do |line_item|
+      inventory_item = line_item.item.inventory_item_at(storage_location.id)
+      inventory_item.lower_than_on_hand_minimum_quantity?
+    end.map(&:item)
 
-      if inventory_item.quantity < item.on_hand_minimum_quantity
-        items_below_minimum_quantity << item
-      elsif item.on_hand_recommended_quantity.present? &&
-          inventory_item.quantity < item.on_hand_recommended_quantity
-        items_below_recommended_quantity << item
-      end
-    end
+    items_below_recommended_quantity = @distribution.line_items.select do |line_item|
+      inventory_item = line_item.item.inventory_item_at(storage_location.id)
+      inventory_item.lower_than_on_hand_recommended_quantity?
+    end.map(&:item)
+
+    items_below_recommended_quantity = items_below_recommended_quantity - items_below_minimum_quantity
 
     unless items_below_minimum_quantity.empty?
       @error = "The following items have fallen below the minimum " \
