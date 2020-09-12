@@ -29,6 +29,26 @@ RSpec.describe ItemsController, type: :controller do
       end
     end
 
+    describe "PUT #update" do
+      context "visible" do
+        let(:item) { create(:item, visible_to_partners: false) }
+        subject { put :update, params: default_params.merge(id: item.id, item: { value_in_cents: 100, visible_to_partners: true }) }
+        it "should update visible_to_partners to true" do
+          expect(subject).to redirect_to(items_path)
+          expect(item.reload.visible_to_partners).to be true
+        end
+      end
+
+      context "invisible" do
+        let(:item) { create(:item, visible_to_partners: true) }
+        subject { put :update, params: default_params.merge(id: item.id, item: { value_in_cents: 100, visible_to_partners: false }) }
+        it "should update visible_to_partners to false" do
+          expect(subject).to redirect_to(items_path)
+          expect(item.reload.visible_to_partners).to be false
+        end
+      end
+    end
+
     describe "GET #show" do
       subject { get :show, params: default_params.merge(id: create(:item, organization: @organization)) }
       it "returns http success" do

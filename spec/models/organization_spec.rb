@@ -331,6 +331,18 @@ RSpec.describe Organization, type: :model do
       final_count = organization.valid_items.count
       expect(intial_count).to_not eq(final_count)
     end
+
+    context 'with invisible items' do
+      let!(:organization) { create(:organization, skip_items: true) }
+      let!(:item1) { create(:item, organization: organization, active: true, visible_to_partners: true) }
+      let!(:item2) { create(:item, organization: organization, active: true, visible_to_partners: false) }
+      let!(:item3) { create(:item, organization: organization, active: false, visible_to_partners: true) }
+      let!(:item4) { create(:item, organization: organization, active: false, visible_to_partners: false) }
+
+      it 'only shows active and visible items' do
+        expect(organization.valid_items).to eq([{ id: item1.id, partner_key: item1.partner_key, name: item1.name }])
+      end
+    end
   end
 
   describe 'from_email' do
