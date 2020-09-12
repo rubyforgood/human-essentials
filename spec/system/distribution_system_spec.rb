@@ -55,11 +55,12 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
+        select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
         click_button "Save"
 
-        expect(page).to have_content("The inventory has falled below the on hand minimum quantity.")
+        expect(page).to have_content("The following items have fallen below the minimum on hand quantity: #{item.name}")
       end
     end
 
