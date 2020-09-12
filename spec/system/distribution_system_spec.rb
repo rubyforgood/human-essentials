@@ -309,8 +309,6 @@ RSpec.feature "Distributions", type: :system do
         find_all(".numeric")[0].set 1
 
         click_on "Add another item"
-        second_item_name_field = 'distribution_line_items_attributes_1_item_id'
-        select(diaper_type, from: second_item_name_field)
         find_all(".numeric")[1].set 3
 
         first("button", text: "Save").click
