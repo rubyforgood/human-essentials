@@ -61,9 +61,12 @@ class DistributionsController < ApplicationController
       @distribution = result.distribution
       flash[:notice] = "Distribution created!"
 
-      error = InventoryCheckService.new(@distribution).call.error
-      if error.present?
-        flash[:error] = error
+      inventory_check_result = InventoryCheckService.new(@distribution).call
+      if inventory_check_result.error.present?
+        flash[:error] = inventory_check_result.error
+      end
+      if inventory_check_result.alert.present?
+        flash[:alert] = inventory_check_result.alert
       end
 
       redirect_to(distribution_path(result.distribution)) && return
