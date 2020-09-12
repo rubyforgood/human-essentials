@@ -216,7 +216,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_155253) do
     t.integer "distribution_quantity"
     t.integer "on_hand_minimum_quantity", default: 0, null: false
     t.integer "on_hand_recommended_quantity"
-    t.boolean "visible_to_partners", default: true
+    t.boolean "visible_to_partners", default: true, null: false
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
