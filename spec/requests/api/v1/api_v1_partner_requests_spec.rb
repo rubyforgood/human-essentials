@@ -84,7 +84,7 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
         it "should only return items that are visible" do
           org = create(:organization, skip_items: true)
           item1 = create(:item, organization: org, visible_to_partners: true)
-          item2 = create(:item, organization: org, visible_to_partners: false) # rubocop:disable Lint/UselessAssignment
+          create(:item, organization: org, visible_to_partners: false)
           item3 = create(:item, organization: org, visible_to_partners: true)
           expected_item1 = { id: item1.id, partner_key: item1.partner_key, name: item1.name }.with_indifferent_access
           expected_item3 = { id: item3.id, partner_key: item3.partner_key, name: item3.name }.with_indifferent_access
