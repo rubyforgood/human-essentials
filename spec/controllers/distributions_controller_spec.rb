@@ -36,8 +36,8 @@ RSpec.describe DistributionsController, type: :controller do
       end
 
       context "multiple line_items that have inventory quantity below minimum quantity" do
-        let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5) }
-        let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_minimum_quantity: 5) }
+        let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
+        let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
         let(:storage_location) do
           storage_location = create(:storage_location)
           create(:inventory_item, storage_location: storage_location, item: item1, quantity: 20)

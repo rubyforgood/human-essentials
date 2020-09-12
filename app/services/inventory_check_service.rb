@@ -3,6 +3,7 @@ class InventoryCheckService
 
   def initialize(distribution)
     @distribution = distribution
+    @alert = nil
     @error = nil
   end
 
@@ -17,9 +18,8 @@ class InventoryCheckService
 
       if inventory_item.quantity < item.on_hand_minimum_quantity
         items_below_minimum_quantity << item
-      end
-
-      if inventory_item.quantity < item.on_hand_recommended_quantity
+      elsif item.on_hand_recommended_quantity.present? &&
+          inventory_item.quantity < item.on_hand_recommended_quantity
         items_below_recommended_quantity << item
       end
     end
