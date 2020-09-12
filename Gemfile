@@ -79,6 +79,7 @@ group :development do
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
+  gem "letter_opener"
   gem "listen", "~> 3.2.1"
   gem "rails-erd"
   gem "spring"
