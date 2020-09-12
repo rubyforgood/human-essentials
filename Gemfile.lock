@@ -234,6 +234,8 @@ GEM
     kaminari-core (1.2.1)
     launchy (2.5.0)
       addressable (~> 2.7)
+    letter_opener (1.7.0)
+      launchy (~> 2.2)
     libv8 (8.4.255.0)
     listen (3.2.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -553,6 +555,7 @@ DEPENDENCIES
   jquery-ui-rails
   kaminari
   launchy
+  letter_opener
   listen (~> 3.2.1)
   mini_racer (~> 0.3.1)
   momentjs-rails
