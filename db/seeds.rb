@@ -315,7 +315,7 @@ end
                                       partner:          random_record_for_org(pdx_org, Partner),
                                       organization:     pdx_org,
                                       issued_at:        Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
-                                      delivery_method: Distribution.delivery_methods.keys.sample)
+                                      delivery_method:  Distribution.delivery_methods.keys.sample)
 
   stored_inventory_items_sample.each do |stored_inventory_item|
     distribution_qty = rand(stored_inventory_item.quantity / 2)

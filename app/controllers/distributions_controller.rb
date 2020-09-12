@@ -105,7 +105,11 @@ class DistributionsController < ApplicationController
 
     if result.success?
       if result.resend_notification? && @distribution.partner&.send_reminders
-        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
+        if result.issued_at_changed?
+          send_notification(current_organization.id, @distribution.id, subject: "Your Distribution's new Schedule Date is #{@distribution.issued_at}")
+        elsif result.delivery_method_changed?
+          send_notification(current_organization.id, @distribution.id, subject: "Your Distribution's new Delivery Method is #{@distribution.delivery_method.humanize}")
+        end
       end
       schedule_reminder_email(@distribution)
 

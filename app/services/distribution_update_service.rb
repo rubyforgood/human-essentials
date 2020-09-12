@@ -24,6 +24,14 @@ class DistributionUpdateService < DistributionService
   end
 
   def resend_notification?
-    @old_issued_at.to_date != @new_issued_at.to_date || @old_delivery_method != @new_delivery_method
+    issued_at_changed? || delivery_method_changed?
+  end
+
+  def issued_at_changed?
+    @old_issued_at.to_date != @new_issued_at.to_date
+  end
+
+  def delivery_method_changed?
+    @old_delivery_method != @new_delivery_method
   end
 end
