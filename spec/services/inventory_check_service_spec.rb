@@ -15,8 +15,8 @@ RSpec.describe InventoryCheckService, type: :service do
 
       it "should set the error" do
         distribution = create(:distribution, storage_location_id: storage_location.id)
-        line_item1 = create(:line_item, item: item1, itemizable_type: "Distribution", itemizable_id: distribution.id, quantity: 16)
-        line_item2 = create(:line_item, item: item2, itemizable_type: "Distribution", itemizable_id: distribution.id, quantity: 16)
+        create(:line_item, item: item1, itemizable_type: "Distribution", itemizable_id: distribution.id, quantity: 16)
+        create(:line_item, item: item2, itemizable_type: "Distribution", itemizable_id: distribution.id, quantity: 16)
 
         result = subject.new(distribution.reload).call
 
@@ -38,8 +38,8 @@ RSpec.describe InventoryCheckService, type: :service do
 
       it "should set the alert" do
         distribution = create(:distribution, storage_location_id: storage_location.id)
-        line_item1 = create(:line_item, item: item1, itemizable_type: "Distribution", itemizable_id: distribution.id, quantity: 16)
-        line_item2 = create(:line_item, item: item2, itemizable_type: "Distribution", itemizable_id: distribution.id, quantity: 16)
+        create(:line_item, item: item1, itemizable_type: "Distribution", itemizable_id: distribution.id, quantity: 16)
+        create(:line_item, item: item2, itemizable_type: "Distribution", itemizable_id: distribution.id, quantity: 16)
 
         result = subject.new(distribution.reload).call
 

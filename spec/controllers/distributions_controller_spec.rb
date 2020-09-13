@@ -103,7 +103,6 @@ RSpec.describe DistributionsController, type: :controller do
           expect(flash[:alert]).to eq("The following items have fallen below the recommended on hand quantity: Item 1, Item 2")
         end
       end
-
     end
 
     describe "PUT #update" do

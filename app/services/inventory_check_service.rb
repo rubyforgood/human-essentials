@@ -30,14 +30,14 @@ class InventoryCheckService
   end
 
   def items_below_minimum_quantity
-    @_items_below_min ||= @distribution.line_items.select do |line_item|
+    @items_below_minimum_quantity ||= @distribution.line_items.select do |line_item|
       inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
       inventory_item.lower_than_on_hand_minimum_quantity?
     end.map(&:item)
   end
 
   def items_below_recommended_quantity
-    @_items_below_rec ||= @distribution.line_items.select do |line_item|
+    @items_below_recommended_quantity ||= @distribution.line_items.select do |line_item|
       inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
       inventory_item.lower_than_on_hand_recommended_quantity?
     end.map(&:item)

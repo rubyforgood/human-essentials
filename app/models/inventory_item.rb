@@ -27,10 +27,10 @@ class InventoryItem < ApplicationRecord
   delegate :name, to: :item, prefix: true
 
   def lower_than_on_hand_minimum_quantity?
-    self.quantity < self.item.on_hand_minimum_quantity
+    quantity < item.on_hand_minimum_quantity
   end
 
   def lower_than_on_hand_recommended_quantity?
-    self.item.on_hand_recommended_quantity.present? && self.quantity < self.item.on_hand_recommended_quantity
+    item.on_hand_recommended_quantity.present? && quantity < item.on_hand_recommended_quantity
   end
 end

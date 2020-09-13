@@ -121,6 +121,6 @@ class Item < ApplicationRecord
   end
 
   def inventory_item_at(storage_location_id)
-    inventory_items.where(storage_location_id: storage_location_id).first
+    inventory_items.find_by(storage_location_id: storage_location_id)
   end
 end
