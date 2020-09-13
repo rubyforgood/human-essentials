@@ -22,8 +22,9 @@ RSpec.describe DistributionCreateService, type: :service do
         @partner.update!(send_reminders: true)
         allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        expect(PartnerMailerJob).to receive(:perform_now).once
-        subject.new(distribution_params).call
+        result = subject.new(distribution_params).call
+
+        expect(PartnerMailerJob).to have_enqueued_sidekiq_job(@organization.id, result.distribution.id, "Your Distribution")
       end
     end
 
