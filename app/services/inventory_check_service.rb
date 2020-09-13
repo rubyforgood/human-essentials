@@ -21,12 +21,12 @@ class InventoryCheckService
 
   def set_error
     @error = "The following items have fallen below the minimum " \
-      "on hand quantity: #{items_below_minimum_quantity.map(&:name).join(", ")}"
+      "on hand quantity: #{items_below_minimum_quantity.map(&:name).sort.join(", ")}"
   end
 
   def set_alert
     @alert = "The following items have fallen below the recommended " \
-      "on hand quantity: #{deduplicate_items_below_recommended_quantity.map(&:name).join(", ")}"
+      "on hand quantity: #{deduplicate_items_below_recommended_quantity.map(&:name).sort.join(", ")}"
   end
 
   def items_below_minimum_quantity

@@ -65,7 +65,9 @@ RSpec.describe DistributionsController, type: :controller do
         it "redirects with a flash notice and a flash error" do
           expect(subject).to have_http_status(:redirect)
           expect(flash[:notice]).to eq("Distribution created!")
-          expect(flash[:error]).to eq("The following items have fallen below the minimum on hand quantity: Item 1, Item 2")
+          expect(flash[:error]).to include("The following items have fallen below the minimum on hand quantity")
+          expect(flash[:error]).to include("Item 1")
+          expect(flash[:error]).to include("Item 2")
           expect(flash[:alert]).to be_nil
         end
       end
