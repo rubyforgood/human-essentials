@@ -77,7 +77,7 @@
             </table>
           </div>
           <div class="card-footer">
-            <%= update_button_to picked_up_distribution_path(@distribution), {text: "Pick up Complete", size: "md"} if @distribution.scheduled? %>
+            <%= update_button_to picked_up_distribution_path(@distribution), {text: "Distribution Complete", size: "md"} if @distribution.scheduled? %>
             <% if @distribution.future? || current_user.organization_admin? %>
               <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "md"} %>
             <% end %>

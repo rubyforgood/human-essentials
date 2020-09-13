@@ -132,9 +132,9 @@ class DistributionsController < ApplicationController
     distribution = current_organization.distributions.find(params[:id])
 
     if !distribution.complete? && distribution.complete!
-      flash[:notice] = 'This distribution has been marked as being picked up!'
+      flash[:notice] = 'This distribution has been marked as being completed!'
     else
-      flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being picked up'
+      flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being completed'
     end
 
     redirect_back(fallback_location: distribution_path)
