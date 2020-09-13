@@ -9,13 +9,13 @@ RSpec.describe PartnerMailerJob, type: :job do
 
     it "does not send mail for past distributions" do
       expect do
-        PartnerMailerJob.perform_now(organization.id, past_distribution.id, mailer_subject)
+        PartnerMailerJob.new.perform(organization.id, past_distribution.id, mailer_subject)
       end.not_to change { ActionMailer::Base.deliveries.count }
     end
 
     it "sends mail for future distributions immediately" do
       expect do
-        PartnerMailerJob.perform_now(organization.id, future_distribution.id, mailer_subject)
+        PartnerMailerJob.new.perform(organization.id, future_distribution.id, mailer_subject)
       end.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
   end

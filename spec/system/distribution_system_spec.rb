@@ -18,10 +18,9 @@ RSpec.feature "Distributions", type: :system do
         select @storage_location.name, from: "From storage location"
 
         fill_in "Comment", with: "Take my wipes... please"
+        expect(PartnerMailerJob).to receive(:perform_async)
 
-        expect do
-          click_button "Save", match: :first
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        click_button "Save", match: :first
 
         expect(page).to have_content "Distributions"
         expect(page.find(".alert-info")).to have_content "reated"

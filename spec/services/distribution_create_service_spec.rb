@@ -33,7 +33,7 @@ RSpec.describe DistributionCreateService, type: :service do
         @partner.update!(send_reminders: false)
         allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        expect(PartnerMailerJob).not_to receive(:perform_now)
+        expect(PartnerMailerJob).not_to receive(:perform_async)
         subject.new(distribution_params).call
       end
     end
