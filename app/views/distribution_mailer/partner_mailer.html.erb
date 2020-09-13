@@ -350,7 +350,7 @@
                       </p>
                     <% else %>
                       <p>
-                        Your distribution has been set to be picked up on <%= @distribution.issued_at.strftime("%m/%d/%Y") %>.
+                        Your distribution has been set to be picked up on <%= @distribution.issued_at.strftime("%m/%d/%Y") %> at <%= @distribution.issued_at.strftime("%l:%M%P") %>.
                       </p>
                     <% end %>
                     <p>See you soon!</p>
