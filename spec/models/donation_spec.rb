@@ -189,6 +189,50 @@ RSpec.describe Donation, type: :model do
         end
       end
     end
+
+    describe "source_view" do
+      context "from a drive" do
+        let!(:donation) { create(:diaper_drive_donation, diaper_drive_participant: diaper_drive_participant, diaper_drive: diaper_drive) }
+
+        let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
+
+        context "participant known" do
+          let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: contact_name) }
+
+          context "contact name present" do
+            let(:contact_name) { "Contact Name" }
+
+            it "returns participant display name" do
+              expect(donation.source_view).to eq("Contact Name (participant)")
+            end
+          end
+
+          context "no contact name" do
+            let(:contact_name) { nil }
+
+            it "returns drive display name" do
+              expect(donation.source_view).to eq("Test Drive (diaper drive)")
+            end
+          end
+        end
+
+        context "unknown participant" do
+          let(:diaper_drive_participant) { nil }
+
+          it "returns drive display name" do
+            expect(donation.source_view).to eq("Test Drive (diaper drive)")
+          end
+        end
+      end
+
+      context "not from a drive" do
+        let!(:donation) { create(:manufacturer_donation) }
+
+        it "returns source" do
+          expect(donation.source_view).to eq(donation.source)
+        end
+      end
+    end
   end
 
   describe "SOURCES" do
