@@ -8,6 +8,7 @@
   <%= csrf_meta_tags %>
   <%= javascript_include_tag 'application' %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
+  <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= javascript_pack_tag 'application' %>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
