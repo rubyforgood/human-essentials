@@ -210,13 +210,13 @@ RSpec.feature "Distributions", type: :system do
       it "can click on Edit button and a warning appears " do
         visit @url_prefix + "/distributions"
         click_on "Edit", match: :first
-        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
+        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was scheduled for."
       end
 
       it "can be accessed directly" do
         visit @url_prefix + "/distributions/#{distribution.id}/edit"
         expect(page).to have_no_css(".alert-danger")
-        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
+        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was scheduled for."
       end
     end
   end

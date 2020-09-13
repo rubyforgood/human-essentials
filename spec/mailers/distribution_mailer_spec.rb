@@ -22,7 +22,7 @@ RSpec.describe DistributionMailer, type: :mailer do
       it "renders the body with 'picked up' specified" do
         distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :pick_up)
         mail = DistributionMailer.partner_mailer(@organization, distribution, 'test subject')
-        expect(mail.body.encoded).to match("distribution has been set to be picked up on")
+        expect(mail.body.encoded).to match("picked up")
       end
     end
 
@@ -30,7 +30,7 @@ RSpec.describe DistributionMailer, type: :mailer do
       it "renders the body with 'delivered' specified" do
         distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :delivery)
         mail = DistributionMailer.partner_mailer(@organization, distribution, 'test subject')
-        expect(mail.body.encoded).to match("distribution has been set to be delivered on")
+        expect(mail.body.encoded).to match("delivered")
       end
     end
   end
@@ -47,7 +47,7 @@ RSpec.describe DistributionMailer, type: :mailer do
       it "renders the body with 'pick up' specified" do
         distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :pick_up)
         mail = DistributionMailer.reminder_email(distribution.id)
-        expect(mail.body.encoded).to match("your distribution pick up date")
+        expect(mail.body.encoded).to match("pick up")
       end
     end
 
@@ -55,7 +55,7 @@ RSpec.describe DistributionMailer, type: :mailer do
       it "renders the body with 'delivery' specified" do
         distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :delivery)
         mail = DistributionMailer.reminder_email(distribution.id)
-        expect(mail.body.encoded).to match("your distribution delivery date")
+        expect(mail.body.encoded).to match("delivery")
       end
     end
   end
