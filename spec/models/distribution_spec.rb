@@ -5,7 +5,7 @@
 #  id                     :integer          not null, primary key
 #  agency_rep             :string
 #  comment                :text
-#  delivery_method        :integer          default(NULL), not null
+#  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  state                  :integer          default("started"), not null

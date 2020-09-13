@@ -6,7 +6,7 @@ require 'time_util'
 #  id                     :integer          not null, primary key
 #  agency_rep             :string
 #  comment                :text
-#  delivery_method        :integer          default(NULL), not null
+#  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  state                  :integer          default("started"), not null
@@ -41,7 +41,7 @@ class Distribution < ApplicationRecord
 
   enum state: { started: 0, scheduled: 5, complete: 10 }
 
-  enum delivery_method: { pick_up: 1, delivery: 2 }
+  enum delivery_method: { pick_up: 0, delivery: 1 }
 
   include Filterable
   # add item_id scope to allow filtering distributions by item

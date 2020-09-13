@@ -45,7 +45,7 @@
               <tr>
                 <td><%= @distribution.storage_location.name %></td>
                 <td><%= @distribution.agency_rep %></td>
-                <td><%= @distribution.delivery_method&.humanize %></td>
+                <td><%= @distribution.delivery_method.humanize %></td>
                 <td><%= @distribution.state&.humanize %></td>
               </tr>
             </table>
