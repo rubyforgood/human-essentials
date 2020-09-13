@@ -33,7 +33,6 @@ RSpec.describe DistributionMailer, type: :mailer do
         expect(mail.body.encoded).to match("distribution has been set to be delivered on")
       end
     end
-
   end
 
   describe "#reminder_email" do
@@ -42,6 +41,22 @@ RSpec.describe DistributionMailer, type: :mailer do
     it "renders the body with organizations email text" do
       expect(mail.body.encoded).to match("This is a friendly reminder")
       expect(mail.subject).to eq("PARTNER Distribution Reminder")
+    end
+
+    context "with deliver_method: :pick_up" do
+      it "renders the body with 'pick up' specified" do
+        distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :pick_up)
+        mail = DistributionMailer.reminder_email(distribution.id)
+        expect(mail.body.encoded).to match("your distribution pick up date")
+      end
+    end
+
+    context "with deliver_method: :delivery" do
+      it "renders the body with 'delivery' specified" do
+        distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :delivery)
+        mail = DistributionMailer.reminder_email(distribution.id)
+        expect(mail.body.encoded).to match("your distribution delivery date")
+      end
     end
   end
 end
