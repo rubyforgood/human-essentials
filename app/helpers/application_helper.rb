@@ -91,7 +91,7 @@ module ApplicationHelper
       window['_fs_debug'] = false;
       window['_fs_host'] = 'fullstory.com';
       window['_fs_script'] = 'edge.fullstory.com/s/fs.js';
-      window['_fs_org'] = 'Y1GF2';
+      window['_fs_org'] = 'Y2C5Q';
       window['_fs_namespace'] = 'FS';
       (function(m,n,e,t,l,o,g,y){
           if (e in m) {if(m.console && m.console.log) { m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].');} return;}
