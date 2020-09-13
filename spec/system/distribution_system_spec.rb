@@ -28,6 +28,27 @@ RSpec.feature "Distributions", type: :system do
       end
     end
 
+    it "Allows distribution to be created with a time frame" do
+      with_features email_active: true do
+        visit @url_prefix + "/distributions/new"
+
+        select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
+
+        fill_in "Comment", with: "Take my wipes... please"
+        check "distribution[issued_at_timeframe_enabled]"
+        select "15", from: "distribution[issued_at_end(5i)]"
+        expect do
+          click_button "Save", match: :first
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        expect(page).to have_content "Distributions"
+        expect(Distribution.last.issued_at_timeframe_enabled).to eq(true)
+        expect(Distribution.last.issued_at_end).not_to eq(nil)
+        expect(page.find(".alert-info")).to have_content "reated"
+      end
+    end
+
     it "Displays a complete form after validation errors" do
       with_features email_active: true do
         visit @url_prefix + "/distributions/new"
