@@ -30,20 +30,34 @@ class InventoryCheckService
   end
 
   def items_below_minimum_quantity
-    @items_below_minimum_quantity ||= @distribution.line_items.select do |line_item|
-      inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
-      inventory_item.lower_than_on_hand_minimum_quantity?
-    end.map(&:item)
+    unless @items_below_minimum_quantity
+      item_ids = @distribution.line_items.select do |line_item|
+        inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
+        inventory_item.lower_than_on_hand_minimum_quantity?
+      end.map(&:item_id)
+
+      @items_below_minimum_quantity = Item.find(item_ids)
+    end
+
+    @items_below_minimum_quantity
   end
 
   def items_below_recommended_quantity
-    @items_below_recommended_quantity ||= @distribution.line_items.select do |line_item|
-      inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
-      inventory_item.lower_than_on_hand_recommended_quantity?
-    end.map(&:item)
+    unless @items_below_recommended_quantity
+      item_ids = @distribution.line_items.select do |line_item|
+        inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
+        inventory_item.lower_than_on_hand_recommended_quantity?
+      end.map(&:item_id)
+
+      @items_below_recommended_quantity = Item.find(item_ids)
+    end
+
+    @items_below_recommended_quantity
   end
 
   def deduplicate_items_below_recommended_quantity
+    binding.pry if items_below_recommended_quantity.nil?
+    binding.pry if items_below_minimum_quantity.nil?
     items_below_recommended_quantity - items_below_minimum_quantity
   end
 end
