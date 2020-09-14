@@ -47,6 +47,7 @@ RSpec.feature "Distributions", type: :system do
         expect(Distribution.last.issued_at_end).not_to eq(nil)
         expect(page.find(".alert-info")).to have_content "reated"
       end
+      visit(pickup_day_distributions_path(organization_id: @organization.id))
     end
 
     it "Displays a complete form after validation errors" do
