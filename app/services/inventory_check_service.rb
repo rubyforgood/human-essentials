@@ -56,8 +56,6 @@ class InventoryCheckService
   end
 
   def deduplicate_items_below_recommended_quantity
-    binding.pry if items_below_recommended_quantity.nil?
-    binding.pry if items_below_minimum_quantity.nil?
     items_below_recommended_quantity - items_below_minimum_quantity
   end
 end
