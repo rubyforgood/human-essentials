@@ -30,6 +30,7 @@ class InventoryCheckService
   end
 
   def items_below_minimum_quantity
+    # Done this way to prevent N+1 query on items
     unless @items_below_minimum_quantity
       item_ids = @distribution.line_items.select do |line_item|
         inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
@@ -43,6 +44,7 @@ class InventoryCheckService
   end
 
   def items_below_recommended_quantity
+    # Done this way to prevent N+1 query on items
     unless @items_below_recommended_quantity
       item_ids = @distribution.line_items.select do |line_item|
         inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
