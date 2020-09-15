@@ -42,5 +42,25 @@ RSpec.describe DiaperDriveParticipant, type: :model do
         expect(ddp.volume).to eq(10)
       end
     end
+
+    describe "donation_source_view" do
+      let!(:participant) { create(:diaper_drive_participant, contact_name: contact_name) }
+
+      context "contact name present" do
+        let(:contact_name) { "Contact Name" }
+
+        it do
+          expect(participant.donation_source_view).to eq("Contact Name (participant)")
+        end
+      end
+
+      context "no contact name" do
+        let(:contact_name) { nil }
+
+        it do
+          expect(participant.donation_source_view).to be_nil
+        end
+      end
+    end
   end
 end

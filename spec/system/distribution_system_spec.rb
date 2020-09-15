@@ -18,10 +18,9 @@ RSpec.feature "Distributions", type: :system do
         select @storage_location.name, from: "From storage location"
 
         fill_in "Comment", with: "Take my wipes... please"
+        expect(PartnerMailerJob).to receive(:perform_async)
 
-        expect do
-          click_button "Save", match: :first
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        click_button "Save", match: :first
 
         expect(page).to have_content "Distributions"
         expect(page.find(".alert-info")).to have_content "reated"
@@ -309,8 +308,6 @@ RSpec.feature "Distributions", type: :system do
         find_all(".numeric")[0].set 1
 
         click_on "Add another item"
-        second_item_name_field = 'distribution_line_items_attributes_1_item_id'
-        select(diaper_type, from: second_item_name_field)
         find_all(".numeric")[1].set 3
 
         first("button", text: "Save").click

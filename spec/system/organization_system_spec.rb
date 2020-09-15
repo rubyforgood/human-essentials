@@ -10,6 +10,11 @@ RSpec.describe "Organization management", type: :system, js: true do
     it "can see summary details about the organization as a user" do
       visit url_prefix + "/organization"
     end
+
+    it "cannot see 'Make user' button for admins" do
+      visit url_prefix + "/organization"
+      expect(page.find(".table.border")).to have_no_content "Make User"
+    end
   end
   context "while signed in as an organization admin" do
     let!(:store) { create(:storage_location) }
@@ -66,6 +71,12 @@ RSpec.describe "Organization management", type: :system, js: true do
       create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
       visit url_prefix + "/organization"
       expect(page).to have_xpath("//i[@alt='Re-send invitation']")
+    end
+
+    it "can see 'Make user' button for admins" do
+      create(:organization_admin)
+      visit url_prefix + "/organization"
+      expect(page.find(".table.border")).to have_content "Make User"
     end
 
     it "can deactivate a user in the organization" do

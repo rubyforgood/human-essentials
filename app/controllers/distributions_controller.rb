@@ -89,7 +89,7 @@ class DistributionsController < ApplicationController
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     if (!@distribution.complete? && @distribution.future?) || current_user.organization_admin?
-      @distribution.line_items.build
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
     else
@@ -112,7 +112,7 @@ class DistributionsController < ApplicationController
       redirect_to @distribution, notice: "Distribution updated!"
     else
       flash[:error] = insufficient_error_message(result.error.message)
-      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
       render :edit
@@ -149,7 +149,7 @@ class DistributionsController < ApplicationController
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
   def schedule_reminder_email(distribution)

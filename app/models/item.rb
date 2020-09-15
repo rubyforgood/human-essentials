@@ -13,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  value_in_cents               :integer          default(0)
+#  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organization_id              :integer
@@ -35,6 +36,7 @@ class Item < ApplicationRecord
 
   include Filterable
   scope :active, -> { where(active: true) }
+  scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }

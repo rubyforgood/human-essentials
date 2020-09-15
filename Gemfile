@@ -9,11 +9,13 @@ ruby "2.7.1"
 
 gem "api-auth", "~> 2.4"
 gem 'bootstrap', '~> 4.5.2'
+gem 'bootstrap-daterangepicker-rails'
 gem 'bootstrap-select-rails'
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
 gem "devise", '>= 4.7.1'
+gem 'discard', '~> 1.2'
 gem "devise_invitable"
 gem "dotenv-rails"
 gem "filterrific"
@@ -24,34 +26,32 @@ gem "font-awesome-rails"
 gem "font-ionicons-rails"
 gem "fullcalendar-rails"
 gem "geocoder"
-gem "groupdate", "~> 5.1"
+gem "groupdate", "~> 5.2"
 gem "image_processing"
 gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "kaminari"
+gem "mini_racer", "~> 0.3.1"
 gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
 gem "paperclip" # needed for legacy migrations
 gem "pg", "~> 1.2.3"
+gem "simple_form"
 gem 'popper_js'
 gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 6.0.3"
 gem "sass-rails"
 gem "sidekiq"
-gem "simple_form"
+gem 'sidekiq-scheduler'
 gem "skylight"
 gem "sprockets", "~> 4.0.2"
-gem "uglifier", ">= 1.3.0"
-gem "mini_racer", "~> 0.3.1"
-gem "yajl-ruby"
 gem "toastr-rails"
+gem "uglifier", ">= 1.3.0"
 gem "webpacker", "> 4.0"
-gem 'sidekiq-scheduler'
-gem 'bootstrap-daterangepicker-rails'
-gem 'discard', '~> 1.2'
+gem "yajl-ruby"
 
 group :development, :test do
   gem "awesome_print"
@@ -63,7 +63,7 @@ group :development, :test do
   gem 'rb-readline', '~> 0.5.3'
   gem "rspec-rails", "~> 4.0.1"
   gem "rubocop"
-  gem "rubocop-rails", "~> 2.7.1"
+  gem "rubocop-rails", "~> 2.8.0"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "faker"
@@ -79,6 +79,7 @@ group :development do
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
+  gem "letter_opener"
   gem "listen", "~> 3.2.1"
   gem "rails-erd"
   gem "spring"
