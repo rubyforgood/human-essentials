@@ -97,7 +97,7 @@ group :test do
   gem "rspec-sidekiq"
   gem 'simplecov'
   gem 'webdrivers', '~> 4.4'
-  gem "webmock", "~> 3.8"
+  gem "webmock", "~> 3.9"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
