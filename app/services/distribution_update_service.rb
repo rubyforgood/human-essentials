@@ -27,6 +27,8 @@ class DistributionUpdateService < DistributionService
     issued_at_changed? || delivery_method_changed?
   end
 
+  private
+
   def issued_at_changed?
     @old_issued_at.to_date != @new_issued_at.to_date
   end
