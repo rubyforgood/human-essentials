@@ -46,8 +46,8 @@ RSpec.describe Distribution, type: :model do
     end
     it "ensures the issued at end time is after the issued at start time" do
       d = build(:distribution)
-      start_time = Time.now
-      end_time = Time.now - 2.hours
+      start_time = Time.zone.now
+      end_time = Time.zone.now - 2.hours
       d.issued_at = start_time
       d.issued_at_end = end_time
       d.issued_at_timeframe_enabled = true
