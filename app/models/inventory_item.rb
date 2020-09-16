@@ -25,4 +25,12 @@ class InventoryItem < ApplicationRecord
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
   delegate :name, to: :item, prefix: true
+
+  def lower_than_on_hand_minimum_quantity?
+    quantity < item.on_hand_minimum_quantity
+  end
+
+  def lower_than_on_hand_recommended_quantity?
+    item.on_hand_recommended_quantity.present? && quantity < item.on_hand_recommended_quantity
+  end
 end

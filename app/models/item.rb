@@ -121,4 +121,8 @@ class Item < ApplicationRecord
   def default_quantity
     distribution_quantity || 50
   end
+
+  def inventory_item_at(storage_location_id)
+    inventory_items.find_by(storage_location_id: storage_location_id)
+  end
 end
