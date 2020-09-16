@@ -48,6 +48,7 @@ RSpec.feature "Distributions", type: :system do
         expect(page.find(".alert-info")).to have_content "reated"
       end
       visit(pickup_day_distributions_path(organization_id: @organization.id))
+      page.has_css?("td", text: "PM") or page.has_css?("td", text: "AM")
     end
 
     it "Displays a complete form after validation errors" do
