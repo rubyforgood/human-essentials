@@ -58,7 +58,11 @@ class DistributionsController < ApplicationController
 
     if result.success?
       session[:created_distribution_id] = result.distribution.id
-      redirect_to(distribution_path(result.distribution), notice: "Distribution created!") && return
+      @distribution = result.distribution
+      flash[:notice] = "Distribution created!"
+
+      perform_inventory_check
+      redirect_to(distribution_path(result.distribution)) && return
     else
       @distribution = result.distribution
       flash[:error] = insufficient_error_message(result.error.message)
@@ -109,6 +113,7 @@ class DistributionsController < ApplicationController
       end
       schedule_reminder_email(@distribution)
 
+      perform_inventory_check
       redirect_to @distribution, notice: "Distribution updated!"
     else
       flash[:error] = insufficient_error_message(result.error.message)
@@ -189,5 +194,16 @@ class DistributionsController < ApplicationController
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:by_item_id, :by_partner)
+  end
+
+  def perform_inventory_check
+    inventory_check_result = InventoryCheckService.new(@distribution).call
+
+    if inventory_check_result.error.present?
+      flash[:error] = inventory_check_result.error
+    end
+    if inventory_check_result.alert.present?
+      flash[:alert] = inventory_check_result.alert
+    end
   end
 end
