@@ -242,7 +242,7 @@ RSpec.describe "Distributions", type: :request do
 
           it "does send the email" do
             subject
-            expect(PartnerMailerJob).to have_enqueued_sidekiq_job(distribution.organization.id, distribution.id, /Your Distribution New Schedule Date is/)
+            expect(PartnerMailerJob).to have_enqueued_sidekiq_job(distribution.organization.id, distribution.id, /Your Distribution Has Changed/)
           end
         end
 

@@ -16,7 +16,7 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
-        select "Pick up", from: "Delivery method"
+        choose "Pick up"
 
         fill_in "Comment", with: "Take my wipes... please"
         expect(PartnerMailerJob).to receive(:perform_async)
@@ -52,7 +52,7 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
-        select "Delivery", from: "Delivery method"
+        choose "Delivery"
 
         fill_in "Comment", with: "Take my wipes... please"
 
@@ -263,7 +263,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Start a new Distribution"
       within "#new_distribution" do
         select @partner.name, from: "Partner"
-        select "Pick up", from: "Delivery method"
+        choose "Pick up"
         click_button "Save"
       end
     end
@@ -335,7 +335,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
-        select "Delivery", from: "Delivery method"
+        choose "Delivery"
         click_on "Save"
       end
 
