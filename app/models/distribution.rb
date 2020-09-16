@@ -132,7 +132,7 @@ class Distribution < ApplicationRecord
     if issued_at_timeframe_enabled
       start_time = issued_at
       end_time = issued_at_end
-      if start_time > end_time
+      if issued_at > issued_at_end
         errors.add(:issued_at_end, "can't be before issued at")
       end
     end
