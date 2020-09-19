@@ -13,6 +13,38 @@ RSpec.describe "Admin::Organizations", type: :request do
         get new_admin_organization_path
         expect(response).to be_successful
       end
+
+      context 'when given a valid account request token in the query parameters' do
+        let!(:account_request) { FactoryBot.create(:account_request) }
+
+        it 'should render new with pre populate input fields from the account_request' do
+          get new_admin_organization_url(token: account_request.identity_token)
+          expect(response).to render_template(:new)
+
+          # Just checking if the values appear in the template. This assumes
+          # that if they are present in the body then they are pre-populating
+          # the form. A system test will likely handle this test case.
+          expect(response.body).to include(account_request.name)
+          expect(response.body).to include(account_request.email)
+          expect(response.body).to include(account_request.organization_name)
+          expect(response.body).to include(account_request.organization_website)
+        end
+      end
+
+      context 'whwne given a token that matches a account request that has already been processed' do
+        let!(:account_request) { FactoryBot.create(:account_request) }
+
+        before do
+          FactoryBot.create(:organization, account_request_id: account_request.id)
+        end
+
+        it 'should render new with a flash error message' do
+          get new_admin_organization_url(token: account_request.identity_token)
+          expect(response).to render_template(:new)
+
+          expect(response.body).to include("The account request had already been processed and cannot be used again")
+        end
+      end
     end
 
     xdescribe "POST #create" do
