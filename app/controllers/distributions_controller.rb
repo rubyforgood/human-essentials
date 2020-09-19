@@ -109,7 +109,7 @@ class DistributionsController < ApplicationController
 
     if result.success?
       if result.resend_notification? && @distribution.partner&.send_reminders
-        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
+        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution Date Has Changed")
       end
       schedule_reminder_email(@distribution)
 
@@ -133,9 +133,9 @@ class DistributionsController < ApplicationController
     distribution = current_organization.distributions.find(params[:id])
 
     if !distribution.complete? && distribution.complete!
-      flash[:notice] = 'This distribution has been marked as being picked up!'
+      flash[:notice] = 'This distribution has been marked as being completed!'
     else
-      flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being picked up'
+      flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being completed'
     end
 
     redirect_back(fallback_location: distribution_path)
@@ -164,7 +164,7 @@ class DistributionsController < ApplicationController
   end
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, line_items_attributes: %i(item_id quantity _destroy))
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, :delivery_method, line_items_attributes: %i(item_id quantity _destroy))
   end
 
   def request_id

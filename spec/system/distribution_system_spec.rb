@@ -16,6 +16,7 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
+        choose "Pick up"
 
         fill_in "Comment", with: "Take my wipes... please"
         expect(PartnerMailerJob).to receive(:perform_async)
@@ -87,6 +88,7 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
+        choose "Delivery"
 
         fill_in "Comment", with: "Take my wipes... please"
 
@@ -244,13 +246,13 @@ RSpec.feature "Distributions", type: :system do
       it "can click on Edit button and a warning appears " do
         visit @url_prefix + "/distributions"
         click_on "Edit", match: :first
-        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
+        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was scheduled for."
       end
 
       it "can be accessed directly" do
         visit @url_prefix + "/distributions/#{distribution.id}/edit"
         expect(page).to have_no_css(".alert-danger")
-        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
+        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was scheduled for."
       end
     end
   end
@@ -297,6 +299,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Start a new Distribution"
       within "#new_distribution" do
         select @partner.name, from: "Partner"
+        choose "Pick up"
         click_button "Save"
       end
     end
@@ -358,7 +361,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   # TODO: This should probably be in the Request resource specs, not Distribution
-  context "When creating a distrubition from a request" do
+  context "When creating a distribution from a request" do
     it "sets the distribution id and fulfilled status on the request" do
       items = @storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
@@ -368,6 +371,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
+        choose "Delivery"
         click_on "Save"
       end
 

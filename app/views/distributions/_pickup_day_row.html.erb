@@ -5,13 +5,13 @@
   <td><%= pickup_day_row.line_items.total %></td>
   <td>
     <% if pickup_day_row.complete? %>
-      Picked up
+      Complete
     <% else %>
       Scheduled
     <% end %>
   </td>
   <td class="text-right">
-    <%= update_button_to picked_up_distribution_path(pickup_day_row), {text: "Pick up Complete", size: "xs"} if !pickup_day_row.complete? %>
+    <%= update_button_to picked_up_distribution_path(pickup_day_row), {text: "Distribution Complete", size: "xs"} if !pickup_day_row.complete? %>
     <%= view_button_to distribution_path(pickup_day_row) %>
   </td>
 </tr>
