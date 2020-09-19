@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Account Requests</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Organization name</th>
+      <th>Organization website</th>
+      <th>Request details</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @account_requests.each do |account_request| %>
+      <tr>
+        <td><%= account_request.email %></td>
+        <td><%= account_request.organization_name %></td>
+        <td><%= account_request.organization_website %></td>
+        <td><%= account_request.request_details %></td>
+        <td><%= link_to 'Show', account_request %></td>
+        <td><%= link_to 'Edit', edit_account_request_path(account_request) %></td>
+        <td><%= link_to 'Destroy', account_request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Account Request', new_account_request_path %>

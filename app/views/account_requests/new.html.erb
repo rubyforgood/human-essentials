@@ -1,0 +1,40 @@
+<div class="card" style='width: 30rem'>
+  <div class="card-body">
+    <div class="card-title mb-10">
+      <h3>Account Request Form</h3>
+    </div>
+
+    <div class='card-text'>
+      <%= simple_form_for(@account_request) do |f| %>
+        <%= f.error_notification %>
+
+        <div class="form-inputs">
+          <div class="form-inputs">
+            <%= f.input :name, autofocus: true %>
+          </div>
+
+          <div class="form-inputs">
+            <%= f.input :email %>
+          </div>
+
+          <div class="form-inputs">
+            <%= f.input :organization_name %>
+          </div>
+
+          <div class="form-inputs">
+            <%= f.input :organization_website %>
+          </div>
+
+          <div class="form-inputs">
+            <%= f.input :request_details, placeholder: 'Tell us more about your organization and how you would use the software account', label: "Request Details (min 50 characters)" %>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <%= submit_button({text: 'Submit', icon: nil}) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+

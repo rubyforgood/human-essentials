@@ -172,16 +172,21 @@
       <div class="row">
 
         <!--    Start CTA Titles    -->
-        <h1 class="title">Get in touch to sign up</h1>
-        <h2 class="sub_title">start the process by clicking below or sending us an email at <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top" >info@diaper.app</a></h2>
+        <h1 class="title">Want to use Diaperbase? </h1>
         <!--    End CTA Titles    -->
 
         <!--    Start Button    -->
-        <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top" class="btn_fancy">
-          <div class="solid_layer"></div>
-          <div class="text_layer">Get In Touch!</div>
-        </a>
-        <!--    End Button    -->
+        <%= button_to "Request A Demo", new_account_request_path,  method: :get%>
+        <!--
+          End
+          Button
+        -->
+        <br>
+        <p>
+          <strong>After the demo, you will be able to request your own account.</strong>
+          <br>
+          Have questions? Email us at <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top" >info@diaper.app</a>
+        </p>
       </div>
     </section>
     <!--  End Call To Action Section  -->

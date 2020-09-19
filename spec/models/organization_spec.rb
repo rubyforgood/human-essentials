@@ -21,6 +21,7 @@
 #  zipcode                  :string
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  account_request_id       :integer
 #
 
 RSpec.describe Organization, type: :model do
@@ -120,6 +121,29 @@ RSpec.describe Organization, type: :model do
           expect(ranking_items[2].name).to eq(organization.items[2].name)
         end
       end
+    end
+  end
+
+  describe '#assign_attributes_from_account_request' do
+    subject { organization.assign_attributes_from_account_request(account_request) }
+    let(:organization) { Organization.new }
+    let(:account_request) { FactoryBot.create(:account_request) }
+
+    it 'should assign the proper attributes to the organization' do
+      expect(subject.attributes).to include({
+        name: account_request.organization_name,
+        url: account_request.organization_website,
+        email: account_request.email,
+        account_request_id: account_request.id
+      }.stringify_keys)
+    end
+
+    it 'should build a admin user with the account request attributes' do
+      expect(subject.users.first.attributes).to include({
+        organization_admin: true,
+        email: account_request.email,
+        name: account_request.name
+      }.stringify_keys)
     end
   end
 

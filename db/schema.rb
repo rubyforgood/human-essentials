@@ -15,6 +15,17 @@ ActiveRecord::Schema.define(version: 2020_09_06_185544) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "account_requests", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "organization_name", null: false
+    t.string "organization_website"
+    t.datetime "confirmed_at"
+    t.text "request_details", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -259,6 +270,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_185544) do
     t.text "invitation_text"
     t.integer "default_storage_location"
     t.text "partner_form_fields", default: [], array: true
+    t.integer "account_request_id"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -385,6 +397,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_185544) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "manufacturers", "organizations"
+  add_foreign_key "organizations", "account_requests"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

@@ -31,6 +31,7 @@ gem "image_processing"
 gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
+gem "jwt"
 gem "kaminari"
 gem "mini_racer", "~> 0.3.1"
 gem "momentjs-rails"
@@ -96,6 +97,7 @@ group :test do
   gem "rails-controller-testing"
   gem "rspec-sidekiq"
   gem 'simplecov'
+  gem 'shoulda-matchers', '~> 4.0'
   gem 'webdrivers', '~> 4.4'
   gem "webmock", "~> 3.9"
 end
