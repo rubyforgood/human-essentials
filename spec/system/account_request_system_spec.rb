@@ -29,10 +29,11 @@ RSpec.describe "Account request flow", type: :system, js: true do
 
     expect(created_account_request.confirmed_at).to eq(nil)
 
-    click_link "Confirm"
+    click_link "I'm ready! Let's go!"
 
     expect(created_account_request.reload.confirmed_at).not_to eq(nil)
-    expect(page).to have_content("I'm ready! Let's go!,")
+
+    expect(page).to have_content("Confirmed!")
     expect(page).to have_content("We will be processing your request now.")
 
     # Access link within email sent to admin user to process the request.
