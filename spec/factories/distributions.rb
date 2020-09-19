@@ -5,6 +5,7 @@
 #  id                     :integer          not null, primary key
 #  agency_rep             :string
 #  comment                :text
+#  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  state                  :integer          default("started"), not null
@@ -21,6 +22,7 @@ FactoryBot.define do
     partner
     organization { Organization.try(:first) || create(:organization) }
     issued_at { nil }
+    delivery_method { :pick_up }
     state { :started }
 
     trait :with_items do

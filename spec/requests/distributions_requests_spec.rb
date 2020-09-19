@@ -53,7 +53,7 @@ RSpec.describe "Distributions", type: :request do
       let!(:storage_location) { create(:storage_location) }
       let!(:partner) { create(:partner) }
       let(:distribution) do
-        { distribution: { storage_location_id: storage_location.id, partner_id: partner.id } }
+        { distribution: { storage_location_id: storage_location.id, partner_id: partner.id, delivery_method: :delivery } }
       end
 
       it "redirects to #show on success" do
@@ -242,7 +242,7 @@ RSpec.describe "Distributions", type: :request do
 
           it "does send the email" do
             subject
-            expect(PartnerMailerJob).to have_enqueued_sidekiq_job(distribution.organization.id, distribution.id, /Your Distribution New Schedule Date is/)
+            expect(PartnerMailerJob).to have_enqueued_sidekiq_job(distribution.organization.id, distribution.id, /Your Distribution Date Has Changed/)
           end
         end
 

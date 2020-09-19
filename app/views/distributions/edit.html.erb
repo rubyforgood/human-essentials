@@ -28,7 +28,7 @@
 
   <% unless @distribution.future? %>
     <div class="alert alert-warning" , role="alert">
-      The current date is past the date this distribution was picked up.
+      The current date is past the date this distribution was scheduled for.
       Please be very careful when editing this record;
       the contents should match what was given to the recipient.
     </div>
@@ -60,6 +60,7 @@
                   <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date" %>
                   <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
                   <%= f.input :agency_rep, label: "Agency representative" %>
+                  <%= f.input :delivery_method, as: :radio_buttons, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
 
                   <%= render partial: "storage_locations/source", object: f %>
 
