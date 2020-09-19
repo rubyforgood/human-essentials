@@ -2,7 +2,7 @@ RSpec.describe "Account request flow", type: :system, js: true do
   it 'should allow prospect users to request an account via a form. And that request form data gets used to create an organization' do
     visit root_path
 
-    click_button "Click Here To Request A Demo"
+    click_button "Request A Demo"
 
     account_request_attrs = FactoryBot.attributes_for(:account_request)
 
@@ -32,7 +32,7 @@ RSpec.describe "Account request flow", type: :system, js: true do
     click_link "Confirm"
 
     expect(created_account_request.reload.confirmed_at).not_to eq(nil)
-    expect(page).to have_content("Confirmed")
+    expect(page).to have_content("I'm ready! Let's go!,")
     expect(page).to have_content("We will be processing your request now.")
 
     # Access link within email sent to admin user to process the request.
