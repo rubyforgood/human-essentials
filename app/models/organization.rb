@@ -115,14 +115,14 @@ class Organization < ApplicationRecord
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
 
   def assign_attributes_from_account_request(account_request)
-    self.assign_attributes({
+    assign_attributes(
       name: account_request.organization_name,
       url: account_request.organization_website,
       email: account_request.email,
       account_request_id: account_request.id
-    })
+    )
 
-    self.users.build(
+    users.build(
       organization_admin: true,
       email: account_request.email,
       name: account_request.name
