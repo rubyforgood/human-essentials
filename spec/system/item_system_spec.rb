@@ -50,6 +50,17 @@ RSpec.describe "Item management", type: :system do
     expect(page.find(".alert")).to have_content "didn't work"
   end
 
+  it "can make the item invisible to partners" do
+    item = create(:item)
+    visit url_prefix + "/items/#{item.id}/edit"
+    uncheck "visible_to_partners"
+    click_button "Save"
+    visit url_prefix + "/items/#{item.id}/edit"
+
+    expect(find_by_id("visible_to_partners").checked?).to be false # rubocop:disable Rails/DynamicFindBy
+    expect(item.reload.visible_to_partners).to be false
+  end
+
   it "can filter the #index by base item as a user" do
     Item.delete_all
     create(:item, base_item: BaseItem.first)

@@ -56,19 +56,18 @@ RSpec.describe "Distributions", type: :request do
         { distribution: { storage_location_id: storage_location.id, partner_id: partner.id } }
       end
 
-      it "redirects to #index on success" do
+      it "redirects to #show on success" do
         params = default_params.merge(distribution)
         expect(storage_location).to be_valid
         expect(partner).to be_valid
         expect(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        expect do
-          post distributions_path(params)
+        post distributions_path(params)
 
-          expect(response).to have_http_status(:redirect)
-
-          expect(response).to redirect_to(distributions_path)
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        expect(response).to have_http_status(:redirect)
+        last_distribution = Distribution.last
+        expect(response).to redirect_to(distribution_path(last_distribution))
+        expect(PartnerMailerJob).to have_enqueued_sidekiq_job(last_distribution.organization.id, last_distribution.id, /Your Distribution/)
       end
 
       it "renders #new again on failure, with notice" do
@@ -113,6 +112,36 @@ RSpec.describe "Distributions", type: :request do
       it "returns http success" do
         get pickup_day_distributions_path(default_params)
         expect(response).to be_successful
+      end
+
+      it "correctly sums the item counts from distributions" do
+        first_item = create(:item)
+        second_item = create(:item)
+        first_distribution = create(:distribution)
+        second_distribution = create(:distribution)
+
+        create(:line_item, :distribution, item_id: first_item.id, itemizable_id: first_distribution.id, quantity: 7)
+        create(:line_item, :distribution, item_id: first_item.id, itemizable_id: second_distribution.id, quantity: 4)
+        create(:line_item, :distribution, item_id: second_item.id, itemizable_id: second_distribution.id, quantity: 5)
+        get pickup_day_distributions_path(default_params)
+        expect(assigns(:daily_items).detect { |item| item[:name] == first_item.name }[:quantity]).to eq(11)
+        expect(assigns(:daily_items).detect { |item| item[:name] == second_item.name }[:quantity]).to eq(5)
+        expect(assigns(:daily_items).sum { |item| item[:quantity] }).to eq(16)
+      end
+
+      it "correctly sums the item package counts from distributions" do
+        first_item = create(:item, package_size: 2)
+        second_item = create(:item, package_size: 3)
+        first_distribution = create(:distribution)
+        second_distribution = create(:distribution)
+
+        create(:line_item, :distribution, item_id: first_item.id, itemizable_id: first_distribution.id, quantity: 7)
+        create(:line_item, :distribution, item_id: first_item.id, itemizable_id: second_distribution.id, quantity: 4)
+        create(:line_item, :distribution, item_id: second_item.id, itemizable_id: second_distribution.id, quantity: 6)
+        get pickup_day_distributions_path(default_params)
+        expect(assigns(:daily_items).detect { |item| item[:name] == first_item.name }[:package_count]).to eq(5)
+        expect(assigns(:daily_items).detect { |item| item[:name] == second_item.name }[:package_count]).to eq(2)
+        expect(assigns(:daily_items).sum { |item| item[:package_count] }).to eq(7)
       end
     end
 
@@ -202,14 +231,18 @@ RSpec.describe "Distributions", type: :request do
         before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 
         it "does not send an e-mail" do
-          expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
+          Sidekiq::Testing.inline! do
+            subject
+            expect(PartnerMailerJob).not_to have_enqueued_sidekiq_job(distribution.organization.id, distribution.id, "Your Distribution")
+          end
         end
 
         context "sending" do
           let(:issued_at) { distribution.issued_at + 1.day }
 
-          it "does send an e-mail" do
-            expect { subject }.to change { ActionMailer::Base.deliveries.count }.by(1)
+          it "does send the email" do
+            subject
+            expect(PartnerMailerJob).to have_enqueued_sidekiq_job(distribution.organization.id, distribution.id, /Your Distribution New Schedule Date is/)
           end
         end
 

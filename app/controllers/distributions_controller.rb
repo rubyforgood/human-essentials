@@ -58,12 +58,15 @@ class DistributionsController < ApplicationController
 
     if result.success?
       session[:created_distribution_id] = result.distribution.id
-      redirect_to(distributions_path, notice: "Distribution created!") && return
+      @distribution = result.distribution
+      flash[:notice] = "Distribution created!"
+
+      perform_inventory_check
+      redirect_to(distribution_path(result.distribution)) && return
     else
       @distribution = result.distribution
       flash[:error] = insufficient_error_message(result.error.message)
-      # NOTE: Can we just do @distribution.line_items.build, regardless?
-      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
       render :new
@@ -90,7 +93,7 @@ class DistributionsController < ApplicationController
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     if (!@distribution.complete? && @distribution.future?) || current_user.organization_admin?
-      @distribution.line_items.build
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
     else
@@ -110,10 +113,11 @@ class DistributionsController < ApplicationController
       end
       schedule_reminder_email(@distribution)
 
+      perform_inventory_check
       redirect_to @distribution, notice: "Distribution updated!"
     else
       flash[:error] = insufficient_error_message(result.error.message)
-      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
       render :edit
@@ -139,6 +143,7 @@ class DistributionsController < ApplicationController
 
   def pickup_day
     @pick_ups = current_organization.distributions.during(pickup_date).order(issued_at: :asc)
+    @daily_items = daily_items(@pick_ups)
     @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
 
@@ -149,7 +154,7 @@ class DistributionsController < ApplicationController
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
   def schedule_reminder_email(distribution)
@@ -174,9 +179,31 @@ class DistributionsController < ApplicationController
     distributions.sum(&:value_per_itemizable)
   end
 
+  def daily_items(pick_ups)
+    item_groups = LineItem.where(itemizable_type: "Distribution", itemizable_id: pick_ups.pluck(:id)).group_by(&:item_id)
+    item_groups.map do |_id, items|
+      {
+        name: items.first.item.name,
+        quantity: items.sum(&:quantity),
+        package_count: items.sum { |item| item.package_count.to_i }
+      }
+    end
+  end
+
   def filter_params
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:by_item_id, :by_partner)
+  end
+
+  def perform_inventory_check
+    inventory_check_result = InventoryCheckService.new(@distribution).call
+
+    if inventory_check_result.error.present?
+      flash[:error] = inventory_check_result.error
+    end
+    if inventory_check_result.alert.present?
+      flash[:alert] = inventory_check_result.alert
+    end
   end
 end

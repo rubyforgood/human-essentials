@@ -22,6 +22,8 @@ class LineItem < ApplicationRecord
   validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT }
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
+  delegate :name, to: :item
+
   def value_per_line_item
     (item&.value_in_cents || 0) * quantity
   end

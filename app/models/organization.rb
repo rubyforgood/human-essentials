@@ -197,13 +197,17 @@ class Organization < ApplicationRecord
   end
 
   def valid_items
-    items.active.map do |item|
+    items.active.visible.map do |item|
       {
         id: item.id,
         partner_key: item.partner_key,
         name: item.name
       }
     end
+  end
+
+  def from_email
+    email || get_admin_email
   end
 
   private
@@ -224,5 +228,9 @@ class Organization < ApplicationRecord
     return if deadline_day.blank? || reminder_day.blank?
 
     errors.add(:deadline_day, "must be after the reminder date") if deadline_day < reminder_day
+  end
+
+  def get_admin_email
+    User.where(organization_id: id, organization_admin: true).sample.email
   end
 end

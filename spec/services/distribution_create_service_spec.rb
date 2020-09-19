@@ -1,7 +1,7 @@
 RSpec.describe DistributionCreateService, type: :service do
   subject { DistributionCreateService }
   describe "call" do
-    let!(:storage_location) { create(:storage_location, :with_items) }
+    let!(:storage_location) { create(:storage_location, :with_items, item_count: 2) }
     let!(:distribution_params) { { organization_id: @organization.id, partner_id: @partner.id, storage_location_id: storage_location.id, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 5 } } } }
 
     it "replaces a big distribution with a smaller one, resulting in increased stored quantities" do
@@ -22,8 +22,9 @@ RSpec.describe DistributionCreateService, type: :service do
         @partner.update!(send_reminders: true)
         allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        expect(PartnerMailerJob).to receive(:perform_now).once
-        subject.new(distribution_params).call
+        result = subject.new(distribution_params).call
+
+        expect(PartnerMailerJob).to have_enqueued_sidekiq_job(@organization.id, result.distribution.id, "Your Distribution")
       end
     end
 
@@ -32,7 +33,7 @@ RSpec.describe DistributionCreateService, type: :service do
         @partner.update!(send_reminders: false)
         allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        expect(PartnerMailerJob).not_to receive(:perform_now)
+        expect(PartnerMailerJob).not_to receive(:perform_async)
         subject.new(distribution_params).call
       end
     end
@@ -50,6 +51,27 @@ RSpec.describe DistributionCreateService, type: :service do
 
     context "when there's not sufficient inventory" do
       let(:too_much_params) { { organization_id: @organization.id, partner_id: @partner.id, storage_location_id: storage_location.id, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } } } }
+
+      it "preserves the Insufficiency error and is unsuccessful" do
+        result = subject.new(too_much_params).call
+        expect(result.error).to be_instance_of(Errors::InsufficientAllotment)
+        expect(result).not_to be_success
+      end
+    end
+
+    context "when there's multiple line items and one has insufficient inventory" do
+      let(:too_much_params) do
+        {
+          organization_id: @organization.id,
+          partner_id: @partner.id,
+          storage_location_id: storage_location.id,
+          line_items_attributes:
+            {
+              "0": { item_id: storage_location.items.first.id, quantity: 2 },
+              "1": { item_id: storage_location.items.last.id, quantity: 500 }
+            }
+        }
+      end
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_params).call

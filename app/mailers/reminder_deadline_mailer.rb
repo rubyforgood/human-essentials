@@ -3,6 +3,6 @@ class ReminderDeadlineMailer < ApplicationMailer
   def notify_deadline(partner, organization)
     @partner = partner
     @organization = organization
-    mail(to: @partner.email, subject: "#{@organization.name} Deadline Reminder")
+    mail(from: @organization.from_email, to: @partner.email, subject: "#{@organization.name} Deadline Reminder")
   end
 end

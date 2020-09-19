@@ -18,5 +18,19 @@ RSpec.describe "Admin Feedback Message Management", type: :system, js: true do
       feedback_message.reload
       expect(feedback_message.resolved).to eq(true)
     end
+
+    it "should sort by unresolved first" do
+      FactoryBot.create(:feedback_message, resolved: true)
+      FactoryBot.create(:feedback_message, resolved: false)
+      visit admin_feedback_messages_path
+
+      within(:xpath, "//table/tbody/tr[1]") do
+        expect(page).not_to have_field('Resolved', checked: true)
+      end
+
+      within(:xpath, "//table/tbody/tr[2]") do
+        expect(page).to have_field('Resolved', checked: true)
+      end
+    end
   end
 end

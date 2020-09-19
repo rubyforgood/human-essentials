@@ -91,17 +91,9 @@ class Donation < ApplicationRecord
   end
 
   def source_view
-    from_diaper_drive? ? format_drive_name : source
-  end
+    return source unless from_diaper_drive?
 
-  def format_drive_name
-    if !diaper_drive_participant.nil? && diaper_drive_participant.contact_name.present?
-      "#{diaper_drive_participant.contact_name} (participant)"
-    elsif !diaper_drive.nil? && diaper_drive.name.present?
-      "#{diaper_drive.name} (diaper drive)"
-    else
-      source
-    end
+    diaper_drive_participant&.donation_source_view || diaper_drive.donation_source_view
   end
 
   def self.daily_quantities_by_source(start, stop)

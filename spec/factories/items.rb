@@ -13,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  value_in_cents               :integer          default(0)
+#  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organization_id              :integer

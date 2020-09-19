@@ -53,7 +53,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def item_total(item_id)
-    inventory_items.select(:quantity).find_by(item_id: item_id).try(:quantity)
+    inventory_items.select(:quantity).find_by(item_id: item_id).try(:quantity) || 0
   end
 
   def size
