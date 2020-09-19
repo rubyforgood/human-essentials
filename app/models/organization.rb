@@ -114,6 +114,23 @@ class Organization < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
 
+  def assign_attributes_from_account_request(account_request)
+    self.assign_attributes({
+      name: account_request.organization_name,
+      url: account_request.organization_website,
+      email: account_request.email,
+      account_request_id: account_request.id
+    })
+
+    self.users.build(
+      organization_admin: true,
+      email: account_request.email,
+      name: account_request.name
+    )
+
+    self
+  end
+
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
     short_name

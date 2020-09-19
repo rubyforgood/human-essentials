@@ -124,6 +124,29 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe '#assign_attributes_from_account_request' do
+    subject { organization.assign_attributes_from_account_request(account_request) }
+    let(:organization) { Organization.new }
+    let(:account_request) { FactoryBot.create(:account_request) }
+
+    it 'should assign the proper attributes to the organization' do
+      expect(subject.attributes).to include({
+        name: account_request.organization_name,
+        url: account_request.organization_website,
+        email: account_request.email,
+        account_request_id: account_request.id
+      }.stringify_keys)
+    end
+
+    it 'should build a admin user with the account request attributes' do
+      expect(subject.users.first.attributes).to include({
+        organization_admin: true,
+        email: account_request.email,
+        name: account_request.name
+      }.stringify_keys)
+    end
+  end
+
   describe ".seed_items" do
     context "when provided with an organization to seed" do
       it "loads the base items into Item records" do

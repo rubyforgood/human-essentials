@@ -38,13 +38,7 @@ class Admin::OrganizationsController < AdminController
       flash[:error] = "The account request had already been processed and cannot be used again"
       @organization.users.build(organization_admin: true)
     else
-      @organization.assign_attributes({
-                                        name: account_request.organization_name,
-                                        url: account_request.organization_website,
-                                        email: account_request.email,
-                                        account_request_id: account_request.id
-                                      })
-      @organization.users.build(organization_admin: true, email: account_request.email, name: account_request.name)
+      @organization.assign_attributes_from_account_request(account_request)
     end
   end
 
