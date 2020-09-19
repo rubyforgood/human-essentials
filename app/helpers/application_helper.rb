@@ -119,7 +119,7 @@ module ApplicationHelper
       HTML
     end
 
-    return <<-HTML
+    <<-HTML
       <script>#{base_script}</script>
     HTML
   end
