@@ -62,12 +62,13 @@ RSpec.describe "Distributions", type: :request do
         expect(partner).to be_valid
         expect(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        post distributions_path(params)
+        expect do
+          post distributions_path(params)
 
-        expect(response).to have_http_status(:redirect)
-        last_distribution = Distribution.last
-        expect(response).to redirect_to(distribution_path(last_distribution))
-        expect(PartnerMailerJob).to have_enqueued_sidekiq_job(last_distribution.organization.id, last_distribution.id, /Your Distribution/)
+          expect(response).to have_http_status(:redirect)
+          last_distribution = Distribution.last
+          expect(response).to redirect_to(distribution_path(last_distribution))
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
       it "renders #new again on failure, with notice" do
@@ -231,18 +232,14 @@ RSpec.describe "Distributions", type: :request do
         before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 
         it "does not send an e-mail" do
-          Sidekiq::Testing.inline! do
-            subject
-            expect(PartnerMailerJob).not_to have_enqueued_sidekiq_job(distribution.organization.id, distribution.id, "Your Distribution")
-          end
+          expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
         end
 
         context "sending" do
           let(:issued_at) { distribution.issued_at + 1.day }
 
-          it "does send the email" do
-            subject
-            expect(PartnerMailerJob).to have_enqueued_sidekiq_job(distribution.organization.id, distribution.id, /Your Distribution Date Has Changed/)
+          it "does send an e-mail" do
+            expect { subject }.to change { ActionMailer::Base.deliveries.count }.by(1)
           end
         end
 
