@@ -3,7 +3,7 @@
 # Table name: feedback_messages
 #
 #  id         :bigint           not null, primary key
-#  message    :string
+#  message    :text
 #  path       :string
 #  resolved   :boolean
 #  created_at :datetime         not null
