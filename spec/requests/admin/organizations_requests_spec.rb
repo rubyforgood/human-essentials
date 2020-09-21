@@ -15,7 +15,7 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
 
       context 'when given a valid account request token in the query parameters' do
-        let!(:account_request) { FactoryBot.create(:account_request, organization_name: "Pouros, O'Kon and Schumm") }
+        let!(:account_request) { FactoryBot.create(:account_request) }
 
         it 'should render new with pre populate input fields from the account_request' do
           get new_admin_organization_url(token: account_request.identity_token)
@@ -29,10 +29,13 @@ RSpec.describe "Admin::Organizations", type: :request do
           # to be HTML safe. If the organization_name or any attribute has unsafe characters
           # then this test would fail. For example, if the organization_name were
           # "Pouros, O'Kon and Schumm"
+          #
+          # rubocop:disable Style/ColonMethodCall
           expect(response.body).to match(CGI::escapeHTML(account_request.name))
           expect(response.body).to match(CGI::escapeHTML(account_request.email))
           expect(response.body).to match(CGI::escapeHTML(account_request.organization_name))
           expect(response.body).to match(CGI::escapeHTML(account_request.organization_website))
+          # rubocop:enable Style/ColonMethodCall
         end
       end
 
