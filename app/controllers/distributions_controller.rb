@@ -39,7 +39,6 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .where(issued_at: selected_range)
                      .includes(:partner, :storage_location, :line_items, :items)
                      .order(issued_at: :desc)
                      .class_filter(filter_params)
