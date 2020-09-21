@@ -207,7 +207,9 @@ class Organization < ApplicationRecord
   end
 
   def from_email
-    email || get_admin_email
+    return get_admin_email if email.blank?
+
+    email
   end
 
   private
