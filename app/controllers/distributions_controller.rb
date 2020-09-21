@@ -154,7 +154,7 @@ class DistributionsController < ApplicationController
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
   def schedule_reminder_email(distribution)
