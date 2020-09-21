@@ -33,7 +33,7 @@ class Donation < ApplicationRecord
   belongs_to :storage_location
 
   include Itemizable
-
+  include Exportable
   include Filterable
   scope :at_storage_location, ->(storage_location_id) {
     where(storage_location_id: storage_location_id)

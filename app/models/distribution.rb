@@ -28,6 +28,7 @@ class Distribution < ApplicationRecord
 
   # Distributions contain many different items
   include Itemizable
+  include Exportable
 
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request

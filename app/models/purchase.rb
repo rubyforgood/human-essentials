@@ -22,6 +22,7 @@ class Purchase < ApplicationRecord
   include Itemizable
   include Filterable
   include IssuedAt
+  include Exportable
 
   scope :at_storage_location, ->(storage_location_id) {
                                 where(storage_location_id: storage_location_id)
