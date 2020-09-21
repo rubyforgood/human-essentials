@@ -20,6 +20,12 @@ RSpec.describe FeedbackMessage, type: :model do
   describe "validations" do
     it { is_expected.to validate_presence_of(:message) }
     it { is_expected.to validate_length_of(:message).is_at_least(10) }
+
+    it "allows long messages" do
+      message = FeedbackMessage.new(message: "Diapers! " * 1000, user: user)
+
+      expect(message).to be_valid
+    end
   end
 
   describe "relations and attributes" do
