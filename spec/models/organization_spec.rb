@@ -379,7 +379,19 @@ RSpec.describe Organization, type: :model do
       admin = create(:organization_admin, organization: org)
       expect(org.from_email).to eq(admin.email)
     end
-  end
+
+    it "returns admin email when it's empty" do
+      org = create(:organization, email: "")
+      admin = create(:organization_admin, organization: org)
+      expect(org.from_email).to eq(admin.email)
+    end
+
+    it "returns admin email when it's empty space" do
+      org = create(:organization, email: " ")
+      admin = create(:organization_admin, organization: org)
+      expect(org.from_email).to eq(admin.email)
+    end
+end
 
   describe 'reminder_day' do
     it "can only contain numbers 1-14" do
