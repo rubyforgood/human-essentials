@@ -17,6 +17,11 @@
 RSpec.describe FeedbackMessage, type: :model do
   let(:user) { FactoryBot.build(:user) }
 
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:message) }
+    it { is_expected.to validate_length_of(:message).is_at_least(10) }
+  end
+
   describe "relations and attributes" do
     it "belongs to a user" do
       expect(user.feedback_messages.count).to eql 0
