@@ -39,7 +39,7 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .where(issued_at: selected_range)
+                     .where(issued_at: selected_range, state: state_filter)
                      .includes(:partner, :storage_location, :line_items, :items)
                      .order(issued_at: :desc)
                      .class_filter(filter_params)
@@ -51,6 +51,7 @@ class DistributionsController < ApplicationController
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
+    @states = Distribution.pluck("DISTINCT(state)").map(&:titleize)
   end
 
   def create
@@ -194,6 +195,13 @@ class DistributionsController < ApplicationController
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:by_item_id, :by_partner)
+  end
+
+  def state_filter
+    distribution_states = Distribution.pluck("DISTINCT(state)")
+    return distribution_states if params[:filters].nil?
+
+    params[:filters][:state].presence&.downcase || distribution_states
   end
 
   def perform_inventory_check
