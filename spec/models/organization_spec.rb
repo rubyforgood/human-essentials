@@ -391,7 +391,7 @@ RSpec.describe Organization, type: :model do
       admin = create(:organization_admin, organization: org)
       expect(org.from_email).to eq(admin.email)
     end
-end
+  end
 
   describe 'reminder_day' do
     it "can only contain numbers 1-14" do

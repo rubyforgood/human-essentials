@@ -208,6 +208,7 @@ class Organization < ApplicationRecord
 
   def from_email
     return get_admin_email if email.blank?
+
     email
   end
 
