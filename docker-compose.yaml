@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:12.4
+    restart: always
+    volumes:
+    - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: diaper
+      POSTGRES_PASSWORD: diaper
+      POSTGRES_DB: dummy
+    networks:
+      net: {}
+
+  app:
+    build:
+      context: .
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: "postgresql://diaper:diaper@db/diaper"
+    networks:
+      net: {}
+    depends_on:
+    - db
+    volumes:
+    - code:/opt/diaper
+
+volumes:
+  db:
+  code:
+
+networks:
+  net:
+    driver: bridge
+    attachable: true
+
+x-mutagen:
+  sync:
+    defaults:
+      ignore:
+        vcs: true
+    code:
+      alpha: "."
+      beta: "volume://code"
