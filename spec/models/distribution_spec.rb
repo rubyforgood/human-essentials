@@ -198,7 +198,7 @@ RSpec.describe Distribution, type: :model do
     let(:item2) { create(:item) }
     let!(:distribution_1) { create(:distribution, :with_items, item: item1, organization: @organization, issued_at: 3.days.ago) }
     let!(:distribution_2) { create(:distribution, :with_items, item: item2, organization: @organization, issued_at: 1.day.ago) }
-    let!(:distribution_3) { create(:distribution, organization: organization_2, issued_at: Date.today) }
+    let!(:distribution_3) { create(:distribution, organization: organization_2, issued_at: Time.zone.today) }
 
     describe "for_csv_export >" do
       it "filters only to the given organization" do
@@ -210,7 +210,7 @@ RSpec.describe Distribution, type: :model do
       end
 
       it "filters only to the given issue time range" do
-        expect(Distribution.for_csv_export(@organization, { }, 4.days.ago..2.days.ago)).to match_array [distribution_1]
+        expect(Distribution.for_csv_export(@organization, {}, 4.days.ago..2.days.ago)).to match_array [distribution_1]
       end
     end
   end

@@ -90,7 +90,7 @@ RSpec.describe DataExport, type: :model do
       end
 
       it "filters by the given date range" do
-        export = DataExport.new(org, type, {}, 10.days.ago..Date.today)
+        export = DataExport.new(org, type, {}, 10.days.ago..Time.zone.today)
 
         expect(export.as_csv).to include(partner_name)
         expect(export.as_csv.split("\n").size).to eql(2)
