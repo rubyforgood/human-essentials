@@ -1,5 +1,7 @@
 # Provides a pseudo-resource for `DataExport`, a service object that encapsulates exporting functions.
 class DataExportsController < ApplicationController
+  include DateRangeHelper
+
   respond_to :csv
 
   def csv
@@ -15,7 +17,7 @@ class DataExportsController < ApplicationController
   private
 
   def data(type)
-    DataExport.new(current_organization, type, filter_params).as_csv
+    DataExport.new(current_organization, type, filter_params, helpers.selected_range).as_csv
   end
 
   def filter_params

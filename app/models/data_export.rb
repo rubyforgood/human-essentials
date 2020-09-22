@@ -19,17 +19,18 @@ class DataExport
     BarcodeItem
   ).map(&:freeze).freeze
 
-  def initialize(organization, type, filters)
+  def initialize(organization, type, filters, date_range)
     @current_organization = organization
     @type = type
     @filters = filters
+    @date_range = date_range
   end
 
   def as_csv
     return nil unless current_organization.present? && type.present?
     return nil unless SUPPORTED_TYPES.include? type
 
-    data_to_export = exportable.for_csv_export(current_organization, filters)
+    data_to_export = exportable.for_csv_export(current_organization, filters, date_range)
     headers = exportable.csv_export_headers
     generate_csv(data_to_export, headers)
   end
@@ -40,7 +41,7 @@ class DataExport
 
   private
 
-  attr_reader :current_organization, :type, :filters
+  attr_reader :current_organization, :type, :filters, :date_range
 
   def exportable
     @exportable ||= type.constantize
