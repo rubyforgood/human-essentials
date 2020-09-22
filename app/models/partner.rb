@@ -5,6 +5,8 @@
 #  id              :integer          not null, primary key
 #  email           :string
 #  name            :string
+#  notes           :text
+#  quota           :integer
 #  send_reminders  :boolean          default(FALSE), not null
 #  status          :integer          default("uninvited")
 #  created_at      :datetime         not null
