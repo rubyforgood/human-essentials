@@ -21,6 +21,6 @@ class DataExportsController < ApplicationController
   end
 
   def filter_params
-    params.fetch(:filters).except(:date_range)
+    params.fetch(:filters, {}).except(:date_range)
   end
 end
