@@ -46,6 +46,9 @@
               <div class="card-footer">
                 <%= filter_button %>
                 <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
+                <span class="float-right">
+                  <%= download_button_to(csv_path(format: :csv, type: "Request", filters: params[:filters]&.permit(:date_range)), text: "Export Requests") if @requests.length > 0 %>
+                </span>
               </div>
             <% end # form %>
             </div>
