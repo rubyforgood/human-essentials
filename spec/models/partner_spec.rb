@@ -42,6 +42,11 @@ RSpec.describe Partner, type: :model do
       expect(build(:partner, email: "foo@bar.com")).not_to be_valid
       expect(build(:partner, email: "boooooooooo")).not_to be_valid
     end
+
+    it "validates the quota is a number but it is not required" do
+      is_expected.to validate_numericality_of(:quota)
+      expect(build(:partner, email: "foo@bar.com", quota: "")).to be_valid
+    end
   end
 
   describe "Filters" do
