@@ -15,6 +15,6 @@ class DataExportsController < ApplicationController
   private
 
   def data(type)
-    DataExport.new(current_organization, type).as_csv
+    DataExport.new(current_organization, type, {}).as_csv
   end
 end

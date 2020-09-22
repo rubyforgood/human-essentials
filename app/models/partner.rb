@@ -28,7 +28,7 @@ class Partner < ApplicationRecord
                     uniqueness: true,
                     format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, on: :create }
 
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .order(:name)
   }

@@ -22,7 +22,7 @@ class Transfer < ApplicationRecord
   include Filterable
   scope :from_location, ->(location_id) { where(from_id: location_id) }
   scope :to_location, ->(location_id) { where(to_id: location_id) }
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .includes(:line_items, :from, :to)
   }

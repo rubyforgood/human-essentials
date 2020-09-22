@@ -4,8 +4,9 @@
 RSpec.describe DataExport, type: :model do
   let(:org) { create(:organization) }
   let(:type) { "Donation" }
+  let(:filters) { {} }
 
-  subject { described_class.new(org, type) }
+  subject { described_class.new(org, type, filters) }
 
   describe "as_csv" do
     context "current org is nil >" do
