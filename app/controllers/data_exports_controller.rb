@@ -15,6 +15,10 @@ class DataExportsController < ApplicationController
   private
 
   def data(type)
-    DataExport.new(current_organization, type, {}).as_csv
+    DataExport.new(current_organization, type, filter_params).as_csv
+  end
+
+  def filter_params
+    params.fetch(:filters).except(:date_range)
   end
 end
