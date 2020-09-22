@@ -186,6 +186,7 @@ class DistributionsController < ApplicationController
     end
   end
 
+  helper_method \
   def filter_params
     params.fetch(:filters, {})
           .permit(:by_item_id, :by_partner)
