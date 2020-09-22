@@ -178,6 +178,61 @@ RSpec.describe DistributionsController, type: :controller do
           expect(flash[:alert]).to be_nil
         end
       end
+
+      context "when distribution has items updated for minimum quantity" do
+        let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5) }
+        let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_minimum_quantity: 5) }
+        let(:storage_location) do
+          storage_location = create(:storage_location)
+          create(:inventory_item, storage_location: storage_location, item: item1, quantity: 20)
+          create(:inventory_item, storage_location: storage_location, item: item2, quantity: 20)
+
+          storage_location
+        end
+        let(:distribution) { create(:distribution, :with_items, item: item1, storage_location: storage_location) }
+        let(:params) do
+          {
+            organization_id: @organization.id,
+            id: distribution.id,
+            distribution: {
+              storage_location_id: distribution.storage_location.id,
+              line_items_attributes:
+                {
+                  "0": { item_id: item1.id, quantity: 4 },
+                  "1": { item_id: item2.id, quantity: 4 }
+                }
+            }
+          }
+        end
+
+        before do
+          ActiveJob::Base.queue_adapter = :test
+          allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
+        end
+
+
+        it "redirects with a flash notice and send send_notification" do
+          expected_distribution_changes = {
+            removed: [],
+            updates: [
+              {
+                name: item1.name,
+                new_quantity: 4,
+                old_quantity: 100
+              }
+            ]
+          }
+
+          expect(PartnerMailerJob).to receive(:perform_now).with(@organization.id, distribution.id, "Your Distribution Has Changed", expected_distribution_changes)
+
+          put :update, params: params
+
+          expect(response).to have_http_status(:redirect)
+          expect(flash[:notice]).to eq("Distribution updated!")
+          expect(flash[:error]).to be_nil
+          expect(flash[:alert]).to be_nil
+        end
+      end
     end
   end
 end

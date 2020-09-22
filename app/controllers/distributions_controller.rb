@@ -109,7 +109,7 @@ class DistributionsController < ApplicationController
 
     if result.success?
       if result.resend_notification? && @distribution.partner&.send_reminders
-        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution Date Has Changed")
+        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution Has Changed", distribution_changes: result.distribution_content.changes)
       end
       schedule_reminder_email(@distribution)
 
@@ -153,8 +153,8 @@ class DistributionsController < ApplicationController
     "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{details}"
   end
 
-  def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
+  def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
+    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes) if Flipper.enabled?(:email_active)
   end
 
   def schedule_reminder_email(distribution)
