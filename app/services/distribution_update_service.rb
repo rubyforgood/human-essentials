@@ -2,6 +2,7 @@ class DistributionUpdateService < DistributionService
   def initialize(old_distribution, new_distribution_params)
     @distribution = old_distribution
     @params = new_distribution_params
+    @old_line_items = old_distribution.to_a
   end
 
   # FIXME: This doesn't allow for the storage location to be changed.
@@ -9,7 +10,7 @@ class DistributionUpdateService < DistributionService
     perform_distribution_service do
       @old_issued_at = distribution.issued_at
       @old_delivery_method = distribution.delivery_method
-      distribution.storage_location.increase_inventory(distribution.to_a)
+      log = distribution.storage_location.increase_inventory(distribution.to_a)
       # Delete the line items -- they'll be replaced later
       distribution.line_items.each(&:destroy!)
       distribution.reload
@@ -24,7 +25,11 @@ class DistributionUpdateService < DistributionService
   end
 
   def resend_notification?
-    issued_at_changed? || delivery_method_changed?
+    issued_at_changed? || delivery_method_changed? || distribution_content.any_change?
+  end
+
+  def distribution_content
+    @distribution_content ||= DistributionContentChangeService.new(@old_line_items, distribution.to_a).call
   end
 
   private
