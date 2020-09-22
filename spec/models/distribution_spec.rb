@@ -191,4 +191,23 @@ RSpec.describe Distribution, type: :model do
       end
     end
   end
+
+  context "CSV export >" do
+    let(:organization_2) { create(:organization) }
+    let(:item1) { create(:item) }
+    let(:item2) { create(:item) }
+    let!(:distribution_1) { create(:distribution, :with_items, item: item1, organization: @organization, issued_at: Date.yesterday) }
+    let!(:distribution_2) { create(:distribution, :with_items, item: item2, organization: @organization, issued_at: Date.yesterday) }
+    let!(:distribution_3) { create(:distribution, organization: organization_2, issued_at: Date.yesterday) }
+
+    describe "for_csv_export >" do
+      it "filters only to the given organization" do
+        expect(Distribution.for_csv_export(@organization)).to match_array [distribution_1, distribution_2]
+      end
+
+      it "filters only to the given organization filter" do
+        expect(Distribution.for_csv_export(@organization, filters: { by_item_id: item1.id })).to match_array [distribution_1]
+      end
+    end
+  end
 end

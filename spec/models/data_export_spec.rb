@@ -72,11 +72,21 @@ RSpec.describe DataExport, type: :model do
       let(:type) { "Distribution" }
       let(:partner_name) { "Cool Beans" }
       let(:partner) { create(:partner, name: partner_name, organization: org) }
-      let!(:distribution) { create(:distribution, partner: partner, organization: org) }
+      let!(:distribution_1) { create(:distribution, partner: partner, organization: org) }
+      let(:item) { create(:item) }
+      let!(:distribution_2) { create(:distribution, :with_items, partner: partner, item: item, organization: org) }
 
       it "should return a CSV string with distribution data" do
         expect(subject.as_csv).to include(partner_name)
-        expect(subject.as_csv).to include(distribution.issued_at.strftime("%F"))
+        expect(subject.as_csv).to include(distribution_1.issued_at.strftime("%F"))
+        expect(subject.as_csv.split("\n").size).to eql(3)
+      end
+
+      it "filters by the given filter" do
+        filters.merge!(by_item_id: item.id)
+
+        expect(subject.as_csv).to include(partner_name)
+        expect(subject.as_csv.split("\n").size).to eql(2)
       end
     end
 
