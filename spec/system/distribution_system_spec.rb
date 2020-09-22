@@ -448,6 +448,20 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("table tbody tr", count: 1)
     end
 
+    it "filters by state" do
+      distribution1 = create(:distribution, state: "started")
+      create(:distribution, state: "complete")
+
+      visit subject
+      # check for all distributions
+      expect(page).to have_css("table tbody tr", count: 2)
+      # filter
+      select(distribution1.state.humanize, from: "filters_by_state")
+      click_button("Filter")
+      # check for filtered distributions
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+
     it_behaves_like "Date Range Picker", Distribution, :issued_at
   end
 end

@@ -50,7 +50,7 @@
                 <% end %>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                   <%= label_tag "by Status" %>
-                  <%= select_tag "filters[state]", options_for_select(@states) || {}, {include_blank: true, class: "form-control"} %>
+                  <%= collection_select(:filters, :by_state, @states || {}, :last, :first, {include_blank: true}, {class: "form-control"}) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
