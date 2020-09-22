@@ -25,7 +25,7 @@ class Request < ApplicationRecord
   enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
   scope :during, ->(range) { where(created_at: range) }
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .includes(:partner)
       .order(created_at: :desc)
