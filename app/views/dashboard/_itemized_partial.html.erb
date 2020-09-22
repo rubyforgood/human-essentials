@@ -5,7 +5,8 @@
   <thead>
   <tr>
     <th>&nbsp&nbsp&nbspItem</th>
-    <th>Quantity</th>
+    <th>Total Distributed</th>
+    <th>Total On Hand</th>
   </tr>
   </thead>
   <% hash.sort_by { |name, quantity| -quantity }.each do |dist_item, value| %>
@@ -13,6 +14,7 @@
     <tr>
       <td>&nbsp&nbsp&nbsp<%= dist_item %></td>
       <td><%= value %></td>
+      <td><%= @onhand_quantities[dist_item] %></td>
     </tr>
   <% end %>
   </tbody>
