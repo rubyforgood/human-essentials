@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_06_185544) do
+ActiveRecord::Schema.define(version: 2020_09_21_182529) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -182,7 +182,7 @@ ActiveRecord::Schema.define(version: 2020_09_06_185544) do
 
   create_table "feedback_messages", force: :cascade do |t|
     t.bigint "user_id"
-    t.string "message"
+    t.text "message"
     t.string "path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

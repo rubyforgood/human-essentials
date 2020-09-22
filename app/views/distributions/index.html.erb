@@ -37,18 +37,22 @@
             <%= form_tag(distributions_path, method: :get) do |f| %>
               <div class="row">
                 <% if @items.present? %>
-                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                     <%= label_tag "by Item" %>
                     <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
                   </div>
                 <% end %>
                 <% if @partners.present? %>
-                  <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                     <%= label_tag "by Partner" %>
                     <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, {include_blank: true}, {class: "form-control"}) %>
                   </div>
                 <% end %>
-                <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <%= label_tag "by Status" %>
+                  <%= collection_select(:filters, :by_state, @states || {}, :last, :first, {include_blank: true}, {class: "form-control"}) %>
+                </div>
+                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
                   <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
                 </div>
@@ -66,7 +70,7 @@
                     end
                   %>
                   <%= new_button_to new_distribution_path(organization_id: current_organization), {text: "New Distribution"} %>
-                    </span>
+                </span>
               </div>
             <% end # form %>
           </div>

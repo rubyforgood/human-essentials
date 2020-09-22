@@ -28,6 +28,7 @@ class Distribution < ApplicationRecord
 
   # Distributions contain many different items
   include Itemizable
+  include Exportable
 
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
@@ -48,6 +49,8 @@ class Distribution < ApplicationRecord
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
+  # state scope to allow filtering by state
+  scope :by_state, ->(state) { where(state: state) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :future, -> { where("issued_at >= :tomorrow", tomorrow: Time.zone.tomorrow) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }

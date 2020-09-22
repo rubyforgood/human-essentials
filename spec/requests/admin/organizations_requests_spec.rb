@@ -24,14 +24,22 @@ RSpec.describe "Admin::Organizations", type: :request do
           # Just checking if the values appear in the template. This assumes
           # that if they are present in the body then they are pre-populating
           # the form. A system test will likely handle this test case.
-          expect(response.body).to include(account_request.name)
-          expect(response.body).to include(account_request.email)
-          expect(response.body).to include(account_request.organization_name)
-          expect(response.body).to include(account_request.organization_website)
+          #
+          # Using CGI.escapeHTML to match account_request attribute which is rendered
+          # to be HTML safe. If the organization_name or any attribute has unsafe characters
+          # then this test would fail. For example, if the organization_name were
+          # "Pouros, O'Kon and Schumm"
+          #
+          # rubocop:disable Style/ColonMethodCall
+          expect(response.body).to match(CGI::escapeHTML(account_request.name))
+          expect(response.body).to match(CGI::escapeHTML(account_request.email))
+          expect(response.body).to match(CGI::escapeHTML(account_request.organization_name))
+          expect(response.body).to match(CGI::escapeHTML(account_request.organization_website))
+          # rubocop:enable Style/ColonMethodCall
         end
       end
 
-      context 'whwne given a token that matches a account request that has already been processed' do
+      context 'when given a token that matches a account request that has already been processed' do
         let!(:account_request) { FactoryBot.create(:account_request) }
 
         before do

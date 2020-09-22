@@ -47,6 +47,7 @@ class DistributionsController < ApplicationController
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
+    @states = Distribution.states.transform_keys(&:humanize)
   end
 
   def create
@@ -189,7 +190,7 @@ class DistributionsController < ApplicationController
   helper_method \
   def filter_params
     params.fetch(:filters, {})
-          .permit(:by_item_id, :by_partner)
+          .permit(:by_item_id, :by_partner, :by_state)
   end
 
   def perform_inventory_check

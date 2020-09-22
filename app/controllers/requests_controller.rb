@@ -3,13 +3,10 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @paginated_requests = current_organization
-                          .ordered_requests
-                          .during(helpers.selected_range)
-                          .page(params[:page])
-    respond_to do |format|
-      format.html
-    end
+    @requests = current_organization.ordered_requests.during(helpers.selected_range)
+    @paginated_requests = @requests.page(params[:page])
+
+    respond_to { |format| format.html }
   end
 
   def show

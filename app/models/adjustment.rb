@@ -16,6 +16,7 @@ class Adjustment < ApplicationRecord
   belongs_to :storage_location
   belongs_to :user
 
+  include Exportable
   include Itemizable
   include Filterable
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }

@@ -34,6 +34,7 @@ class StorageLocation < ApplicationRecord
 
   include Geocodable
   include Filterable
+  include Exportable
   scope :containing, ->(item_id) {
     joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
   }
