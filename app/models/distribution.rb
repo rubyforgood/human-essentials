@@ -55,6 +55,11 @@ class Distribution < ApplicationRecord
     where(organization: organization)
       .includes(:partner, :storage_location, :line_items)
   }
+  scope :apply_filters, ->(filters, date_range) {
+    includes(:partner, :storage_location, :line_items, :items)
+      .order(issued_at: :desc)
+      .class_filter(filters.merge(during: date_range))
+  }
   scope :this_week, -> do
     where("issued_at > :start_date AND issued_at <= :end_date",
           start_date: Time.zone.today.beginning_of_week.beginning_of_day, end_date: Time.zone.today.end_of_week.end_of_day)
