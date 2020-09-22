@@ -1,5 +1,6 @@
 <% hash = Hash.new(0) %>
 <% item_to_itemize.map { |d| d.line_items.map { |i| [i.item.name, i.quantity] } }.flatten(1).map { |a_i| hash[a_i[0]] += a_i[1] } %>
+
 <table class="table table-hover striped">
   <thead>
   <tr>
@@ -7,7 +8,7 @@
     <th>Quantity</th>
   </tr>
   </thead>
-  <% hash.sort.each do |dist_item, value| %>
+  <% hash.sort_by { |name, quantity| -quantity }.each do |dist_item, value| %>
     <tbody>
     <tr>
       <td>&nbsp&nbsp&nbsp<%= dist_item %></td>
