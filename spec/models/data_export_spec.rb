@@ -143,6 +143,24 @@ RSpec.describe DataExport, type: :model do
         expect(subject.as_csv).to include("11")
       end
     end
+
+    context "type is Request >" do
+      let(:type) { "Request" }
+      let(:item) { create :item, name: "3T Diapers" }
+      let!(:request) do
+        create(:request,
+               :started,
+               organization: org,
+               request_items: [{ item_id: item.id, quantity: 150 }])
+      end
+
+      it "should return a CSV string with request and item data" do
+        expect(subject.as_csv).to include("Date,Requestor,Status")
+        expect(subject.as_csv).to include(request.created_at.strftime("%m/%d/%Y").to_s)
+        expect(subject.as_csv).to include(item.name)
+        expect(subject.as_csv).to include("150")
+      end
+    end
   end
 
   describe 'SUPPORTED_TYPES' do
