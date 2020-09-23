@@ -39,11 +39,7 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .where(issued_at: selected_range)
-                     .includes(:partner, :storage_location, :line_items, :items)
-                     .order(issued_at: :desc)
-                     .class_filter(filter_params)
-                     .during(helpers.selected_range)
+                     .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
     @total_value_paginated_distributions = total_value(@paginated_distributions)
@@ -191,10 +187,10 @@ class DistributionsController < ApplicationController
     end
   end
 
-  def filter_params
-    return {} unless params.key?(:filters)
-
-    params.require(:filters).slice(:by_item_id, :by_partner, :by_state)
+  helper_method \
+    def filter_params
+    params.fetch(:filters, {})
+          .permit(:by_item_id, :by_partner, :by_state)
   end
 
   def perform_inventory_check
