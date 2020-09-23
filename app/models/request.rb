@@ -24,6 +24,13 @@ class Request < ApplicationRecord
 
   enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
+  include Filterable
+  # add request item scope to allow filtering distributions by request item
+  scope :by_request_item_id, ->(item_id) { where("request_items @> :with_item_id ", with_item_id: [{ item_id: item_id.to_i }].to_json) }
+  # partner scope to allow filtering by partner
+  scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
+  # status scope to allow filtering by status
+  scope :by_status, ->(status) { where(status: status) }
   scope :during, ->(range) { where(created_at: range) }
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
