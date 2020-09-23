@@ -24,7 +24,7 @@ class DonationSite < ApplicationRecord
   include Geocodable
   include Exportable
 
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .order(:name)
   }

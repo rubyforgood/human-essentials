@@ -21,9 +21,11 @@ class DataExport
     Vendor
   ).map(&:freeze).freeze
 
-  def initialize(organization, type)
+  def initialize(organization, type, filters, date_range)
     @current_organization = organization
     @type = type
+    @filters = filters
+    @date_range = date_range
   end
 
   def as_csv
@@ -39,14 +41,18 @@ class DataExport
 
   private
 
-  attr_reader :current_organization, :type
+  attr_reader :current_organization, :type, :filters, :date_range
+
+  def exportable
+    @exportable ||= type.constantize
+  end
 
   def model_class
     @model_class ||= type.constantize
   end
 
   def data_to_export
-    model_class.for_csv_export(current_organization)
+    exportable.for_csv_export(current_organization, filters, date_range)
   end
 
   def generate_csv
