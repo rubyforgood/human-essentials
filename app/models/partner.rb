@@ -5,6 +5,8 @@
 #  id              :integer          not null, primary key
 #  email           :string
 #  name            :string
+#  notes           :text
+#  quota           :integer
 #  send_reminders  :boolean          default(FALSE), not null
 #  status          :integer          default("uninvited")
 #  created_at      :datetime         not null
@@ -27,6 +29,8 @@ class Partner < ApplicationRecord
   validates :email, presence: true,
                     uniqueness: true,
                     format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, on: :create }
+
+  validates :quota, numericality: true, allow_blank: true
 
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)

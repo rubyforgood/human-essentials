@@ -6,4 +6,12 @@ module PartnersHelper
     uri.path = path
     uri.to_s
   end
+
+  def show_header_column_class(partner, additional_classes: "")
+    if partner.quota.present?
+      "col-sm-3 col-3 #{additional_classes}"
+    else
+      "col-sm-4 col-4 #{additional_classes}"
+    end
+  end
 end
