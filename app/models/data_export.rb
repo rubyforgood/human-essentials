@@ -13,6 +13,7 @@ class DataExport
     DonationSite
     Item
     Partner
+    PartnerDistribution
     Purchase
     Request
     StorageLocation
