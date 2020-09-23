@@ -153,3 +153,80 @@ You should now be able to successfully run the application:
 `rails server`
 
 Point a browser to `localhost:3000`. You should see the Diaper home page. For login credentials, consult the README.md file (at the time of this writing at [https://github.com/rubyforgood/diaper/blob/master/README.md#login](https://github.com/rubyforgood/diaper/blob/master/README.md#login).
+
+
+# Using Docker with Mutagen
+
+There has been some attriction in the past with Docker on MacOS because of poor sync performance of named volumes. Mutagen is a new way to perform sync between data in the container and residing on the host that is both cross-platform and promises much better performance on MacOS.
+
+## Set up
+
+You need at least `docker >= 19.03`, `docker-compose >= 1.22.0` and `mutagen >= 0.12.0-beta2`. At the time of this writing, the needed feature is still in beta, but was functional on our tests. [Check here](https://github.com/mutagen-io/mutagen/releases) if there is a stable version that is greater than the version stated before if you want to be extra safe.
+
+### MacOS
+
+Run:
+
+```
+brew update
+brew cask install docker
+brew install docker-compose
+```
+
+If still only beta versions of mutagen 0.12 series are available, use the following command to install mutagen:
+
+```
+brew install mutagen-io/mutagen/mutagen-beta
+```
+
+Otherwise:
+
+```
+brew install mutagen-io/mutagen/mutagen
+```
+
+### GNU/Linux
+
+Follow the setup of docker and docker-compose for your distro, then install mutagen from the `All distros` section.
+
+#### Fedora >= 31
+
+Run:
+
+```
+sudo dnf install moby-engine docker-compose
+sudo systemctl enable --now docker
+```
+
+#### Ubuntu >= 20.04
+
+Run:
+
+```
+sudo apt update
+sudo apt install docker.io docker-compose
+```
+
+#### All distros
+
+Download a version of `mutagen >= 0.12.0-beta2` that is for Linux and probably in your case for the amd64 architecture from the [official Mutagen repo](https://github.com/mutagen-io/mutagen/releases) and install it to `/usr/local/bin`:
+
+```
+curl https://github.com/mutagen-io/mutagen/releases/download/v0.12.0-beta2/mutagen_linux_amd64_v0.12.0-beta2.tar.gz -o mutagen.tar.gz
+tar -zxvf mutagen.tar.gz
+sudo cp -R mutagen mutagen-agents.tar.gz /usr/local/bin
+```
+
+### Windows
+
+TO DO
+
+## Running diaper
+
+Change directory to the root of Diaper's source code and then run:
+
+```
+mutagen compose up --build
+```
+
+Finally, just point your browser to <http://127.0.0.1:3000>.
