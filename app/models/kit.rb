@@ -10,6 +10,8 @@
 #  storage_location_id :integer
 #
 class Kit < ApplicationRecord
+  include Itemizable
+
   has_many :kit_items
   has_many :items, through: :kit_items
 

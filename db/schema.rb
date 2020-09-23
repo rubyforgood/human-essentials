@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_23_143843) do
+ActiveRecord::Schema.define(version: 2020_09_23_143835) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -231,16 +231,6 @@ ActiveRecord::Schema.define(version: 2020_09_23_143843) do
     t.boolean "visible_to_partners", default: true, null: false
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
-  end
-
-  create_table "kit_items", force: :cascade do |t|
-    t.integer "item_id"
-    t.integer "kit_id"
-    t.integer "quantity"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["item_id"], name: "index_kit_items_on_item_id"
-    t.index ["kit_id"], name: "index_kit_items_on_kit_id"
   end
 
   create_table "kits", force: :cascade do |t|
