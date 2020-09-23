@@ -1,6 +1,4 @@
 class Forecasting::DistributionsController < ApplicationController
-  include DistributionHelper
-
   def index
     @distributions = distributions_data
   end
