@@ -1,5 +1,5 @@
 RSpec.describe DistributionMailer, type: :mailer do
-   before do
+  before do
     @organization.default_email_text = "Default email text example"
     @partner = create(:partner, name: 'PARTNER')
     @distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner)
@@ -37,18 +37,18 @@ RSpec.describe DistributionMailer, type: :mailer do
 
     context "with distribution changes" do
       let(:distribution_changes) do
-          {
-            removed: [
-              { name: "Adult Diapers" }
-            ],
-            updates: [
-              {
-                name: "Kid Diapers",
-                new_quantity: 4,
-                old_quantity: 100
-              }
-            ]
-          }
+        {
+          removed: [
+            { name: "Adult Diapers" }
+          ],
+          updates: [
+            {
+              name: "Kid Diapers",
+              new_quantity: 4,
+              old_quantity: 100
+            }
+          ]
+        }
       end
 
       it "renders the body with changes that happened in the distribution" do

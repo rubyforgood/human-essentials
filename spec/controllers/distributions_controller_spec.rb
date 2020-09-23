@@ -210,7 +210,6 @@ RSpec.describe DistributionsController, type: :controller do
           allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
         end
 
-
         it "redirects with a flash notice and send send_notification" do
           expected_distribution_changes = {
             removed: [],
