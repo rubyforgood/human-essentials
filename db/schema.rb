@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_22_144333) do
+ActiveRecord::Schema.define(version: 2020_09_23_143843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -231,6 +231,26 @@ ActiveRecord::Schema.define(version: 2020_09_22_144333) do
     t.boolean "visible_to_partners", default: true, null: false
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
+  end
+
+  create_table "kit_items", force: :cascade do |t|
+    t.integer "item_id"
+    t.integer "kit_id"
+    t.integer "quantity"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["item_id"], name: "index_kit_items_on_item_id"
+    t.index ["kit_id"], name: "index_kit_items_on_kit_id"
+  end
+
+  create_table "kits", force: :cascade do |t|
+    t.string "name"
+    t.integer "storage_location_id"
+    t.integer "organization_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["organization_id"], name: "index_kits_on_organization_id"
+    t.index ["storage_location_id"], name: "index_kits_on_storage_location_id"
   end
 
   create_table "line_items", id: :serial, force: :cascade do |t|
