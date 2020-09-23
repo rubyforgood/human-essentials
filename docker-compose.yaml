@@ -10,8 +10,6 @@ services:
       POSTGRES_USER: diaper
       POSTGRES_PASSWORD: diaper
       POSTGRES_DB: dummy
-    networks:
-      net: {}
 
   app:
     build:
@@ -22,8 +20,6 @@ services:
     environment:
       RAILS_ENV: development
       DATABASE_URL: "postgresql://diaper:diaper@db/diaper"
-    networks:
-      net: {}
     depends_on:
     - db
     volumes:
@@ -32,11 +28,6 @@ services:
 volumes:
   db:
   code:
-
-networks:
-  net:
-    driver: bridge
-    attachable: true
 
 x-mutagen:
   sync:
