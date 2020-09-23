@@ -117,6 +117,7 @@ Rails.application.routes.draw do
         post :import_csv
       end
     end
+    resources :kits
     resources :items do
       patch :restore, on: :member
     end

@@ -55,6 +55,7 @@
 
                   <%= download_button_to(csv_path(format: :csv, type: "Item"), {text: "Export Items"}) if @items.any? %>
                   <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+                  <%= new_button_to new_kit_path(organization_id: current_organization), {text: "New Kit"} %>
                   </span>
               </div>
             <% end # form %>

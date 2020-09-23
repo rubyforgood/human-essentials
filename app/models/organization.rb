@@ -36,53 +36,58 @@ class Organization < ApplicationRecord
   validates :reminder_day, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
   validate :deadline_after_reminder
 
-  has_many :adjustments, dependent: :destroy
-  has_many :barcode_items, dependent: :destroy do
-    def all
-      unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
+  with_options dependent: :destroy do
+    has_many :adjustments
+    has_many :audits
+    has_many :diaper_drive_participants
+    has_many :diaper_drives
+    has_many :donation_sites
+    has_many :donations
+    has_many :kits
+    has_many :manufacturers
+    has_many :partners
+    has_many :purchases
+    has_many :requests
+    has_many :storage_locations
+    has_many :inventory_items, through: :storage_locations
+    has_many :transfers
+    has_many :users
+    has_many :vendors
+    has_many :items do
+      def other
+        where(partner_key: "other")
+      end
+
+      def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
+        select("COUNT(line_items.id) as amount, name")
+          .joins(:line_items)
+          .where("line_items.created_at BETWEEN ? and ?", date_start, date_end)
+          .group(:name)
+      end
+
+      def top(limit = 5)
+        order('count(line_items.id) DESC')
+          .limit(limit)
+      end
+
+      def bottom(limit = 5)
+        order('count(line_items.id) ASC')
+          .limit(limit)
+      end
+    end
+    has_many :barcode_items, dependent: :destroy do
+      def all
+        unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
+      end
+    end
+    has_many :distributions, dependent: :destroy do
+      def upcoming
+        this_week.scheduled.where('issued_at >= ?', Time.zone.today)
+      end
     end
   end
-  has_many :distributions, dependent: :destroy do
-    def upcoming
-      this_week.scheduled.where('issued_at >= ?', Time.zone.today)
-    end
-  end
-  has_many :donations, dependent: :destroy
-  has_many :purchases, dependent: :destroy
-  has_many :donation_sites, dependent: :destroy
-  has_many :diaper_drives, dependent: :destroy
-  has_many :diaper_drive_participants, dependent: :destroy
-  has_many :manufacturers, dependent: :destroy
-  has_many :vendors, dependent: :destroy
-  has_many :storage_locations, dependent: :destroy
-  has_many :inventory_items, through: :storage_locations
-  has_many :items, dependent: :destroy do
-    def other
-      where(partner_key: "other")
-    end
 
-    def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
-      select("COUNT(line_items.id) as amount, name")
-        .joins(:line_items)
-        .where("line_items.created_at BETWEEN ? and ?", date_start, date_end)
-        .group(:name)
-    end
 
-    def top(limit = 5)
-      order('count(line_items.id) DESC')
-        .limit(limit)
-    end
-
-    def bottom(limit = 5)
-      order('count(line_items.id) ASC')
-        .limit(limit)
-    end
-  end
-  has_many :partners, dependent: :destroy
-  has_many :transfers, dependent: :destroy
-  has_many :users, dependent: :destroy
-  has_many :requests, dependent: :destroy
-  has_many :audits, dependent: :destroy
   before_update :update_partner_sections, if: :partner_form_fields_changed?
 
   ALL_PARTIALS = [

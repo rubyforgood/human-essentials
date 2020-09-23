@@ -12,11 +12,20 @@
 class Kit < ApplicationRecord
   include Itemizable
 
-  has_many :kit_items
-  has_many :items, through: :kit_items
-
   belongs_to :storage_location
   belongs_to :organization
 
   validates :storage_location, :organization, presence: true
+  validate :can_build_kit?
+
+  delegate :inventory_items, to: :storage_location
+
+  def can_build_kit?
+    grouped_inventory_items = inventory_items.group_by(&:item_id)
+    line_items.each do |line_item|
+      inventory_item = grouped_inventory_items[line_item.item_id]&.first
+      next if inventory_item.quantity > line_item.quantity
+      self.errors.add(:base, "Not enough #{line_item.item.name} to build kit")
+    end
+  end
 end
