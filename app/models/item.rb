@@ -35,6 +35,7 @@ class Item < ApplicationRecord
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
   include Filterable
+  include Exportable
   scope :active, -> { where(active: true) }
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
@@ -42,7 +43,7 @@ class Item < ApplicationRecord
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .includes(:base_item)
       .alphabetized

@@ -22,6 +22,7 @@ class Purchase < ApplicationRecord
   include Itemizable
   include Filterable
   include IssuedAt
+  include Exportable
 
   scope :at_storage_location, ->(storage_location_id) {
                                 where(storage_location_id: storage_location_id)
@@ -32,7 +33,7 @@ class Purchase < ApplicationRecord
   scope :purchased_from, ->(purchased_from) { where(purchased_from: purchased_from) }
   scope :during, ->(range) { where(purchases: { issued_at: range }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .includes(:line_items, :storage_location)
       .order(created_at: :desc)
