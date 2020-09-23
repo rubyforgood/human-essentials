@@ -1,0 +1,59 @@
+<div class="card card-info card-outline">
+  <div class="card-header">
+    <h2 class="card-title"><%= partner.name %></h2>
+  </div>
+  <div class="card-body p-0">
+    <div class="row">
+      <div class="<%= show_header_column_class(partner) %>">
+        <div class="description-block border-right">
+          <h1 style="color:purple"><%= total_on_hand(impact_metrics.dig("agency", "families_served") || 0) %> </h1>
+          <h5>Families served</h5>
+        </div>
+        <!-- /.description-block -->
+      </div>
+      <!-- /.col -->
+      <div class="<%= show_header_column_class(partner) %>">
+        <div class="description-block border-right">
+          <h1 style="color:purple"><%= total_on_hand(impact_metrics.dig("agency", "children_served") || 0) %> </h1>
+          <h5>Children served</h5>
+        </div>
+        <!-- /.description-block -->
+      </div>
+      <!-- /.col -->
+      <div class="<%= show_header_column_class(partner) %>">
+        <div class="description-block border-right">
+          <h1 style="color:purple"><%= total_on_hand(impact_metrics.dig("agency", "family_zipcodes") || 0) %> </h1>
+          <h5>Zipcodes served</h5>
+          <%= modal_button_to("#seeZipcodes", {text: "See Zipcodes?", size: "xs"}) if impact_metrics.dig("agency", "family_zipcodes_list").present? %>
+        </div>
+        <!-- /.description-block -->
+      </div>
+
+      <% if partner.quota.present? %>
+        <!-- /.col -->
+        <div class="<%= show_header_column_class(partner) %>">
+          <div class="description-block border-right">
+            <h1 style="color:purple"><%= partner.quota %> </h1>
+            <h5>Monthly Limit</h5>
+          </div>
+          <!-- /.description-block -->
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <!-- /.card-body -->
+  <div class="card-footer">
+    <%= view_button_to approve_partner_partner_path(partner) %>
+    <%= edit_button_to edit_partner_path(partner) %>
+    <% if partner.deactivated? %>
+      <%= reactivate_button_to reactivate_partner_path(partner), {confirm: confirm_reactivate_msg(partner.name)} %>
+    <% else %>
+      <%= deactivate_button_to deactivate_partner_path(partner), {confirm: confirm_deactivate_msg(partner.name)} %>
+    <% end %>
+    <%= modal_button_to("#addUserModal", {text: "Add/Remind Partner", size: "xs"}) if can_administrate? %>
+    <%= print_button_to approve_application_partner_path(partner), {text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "xs"} if can_administrate? %>
+    <span class="float-right">
+      <%= download_button_to(csv_path(format: :csv, type: "PartnerDistribution", filters: { partner_id: partner.id }), text: "Export Partner Distributions") if partner_distributions&.length > 0 %>
+    </span>
+  </div>
+</div>
