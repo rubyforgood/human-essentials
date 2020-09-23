@@ -73,8 +73,8 @@ RSpec.describe "Requests", type: :system, js: true do
       let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com") }
 
       it "filters by item id" do
-        create(:request, request_items: [{ "item_id": item1.id, "quantity": 3 }])
-        create(:request, request_items: [{ "item_id": item2.id, "quantity": 3 }])
+        create(:request, request_items: [{ "item_id": item1.id, "quantity": '3' }])
+        create(:request, request_items: [{ "item_id": item2.id, "quantity": '3' }])
 
         visit subject
         # check for all requests
