@@ -10,7 +10,7 @@ class DistributionUpdateService < DistributionService
     perform_distribution_service do
       @old_issued_at = distribution.issued_at
       @old_delivery_method = distribution.delivery_method
-      log = distribution.storage_location.increase_inventory(distribution.to_a)
+      distribution.storage_location.increase_inventory(distribution.to_a)
       # Delete the line items -- they'll be replaced later
       distribution.line_items.each(&:destroy!)
       distribution.reload
