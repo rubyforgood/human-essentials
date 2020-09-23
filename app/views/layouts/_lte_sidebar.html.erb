@@ -4,6 +4,22 @@
       <i class="nav-icon fas fa-tachometer-alt"></i> <p>Dashboard</p>
     <% end %>
   </li>
+
+  <li class="nav-item has-treeview <%= menu_open?(['forecasting/distributions']) %>">
+    <a href="#" class="nav-link <%= active_class(['forecasting/distributions']) %>">
+      <i class="nav-icon fa fa-bar-chart"></i>
+      <p>Forecasting
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(forecasting_distributions_path) %>">
+        <%= link_to(forecasting_distributions_path, class: "nav-link #{"active" if current_page?(forecasting_distributions_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Distributions
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
   <li class="nav-item has-treeview <%= menu_open?(['diaper_drives']) %>">
     <a href="#" class="nav-link <%= active_class(['diaper_drives']) %>">
       <i class="nav-icon fas fa-trophy"></i>
@@ -24,6 +40,7 @@
         <% end %>
       </li>
     </ul>
+  </li>
 
   <li class="nav-item has-treeview <%= menu_open?(['donations']) %>">
     <a href="#" class="nav-link <%= active_class(['donations']) %>">

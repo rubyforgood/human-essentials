@@ -162,6 +162,8 @@ Rails.application.routes.draw do
     end
 
     get "dashboard", to: "dashboard#index"
+    get "forecasting/distributions", to: "forecasting/distributions#index"
+
     get "csv", to: "data_exports#csv"
   end
 
