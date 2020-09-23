@@ -3,8 +3,16 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @requests = current_organization.ordered_requests.during(helpers.selected_range)
+    @requests = current_organization
+                .ordered_requests
+                .during(helpers.selected_range)
+                .class_filter(filter_params)
+
     @paginated_requests = @requests.page(params[:page])
+    @calculate_product_totals = total_items(@requests)
+    @items = current_organization.items.alphabetized
+    @partners = @requests.collect(&:partner).uniq.sort_by(&:name)
+    @statuses = Request.statuses.transform_keys(&:humanize)
 
     respond_to { |format| format.html }
   end
@@ -35,9 +43,29 @@ class RequestsController < ApplicationController
 
   private
 
+  def total_items(requests)
+    request_items = []
+
+    requests.pluck(:request_items).each do |items|
+      items.map { |json| request_items << [Item.find(json['item_id']).name, json['quantity']] }
+    end
+
+    request_items.inject({}) do |item, (quantity, total)|
+      item[quantity] ||= 0
+      item[quantity] += total
+      item
+    end
+  end
+
   def load_items
     return unless @request.request_items
 
     @request.request_items.map { |json| RequestItem.from_json(json, current_organization) }
+  end
+
+  def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).slice(:by_request_item_id, :by_partner, :by_status)
   end
 end

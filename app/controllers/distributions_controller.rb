@@ -39,11 +39,7 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .where(issued_at: selected_range)
-                     .includes(:partner, :storage_location, :line_items, :items)
-                     .order(issued_at: :desc)
-                     .class_filter(filter_params)
-                     .during(helpers.selected_range)
+                     .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
     @total_value_paginated_distributions = total_value(@paginated_distributions)
@@ -110,7 +106,7 @@ class DistributionsController < ApplicationController
 
     if result.success?
       if result.resend_notification? && @distribution.partner&.send_reminders
-        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution Date Has Changed")
+        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution Has Changed", distribution_changes: result.distribution_content.changes)
       end
       schedule_reminder_email(@distribution)
 
@@ -154,8 +150,8 @@ class DistributionsController < ApplicationController
     "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{details}"
   end
 
-  def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
+  def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
+    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes) if Flipper.enabled?(:email_active)
   end
 
   def schedule_reminder_email(distribution)
@@ -191,10 +187,10 @@ class DistributionsController < ApplicationController
     end
   end
 
-  def filter_params
-    return {} unless params.key?(:filters)
-
-    params.require(:filters).slice(:by_item_id, :by_partner, :by_state)
+  helper_method \
+    def filter_params
+    params.fetch(:filters, {})
+          .permit(:by_item_id, :by_partner, :by_state)
   end
 
   def perform_inventory_check

@@ -4,8 +4,9 @@
 RSpec.describe DataExport, type: :model do
   let(:org) { create(:organization) }
   let(:type) { "Donation" }
+  let(:filters) { {} }
 
-  subject { described_class.new(org, type) }
+  subject { described_class.new(org, type, filters, nil) }
 
   describe "as_csv" do
     context "current org is nil >" do
@@ -71,11 +72,29 @@ RSpec.describe DataExport, type: :model do
       let(:type) { "Distribution" }
       let(:partner_name) { "Cool Beans" }
       let(:partner) { create(:partner, name: partner_name, organization: org) }
-      let!(:distribution) { create(:distribution, partner: partner, organization: org) }
+      let!(:distribution_1) { create(:distribution, partner: partner, organization: org, issued_at: 11.days.ago) }
+      let(:item) { create(:item) }
+      let!(:distribution_2) { create(:distribution, :with_items, partner: partner, item: item, organization: org, issued_at: 3.days.ago) }
 
       it "should return a CSV string with distribution data" do
         expect(subject.as_csv).to include(partner_name)
-        expect(subject.as_csv).to include(distribution.issued_at.strftime("%F"))
+        expect(subject.as_csv).to include(distribution_1.issued_at.strftime("%F"))
+        expect(subject.as_csv.split("\n").size).to eql(3)
+      end
+
+      it "filters by the given filter" do
+        filters.merge!(by_item_id: item.id)
+
+        expect(subject.as_csv).to include(partner_name)
+        expect(subject.as_csv.split("\n").size).to eql(2)
+      end
+
+      it "filters by the given date range" do
+        export = DataExport.new(org, type, {}, 10.days.ago..Time.zone.today)
+
+        expect(export.as_csv).to include(partner_name)
+        expect(export.as_csv.split("\n").size).to eql(2)
+        expect(subject.as_csv).to include(distribution_2.issued_at.strftime("%F"))
       end
     end
 
@@ -159,6 +178,22 @@ RSpec.describe DataExport, type: :model do
         expect(subject.as_csv).to include(request.created_at.strftime("%m/%d/%Y").to_s)
         expect(subject.as_csv).to include(item.name)
         expect(subject.as_csv).to include("150")
+      end
+    end
+
+    context "type is PartnerDistribution >" do
+      let(:type) { "PartnerDistribution" }
+      let!(:distribution) { create :distribution, :with_items, organization: org }
+      let(:filters) { { partner_id: distribution.partner_id } }
+
+      subject { described_class.new(org, type, filters, nil) }
+
+      it "should return a CSV string with distribution and line item data" do
+        expect(subject.as_csv).to include("Date,Source Inventory,Total Items")
+        expect(subject.as_csv).to include(distribution.issued_at.strftime("%m/%d/%Y").to_s)
+        expect(subject.as_csv).to include(distribution.storage_location.name)
+        expect(subject.as_csv).to include(distribution.line_items.first.item.name)
+        expect(subject.as_csv).to include("100")
       end
     end
   end

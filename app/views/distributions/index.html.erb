@@ -61,7 +61,14 @@
                 <%= filter_button %>
                 <%= cancel_button_to distributions_path, {text: "Clear Filters"} %>
                 <span class="float-right">
-                  <%= download_button_to(csv_path(format: :csv, type: "Distribution"), text: "Export Distributions") if @distributions.length > 0 %>
+                  <%=
+                    if @distributions.length > 0
+                      download_button_to(
+                        csv_path(format: :csv, type: "Distribution", filters: filter_params.merge(date_range: date_range_params)),
+                        text: "Export Distributions"
+                      )
+                    end
+                  %>
                   <%= new_button_to new_distribution_path(organization_id: current_organization), {text: "New Distribution"} %>
                 </span>
               </div>

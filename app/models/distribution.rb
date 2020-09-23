@@ -54,9 +54,15 @@ class Distribution < ApplicationRecord
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :future, -> { where("issued_at >= :tomorrow", tomorrow: Time.zone.tomorrow) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, filters = {}, date_range = nil) {
     where(organization: organization)
       .includes(:partner, :storage_location, :line_items)
+      .apply_filters(filters, date_range)
+  }
+  scope :apply_filters, ->(filters, date_range) {
+    includes(:partner, :storage_location, :line_items, :items)
+      .order(issued_at: :desc)
+      .class_filter(filters.merge(during: date_range))
   }
   scope :this_week, -> do
     where("issued_at > :start_date AND issued_at <= :end_date",

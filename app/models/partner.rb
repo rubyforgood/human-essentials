@@ -32,7 +32,7 @@ class Partner < ApplicationRecord
 
   validates :quota, numericality: true, allow_blank: true
 
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .order(:name)
   }

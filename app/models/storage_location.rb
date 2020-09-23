@@ -39,7 +39,7 @@ class StorageLocation < ApplicationRecord
     joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
   }
   scope :alphabetized, -> { order(:name) }
-  scope :for_csv_export, ->(organization) { where(organization: organization) }
+  scope :for_csv_export, ->(organization, *) { where(organization: organization) }
 
   def self.item_total(item_id)
     StorageLocation.select("quantity")
