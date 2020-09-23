@@ -7,11 +7,24 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        <% @calculate_product_totals.each do |name, quantity| %>
-          <div><%= "#{name}: " %> <b><%= quantity %></b></div>
-          <br />
-        <% end %>
+      <div class="modal-body p-4">
+        <table class="table table-hover striped">
+          <thead>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+          </tr>
+          </thead>
+          <tbody>
+            <% @calculate_product_totals.sort_by { |name, quantity| -quantity}.each do |name, quantity| %>
+              <tr>
+                <td><%= name %></td>
+                <td><%= quantity %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
+    </div>
   </div>
 </div>
