@@ -61,8 +61,8 @@
               </div>
               <div class="card-footer">
                 <%= filter_button %>
-                <%= modal_button_to("#calculateTotals", {text: "Calculate Product Totals", icon: nil, size: "md", type: "success"}) %>
                 <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
+                <%= modal_button_to("#calculateTotals", {text: "Calculate Product Totals", icon: nil, size: "md", type: "success"}) %>
                 <span class="float-right">
                   <%= download_button_to(csv_path(format: :csv, type: "Request", filters: params[:filters]&.permit(:date_range)), text: "Export Requests") if @requests.length > 0 %>
                 </span>
