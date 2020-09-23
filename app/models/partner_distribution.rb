@@ -1,9 +1,9 @@
 class PartnerDistribution
   include Exportable
 
-  def self.for_csv_export(organization, partner_id:)
+  def self.for_csv_export(organization, filters, *)
     Distribution.includes(:partner, :storage_location, :line_items)
-                .where(organization: organization, partner_id: partner_id)
+                .where(organization: organization, partner_id: filters[:partner_id])
   end
 
   def self.csv_export(distributions)
@@ -18,7 +18,7 @@ class PartnerDistribution
         "Source Inventory" => distribution.storage_location.name,
         "Total Items" => distribution.line_items.total
       }.tap do |row|
-        distribution.line_items.quantities_by_name.each do |id, item_ref|
+        distribution.line_items.quantities_by_name.each do |_id, item_ref|
           row[item_ref[:name]] = item_ref[:quantity]
           headers << item_ref[:name] unless headers.include?(item_ref[:name])
         end
