@@ -3,13 +3,12 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @paginated_requests = current_organization
-                          .ordered_requests
-                          .during(helpers.selected_range)
-                          .page(params[:page])
-    respond_to do |format|
-      format.html
-    end
+    @requests = current_organization
+                .ordered_requests
+                .during(helpers.selected_range)
+
+    @paginated_requests = @requests.page(params[:page])
+    @calculate_product_totals = total_items(@requests)
   end
 
   def show
@@ -37,6 +36,20 @@ class RequestsController < ApplicationController
   end
 
   private
+
+  def total_items(requests)
+    request_items = []
+
+    requests.pluck(:request_items).each do |items|
+      items.map { |json| request_items << [Item.find(json['item_id']).name, json['quantity']] }
+    end
+
+    request_items.inject({}) do |item, (quantity, total)|
+      item[quantity] ||= 0
+      item[quantity] += total
+      item
+    end
+  end
 
   def load_items
     return unless @request.request_items

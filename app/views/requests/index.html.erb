@@ -45,6 +45,7 @@
               </div>
               <div class="card-footer">
                 <%= filter_button %>
+                <%= modal_button_to("#calculateTotals", {text: "Calculate Product Totals", icon: nil, size: "md", type: "success"}) %>
                 <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
               </div>
             <% end # form %>
@@ -91,4 +92,5 @@
       </div>
     </div>
   </div>
+  <%= render partial: "calculate_product_totals" %>
 </section>
