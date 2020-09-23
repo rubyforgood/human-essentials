@@ -63,5 +63,58 @@ RSpec.describe "Requests", type: :system, js: true do
         end
       end
     end
+
+    context "when filtering on the index page" do
+      subject { url_prefix + "/requests" }
+
+      let(:item1) { create(:item, name: "Good item") }
+      let(:item2) { create(:item, name: "Crap item") }
+      let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
+      let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com") }
+
+      it "filters by item id" do
+        create(:request, request_items: [{ "item_id": item1.id, "quantity": 3 }])
+        create(:request, request_items: [{ "item_id": item2.id, "quantity": 3 }])
+
+        visit subject
+        # check for all requests
+        expect(page).to have_css("table tbody tr", count: 3)
+        # filter
+        select(item1.name, from: "filters_by_request_item_id")
+        click_button("Filter")
+        # check for filtered requests
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
+
+      it "filters by partner" do
+        create(:request, partner: partner1)
+        create(:request, partner: partner2)
+
+        visit subject
+        # check for all requests
+        expect(page).to have_css("table tbody tr", count: 3)
+        # filter
+        select(partner1.name, from: "filters_by_partner")
+        click_button("Filter")
+        # check for filtered requests
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
+
+      it "filters by status" do
+        request1 = create(:request, status: "fulfilled")
+        create(:request, status: "pending")
+
+        visit subject
+        # check for all requests
+        expect(page).to have_css("table tbody tr", count: 3)
+        # filter
+        select(request1.status.humanize, from: "filters_by_status")
+        click_button("Filter")
+        # check for filtered requests
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
+
+      it_behaves_like "Date Range Picker", Request, :created_at
+    end
   end
 end
