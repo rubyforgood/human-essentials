@@ -23,6 +23,7 @@ class BarcodeItem < ApplicationRecord
   validates :quantity, numericality: { only_integer: true, greater_than: 0 }
 
   include Filterable
+  include Exportable
   default_scope { order("barcodeable_type DESC, created_at ASC") }
 
   scope :barcodeable_id, ->(barcodeable_id) { where(barcodeable_id: barcodeable_id) }

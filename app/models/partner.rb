@@ -40,6 +40,7 @@ class Partner < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
 
   include Filterable
+  include Exportable
   scope :by_status, ->(status) {
     where(status: status.to_sym)
   }

@@ -14,7 +14,10 @@
 #
 
 class Request < ApplicationRecord
+  include Exportable
+
   class MismatchedItemIdsError < StandardError; end
+
   belongs_to :partner
   belongs_to :organization
   belongs_to :distribution, optional: true
@@ -22,6 +25,11 @@ class Request < ApplicationRecord
   enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
   scope :during, ->(range) { where(created_at: range) }
+  scope :for_csv_export, ->(organization) {
+    where(organization: organization)
+      .includes(:partner)
+      .order(created_at: :desc)
+  }
 
   def family_request_reply
     {
@@ -56,5 +64,9 @@ class Request < ApplicationRecord
         }
       end
     request
+  end
+
+  def self.csv_export(requests)
+    Exports::ExportRequestService.new(requests).call
   end
 end
