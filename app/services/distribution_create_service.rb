@@ -20,6 +20,6 @@ class DistributionCreateService < DistributionService
   private
 
   def send_notification
-    PartnerMailerJob.perform_async(distribution_organization.id, distribution.id, 'Your Distribution') if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_now(distribution_organization.id, distribution.id, 'Your Distribution') if Flipper.enabled?(:email_active)
   end
 end

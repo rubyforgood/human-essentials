@@ -9,6 +9,8 @@ class RequestsController < ApplicationController
 
     @paginated_requests = @requests.page(params[:page])
     @calculate_product_totals = total_items(@requests)
+
+    respond_to { |format| format.html }
   end
 
   def show

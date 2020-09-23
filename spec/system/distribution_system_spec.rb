@@ -19,9 +19,10 @@ RSpec.feature "Distributions", type: :system do
         choose "Pick up"
 
         fill_in "Comment", with: "Take my wipes... please"
-        expect(PartnerMailerJob).to receive(:perform_async)
 
-        click_button "Save", match: :first
+        expect do
+          click_button "Save", match: :first
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
 
         expect(page).to have_content "Distributions"
         expect(page.find(".alert-info")).to have_content "reated"
@@ -443,6 +444,20 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
       select(partner1.name, from: "filters_by_partner")
+      click_button("Filter")
+      # check for filtered distributions
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+
+    it "filters by state" do
+      distribution1 = create(:distribution, state: "started")
+      create(:distribution, state: "complete")
+
+      visit subject
+      # check for all distributions
+      expect(page).to have_css("table tbody tr", count: 2)
+      # filter
+      select(distribution1.state.humanize, from: "filters_by_state")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)

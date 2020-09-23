@@ -51,6 +51,7 @@ class DistributionsController < ApplicationController
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
+    @states = Distribution.states.transform_keys(&:humanize)
   end
 
   def create
@@ -154,7 +155,7 @@ class DistributionsController < ApplicationController
   end
 
   def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_async(org, dist, subject) if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
   end
 
   def schedule_reminder_email(distribution)
@@ -193,7 +194,7 @@ class DistributionsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_item_id, :by_partner)
+    params.require(:filters).slice(:by_item_id, :by_partner, :by_state)
   end
 
   def perform_inventory_check

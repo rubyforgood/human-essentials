@@ -35,6 +35,7 @@ class Item < ApplicationRecord
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
   include Filterable
+  include Exportable
   scope :active, -> { where(active: true) }
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
