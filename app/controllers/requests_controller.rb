@@ -52,7 +52,7 @@ class RequestsController < ApplicationController
 
     request_items.inject({}) do |item, (quantity, total)|
       item[quantity] ||= 0
-      item[quantity] += total
+      item[quantity] += total.to_i
       item
     end
   end
