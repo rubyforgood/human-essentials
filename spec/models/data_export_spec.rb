@@ -180,6 +180,22 @@ RSpec.describe DataExport, type: :model do
         expect(subject.as_csv).to include("150")
       end
     end
+
+    context "type is PartnerDistribution >" do
+      let(:type) { "PartnerDistribution" }
+      let!(:distribution) { create :distribution, :with_items, organization: org }
+      let(:filters) { { partner_id: distribution.partner_id } }
+
+      subject { described_class.new(org, type, filters, nil) }
+
+      it "should return a CSV string with distribution and line item data" do
+        expect(subject.as_csv).to include("Date,Source Inventory,Total Items")
+        expect(subject.as_csv).to include(distribution.issued_at.strftime("%m/%d/%Y").to_s)
+        expect(subject.as_csv).to include(distribution.storage_location.name)
+        expect(subject.as_csv).to include(distribution.line_items.first.item.name)
+        expect(subject.as_csv).to include("100")
+      end
+    end
   end
 
   describe 'SUPPORTED_TYPES' do
