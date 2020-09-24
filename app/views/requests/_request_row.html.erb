@@ -1,7 +1,7 @@
 <tr>
   <td class="date"><%= request_row.created_at.strftime("%m/%d/%Y") %></td>
   <td><%= request_row.partner.name %> </td>
-  <td>
+  <td class="<%= quota_column_class(request_row.total_items, request_row.partner) %>">
     <%= request_row.total_items %>
     <%= quota_display(request_row.partner) %>
   </td>
