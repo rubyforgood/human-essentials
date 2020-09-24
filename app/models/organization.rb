@@ -43,13 +43,13 @@ class Organization < ApplicationRecord
     has_many :diaper_drives
     has_many :donation_sites
     has_many :donations
-    has_many :kits
     has_many :manufacturers
     has_many :partners
     has_many :purchases
     has_many :requests
     has_many :storage_locations
     has_many :inventory_items, through: :storage_locations
+    has_many :kits
     has_many :transfers
     has_many :users
     has_many :vendors

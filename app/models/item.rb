@@ -20,8 +20,12 @@
 #
 
 class Item < ApplicationRecord
+  include Filterable
+  include Exportable
+
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
+
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
@@ -34,8 +38,6 @@ class Item < ApplicationRecord
   has_many :donations, through: :line_items, source: :itemizable, source_type: Donation
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
-  include Filterable
-  include Exportable
   scope :active, -> { where(active: true) }
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }

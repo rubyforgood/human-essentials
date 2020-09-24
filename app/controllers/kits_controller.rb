@@ -32,6 +32,6 @@ class KitsController < ApplicationController
   end
 
   def kit_params
-    params.require(:kit).permit(:name, :storage_location_id, line_items_attributes: [:item_id, :quantity, :_destroy])
+    params.require(:kit).permit(:name, line_items_attributes: [:item_id, :quantity, :_destroy])
   end
 end
