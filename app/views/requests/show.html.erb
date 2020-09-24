@@ -74,6 +74,14 @@
                   <td><%= item.on_hand %></td>
                 </tr>
               <% end %>
+              <tr>
+                <td>Total (Quota)</td>
+                <td>
+                  <%= @request.total_items %>
+                  <%= quota_display(@request.partner) %>
+                </td>
+                <td />
+              </tr>
               </tbody>
             </table>
           </div>
