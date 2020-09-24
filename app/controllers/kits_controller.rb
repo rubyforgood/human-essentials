@@ -28,7 +28,6 @@ class KitsController < ApplicationController
 
   def load_form_collections
     @items = current_organization.items.active.alphabetized
-    @storage_locations = current_organization.storage_locations
   end
 
   def kit_params
