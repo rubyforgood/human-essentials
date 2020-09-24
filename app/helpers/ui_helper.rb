@@ -93,7 +93,7 @@ module UiHelper
   end
 
   def new_button_to(link, options = {})
-    _link_to link, {  type: "secondary", text: "New", size: "md" }.merge(options)
+    _link_to link, { type: "secondary", text: "New", size: "md" }.merge(options)
   end
 
   def print_button_to(link, options = {})
