@@ -6,8 +6,8 @@ module RequestsHelper
   end
 
   def quota_column_class(total, partner)
-    return "" if partner.quota.blank? || total < partner.quota
+    return "" if partner.quota.blank? || total.to_i < partner.quota
 
-    "text-danger font-weight-bold"
+    "font-italic font-weight-bold"
   end
 end
