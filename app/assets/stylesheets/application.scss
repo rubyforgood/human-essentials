@@ -26,7 +26,9 @@
  @import 'base/_variables';
  @import 'resources/*';
  // import other stylesheets after variables
-@import 'AdminLTE';
+@import 'theme_overrides';
+
+@import 'custom';
 @import 'bootstrap';
 @import 'bootstrap-select';
 @import 'simple_form-bootstrap/simple_form-bootstrap';
@@ -34,7 +36,7 @@
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';
-@import 'custom';
+
 
 .modal-dialog {
   display: flex;
@@ -166,4 +168,7 @@ a{
     background-color: darken(#d6d9f9,15%);
     color: white;
   }
+}
+.card-title{
+  margin:0;
 }
