@@ -17,6 +17,12 @@
 class Partner < ApplicationRecord
   require "csv"
 
+  ALLOWED_MIME_TYPES = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ].freeze
+
   enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, error: 4, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
@@ -33,6 +39,8 @@ class Partner < ApplicationRecord
                     format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, on: :create }
 
   validates :quota, numericality: true, allow_blank: true
+
+  validate :correct_document_mime_type
 
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
@@ -82,5 +90,13 @@ class Partner < ApplicationRecord
       .includes(:line_items)
       .where("line_items.created_at > ?", Time.zone.today.beginning_of_year)
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
+  end
+
+  protected
+
+  def correct_document_mime_type
+    if documents.attached? && documents.any? { |doc| !doc.content_type.in?(ALLOWED_MIME_TYPES) }
+      errors.add(:documents, "Must be a PDF or DOC file")
+    end
   end
 end
