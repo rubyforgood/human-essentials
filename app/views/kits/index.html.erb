@@ -30,21 +30,23 @@
             <h3 class="card-title">Kit Filter</h3>
           </div>
           <div class="card-body">
-            <%= form_tag(items_path, method: :get) do |f| %>
+            <%= form_tag(kits_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Filter by Base Item" %>
-                  <%= collection_select(:filters, :by_base_item, BaseItem.alphabetized, :partner_key, :name, {include_blank: true, selected: @selected_base_item}, class: "form-control") %>
+                  <%= collection_select(:filters, :by_item, Item.alphabetized, :partner_key, :name, {include_blank: true, selected: @selected_item}, class: "form-control") %>
                 </div>
               </div>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= check_box_tag("include_inactive_items", 1, @include_inactive_items) %>
+                  <%= check_box_tag("include_inactive", 1, @include_inactive) %>
                   <%= label_tag "Also include inactive items" %>
                 </div>
               </div>
               </div>
               <div class="card-footer">
+                <%= filter_button %>
+                <%= cancel_button_to kits_path, { text: "Clear Filters" } %>
                 <span class="float-right">
                   <%= new_button_to new_kit_path(organization_id: current_organization), { text: "New Kit" } %>
                   </span>
