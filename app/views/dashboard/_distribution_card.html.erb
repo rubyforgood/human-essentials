@@ -1,0 +1,46 @@
+<div class="card d-flex flex-column" id="distributions">
+          <div class="card-header border-0 bg-primary">
+            <h3 class="card-title text-semibold">Distributions</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body p-0 ">
+            <div class="d-flex justify-content-between align-items-center mb-3 px-3 pt-3 flex-sm-wrap">
+              <h4 class="m-0"><%= @selected_date_range %></h4>
+              <a class="btn btn-secondary text-white text-semibold" href="<%=new_distribution_path%>"> Add New Distribution</a>
+            </div>
+              
+
+                <div class="px-3 mb-3">
+                  <h2 class="m-0"><%= total_distributed %></h2>
+                  <span class="text-muted">Items Distributed</span>
+                </div>
+          
+                <span class="text-muted px-3 mb-2 ">(<%= future_distributed %> items scheduled for future distribution)</span>
+                
+                  <div class="d-flex justify-content-end border-bottom">
+                    <small class="text-muted mr-3 mb-1">Recent distributions</small>
+                  </div>
+                  <div class="d-flex justify-content-between mx-3 my-2 text-muted ">
+                    <div class="w-100">
+                      <small>Quantity</small>
+                    </div>
+                    <div class="w-100 text-left">
+                      <small>Distributed To</small>
+                    </div>
+                    <div class="w-100 text-right">
+                      <small>Time Ago</small>
+                    </div>
+                  </div>
+                  <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
+               
+             
+            
+          </div>
+          <div class="card-footer text-center">
+            <%= link_to "View All Distributions", distributions_path %>
+          </div>
+        </div>
