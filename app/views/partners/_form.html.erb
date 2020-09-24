@@ -27,6 +27,9 @@
               <%= f.input :notes, label: "Notes", wrapper: :input_group do %>
                 <%= f.input_field :notes, class: "form-control" %>
               <% end %>
+              <%= f.input :documents, label: "Documents", wrapper: :input_group do %>
+                <%= f.file_field :documents, multiple: true, accept: allowed_file_types, class: "form-control" %>
+              <% end %>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">

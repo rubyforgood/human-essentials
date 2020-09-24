@@ -23,6 +23,8 @@ class Partner < ApplicationRecord
   has_many :distributions, dependent: :destroy
   has_many :requests, dependent: :destroy
 
+  has_many_attached :documents
+
   validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
 

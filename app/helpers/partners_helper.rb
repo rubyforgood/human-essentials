@@ -14,4 +14,12 @@ module PartnersHelper
       "col-sm-4 col-4 #{additional_classes}"
     end
   end
+
+  def allowed_file_types
+    [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ].join(",")
+  end
 end
