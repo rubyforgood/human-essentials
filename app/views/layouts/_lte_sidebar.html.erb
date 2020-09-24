@@ -101,11 +101,13 @@
           <i class="nav-icon fa fa-circle-o"></i> Items &amp; Inventory
         <% end %>
       </li>
-      <li class="nav-item <%= active_class(['kits']) %>">
-        <%= link_to(kits_path(organization_id: current_user.organization), class: "nav-link #{active_class(['kits'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Kits
-        <% end %>
-      </li>
+      <% if Flipper.enabled?(:kits) %>
+        <li class="nav-item <%= active_class(['kits']) %>">
+          <%= link_to(kits_path(organization_id: current_user.organization), class: "nav-link #{active_class(['kits'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> Kits
+          <% end %>
+        </li>
+      <% end %>
       <li class="nav-item <%= active_class(['barcode_items']) %>">
         <%= link_to(barcode_items_path(organization_id: current_user.organization), class: "nav-link #{active_class(['barcode_items'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Barcode Items
