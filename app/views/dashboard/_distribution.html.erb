@@ -1,6 +1,5 @@
-
 <div class="d-flex justify-content-between mx-3 my-2 ">
-  <div class="w-100">
+  <div class="w-50">
   <%= link_to distribution do %>
     <%= distribution.line_items.total %> items 
   <% end %>
@@ -10,7 +9,7 @@
     <%= distribution.partner_name %>
   <% end %>
 </div>
-<div class="w-100 text-right">
+<div class="w-50 text-right">
   <%= distance_of_time_in_words_to_now distribution.created_at %> ago
   </div>
 </div>

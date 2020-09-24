@@ -122,15 +122,16 @@ module UiHelper
   end
 
   def _link_to(link, options = {}, properties = {})
-    icon = options[:icon]
+    # icon = options[:icon]
     text = options[:text]
     size = options[:size]
     type = options[:type]
+    classes = options[:classes]
     # user sparingly.
     center = options[:center].present? ? "center-block" : ""
 
-    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center}") do
-       text: text
+    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center} #{classes}") do
+      text
     end
   end
 
