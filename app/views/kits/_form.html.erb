@@ -19,6 +19,10 @@
                 <% end %>
               <% end %>
 
+              <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
+                <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
+              <% end %>
+
               <fieldset style="margin-bottom: 2rem;" class="form-inline">
                 <legend>Items in this Kit</legend>
                 <%= f.simple_fields_for :line_items do |item| %>
