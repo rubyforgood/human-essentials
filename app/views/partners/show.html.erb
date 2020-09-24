@@ -32,6 +32,10 @@
         <% if @partner.notes.present? %>
           <%= render "notes", partner: @partner %>
         <% end %>
+
+        <% if @partner.documents.present? %>
+          <%= render "documents", partner: @partner %>
+        <% end %>
       </div>
     </div>
   </div>
