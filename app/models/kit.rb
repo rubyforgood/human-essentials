@@ -1,31 +1,27 @@
 # == Schema Information
 #
-# Table name: kits
+# Table name: items
 #
-#  id                  :bigint           not null, primary key
-#  name                :string
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organization_id     :integer
-#  storage_location_id :integer
+#  id                           :integer          not null, primary key
+#  active                       :boolean          default(TRUE)
+#  barcode_count                :integer
+#  category                     :string
+#  distribution_quantity        :integer
+#  name                         :string
+#  on_hand_minimum_quantity     :integer          default(0), not null
+#  on_hand_recommended_quantity :integer
+#  package_size                 :integer
+#  partner_key                  :string
+#  value_in_cents               :integer          default(0)
+#  visible_to_partners          :boolean          default(TRUE), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  organization_id              :integer
 #
-class Kit < ApplicationRecord
+class Kit < Item
   include Itemizable
 
-  belongs_to :storage_location
   belongs_to :organization
 
-  validates :storage_location, :organization, presence: true
-  validate :can_build_kit?
-
-  delegate :inventory_items, to: :storage_location
-
-  def can_build_kit?
-    grouped_inventory_items = inventory_items.group_by(&:item_id)
-    line_items.each do |line_item|
-      inventory_item = grouped_inventory_items[line_item.item_id]&.first
-      next if inventory_item.quantity > line_item.quantity
-      self.errors.add(:base, "Not enough #{line_item.item.name} to build kit")
-    end
-  end
+  validates :organization, presence: true
 end
