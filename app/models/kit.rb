@@ -17,7 +17,7 @@ class Kit < ApplicationRecord
 
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
-  scope :by_item, ->(partner_key) { joins(:items).where(items: { partner_key: partner_key }) }
+  scope :by_partner_key, ->(key) { joins(:items).where(items: { partner_key: key }) }
 
   validates :organization, :name, presence: true
 end

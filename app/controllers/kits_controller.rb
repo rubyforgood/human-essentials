@@ -1,7 +1,7 @@
 class KitsController < ApplicationController
   def index
     @kits = current_organization.kits.class_filter(filter_params)
-    @selected_item = filter_params[:by_item]
+    @selected_item = filter_params[:by_partner_key]
     @include_inactive = params[:include_inactive]
     unless params[:include_inactive]
       @kits = @kits.active
@@ -40,6 +40,6 @@ class KitsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_item, :include_inactive_items)
+    params.require(:filters).slice(:by_partner_key, :include_inactive_items)
   end
 end
