@@ -1,1 +1,43 @@
-<%= line_chart @distributions %>
+<div id="container"></div>
+<script>
+  Highcharts.chart('container', {
+      chart: {
+          type: 'column',
+          height: 850
+      },
+      title: {
+          text: 'Monthly Distributions'
+      },
+      subtitle: {
+          text: 'Source: Diaperbase.org'
+      },
+      xAxis: {
+          categories: <%= raw @categories %>,
+          crosshair: true
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Line Items'
+          }
+      },
+      tooltip: {
+          style: {
+            zIndex: 100
+          },
+          headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+              '<td style="padding:0"><b>{point.y}</b></td></tr>',
+          footerFormat: '</table>',
+          shared: true,
+          useHTML: true
+      },
+      plotOptions: {
+          column: {
+              pointPadding: 0.2,
+              borderWidth: 0
+          }
+      },
+      series: <%= raw @series %>
+  });
+</script> 

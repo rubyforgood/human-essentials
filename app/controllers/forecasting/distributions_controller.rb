@@ -1,23 +1,36 @@
 class Forecasting::DistributionsController < ApplicationController
   def index
-    @distributions = distributions_data
+    @series     = series
+    @categories = categories
   end
 
   private
 
-  def distributions_data
-    partner_items = []
+  def series
+    items = []
 
-    current_organization.partners.each do |partner|
-      partner_items << {name: partner.name, data: total_items(partner.distributions)}
+    Item.all.sort.each do |item|
+      next if item.line_items.empty?
+
+      items << {name: item.name, data: total_items(item.line_items).values}
     end
 
-    partner_items
+    items.to_json
   end
 
-  def total_items(distributions)
-    LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id))
-            .group_by_month(:created_at)
-            .sum(:quantity)
+  def categories
+    keys = total_items(LineItem.where(itemizable_type: "Distribution")).keys
+
+    dates(keys)
+  end
+
+  def dates(dates)
+    dates.sort.flatten.uniq.map {|date| Date::ABBR_MONTHNAMES[date.month]}
+  end
+
+  def total_items(line_items)
+    line_items.where(itemizable_type: "Distribution")
+              .group_by_month(:created_at)
+              .sum(:quantity)
   end
 end
