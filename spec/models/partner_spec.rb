@@ -166,4 +166,16 @@ RSpec.describe Partner, type: :model do
       expect(partner.quantity_year_to_date).to eq(200)
     end
   end
+
+  describe "ActiveStorage validation" do
+    it "validates that attachments are pdf or docs" do
+      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"), "image/jpeg")])
+
+      expect(partner).to_not be_valid
+
+      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/dbase.pdf"), "application/pdf")])
+
+      expect(partner).to be_valid
+    end
+  end
 end
