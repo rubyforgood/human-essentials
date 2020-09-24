@@ -1,4 +1,8 @@
 class KitsController < ApplicationController
+  def index
+    @kits = current_organization.kits
+  end
+
   def new
     load_form_collections
     @kit = current_organization.kits.new
