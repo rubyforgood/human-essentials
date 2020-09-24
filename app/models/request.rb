@@ -76,4 +76,8 @@ class Request < ApplicationRecord
   def self.csv_export(requests)
     Exports::ExportRequestService.new(requests).call
   end
+
+  def total_items
+    request_items.sum { |item| item["quantity"] }
+  end
 end
