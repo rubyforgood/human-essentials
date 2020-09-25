@@ -19,11 +19,11 @@ module ApplicationHelper
   end
 
   def active_class(name)
-    name.include?(controller_name) ? "active" : controller_name
+    name.include?(controller_path) ? "active" : controller_path
   end
 
   def menu_open?(name)
-    name.include?(controller_name) ? 'menu-open' : ''
+    name.include?(controller_path) ? 'menu-open' : ''
   end
 
   def can_administrate?
