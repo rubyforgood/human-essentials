@@ -1,0 +1,22 @@
+<table class="table table-items-location">
+<thead>
+<tr>
+  <th>Name</th>
+  <th>Items</th>
+</tr>
+</thead>
+<tbody>
+  <% @kits.each do |kit| %>
+    <tr>
+      <td><%= kit.name %></td>
+      <td>
+        <ul>
+          <% kit.line_items.quantities_by_name.map do |id, item_hash| %>
+            <li><%= "#{item_hash[:quantity]} #{item_hash[:name]}" %></li>
+          <% end %>
+        </ul>
+      </td>
+    </tr>
+  <% end %>
+</tbody>
+</table>

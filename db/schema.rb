@@ -233,6 +233,17 @@ ActiveRecord::Schema.define(version: 2020_09_25_160112) do
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
 
+  create_table "kits", force: :cascade do |t|
+    t.string "name"
+    t.integer "organization_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "active", default: true
+    t.boolean "visible_to_partners", default: true, null: false
+    t.integer "value_in_cents", default: 0
+    t.index ["organization_id"], name: "index_kits_on_organization_id"
+  end
+
   create_table "line_items", id: :serial, force: :cascade do |t|
     t.integer "quantity"
     t.integer "item_id"

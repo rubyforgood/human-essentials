@@ -1,0 +1,44 @@
+<%= simple_form_for @kit, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-primary">
+            <div class="card-body">
+              <%= f.input :name, label: "Name", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-tag"></i></span>
+                <%= f.input_field :name, class: "form-control" %>
+              <% end %>
+
+              <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
+                <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
+              <% end %>
+
+              <%= f.input :value_in_cents, label: "Value for kit", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-dollar"></i></span>
+                <%= f.input_field :value_in_dollars, class: "form-control", min: 0 %>
+              <% end %>
+
+              <fieldset style="margin-bottom: 2rem;" class="form-inline">
+                <legend>Items in this Kit</legend>
+                <%= f.simple_fields_for :line_items do |item| %>
+                  <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
+                    <%= render 'line_items/line_item_fields', f: item %>
+                  </div>
+                <% end %>
+                <div class="row links">
+                  <div class="col-xs-12">
+                    <%= add_line_item_button f, "#kit_line_items" %>
+                  </div>
+                </div>
+              </fieldset>
+
+            </div>
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+<% end %>
