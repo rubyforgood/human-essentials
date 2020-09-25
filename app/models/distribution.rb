@@ -29,6 +29,8 @@ class Distribution < ApplicationRecord
   # Distributions contain many different items
   include Itemizable
   include Exportable
+  include IssuedAt
+  include Filterable
 
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
@@ -36,15 +38,11 @@ class Distribution < ApplicationRecord
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
   validate :line_item_items_exist_in_inventory
 
-  include IssuedAt
-
   before_save :combine_distribution
 
   enum state: { started: 0, scheduled: 5, complete: 10 }
-
   enum delivery_method: { pick_up: 0, delivery: 1 }
 
-  include Filterable
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
