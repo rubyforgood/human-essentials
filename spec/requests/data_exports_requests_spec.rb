@@ -9,6 +9,7 @@ RSpec.describe "DataExports", type: :request do
   context "While signed in" do
     before do
       sign_in(@user)
+      allow_any_instance_of(Partner).to receive(:contact_person) { Hash.new }
     end
 
     describe "GET #csv" do

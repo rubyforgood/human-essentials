@@ -70,11 +70,23 @@ class Partner < ApplicationRecord
   end
 
   def self.csv_export_headers
-    %w{Name Email}
+    [
+      "Agency Name",
+      "Agency Email",
+      "Contact Name",
+      "Contact Phone",
+      "Contact Email"
+    ]
   end
 
   def csv_export_attributes
-    [name, email]
+    [
+      name,
+      email,
+      contact_person[:name],
+      contact_person[:phone] || contact_person[:mobile],
+      contact_person[:email]
+    ]
   end
 
   def register_on_partnerbase
@@ -83,6 +95,18 @@ class Partner < ApplicationRecord
 
   def add_user_on_partnerbase(options = {})
     AddDiaperPartnerJob.perform_now(id, options)
+  end
+
+  def partnerbase_partner
+    @partnerbase_partner ||= Partnerbase::Partner.find(id) if id
+  end
+
+  def contact_person
+    if partnerbase_partner
+      partnerbase_partner.agency.fetch(:contact_person)
+    else
+      {}
+    end
   end
 
   def quantity_year_to_date
