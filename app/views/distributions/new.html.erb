@@ -34,7 +34,8 @@
           <div class="card-body">
             <!-- Default box -->
             <div class="box">
-              <%= simple_form_for @distribution, method: :post, 
+              <%= simple_form_for @distribution, method: :post,
+                html: {class: "storage-location-required"},
                 wrapper_mappings: {
                   datetime: :custom_multi_select
                 } do |f| %>
