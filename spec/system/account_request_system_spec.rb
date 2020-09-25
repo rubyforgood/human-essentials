@@ -2,7 +2,7 @@ RSpec.describe "Account request flow", type: :system, js: true do
   it 'should allow prospect users to request an account via a form. And that request form data gets used to create an organization' do
     visit root_path
 
-    click_button "Request A Demo"
+    click_button("Request A Demo", match: :first)
 
     account_request_attrs = FactoryBot.attributes_for(:account_request)
 
@@ -12,11 +12,9 @@ RSpec.describe "Account request flow", type: :system, js: true do
     fill_in "Organization website", with: account_request_attrs[:organization_website]
     fill_in "Request Details (min 50 characters)", with: account_request_attrs[:request_details]
 
-    expect(AccountRequest.all.count).to eq(0)
+    expect(AccountRequest.count).to eq(0)
 
-    click_button "Submit"
-
-    expect(AccountRequest.all.count).to eq(1)
+    expect { click_button "Submit" }.to change(AccountRequest, :count).by(1)
 
     created_account_request = AccountRequest.last
 
