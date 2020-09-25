@@ -1,6 +1,7 @@
 <div id="container"></div>
 <span class='title'><%= @title %></span>
 <script>
+  $('span.title').hide();
   var title = $('span.title').text();
   Highcharts.chart('container', {
       chart: {
