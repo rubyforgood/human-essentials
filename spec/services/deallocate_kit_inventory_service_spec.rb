@@ -1,11 +1,11 @@
 RSpec.describe DeallocateKitInventoryService, type: :service do
   let(:organization) { create :organization }
   let(:item1) { create(:item, name: "Item11", organization: organization, on_hand_minimum_quantity: 5) }
-  let(:item2) { create(:item, name: "Item 2", organization: organization, on_hand_minimum_quantity: 1)}
+  let(:item2) { create(:item, name: "Item 2", organization: organization, on_hand_minimum_quantity: 1) }
 
-  let(:storage_location) {create(:storage_location, organization: organization) }
-  let(:item_inventory1) {create(:inventory_item, storage_location: storage_location, quantity: item1.on_hand_minimum_quantity, item: item1)}
-  let(:item_inventory2) {create(:inventory_item, storage_location: storage_location, quantity: item2.on_hand_minimum_quantity, item: item2)}
+  let(:storage_location) { create(:storage_location, organization: organization) }
+  let(:item_inventory1) { create(:inventory_item, storage_location: storage_location, quantity: item1.on_hand_minimum_quantity, item: item1) }
+  let(:item_inventory2) { create(:inventory_item, storage_location: storage_location, quantity: item2.on_hand_minimum_quantity, item: item2) }
 
   describe "#error" do
     let(:kit) { Kit.create(params) }
