@@ -1,0 +1,132 @@
+html, body {
+    background-color: white;
+    height: calc(100vw - 3em);
+    position: relative;
+}
+
+.hero {
+    &-background {
+    background: linear-gradient(135deg, #3023AE , #C86DD7);
+    width: 100%;
+    color: white;
+    height: 660px;
+        @media (max-width: 1200px) { 
+            height: 590px;
+        }
+        @media (max-width: 992px) { 
+            height: auto;
+        }
+        @media (max-width: 768px) { 
+            height: auto;
+        }
+        @media (max-width: 576px) { 
+            height: auto;
+        }
+    }
+    &-image {
+        flex-basis: 1400px;
+        @media (max-width: 576px) { 
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) { 
+            margin-bottom: 20px;
+        }
+    }
+    &-copy {
+        z-index: 1;
+        @media (max-width: 768px) { 
+            text-align: center;
+        }
+        @media (max-width: 576px) { 
+            text-align: center;
+        }
+    }
+}
+
+.navbar-brand {
+    margin-right: none !important;
+}
+.navbar-light .navbar-toggler {
+    border: none;
+    margin-top: 13px;
+}
+
+button:focus {
+    outline: none !important;
+    outline: none !important;
+}
+
+button:hover, button:focus, .button:hover, .button:focus {
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
+.btn-primary {
+    background-color: #72E6B5 !important;
+    border-color: #72E6B5 !important;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+    background-color: #55AF89 !important;
+    border-color: #55AF89 !important;
+}
+
+.text {
+
+    &-header {
+        color: #454F5B;
+    }
+    &-body-color {
+        color: #919EAB !important;
+        line-height: 2em;
+    }
+    &-testimonials {
+        color: white;
+        line-height: 1.5em;
+        font-size: 14px;
+
+    }
+}
+
+.description-container {
+    margin-top: 120px;
+    @media (max-width: 576px) { 
+        margin-top: 80px;
+    }
+}
+
+.bottom-cta {
+    margin-top: 80px;
+    margin-bottom: 80px;
+    @media (max-width: 576px) { 
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+}
+
+.app-images {
+    width: 400px;
+    height: 400px;
+    &-block {
+        flex-basis: 340px;
+    }
+}
+
+.green-bkg {
+    background: linear-gradient(45deg, #1AD1BD , #02A98C);
+    height: auto;
+}
+
+.quote {
+    &-block {
+    flex-basis: 400px;
+    }
+    &-image {
+        flex-basis: 600px;
+        }
+}
+
+.footer-content {
+    background-color: #C4CDD5;
+    padding-top: 150px;
+    padding-bottom: 150px;
+}
