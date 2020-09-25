@@ -35,6 +35,13 @@ RSpec.describe Kit, type: :model do
       kit.line_items = []
       expect(kit).not_to be_valid
     end
+
+    it "can't have negative value" do
+      kit.value_in_cents = 5
+      expect(kit).to be_valid
+      kit.value_in_cents = -5
+      expect(kit).not_to be_valid
+    end
   end
 
   context "Filtering >" do
@@ -64,13 +71,25 @@ RSpec.describe Kit, type: :model do
     end
   end
 
-  describe ".value_per_itemizable" do
-    it "calculates values from associated items" do
-      kit.line_items = [
-        create(:line_item, item: create(:item, value_in_cents: 100)),
-        create(:line_item, item: create(:item, value_in_cents: 90))
-      ]
-      expect(kit.value_per_itemizable).to eq(190)
+  context "Value >" do
+    describe ".value_per_itemizable" do
+      it "calculates values from associated items" do
+        kit.line_items = [
+          create(:line_item, item: create(:item, value_in_cents: 100)),
+          create(:line_item, item: create(:item, value_in_cents: 90))
+        ]
+        expect(kit.value_per_itemizable).to eq(190)
+      end
+    end
+
+    it "converts dollars to cents" do
+      kit.value_in_dollars = 5.50
+      expect(kit.value_in_cents).to eq(550)
+    end
+
+    it "converts cents to dollars" do
+      kit.value_in_cents = 550
+      expect(kit.value_in_dollars).to eq(5.50)
     end
   end
 end

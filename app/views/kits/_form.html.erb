@@ -14,6 +14,11 @@
                 <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
               <% end %>
 
+              <%= f.input :value_in_cents, label: "Value for kit", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-dollar"></i></span>
+                <%= f.input_field :value_in_dollars, class: "form-control", min: 0 %>
+              <% end %>
+
               <fieldset style="margin-bottom: 2rem;" class="form-inline">
                 <legend>Items in this Kit</legend>
                 <%= f.simple_fields_for :line_items do |item| %>

@@ -22,6 +22,7 @@
 class Item < ApplicationRecord
   include Filterable
   include Exportable
+  include Valuable
 
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
@@ -29,7 +30,6 @@ class Item < ApplicationRecord
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
-  validates :value_in_cents, numericality: { greater_than_or_equal_to: 0 }
 
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
@@ -70,10 +70,6 @@ class Item < ApplicationRecord
 
   def other?
     partner_key == "other"
-  end
-
-  def value_in_dollars
-    value_in_cents.to_d / 100
   end
 
   # Override `destroy` to ensure Item isn't accidentally destroyed

@@ -23,6 +23,7 @@ class KitsController < ApplicationController
     else
       flash[:error] = @kit.errors.full_messages.to_sentence
       load_form_collections
+      @kit.line_items.build
       render :new
     end
   end
@@ -34,7 +35,12 @@ class KitsController < ApplicationController
   end
 
   def kit_params
-    params.require(:kit).permit(:name, line_items_attributes: [:item_id, :quantity, :_destroy])
+    params.require(:kit).permit(
+      :name,
+      :visible_to_partners,
+      :value_in_dollars,
+      line_items_attributes: [:item_id, :quantity, :_destroy]
+    )
   end
 
   def filter_params
