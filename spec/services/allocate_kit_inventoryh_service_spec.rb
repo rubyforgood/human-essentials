@@ -22,7 +22,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
 
       it "returns error" do
         service = AllocateKitInventoryService.new(kit, storage_location).allocate
-        expect(service.error.message).to include("Requested items exceed the available inventory")
+        expect(service.error).to include("Requested items exceed the available inventory")
       end
     end
 
@@ -39,7 +39,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
 
       it "returns error" do
         service = AllocateKitInventoryService.new(kit, wrong_storage).allocate
-        expect(service.error.message).to include("Storage location kit doesn't match")
+        expect(service.error).to include("Storage location kit doesn't match")
       end
     end
   end
@@ -82,7 +82,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
 
         it "returns error" do
           service = AllocateKitInventoryService.new(kit, storage_location, quantity_of_kits).allocate
-          expect(service.error.message).to include("Requested items exceed the available inventory")
+          expect(service.error).to include("Requested items exceed the available inventory")
           expect(item_inventory.reload.quantity).to eq quantity_of_items
         end
       end
