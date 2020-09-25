@@ -5,8 +5,8 @@
     <% end %>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['forecasting/distributions', 'forecasting/donations']) %>">
-    <a href="#" class="nav-link <%= active_class(['forecasting/distributions', 'forecasting/donations']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
+    <a href="#" class="nav-link <%= active_class(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
       <i class="nav-icon fa fa-bar-chart"></i>
       <p>Forecasting
         <i class="fas fa-angle-left right"></i></p>
@@ -15,6 +15,12 @@
       <li class="nav-item <%= 'active' if current_page?(forecasting_donations_path) %>">
         <%= link_to(forecasting_donations_path, class: "nav-link #{"active" if current_page?(forecasting_donations_path)}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Donations
+        <% end %>
+      </li>
+
+      <li class="nav-item <%= 'active' if current_page?(forecasting_purchases_path) %>">
+        <%= link_to(forecasting_purchases_path, class: "nav-link #{"active" if current_page?(forecasting_purchases_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Purchases
         <% end %>
       </li>
 
