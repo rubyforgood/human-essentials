@@ -26,6 +26,7 @@ script:
   - export RAILS_ENV=test
   - bundle exec rake db:create db:schema:load
   - bin/webpack
+  - bundle exec brakeman
   - bundle exec rake factory_bot:lint
   - bundle exec rspec
 after_script:

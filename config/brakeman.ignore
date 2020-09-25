@@ -1,0 +1,46 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "53186cd4eccf803f35837392ee3ab4c96cb625fc445628cc3571b5fa42ca9db1",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "config/initializers/postgres.rb",
+      "line": 8,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "connection.select_all(\"select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where datname='#{configuration[\"database\"]}' AND state='idle';\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PostgreSQLDatabaseTasks",
+        "method": "drop"
+      },
+      "user_input": "configuration[\"database\"]",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "82ef033042422190ef49507207d51ed6ccd9593483630925baf0bf6c5e65033e",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/controllers/static_controller.rb",
+      "line": 25,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(template => \"static/#{params[:name]}\", {})",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "StaticController",
+        "method": "page"
+      },
+      "user_input": "params[:name]",
+      "confidence": "Medium",
+      "note": ""
+    }
+  ],
+  "updated": "2020-09-25 18:26:33 -0400",
+  "brakeman_version": "4.9.1"
+}
