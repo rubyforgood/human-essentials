@@ -149,6 +149,31 @@ RSpec.describe Partner, type: :model do
     end
   end
 
+  describe "#csv_export_attributes" do
+    let!(:partner) { create(:partner) }
+    let(:partnerbase_partner) {
+      {
+        agency: {
+          contact_person: {
+            name: "Jon Ralfeo",
+            phone: "1231231234",
+            email: "jon@entertainment720.com"
+          }
+        }
+      }.to_json
+    }
+
+    before do
+      allow(DiaperPartnerClient).to receive(:get).with({id: partner.id}) { partnerbase_partner }
+    end
+
+    it "includes contact person information from parnerbase" do
+      expect(partner.csv_export_attributes).to include("Jon Ralfeo")
+      expect(partner.csv_export_attributes).to include("1231231234")
+      expect(partner.csv_export_attributes).to include("jon@entertainment720.com")
+    end
+  end
+
   describe '#quantity_year_to_date' do
     let(:partner) { create(:partner) }
     before do

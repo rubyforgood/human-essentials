@@ -10,7 +10,7 @@ module Partnerbase
 
     def self.parse_response(response)
       begin
-        JSON.parse(response).with_indifferent_access
+        JSON.parse(response.to_s).with_indifferent_access
       rescue JSON::ParserError
       end
     end
