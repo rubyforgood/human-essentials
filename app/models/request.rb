@@ -24,6 +24,8 @@ class Request < ApplicationRecord
 
   enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
+  before_save :sanitize_items_data
+
   include Filterable
   # add request item scope to allow filtering distributions by request item
   scope :by_request_item_id, ->(item_id) { where("request_items @> :with_item_id ", with_item_id: [{ item_id: item_id.to_i }].to_json) }
@@ -79,5 +81,15 @@ class Request < ApplicationRecord
 
   def total_items
     request_items.sum { |item| item["quantity"] }
+  end
+
+private
+
+  def sanitize_items_data
+    return unless request_items && request_items_changed?
+
+    self.request_items = request_items.map do |item|
+      item.merge("item_id" => item["item_id"]&.to_i, "quantity" => item["quantity"]&.to_i)
+    end
   end
 end
