@@ -83,7 +83,7 @@ class Request < ApplicationRecord
     request_items.sum { |item| item["quantity"] }
   end
 
-private
+  private
 
   def sanitize_items_data
     return unless request_items && request_items_changed?
