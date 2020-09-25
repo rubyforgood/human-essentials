@@ -1,7 +1,7 @@
 class AllocateKitInventoryService
   attr_reader :kit, :storage_location, :quantity, :error
 
-  def initialize(kit, storage_location=nil, quantity=1)
+  def initialize(kit, storage_location = nil, quantity = 1)
     @kit = kit
     @storage_location = storage_location
     @quantity = quantity
@@ -14,7 +14,7 @@ class AllocateKitInventoryService
     kit.line_items.assign_insufficiency_errors(e.insufficient_items)
     Rails.logger.error "[!] #{self.class.name} failed because of Insufficient Allotment #{kit.organization.short_name}: #{kit.errors.full_messages} [#{e.message}]"
     set_error(e)
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error "[!] #{self.class.name} failed to allocate items for a kit #{kit.name}: #{storage_location.errors.full_messages} [#{e.inspect}]"
     set_error(e)
   ensure
