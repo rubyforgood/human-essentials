@@ -98,7 +98,7 @@ class Partner < ApplicationRecord
   end
 
   def partnerbase_partner
-    @partnerbase_partner ||= Partnerbase::Partner.find(id)
+    @partnerbase_partner ||= Partnerbase::Partner.find(id) if id
   end
 
   def contact_person
