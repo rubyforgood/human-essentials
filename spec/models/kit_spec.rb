@@ -5,6 +5,7 @@
 #  id                  :bigint           not null, primary key
 #  active              :boolean          default(TRUE)
 #  name                :string
+#  value_in_cents      :integer          default(0)
 #  visible_to_partners :boolean          default(TRUE), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -13,20 +14,26 @@
 require 'rails_helper'
 
 RSpec.describe Kit, type: :model do
+  let(:kit) { build(:kit, name: "Test Kit") }
+
   context "Validations >" do
+    it "is valid as built" do
+      expect(kit).to be_valid
+    end
+
     it "must belong to an organization" do
-      expect(build(:kit, :with_items, organization: nil, name: "Test Kit")).not_to be_valid
-      expect(build(:kit, :with_items, name: "Test Kit")).to be_valid
+      kit.organization = nil
+      expect(kit).not_to be_valid
     end
 
     it "requires a name" do
-      expect(build(:kit, :with_items, name: nil)).not_to be_valid
-      expect(build(:kit, :with_items, name: "Test Kit")).to be_valid
+      kit.name = nil
+      expect(kit).not_to be_valid
     end
 
     it "requires at least one item" do
-      expect(build(:kit, :with_items, name: "Test Kit")).to be_valid
-      expect(build(:kit, name: "Test Kit")).not_to be_valid
+      kit.line_items = []
+      expect(kit).not_to be_valid
     end
   end
 
@@ -36,9 +43,9 @@ RSpec.describe Kit, type: :model do
     end
 
     it "->alphabetized retrieves items in alphabetical order" do
-      kit_c = create(:kit, :with_items, name: "C")
-      kit_b = create(:kit, :with_items, name: "B")
-      kit_a = create(:kit, :with_items, name: "A")
+      kit_c = create(:kit, name: "C")
+      kit_b = create(:kit, name: "B")
+      kit_a = create(:kit, name: "A")
       alphabetized_list = [kit_a.name, kit_b.name, kit_c.name]
       expect(Kit.alphabetized.count).to eq(3)
       expect(Kit.alphabetized.map(&:name)).to eq(alphabetized_list)
@@ -54,6 +61,16 @@ RSpec.describe Kit, type: :model do
         expect(Kit.by_partner_key(c1.partner_key).size).to eq(1)
         expect(Kit.active.size).to be > 1
       end
+    end
+  end
+
+  describe ".value_per_itemizable" do
+    it "calculates values from associated items" do
+      kit.line_items = [
+        create(:line_item, item: create(:item, value_in_cents: 100)),
+        create(:line_item, item: create(:item, value_in_cents: 90))
+      ]
+      expect(kit.value_per_itemizable).to eq(190)
     end
   end
 end
