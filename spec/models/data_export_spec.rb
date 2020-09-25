@@ -63,6 +63,10 @@ RSpec.describe DataExport, type: :model do
       let(:type) { "Partner" }
       let!(:partner) { create(:partner, organization: org) }
 
+      before do
+        allow_any_instance_of(Partner).to receive(:contact_person) { Hash.new }
+      end
+
       it "should return a CSV string with partner data" do
         expect(subject.as_csv).to include(partner.email)
       end
