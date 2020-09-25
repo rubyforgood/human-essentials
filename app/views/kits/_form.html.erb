@@ -10,15 +10,6 @@
                 <%= f.input_field :name, class: "form-control" %>
               <% end %>
 
-              <% if current_user.organization_admin? %>
-                <%= f.input :name, label: "On hand minimum quantity", wrapper: :input_group do %>
-                  <%= f.input_field :on_hand_minimum_quantity, input_html: {value: 0}, class: "form-control" %>
-                <% end %>
-                <%= f.input :name, label: "On hand recommended quantity", wrapper: :input_group do %>
-                  <%= f.input_field :on_hand_recommended_quantity, class: "form-control" %>
-                <% end %>
-              <% end %>
-
               <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
                 <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
               <% end %>
