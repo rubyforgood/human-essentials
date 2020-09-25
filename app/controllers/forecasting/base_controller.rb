@@ -7,16 +7,16 @@ class Forecasting::BaseController < ApplicationController
 
       dates = Hash.new
 
-      (1..Date.today.month).each do |month|
+      (1..Time.zone.today.month).each do |month|
         dates[month] = 0
       end
 
-      total_items(item.line_items, type).each do |item|
-        month = item.dig(0).to_date.month
-        dates[month] = item.dig(1)
+      total_items(item.line_items, type).each do |line_item|
+        month = line_item.dig(0).to_date.month
+        dates[month] = line_item.dig(1)
       end
 
-      items << {name: item.name, data: dates.values}
+      items << { name: item.name, data: dates.values }
     end
 
     items.to_json
@@ -25,7 +25,7 @@ class Forecasting::BaseController < ApplicationController
   private
 
   def total_items(line_items, type)
-    items = line_items.where(itemizable_type: type)
+    line_items.where(itemizable_type: type)
               .group_by_month(:created_at)
               .sum(:quantity)
   end

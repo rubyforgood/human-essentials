@@ -5,33 +5,6 @@
     <% end %>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
-    <a href="#" class="nav-link <%= active_class(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
-      <i class="nav-icon fa fa-bar-chart"></i>
-      <p>Forecasting
-        <i class="fas fa-angle-left right"></i></p>
-    </a>
-    <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(forecasting_donations_path) %>">
-        <%= link_to(forecasting_donations_path, class: "nav-link #{"active" if current_page?(forecasting_donations_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Donations
-        <% end %>
-      </li>
-
-      <li class="nav-item <%= 'active' if current_page?(forecasting_purchases_path) %>">
-        <%= link_to(forecasting_purchases_path, class: "nav-link #{"active" if current_page?(forecasting_purchases_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Purchases
-        <% end %>
-      </li>
-
-      <li class="nav-item <%= 'active' if current_page?(forecasting_distributions_path) %>">
-        <%= link_to(forecasting_distributions_path, class: "nav-link #{"active" if current_page?(forecasting_distributions_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Distributions
-        <% end %>
-      </li>
-    </ul>
-  </li>
-
   <li class="nav-item has-treeview <%= menu_open?(['diaper_drives']) %>">
     <a href="#" class="nav-link <%= active_class(['diaper_drives']) %>">
       <i class="nav-icon fas fa-trophy"></i>
@@ -200,6 +173,33 @@
       </ul>
     </li>
   <% end %>
+
+  <li class="nav-item has-treeview <%= menu_open?(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
+    <a href="#" class="nav-link <%= active_class(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
+      <i class="nav-icon fa fa-bar-chart"></i>
+      <p>Forecasting
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(forecasting_donations_path) %>">
+        <%= link_to(forecasting_donations_path, class: "nav-link #{"active" if current_page?(forecasting_donations_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donations
+        <% end %>
+      </li>
+
+      <li class="nav-item <%= 'active' if current_page?(forecasting_purchases_path) %>">
+        <%= link_to(forecasting_purchases_path, class: "nav-link #{"active" if current_page?(forecasting_purchases_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Purchases
+        <% end %>
+      </li>
+
+      <li class="nav-item <%= 'active' if current_page?(forecasting_distributions_path) %>">
+        <%= link_to(forecasting_distributions_path, class: "nav-link #{"active" if current_page?(forecasting_distributions_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Distributions
+        <% end %>
+      </li>
+    </ul>
+  </li>
 
   <% if current_user.organization_admin %>
     <li class="nav-item">
