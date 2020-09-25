@@ -151,7 +151,7 @@ RSpec.describe Partner, type: :model do
 
   describe "#csv_export_attributes" do
     let!(:partner) { create(:partner) }
-    let(:partnerbase_partner) {
+    let(:partnerbase_partner) do
       {
         agency: {
           contact_person: {
@@ -161,10 +161,10 @@ RSpec.describe Partner, type: :model do
           }
         }
       }.to_json
-    }
+    end
 
     before do
-      allow(DiaperPartnerClient).to receive(:get).with({id: partner.id}) { partnerbase_partner }
+      allow(DiaperPartnerClient).to receive(:get).with({ id: partner.id }) { partnerbase_partner }
     end
 
     it "includes contact person information from parnerbase" do

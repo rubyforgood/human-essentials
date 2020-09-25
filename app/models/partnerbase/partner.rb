@@ -6,13 +6,9 @@ module Partnerbase
       new(parsed_response) if parsed_response
     end
 
-    private
-
     def self.parse_response(response)
-      begin
-        JSON.parse(response.to_s).with_indifferent_access
-      rescue JSON::ParserError
-      end
+      JSON.parse(response.to_s).with_indifferent_access
+    rescue JSON::ParserError
     end
   end
 end
