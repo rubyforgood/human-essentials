@@ -42,4 +42,10 @@ module Errors
       end.join("</li><li>") + "</li></ul>")
     end
   end
+
+  class StorageLocationDoestNotMatch < StandardError
+    def message
+      "Storage location kit doesn't match"
+    end
+  end
 end
