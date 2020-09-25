@@ -8,12 +8,14 @@
         <thead>
           <tr>
             <th>Filename</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <% partner.documents.each do |document| %>
             <tr>
               <td><%= link_to document.filename, rails_blob_path(document, disposition: "attachment") %></td>
+              <td><%= delete_button_to attachment_path(document), { size: "md", confirm: "Are you sure you want to permanently remove this document?" } %>
             </tr>
           <% end %>
         </tbody>
