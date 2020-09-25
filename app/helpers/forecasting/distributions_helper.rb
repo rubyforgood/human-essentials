@@ -1,2 +1,0 @@
-module Forecasting::DistributionsHelper
-end
