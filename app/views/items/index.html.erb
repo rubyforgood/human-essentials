@@ -55,6 +55,9 @@
 
                   <%= download_button_to(csv_path(format: :csv, type: "Item"), {text: "Export Items"}) if @items.any? %>
                   <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+                  <% if Flipper.enabled?(:kits) %>
+                    <%= new_button_to new_kit_path(organization_id: current_organization), {text: "New Kit"} %>
+                  <% end %>
                   </span>
               </div>
             <% end # form %>
@@ -82,14 +85,20 @@
                 <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Items,
                   Quantity, and Location</a>
               </li>
+              <% if Flipper.enabled?(:kits) %>
+                <li class="nav-item">
+                  <a class="nav-link" id="custom-tabs-three-kits-tab" data-toggle="pill" href="#custom-tabs-three-kits" role="tab" aria-controls="custom-tabs-three-kits" aria-selected="false">Kits</a>
+                </li>
+              <% end %>
             </ul>
           </div>
           <div class="card-body">
             <div class="tab-content" id="custom-tabs-three-tabContent">
-
               <%= render partial: 'item_list' %>
-
               <%= render partial: 'items_quantity_and_location' %>
+              <% if Flipper.enabled?(:kits) %>
+                <%= render partial: 'kits' %>
+              <% end %>
             </div>
           </div>
         </div>
