@@ -28,7 +28,7 @@
                 <%= f.input_field :notes, class: "form-control" %>
               <% end %>
               <%= f.input :documents, label: "Documents", wrapper: :input_group do %>
-                <%= f.input_field :documents, as: :file, multiple: true, accept: Partner::ALLOWED_MIME_TYPES.join(","), class: "form-control" %>
+                <%= f.input_field :documents, as: :file, multiple: true, accept: Partner::ALLOWED_MIME_TYPES.join(","), class: "form-control h-auto" %>
               <% end %>
             </div>
             <!-- /.card-body -->
