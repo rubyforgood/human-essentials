@@ -56,6 +56,7 @@ gem "yajl-ruby"
 
 group :development, :test do
   gem "awesome_print"
+  gem "brakeman"
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "pry-rails"
