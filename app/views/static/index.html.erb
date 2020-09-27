@@ -4,16 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DiaperBase</title>
-    
+
     <!--    Stylesheet Files    -->
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/foundation.min.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <%= stylesheet_link_tag 'landing_page'%>
-    
+
   </head>
   <body>
-    <div class="hero-background container-fluid py-5"> 
+    <div class="hero-background container-fluid py-5">
         <div class="container mb-2">
             <nav class="navbar navbar-expand-lg navbar-light ">
                 <div class="row d-flex align-items-center">
@@ -33,7 +33,7 @@
                     </div>
                 </div>
             </nav>
-        </div>    
+        </div>
 
         <div class="container">
             <div class="d-flex flex-wrap-reverse flex-sm-wrap-reverse flex-md-nowrap flex-lg-nowrap">
@@ -61,23 +61,43 @@
         <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
             <div class="app-images-block">
                 <div class="pb-2">
-                    <%= image_tag("report-image.svg", :class => "app-images") %>
+                    <%= image_tag("partner-management.svg", :class => "app-images") %>
                 </div>
                 <div class="">
-                    <h3 class="text-header">Report Generation</h3>
-                    <p class="text-body-color">Generate pdfs of partner distribution invoices for easy printing and sending.</p>
+                    <h3 class="text-header">Partner Management</h3>
+                    <p class="text-body-color">Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders. </p>
                 </div>
             </div>
             <div class="app-images-block">
                 <div class="pb-2">
-                    <%= image_tag("barcode.svg", :class => "app-images") %>
+                    <%= image_tag("forecasting.svg", :class => "app-images") %>
                 </div>
                 <div class="">
-                    <h3 class="text-header">Barcode Scanning</h3>
-                    <p class="text-body-color">Quickly add or remove inventory with the scan of a barcode. The adjusting and transfering of inventory is also supported as well as creating your own barcodes.</p>
+                    <h3 class="text-header">Forecasting</h3>
+                    <p class="text-body-color">View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
                 </div>
             </div>
         </div>
+      <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
+        <div class="app-images-block">
+          <div class="pb-2">
+            <%= image_tag("report-image.svg", :class => "app-images") %>
+          </div>
+          <div class="">
+            <h3 class="text-header">Report Generation</h3>
+            <p class="text-body-color">Generate pdfs of partner distribution invoices for easy printing and sending.</p>
+          </div>
+        </div>
+        <div class="app-images-block">
+          <div class="pb-2">
+            <%= image_tag("barcode.svg", :class => "app-images") %>
+          </div>
+          <div class="">
+            <h3 class="text-header">Barcode Scanning</h3>
+            <p class="text-body-color">Quickly add or remove inventory with the scan of a barcode. The adjusting and transfering of inventory is also supported as well as creating your own barcodes.</p>
+          </div>
+        </div>
+      </div>
         <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
             <div class="app-images-block">
                 <div class="pb-2">
@@ -130,7 +150,7 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
-            </div>    
+            </div>
         </div>
     </div>
     <div class="container bottom-cta" id="contact">
@@ -156,8 +176,8 @@
                     <br/><br/>
                     <a href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
                 </div>
-            </div>   
-        </div>      
+            </div>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -165,6 +185,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    
+
   </body>
 </html>
