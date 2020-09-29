@@ -14,9 +14,11 @@
     <tr>
       <td>&nbsp&nbsp&nbsp<%= dist_item %></td>
       <td><%= value %></td>
-      <td class="<%= 'table-danger' if @onhand_quantities[dist_item] < @onhand_minimums[dist_item] %>">
-        <%= @onhand_quantities[dist_item] %>
-      </td>
+      <% if @onhand_quantities[dist_item] && @onhand_minimums[dist_item] %>
+        <td class="<%= 'table-danger' if @onhand_quantities[dist_item] < @onhand_minimums[dist_item] %>">
+          <%= @onhand_quantities[dist_item] %>
+        </td>
+      <% end %>
     </tr>
   <% end %>
   </tbody>
