@@ -40,6 +40,19 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
   end
 
+  context "when viewing an uninvited partner" do
+    let(:uninvited) { create(:partner, name: "Uninvited Partner", status: :uninvited) }
+    subject { url_prefix + "/partners/#{uninvited.id}" }
+
+    it 'only has an edit option available' do
+      visit subject
+
+      expect(page).to have_selector(:link_or_button, 'Edit')
+      expect(page).to_not have_selector(:link_or_button, 'View')
+      expect(page).to_not have_selector(:link_or_button, 'Activate Partner Now')
+      expect(page).to_not have_selector(:link_or_button, 'Add/Remind Partner')
+    end
+  end
   context "when creating a new partner" do
     subject { url_prefix + "/partners/new" }
 

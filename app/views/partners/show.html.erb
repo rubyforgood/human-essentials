@@ -27,8 +27,11 @@
     <div class="row">
       <div class="col-12">
         <!-- Default box -->
-        <%= render "show_header", partner: @partner, impact_metrics: @impact_metrics, partner_distributions: @partner_distributions %>
-
+        <% if @partner.uninvited? %>
+        <%= render "uninvited_header", partner: @partner %>
+          <% else %>
+          <%= render "show_header", partner: @partner, impact_metrics: @impact_metrics, partner_distributions: @partner_distributions %>
+        <% end %>
         <% if @partner.notes.present? %>
           <%= render "notes", partner: @partner %>
         <% end %>
@@ -109,24 +112,4 @@
       </div><!-- modal-content -->
     </div><!-- modal-dialog -->
   </div><!-- addUserModal -->
-  <div id="seeZipcodes" class="modal fade">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Serviced zipcodes</h4>
-        </div><!-- modal-header -->
-        <div class="modal-body">
-          <div class="box-body">
-          <ul>
-            <% @impact_metrics.dig("agency", "family_zipcodes_list").each do |zipcode| %>
-              <li><%= zipcode %></li>
-            <% end %>
-          </ul>
-          </div><!-- box-body -->
-        </div><!-- modal-body -->
-      </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-  </div><!-- seeZipcodes -->
-
 </section>
