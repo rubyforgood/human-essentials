@@ -31,8 +31,8 @@ class PartnersController < ApplicationController
   end
 
   def show
-    @impact_metrics = JSON.parse(DiaperPartnerClient.get({ id: params[:id] }, query_params: { impact_metrics: true }))
     @partner = current_organization.partners.find(params[:id])
+    @impact_metrics = JSON.parse(DiaperPartnerClient.get({ id: params[:id] }, query_params: { impact_metrics: true })) unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
   end
 
