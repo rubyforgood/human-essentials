@@ -15,7 +15,7 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "GET #show" do
-    let(:partner) { create(:partner, organization: @organization) }
+    let(:partner) { create(:partner, organization: @organization, status: :approved) }
     let(:fake_get_return) do
       { "agency" => {
         "families_served" => Faker::Number.number,
