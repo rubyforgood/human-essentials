@@ -3,7 +3,7 @@
 <script>
   $('span.title').hide();
   var title = $('span.title').text();
-  Highcharts.chart('container', {
+  chart = Highcharts.chart('container', {
       chart: {
           type: 'column',
           height: 850
@@ -56,4 +56,18 @@
       },
       series: <%= raw @series %>
   });
-</script> 
+</script>
+<button class="clear_all">Unselect All</button>
+<button class="select_all">Select All</button>
+<script>
+  $('.clear_all').click(function () {
+    for (i = 0; i < chart.series.length; i++) {
+      chart.series[i].hide();
+    }
+  });
+  $('.select_all').click(function(){
+    for (i = 0; i < chart.series.length; i++) {
+      chart.series[i].show();
+    }
+  });
+</script>
