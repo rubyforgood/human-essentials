@@ -32,12 +32,12 @@ script:
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 after_success:
-- if [ $TRAVIS_PULL_REQUEST == false ] && [ $TRAVIS_BRANCH == "master" ]; then
+- if [ $TRAVIS_PULL_REQUEST == false ] && [ $TRAVIS_BRANCH == "main" ]; then
     openssl aes-256-cbc -K $encrypted_d7f80deb40b0_key -iv $encrypted_d7f80deb40b0_iv -in id_rsa.enc -out config/deploy_id_rsa -d;
     chmod 600 config/deploy_id_rsa;
     eval `ssh-agent -s`;
     ssh-add config/deploy_id_rsa;
-    BRANCH=master bundle exec cap staging deploy;
+    BRANCH=main bundle exec cap staging deploy;
     ssh-agent -k;
   fi
 env:
