@@ -39,7 +39,7 @@
                 <% if @items.present? %>
                   <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                     <%= label_tag "by Item" %>
-                    <%= collection_select(:filters, :by_request_item_id, @items || {}, :id, :name, {include_blank: true, selected: @selected_request_item}, {class: "form-control"}) %>
+                    <%= collection_select(:filters, :by_item_id, @items || {}, :id, :name, {include_blank: true, selected: @selected_item}, {class: "form-control"}) %>
                   </div>
                 <% end %>
                 <% if @partners.present? %>
