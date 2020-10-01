@@ -4,12 +4,12 @@
 #
 #  id                  :bigint           not null, primary key
 #  active              :boolean          default(TRUE)
-#  name                :string
+#  name                :string           not null
 #  value_in_cents      :integer          default(0)
 #  visible_to_partners :boolean          default(TRUE), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  organization_id     :integer
+#  organization_id     :integer          not null
 #
 require 'rails_helper'
 
@@ -17,6 +17,14 @@ RSpec.describe Kit, type: :model do
   let(:kit) { build(:kit, name: "Test Kit") }
 
   context "Validations >" do
+    it "requires a unique name" do
+      organization = create :organization
+      kit = create(:kit, organization: organization)
+      expect(
+        build(:kit, name: kit.name, organization: organization)
+      ).not_to be_valid
+    end
+
     it "is valid as built" do
       expect(kit).to be_valid
     end
