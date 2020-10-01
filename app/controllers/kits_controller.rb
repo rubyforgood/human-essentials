@@ -1,6 +1,7 @@
 class KitsController < ApplicationController
   def index
     @kits = current_organization.kits.class_filter(filter_params)
+    @base_items = current_organization.items.alphabetized
     @selected_item = filter_params[:by_partner_key]
     @include_inactive = params[:include_inactive]
     unless params[:include_inactive]
