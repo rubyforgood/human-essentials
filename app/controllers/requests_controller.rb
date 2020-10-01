@@ -16,7 +16,11 @@ class RequestsController < ApplicationController
     @selected_request_item = filter_params[:by_request_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_status]
-    respond_to { |format| format.html }
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Request.generate_csv(@requests), filename: "Requests-#{Time.zone.today}.csv" }
+    end
   end
 
   def show
@@ -51,9 +55,10 @@ class RequestsController < ApplicationController
     @request.request_items.map { |json| RequestItem.from_json(json, current_organization) }
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_request_item_id, :by_partner, :by_status)
+    params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status)
   end
 end

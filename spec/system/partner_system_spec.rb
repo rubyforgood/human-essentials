@@ -4,7 +4,7 @@ RSpec.describe "Partner management", type: :system, js: true do
   end
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
-  context "When a user views the index page" do
+  describe "#index" do
     before(:each) do
       @uninvited = create(:partner, name: "Bcd", status: :uninvited)
       @invited = create(:partner, name: "Abc", status: :invited)
@@ -12,10 +12,22 @@ RSpec.describe "Partner management", type: :system, js: true do
       visit url_prefix + "/partners"
     end
 
-    it "the partner agency names are in alphabetical order" do
+    it "displays the partner agency names in alphabetical order" do
       expect(page).to have_css("table tr", count: 5)
       expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@invited.name)
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@approved.name)
+    end
+
+    it "allows a user to invite a partner", :js do
+      partner = create(:partner, name: 'Charities')
+      visit url_prefix + "/partners"
+
+      within("table > tbody > tr:nth-child(4) > td:nth-child(5)") { click_on "Invite" }
+      invite_alert = page.driver.browser.switch_to.alert
+      expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
+
+      invite_alert.accept
+      expect(page.find(".alert")).to have_content "invited!"
     end
 
     it "shows invite button only for unapproved partners" do
@@ -38,22 +50,60 @@ RSpec.describe "Partner management", type: :system, js: true do
         end
       end
     end
-  end
 
-  context "when viewing an uninvited partner" do
-    let(:uninvited) { create(:partner, name: "Uninvited Partner", status: :uninvited) }
-    subject { url_prefix + "/partners/#{uninvited.id}" }
+    context "when exporting as CSV" do
+      let(:fake_get_return) do
+        { "agency" => {
+          "contact_person" => { name: "A Name" }
+        } }.to_json
+      end
 
-    it 'only has an edit option available' do
-      visit subject
+      before do
+        allow(DiaperPartnerClient).to receive(:get).and_return(fake_get_return)
+      end
 
-      expect(page).to have_selector(:link_or_button, 'Edit')
-      expect(page).to_not have_selector(:link_or_button, 'View')
-      expect(page).to_not have_selector(:link_or_button, 'Activate Partner Now')
-      expect(page).to_not have_selector(:link_or_button, 'Add/Remind Partner')
+      it "renders all displayed partners" do
+      end
+
+      context "when filtering" do
+        it "preserves the filter constraints in the CSV output" do
+          approved_partners = Partner.approved.to_a
+          within "#partner-status" do
+            click_on "Approved"
+          end
+
+          page.find 'a.filtering', text: /Approved/
+
+          click_on "Export Partner Agencies"
+          wait_for_download
+          expect(downloads.length).to eq(1)
+          expect(download).to match(/.*\.csv/)
+
+          rows = download_content.split("\n").slice(1..)
+          expect(rows.size).to eq(approved_partners.size)
+          expect(rows.first).to match(/#{approved_partners.first.email}/)
+        end
+      end
     end
   end
-  context "when creating a new partner" do
+
+  describe "#show" do
+    context "when viewing an uninvited partner" do
+      let(:uninvited) { create(:partner, name: "Uninvited Partner", status: :uninvited) }
+      subject { url_prefix + "/partners/#{uninvited.id}" }
+
+      it 'only has an edit option available' do
+        visit subject
+
+        expect(page).to have_selector(:link_or_button, 'Edit')
+        expect(page).to_not have_selector(:link_or_button, 'View')
+        expect(page).to_not have_selector(:link_or_button, 'Activate Partner Now')
+        expect(page).to_not have_selector(:link_or_button, 'Add/Remind Partner')
+      end
+    end
+  end
+
+  describe "#new" do
     subject { url_prefix + "/partners/new" }
 
     it "User can add a new partner" do
@@ -74,7 +124,7 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
   end
 
-  context "when editing an existing partner" do
+  describe "#edit" do
     let!(:partner) { create(:partner, name: "Frank") }
     subject { url_prefix + "/partners/#{partner.id}/edit" }
 
@@ -105,17 +155,5 @@ RSpec.describe "Partner management", type: :system, js: true do
       partner.reload
       expect(partner.send_reminders).to be false
     end
-  end
-
-  it "User invite a partner", :js do
-    partner = create(:partner, name: 'Charities')
-    visit url_prefix + "/partners"
-
-    within("table > tbody > tr:nth-child(1) > td:nth-child(5)") { click_on "Invite" }
-    invite_alert = page.driver.browser.switch_to.alert
-    expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
-
-    invite_alert.accept
-    expect(page.find(".alert")).to have_content "invited!"
   end
 end

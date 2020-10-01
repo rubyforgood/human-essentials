@@ -20,6 +20,11 @@ class PurchasesController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Purchase.generate_csv(@purchases), filename: "Purchases-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -101,10 +106,11 @@ class PurchasesController < ApplicationController
     params.require(:purchase).permit(:comment, :amount_spent_in_cents, :purchased_from, :storage_location_id, :issued_at, :vendor_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:at_storage_location, :by_source, :from_vendor)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_vendor)
   end
 
   # If line_items have submitted with empty rows, clear those out first.

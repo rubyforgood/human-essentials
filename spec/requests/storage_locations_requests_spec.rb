@@ -9,9 +9,23 @@ RSpec.describe "StorageLocations", type: :request do
     end
 
     describe "GET #index" do
-      it "returns http success" do
-        get storage_locations_path(default_params)
-        expect(response).to be_successful
+      subject do
+        get storage_locations_path(default_params.merge(format: response_format))
+        response
+      end
+
+      before { create(:storage_location) }
+
+      context "html" do
+        let(:response_format) { 'html' }
+
+        it { is_expected.to be_successful }
+      end
+
+      context "csv" do
+        let(:response_format) { 'csv' }
+
+        it { is_expected.to be_successful }
       end
     end
 
@@ -82,9 +96,23 @@ RSpec.describe "StorageLocations", type: :request do
     end
 
     describe "GET #show" do
-      it "returns http success" do
-        get storage_location_path(default_params.merge(id: create(:storage_location, organization: @organization)))
-        expect(response).to be_successful
+      subject do
+        get storage_location_path(storage_location, default_params.merge(format: response_format))
+        response
+      end
+
+      let(:storage_location) { create(:storage_location, organization: @organization) }
+
+      context "html" do
+        let(:response_format) { 'html' }
+
+        it { is_expected.to be_successful }
+      end
+
+      context "csv" do
+        let(:response_format) { 'csv' }
+
+        it { is_expected.to be_successful }
       end
     end
 
