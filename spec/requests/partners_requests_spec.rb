@@ -135,20 +135,20 @@ RSpec.describe "Partners", type: :request do
         expect(response).to have_http_status(:found)
       end
 
-      it "redirects to #index" do
+      it "redirects to #show" do
         partner = create(:partner, organization: @organization)
         put partner_path(default_params.merge(id: partner, partner: partner_params))
-        expect(response).to redirect_to(partners_path)
+        expect(response).to redirect_to(partner_path(partner))
       end
     end
 
     context "unsuccessful save due to empty params" do
-      partner_params = { partner: { name: nil, email: nil } }
+      partner_params = { name: "", email: "" }
 
       it "renders :edit" do
         partner = create(:partner, organization: @organization)
         put partner_path(default_params.merge(id: partner, partner: partner_params))
-        expect(response).to redirect_to(partners_path)
+        expect(response).to render_template(:edit)
       end
     end
   end
