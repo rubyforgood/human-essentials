@@ -17,7 +17,7 @@ There are numerous other folks that can chime in and answer questions -- please 
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/maintainability)](https://codeclimate.com/github/rubyforgood/diaper/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/test_coverage)](https://codeclimate.com/github/rubyforgood/diaper/test_coverage)
-[![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=master)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
+[![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=main)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
 
 ## About
@@ -34,7 +34,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 ### Installation Instructions
 
-The `installation.md` file ([https://github.com/rubyforgood/diaper/blob/master/installation.md](https://github.com/rubyforgood/diaper/blob/master/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
+The `installation.md` file ([https://github.com/rubyforgood/diaper/blob/main/installation.md](https://github.com/rubyforgood/diaper/blob/main/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
 
 ### Ruby Version
 This app uses Ruby version 2.7.1, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
@@ -159,7 +159,7 @@ Sometimes we want to get a PR up there and going so that other people can review
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
 
 # Deployment Process
-The diaper & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into master. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `master` branch deployed to our servers.
+The diaper & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
 #### Requirements
 - You will need SSH access to our servers. Access is usually only given to core maintainers of the diaper & partner projects.
