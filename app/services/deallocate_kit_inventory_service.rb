@@ -19,7 +19,7 @@ class DeallocateKitInventoryService
   private
 
   def validate_storage_location
-    raise Errors::StorageLocationDoestNotMatch if storage_location.organization != kit.organization
+    raise Errors::StorageLocationDoesNotMatch if storage_location.organization != kit.organization
   end
 
   def deallocate_inventory_items

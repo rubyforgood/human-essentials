@@ -34,7 +34,7 @@
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Filter by Base Item" %>
-                  <%= collection_select(:filters, :by_partner_key, Item.alphabetized, :partner_key, :name, {include_blank: true, selected: @selected_item}, class: "form-control") %>
+                  <%= collection_select(:filters, :by_partner_key, @base_items, :partner_key, :name, {include_blank: true, selected: @selected_item}, class: "form-control") %>
                 </div>
               </div>
               <div class="row">
