@@ -115,17 +115,40 @@ end
 # Partners
 # ----------------------------------------------------------------------------
 
+note = [
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac enim orci. Donec id consequat est. Vivamus luctus vel erat quis tincidunt. Nunc quis varius justo. Integer quam augue, dictum vitae bibendum in, fermentum quis felis. Nam euismod ultrices velit a tristique. Vestibulum sed tincidunt erat. Vestibulum et ullamcorper sem. Sed ante leo, molestie vitae augue ac, aliquam ultrices enim."
+]
+
 [
-  { name: "Pawnee Parent Service",         email: "someone@pawneeparent.org",      status: :approved },
-  { name: "Pawnee Homeless Shelter",       email: "anyone@pawneehomelss.com",      status: :invited },
-  { name: "Pawnee Pregnancy Center",       email: "contactus@pawneepregnancy.com", status: :invited },
-  { name: "Pawnee Senior Citizens Center", email: "help@pscc.org",                 status: :recertification_required }
+  {
+    name: "Pawnee Parent Service",
+    email: "someone@pawneeparent.org",
+    status: :approved,
+    notes: note.sample
+  },
+  {
+    name: "Pawnee Homeless Shelter",
+    email: "anyone@pawneehomelss.com",
+    status: :invited,
+    notes: note.sample
+  },
+  {
+    name: "Pawnee Pregnancy Center",
+    email: "contactus@pawneepregnancy.com",
+    status: :invited,
+    notes: note.sample
+  },
+  {
+    name: "Pawnee Senior Citizens Center",
+    email: "help@pscc.org",
+    status: :recertification_required,
+    notes: note.sample
+  }
 ].each do |partner_option|
   Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
   end
 end
-
 
 # ----------------------------------------------------------------------------
 # Storage Locations
