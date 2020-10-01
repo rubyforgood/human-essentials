@@ -43,7 +43,7 @@ module Errors
     end
   end
 
-  class StorageLocationDoestNotMatch < StandardError
+  class StorageLocationDoesNotMatch < StandardError
     def message
       "Storage location kit doesn't match"
     end
