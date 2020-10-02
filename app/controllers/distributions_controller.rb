@@ -125,7 +125,7 @@ class DistributionsController < ApplicationController
   end
 
   # TODO: This needs a little more context. Is it JSON only? HTML?
-  def pick_ups
+  def schedule
     @pick_ups = current_organization.distributions
   end
 
