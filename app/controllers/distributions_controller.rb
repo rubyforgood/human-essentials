@@ -47,7 +47,10 @@ class DistributionsController < ApplicationController
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
-    @states = Distribution.states.transform_keys(&:humanize)
+    @statuses = Distribution.states.transform_keys(&:humanize)
+    @selected_item = filter_params[:by_item_id]
+    @selected_partner = filter_params[:by_partner]
+    @selected_status = filter_params[:by_state]
   end
 
   def create
