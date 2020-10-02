@@ -92,6 +92,13 @@ RSpec.describe "Distributions", type: :request do
       end
     end
 
+    describe "GET #schedule" do
+      it "returns http success" do
+        get schedule_distributions_path(default_params)
+        expect(response).to be_successful
+      end
+    end
+
     describe 'PATCH #picked_up' do
       subject { patch picked_up_distribution_path(default_params.merge(id: distribution.id)) }
 
