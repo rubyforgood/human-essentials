@@ -8,7 +8,7 @@ If you're new here, here are some things you should know:
  - Check the `CONTRIBUTING.md` file for a guide on how to get started
  - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
-Please feel free to join us on Slack! You can sign up at https://rubyforgood.herokuapp.com -- click on the Slack icon at the top to get an invite. We're in #diaper
+Please feel free to join us on Slack! You can sign up at https://rubyforgood.herokuapp.com We're in #diaper
 
 The core team leads are: @edwinmak @albert @gia @sean @scott
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
