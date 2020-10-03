@@ -60,7 +60,7 @@ $(document).ready(function () {
     firstDay: 1,
     displayEventTime: true,
     eventLimit: true,
-    events: 'pick_ups.json',
+    events: 'schedule.json',
     height: isMobile || isShortHeight ? 'auto' : 'parent',
     defaultView: isMobile ? 'listWeek' : 'month'
   });

@@ -50,7 +50,7 @@
       remaining this week
     </a>
     <div class="dropdown-divider"></div>
-    <%= link_to_if current_organization.id.present?, "View Calendar", pick_ups_distributions_path(organization_id: current_organization.to_param), class: "dropdown-item dropdown-footer" %>
+    <%= link_to_if current_organization.id.present?, "View Calendar", schedule_distributions_path(organization_id: current_organization.to_param), class: "dropdown-item dropdown-footer" %>
   </div>
 </li>
 
