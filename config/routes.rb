@@ -87,7 +87,7 @@ Rails.application.routes.draw do
     resources :distributions do
       get :print, on: :member
       collection do
-        get :pick_ups
+        get :schedule
         get :pickup_day
       end
       patch :picked_up, on: :member
