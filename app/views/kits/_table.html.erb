@@ -16,6 +16,9 @@
           <% end %>
         </ul>
       </td>
+      <td>
+        <%= new_button_to quantity_kit_path(organization_id: current_organization.id, id: kit.id), { text: "Quantities" } %>
+      </td>
     </tr>
   <% end %>
 </tbody>

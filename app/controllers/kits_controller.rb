@@ -38,6 +38,14 @@ class KitsController < ApplicationController
     end
   end
 
+  def quantity
+    @kit = Kit.find(params[:id])
+    @storage_locations = current_organization.storage_locations
+    @item_inventories = @kit.item.inventory_items
+
+    load_form_collections
+  end
+
   private
 
   def load_form_collections
