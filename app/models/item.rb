@@ -16,6 +16,7 @@
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  kit_id                       :integer
 #  organization_id              :integer
 #
 
@@ -26,6 +27,7 @@ class Item < ApplicationRecord
 
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
+  belongs_to :kit, optional: true
 
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
@@ -39,6 +41,11 @@ class Item < ApplicationRecord
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
   scope :active, -> { where(active: true) }
+
+  # Add spec for these
+  scope :kits, -> { where.not(kit_id: nil) }
+  scope :loose, -> { where(kit_id: nil) }
+
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }

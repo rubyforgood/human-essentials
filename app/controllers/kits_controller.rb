@@ -11,20 +11,29 @@ class KitsController < ApplicationController
 
   def new
     load_form_collections
+
     @kit = current_organization.kits.new
     @kit.line_items.build
   end
 
   def create
-    @kit = current_organization.kits.new(kit_params)
-    @kit.organization_id = current_organization.id
-    if @kit.save
+    kit_creation = KitCreateService.new(organization_id: current_organization.id, kit_params: kit_params)
+    kit_creation.call
+
+    if kit_creation.errors.none?
       flash[:notice] = "Kit created successfully"
       redirect_to kits_path
     else
-      flash[:error] = @kit.errors.full_messages.to_sentence
+      flash[:error] = kit_creation.errors
+        .full_messages
+        .map(&:humanize)
+        .join(", ")
+
       load_form_collections
+
+      @kit ||= Kit.new
       @kit.line_items.build
+
       render :new
     end
   end

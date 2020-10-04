@@ -17,6 +17,7 @@ class Kit < ApplicationRecord
   include Valuable
 
   belongs_to :organization
+  has_one :item
 
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
@@ -24,7 +25,13 @@ class Kit < ApplicationRecord
 
   validates :organization, :name, presence: true
   validates :name, uniqueness: { scope: :organization }
+
   validate :at_least_one_item
+
+  # TODO
+  # - Ensure that other organizations can re-use the name for the BaseItem associated to a Kit
+  # - Ensure the BaseItem for a Kit has only one Item or Kit option. We do not want to allow multiple.
+  # It should be 1-to-1-to-1 relationship
 
   private
 

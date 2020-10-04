@@ -17,6 +17,9 @@ class BaseItem < ApplicationRecord
   has_many :items, dependent: :destroy, inverse_of: :base_item, foreign_key: :partner_key, primary_key: :partner_key
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
 
+  # Access the item that corresponds to a kit directly
+  # belongs_to :kit_item, -> { kits }, foreign_key: :partner_key, primary_key: :partner_key, class_name: 'Item'
+
   validates :name, presence: true, uniqueness: true
   validates :partner_key, presence: true, uniqueness: true
 

@@ -9,7 +9,7 @@ class AllocateKitInventoryService
 
   def allocate
     validate_storage_location
-    allocate_inventory_items if error.nil?
+    allocate_inventory_items_and_increase_kit_quantity if error.nil?
   rescue Errors::InsufficientAllotment => e
     kit.line_items.assign_insufficiency_errors(e.insufficient_items)
     Rails.logger.error "[!] #{self.class.name} failed because of Insufficient Allotment #{kit.organization.short_name}: #{kit.errors.full_messages} [#{e.message}]"
@@ -27,13 +27,31 @@ class AllocateKitInventoryService
     raise Errors::StorageLocationDoesNotMatch if storage_location.organization != kit.organization
   end
 
-  def allocate_inventory_items
+  def allocate_inventory_items_and_increase_kit_quantity
     ActiveRecord::Base.transaction do
-      1.upto(quantity) { storage_location.decrease_inventory(kit) }
+      storage_location.decrease_inventory(kit_content)
+      storage_location.increase_inventory(associated_kit_item)
     end
   end
 
   def set_error(error)
     @error = error.message
+  end
+
+  def kit_content
+    kit.to_a.map do |item|
+      item.merge({
+        quantity: item[:quantity] * quantity
+      })
+    end
+  end
+
+  def associated_kit_item
+    [
+      {
+        item_id: kit.item.id,
+        quantity: quantity
+      }
+    ]
   end
 end
