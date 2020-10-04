@@ -1,12 +1,6 @@
 class RequestsTotalItemsService
-  attr_accessor :requests
-
-  def initialize(requests)
+  def initialize(requests:)
     @requests = requests
-  end
-
-  def self.calculate(requests)
-    new(requests).calculate
   end
 
   def calculate
@@ -29,6 +23,8 @@ class RequestsTotalItemsService
   end
 
   private
+
+  attr_accessor :requests
 
   def request_items_ids
     request_items.map { |jitem| jitem.map { |item| item["item_id"] } }.flatten

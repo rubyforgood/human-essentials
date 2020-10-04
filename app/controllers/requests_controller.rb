@@ -9,7 +9,7 @@ class RequestsController < ApplicationController
                 .class_filter(filter_params)
 
     @paginated_requests = @requests.page(params[:page])
-    @calculate_product_totals = RequestsTotalItemsService.calculate(@requests)
+    @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized
     @partners = current_organization.partners.order(:name)
     @statuses = Request.statuses.transform_keys(&:humanize)

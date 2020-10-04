@@ -1,32 +1,37 @@
 RSpec.describe RequestsTotalItemsService, type: :service do
   describe '#calculate' do
-    it 'return items with quantities calculated' do
-      items = Item.active.sample(3)
-      items_id = items.pluck(:id)
-      requests = [
-        create(:request, request_items: request_items(items_id, 20)),
-        create(:request, request_items: request_items(items_id, 10))
-      ]
+    subject { described_class.new(requests: requests).calculate }
 
-      items_calculated = described_class.calculate(requests)
-      expect(total_first_item(items_calculated)).to eq(30)
+    context 'when the request items is not blank' do
+      let(:requests) do
+        items = Item.active.sample(3)
+        item_ids = items.pluck(:id)
+
+        [
+          create(:request, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 20 } }),
+          create(:request, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 10 } })
+        ]
+      end
+
+      it 'return items with correct quantities calculated' do
+        expect(subject.first.last).to eq(30)
+      end
     end
 
-    it 'return blank when requests itens is blank' do
-      request = create(:request, request_items: {})
-      expect(described_class.calculate([request])).to be_blank
+    context 'when provided with requests that have no request items' do
+      let(:requests) { [create(:request, request_items: {})] }
+
+      it 'return blank when requests itens is blank' do
+        expect(subject).to be_blank
+      end
     end
 
-    it 'return blank when requests is nil' do
-      expect(described_class.calculate(nil)).to be_blank
+    context 'when provided requests is nil' do
+      let(:requests) { nil }
+
+      it 'return blank when requests itens is blank' do
+        expect(subject).to be_blank
+      end
     end
-  end
-
-  def total_first_item(items_calculated)
-    items_calculated.first.last
-  end
-
-  def request_items(items_id, quantity)
-    items_id.map { |k| { "item_id" => k, "quantity" => quantity } }
   end
 end
