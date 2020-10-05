@@ -27,7 +27,7 @@ RSpec.describe "Organizations", type: :request do
     describe "GET #edit" do
       before { get edit_organization_path(default_params) }
 
-      it { expect(response).to have_http_status(:redirect) }
+      it { expect(response).to redirect_to(dashboard_path) }
       it { expect(response).to have_error }
     end
 
@@ -38,7 +38,7 @@ RSpec.describe "Organizations", type: :request do
               params: default_params.merge(update_param)
       end
 
-      it { expect(response).to have_http_status(:redirect) }
+      it { expect(response).to redirect_to(dashboard_path) }
       it { expect(response).to have_error }
     end
   end
@@ -72,7 +72,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "should be redirect after update" do
         subject
-        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(organization_path)
       end
       it "can update name" do
         expect { subject }.to change { @organization.reload.name }.to "Thunder Pants"
@@ -84,7 +84,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "promotes the user to organization admin" do
         subject
-        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(organization_path)
       end
       it "change user" do
         expect { subject }.to change { @user.reload.kind }.to "admin"
@@ -99,7 +99,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "redirect after update" do
         subject
-        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(organization_path)
       end
       it "demotes the user to user" do
         expect { subject }.to change { admin_user.reload.organization_admin }.to be_falsey
@@ -111,7 +111,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "redirect after update" do
         subject
-        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(organization_path)
       end
       it "deactivates the user" do
         expect { subject }.to change { @user.reload.discarded_at }.to be_present
@@ -124,7 +124,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "redirect after update" do
         subject
-        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(organization_path)
       end
       it "reactivates the user" do
         expect { subject }.to change { @user.reload.discarded_at }.to be_nil
