@@ -24,6 +24,10 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
         post api_v1_partner_requests_path, params: params, headers: headers
       end
 
+      before do
+        allow(NotifyPartnerJob).to receive(:perform_now)
+      end
+
       it "returns HTTP created" do
         subject
         expect(response).to have_http_status(:created)
@@ -31,6 +35,11 @@ RSpec.describe "API::V1::PartnerRequests", type: :request do
 
       it "creates a new Reqeust" do
         expect { subject }.to change { Request.count }.by(1)
+      end
+
+      it "is expected to call the NotifyPartnerJob" do
+        subject
+        expect(NotifyPartnerJob).to have_received(:perform_now).with(Request.last.id)
       end
     end
 
