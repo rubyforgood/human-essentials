@@ -10,7 +10,7 @@ class RequestsTotalItemsService
     items_names = Item.where(id: request_items_ids).as_json(only: [:id, :name])
 
     request_items.each do |items|
-      items.map do |json|
+      items.each do |json|
         request_items_array << [item_name(items_names, json['item_id']), json['quantity']]
       end
     end
@@ -27,7 +27,7 @@ class RequestsTotalItemsService
   attr_accessor :requests
 
   def request_items_ids
-    request_items.map { |jitem| jitem.map { |item| item["item_id"] } }.flatten
+    request_items.flat_map { |jitem| jitem.map { |item| item["item_id"] } }
   end
 
   def request_items
@@ -36,6 +36,6 @@ class RequestsTotalItemsService
 
   def item_name(items_names, id)
     item_found = items_names.select { |item| item["id"] == id }
-    item_found.present? ? item_found.first["name"] : ""
+    item_found.first["name"].presence || ""
   end
 end
