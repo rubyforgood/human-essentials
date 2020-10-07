@@ -49,7 +49,13 @@ class RequestsController < ApplicationController
     request_items = []
 
     requests.pluck(:request_items).each do |items|
-      items.map { |json| request_items << [Item.find(json['item_id']).name, json['quantity']] }
+      items.map do |json|
+        item = Item.find_by(id: json['item_id'])
+        request_items << [
+          item&.name || '*Unknown Item*',
+          json['quantity']
+        ]
+      end
     end
 
     request_items.inject({}) do |item, (quantity, total)|
