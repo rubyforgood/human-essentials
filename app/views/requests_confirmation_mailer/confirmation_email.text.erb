@@ -2,7 +2,7 @@ Hello <%= @partner.name %>,
 
 This is an email confirmation that the <%= @organization.name %> has received your request of:
 <% @request_items.each do |item| %>
-  <%= item['name'] %> - <%= item['quantity'] %>
+  <%= item['name'] %> - <%= item['quantity'] || item['person_count'] %>
 <% end %>
 
 
