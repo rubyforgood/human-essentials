@@ -1,0 +1,12 @@
+Hello <%= @partner.name %>,
+
+This is an email confirmation that the <%= @organization.name %> has received your request of:
+<% @request_items.each do |item| %>
+  <%= item['name'] %> - <%= item['quantity'] || item['person_count'] %>
+<% end %>
+
+
+You will receive a notification when a distribution has been created of the pick-up time and date.
+
+Your friends at,
+<%= @organization.name %>
