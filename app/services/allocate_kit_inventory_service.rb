@@ -1,10 +1,10 @@
 class AllocateKitInventoryService
-  attr_reader :kit, :storage_location, :quantity, :error
+  attr_reader :kit, :storage_location, :increase_by, :error
 
-  def initialize(kit, storage_location = nil, quantity = 1)
+  def initialize(kit:, storage_location:, increase_by:)
     @kit = kit
     @storage_location = storage_location
-    @quantity = quantity
+    @increase_by = increase_by
   end
 
   def allocate
@@ -41,7 +41,7 @@ class AllocateKitInventoryService
   def kit_content
     kit.to_a.map do |item|
       item.merge({
-        quantity: item[:quantity] * quantity
+        quantity: item[:quantity] * increase_by
       })
     end
   end
@@ -50,7 +50,7 @@ class AllocateKitInventoryService
     [
       {
         item_id: kit.item.id,
-        quantity: quantity
+        quantity: increase_by
       }
     ]
   end

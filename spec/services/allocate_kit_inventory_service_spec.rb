@@ -10,22 +10,6 @@ RSpec.describe AllocateKitInventoryService, type: :service do
   describe "#error" do
     let(:kit) { Kit.create(params) }
 
-    context "when inventory is not available" do
-      let(:params) do
-        {
-          organization_id: organization.id,
-          line_items_attributes: {
-            "0": { item_id: item_out_of_stock.id, quantity: 5 }
-          }
-        }
-      end
-
-      it "returns error" do
-        service = AllocateKitInventoryService.new(kit, storage_location).allocate
-        expect(service.error).to include("Requested items exceed the available inventory")
-      end
-    end
-
     context "when the Store location organization doesn't match" do
       let(:wrong_storage) { create(:storage_location) }
       let(:params) do
@@ -38,7 +22,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
       end
 
       it "returns error" do
-        service = AllocateKitInventoryService.new(kit, wrong_storage).allocate
+        service = AllocateKitInventoryService.new(kit: kit, storage_location: wrong_storage, increase_by: 1).allocate
         expect(service.error).to include("Storage location kit doesn't match")
       end
     end
@@ -68,7 +52,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
         quantity_before_allocate = item_inventory.quantity
         kit_quantity_before_allocate = kit_item_inventory.quantity
 
-        service = AllocateKitInventoryService.new(kit, storage_location, increase_by).allocate
+        service = AllocateKitInventoryService.new(kit: kit, storage_location: storage_location, increase_by: increase_by).allocate
 
         # Check to see that the correct amount of the associated item
         # had decreased in quantity
@@ -99,7 +83,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
         it "returns error and does not change kit or item quantity" do
           kit_quantity_before_allocate = kit_item_inventory.quantity
 
-          service = AllocateKitInventoryService.new(kit, storage_location, quantity_of_kits).allocate
+          service = AllocateKitInventoryService.new(kit: kit, storage_location: storage_location, increase_by: quantity_of_kits).allocate
 
           expect(service.error).to include("Requested items exceed the available inventory")
 
