@@ -17,7 +17,7 @@
         </ul>
       </td>
       <td>
-        <%= new_button_to quantity_kit_path(organization_id: current_organization.id, id: kit.id), { text: "Quantities" } %>
+        <%= edit_button_to allocations_kit_path(organization_id: current_organization.id, id: kit.id), { text: "Allocations" } %>
       </td>
     </tr>
   <% end %>

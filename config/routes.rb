@@ -118,8 +118,10 @@ Rails.application.routes.draw do
       end
     end
     resources :kits do
+
       member do
-        get :quantity
+        get :allocations
+        post :allocate
       end
     end
 

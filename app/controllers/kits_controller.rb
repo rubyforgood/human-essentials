@@ -38,12 +38,28 @@ class KitsController < ApplicationController
     end
   end
 
-  def quantity
+  def allocations
     @kit = Kit.find(params[:id])
     @storage_locations = current_organization.storage_locations
     @item_inventories = @kit.item.inventory_items
 
     load_form_collections
+  end
+
+  def allocate
+    @kit = Kit.find(params[:id])
+    @storage_location = current_organization.storage_locations.find(kit_adjustment_params[:storage_location_id])
+    @change_by = kit_adjustment_params[:change_by].to_i
+
+    if @change_by.positive?
+      service = AllocateKitInventoryService.new(kit: @kit, storage_location: @storage_location, increase_by: @change_by)
+      service.allocate
+    elsif @change_by.negative?
+      service = DeallocateKitInventoryService.new(kit: @kit, storage_location: @storage_location, decrease_by: @change_by.abs)
+      service.deallocate
+    end
+
+    redirect_to allocations_kit_path(id: @kit.id)
   end
 
   private
@@ -59,6 +75,10 @@ class KitsController < ApplicationController
       :value_in_dollars,
       line_items_attributes: [:item_id, :quantity, :_destroy]
     )
+  end
+
+  def kit_adjustment_params
+    params.require(:kit_adjustment).permit(:storage_location_id, :change_by)
   end
 
   def filter_params
