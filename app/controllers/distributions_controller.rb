@@ -52,7 +52,6 @@ class DistributionsController < ApplicationController
     @selected_status = filter_params[:by_state]
     # FIXME: one of these needs to be removed but it's unclear which at this point
     @statuses = Distribution.states.transform_keys(&:humanize)
-    @states = Distribution.states.transform_keys(&:humanize)
 
     respond_to do |format|
       format.html

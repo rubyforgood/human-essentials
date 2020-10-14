@@ -54,9 +54,6 @@
     <%= print_button_to approve_application_partner_path(partner), {text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "xs"} if can_administrate? %>
     <span class="float-right">
       <%= download_button_to(partner_path(partner, format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Partner Distributions", size: "md"}) if partner_distributions.any? %>
-
-
-      <%= download_button_to(csv_path(format: :csv, type: "PartnerDistribution", filters: { partner_id: partner.id }), text: "Old Export Partner Distributions") if partner_distributions&.length > 0 %>
     </span>
   </div>
 </div>

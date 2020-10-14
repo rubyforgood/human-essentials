@@ -62,9 +62,6 @@ RSpec.describe "Partner management", type: :system, js: true do
         allow(DiaperPartnerClient).to receive(:get).and_return(fake_get_return)
       end
 
-      it "renders all displayed partners" do
-      end
-
       context "when filtering" do
         it "preserves the filter constraints in the CSV output" do
           approved_partners = Partner.approved.to_a
@@ -99,6 +96,49 @@ RSpec.describe "Partner management", type: :system, js: true do
         expect(page).to_not have_selector(:link_or_button, 'View')
         expect(page).to_not have_selector(:link_or_button, 'Activate Partner Now')
         expect(page).to_not have_selector(:link_or_button, 'Add/Remind Partner')
+      end
+    end
+
+    context "when exporting as CSV" do
+      subject { url_prefix + "/partners/#{partner.id}" }
+
+      let(:partner) do
+        partner = create(:partner, :approved)
+        partner.distributions << create(:distribution, :with_items, item_quantity: 1231)
+        partner.distributions << create(:distribution, :with_items, item_quantity: 4564)
+        partner.distributions << create(:distribution, :with_items, item_quantity: 7897)
+        partner
+      end
+
+      let(:fake_get_return) do
+        { "agency" => {
+          "families_served" => Faker::Number.number,
+          "children_served" => Faker::Number.number,
+          "family_zipcodes" => Faker::Number.number,
+          "family_zipcodes_list" => [Faker::Number.number]
+        } }.to_json
+      end
+
+      before do
+        allow(DiaperPartnerClient).to receive(:get).with({ id: partner.to_param }, query_params: { impact_metrics: true }).and_return(fake_get_return)
+      end
+
+      context "when filtering" do
+        it "preserves the filter constraints in the CSV output" do
+          visit subject
+
+          click_on "Export Partner Distributions"
+          wait_for_download
+          expect(downloads.length).to eq(1)
+          expect(download).to match(/.*\.csv/)
+
+          rows = download_content.split("\n").slice(1..)
+
+          expect(rows.size).to eq(partner.distributions.size)
+          expect(rows.join).to have_text('1231', count: 2)
+          expect(rows.join).to have_text('4564', count: 2)
+          expect(rows.join).to have_text('7897', count: 2)
+        end
       end
     end
   end
