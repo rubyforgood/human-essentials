@@ -3,6 +3,7 @@ class StorageLocationsController < ApplicationController
   include Importable
 
   def index
+    @selected_item_category = filter_params[:containing]
     @items = current_organization.storage_locations.items_inventoried
     @storage_locations = current_organization.storage_locations.alphabetized.includes(:inventory_items).class_filter(filter_params)
   end
@@ -87,6 +88,6 @@ class StorageLocationsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:containing)
+    params.require(:filters).permit(:containing)
   end
 end

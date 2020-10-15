@@ -27,18 +27,16 @@
       <div class="col-md-12">
         <div class="card card-primary">
           <div class="card-header">
-            <h3 class="card-title">Barcode Filters</h3>
+            <h3 class="card-title">Transfer Filters</h3>
           </div>
           <div class="card-body">
             <%= form_tag(transfers_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "From this Storage Location" %>
-                  <%= collection_select(:filters, :from_location, @from_storage_locations || {}, :id, :name, {include_blank: true, selected: (@selected_from)}, class: "form-control") %>
+                  <%= filter_select(label: "From this storage location", scope: :from_location, collection: @from_storage_locations, selected: @selected_from) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "To this Storage Location" %>
-                  <%= collection_select(:filters, :to_location, @to_storage_locations || {}, :id, :name, {include_blank: true, selected: (@selected_to)}, class: "form-control") %>
+                  <%= filter_select(label: "To this storage location", scope: :to_location, collection: @to_storage_locations, selected: @selected_to) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
@@ -47,7 +45,7 @@
               </div><!-- /.row -->
               <div class="card-footer">
                 <%= filter_button %>
-                <%= cancel_button_to transfers_path, {text: "Clear Filters"} %>
+                <%= clear_filter_button %>
                 <span class="float-right">
                 <%= download_button_to(csv_path(format: :csv, type: "Transfer"), {text: "Export Transfers"}) if @transfers.any? %>
                   <%= new_button_to new_transfer_path(organization_id: current_organization), {text: "New Transfer"} %>

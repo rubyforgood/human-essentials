@@ -29,7 +29,7 @@
         <!-- jquery validation -->
         <div class="card card-primary">
           <div class="card-header">
-            <h3 class="card-title">Distribution Filters</h3>
+            <h3 class="card-title">Purchase Filters</h3>
           </div>
           <!-- /.card-header -->
           <!-- form start -->
@@ -38,14 +38,12 @@
               <div class="row">
                 <% if @storage_locations.present? %>
                   <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "by Storage Location" %>
-                    <%= collection_select(:filters, :at_storage_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_storage_location}, class: "form-control") %>
+                    <%= filter_select(label: "Filter by storage location", scope: :at_storage_location, collection: @storage_locations, selected: @selected_storage_location) %>
                   </div>
                 <% end %>
                 <% if @vendors.present? %>
                   <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "by Vendors" %>
-                    <%= collection_select(:filters, :from_vendor, @vendors || {}, :id, :business_name, {include_blank: true, selected: @selected_vendor}, class: "form-control") %>
+                    <%= filter_select(label: "Filter by vendor", scope: :from_vendor, collection: @vendors, value: :business_name, selected: @selected_vendor) %>
                   </div>
                 <% end %>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
