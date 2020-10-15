@@ -9,7 +9,7 @@ class RequestsController < ApplicationController
                 .class_filter(filter_params)
 
     @paginated_requests = @requests.page(params[:page])
-    @calculate_product_totals = total_items(@requests)
+    @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized
     @partners = current_organization.partners.order(:name)
     @statuses = Request.statuses.transform_keys(&:humanize)
@@ -44,26 +44,6 @@ class RequestsController < ApplicationController
   end
 
   private
-
-  def total_items(requests)
-    request_items = []
-
-    requests.pluck(:request_items).each do |items|
-      items.map do |json|
-        item = Item.find_by(id: json['item_id'])
-        request_items << [
-          item&.name || '*Unknown Item*',
-          json['quantity']
-        ]
-      end
-    end
-
-    request_items.inject({}) do |item, (quantity, total)|
-      item[quantity] ||= 0
-      item[quantity] += total.to_i
-      item
-    end
-  end
 
   def load_items
     return unless @request.request_items
