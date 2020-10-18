@@ -29,11 +29,6 @@ class Kit < ApplicationRecord
 
   validate :at_least_one_item
 
-  # TODO
-  # - Ensure that other organizations can re-use the name for the BaseItem associated to a Kit
-  # - Ensure the BaseItem for a Kit has only one Item or Kit option. We do not want to allow multiple.
-  # It should be 1-to-1-to-1 relationship
-
   private
 
   def at_least_one_item

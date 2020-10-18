@@ -11,8 +11,8 @@
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
-              <i class="fa fa-dashboard"></i> Home
-            <% end %>
+            <i class="fa fa-dashboard"></i> Home
+          <% end %>
           </li>
           <li class="breadcrumb-item"><a href="#">All Kits</a></li>
         </ol>
@@ -43,16 +43,16 @@
                   <%= label_tag "Also include inactive items" %>
                 </div>
               </div>
-              </div>
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= cancel_button_to kits_path, { text: "Clear Filters" } %>
-                <span class="float-right">
-                  <%= new_button_to new_kit_path(organization_id: current_organization), { text: "New Kit" } %>
-                  </span>
-              </div>
-            <% end # form %>
-            </div>
+          </div>
+          <div class="card-footer">
+            <%= filter_button %>
+            <%= cancel_button_to kits_path, { text: "Clear Filters" } %>
+            <span class="float-right">
+              <%= new_button_to new_kit_path(organization_id: current_organization), { text: "New Kit" } %>
+            </span>
+          </div>
+          <% end # form %>
+        </div>
       </div>
     </div>
   </div>
