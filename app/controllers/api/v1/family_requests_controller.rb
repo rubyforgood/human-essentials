@@ -13,6 +13,7 @@ class API::V1::FamilyRequestsController < ApplicationController
     partner_request = parse_request
 
     if partner_request.save
+      NotifyPartnerJob.perform_now(partner_request.id)
       render json: partner_request.family_request_reply, status: :created
     else
       render json: partner_request.errors, status: :bad_request
