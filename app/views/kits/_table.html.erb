@@ -3,6 +3,7 @@
 <tr>
   <th>Name</th>
   <th>Items</th>
+  <th>Allocations</th>
 </tr>
 </thead>
 <tbody>
@@ -16,8 +17,24 @@
           <% end %>
         </ul>
       </td>
-      <td>
-        <%= edit_button_to allocations_kit_path(organization_id: current_organization.id, id: kit.id), { text: "Allocations" } %>
+      <td class='d-flex flex-column'>
+        <table class='table'>
+          <thead>
+            <tr>
+              <td> Storage Location </td>
+              <td> Quantity </td>
+            </tr>
+          </thead>
+          <% kit.inventory_items.map do |inventory_item| %>
+            <tr>
+              <td><%= inventory_item.storage_location.name %></td>
+              <td><%= inventory_item.quantity %></td>
+            </tr>
+          <% end %>
+        </table>
+        <div class='align-self-center'>
+          <%= edit_button_to allocations_kit_path(organization_id: current_organization.id, id: kit.id), { text: "Modify Allocation" } %>
+        </div>
       </td>
     </tr>
   <% end %>

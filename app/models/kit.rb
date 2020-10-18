@@ -18,6 +18,7 @@ class Kit < ApplicationRecord
 
   belongs_to :organization
   has_one :item
+  has_many :inventory_items, through: :item
 
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
