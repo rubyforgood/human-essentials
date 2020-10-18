@@ -13,26 +13,21 @@ class KitCreateService
 
     organization.transaction do
       begin
-        # Create the Kit record
 
+        # Create the Kit record
         @kit = Kit.new(kit_params_with_organization)
         @kit.save!
 
-        # Must create a BaseItem as well..
-        #
-        # Could we get away with just using an Item?
-        base_item = BaseItem.new({
-          name: "[KIT] #{kit.name}",
-          partner_key: unique_partner_key(kit.name)
-        })
-        base_item.save!
+        # Create a BaseItem that houses each
+        # kit item created.
+        kit_base_item = fetch_or_create_kit_base_item
 
         # Create the Item.
         item_creation = ItemCreateService.new(
           organization_id: organization.id,
           item_params: {
             name: kit.name,
-            partner_key: unique_partner_key(kit.name),
+            partner_key: partner_key_for_kits,
             kit_id: kit.id
           }
         )
@@ -61,8 +56,16 @@ class KitCreateService
     })
   end
 
-  def unique_partner_key(name)
-    "organizations/#{organization.id}/kit_#{name.underscore.gsub(/\s+/,'_')}"
+  def fetch_or_create_kit_base_item
+    BaseItem.find_or_create_by!({
+      name: 'Kit',
+      category: 'kit',
+      partner_key: partner_key_for_kits
+    })
+  end
+
+  def partner_key_for_kits
+    'kit'
   end
 
   def valid?

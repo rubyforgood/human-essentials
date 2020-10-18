@@ -11,7 +11,7 @@ describe KitCreateService do
         kit_params: kit_params
       }
     end
-    let(:organization_id) { FactoryBot.create(:organization).id }
+    let!(:organization_id) { FactoryBot.create(:organization).id }
     let(:kit_params) do
       attrs = FactoryBot.attributes_for(:kit)
       attrs.merge!({line_items_attributes: line_items_attr})
@@ -19,9 +19,9 @@ describe KitCreateService do
     end
 
     let(:line_items_attr) do
-      FactoryBot.create_list(:line_item, 3).map do |line_item|
+      Item.first(3).map do |item|
         {
-          item_id: line_item.id,
+          item_id: item.id,
           quantity: Faker::Number.number(digits: 2)
         }
       end
@@ -41,8 +41,7 @@ describe KitCreateService do
       end
 
       it 'should create the new Item associated with the Kit' do
-        subject
-        expect(Kit.last.item).not_to eq(nil)
+        expect { subject }.to change { Kit.all.count }.by(1)
       end
 
       context 'but an unexpected error gets raised' do
