@@ -25,4 +25,8 @@ FactoryBot.define do
   trait :approved do
     status { :approved }
   end
+
+  trait :uninvited do
+    status { :uninvited }
+  end
 end

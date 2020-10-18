@@ -33,4 +33,8 @@ FactoryBot.define do
   trait :fulfilled do
     status { 'fulfilled' }
   end
+
+  trait :pending do
+    status { 'pending' }
+  end
 end

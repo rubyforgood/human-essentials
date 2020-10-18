@@ -31,6 +31,11 @@ class DonationsController < ApplicationController
     @selected_diaper_participant_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Donation.generate_csv(@donations), filename: "Donations-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -118,10 +123,11 @@ class DonationsController < ApplicationController
     params.require(:donation).permit(:barcode_id, :item_id, :quantity)
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive, :by_diaper_drive_participant, :from_manufacturer)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive, :by_diaper_drive_participant, :from_manufacturer)
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source
