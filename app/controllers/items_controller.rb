@@ -26,7 +26,7 @@ class ItemsController < ApplicationController
     if result.success?
       redirect_to items_path, notice: "#{result.item.name} added!"
     else
-      @base_items = BaseItem.alphabetized
+      @base_items = BaseItem.without_kit.alphabetized
       # Define a @item to be used in the `new` action to be rendered with
       # the provided parameters. This is required to render the page again
       # with the error + the invalid parameters
@@ -38,12 +38,12 @@ class ItemsController < ApplicationController
   end
 
   def new
-    @base_items = BaseItem.alphabetized
+    @base_items = BaseItem.without_kit.alphabetized
     @item = current_organization.items.new
   end
 
   def edit
-    @base_items = BaseItem.alphabetized
+    @base_items = BaseItem.without_kit.alphabetized
     @item = current_organization.items.find(params[:id])
   end
 
@@ -58,7 +58,7 @@ class ItemsController < ApplicationController
     if @item.update(item_params)
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      @base_items = BaseItem.alphabetized
+      @base_items = BaseItem.without_kit.alphabetized
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end

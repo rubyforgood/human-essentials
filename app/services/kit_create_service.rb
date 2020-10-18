@@ -60,7 +60,7 @@ class KitCreateService
     BaseItem.find_or_create_by!({
       name: 'Kit',
       category: 'kit',
-      partner_key: partner_key_for_kits
+      partner_key: 'kit'
     })
   end
 

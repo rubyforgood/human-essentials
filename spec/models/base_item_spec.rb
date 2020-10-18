@@ -46,7 +46,17 @@ RSpec.describe BaseItem, type: :model do
   describe "Methods >" do
   end
 
+
   describe "Filtering >" do
+    describe '->without_kit' do
+      subject { BaseItem.without_kit }
+
+      let!(:kit_base_item) { FactoryBot.create(:base_item, name: 'Kit') }
+      it 'should not include the Kit BaseItem' do
+        expect(subject).not_to include(kit_base_item)
+      end
+    end
+
     describe "->by_partner_key" do
       it "shows the Base Items by partner_key" do
         expect(BaseItem.by_partner_key(BaseItem.first.partner_key).size).to eq(1)
