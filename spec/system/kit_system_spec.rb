@@ -62,7 +62,7 @@ RSpec.describe "Kit management", type: :system do
     click_on 'Save'
 
     # Check that the kit quantity increased by the expected amount
-    expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id).quantity).to eq(original_kit_count+change_quantity_by)
+    expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id).quantity).to eq(original_kit_count + change_quantity_by)
 
     # Ensure each of the contained items decrease the correct amount
     expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity).to eq(original_item_1_count - (change_quantity_by * existing_kit_item_1_quantity))
@@ -84,7 +84,7 @@ RSpec.describe "Kit management", type: :system do
   context 'when there is not enough quantity of the items contained in the kit on-hand' do
     before do
       # Force there to be no loose items available
-      InventoryItem.update_all(quantity: 0)
+      InventoryItem.all.each { |ii| ii.update(quantity: 0) }
     end
 
     it 'will not change quantity amounts when allocating' do

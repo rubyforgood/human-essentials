@@ -39,8 +39,8 @@ class DeallocateKitInventoryService
   def kit_content
     kit.to_a.map do |item|
       item.merge({
-        quantity: item[:quantity] * decrease_by
-      })
+                   quantity: item[:quantity] * decrease_by
+                 })
     end
   end
 
@@ -52,5 +52,4 @@ class DeallocateKitInventoryService
       }
     ]
   end
-
 end

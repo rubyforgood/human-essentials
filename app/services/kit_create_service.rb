@@ -12,31 +12,28 @@ class KitCreateService
     return self unless valid?
 
     organization.transaction do
-      begin
+      # Create the Kit record
+      @kit = Kit.new(kit_params_with_organization)
+      @kit.save!
 
-        # Create the Kit record
-        @kit = Kit.new(kit_params_with_organization)
-        @kit.save!
+      # Create a BaseItem that houses each
+      # kit item created.
+      kit_base_item = fetch_or_create_kit_base_item
 
-        # Create a BaseItem that houses each
-        # kit item created.
-        kit_base_item = fetch_or_create_kit_base_item
+      # Create the Item.
+      item_creation = ItemCreateService.new(
+        organization_id: organization.id,
+        item_params: {
+          name: kit.name,
+          partner_key: kit_base_item.partner_key,
+          kit_id: kit.id
+        }
+      )
 
-        # Create the Item.
-        item_creation = ItemCreateService.new(
-          organization_id: organization.id,
-          item_params: {
-            name: kit.name,
-            partner_key: partner_key_for_kits,
-            kit_id: kit.id
-          }
-        )
-
-        result = item_creation.call
-      rescue => e
-        errors.add(:base, e.message)
-        raise ActiveRecord::Rollback
-      end
+      item_creation.call
+    rescue StandardError => e
+      errors.add(:base, e.message)
+      raise ActiveRecord::Rollback
     end
 
     self
@@ -52,16 +49,16 @@ class KitCreateService
 
   def kit_params_with_organization
     kit_params.merge({
-      organization_id: organization.id
-    })
+                       organization_id: organization.id
+                     })
   end
 
   def fetch_or_create_kit_base_item
     BaseItem.find_or_create_by!({
-      name: 'Kit',
-      category: 'kit',
-      partner_key: 'kit'
-    })
+                                  name: 'Kit',
+                                  category: 'kit',
+                                  partner_key: 'kit'
+                                })
   end
 
   def partner_key_for_kits
@@ -99,8 +96,7 @@ class KitCreateService
   end
 
   def partner_key_for(name)
-    "kit_#{name.underscore.gsub(/\s+/,'_')}"
+    "kit_#{name.underscore.gsub(/\s+/, '_')}"
   end
-
 end
 

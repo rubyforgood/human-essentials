@@ -46,7 +46,6 @@ RSpec.describe BaseItem, type: :model do
   describe "Methods >" do
   end
 
-
   describe "Filtering >" do
     describe '->without_kit' do
       subject { BaseItem.without_kit }

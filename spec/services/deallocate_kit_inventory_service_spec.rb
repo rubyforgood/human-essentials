@@ -42,7 +42,7 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
 
     before do
       # Force there to be kit quantity
-      kit_item_inventory.update_column(:quantity, 100)
+      kit_item_inventory.update(quantity: 100)
     end
 
     context "when inventory items are available" do

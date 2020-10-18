@@ -41,8 +41,8 @@ class AllocateKitInventoryService
   def kit_content
     kit.to_a.map do |item|
       item.merge({
-        quantity: item[:quantity] * increase_by
-      })
+                   quantity: item[:quantity] * increase_by
+                 })
     end
   end
 

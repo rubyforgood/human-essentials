@@ -1,8 +1,6 @@
 require 'rails_helper'
 
-
 describe KitCreateService do
-
   describe '#call' do
     subject { described_class.new(args).call }
     let(:args) do
@@ -14,7 +12,7 @@ describe KitCreateService do
     let!(:organization_id) { FactoryBot.create(:organization).id }
     let(:kit_params) do
       attrs = FactoryBot.attributes_for(:kit)
-      attrs.merge!({line_items_attributes: line_items_attr})
+      attrs.merge!({ line_items_attributes: line_items_attr })
       attrs
     end
 

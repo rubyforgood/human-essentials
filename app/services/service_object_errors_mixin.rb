@@ -1,5 +1,4 @@
 module ServiceObjectErrorsMixin
-
   #
   # This module is can be included into service object like
   # classes so that they get the similiar interface commonly used
@@ -37,7 +36,7 @@ module ServiceObjectErrorsMixin
   end
 
   module ClassMethods
-    def human_attribute_name(attr, options = {})
+    def human_attribute_name(attr, _options = {})
       attr
     end
 

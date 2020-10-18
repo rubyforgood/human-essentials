@@ -25,9 +25,9 @@ class KitsController < ApplicationController
       redirect_to kits_path
     else
       flash[:error] = kit_creation.errors
-        .full_messages
-        .map(&:humanize)
-        .join(", ")
+                                  .full_messages
+                                  .map(&:humanize)
+                                  .join(", ")
 
       load_form_collections
 
