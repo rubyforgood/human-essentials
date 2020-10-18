@@ -54,9 +54,17 @@ class KitsController < ApplicationController
     if @change_by.positive?
       service = AllocateKitInventoryService.new(kit: @kit, storage_location: @storage_location, increase_by: @change_by)
       service.allocate
+      flash[:error] = service.error if service.error
     elsif @change_by.negative?
       service = DeallocateKitInventoryService.new(kit: @kit, storage_location: @storage_location, decrease_by: @change_by.abs)
       service.deallocate
+      flash[:error] = service.error if service.error
+    end
+
+    if service.error
+      flash[:error] = service.error
+    else
+      flash[:notice] = "#{@kit.name} at #{@storage_location.name} quantity has changed by #{@change_by}"
     end
 
     redirect_to allocations_kit_path(id: @kit.id)
