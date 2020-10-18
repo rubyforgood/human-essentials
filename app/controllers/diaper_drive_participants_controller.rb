@@ -7,6 +7,11 @@ class DiaperDriveParticipantsController < ApplicationController
 
   def index
     @diaper_drive_participants = current_organization.diaper_drive_participants.includes(:donations).all.order(:business_name)
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data DiaperDriveParticipant.generate_csv(@diaper_drive_participants), filename: "DiaperDriveParticipants-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -56,5 +61,10 @@ class DiaperDriveParticipantsController < ApplicationController
   def diaper_drive_participant_params
     params.require(:diaper_drive_participant)
           .permit(:contact_name, :phone, :email, :business_name, :address)
+  end
+
+  helper_method \
+    def filter_params
+    {}
   end
 end

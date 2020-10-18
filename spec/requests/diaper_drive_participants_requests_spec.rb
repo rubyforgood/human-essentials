@@ -11,9 +11,23 @@ RSpec.describe "DiaperDriveParticipants", type: :request do
     end
 
     describe "GET #index" do
-      it "returns http success" do
-        get diaper_drive_participants_path(default_params)
-        expect(response).to be_successful
+      subject do
+        get diaper_drive_participants_path(default_params.merge(format: response_format))
+        response
+      end
+
+      before { create(:diaper_drive_participant) }
+
+      context "html" do
+        let(:response_format) { 'html' }
+
+        it { is_expected.to be_successful }
+      end
+
+      context "csv" do
+        let(:response_format) { 'csv' }
+
+        it { is_expected.to be_successful }
       end
     end
 

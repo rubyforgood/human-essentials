@@ -17,6 +17,11 @@ class ItemsController < ApplicationController
     end
 
     @paginated_items = @items.page(params[:page])
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Item.generate_csv(@items), filename: "Items-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -120,9 +125,10 @@ class ItemsController < ApplicationController
     )
   end
 
-  def filter_params(_parameters = nil)
+  helper_method \
+    def filter_params(_parameters = nil)
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_base_item, :include_inactive_items)
+    params.require(:filters).permit(:by_base_item, :include_inactive_items)
   end
 end

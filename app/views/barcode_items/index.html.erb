@@ -34,11 +34,11 @@
               <div class="row">
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Filter By Item Category" %>
-                  <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "form-control") %>
+                  <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true, selected: @selected_item}, class: "form-control") %>
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Filter By Base Item" %>
-                  <%= collection_select(:filters, :by_item_partner_key, @base_items.order('name'), :partner_key, :name, {include_blank: true}, class: "form-control") %>
+                  <%= collection_select(:filters, :by_item_partner_key, @base_items.order('name'), :partner_key, :name, {include_blank: true, selected: @selected_partner_key}, class: "form-control") %>
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Filter By Barcode (Boop it!)" %>
@@ -49,7 +49,7 @@
                 <%= filter_button %>
                 <%= cancel_button_to barcode_items_path, {text: "Clear Filters"} %>
                 <span class="float-right">
-<%= download_button_to(csv_path(format: :csv, type: "BarcodeItem"), {text: "Export Barcode Items"}) if @barcode_items.length > 0 %>
+                  <%= download_button_to(barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Barcode Items", size: "md"}) if @barcode_items.any? %>
                   <%= download_button_to(font_barcode_items_path, {text: "Download Barcode Font"}) %>
                   <%= new_button_to new_barcode_item_path(organization_id: current_organization), {text: "New Barcode"} %>
                   </span>

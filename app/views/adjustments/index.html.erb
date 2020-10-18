@@ -50,8 +50,11 @@
                 <%= cancel_button_to adjustments_path, size: "md", text: "Clear Filters" %>
 
                 <span class="float-right">
-                <%= download_button_to(csv_path(format: :csv, type: "Adjustment"), {text: "Export Adjustments"}) if @adjustments.length > 0 %>
-
+                  <%= download_button_to(
+                        adjustments_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
+                        text: "Export Adjustments"
+                      ) if @adjustments.any? %>
+                
                   <%= new_button_to new_adjustment_path(organization_id: current_organization), {text: "New Adjustment"} %>
                   </span>
               </div>
