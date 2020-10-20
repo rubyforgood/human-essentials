@@ -9,10 +9,10 @@
     <span class="col">
       <label>OR</label>
     </span>
-    <span class="col">
+    <span class="col li-name">
       <%= f.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false %>
     </span>
-    <div class="col">
+    <div class="col li-quantity">
       <%= f.input :quantity, placeholder: "Quantity", label: false, input_html: { class: "quantity", style: "width: 100px;" } %>
     </div>
     <div class="col">
