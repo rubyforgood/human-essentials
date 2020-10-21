@@ -16,18 +16,7 @@
                 <%= simple_form_for @audit, html: {class: "storage-location-required"} do |f| %>
                   <%= render partial: "storage_locations/source", object: f, locals: {include_inactive_items: true} %>
 
-                  <fieldset style="margin-bottom: 2rem;" class="form-inline justify-content-around" id="audit_line_items_container">
-                    <legend>Items in this audit</legend>
-                    <%= f.simple_fields_for :line_items do |item| %>
-                      <%= render partial: 'line_items/line_item_fields', locals: { f: item, div_id: "audit_line_items" } %>
-                    <% end %>
-                  </fieldset>
-
-                  <div class="row links align-items-center mb-3 mr-3">
-                    <div class="col-xs-12 ml-auto">
-                      <%= add_line_item_button f, "#audit_line_items_container", { partial_locals: { div_id: "audit_line_items" }} %>
-                    </div>
-                  </div>
+                  <%= render partial: 'line_items/line_items_form', locals: { f: f, form_id: "audit" } %>
 
                   </div>
                   <div class="card-footer">

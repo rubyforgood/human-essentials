@@ -1,0 +1,15 @@
+<%
+  form_id ||= "default"
+%>
+<fieldset style="margin-bottom: 2rem;" class="form-inline justify-content-around" id="<%= form_id %>_line_items_container">
+  <legend>Items in this <%= form_id %></legend>
+  <%= f.simple_fields_for :line_items do |item| %>
+    <%= render partial: 'line_items/line_item_fields', locals: { f: item, div_id: "#{ form_id }_line_items" } %>
+  <% end %>
+</fieldset>
+
+<div class="row links align-items-center mb-3 mr-3">
+  <div class="col-xs-12 ml-auto">
+    <%= add_line_item_button f, "##{ form_id }_line_items_container", { partial_locals: { div_id: "#{ form_id }_line_items" }} %>
+  </div>
+</div>
