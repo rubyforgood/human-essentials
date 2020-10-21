@@ -75,6 +75,10 @@ module UiHelper
     _link_to link, { icon: "ban", type: "outline-primary", text: "Cancel", size: "md" }.merge(options)
   end
 
+  def clear_filter_button(options = {})
+    cancel_button_to request.path, { size: "md", text: "Clear Filters" }.merge(options)
+  end
+
   def download_button_to(link, options = {})
     _link_to link, { icon: "download", type: "info", text: "Download", size: "md" }.merge(options)
   end

@@ -38,8 +38,7 @@
             <%= form_tag(diaper_drives_path, method: :get, organization_id: current_organization) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "by name" %>
-                  <%= collection_select(:filters, :by_name, @diaper_drives || {}, :name, :name, {include_blank: true, selected: @selected_name_filter}, class: "form-control") %>
+                  <%= filter_select(scope: :by_name, collection: @diaper_drives, key: :name, value: :name, selected: @selected_name_filter) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
@@ -49,7 +48,7 @@
               </div>
               <div class="card-footer">
                 <%= filter_button %>
-                <%= cancel_button_to diaper_drives_path, {text: "Clear Filters"} %>
+                <%= clear_filter_button %>
                 <span class="float-right">
                   <%= new_button_to new_diaper_drive_path(organization_id: current_organization), {text: "New Diaper Drive"} %>
                   </span>
