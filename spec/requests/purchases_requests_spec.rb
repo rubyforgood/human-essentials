@@ -11,17 +11,33 @@ RSpec.describe "Purchases", type: :request do
     end
 
     describe "GET #index" do
-      it "returns http success" do
-        get purchases_path(default_params)
-        expect(response).to be_successful
+      subject do
+        get purchases_path(default_params.merge(format: response_format))
+        response
+      end
+
+      before { create(:purchase) }
+
+      context "html" do
+        let(:response_format) { 'html' }
+
+        it { is_expected.to be_successful }
+      end
+
+      context "csv" do
+        let(:response_format) { 'csv' }
+
+        it { is_expected.to be_successful }
       end
     end
 
     describe "GET #new" do
-      it "returns http success" do
+      subject do
         get new_purchase_path(default_params)
-        expect(response).to be_successful
+        response
       end
+
+      it { is_expected.to be_successful }
     end
 
     describe "POST#create" do

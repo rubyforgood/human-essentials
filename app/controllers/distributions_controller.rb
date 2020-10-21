@@ -47,10 +47,16 @@ class DistributionsController < ApplicationController
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
-    @statuses = Distribution.states.transform_keys(&:humanize)
     @selected_item = filter_params[:by_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
+    # FIXME: one of these needs to be removed but it's unclear which at this point
+    @statuses = Distribution.states.transform_keys(&:humanize)
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Distribution.generate_csv(@distributions), filename: "Distributions-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -192,8 +198,9 @@ class DistributionsController < ApplicationController
 
   helper_method \
     def filter_params
-    params.fetch(:filters, {})
-          .permit(:by_item_id, :by_partner, :by_state)
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).permit(:by_item_id, :by_partner, :by_state)
   end
 
   def perform_inventory_check

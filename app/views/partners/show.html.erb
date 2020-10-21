@@ -28,8 +28,8 @@
       <div class="col-12">
         <!-- Default box -->
         <% if @partner.uninvited? %>
-        <%= render "uninvited_header", partner: @partner %>
-          <% else %>
+          <%= render "uninvited_header", partner: @partner %>
+        <% else %>
           <%= render "show_header", partner: @partner, impact_metrics: @impact_metrics, partner_distributions: @partner_distributions %>
         <% end %>
         <% if @partner.notes.present? %>

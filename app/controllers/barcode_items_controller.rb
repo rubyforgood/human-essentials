@@ -8,6 +8,13 @@ class BarcodeItemsController < ApplicationController
     @selected_partner_key = filter_params[:by_item_partner_key]
     @selected_barcode_id = filter_params[:by_value]
     @barcode_items = current_organization.barcode_items.class_filter(filter_params)
+    @selected_item = filter_params[:barcodeable_id]
+    @selected_partner_key = filter_params[:by_item_partner_key]
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data BarcodeItem.generate_csv(@barcode_items), filename: "BarcodeItems-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -94,7 +101,8 @@ class BarcodeItemsController < ApplicationController
     params.require(:barcode_item).permit(:value, :barcodeable_id, :quantity).merge(organization_id: current_organization.id)
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
     params.require(:filters).permit(:barcodeable_id, :by_item_partner_key, :by_value)

@@ -75,8 +75,11 @@ class Request < ApplicationRecord
     request
   end
 
-  def self.csv_export(requests)
-    Exports::ExportRequestService.new(requests).call
+  def self.generate_csv(requests)
+    rows = Exports::ExportRequestService.new(requests).call
+    CSV.generate(headers: true) do |csv|
+      rows.each { |row| csv << row }
+    end
   end
 
   def total_items

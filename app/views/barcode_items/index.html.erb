@@ -46,7 +46,7 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
-                  <%= download_button_to(csv_path(format: :csv, type: "BarcodeItem"), {text: "Export Barcode Items"}) if @barcode_items.length > 0 %>
+                  <%= download_button_to(barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Barcode Items", size: "md"}) if @barcode_items.any? %>
                   <%= download_button_to(font_barcode_items_path, {text: "Download Barcode Font"}) %>
                   <%= new_button_to new_barcode_item_path(organization_id: current_organization), {text: "New Barcode"} %>
                   </span>

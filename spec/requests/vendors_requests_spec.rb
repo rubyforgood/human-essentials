@@ -9,9 +9,23 @@ RSpec.describe "Vendors", type: :request do
     end
 
     describe "GET #index" do
-      it "returns http success" do
-        get vendors_path(default_params)
-        expect(response).to be_successful
+      subject do
+        get vendors_path(default_params.merge(format: response_format))
+        response
+      end
+
+      before { create(:vendor) }
+
+      context "html" do
+        let(:response_format) { 'html' }
+
+        it { is_expected.to be_successful }
+      end
+
+      context "csv" do
+        let(:response_format) { 'csv' }
+
+        it { is_expected.to be_successful }
       end
     end
 

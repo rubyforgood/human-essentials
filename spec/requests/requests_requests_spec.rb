@@ -1,14 +1,33 @@
 require 'rails_helper'
 
 RSpec.describe 'Requests', type: :request do
+  let(:default_params) do
+    { organization_id: @organization.to_param }
+  end
+
   context 'When signed' do
     before { sign_in(@user) }
 
-    describe 'GET #index' do
-      it 'responds with success' do
-        get requests_path(@organization.id)
+    describe "GET #index" do
+      subject do
+        get requests_path(default_params.merge(format: response_format))
+        response
+      end
 
-        expect(response).to have_http_status(:ok)
+      before do
+        create(:request)
+      end
+
+      context "html" do
+        let(:response_format) { 'html' }
+
+        it { is_expected.to be_successful }
+      end
+
+      context "csv" do
+        let(:response_format) { 'csv' }
+
+        it { is_expected.to be_successful }
       end
     end
 
@@ -17,7 +36,7 @@ RSpec.describe 'Requests', type: :request do
         let(:request) { create(:request, organization: @organization) }
 
         it 'responds with success' do
-          get request_path(@organization.id, request.id)
+          get request_path(request, default_params)
 
           expect(response).to have_http_status(:ok)
         end
@@ -25,7 +44,7 @@ RSpec.describe 'Requests', type: :request do
 
       context 'When the request does not exist' do
         it 'responds with not found' do
-          get request_path(@organization.id, 1)
+          get request_path(1, default_params)
 
           expect(response).to have_http_status(:not_found)
         end
@@ -37,7 +56,7 @@ RSpec.describe 'Requests', type: :request do
         let(:request) { create(:request, organization: @organization) }
 
         it 'redirects to requests index' do
-          delete request_path(@organization.id, request.id)
+          delete request_path(request, default_params)
 
           expect(response).to redirect_to(requests_path)
         end
@@ -45,7 +64,7 @@ RSpec.describe 'Requests', type: :request do
 
       context 'When the request does not exist' do
         it 'responds with not found' do
-          delete request_path(@organization.id, 1)
+          delete request_path(1, default_params)
 
           expect(response).to have_http_status(:not_found)
         end
@@ -58,13 +77,13 @@ RSpec.describe 'Requests', type: :request do
 
         it 'changes the request status from pending to started' do
           expect do
-            post start_request_path(@organization.id, request.id)
+            post start_request_path(request, default_params)
             request.reload
           end.to change(request, :status).from('pending').to('started')
         end
 
         it 'redirects to new_distribution_path and flashes a notice', :aggregate_failures do
-          post start_request_path(@organization.id, request.id)
+          post start_request_path(request, default_params)
 
           expect(flash[:notice]).to eq('Request started')
           expect(response).to redirect_to(new_distribution_path(request_id: request.id))

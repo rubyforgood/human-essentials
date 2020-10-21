@@ -7,6 +7,11 @@ class PartnersController < ApplicationController
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
     @partners = Partner.where(organization: current_organization).class_filter(filter_params).alphabetized
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Partner.generate_csv(@partners), filename: "Partners-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -32,8 +37,14 @@ class PartnersController < ApplicationController
 
   def show
     @partner = current_organization.partners.find(params[:id])
+
     @impact_metrics = JSON.parse(DiaperPartnerClient.get({ id: params[:id] }, query_params: { impact_metrics: true })) unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Partner.generate_distributions_csv(@partner_distributions), filename: "PartnerDistributions-#{Time.zone.today}.csv" }
+    end
   end
 
   def new
@@ -134,9 +145,10 @@ class PartnersController < ApplicationController
     params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, documents: [])
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_status)
+    params.require(:filters).permit(:by_status)
   end
 end
