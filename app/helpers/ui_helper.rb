@@ -12,7 +12,7 @@ module UiHelper
                             data: {
                               association_insertion_node: node,
                               association_insertion_method: "append"
-                            }, id: "__add_line_item", class: "btn btn-#{size} btn-#{type}", partial: partial do
+                            }, render_options: { locals: options[:partial_locals] } , id: "__add_line_item", class: "btn btn-#{size} btn-#{type}", partial: partial do
       fa_icon "plus", text: text
     end
   end

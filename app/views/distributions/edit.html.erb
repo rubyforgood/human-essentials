@@ -66,20 +66,19 @@
 
                   <%= f.input :comment, label: "Comment" %>
 
-                  <fieldset class="form-inline justify-content-around">
+                  <fieldset style="margin-bottom: 2rem;" class="form-inline justify-content-around" id="distribution_line_items_container">
                     <legend>Items in this distribution</legend>
                     <%= f.simple_fields_for :line_items do |item| %>
-                      <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
-                        <%= render 'line_items/line_item_fields', f: item %>
-                      </div>
+                      <%= render partial: 'line_items/line_item_fields', locals: { f: item, div_id: "distribution_line_items" } %>
                     <% end %>
-
                   </fieldset>
+
                   <div class="row links align-items-center mb-3 mr-3">
                     <div class="col-xs-12 ml-auto">
-                      <%= add_line_item_button f, "#distribution_line_items" %>
+                      <%= add_line_item_button f, "#distribution_line_items_container", { partial_locals: { div_id: "distribution_line_items" }} %>
                     </div>
                   </div>
+
                   </div>
                   <div class="card-footer">
                     <%= submit_button %>

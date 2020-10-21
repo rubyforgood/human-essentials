@@ -48,21 +48,18 @@
       </div>
     </div>
 
-    <fieldset style="margin-bottom: 2rem;" class="form-inline">
+    <fieldset style="margin-bottom: 2rem;" class="form-inline justify-content-around" id="purchase_line_items_container">
       <legend>Items in this purchase</legend>
-      <div id="purchase_line_items" data-capture-barcode="true">
-
-        <%= f.simple_fields_for :line_items do |item| %>
-          <%= render 'line_items/line_item_fields', f: item %>
-        <% end %>
-      </div>
-
-      <div class="row links">
-        <div class="col-xs-12 p-3">
-          <%= add_line_item_button f, "#purchase_line_items" %>
-        </div>
-      </div>
+      <%= f.simple_fields_for :line_items do |item| %>
+        <%= render partial: 'line_items/line_item_fields', locals: { f: item, div_id: "purchase_line_items" } %>
+      <% end %>
     </fieldset>
+
+    <div class="row links align-items-center mb-3 mr-3">
+      <div class="col-xs-12 ml-auto">
+        <%= add_line_item_button f, "#purchase_line_items_container", { partial_locals: { div_id: "purchase_line_items" }} %>
+      </div>
+    </div>
 
     <div class="card-footer">
       <%= submit_button %>
