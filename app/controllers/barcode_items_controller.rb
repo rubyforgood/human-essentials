@@ -4,6 +4,9 @@ class BarcodeItemsController < ApplicationController
   def index
     @items = Item.gather_items(current_organization, @global)
     @base_items = BaseItem.alphabetized
+    @selected_barcodeable_id = filter_params[:barcodeable_id]
+    @selected_partner_key = filter_params[:by_item_partner_key]
+    @selected_barcode_id = filter_params[:by_value]
     @barcode_items = current_organization.barcode_items.class_filter(filter_params)
     @selected_item = filter_params[:barcodeable_id]
     @selected_partner_key = filter_params[:by_item_partner_key]
