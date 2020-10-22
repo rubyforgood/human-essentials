@@ -226,7 +226,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
           expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
-          within "#purchase_line_items" do
+          within "#purchase_line_items_container" do
             expect(page).to have_css('.__barcode_item_lookup', count: 2)
             Barcode.boop(@existing_barcode.value, "new_line_items")
           end

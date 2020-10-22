@@ -178,7 +178,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
           page.find(:css, "#__add_line_item").click
-          select_id = page.find(:xpath, '//*[@id="donation_line_items"]/section[2]//select')[:id]
+          select_id = page.find(:xpath, '//*[@id="donation_line_items_container"]/div[2]/section/div/span[4]/div/select')[:id]
           select Item.alphabetized.first.name, from: select_id
           text_id = page.find_all('.donation_line_items_quantity > input').last[:id]
           fill_in text_id, with: "10"
@@ -404,15 +404,15 @@ RSpec.describe "Donations", type: :system, js: true do
         end
 
         it "Updates the line item when the same barcode is scanned twice", :js do
-          within "#donation_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+          within "#donation_line_items_container" do
+            expect(page).to have_xpath("//div[1]//input[@id='_barcode-lookup-0']")
             Barcode.boop(@existing_barcode.value)
           end
 
           expect(page).to have_field "donation_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
 
-          within "#donation_line_items" do
-            expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
+          within "#donation_line_items_container" do
+            expect(page).to have_xpath("//div[2]//input[@id='_barcode-lookup-1']")
             Barcode.boop(@existing_barcode.value)
           end
 
@@ -438,8 +438,8 @@ RSpec.describe "Donations", type: :system, js: true do
             click_on "Save"
           end
 
-          within "#donation_line_items" do
-            barcode_field = page.find(:xpath, "//input[@id='_barcode-lookup-0']").value
+          within "#donation_line_items_container" do
+            barcode_field = page.find(:xpath, "//div[1]//input[@id='_barcode-lookup-0']").value
             expect(barcode_field).to eq(new_barcode)
             qty_field = page.find(:xpath, "//input[@id='donation_line_items_attributes_0_quantity']").value
             expect(qty_field).to eq("10")
