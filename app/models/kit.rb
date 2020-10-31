@@ -23,7 +23,7 @@ class Kit < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
   scope :by_partner_key, ->(key) { joins(:items).where(items: { partner_key: key }) }
-  scope :by_name, -> (name) { where("name ILIKE ?", "%#{name}%") }
+  scope :by_name, ->(name) { where("name ILIKE ?", "%#{name}%") }
 
   validates :organization, :name, presence: true
   validates :name, uniqueness: { scope: :organization }
