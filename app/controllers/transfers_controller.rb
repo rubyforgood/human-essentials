@@ -13,6 +13,11 @@ class TransfersController < ApplicationController
     @selected_to = filter_params[:to_location]
     @from_storage_locations = Transfer.storage_locations_transferred_from_in(current_organization)
     @to_storage_locations = Transfer.storage_locations_transferred_to_in(current_organization)
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Transfer.generate_csv(@transfers), filename: "Transfers-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -74,9 +79,10 @@ class TransfersController < ApplicationController
                                      line_items_attributes: %i(item_id quantity _destroy))
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:from_location, :to_location)
+    params.require(:filters).permit(:from_location, :to_location)
   end
 end

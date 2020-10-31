@@ -39,19 +39,16 @@
               <div class="row">
                 <% if @items.present? %>
                   <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <%= label_tag "by Item" %>
-                    <%= collection_select(:filters, :by_request_item_id, @items || {}, :id, :name, {include_blank: true, selected: @selected_request_item}, {class: "form-control"}) %>
+                    <%= filter_select(label: "Filter by item", scope: :by_request_item_id, collection: @items, selected: @selected_request_item) %>
                   </div>
                 <% end %>
                 <% if @partners.present? %>
                   <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <%= label_tag "by Partner" %>
-                    <%= collection_select(:filters, :by_partner, @partners || {}, :id, :name, {include_blank: true, selected: @selected_partner}, {class: "form-control"}) %>
+                    <%= filter_select(scope: :by_partner, collection: @partners, selected: @selected_partner) %>
                   </div>
                 <% end %>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= label_tag "by Status" %>
-                  <%= collection_select(:filters, :by_status, @statuses || {}, :last, :first, {include_blank: true, selected: @selected_status}, {class: "form-control"}) %>
+                  <%= filter_select(scope: :by_status, collection: @statuses, key: :last, value: :first, selected: @selected_status) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
@@ -61,10 +58,10 @@
               </div>
               <div class="card-footer">
                 <%= filter_button %>
-                <%= cancel_button_to requests_path, {text: "Clear Filters"} %>
+                <%= clear_filter_button %>
                 <%= modal_button_to("#calculateTotals", {text: "Calculate Product Totals", icon: nil, size: "md", type: "success"}) %>
                 <span class="float-right">
-                  <%= download_button_to(csv_path(format: :csv, type: "Request", filters: params[:filters]&.permit(:date_range)), text: "Export Requests") if @requests.length > 0 %>
+                  <%= download_button_to(requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Requests", size: "md"}) if @requests.any? %>
                 </span>
               </div>
             <% end # form %>

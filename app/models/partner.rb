@@ -27,6 +27,7 @@ class Partner < ApplicationRecord
 
   belongs_to :organization
   has_many :distributions, dependent: :destroy
+
   has_many :requests, dependent: :destroy
 
   has_many_attached :documents
@@ -87,6 +88,13 @@ class Partner < ApplicationRecord
       contact_person[:phone] || contact_person[:mobile],
       contact_person[:email]
     ]
+  end
+
+  def self.generate_distributions_csv(distributions)
+    rows = Exports::ExportPartnerDistributionsService.new(distributions).call
+    CSV.generate(headers: true) do |csv|
+      rows.each { |row| csv << row }
+    end
   end
 
   def register_on_partnerbase

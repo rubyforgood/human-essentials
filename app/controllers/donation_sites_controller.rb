@@ -6,6 +6,10 @@ class DonationSitesController < ApplicationController
   def index
     @donation_sites = current_organization.donation_sites.all.alphabetized
     @donation_site = current_organization.donation_sites.new
+    respond_to do |format|
+      format.html
+      format.csv { send_data DonationSite.generate_csv(@donation_sites), filename: "DonationSites-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -57,5 +61,10 @@ class DonationSitesController < ApplicationController
 
   def donation_site_params
     params.require(:donation_site).permit(:name, :address)
+  end
+
+  helper_method \
+    def filter_params
+    {}
   end
 end

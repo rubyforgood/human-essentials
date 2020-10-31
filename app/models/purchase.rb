@@ -96,7 +96,7 @@ class Purchase < ApplicationRecord
 
   def csv_export_attributes
     [
-      purchased_from,
+      purchased_from_view,
       storage_location.name,
       line_items.total,
       line_items.size,

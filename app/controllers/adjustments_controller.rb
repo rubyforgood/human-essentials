@@ -16,6 +16,11 @@ class AdjustmentsController < ApplicationController
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
     @users = current_organization.users
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Adjustment.generate_csv(@adjustments), filename: "Adjustments-#{Time.zone.today}.csv" }
+    end
   end
 
   # GET /adjustments/1
@@ -68,9 +73,10 @@ class AdjustmentsController < ApplicationController
                                        line_items_attributes: %i(item_id quantity _destroy))
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:at_location, :by_user)
+    params.require(:filters).permit(:at_location, :by_user)
   end
 end

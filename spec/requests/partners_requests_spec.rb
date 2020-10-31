@@ -8,13 +8,42 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "GET #index" do
-    it "returns http success" do
-      get partners_path(default_params)
-      expect(response).to be_successful
+    subject do
+      get partners_path(default_params.merge(format: response_format))
+      response
+    end
+
+    let!(:partner) { create(:partner, organization: @organization) }
+
+    context "html" do
+      let(:response_format) { 'html' }
+
+      it { is_expected.to be_successful }
+    end
+
+    context "csv" do
+      let(:response_format) { 'csv' }
+
+      let(:fake_get_return) do
+        { "agency" => {
+          "contact_person" => { name: "A Name" }
+        } }.to_json
+      end
+
+      before do
+        allow(DiaperPartnerClient).to receive(:get).and_return(fake_get_return)
+      end
+
+      it { is_expected.to be_successful }
     end
   end
 
   describe "GET #show" do
+    subject do
+      get partner_path(partner, default_params.merge(format: response_format))
+      response
+    end
+
     let(:partner) { create(:partner, organization: @organization, status: :approved) }
     let(:fake_get_return) do
       { "agency" => {
@@ -29,10 +58,32 @@ RSpec.describe "Partners", type: :request do
       allow(DiaperPartnerClient).to receive(:get).with({ id: partner.to_param }, query_params: { impact_metrics: true }).and_return(fake_get_return)
     end
 
-    it "returns http success" do
-      get partner_path(default_params.merge(id: partner))
-      expect(response).to be_successful
-      expect(assigns[:impact_metrics]).to eq(JSON.parse(fake_get_return))
+    context "html" do
+      let(:response_format) { 'html' }
+
+      it { is_expected.to be_successful }
+
+      context "when the partner is invited" do
+        it "includes impact metrics" do
+          subject
+          expect(assigns[:impact_metrics]).to eq(JSON.parse(fake_get_return))
+        end
+      end
+
+      context "when the partner is uninvited" do
+        let(:partner) { create(:partner, organization: @organization, status: :uninvited) }
+
+        it "does not include impact metrics" do
+          subject
+          expect(assigns[:impact_metrics]).not_to be_present
+        end
+      end
+    end
+
+    context "csv" do
+      let(:response_format) { 'csv' }
+
+      it { is_expected.to be_successful }
     end
   end
 
