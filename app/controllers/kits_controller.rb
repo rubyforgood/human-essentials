@@ -1,12 +1,7 @@
 class KitsController < ApplicationController
   def index
-    @kits = current_organization.kits.class_filter(filter_params)
-    @base_items = current_organization.items.alphabetized
-    @selected_item = filter_params[:by_partner_key]
-    @include_inactive = params[:include_inactive]
-    unless params[:include_inactive]
-      @kits = @kits.active
-    end
+    @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
+    @selected_filter_name = filter_params[:by_name]
   end
 
   def new
@@ -92,6 +87,6 @@ class KitsController < ApplicationController
   def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_partner_key, :include_inactive_items)
+    params.require(:filters).slice(:by_name)
   end
 end
