@@ -16,6 +16,7 @@
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  kit_id                       :integer
 #  organization_id              :integer
 #
 
