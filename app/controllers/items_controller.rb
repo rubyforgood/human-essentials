@@ -2,7 +2,7 @@
 # they like with their own Items.
 class ItemsController < ApplicationController
   def index
-    @items = current_organization.items.includes(:base_item).alphabetized.class_filter(filter_params)
+    @items = current_organization.items.includes(:base_item, :kit).alphabetized.class_filter(filter_params)
     @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location)
     @storages = current_organization.storage_locations.order(id: :asc)
 
