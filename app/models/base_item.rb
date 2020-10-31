@@ -21,9 +21,11 @@ class BaseItem < ApplicationRecord
   validates :partner_key, presence: true, uniqueness: true
 
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
+  scope :without_kit, -> { where.not(name: 'Kit') }
   scope :alphabetized, -> { order(:name) }
 
   def to_h
     { partner_key: partner_key, name: name }
   end
 end
+

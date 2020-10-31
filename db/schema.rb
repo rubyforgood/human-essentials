@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_01_191608) do
+ActiveRecord::Schema.define(version: 2020_10_04_124133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -229,6 +229,8 @@ ActiveRecord::Schema.define(version: 2020_10_01_191608) do
     t.integer "on_hand_minimum_quantity", default: 0, null: false
     t.integer "on_hand_recommended_quantity"
     t.boolean "visible_to_partners", default: true, null: false
+    t.integer "kit_id"
+    t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
   end
@@ -410,6 +412,7 @@ ActiveRecord::Schema.define(version: 2020_10_01_191608) do
   add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"

@@ -39,6 +39,13 @@ items_by_category.each do |category, entries|
   end
 end
 
+# Create global 'Kit' base item
+BaseItem.find_or_create_by!(
+  name: 'Kit',
+  category: 'kit',
+  partner_key: 'kit'
+)
+
 
 # ----------------------------------------------------------------------------
 # Organizations
@@ -448,3 +455,5 @@ users.each do |user|
     )
   end
 end
+
+
