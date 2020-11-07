@@ -49,17 +49,15 @@
 
                     <%= f.input :comment %>
 
-                    <fieldset style="margin-bottom: 2rem;">
+                    <fieldset style="margin-bottom: 2rem;" class='w-50'>
                       <legend>Items in this adjustment</legend>
                       <%= f.simple_fields_for :line_items do |item| %>
                         <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
                           <%= render 'line_items/line_item_fields', f: item %>
                         </div>
                       <% end %>
-                      <div class="row links">
-                        <div class="col-xs-12">
-                          <%= add_line_item_button f, "#adjustment_line_items" %>
-                        </div>
+                      <div class="row links justify-content-end">
+                        <%= add_line_item_button f, "#adjustment_line_items" %>
                       </div>
 
                     </fieldset>
