@@ -484,7 +484,7 @@ GEM
     unicode-display_width (1.7.0)
     warden (1.2.9)
       rack (>= 2.0.9)
-    web-console (4.0.4)
+    web-console (4.1.0)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
@@ -508,7 +508,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yajl-ruby (1.4.1)
-    zeitwerk (2.4.0)
+    zeitwerk (2.4.1)
 
 PLATFORMS
   ruby
