@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <fieldset style="margin-bottom: 2rem;">
+    <fieldset style="margin-bottom: 2rem;" class='w-50'>
       <legend>Items in this donation</legend>
       <div id="donation_line_items" data-capture-barcode="true">
 
@@ -98,10 +98,8 @@
         <% end %>
       </div>
 
-      <div class="row links">
-        <div class="col-xs-12 p-3">
-          <%= add_line_item_button f, "#donation_line_items", {} %>
-        </div>
+      <div class="row links justify-content-end">
+        <%= add_line_item_button f, "#donation_line_items", {} %>
       </div>
     </fieldset>
 
