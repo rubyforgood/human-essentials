@@ -213,5 +213,21 @@ RSpec.describe Distribution, type: :model do
         expect(Distribution.for_csv_export(@organization, {}, 4.days.ago..2.days.ago)).to match_array [distribution_1]
       end
     end
+
+    describe "csv_export_attributes" do
+      let(:item) { create(:item) }
+      let!(:distribution) { create(:distribution, :with_items, item: item, organization: @organization, issued_at: 3.days.ago) }
+
+      it "returns the set of attributes which define a row in case of distribution export" do
+        distribution_details = [distribution].map(&:csv_export_attributes).first
+        expect(distribution_details[0]).to eq distribution.partner.name
+        expect(distribution_details[1]).to eq distribution.issued_at.strftime("%F")
+        expect(distribution_details[2]).to eq distribution.storage_location.name
+        expect(distribution_details[3]).to eq distribution.line_items.total
+        expect(distribution_details[5]).to eq distribution.delivery_method
+        expect(distribution_details[6]).to eq distribution.state
+        expect(distribution_details[7]).to eq distribution.agency_rep
+      end
+    end
   end
 end

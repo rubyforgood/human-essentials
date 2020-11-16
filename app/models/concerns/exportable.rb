@@ -10,9 +10,9 @@ module Exportable
       [csv_export_headers] + data.map(&:csv_export_attributes)
     end
 
-    def generate_csv(data)
+    def generate_csv(data, additional_headers = [])
       CSV.generate(headers: true) do |csv|
-        ([csv_export_headers] + data.map(&:csv_export_attributes)).each do |row|
+        ([csv_export_headers + additional_headers] + data.map(&:csv_export_attributes)).each do |row|
           csv << row
         end
       end
