@@ -32,10 +32,10 @@ class Distribution < ApplicationRecord
 
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
-
+  
   validates :storage_location, :partner, :organization, presence: true
   validate :line_item_items_exist_in_inventory
-  validate :issued_at_end_is_after_issued_at, if: 'issued_at_timeframe_enabled.present?'
+  validate :issued_at_end_is_after_issued_at, if: -> { 'issued_at_timeframe_enabled.present?' }
   include IssuedAt
 
   before_save :combine_distribution

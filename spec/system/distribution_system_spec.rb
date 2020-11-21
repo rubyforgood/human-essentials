@@ -38,6 +38,7 @@ RSpec.feature "Distributions", type: :system do
         fill_in "Comment", with: "Take my wipes... please"
         check "distribution[issued_at_timeframe_enabled]"
         select "15", from: "distribution[issued_at_end(5i)]"
+        freeze_time
         expect do
           click_button "Save", match: :first
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
@@ -48,7 +49,17 @@ RSpec.feature "Distributions", type: :system do
         expect(page.find(".alert-info")).to have_content "reated"
       end
       visit(pickup_day_distributions_path(organization_id: @organization.id))
-      page.has_css?("td", text: "PM") or page.has_css?("td", text: "AM")
+      current_distribution = Distribution.last
+      assert_equal Time.current, current_distribution.created_at
+      unfreeze_time
+      pickup_time_range = (
+        current_distribution.issued_at.strftime("%l:%M %p") +
+        " - " +
+        current_distribution.issued_at_end.strftime("%l:%M %p")
+      )
+      expect (
+        page.has_css?("td", text: pickup_time_range )
+      )
     end
 
     it "Displays a complete form after validation errors" do
