@@ -6,7 +6,7 @@ set :application,     "diaper_base"
 set :user,            "deploy"
 set :puma_threads,    [4, 16]
 set :puma_workers,    0
-set :ssh_options, keys: ["config/deploy_id_rsa"] if File.exist?("config/deploy_id_rsa")
+set :ssh_options, keys: ["config/deploy_id_rsa_enc"] if File.exist?("config/deploy_id_rsa_enc")
 
 # Don't change these unless you know what you're doing
 set :pty,             false
