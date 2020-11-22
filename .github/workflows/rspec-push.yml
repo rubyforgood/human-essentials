@@ -69,14 +69,10 @@ jobs:
           RAILS_ENV: test
         run: |
           RUBYOPT='-W:no-deprecated -W:no-experimental' bundle exec rspec
-      - name: deploy
-        - uses: ruby/setup-ruby@v1
-          with:
-            ruby-version: 2.7.2
-            bundler-cache: true
-        - uses: miloserdow/capistrano-deploy@master
-          env:
-            BRANCH: main
-          with:
-            target: staging
-            deploy_key: ${{ secrets.DEPLOY_ENC_KEY }}
+      - name: Deploy via capistrano
+        uses: miloserdow/capistrano-deploy@master
+        env:
+          BRANCH: main
+        with:
+          target: staging
+          deploy_key: ${{ secrets.DEPLOY_ENC_KEY }}
