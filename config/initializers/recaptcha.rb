@@ -1,5 +1,5 @@
 Recaptcha.configure do |config|
   # Call keys from .env file here
-  # config.site_key   = Rails.application.secrets[:RECAPTCHA_PUBLIC_KEY]
-  # config.secret_key = Rails.application.secrets[:RECAPTCHA_PRIVATE_KEY]
+  config.site_key   = '6LdBfekZAAAAAAmEgaeLe3S2KxW3DPUNVoIKT6wE'
+  config.secret_key = '6LdBfekZAAAAAElU4F2gSspPkJ_LtXMa1gPFX6E5'
 end
