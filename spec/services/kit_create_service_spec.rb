@@ -60,6 +60,27 @@ describe KitCreateService do
           expect(subject.errors[:base]).to eq([raised_error])
         end
       end
+
+      context 'but the ItemCreationService is unsuccesful' do
+        let(:fake_error_struct) { OpenStruct.new(success?: false, error: error) }
+        let(:error) { Faker::Name.name }
+
+        before do
+          allow_any_instance_of(ItemCreateService).to receive(:call).and_return(fake_error_struct)
+        end
+
+        it 'should not create the Kit' do
+          expect { subject }.not_to change { Kit.all.count }
+        end
+
+        it 'should not create a Item' do
+          expect { subject }.not_to change { Item.all.count }
+        end
+
+        it 'should have an error that includes the error' do
+          expect(subject.errors[:base]).to eq([error])
+        end
+      end
     end
 
     context 'when the parameters provided are invalid' do
