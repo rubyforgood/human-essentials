@@ -39,6 +39,6 @@ class RequestsTotalItemsService
 
   def item_name(id)
     item_found = items_names.find { |item| item["id"] == id }
-    item_found["name"].presence || "*Unknown Item*"
+    item_found&.fetch('name') || '*Unknown Item*'
   end
 end
