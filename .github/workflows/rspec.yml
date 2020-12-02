@@ -67,5 +67,11 @@ jobs:
           PGHOST: localhost
           PGUSER: postgres
           RAILS_ENV: test
-        run: |
-          RUBYOPT='-W:no-deprecated -W:no-experimental' bundle exec rspec
+        run: bundle exec rake -T
+      - name: Deploy via capistrano
+        uses: miloserdow/capistrano-deploy@master
+        env:
+          BRANCH: main
+        with:
+          target: staging
+          deploy_key: ${{ secrets.DEPLOY_ENC_KEY }}
