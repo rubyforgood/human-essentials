@@ -23,6 +23,12 @@
     "webpack-cli": "^3.3.7"
   },
   "devDependencies": {
+    "husky": "^4.3.4",
     "webpack-dev-server": "^3.8.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "rubocop -a"
+    }
   }
 }
