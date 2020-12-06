@@ -28,7 +28,10 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "rubocop -a"
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.rb": "rubocop -a"
   }
 }
