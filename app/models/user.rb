@@ -49,7 +49,6 @@ class User < ApplicationRecord
 
   def invitation_status
     return "joined" if current_sign_in_at.present?
-
     return "accepted" if invitation_accepted_at.present?
     return "invited" if invitation_sent_at.present?
   end
