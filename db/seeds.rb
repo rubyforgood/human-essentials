@@ -28,7 +28,6 @@ end
 base_items = File.read(Rails.root.join("db", "base_items.json"))
 items_by_category = JSON.parse(base_items)
 
-
 # ----------------------------------------------------------------------------
 # Base Items
 # ----------------------------------------------------------------------------
@@ -119,8 +118,15 @@ end
 
 
 # ----------------------------------------------------------------------------
-# Partners
+# Partners & Associated Data
 # ----------------------------------------------------------------------------
+
+partner_status_map = {
+  :pending => "pending",
+  :recertification_required => "recertification_required",
+  :approved => "verified",
+  :verified => "verified"
+}
 
 note = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac enim orci. Donec id consequat est. Vivamus luctus vel erat quis tincidunt. Nunc quis varius justo. Integer quam augue, dictum vitae bibendum in, fermentum quis felis. Nam euismod ultrices velit a tristique. Vestibulum sed tincidunt erat. Vestibulum et ullamcorper sem. Sed ante leo, molestie vitae augue ac, aliquam ultrices enim."
@@ -129,33 +135,165 @@ note = [
 [
   {
     name: "Pawnee Parent Service",
-    email: "someone@pawneeparent.org",
+    email: "verified@example.com",
     status: :approved,
     notes: note.sample
   },
   {
     name: "Pawnee Homeless Shelter",
-    email: "anyone@pawneehomelss.com",
+    email: "invited@pawneehomelss.com",
     status: :invited,
     notes: note.sample
   },
   {
     name: "Pawnee Pregnancy Center",
-    email: "contactus@pawneepregnancy.com",
+    email: "unverified@pawneepregnancy.com",
     status: :invited,
     notes: note.sample
   },
   {
     name: "Pawnee Senior Citizens Center",
-    email: "help@pscc.org",
+    email: "recertification_required@example.com",
     status: :recertification_required,
     notes: note.sample
   }
 ].each do |partner_option|
-  Partner.find_or_create_by!(partner_option) do |partner|
+  p = Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
   end
+
+  # ----------------------------------------------------------------------------
+  # Creating associated records within the Partnerbase database
+  #
+  # **We have two seperate database. One for diaperbase and the other for partnerbase**
+  # ----------------------------------------------------------------------------
+
+  partner = Partners::Partner.create!(
+    executive_director_name: Faker::Name.name,
+    program_contact_name: Faker::Name.name,
+    name: p.name,
+    address1: Faker::Address.street_address,
+    address2: "",
+    city: Faker::Address.city,
+    state: Faker::Address.state_abbr,
+    zip_code: Faker::Address.zip,
+    website: Faker::Internet.domain_name,
+    zips_served: Faker::Address.zip,
+    diaper_bank_id: pdx_org.id,
+    diaper_partner_id: p.id,
+    executive_director_email: p.email,
+    partner_status: partner_status_map[partner_option[:status]] || "pending",
+    status_in_diaper_base: partner_option[:status]
+  )
+
+  Partners::User.create!(
+    name: Faker::Name.name,
+    password: "password",
+    password_confirmation: "password",
+    email: p.email,
+    partner: partner
+  )
+
+  #
+  # Skip creating records that they would have created after
+  # they've accepted the invitation
+  #
+  next if partner.partner_status == 'pending'
+
+  families = (1..Faker::Number.within(range: 4..13)).to_a.map do
+    Partners::Family.create!(
+      guardian_first_name: Faker::Name.first_name,
+      guardian_last_name: Faker::Name.last_name,
+      guardian_zip_code: Faker::Address.zip_code,
+      guardian_country: "United States",
+      guardian_phone: Faker::PhoneNumber.phone_number,
+      agency_guardian_id: Faker::Name.name,
+      home_adult_count: [1, 2, 3].sample,
+      home_child_count: [0, 1, 2, 3, 4, 5].sample,
+      home_young_child_count: [1, 2, 3, 4].sample,
+      sources_of_income: Partners::Family::INCOME_TYPES.sample(2),
+      guardian_employed: Faker::Boolean.boolean,
+      guardian_employment_type: Partners::Family::EMPLOYMENT_TYPES.sample,
+      guardian_monthly_pay: [1, 2, 3, 4].sample,
+      guardian_health_insurance: Partners::Family::INSURANCE_TYPES.sample,
+      comments: Faker::Lorem.paragraph,
+      military: false,
+      partner: partner
+    )
+  end
+
+  families.each do |family|
+    Partners::AuthorizedFamilyMember.create!(
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name,
+      date_of_birth: Faker::Date.birthday(min_age: 18, max_age: 100),
+      gender: Faker::Gender.binary_type,
+      comments: Faker::Lorem.paragraph,
+      family: family
+    )
+
+    family.home_child_count.times do
+      Partners::Child.create!(
+        family: family,
+        first_name: Faker::Name.first_name,
+        last_name: family.guardian_last_name,
+        date_of_birth: Faker::Date.birthday(min_age: 5, max_age: 18),
+        gender: Faker::Gender.binary_type,
+        child_lives_with: Partners::Child::CAN_LIVE_WITH.sample(2),
+        race: Partners::Child::RACES.sample,
+        agency_child_id: family.agency_guardian_id,
+        health_insurance: family.guardian_health_insurance,
+        comments: Faker::Lorem.paragraph,
+        active: Faker::Boolean.boolean,
+        archived: false,
+        item_needed_diaperid: Partners::Child::CHILD_ITEMS.sample
+      )
+    end
+
+    family.home_young_child_count.times do
+      Partners::Child.create!(
+        family: family,
+        first_name: Faker::Name.first_name,
+        last_name: family.guardian_last_name,
+        date_of_birth: Faker::Date.birthday(min_age: 0, max_age: 5),
+        gender: Faker::Gender.binary_type,
+        child_lives_with: Partners::Child::CAN_LIVE_WITH.sample(2),
+        race: Partners::Child::RACES.sample,
+        agency_child_id: family.agency_guardian_id,
+        health_insurance: family.guardian_health_insurance,
+        comments: Faker::Lorem.paragraph,
+        active: Faker::Boolean.boolean,
+        archived: false,
+        item_needed_diaperid: Partners::Child::CHILD_ITEMS.sample
+      )
+    end
+  end
+
+  Faker::Number.within(range: 32..56).times do
+    pr = Partners::Request.new(
+      comments: Faker::Lorem.paragraph,
+      partner: partner,
+      for_families: Faker::Boolean.boolean
+    )
+
+    # Ensure that the item requests are valid with
+    # the valid `item_id
+    item_requests = Array.new(Faker::Number.within(range: 5..15)) do
+      item = Item.all.sample
+
+      Partners::ItemRequest.new(
+        name: Partners::Child::CHILD_ITEMS.sample,
+        quantity: Faker::Number.within(range: 10..30),
+        partner_key: item.partner_key,
+        item_id: item.id
+      )
+    end
+
+    pr.item_requests = item_requests
+    pr.save!
+  end
 end
+
 
 # ----------------------------------------------------------------------------
 # Storage Locations
@@ -164,10 +302,14 @@ end
 inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage Location") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = pdx_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[0]
+  inventory.square_footage = 10000
 end
 inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = pdx_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[1]
+  inventory.square_footage = 20000
 end
 
 # ----------------------------------------------------------------------------
@@ -455,5 +597,3 @@ users.each do |user|
     )
   end
 end
-
-

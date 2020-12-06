@@ -67,6 +67,10 @@ module Itemizable
       def total
         sum(:quantity)
       end
+
+      def total_value
+        sum(&:value_per_line_item)
+      end
     end
     has_many :items, through: :line_items
     accepts_nested_attributes_for :line_items,

@@ -46,16 +46,18 @@ class DistributionsController < ApplicationController
     @total_items_all_distributions = total_items(@distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
+    @storage_locations = current_organization.storage_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
     @selected_item = filter_params[:by_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
+    @selected_location = filter_params[:by_location]
     # FIXME: one of these needs to be removed but it's unclear which at this point
     @statuses = Distribution.states.transform_keys(&:humanize)
 
     respond_to do |format|
       format.html
-      format.csv { send_data Distribution.generate_csv(@distributions), filename: "Distributions-#{Time.zone.today}.csv" }
+      format.csv { send_data Distribution.generate_csv(@distributions, @items.collect(&:name).sort), filename: "Distributions-#{Time.zone.today}.csv" }
     end
   end
 
@@ -200,7 +202,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_partner, :by_state)
+    params.require(:filters).permit(:by_item_id, :by_partner, :by_state, :by_location)
   end
 
   def perform_inventory_check

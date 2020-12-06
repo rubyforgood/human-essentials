@@ -31,6 +31,7 @@ class Distribution < ApplicationRecord
   include Exportable
   include IssuedAt
   include Filterable
+  include ItemsHelper
 
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
@@ -47,6 +48,8 @@ class Distribution < ApplicationRecord
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
+  # location scope to allow filtering distributions by location
+  scope :by_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
   # state scope to allow filtering by state
   scope :by_state, ->(state) { where(state: state) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
@@ -112,7 +115,8 @@ class Distribution < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Partner", "Date of Distribution", "Source Inventory", "Total items"]
+    ["Partner", "Date of Distribution", "Source Inventory", "Total items",
+     "Total Value (in $)", "Delivery Method", "State", "Agency Representative"]
   end
 
   def combine_distribution
@@ -124,8 +128,12 @@ class Distribution < ApplicationRecord
       partner.name,
       issued_at.strftime("%F"),
       storage_location.name,
-      line_items.total
-    ]
+      line_items.total,
+      cents_to_dollar(line_items.total_value),
+      delivery_method,
+      state,
+      agency_rep
+    ] + quantity_per_line_item
   end
 
   def future?
@@ -134,5 +142,15 @@ class Distribution < ApplicationRecord
 
   def past?
     issued_at < Time.zone.today
+  end
+
+  private
+
+  def quantity_per_line_item
+    item_hash = line_items.quantities_by_name
+    item_ids = item_hash.collect { |_, value| value[:item_id] }
+    filtered_items = organization.items.filter { |item| item.active && item.visible_to_partners && !item_ids.include?(item.id) }
+    filtered_items.each { |item| item_hash[item.id] = { item_id: item.id, name: item.name, quantity: 0 } }
+    item_hash.sort_by { |_, value| value[:name] }.to_h.collect { |_, value| value[:quantity] }
   end
 end

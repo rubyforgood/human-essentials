@@ -174,6 +174,15 @@ RSpec.describe Partner, type: :model do
     end
   end
 
+  describe '#contact_person' do
+    let(:partner) { create(:partner) }
+
+    it "checks for agency in response before fetching contact info" do
+      allow(partner).to receive(:partnerbase_partner) { instance_double('partnerbase_partner', agency: nil) }
+      expect(partner.contact_person).to eq({})
+    end
+  end
+
   describe '#quantity_year_to_date' do
     let(:partner) { create(:partner) }
     before do

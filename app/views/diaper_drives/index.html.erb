@@ -79,6 +79,7 @@
                 <th>Diaper Drive Name</th>
                 <th>Start Date</th>
                 <th>End Date</th>
+                <th>Held Virtually?<th>
                 <th class="numeric">Quantity of Items</th>
                 <th class="numeric">Variety of Items</th>
                 <th class="numeric">In Kind Value</th>
@@ -91,6 +92,7 @@
                   <td><%= diaper_drive.name %></td>
                   <td><%= diaper_drive.start_date.strftime("%m-%d-%Y") %></td>
                   <td><%= diaper_drive.end_date.strftime("%m-%d-%Y") %></td>
+                  <td><%= is_virtual(diaper_drive: diaper_drive) %></td>
                   <td class="text-right"><%= diaper_drive.donation_quantity %></td>
                   <td class="text-right"><%= diaper_drive.distinct_items %></td>
                   <td class="text-right"><strong><%= dollar_value(diaper_drive.in_kind_value) %></strong></td>

@@ -7,6 +7,8 @@
 #  latitude        :float
 #  longitude       :float
 #  name            :string
+#  square_footage  :integer
+#  warehouse_type  :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -17,6 +19,8 @@ FactoryBot.define do
     name { "Smithsonian Conservation Center" }
     address { "1500 Remount Road, Front Royal, VA 22630" }
     organization { Organization.try(:first) || create(:organization) }
+    square_footage { 100 }
+    warehouse_type { StorageLocation::WAREHOUSE_TYPES.sample }
 
     trait :with_items do
       transient do

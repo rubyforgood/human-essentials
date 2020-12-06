@@ -64,3 +64,6 @@ yarn-debug.log*
 
 # Ignore SimpleCov assets
 coverage
+
+# Ignore node management configuration file
+.nvmrc

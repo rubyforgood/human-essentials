@@ -35,7 +35,6 @@ gem "jwt"
 gem "kaminari"
 gem "mini_racer", "~> 0.3.1"
 gem "momentjs-rails"
-gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
 gem "paperclip" # needed for legacy migrations
 gem "pg", "~> 1.2.3"
@@ -54,18 +53,23 @@ gem "uglifier", ">= 1.3.0"
 gem "webpacker", "> 4.0"
 gem "yajl-ruby"
 
+group :production do
+  gem "newrelic_rpm"
+end
+
 group :development, :test do
   gem "awesome_print"
   gem "brakeman"
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
+  gem "knapsack_pro"
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
-  gem 'rb-readline', '~> 0.5.3'
-  gem "rspec-rails", "~> 4.0.1"
+  gem "rb-readline", "~> 0.5.3"
+  gem "rspec-rails", "~> 4.0.2"
   gem "rubocop"
-  gem "rubocop-rails", "~> 2.8.1"
+  gem "rubocop-rails", "~> 2.9.1"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "faker"
@@ -82,7 +86,7 @@ group :development do
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
   gem "letter_opener"
-  gem "listen", "~> 3.3.3"
+  gem "listen", "~> 3.4.1"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
@@ -98,7 +102,7 @@ group :test do
   gem "rails-controller-testing"
   gem "rspec-sidekiq"
   gem 'simplecov'
-  gem 'shoulda-matchers', '~> 4.4'
+  gem 'shoulda-matchers', '~> 4.5'
   gem 'webdrivers', '~> 4.4'
   gem "webmock", "~> 3.10"
 end

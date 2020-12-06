@@ -42,3 +42,17 @@ RSpec.shared_examples "requiring authorization" do |constraints|
     end
   end
 end
+
+RSpec.shared_examples "requiring a authenticated partner user" do
+  context 'when the user is not a authenticated partner_user' do
+    before do
+      sign_out :partner_user
+    end
+
+    it 'should redirect to the partner user login page' do
+      subject.call
+      expect(response).to redirect_to(new_partner_user_session_path)
+    end
+  end
+end
+

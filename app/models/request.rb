@@ -5,7 +5,7 @@
 #  id              :bigint           not null, primary key
 #  comments        :text
 #  request_items   :jsonb
-#  status          :integer          default("pending")
+#  status          :integer          default(0)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  distribution_id :integer

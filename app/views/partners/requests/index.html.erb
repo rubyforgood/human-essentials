@@ -1,0 +1,71 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Essentials Requests - #{current_partner_user.name}" %>
+        <h1><i class="fa fa-edit"></i>&nbsp;&nbsp;Essentials Requests
+          <small>for <%= current_partner_user.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item">
+            <a><%= "#{current_partner_user.partner.name}" %></a></li>
+          <li class="breadcrumb-item"><a href="#">Essentials Requests</a></li>
+        </ol>
+      </div>
+    </div>`
+  </div><!-- /.container-fluid -->
+</section>
+
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Default box -->
+        <%= render 'request_options_card' if @partner.verified? %>
+
+        <div class="card">
+          <div class="card-header bg-info">
+            <h1 class="card-title">Request History</h1>
+          </div>
+          <div class="card-body p-0">
+
+            <table class="table">
+              <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Contents</th>
+                <th scope="col">Pickup Sheet</th>
+                <th scope="col">Request Date</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @partner_requests.each do |partner_request| %>
+                <tr>
+                  <th scope="row"><%= link_to 'TODO' %></th>
+                  <td><%= partner_request.item_requests.map { |item| "#{item.quantity} of #{item.name}" }.join(", ") %></td>
+                  <td>
+                    <% if partner_request.for_families? %>
+                      <%= link_to 'TODO', class: 'btn btn-sm btn-info' do %>
+                        <i class="fa fa-edit"></i> (TODO) Pickup Sheet
+                      <% end %>
+                    <% end %>
+                  </td>
+                  <td><%= partner_request.created_at.strftime("%B %-d %Y") %></td>
+                </tr>
+                </tbody>
+              <% end %>
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

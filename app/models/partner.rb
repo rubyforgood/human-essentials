@@ -8,7 +8,7 @@
 #  notes           :text
 #  quota           :integer
 #  send_reminders  :boolean          default(FALSE), not null
-#  status          :integer          default("uninvited")
+#  status          :integer          default(0)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -110,7 +110,7 @@ class Partner < ApplicationRecord
   end
 
   def contact_person
-    if partnerbase_partner
+    if partnerbase_partner&.agency
       partnerbase_partner.agency.fetch(:contact_person)
     else
       {}
