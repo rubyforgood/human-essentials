@@ -23,6 +23,16 @@
     "webpack-cli": "^3.3.7"
   },
   "devDependencies": {
+    "husky": "^4.3.4",
+    "lint-staged": "^10.5.3",
     "webpack-dev-server": "^3.8.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.rb": "rubocop -a"
   }
 }
