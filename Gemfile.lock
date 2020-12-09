@@ -280,7 +280,7 @@ GEM
       mime-types
       mimemagic (~> 0.3.0)
       terrapin (~> 0.6.0)
-    parallel (1.19.2)
+    parallel (1.20.1)
     parser (2.7.2.0)
       ast (~> 2.4.1)
     pdf-core (0.7.0)
@@ -396,12 +396,12 @@ GEM
       rubocop-ast (>= 1.0.1)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
-    rubocop-ast (1.1.0)
+    rubocop-ast (1.3.0)
       parser (>= 2.7.1.5)
-    rubocop-rails (2.8.1)
+    rubocop-rails (2.9.0)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
-      rubocop (>= 0.87.0)
+      rubocop (>= 0.90.0, < 2.0)
     ruby-graphviz (1.2.4)
     ruby-progressbar (1.10.1)
     ruby-vips (2.0.17)
@@ -508,7 +508,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yajl-ruby (1.4.1)
-    zeitwerk (2.4.1)
+    zeitwerk (2.4.2)
 
 PLATFORMS
   ruby
@@ -580,7 +580,7 @@ DEPENDENCIES
   rspec-rails (~> 4.0.1)
   rspec-sidekiq
   rubocop
-  rubocop-rails (~> 2.8.1)
+  rubocop-rails (~> 2.9.0)
   sass-rails
   shoulda-matchers (~> 4.4)
   sidekiq
