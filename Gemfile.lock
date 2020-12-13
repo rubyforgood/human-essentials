@@ -167,9 +167,9 @@ GEM
     ffi (1.13.1)
     filterrific (5.2.1)
     flipper (0.19.1)
-    flipper-active_record (0.19.0)
+    flipper-active_record (0.19.1)
       activerecord (>= 5.0, < 7)
-      flipper (~> 0.19.0)
+      flipper (~> 0.19.1)
     flipper-ui (0.19.1)
       erubi (>= 1.0.0, < 2.0.0)
       flipper (~> 0.19.1)
@@ -508,7 +508,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yajl-ruby (1.4.1)
-    zeitwerk (2.4.1)
+    zeitwerk (2.4.2)
 
 PLATFORMS
   ruby
