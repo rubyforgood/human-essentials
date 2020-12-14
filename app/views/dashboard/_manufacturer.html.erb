@@ -1,5 +1,12 @@
-  <div class="float-center manufacturer">
-    <%= link_to manufacturer do %>
-      <%= manufacturer.name %> (<%= number_with_delimiter(manufacturer.volume) %>)
+<div class="d-flex justify-content-between mx-3 my-2 ">
+  <div class="w-50">
+  <%= link_to manufacturer do %>
+    <%= number_with_delimiter(manufacturer.volume) %> items 
+  <% end %>
+  </div>
+  <div class="w-100 text-left">
+  <%= link_to manufacturer do %>
+      <%= manufacturer.name %>
     <% end %>
   </div>
+</div>

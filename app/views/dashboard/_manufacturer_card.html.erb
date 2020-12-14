@@ -1,0 +1,36 @@
+<div class="card d-flex flex-column" id="manufacturers">
+  <div class="card-header border-0 bg-primary">
+    <h3 class="card-title text-semibold">Manufacturer Donations</h3>
+    <div class="card-tools">
+      <button type="button" class="btn btn-tool" data-card-widget="collapse">
+        <i class="fas fa-minus"></i>
+      </button>
+    </div>
+  </div>
+  <div class="card-body p-0 ">
+    <div class="d-flex justify-content-between pt-3">
+      <div class="px-3 mb-3">
+        <h2 class="m-0"><b><%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }) %></b></h2>
+        <span class="text-muted">Items Received</span>
+      </div>
+    </div>
+    <div class="border-bottom">
+      <small class="d-flex justify-content-between text-muted px-3 mb-1">
+        <span>Top Manufacturer Donations</span>
+        <%= link_to "View All Manufacturer Donations", donations_path(
+                filters: {
+                    by_source: "Manufacturer"
+                }) %>
+      </small>
+    </div>
+    <div class="d-flex justify-content-between mx-3 my-2 text-muted ">
+      <div class="w-50">
+        <small>Quantity</small>
+      </div>
+      <div class="w-100 text-left">
+        <small>Donated From</small>
+      </div>
+    </div>
+    <%= render partial: "manufacturer", collection: @top_manufacturers, as: :manufacturer %>
+  </div>
+</div>
