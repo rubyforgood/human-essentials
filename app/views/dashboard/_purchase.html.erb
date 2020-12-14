@@ -1,9 +1,12 @@
-<br>
-<div class="pull-left">
+<div class="d-flex justify-content-between mx-3 my-2 ">
+  <div class="w-50">
   <%= link_to purchase do %>
-    <%= purchase.line_items.total %> items from <%= purchase.purchased_from_view %>
+    <%= purchase.line_items.total %> items 
   <% end %>
-</div>
-<div class="pull-right">
-  <%= distance_of_time_in_words_to_now purchase.created_at %> ago
+  </div>
+  <div class="w-100 text-left">
+    <%= link_to purchase do %>
+      <%= purchase.purchased_from_view %>
+    <% end %>
+  </div>
 </div>

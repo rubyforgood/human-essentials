@@ -637,11 +637,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
         it "should list top 10 manufacturers" do
           visit subject
 
-          within "#manufacturers" do
-            expect(page).to have_content("0 items")
-              .and have_content("0 Manufacturers")
-          end
-
           item_qty = 200
           12.times do
             manufacturer = create(:manufacturer)
@@ -653,8 +648,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           within "#manufacturers" do
             expect(page).to have_content("2,334")
-            expect(page).to have_content("12 Manufacturers")
-            expect(page).to have_css(".manufacturer", count: 10)
           end
         end
 
