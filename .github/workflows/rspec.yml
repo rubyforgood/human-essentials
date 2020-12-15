@@ -67,5 +67,11 @@ jobs:
           PGHOST: localhost
           PGUSER: postgres
           RAILS_ENV: test
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: 0038c1f0bebcc49ae3d86e30ef9fe741
+          KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+          KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+          KNAPSACK_PRO_FIXED_QUEUE_SPLIT: true
+          KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+          KNAPSACK_PRO_LOG_LEVEL: info
         run: |
-          RUBYOPT='-W:no-deprecated -W:no-experimental' bundle exec rspec
+          RUBYOPT='-W:no-deprecated -W:no-experimental' bundle exec rake knapsack_pro:queue:rspec
