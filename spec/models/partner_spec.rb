@@ -178,7 +178,7 @@ RSpec.describe Partner, type: :model do
     let(:partner) { create(:partner) }
 
     it "checks for agency in response before fetching contact info" do
-      allow(partner).to receive(:partnerbase_partner) { OpenStruct.new(agency: nil) }
+      allow(partner).to receive(:partnerbase_partner) { instance_double('partnerbase_partner', agency: nil) }
       expect(partner.contact_person).to eq({})
     end
   end
