@@ -8,6 +8,12 @@ RSpec.describe NotifyPartnerJob, job: true do
       allow(mailer).to receive(:deliver_later)
     end
 
+    it "avoids exception when request doesn't exist" do
+      expect do
+        NotifyPartnerJob.perform_now(123)
+      end.not_to raise_error(StandardError)
+    end
+
     it "is expected to call RequestsConfirmationMailer" do
       NotifyPartnerJob.perform_now(request.id)
       expect(RequestsConfirmationMailer).to have_received(:confirmation_email).with(request)
