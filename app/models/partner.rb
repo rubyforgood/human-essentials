@@ -110,7 +110,7 @@ class Partner < ApplicationRecord
   end
 
   def contact_person
-    if partnerbase_partner
+    if partnerbase_partner&.agency
       partnerbase_partner.agency.fetch(:contact_person)
     else
       {}
