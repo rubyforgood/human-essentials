@@ -233,6 +233,8 @@ GEM
       activerecord
       kaminari-core (= 1.2.1)
     kaminari-core (1.2.1)
+    knapsack_pro (2.10.1)
+      rake
     launchy (2.5.0)
       addressable (~> 2.7)
     letter_opener (1.7.0)
@@ -558,6 +560,7 @@ DEPENDENCIES
   jquery-ui-rails
   jwt
   kaminari
+  knapsack_pro
   launchy
   letter_opener
   listen (~> 3.3.3)
