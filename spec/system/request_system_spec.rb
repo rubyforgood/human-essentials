@@ -10,6 +10,9 @@ RSpec.describe "Requests", type: :system, js: true do
   let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
   let(:partner2) { create(:partner, name: "That Guy", email: "ntg@example.com") }
 
+  before { travel_to Time.zone.local(2020, 1, 1) }
+  after { travel_back }
+
   context "#index" do
     subject { url_prefix + "/requests" }
 
