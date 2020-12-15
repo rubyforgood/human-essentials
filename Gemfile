@@ -59,10 +59,11 @@ group :development, :test do
   gem "brakeman"
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
+  gem "knapsack_pro"
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
-  gem 'rb-readline', '~> 0.5.3'
+  gem "rb-readline", "~> 0.5.3"
   gem "rspec-rails", "~> 4.0.1"
   gem "rubocop"
   gem "rubocop-rails", "~> 2.8.1"
