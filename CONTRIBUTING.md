@@ -59,3 +59,5 @@ The most recent test coverage statistics are available online at the Code Climat
 * [aggregate, including other kinds of information](https://codeclimate.com/github/rubyforgood/diaper)
 
 Of the two (local and cloud), the local page is better organized and has more test coverage information. Sample screenshots can be seen in the simplecov [readme](https://github.com/colszowka/simplecov#example-output).
+
+Test
