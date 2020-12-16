@@ -1,15 +1,9 @@
-<div class="d-flex justify-content-between mx-3 my-2 ">
-  <div class="w-50">
+<br>
+<div class="pull-left">
   <%= link_to donation do %>
-    <%= donation.line_items.total %> items 
-  <% end %>
-  </div>
-<div class="w-100 text-left">
- <%= link_to donation do %>
-    <%= donation.source %>
+    <%= donation.line_items.total %> items from <%= donation.source %>
   <% end %>
 </div>
-<div class="w-50 text-right">
+<div class="pull-right">
   <%= distance_of_time_in_words_to_now donation.created_at %> ago
-  </div>
 </div>

@@ -2,7 +2,7 @@
 module ItemsHelper
   def dollar_value(value, addition = '')
     if value.zero?
-      '0'
+      ''
     else
       addition + ActionController::Base.helpers.number_to_currency(cents_to_dollar(value), precision: cents_to_dollar(value).round == value ? 0 : 2)
     end
