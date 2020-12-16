@@ -3,7 +3,7 @@ RSpec.describe "Authorization", type: :system, js: true do
     sign_in(@user)
     visit "/admin/dashboard"
 
-    expect(page.current_path).to eq(dashboard_path(@user.organization))
+    expect(page.find("h1")).to have_content "Dashboard"
     expect(page.find(".alert")).to have_content "Access Denied"
   end
 

@@ -3,7 +3,7 @@ RSpec.describe "Authentication", type: :system, js: true do
     it "should show dashboard upon signin" do
       sign_in(@user)
       visit "/"
-      expect(page.current_path).to eq(dashboard_path(@user.organization))
+      expect(page.find("h1")).to have_content "Dashboard"
     end
   end
 

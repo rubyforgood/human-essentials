@@ -21,17 +21,10 @@
 <body id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/,'_') %>" class="<%= params.fetch(:action, '') %> hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
 <div class="wrapper">
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light d-flex  align-items-center pl-3">
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <a href="#" data-widget="pushmenu" data-auto-collapse-size="992">
       <i class="fa fa-bars"></i>
     </a>
-
-    <% if user_signed_in? && current_organization.present? %>
-      <div class="d-flex ml-3 mt-2 flex-shrink-0 align-items-center">
-        <%= display_logo_or_name %>
-        <h4 class="ml-3"><%= current_organization.name %></h4>
-      </div>
-    <% end %>
 
     <ul class="navbar-nav ml-auto">
       <% if user_signed_in? && current_organization.present? %>

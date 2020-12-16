@@ -22,7 +22,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         end
 
         it "User can click to the new purchase form" do
-          find_link(text: 'New Purchase', match: :first).click
+          find(".fa-plus").click
 
           expect(current_path).to eq(new_purchase_path(@organization))
           expect(page).to have_content "Start a new purchase"

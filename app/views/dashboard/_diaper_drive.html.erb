@@ -1,12 +1,5 @@
-<div class="d-flex justify-content-between mx-3 my-2 ">
-  <div class="w-50">
-  <%= link_to donation do %>
-    <%= donation.line_items.total %> items 
-  <% end %>
-  </div>
-  <div class="w-100 text-left">
-  <%= link_to donation do %>
-      <%= donation.diaper_drive&.name || donation.diaper_drive_participant.business_name %>
+  <div class="float-center">
+    <%= link_to donation do %>
+      <%= donation.line_items.total %> from <%= donation.diaper_drive&.name || donation.diaper_drive_participant.business_name %>
     <% end %>
   </div>
-</div>
