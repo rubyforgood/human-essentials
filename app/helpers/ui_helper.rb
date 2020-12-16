@@ -88,7 +88,7 @@ module UiHelper
   end
 
   def filter_button(options = {})
-    _button_to({ icon: "filter", type: "secondary", text: "Filter", size: "md" }.merge(options))
+    _button_to({ icon: "filter", type: "primary", text: "Filter", size: "md" }.merge(options))
   end
 
   def modal_button_to(target_id, options = {})
@@ -97,7 +97,7 @@ module UiHelper
   end
 
   def new_button_to(link, options = {})
-    _link_to link, { type: "secondary", text: "New", size: "md" }.merge(options)
+    _link_to link, { icon: "plus", type: "success", text: "New", size: "md" }.merge(options)
   end
 
   def print_button_to(link, options = {})
@@ -126,16 +126,15 @@ module UiHelper
   end
 
   def _link_to(link, options = {}, properties = {})
-    # icon = options[:icon]
+    icon = options[:icon]
     text = options[:text]
     size = options[:size]
     type = options[:type]
-    classes = options[:classes]
     # user sparingly.
     center = options[:center].present? ? "center-block" : ""
 
-    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center} #{classes}") do
-      text
+    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center}") do
+      fa_icon icon, text: text
     end
   end
 
