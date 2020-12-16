@@ -18,7 +18,7 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it "Allows User to click to the new donation form" do
-        find(".fa-plus").click
+        find_link(text: 'New Donation', match: :first).click
 
         expect(current_path).to eq(new_donation_path(@organization))
         expect(page).to have_content "Start a new donation"

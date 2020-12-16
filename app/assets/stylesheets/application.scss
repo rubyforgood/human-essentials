@@ -25,9 +25,10 @@
  @import 'colors';
  @import 'base/_variables';
  @import 'resources/*';
-
  // import other stylesheets after variables
-@import 'AdminLTE';
+@import 'theme_overrides';
+
+@import 'custom';
 @import 'bootstrap';
 @import 'bootstrap-select';
 @import 'simple_form-bootstrap/simple_form-bootstrap';
@@ -35,7 +36,7 @@
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';
-@import 'custom';
+
 
 .modal-dialog {
   display: flex;
@@ -146,4 +147,28 @@ tr.negative {
     -webkit-transform: scale(1);
     transform: scale(1);
   }
+}
+.text-semibold{
+  font-weight: 600;
+}
+body{
+  font-family: "Open Sans";
+}
+a{
+  color:#5d6be8;
+  &:hover{
+    color: lighten(#5d6be8,15%);
+  }
+}
+.btn-secondary{
+  background-color: #d6d9f9;
+  color: #5d6be8;
+  border:none;
+  &:hover{
+    background-color: darken(#d6d9f9,15%);
+    color: white;
+  }
+}
+.card-title{
+  margin:0;
 }
