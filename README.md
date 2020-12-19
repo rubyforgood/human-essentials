@@ -58,8 +58,15 @@ Create a `database.yml` file on `config/` directory with your database configura
 ## Seed the database
 From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
+## Install Foreman
+Install [foreman](https://github.com/ddollar/foreman) by running:
+```
+gem install foreman
+```
+This gem assists in running both the rails server and webpack at the same time in development. Without this you may end up trying to run the rails server without neccessary compilation steps.
+
 ## Start the app
-Run `bundle exec rails s` and browse to http://localhost:3000/
+Run `foreman start` and browse to http://localhost:3000/
 
 ## Login
 To login to the web application, use these default credentials:
