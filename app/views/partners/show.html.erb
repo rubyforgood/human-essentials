@@ -27,46 +27,18 @@
     <div class="row">
       <div class="col-12">
         <!-- Default box -->
-        <div class="card card-info card-outline">
-          <div class="card-header">
-            <h2 class="card-title"><%= @partner.name %></h2>
-          </div>
-          <div class="card-body p-0">
-            <div class="row">
-              <div class="col-sm-4 col-4">
-                <div class="description-block border-right">
-                  <h1 style="color:purple"><%= total_on_hand(@impact_metrics.dig("agency", "families_served") || 0) %> </h1>
-                  <h5>Families served</h5>
-                </div>
-                <!-- /.description-block -->
-              </div>
-              <!-- /.col -->
-              <div class="col-sm-4 col-4">
-                <div class="description-block border-right">
-                  <h1 style="color:purple"><%= total_on_hand(@impact_metrics.dig("agency", "children_served") || 0) %> </h1>
-                  <h5>Children served</h5>
-                </div>
-                <!-- /.description-block -->
-              </div>
-              <!-- /.col -->
-              <div class="col-sm-4 col-4">
-                <div class="description-block border-right">
-                  <h1 style="color:purple"><%= total_on_hand(@impact_metrics.dig("agency", "family_zipcodes") || 0) %> </h1>
-                  <h5>Zipcodes served</h5>
-                </div>
-                <!-- /.description-block -->
-              </div>
-            </div>
-          </div>
-          <!-- /.card-body -->
-          <div class="card-footer">
-            <%= view_button_to approve_partner_partner_path(@partner) %>
-            <%= edit_button_to edit_partner_path(@partner) %>
-            <%= delete_button_to partner_path(@partner), {confirm: confirm_delete_msg(@partner.name)} %>
-            <%= modal_button_to("#addUserModal", {text: "Add/Remind Partner", size: "xs"}) if can_administrate? %>
-            <%= print_button_to approve_application_partner_path(@partner), {text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "xs"} if can_administrate? %>
-          </div>
-        </div>
+        <% if @partner.uninvited? %>
+          <%= render "uninvited_header", partner: @partner %>
+        <% else %>
+          <%= render "show_header", partner: @partner, impact_metrics: @impact_metrics, partner_distributions: @partner_distributions %>
+        <% end %>
+        <% if @partner.notes.present? %>
+          <%= render "notes", partner: @partner %>
+        <% end %>
+
+        <% if @partner.documents.present? %>
+          <%= render "documents", partner: @partner %>
+        <% end %>
       </div>
     </div>
   </div>
@@ -77,10 +49,11 @@
     <div class="row">
       <div class="col-12">
         <!-- Default box -->
-        <div class="card card-primary card-outline card-outline-tabs">
-          <div class="card-header p-0 border-bottom-0">
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h2 class="card-title">Prior Distributions</h2>
           </div>
-          <div class="card-body">
+          <div class="card-body p-0">
             <div class="tab-content" id="custom-tabs-three-tabContent">
               <table class="table">
                 <thead>
@@ -92,7 +65,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% @partner.distributions.each do |dist| %>
+                <% @partner_distributions.each do |dist| %>
                   <tr>
                     <td><%= dist.created_at.strftime("%m/%d/%Y") %></td>
                     <td><%= dist.storage_location.name %></td>

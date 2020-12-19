@@ -16,6 +16,7 @@ RSpec.feature "Distributions", type: :system do
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
+        choose "Pick up"
 
         fill_in "Comment", with: "Take my wipes... please"
 
@@ -46,12 +47,49 @@ RSpec.feature "Distributions", type: :system do
       end
     end
 
+    context "when the quantity is lower than the on hand minminum quantity" do
+      it "should display an error" do
+        visit @url_prefix + "/distributions/new"
+        item = @storage_location.inventory_items.first.item
+        item.update!(on_hand_minimum_quantity: 5)
+        @storage_location.inventory_items.first.update!(quantity: 20)
+
+        select @partner.name, from: "Partner"
+        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        select @storage_location.name, from: "distribution_storage_location_id"
+        fill_in "distribution_line_items_attributes_0_quantity", with: 18
+
+        click_button "Save"
+
+        expect(page).to have_content("The following items have fallen below the minimum on hand quantity: #{item.name}")
+      end
+    end
+
+    context "when the quantity is lower than the on hand recommended quantity" do
+      it "should display an alert" do
+        visit @url_prefix + "/distributions/new"
+        item = @storage_location.inventory_items.first.item
+        item.update!(on_hand_minimum_quantity: 1, on_hand_recommended_quantity: 5)
+        @storage_location.inventory_items.first.update!(quantity: 20)
+
+        select @partner.name, from: "Partner"
+        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        select @storage_location.name, from: "distribution_storage_location_id"
+        fill_in "distribution_line_items_attributes_0_quantity", with: 18
+
+        click_button "Save"
+
+        expect(page).to have_content("The following items have fallen below the recommended on hand quantity: #{item.name}")
+      end
+    end
+
     context "when there is insufficient inventory to fulfill the Distribution" do
       it "gracefully handles the error" do
         visit @url_prefix + "/distributions/new"
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
+        choose "Delivery"
 
         fill_in "Comment", with: "Take my wipes... please"
 
@@ -209,13 +247,13 @@ RSpec.feature "Distributions", type: :system do
       it "can click on Edit button and a warning appears " do
         visit @url_prefix + "/distributions"
         click_on "Edit", match: :first
-        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
+        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was scheduled for."
       end
 
       it "can be accessed directly" do
         visit @url_prefix + "/distributions/#{distribution.id}/edit"
         expect(page).to have_no_css(".alert-danger")
-        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was picked up."
+        expect(page.find(".alert-warning")).to have_content "The current date is past the date this distribution was scheduled for."
       end
     end
   end
@@ -262,6 +300,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Start a new Distribution"
       within "#new_distribution" do
         select @partner.name, from: "Partner"
+        choose "Pick up"
         click_button "Save"
       end
     end
@@ -274,6 +313,7 @@ RSpec.feature "Distributions", type: :system do
 
     context "when editing that distribution" do
       before do
+        click_on "Distributions", match: :first
         click_on "Edit", match: :first
         @distribution = Distribution.last
       end
@@ -308,8 +348,6 @@ RSpec.feature "Distributions", type: :system do
         find_all(".numeric")[0].set 1
 
         click_on "Add another item"
-        second_item_name_field = 'distribution_line_items_attributes_1_item_id'
-        select(diaper_type, from: second_item_name_field)
         find_all(".numeric")[1].set 3
 
         first("button", text: "Save").click
@@ -324,7 +362,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   # TODO: This should probably be in the Request resource specs, not Distribution
-  context "When creating a distrubition from a request" do
+  context "When creating a distribution from a request" do
     it "sets the distribution id and fulfilled status on the request" do
       items = @storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
@@ -334,6 +372,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
+        choose "Delivery"
         click_on "Save"
       end
 
@@ -405,6 +444,20 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
       select(partner1.name, from: "filters_by_partner")
+      click_button("Filter")
+      # check for filtered distributions
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+
+    it "filters by state" do
+      distribution1 = create(:distribution, state: "started")
+      create(:distribution, state: "complete")
+
+      visit subject
+      # check for all distributions
+      expect(page).to have_css("table tbody tr", count: 2)
+      # filter
+      select(distribution1.state.humanize, from: "filters_by_state")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)

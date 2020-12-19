@@ -3,8 +3,14 @@ class StorageLocationsController < ApplicationController
   include Importable
 
   def index
+    @selected_item_category = filter_params[:containing]
     @items = current_organization.storage_locations.items_inventoried
     @storage_locations = current_organization.storage_locations.alphabetized.includes(:inventory_items).class_filter(filter_params)
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data StorageLocation.generate_csv(@storage_locations), filename: "StorageLocations-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -84,9 +90,10 @@ class StorageLocationsController < ApplicationController
     params.require(:storage_location).permit(:name, :address)
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:containing)
+    params.require(:filters).permit(:containing)
   end
 end

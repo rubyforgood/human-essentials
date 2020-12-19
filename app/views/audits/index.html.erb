@@ -38,15 +38,14 @@
             <%= form_tag(audits_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Filter by Storage Location" %>
-                  <%= collection_select(:filters, :at_location, @storage_locations || {}, :id, :name, {include_blank: true, selected: @selected_location}, class: "form-control") %>
+                  <%= filter_select(label: "Filter by Storage Location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %>
                 </div>
               </div>
               </div>
               <div class="card-footer">
                 <%= filter_button %>
-                <%= cancel_button_to audits_path, size: "md", text: "Clear Filters" %>
-
+                <%= clear_filter_button %>
+                
                 <div class="btn-group pull-right">
                   <%= new_button_to new_audit_path(organization_id: current_organization), {text: "New Audit"} %>
                 </div>

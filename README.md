@@ -8,16 +8,18 @@ If you're new here, here are some things you should know:
  - Check the `CONTRIBUTING.md` file for a guide on how to get started
  - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
-Please feel free to join us on Slack! You can sign up at https://rubyforgood.org -- click on the Slack icon at the top to get an invite. We're in #diaper
+Please feel free to join us on Slack! You can sign up at https://rubyforgood.herokuapp.com We're in #diaper
 
-The core team leads are: @armahillo @seanmarcia @mdworken @benreyn
+The core team leads are: @edwinmak @albert @gia @sean @scott
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
 # README
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/maintainability)](https://codeclimate.com/github/rubyforgood/diaper/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/test_coverage)](https://codeclimate.com/github/rubyforgood/diaper/test_coverage)
-[![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=master)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
+[![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=main)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
+[![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
 
 ## About
 
@@ -33,10 +35,10 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 ### Installation Instructions
 
-The `installation.md` file ([https://github.com/rubyforgood/diaper/blob/master/installation.md](https://github.com/rubyforgood/diaper/blob/master/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
+The `installation.md` file ([https://github.com/rubyforgood/diaper/blob/main/installation.md](https://github.com/rubyforgood/diaper/blob/main/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
 
 ### Ruby Version
-This app uses Ruby version 2.7.1, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
+This app uses Ruby version 2.7.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
 
 ### Yarn Installation
 If you don't have Yarn installed, you can install with Homebrew on macOS `brew install yarn` or visit [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install). Be sure to run `yarn install` after installing Yarn. NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.
@@ -157,6 +159,41 @@ Sometimes we want to get a PR up there and going so that other people can review
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
 
+# Deployment Process
+The diaper & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
+
+#### Requirements
+- You will need SSH access to our servers. Access is usually only given to core maintainers of the diaper & partner projects.
+- Login credentials to our [Mailchimp](https://mailchimp.com/) account
+
+#### Tag & Release
+1. You'll need to push up a tag with the proper semantic versioning. Check out the [releases](https://github.com/rubyforgood/diaper/releases) to get the correct semantic versioning tag to use. For example, if the last release was `2.1.0` and the update is a hotfix then the next one should be `2.1.1`
+```sh
+git tag x.y.z
+git push --tags
+```
+2. Publish a release associated to that tag pushed up in the previous step. You can do that [here](https://github.com/rubyforgood/diaper/releases/new). Make sure to include details on what the release's updates achieves (we use this to notify our stakeholders on updates via email).
+
+#### Deploying
+Start deploying the latest update by using capistrano and specifying the correct tag
+```sh
+TAG=x.y.z cap production deploy
+```
+
+#### Send Update Email To Diaperbase Users
+We will now want to inform the stakeholders that we've recently made a deployment and include details on what was updated. This is achieved by accessing all the user records and sending out a email via our Mailchimp account.
+
+1. Fetch all the emails of our users by accessing our diaperbase production database
+```ruby
+cap production rails:console
+User.all.pluck(:email) # Copy the output of this!
+```
+2. Use the list of the emails copied from the output from the previous step to send a update email via [Mailchimp](https://mailchimp.com/)
+
 # Acknowledgements
 
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_large)
+

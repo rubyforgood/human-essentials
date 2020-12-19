@@ -1,4 +1,4 @@
-<%= simple_form_for form, html: {role: "form"} do |f| %>
+<%= simple_form_for [:admin, form], html: {role: "form"} do |f| %>
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -17,7 +17,7 @@
                 <span class="input-group-text"><i class="fa fa-sort-numeric-desc"></i></span>
                 <%= f.input_field :quantity, class: "form-control" %>
               <% end %>
-              <%= f.association :barcodeable, collection: @items, label: "Item", wrapper: :input_group %>
+              <%= f.association :barcodeable, collection: @base_items, label: "Item", wrapper: :input_group %>
               <%= f.input :value, label: "Barcode", wrapper: :input_group do %>
                 <span class="input-group-text"><i class="fa fa-barcode"></i></span>
                 <%= f.input_field :value, class: "form-control" %>

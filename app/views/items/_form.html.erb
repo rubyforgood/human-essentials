@@ -9,7 +9,9 @@
             <!-- /.card-header -->
             <!-- form start -->
             <div class="card-body">
-              <%= render partial: "base_items/dropdown", object: f %>
+              <% if @item.kit.blank? %>
+                <%= render partial: "base_items/dropdown", object: f %>
+              <% end %>
               <%= f.input :name, label: "Name", wrapper: :input_group do %>
                 <span class="input-group-text"><i class="fa fa-tag"></i></span>
                 <%= f.input_field :name, class: "form-control" %>
@@ -38,6 +40,10 @@
 
               <%= f.input :active, label: "Item is Active?", wrapper: :input_group do %>
                 <%= f.check_box :active, {class: "input-group-text", id: "active"}, "true", "false" %>
+              <% end %>
+
+              <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
+                <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
               <% end %>
             </div>
             <!-- /.card-body -->

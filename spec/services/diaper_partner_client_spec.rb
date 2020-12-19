@@ -6,7 +6,7 @@ RSpec.describe DiaperPartnerClient, type: :service do
 
   describe '::post' do
     it 'performs a POST request' do
-      attributes = { 'id' => 123, 'organization_id' => 456, 'email' => 'foo@bar.com' }
+      attributes = { 'id' => 123, 'organization_id' => 456, 'email' => 'foo@bar.com', 'organization_email' => 'fake@example.com' }
       invitation_text = 'invitation'
       expected_body = {
         partner:
@@ -14,7 +14,8 @@ RSpec.describe DiaperPartnerClient, type: :service do
           diaper_bank_id: attributes["organization_id"],
           diaper_partner_id: attributes["id"],
           invitation_text: invitation_text,
-          email: attributes["email"]
+          email: attributes["email"],
+          organization_email: attributes["organization_email"]
         }
       }.to_json
       stub_partner_request(:post, 'https://partner-register.com/', body: expected_body)

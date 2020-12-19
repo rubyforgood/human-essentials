@@ -3,12 +3,23 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @paginated_requests = current_organization
-                          .ordered_requests
-                          .during(helpers.selected_range)
-                          .page(params[:page])
+    @requests = current_organization
+                .ordered_requests
+                .during(helpers.selected_range)
+                .class_filter(filter_params)
+
+    @paginated_requests = @requests.page(params[:page])
+    @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
+    @items = current_organization.items.alphabetized
+    @partners = current_organization.partners.order(:name)
+    @statuses = Request.statuses.transform_keys(&:humanize)
+    @selected_request_item = filter_params[:by_request_item_id]
+    @selected_partner = filter_params[:by_partner]
+    @selected_status = filter_params[:by_status]
+
     respond_to do |format|
       format.html
+      format.csv { send_data Request.generate_csv(@requests), filename: "Requests-#{Time.zone.today}.csv" }
     end
   end
 
@@ -42,5 +53,12 @@ class RequestsController < ApplicationController
     return unless @request.request_items
 
     @request.request_items.map { |json| RequestItem.from_json(json, current_organization) }
+  end
+
+  helper_method \
+    def filter_params
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status)
   end
 end

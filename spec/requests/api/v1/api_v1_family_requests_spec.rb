@@ -32,6 +32,10 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
         post api_v1_family_requests_path, params: params, headers: headers
       end
 
+      before do
+        allow(NotifyPartnerJob).to receive(:perform_now)
+      end
+
       it "returns HTTP created" do
         subject
         expect(response).to have_http_status(:created)
@@ -53,6 +57,11 @@ RSpec.describe "API::V1::FamilyRequests", type: :request do
         end
         expect(returned_body['requested_items'])
           .to eq(expected_items.sort_by { |item| item['item_id'] })
+      end
+
+      it "is expected to call the NotifyPartnerJob" do
+        subject
+        expect(NotifyPartnerJob).to have_received(:perform_now).with(Request.last.id)
       end
 
       it "returns bad request if there is an item ids mismatch" do

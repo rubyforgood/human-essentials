@@ -12,7 +12,7 @@ module UiHelper
                             data: {
                               association_insertion_node: node,
                               association_insertion_method: "append"
-                            }, id: "__add_line_item", class: "btn btn-#{size} btn-#{type}", style: "margin-top: 1rem;", partial: partial do
+                            }, id: "__add_line_item", class: "btn btn-#{size} btn-#{type}", partial: partial do
       fa_icon "plus", text: text
     end
   end
@@ -22,7 +22,7 @@ module UiHelper
     size = options[:text] || "sm"
     type = options[:type] || "danger"
 
-    link_to_remove_association form, class: "btn btn-#{size} btn-#{type}" do
+    link_to_remove_association form, class: "btn btn-#{size} btn-#{type}", style: "width: 100px;" do
       fa_icon "trash", text: text
     end
   end
@@ -32,6 +32,18 @@ module UiHelper
     data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
     properties = { method: options[:method]&.to_sym || :delete, rel: "nofollow" }.merge(data)
     _link_to link, { icon: "trash", type: "danger", text: "Delete", size: "xs" }.merge(options), properties
+  end
+
+  def deactivate_button_to(link, options = {})
+    data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
+    properties = { id: options[:id], method: :put, rel: "nofollow" }.merge(data)
+    _link_to link, { icon: "ban", type: "danger", text: "Deactivate", size: "xs" }.merge(options), properties
+  end
+
+  def reactivate_button_to(link, options = {})
+    data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
+    properties = { id: options[:id], method: :put, rel: "nofollow" }.merge(data)
+    _link_to link, { icon: "repeat", type: "success", text: "Reactivate", size: "xs" }.merge(options), properties
   end
 
   def restore_button_to(link, options = {})
@@ -61,6 +73,10 @@ module UiHelper
 
   def cancel_button_to(link, options = {})
     _link_to link, { icon: "ban", type: "outline-primary", text: "Cancel", size: "md" }.merge(options)
+  end
+
+  def clear_filter_button(options = {})
+    cancel_button_to request.path, { size: "md", text: "Clear Filters" }.merge(options)
   end
 
   def download_button_to(link, options = {})

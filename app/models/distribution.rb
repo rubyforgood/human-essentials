@@ -6,6 +6,7 @@ require 'time_util'
 #  id                     :integer          not null, primary key
 #  agency_rep             :string
 #  comment                :text
+#  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  state                  :integer          default("started"), not null
@@ -27,30 +28,39 @@ class Distribution < ApplicationRecord
 
   # Distributions contain many different items
   include Itemizable
+  include Exportable
+  include IssuedAt
+  include Filterable
 
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
 
-  validates :storage_location, :partner, :organization, presence: true
+  validates :storage_location, :partner, :organization, :delivery_method, presence: true
   validate :line_item_items_exist_in_inventory
-
-  include IssuedAt
 
   before_save :combine_distribution
 
   enum state: { started: 0, scheduled: 5, complete: 10 }
+  enum delivery_method: { pick_up: 0, delivery: 1 }
 
-  include Filterable
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
+  # state scope to allow filtering by state
+  scope :by_state, ->(state) { where(state: state) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :future, -> { where("issued_at >= :tomorrow", tomorrow: Time.zone.tomorrow) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, filters = {}, date_range = nil) {
     where(organization: organization)
       .includes(:partner, :storage_location, :line_items)
+      .apply_filters(filters, date_range)
+  }
+  scope :apply_filters, ->(filters, date_range) {
+    includes(:partner, :storage_location, :line_items, :items)
+      .order(issued_at: :desc)
+      .class_filter(filters.merge(during: date_range))
   }
   scope :this_week, -> do
     where("issued_at > :start_date AND issued_at <= :end_date",

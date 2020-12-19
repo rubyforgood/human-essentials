@@ -5,6 +5,7 @@
 #  id                     :integer          not null, primary key
 #  agency_rep             :string
 #  comment                :text
+#  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  state                  :integer          default("started"), not null
@@ -187,6 +188,29 @@ RSpec.describe Distribution, type: :model do
         it "returns false" do
           expect(dist2.future?).to be false
         end
+      end
+    end
+  end
+
+  context "CSV export >" do
+    let(:organization_2) { create(:organization) }
+    let(:item1) { create(:item) }
+    let(:item2) { create(:item) }
+    let!(:distribution_1) { create(:distribution, :with_items, item: item1, organization: @organization, issued_at: 3.days.ago) }
+    let!(:distribution_2) { create(:distribution, :with_items, item: item2, organization: @organization, issued_at: 1.day.ago) }
+    let!(:distribution_3) { create(:distribution, organization: organization_2, issued_at: Time.zone.today) }
+
+    describe "for_csv_export >" do
+      it "filters only to the given organization" do
+        expect(Distribution.for_csv_export(@organization)).to match_array [distribution_1, distribution_2]
+      end
+
+      it "filters only to the given filter" do
+        expect(Distribution.for_csv_export(@organization, { by_item_id: item1.id })).to match_array [distribution_1]
+      end
+
+      it "filters only to the given issue time range" do
+        expect(Distribution.for_csv_export(@organization, {}, 4.days.ago..2.days.ago)).to match_array [distribution_1]
       end
     end
   end

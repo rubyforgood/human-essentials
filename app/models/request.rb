@@ -14,14 +14,31 @@
 #
 
 class Request < ApplicationRecord
+  include Exportable
+
   class MismatchedItemIdsError < StandardError; end
+
   belongs_to :partner
   belongs_to :organization
   belongs_to :distribution, optional: true
 
   enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
+  before_save :sanitize_items_data
+
+  include Filterable
+  # add request item scope to allow filtering distributions by request item
+  scope :by_request_item_id, ->(item_id) { where("request_items @> :with_item_id ", with_item_id: [{ item_id: item_id.to_i }].to_json) }
+  # partner scope to allow filtering by partner
+  scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
+  # status scope to allow filtering by status
+  scope :by_status, ->(status) { where(status: status) }
   scope :during, ->(range) { where(created_at: range) }
+  scope :for_csv_export, ->(organization, *) {
+    where(organization: organization)
+      .includes(:partner)
+      .order(created_at: :desc)
+  }
 
   def family_request_reply
     {
@@ -56,5 +73,26 @@ class Request < ApplicationRecord
         }
       end
     request
+  end
+
+  def self.generate_csv(requests)
+    rows = Exports::ExportRequestService.new(requests).call
+    CSV.generate(headers: true) do |csv|
+      rows.each { |row| csv << row }
+    end
+  end
+
+  def total_items
+    request_items.sum { |item| item["quantity"] }
+  end
+
+  private
+
+  def sanitize_items_data
+    return unless request_items && request_items_changed?
+
+    self.request_items = request_items.map do |item|
+      item.merge("item_id" => item["item_id"]&.to_i, "quantity" => item["quantity"]&.to_i)
+    end
   end
 end

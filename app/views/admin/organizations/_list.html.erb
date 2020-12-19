@@ -1,0 +1,25 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Organization</th>
+      <th>Contact E-mail</th>
+      <th class="date">Added On</th>
+      <th class="text-right">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @organizations.each do |organization| %>
+      <tr class="<%= organization.short_name %>">
+        <td><%= organization.name %></td>
+        <td><%= link_to organization.email, "mailto:#{organization.email}" %></td>
+        <td class="date"><%= organization.created_at.strftime("%F") %></td>
+        <td class="text-right">
+          <%= view_button_to admin_organization_path(organization.id) %>
+          <%= edit_button_to edit_admin_organization_path(organization.id) %>
+          <%= delete_button_to(admin_organization_path(organization.id), { confirm: confirm_delete_msg(organization.name) }) unless (Organization.count <= 1) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

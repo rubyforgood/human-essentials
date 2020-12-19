@@ -3,7 +3,7 @@
 # Table name: feedback_messages
 #
 #  id         :bigint           not null, primary key
-#  message    :string
+#  message    :text
 #  path       :string
 #  resolved   :boolean
 #  created_at :datetime         not null
@@ -14,5 +14,5 @@
 class FeedbackMessage < ApplicationRecord
   belongs_to :user
 
-  validates :message, presence: true, length: { minimum: 10, maximum: 200 }
+  validates :message, presence: true, length: { minimum: 10 }
 end

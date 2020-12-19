@@ -8,6 +8,7 @@
   <%= csrf_meta_tags %>
   <%= javascript_include_tag 'application' %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
+  <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= javascript_pack_tag 'application' %>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -18,7 +19,7 @@
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/,'_') %>" class="<%= params.fetch(:action, '') %> hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">

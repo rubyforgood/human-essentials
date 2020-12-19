@@ -1,8 +1,5 @@
 # Provides CRUD+ for Donations, which are digital representations of one of the ways Diaperbanks take in new inventory
 class DonationsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: %i(scale_intake scale)
-  skip_before_action :authenticate_user!, only: %i(scale_intake scale)
-  skip_before_action :authorize_user, only: %i(scale_intake scale)
   before_action :authorize_admin, only: [:destroy]
 
   def index
@@ -34,24 +31,11 @@ class DonationsController < ApplicationController
     @selected_diaper_participant_drive = filter_params[:by_diaper_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
-  end
 
-  def scale
-    @donation = Donation.new(issued_at: Time.zone.today)
-    @donation.line_items.build
-    load_form_collections
-  end
-
-  def scale_intake
-    @donation = Donation.create(organization: current_organization,
-                                source: "Misc. Donation",
-                                storage_location_id: current_organization.intake_location,
-                                issued_at: Time.zone.today,
-                                line_items_attributes: { "0" => { "item_id" => params["diaper_type"],
-                                                                  "quantity" => params["number_of_diapers"],
-                                                                  "_destroy" => "false" } })
-    @donation.storage_location.increase_inventory @donation
-    render status: :ok, json: @donation.to_json
+    respond_to do |format|
+      format.html
+      format.csv { send_data Donation.generate_csv(@donations), filename: "Donations-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -97,13 +81,15 @@ class DonationsController < ApplicationController
   end
 
   def destroy
-    ActiveRecord::Base.transaction do
-      donation = current_organization.donations.find(params[:id])
-      donation.storage_location.decrease_inventory(donation)
-      donation.destroy!
+    service = DonationDestroyService.new(organization_id: current_organization.id, donation_id: params[:id])
+    service.call
+
+    if service.success?
+      flash[:notice] = "Donation #{params[:id]} has been removed!"
+    else
+      flash[:error] = "Donation #{params[:id]} failed to be removed because #{service.error}"
     end
 
-    flash[:notice] = "Donation #{params[:id]} has been removed!"
     redirect_to donations_path
   end
 
@@ -137,10 +123,11 @@ class DonationsController < ApplicationController
     params.require(:donation).permit(:barcode_id, :item_id, :quantity)
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive, :by_diaper_drive_participant, :from_manufacturer)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_diaper_drive, :by_diaper_drive_participant, :from_manufacturer)
   end
 
   # Omits donation_site_id or diaper_drive_participant_id if those aren't selected as source

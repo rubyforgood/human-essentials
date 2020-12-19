@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_05_164501) do
+ActiveRecord::Schema.define(version: 2020_10_04_124133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "account_requests", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "organization_name", null: false
+    t.string "organization_website"
+    t.datetime "confirmed_at"
+    t.text "request_details", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -131,6 +142,7 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
     t.string "agency_rep"
     t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 0, null: false
+    t.integer "delivery_method", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -170,7 +182,7 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
 
   create_table "feedback_messages", force: :cascade do |t|
     t.bigint "user_id"
-    t.string "message"
+    t.text "message"
     t.string "path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -216,8 +228,23 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
     t.integer "distribution_quantity"
     t.integer "on_hand_minimum_quantity", default: 0, null: false
     t.integer "on_hand_recommended_quantity"
+    t.boolean "visible_to_partners", default: true, null: false
+    t.integer "kit_id"
+    t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
+  end
+
+  create_table "kits", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "organization_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "active", default: true
+    t.boolean "visible_to_partners", default: true, null: false
+    t.integer "value_in_cents", default: 0
+    t.index ["name", "organization_id"], name: "index_kits_on_name_and_organization_id", unique: true
+    t.index ["organization_id"], name: "index_kits_on_organization_id"
   end
 
   create_table "line_items", id: :serial, force: :cascade do |t|
@@ -257,6 +284,7 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
     t.text "invitation_text"
     t.integer "default_storage_location"
     t.text "partner_form_fields", default: [], array: true
+    t.integer "account_request_id"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -269,6 +297,8 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
     t.integer "organization_id"
     t.integer "status", default: 0
     t.boolean "send_reminders", default: false, null: false
+    t.text "notes"
+    t.integer "quota"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
   end
 
@@ -348,6 +378,8 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
     t.string "name", default: "CHANGEME", null: false
     t.boolean "super_admin", default: false
     t.datetime "last_request_at"
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
@@ -380,7 +412,10 @@ ActiveRecord::Schema.define(version: 2020_04_05_164501) do
   add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "items", "kits"
+  add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
+  add_foreign_key "organizations", "account_requests"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

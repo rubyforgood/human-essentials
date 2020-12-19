@@ -21,6 +21,7 @@
 #  zipcode                  :string
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  account_request_id       :integer
 #
 
 class Organization < ApplicationRecord
@@ -29,32 +30,31 @@ class Organization < ApplicationRecord
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
-  validates :email, format: /[^@]+@[^@]+/, allow_blank: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
   validates :deadline_day, numericality: { only_integer: true, less_than_or_equal_to: 28, greater_than_or_equal_to: 1, allow_nil: true }
   validates :reminder_day, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
   validate :deadline_after_reminder
 
-  has_many :adjustments, dependent: :destroy
-  has_many :barcode_items, dependent: :destroy do
-    def all
-      unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
-    end
+  with_options dependent: :destroy do
+    has_many :adjustments
+    has_many :audits
+    has_many :diaper_drive_participants
+    has_many :diaper_drives
+    has_many :donation_sites
+    has_many :donations
+    has_many :manufacturers
+    has_many :partners
+    has_many :purchases
+    has_many :requests
+    has_many :storage_locations
+    has_many :inventory_items, through: :storage_locations
+    has_many :kits
+    has_many :transfers
+    has_many :users
+    has_many :vendors
   end
-  has_many :distributions, dependent: :destroy do
-    def upcoming
-      this_week.scheduled.where('issued_at >= ?', Time.zone.today)
-    end
-  end
-  has_many :donations, dependent: :destroy
-  has_many :purchases, dependent: :destroy
-  has_many :donation_sites, dependent: :destroy
-  has_many :diaper_drives, dependent: :destroy
-  has_many :diaper_drive_participants, dependent: :destroy
-  has_many :manufacturers, dependent: :destroy
-  has_many :vendors, dependent: :destroy
-  has_many :storage_locations, dependent: :destroy
-  has_many :inventory_items, through: :storage_locations
+
   has_many :items, dependent: :destroy do
     def other
       where(partner_key: "other")
@@ -77,11 +77,17 @@ class Organization < ApplicationRecord
         .limit(limit)
     end
   end
-  has_many :partners, dependent: :destroy
-  has_many :transfers, dependent: :destroy
-  has_many :users, dependent: :destroy
-  has_many :requests, dependent: :destroy
-  has_many :audits, dependent: :destroy
+  has_many :barcode_items, dependent: :destroy do
+    def all
+      unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
+    end
+  end
+  has_many :distributions, dependent: :destroy do
+    def upcoming
+      this_week.scheduled.where('issued_at >= ?', Time.zone.today)
+    end
+  end
+
   before_update :update_partner_sections, if: :partner_form_fields_changed?
 
   ALL_PARTIALS = [
@@ -104,7 +110,31 @@ class Organization < ApplicationRecord
 
   include Geocodable
 
+  filterrific(
+    available_filters: [
+      :search_name
+    ]
+  )
+
   scope :alphabetized, -> { order(:name) }
+  scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
+
+  def assign_attributes_from_account_request(account_request)
+    assign_attributes(
+      name: account_request.organization_name,
+      url: account_request.organization_website,
+      email: account_request.email,
+      account_request_id: account_request.id
+    )
+
+    users.build(
+      organization_admin: true,
+      email: account_request.email,
+      name: account_request.name
+    )
+
+    self
+  end
 
   # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
   def to_param
@@ -135,22 +165,6 @@ class Organization < ApplicationRecord
 
   def total_inventory
     inventory_items.sum(:quantity) || 0
-  end
-
-  def scale_values
-    {
-      pu_2t_3t: items.find_by(name: "Kids Pull-Ups (2T-3T)").id,
-      pu_3t_4t: items.find_by(name: "Kids Pull-Ups (3T-4T)").id,
-      pu_4t_5t: items.find_by(name: "Kids Pull-Ups (4T-5T)").id,
-      k_preemie: items.find_by(name: "Kids (Preemie)").id,
-      k_newborm: items.find_by(name: "Kids (Newborn)").id,
-      k_size1: items.find_by(name: "Kids (Size 1)").id,
-      k_size2: items.find_by(name: "Kids (Size 2)").id,
-      k_size3: items.find_by(name: "Kids (Size 3)").id,
-      k_size4: items.find_by(name: "Kids (Size 4)").id,
-      k_size5: items.find_by(name: "Kids (Size 5)").id,
-      k_size6: items.find_by(name: "Kids (Size 6)").id
-    }
   end
 
   def self.seed_items(organization = Organization.all)
@@ -188,13 +202,19 @@ class Organization < ApplicationRecord
   end
 
   def valid_items
-    items.active.map do |item|
+    items.active.visible.map do |item|
       {
         id: item.id,
         partner_key: item.partner_key,
         name: item.name
       }
     end
+  end
+
+  def from_email
+    return get_admin_email if email.blank?
+
+    email
   end
 
   private
@@ -215,5 +235,9 @@ class Organization < ApplicationRecord
     return if deadline_day.blank? || reminder_day.blank?
 
     errors.add(:deadline_day, "must be after the reminder date") if deadline_day < reminder_day
+  end
+
+  def get_admin_email
+    User.where(organization_id: id, organization_admin: true).sample.email
   end
 end

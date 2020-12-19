@@ -52,7 +52,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
   describe "active_class" do
     it "Returns the controller name" do
-      expect(helper.active_class("foo")).to eq "test"
+      expect(helper.active_class("foo")).to eq "application"
     end
   end
 

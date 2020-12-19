@@ -1,0 +1,168 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "New - Adjustments - Inventory - #{current_organization.name}" %>
+        <h1>
+          Kit Allocation
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+            <i class="fa fa-dashboard"></i> Home
+          <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Items", (items_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Kit Allocations</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <!-- Default box -->
+            <div class="box">
+              <div class="box-header with-border">
+                <h3>Increase or decrease the quantity of <strong><%= @kit.name %></strong></h3>
+                <p class="box-title">Manually increase (+) or decrease (-) the amount of inventory in a particular storage location.</p>
+              </div>
+              <div class="box-body">
+                <p class="help">Enter a negative (-) amount for <code>quantity</code> if you want to subtract kit quantity.</p>
+                <p class="help">Simply enter an amount for <code>quantity</code> if you want to add kit quantity.
+                </p>
+
+                <div id='kit-allocation-table'>
+                  <table class="table">
+                    <thead>
+                      <td> Storage Location </td>
+                      <td> On Hand Quantity </td>
+                    </thead>
+                    <tbody>
+                      <% @item_inventories.order('id ASC').each do |ii| %>
+                        <tr id="storage_location_<%=ii.storage_location.id %>">
+                          <td> <%= ii.storage_location.name %> </td>
+                          <td>
+                            <strong><%= ii.quantity %></strong>
+                          </td>
+                        </tr>
+                      <% end %>
+                    <tbody>
+                  </table>
+                </div>
+                <hr>
+                <%= form_for :kit_adjustment, url: allocate_kit_path(id: @kit.id) do |f| %>
+                  <div class='row'>
+                    <div class='col-md-4'>
+                      <div class="form-group">
+                        <%= label_tag "Storage Location" %>
+                        <%= f.collection_select :storage_location_id, @storage_locations, :id, :name, { include_blank: true }, class: "form-control"%>
+                      </div>
+
+                      <div class="form-group">
+                        <%= label_tag "Change Kit Quantity by" %>
+                        <%= f.number_field :change_by, value: 0, class: 'form-control', disabled: true %>
+                      </div>
+                    </div>
+
+                    <div class='col-md-8'>
+                      <div id='change-summary'>
+                        <h4> Allocation Change Summary</h4>
+                        <table class='table'>
+                          <thead>
+                            <td></td>
+                            <td>Change</td>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td><%= @kit.name %></td>
+                              <td data-base-quantity='-1' class='text-bold'></td>
+                            </tr>
+                            <% @kit.line_items.each do |li| %>
+                              <tr>
+                                <td> <%= li.item.name %> </td>
+                                <td data-base-quantity="<%= li.quantity %>" class='text-bold'></td>
+                              </tr>
+                            <% end %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <%= submit_button %>
+            </div>
+            <% end %>
+            </div>
+          </div><!-- /.box -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  $(document).ready(function() {
+    function clearStorageLocationRowHighlights() {
+      $("#kit-allocation-table tr").removeClass("table-primary");
+    }
+
+    function highlightStorageLocationById(id) {
+      const selectedStorageLocationRowId = `#storage_location_` + id;
+      $(selectedStorageLocationRowId).addClass("table-primary");
+    }
+
+    $("#kit_adjustment_storage_location_id").change(function(e) {
+      if(e.currentTarget.value) {
+        const storageLocationRowId = e.currentTarget.value;
+
+        clearStorageLocationRowHighlights();
+        highlightStorageLocationById(storageLocationRowId);
+        $("#kit_adjustment_change_by").attr('disabled', false);
+
+        $('#change-summary').show();
+      } else {
+        clearStorageLocationRowHighlights();
+        highlightStorageLocationById();
+        $("#kit_adjustment_change_by").attr('disabled', true);
+
+        $('#change-summary').hide();
+      }
+    })
+
+    $('#kit_adjustment_change_by').on("input", function(e) {
+      const changeBy = e.currentTarget.value;
+
+      // Update text on change summary content
+      $('*[data-base-quantity]').each(function(idx, row) {
+        let rowElement = $(row);
+
+        let baseQuantity = rowElement.attr('data-base-quantity');
+        // Utilize the -1 to properly make the base kit item
+        // go negative when the content goes postive
+        let newText = -1 * changeBy * baseQuantity
+        rowElement.text(newText);
+
+        rowElement.removeClass()
+        if (newText < 0) {
+          rowElement.addClass('table-danger');
+        } else if(newText > 0) {
+          rowElement.addClass('table-success')
+        }
+      });
+    })
+  })
+</script>

@@ -9,37 +9,49 @@ RSpec.describe "Transfers", type: :request do
     end
 
     describe "GET #index" do
+      subject do
+        get transfers_path(valid_params.merge(format: response_format))
+        response
+      end
+
       around do |example|
         travel_to Time.zone.local(2019, 7, 1)
+        create(:transfer)
         example.run
         travel_back
       end
 
-      subject { get transfers_path(valid_params) }
-      it "returns http success" do
-        subject
-        expect(response).to be_successful
+      context "html" do
+        let(:response_format) { 'html' }
+
+        it { is_expected.to be_successful }
+
+        context 'when filtering by date' do
+          let!(:old_transfer) { create(:transfer, created_at: 7.days.ago, organization: @organization) }
+          let!(:new_transfer) { create(:transfer, created_at: 1.day.ago, organization: @organization) }
+
+          context 'when date parameters are supplied' do
+            it 'only returns the correct obejects' do
+              start_date = 3.days.ago.strftime "%m/%d/%Y"
+              end_date = Time.zone.today.strftime "%m/%d/%Y"
+              get transfers_path(valid_params.merge(filters: { date_range: "#{start_date} - #{end_date}" }))
+              expect(assigns(:transfers)).to eq([new_transfer])
+            end
+          end
+
+          context 'when date parameters are not supplied' do
+            it 'returns all objects' do
+              get transfers_path(valid_params)
+              expect(assigns(:transfers)).to eq([old_transfer, new_transfer])
+            end
+          end
+        end
       end
 
-      context 'when filtering by date' do
-        let!(:old_transfer) { create(:transfer, created_at: 7.days.ago) }
-        let!(:new_transfer) { create(:transfer, created_at: 1.day.ago) }
+      context "csv" do
+        let(:response_format) { 'csv' }
 
-        context 'when date parameters are supplied' do
-          it 'only returns the correct obejects' do
-            start_date = 3.days.ago.strftime "%m/%d/%Y"
-            end_date = Time.zone.today.strftime "%m/%d/%Y"
-            get  transfers_path(valid_params.merge(filters: { date_range: "#{start_date} - #{end_date}" }))
-            expect(assigns(:transfers)).to eq([new_transfer])
-          end
-        end
-
-        context 'when date parameters are not supplied' do
-          it 'returns all objects' do
-            get  transfers_path(valid_params)
-            expect(assigns(:transfers)).to eq([old_transfer, new_transfer])
-          end
-        end
+        it { is_expected.to be_successful }
       end
     end
 

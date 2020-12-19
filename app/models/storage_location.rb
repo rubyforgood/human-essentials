@@ -34,11 +34,12 @@ class StorageLocation < ApplicationRecord
 
   include Geocodable
   include Filterable
+  include Exportable
   scope :containing, ->(item_id) {
     joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
   }
   scope :alphabetized, -> { order(:name) }
-  scope :for_csv_export, ->(organization) { where(organization: organization) }
+  scope :for_csv_export, ->(organization, *) { where(organization: organization) }
 
   def self.item_total(item_id)
     StorageLocation.select("quantity")
@@ -53,7 +54,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def item_total(item_id)
-    inventory_items.select(:quantity).find_by(item_id: item_id).try(:quantity)
+    inventory_items.select(:quantity).find_by(item_id: item_id).try(:quantity) || 0
   end
 
   def size

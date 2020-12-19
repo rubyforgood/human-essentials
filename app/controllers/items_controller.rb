@@ -2,7 +2,8 @@
 # they like with their own Items.
 class ItemsController < ApplicationController
   def index
-    @items = current_organization.items.includes(:base_item).alphabetized.class_filter(filter_params)
+    @items = current_organization.items.includes(:base_item, :kit).alphabetized.class_filter(filter_params)
+    @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location)
     @storages = current_organization.storage_locations.order(id: :asc)
 
     @include_inactive_items = params[:include_inactive_items]
@@ -16,6 +17,11 @@ class ItemsController < ApplicationController
     end
 
     @paginated_items = @items.page(params[:page])
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Item.generate_csv(@items), filename: "Items-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -25,7 +31,7 @@ class ItemsController < ApplicationController
     if result.success?
       redirect_to items_path, notice: "#{result.item.name} added!"
     else
-      @base_items = BaseItem.alphabetized
+      @base_items = BaseItem.without_kit.alphabetized
       # Define a @item to be used in the `new` action to be rendered with
       # the provided parameters. This is required to render the page again
       # with the error + the invalid parameters
@@ -37,12 +43,12 @@ class ItemsController < ApplicationController
   end
 
   def new
-    @base_items = BaseItem.alphabetized
+    @base_items = BaseItem.without_kit.alphabetized
     @item = current_organization.items.new
   end
 
   def edit
-    @base_items = BaseItem.alphabetized
+    @base_items = BaseItem.without_kit.alphabetized
     @item = current_organization.items.find(params[:id])
   end
 
@@ -57,7 +63,7 @@ class ItemsController < ApplicationController
     if @item.update(item_params)
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      @base_items = BaseItem.alphabetized
+      @base_items = BaseItem.without_kit.alphabetized
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
@@ -114,13 +120,15 @@ class ItemsController < ApplicationController
       :on_hand_minimum_quantity,
       :on_hand_recommended_quantity,
       :distribution_quantity,
+      :visible_to_partners,
       :active
     )
   end
 
-  def filter_params(_parameters = nil)
+  helper_method \
+    def filter_params(_parameters = nil)
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_base_item, :include_inactive_items)
+    params.require(:filters).permit(:by_base_item, :include_inactive_items)
   end
 end

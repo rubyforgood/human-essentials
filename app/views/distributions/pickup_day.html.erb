@@ -2,9 +2,9 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Pick up Schedule for #{@selected_date.strftime("%B %e, %Y")}" %>
+        <% content_for :title, "Distribution Schedule for #{@selected_date.strftime("%B %e, %Y")}" %>
         <h1>
-          Pick up Schedule for <%= @selected_date.strftime("%B %e, %Y") %>
+          Distribution Schedule for <%= @selected_date.strftime("%B %e, %Y") %>
         </h1>
       </div>
       <div class="col-sm-6">
@@ -14,7 +14,7 @@
             <% end %>
           </li>
           <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
-          <li class="breadcrumb-item"><%= link_to "Pick-Ups", (pick_ups_distributions_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Schedule", (schedule_distributions_path) %></li>
         </ol>
       </div>
     </div>
@@ -40,6 +40,43 @@
               </thead>
               <tbody>
               <%= render partial: "pickup_day_row", collection: @pick_ups %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          Item totals for <%= @selected_date.strftime("%B %e, %Y") %>
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Number of Packages</th>
+              </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "daily_item_row", collection: @daily_items%>
               </tbody>
             </table>
           </div>

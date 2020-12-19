@@ -28,7 +28,7 @@
 
   <% unless @distribution.future? %>
     <div class="alert alert-warning" , role="alert">
-      The current date is past the date this distribution was picked up.
+      The current date is past the date this distribution was scheduled for.
       Please be very careful when editing this record;
       the contents should match what was given to the recipient.
     </div>
@@ -60,26 +60,23 @@
                   <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date" %>
                   <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
                   <%= f.input :agency_rep, label: "Agency representative" %>
+                  <%= f.input :delivery_method, as: :radio_buttons, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
 
                   <%= render partial: "storage_locations/source", object: f %>
 
                   <%= f.input :comment, label: "Comment" %>
 
-                  <fieldset style="margin-bottom: 2rem;" class="form-inline">
+                  <fieldset class='w-50'>
                     <legend>Items in this distribution</legend>
                     <%= f.simple_fields_for :line_items do |item| %>
                       <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
                         <%= render 'line_items/line_item_fields', f: item %>
                       </div>
                     <% end %>
-                    <div class="row links">
-                      <div class="col-xs-12">
-                        <%= add_line_item_button f, "#distribution_line_items" %>
-                      </div>
+                    <div class="row links justify-content-end">
+                      <%= add_line_item_button f, "#distribution_line_items" %>
                     </div>
-
                   </fieldset>
-                  </div>
                   <div class="card-footer">
                     <%= submit_button %>
                   </div>

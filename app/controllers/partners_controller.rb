@@ -7,6 +7,11 @@ class PartnersController < ApplicationController
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
     @partners = Partner.where(organization: current_organization).class_filter(filter_params).alphabetized
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Partner.generate_csv(@partners), filename: "Partners-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -31,8 +36,15 @@ class PartnersController < ApplicationController
   end
 
   def show
-    @impact_metrics = JSON.parse(DiaperPartnerClient.get({ id: params[:id] }, query_params: { impact_metrics: true }))
     @partner = current_organization.partners.find(params[:id])
+
+    @impact_metrics = JSON.parse(DiaperPartnerClient.get({ id: params[:id] }, query_params: { impact_metrics: true })) unless @partner.uninvited?
+    @partner_distributions = @partner.distributions.order(created_at: :desc)
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Partner.generate_distributions_csv(@partner_distributions), filename: "PartnerDistributions-#{Time.zone.today}.csv" }
+    end
   end
 
   def new
@@ -62,7 +74,7 @@ class PartnersController < ApplicationController
   def update
     @partner = current_organization.partners.find(params[:id])
     if @partner.update(partner_params)
-      redirect_to partners_path, notice: "#{@partner.name} updated!"
+      redirect_to partner_path(@partner), notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -97,6 +109,32 @@ class PartnersController < ApplicationController
     end
   end
 
+  def deactivate
+    @partner = current_organization.partners.find(params[:id])
+    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "deactivated")
+
+    if response.is_a?(Net::HTTPSuccess) && @partner.update(status: "deactivated")
+      redirect_to partners_path, notice: "#{@partner.name} successfully deactivated!"
+    else
+      redirect_to partners_path, error: "#{@partner.name} failed to deactivate!"
+    end
+  end
+
+  def reactivate
+    @partner = current_organization.partners.find(params[:id])
+
+    if @partner.status != "deactivated"
+      redirect_to(partners_path, error: "#{@partner.name} is not deactivated!") && return
+    end
+
+    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "verified")
+    if response.is_a?(Net::HTTPSuccess) && @partner.update(status: "approved")
+      redirect_to partners_path, notice: "#{@partner.name} successfully reactivated!"
+    else
+      redirect_to partners_path, error: "#{@partner.name} failed to reactivate!"
+    end
+  end
+
   private
 
   def autovivifying_hash
@@ -104,14 +142,13 @@ class PartnersController < ApplicationController
   end
 
   def partner_params
-    params.require(:partner).permit(:name, :email, :send_reminders)
+    params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, documents: [])
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_status)
+    params.require(:filters).permit(:by_status)
   end
 end
-
-

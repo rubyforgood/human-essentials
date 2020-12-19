@@ -16,6 +16,11 @@ class AdjustmentsController < ApplicationController
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
     @users = current_organization.users
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Adjustment.generate_csv(@adjustments), filename: "Adjustments-#{Time.zone.today}.csv" }
+    end
   end
 
   # GET /adjustments/1
@@ -29,7 +34,7 @@ class AdjustmentsController < ApplicationController
     @adjustment = current_organization.adjustments.new
     @adjustment.line_items.build
     @storage_locations = current_organization.storage_locations
-    @items = current_organization.items.active.alphabetized
+    @items = current_organization.items.loose.active.alphabetized
   end
 
   # POST /adjustments
@@ -60,7 +65,7 @@ class AdjustmentsController < ApplicationController
 
   def load_form_collections
     @storage_locations = current_organization.storage_locations
-    @items = current_organization.items.alphabetized
+    @items = current_organization.items.loose.alphabetized
   end
 
   def adjustment_params
@@ -68,9 +73,10 @@ class AdjustmentsController < ApplicationController
                                        line_items_attributes: %i(item_id quantity _destroy))
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:at_location, :by_user)
+    params.require(:filters).permit(:at_location, :by_user)
   end
 end

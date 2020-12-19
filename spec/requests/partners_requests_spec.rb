@@ -8,28 +8,82 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "GET #index" do
-    it "returns http success" do
-      get partners_path(default_params)
-      expect(response).to be_successful
+    subject do
+      get partners_path(default_params.merge(format: response_format))
+      response
+    end
+
+    let!(:partner) { create(:partner, organization: @organization) }
+
+    context "html" do
+      let(:response_format) { 'html' }
+
+      it { is_expected.to be_successful }
+    end
+
+    context "csv" do
+      let(:response_format) { 'csv' }
+
+      let(:fake_get_return) do
+        { "agency" => {
+          "contact_person" => { name: "A Name" }
+        } }.to_json
+      end
+
+      before do
+        allow(DiaperPartnerClient).to receive(:get).and_return(fake_get_return)
+      end
+
+      it { is_expected.to be_successful }
     end
   end
 
   describe "GET #show" do
-    let(:partner) { create(:partner, organization: @organization) }
+    subject do
+      get partner_path(partner, default_params.merge(format: response_format))
+      response
+    end
+
+    let(:partner) { create(:partner, organization: @organization, status: :approved) }
     let(:fake_get_return) do
-      {
-        family_count: Faker::Number.number
-      }.to_json
+      { "agency" => {
+        "families_served" => Faker::Number.number,
+        "children_served" => Faker::Number.number,
+        "family_zipcodes" => Faker::Number.number,
+        "family_zipcodes_list" => [Faker::Number.number]
+      } }.to_json
     end
 
     before do
       allow(DiaperPartnerClient).to receive(:get).with({ id: partner.to_param }, query_params: { impact_metrics: true }).and_return(fake_get_return)
     end
 
-    it "returns http success" do
-      get partner_path(default_params.merge(id: partner))
-      expect(response).to be_successful
-      expect(assigns[:impact_metrics]).to eq(JSON.parse(fake_get_return))
+    context "html" do
+      let(:response_format) { 'html' }
+
+      it { is_expected.to be_successful }
+
+      context "when the partner is invited" do
+        it "includes impact metrics" do
+          subject
+          expect(assigns[:impact_metrics]).to eq(JSON.parse(fake_get_return))
+        end
+      end
+
+      context "when the partner is uninvited" do
+        let(:partner) { create(:partner, organization: @organization, status: :uninvited) }
+
+        it "does not include impact metrics" do
+          subject
+          expect(assigns[:impact_metrics]).not_to be_present
+        end
+      end
+    end
+
+    context "csv" do
+      let(:response_format) { 'csv' }
+
+      it { is_expected.to be_successful }
     end
   end
 
@@ -132,20 +186,20 @@ RSpec.describe "Partners", type: :request do
         expect(response).to have_http_status(:found)
       end
 
-      it "redirects to #index" do
+      it "redirects to #show" do
         partner = create(:partner, organization: @organization)
         put partner_path(default_params.merge(id: partner, partner: partner_params))
-        expect(response).to redirect_to(partners_path)
+        expect(response).to redirect_to(partner_path(partner))
       end
     end
 
     context "unsuccessful save due to empty params" do
-      partner_params = { partner: { name: nil, email: nil } }
+      partner_params = { name: "", email: "" }
 
       it "renders :edit" do
         partner = create(:partner, organization: @organization)
         put partner_path(default_params.merge(id: partner, partner: partner_params))
-        expect(response).to redirect_to(partners_path)
+        expect(response).to render_template(:edit)
       end
     end
   end
@@ -162,6 +216,42 @@ RSpec.describe "Partners", type: :request do
       expect(UpdateDiaperPartnerJob).to receive(:perform_now)
       post invite_partner_path(default_params.merge(id: create(:partner, organization: @organization)))
       expect(response).to have_http_status(:found)
+    end
+  end
+
+  describe "PUT #deactivate" do
+    let(:partner) { create(:partner, organization: @organization, status: "approved") }
+
+    context "when the partner successfully deactivates" do
+      before do
+        response = double
+
+        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(true)
+        allow(DiaperPartnerClient).to receive(:put).and_return(response)
+      end
+      it "changes the partner status to deactivated and redirects with flash" do
+        put deactivate_partner_path(default_params.merge(id: partner.id))
+
+        expect(partner.reload.status).to eq("deactivated")
+        expect(response).to redirect_to(partners_path)
+        expect(flash[:notice]).to eq("#{partner.name} successfully deactivated!")
+      end
+    end
+
+    context "when the partner is not successfully deactivated" do
+      before do
+        response = double
+
+        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(false)
+        allow(DiaperPartnerClient).to receive(:put).and_return(response)
+      end
+      it "fails to change the partner status to deactivated and redirects with flash error message" do
+        put deactivate_partner_path(default_params.merge(id: partner.id))
+
+        expect(partner.reload.status).to eq("approved")
+        expect(response).to redirect_to(partners_path)
+        expect(flash[:error]).to eq("#{partner.name} failed to deactivate!")
+      end
     end
   end
 
@@ -201,6 +291,38 @@ RSpec.describe "Partners", type: :request do
       it "redirects to #index" do
         get approve_application_partner_path(default_params.merge(id: partner.id))
         expect(response).to redirect_to(partners_path)
+      end
+    end
+  end
+
+  describe "PUT #reactivate" do
+    context "when the partner successfully reactivates" do
+      let(:partner) { create(:partner, organization: @organization, status: "deactivated") }
+
+      before do
+        response = double
+        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(true)
+        allow(DiaperPartnerClient).to receive(:put).and_return(response)
+      end
+
+      it "changes the partner status to approved, partner status on partner app to verified, and redirects with flash" do
+        put reactivate_partner_path(default_params.merge(id: partner.id))
+
+        expect(partner.reload.status).to eq("approved")
+        expect(response).to redirect_to(partners_path)
+        expect(flash[:notice]).to eq("#{partner.name} successfully reactivated!")
+      end
+    end
+
+    context "when trying to reactivate a partner who is not deactivated " do
+      let(:partner) { create(:partner, organization: @organization, status: "approved") }
+      before do
+        allow(DiaperPartnerClient).to receive(:put)
+      end
+      it "fails to change the partner status to reactivated and redirects with flash error message" do
+        put reactivate_partner_path(default_params.merge(id: partner.id))
+
+        expect(DiaperPartnerClient).not_to have_received(:put)
       end
     end
   end

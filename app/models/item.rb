@@ -13,18 +13,25 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  value_in_cents               :integer          default(0)
+#  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  kit_id                       :integer
 #  organization_id              :integer
 #
 
 class Item < ApplicationRecord
+  include Filterable
+  include Exportable
+  include Valuable
+
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
+  belongs_to :kit, optional: true
+
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
-  validates :value_in_cents, numericality: { greater_than_or_equal_to: 0 }
 
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
@@ -33,14 +40,19 @@ class Item < ApplicationRecord
   has_many :donations, through: :line_items, source: :itemizable, source_type: Donation
   has_many :distributions, through: :line_items, source: :itemizable, source_type: Distribution
 
-  include Filterable
   scope :active, -> { where(active: true) }
+
+  # Add spec for these
+  scope :kits, -> { where.not(kit_id: nil) }
+  scope :loose, -> { where(kit_id: nil) }
+
+  scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
-  scope :for_csv_export, ->(organization) {
+  scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .includes(:base_item)
       .alphabetized
@@ -65,10 +77,6 @@ class Item < ApplicationRecord
 
   def other?
     partner_key == "other"
-  end
-
-  def value_in_dollars
-    value_in_cents.to_d / 100
   end
 
   # Override `destroy` to ensure Item isn't accidentally destroyed
@@ -118,5 +126,9 @@ class Item < ApplicationRecord
 
   def default_quantity
     distribution_quantity || 50
+  end
+
+  def inventory_item_at(storage_location_id)
+    inventory_items.find_by(storage_location_id: storage_location_id)
   end
 end

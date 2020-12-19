@@ -38,6 +38,8 @@
             <div class="card-body">
 
               <div class="form-inputs">
+                <%= f.hidden_field :account_request_id, value: @organization.account_request_id %>
+
                 <%= f.input :name, required: true, autofocus: true %>
                 <%= f.input :short_name, required: true, autofocus: true %>
                 <%= f.input :url, as: :url, placeholder: "http://www.example.com" %>

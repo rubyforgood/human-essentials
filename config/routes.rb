@@ -61,8 +61,11 @@ Rails.application.routes.draw do
     resource :organization, path: :manage, only: %i(edit update) do
       collection do
         post :invite_user
+        put :deactivate_user
+        put :reactivate_user
         post :resend_user_invitation
         post :promote_to_org_admin
+        post :demote_to_user
       end
     end
 
@@ -84,7 +87,7 @@ Rails.application.routes.draw do
     resources :distributions do
       get :print, on: :member
       collection do
-        get :pick_ups
+        get :schedule
         get :pickup_day
       end
       patch :picked_up, on: :member
@@ -114,6 +117,13 @@ Rails.application.routes.draw do
         post :import_csv
       end
     end
+    resources :kits do
+      member do
+        get :allocations
+        post :allocate
+      end
+    end
+
     resources :items do
       patch :restore, on: :member
     end
@@ -127,6 +137,8 @@ Rails.application.routes.draw do
         post :invite
         post :re_invite
         post :recertify_partner
+        put :deactivate
+        put :reactivate
       end
     end
 
@@ -157,12 +169,26 @@ Rails.application.routes.draw do
     end
 
     get "dashboard", to: "dashboard#index"
-    get "csv", to: "data_exports#csv"
+    get "forecasting/distributions", to: "forecasting/distributions#index"
+    get "forecasting/purchases", to: "forecasting/purchases#index"
+    get "forecasting/donations", to: "forecasting/donations#index"
   end
+
+  resources :attachments, only: %i(destroy)
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   get "pages/:name", to: "static#page"
   get "/register", to: "static#register"
+  resources :account_requests, only: [:new, :create] do
+    collection do
+      get 'confirmation'
+      get 'confirm'
+      get 'received'
+
+      get 'invalid_token'
+    end
+  end
+
   root "static#index"
 end

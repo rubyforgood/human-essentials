@@ -2,6 +2,7 @@
 <tr>
   <td><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
+  <td><%= partner_row.quota %></td>
   <td>
     <% case status %>
     <% when "uninvited" %>
@@ -22,7 +23,7 @@
   </td>
   <td>
     <% case status %>
-     <% when "uninvited" %>
+    <% when "uninvited" %>
       <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
     <% when "invited" %>
       <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
@@ -32,6 +33,8 @@
       <%= button_to recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" do %>
         <i class="fa fa-refresh"></i> Request Recertification
       <% end %>
+    <% when "deactivated" %>
+      <%= reactivate_button_to reactivate_partner_path(partner_row), {confirm: confirm_reactivate_msg(partner_row.name)} %>
     <% else %>
       &nbsp;
     <% end %>

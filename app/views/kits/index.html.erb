@@ -1,0 +1,66 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Kits - #{current_organization.name}" %>
+        <h1>
+          Kits
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+            <i class="fa fa-dashboard"></i> Home
+          <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">All Kits</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Kit Filter</h3>
+          </div>
+          <div class="card-body">
+            <%= form_tag(kits_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= filter_text(label: "Filter By Kit Name", scope: :by_name, selected: @selected_filter_name) %>
+                </div>
+              </div>
+          </div>
+          <div class="card-footer">
+            <%= filter_button %>
+            <%= clear_filter_button %>
+            <span class="float-right">
+              <%= new_button_to new_kit_path(organization_id: current_organization), { text: "New Kit" } %>
+            </span>
+          </div>
+          <% end # form %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-primary card-outline card-outline-tabs">
+          <div class="card-body">
+            <%= render partial: 'kits/table' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

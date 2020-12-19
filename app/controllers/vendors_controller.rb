@@ -4,6 +4,11 @@ class VendorsController < ApplicationController
 
   def index
     @vendors = current_organization.vendors.includes(:purchases).all.alphabetized
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Vendor.generate_csv(@vendors), filename: "Vendors-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -53,5 +58,10 @@ class VendorsController < ApplicationController
   def vendor_params
     params.require(:vendor)
           .permit(:contact_name, :phone, :email, :business_name, :address)
+  end
+
+  helper_method \
+    def filter_params
+    {}
   end
 end

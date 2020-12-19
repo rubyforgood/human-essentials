@@ -12,6 +12,9 @@ require "capybara-screenshot/rspec"
 require "pry"
 require 'sidekiq/testing'
 require 'webdrivers'
+require 'knapsack_pro'
+
+KnapsackPro::Adapters::RSpecAdapter.bind
 
 Sidekiq::Testing.fake! # fake is the default mode
 
@@ -49,9 +52,11 @@ Capybara.ignore_hidden_elements = true
 
 # https://docs.travis-ci.com/user/chrome
 Capybara.register_driver :chrome do |app|
-  args = %w[no-sandbox disable-gpu window-size=1680,1050]
+  args = %w[no-sandbox disable-gpu disable-site-isolation-trials window-size=1680,1050]
   args << "headless" unless ENV["NOT_HEADLESS"] == "true"
   options = Selenium::WebDriver::Chrome::Options.new(args: args)
+  options.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
+  options.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
 
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end
@@ -118,6 +123,8 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers, type: :system
   config.include ActiveSupport::Testing::TimeHelpers, type: :feature
 
+  config.include DownloadHelper, type: :system
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
@@ -134,8 +141,13 @@ RSpec.configure do |config|
 
   # set driver for system tests
   config.before(:each, type: :system) do
+    clear_downloads
     driven_by :chrome
     Capybara.server = :puma, { Silent: true }
+  end
+
+  config.after(:each, type: :system, js: true) do
+    clear_downloads
   end
 
   # Preparatifyication
@@ -197,6 +209,13 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
 end
 
 def seed_base_items_for_tests

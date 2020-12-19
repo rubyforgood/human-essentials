@@ -5,17 +5,20 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "2.7.1"
+ruby "2.7.2"
 
 gem "api-auth", "~> 2.4"
-gem 'bootstrap', '~> 4.4.1'
+gem 'bootstrap', '~> 4.5.3'
+gem 'bootstrap-daterangepicker-rails'
 gem 'bootstrap-select-rails'
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
 gem "devise", '>= 4.7.1'
+gem 'discard', '~> 1.2'
 gem "devise_invitable"
 gem "dotenv-rails"
+gem "filterrific"
 gem "flipper"
 gem "flipper-active_record"
 gem "flipper-ui"
@@ -23,43 +26,47 @@ gem "font-awesome-rails"
 gem "font-ionicons-rails"
 gem "fullcalendar-rails"
 gem "geocoder"
-gem "groupdate", "~> 5.0"
+gem "groupdate", "~> 5.2"
 gem "image_processing"
 gem "jbuilder"
 gem "jquery-rails"
 gem "jquery-ui-rails"
+gem "jwt"
 gem "kaminari"
+gem "mini_racer", "~> 0.3.1"
 gem "momentjs-rails"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
+gem "paperclip" # needed for legacy migrations
 gem "pg", "~> 1.2.3"
+gem "simple_form"
 gem 'popper_js'
 gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 6.0.3"
 gem "sass-rails"
 gem "sidekiq"
-gem "simple_form"
-gem "skylight"
-gem "sprockets", "~> 3.7.2"
-gem "uglifier", ">= 1.3.0"
-gem "mini_racer", "~> 0.2.10"
-gem "yajl-ruby"
-gem "toastr-rails"
-gem "webpacker", "> 4.0"
 gem 'sidekiq-scheduler'
-gem 'bootstrap-daterangepicker-rails'
+gem "skylight"
+gem "sprockets", "~> 4.0.2"
+gem "toastr-rails"
+gem "uglifier", ">= 1.3.0"
+gem "webpacker", "> 4.0"
+gem "yajl-ruby"
 
 group :development, :test do
   gem "awesome_print"
+  gem "brakeman"
+  gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
+  gem "knapsack_pro"
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
-  gem 'rb-readline', '~> 0.5.3'
-  gem "rspec-rails", "~> 4.0.0"
+  gem "rb-readline", "~> 0.5.3"
+  gem "rspec-rails", "~> 4.0.1"
   gem "rubocop"
-  gem "rubocop-rails"
+  gem "rubocop-rails", "~> 2.9.1"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "faker"
@@ -75,7 +82,8 @@ group :development do
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
-  gem "listen", "~> 3.2.1"
+  gem "letter_opener"
+  gem "listen", "~> 3.3.3"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
@@ -83,17 +91,17 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 3.32"
+  gem "capybara", "~> 3.34"
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "factory_bot_rails"
-  gem "fakeredis", require: "fakeredis/rspec"
   gem "launchy"
   gem "rails-controller-testing"
   gem "rspec-sidekiq"
   gem 'simplecov'
-  gem 'webdrivers', '~> 4.3'
-  gem "webmock", "~> 3.8"
+  gem 'shoulda-matchers', '~> 4.4'
+  gem 'webdrivers', '~> 4.4'
+  gem "webmock", "~> 3.10"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

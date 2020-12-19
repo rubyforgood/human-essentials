@@ -20,6 +20,16 @@
               <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :input_group do %>
                 <%= f.check_box :send_reminders, {class: "input-group-text", id: "send_reminders"}, "true", "false" %>
               <% end %>
+              <%= f.input :quota, label: "Quota", wrapper: :input_group do %>
+                <span class="input-group-text"><i class="fa fa-warning"></i></span>
+                <%= f.input_field :quota, class: "form-control" %>
+              <% end %>
+              <%= f.input :notes, label: "Notes", wrapper: :input_group do %>
+                <%= f.input_field :notes, class: "form-control" %>
+              <% end %>
+              <%= f.input :documents, label: "Documents", wrapper: :input_group do %>
+                <%= f.input_field :documents, as: :file, multiple: true, accept: Partner::ALLOWED_MIME_TYPES.join(","), class: "form-control h-auto" %>
+              <% end %>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
@@ -34,4 +44,3 @@
     </div><!-- /.container-fluid -->
   </section>
 <% end %>
-

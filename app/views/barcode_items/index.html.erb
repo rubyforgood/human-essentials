@@ -33,23 +33,20 @@
             <%= form_with(url: barcode_items_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Filter By Item Category" %>
-                  <%= collection_select(:filters, :barcodeable_id, @items.alphabetized, :id, :name, {include_blank: true}, class: "form-control") %>
+                  <%= filter_select(label: "Filter by Item Category", scope: :barcodeable_id, collection: @items.alphabetized, key: :id, value: :name, selected: @selected_barcodeable_id) %>
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Filter By Base Item" %>
-                  <%= collection_select(:filters, :by_item_partner_key, @base_items.order('name'), :partner_key, :name, {include_blank: true}, class: "form-control") %>
+                  <%= filter_select(label: "Filter by Base Item", scope: :by_item_partner_key, collection: @base_items.order('name'), key: :partner_key, value: :name, selected: @selected_partner_key) %>
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Filter By Barcode (Boop it!)" %>
-                  <%= text_field(:filters, :by_value, class: "form-control") %>
+                  <%= filter_text(label: "Filter By Barcode (Boop it!)", scope: :by_value, selected: @selected_barcode_id) %>
                 </div>
               </div>
               <div class="card-footer">
                 <%= filter_button %>
-                <%= cancel_button_to barcode_items_path, {text: "Clear Filters"} %>
+                <%= clear_filter_button %>
                 <span class="float-right">
-<%= download_button_to(csv_path(format: :csv, type: "BarcodeItem"), {text: "Export Barcode Items"}) if @barcode_items.length > 0 %>
+                  <%= download_button_to(barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Barcode Items", size: "md"}) if @barcode_items.any? %>
                   <%= download_button_to(font_barcode_items_path, {text: "Download Barcode Font"}) %>
                   <%= new_button_to new_barcode_item_path(organization_id: current_organization), {text: "New Barcode"} %>
                   </span>

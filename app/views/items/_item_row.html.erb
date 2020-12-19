@@ -5,7 +5,9 @@
   <td class="text-right">
     <%= view_button_to item_path(item_row) %>
     <%= edit_button_to edit_item_path(item_row) %>
-    <%= delete_button_to item_path(item_row), { confirm: confirm_delete_msg(item_row.name) } if item_row.active %>
+    <% if item_row.kit.blank? %>
+      <%= delete_button_to item_path(item_row), { confirm: confirm_delete_msg(item_row.name) } if item_row.active %>
+     <% end %>
     <%= restore_button_to restore_item_path(item_row), { confirm: confirm_restore_msg(item_row.name) } unless item_row.active %>
   </td>
 </tr>

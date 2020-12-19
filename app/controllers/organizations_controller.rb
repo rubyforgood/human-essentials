@@ -38,6 +38,30 @@ class OrganizationsController < ApplicationController
     redirect_to organization_path, notice: "User has been promoted!"
   end
 
+  def demote_to_user
+    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    if user.super_admin?
+      notice = "Unable to convert super to user."
+    else
+      user.update(organization_admin: false)
+      notice = "Admin has been changed to User!"
+    end
+
+    redirect_to organization_path, notice: notice
+  end
+
+  def deactivate_user
+    user = User.with_discarded.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user.discard!
+    redirect_to organization_path, notice: "User has been deactivated."
+  end
+
+  def reactivate_user
+    user = User.with_discarded.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user.undiscard!
+    redirect_to organization_path, notice: "User has been reactivated."
+  end
+
   private
 
   def authorize_user

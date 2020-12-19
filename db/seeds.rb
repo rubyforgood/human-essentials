@@ -39,6 +39,13 @@ items_by_category.each do |category, entries|
   end
 end
 
+# Create global 'Kit' base item
+BaseItem.find_or_create_by!(
+  name: 'Kit',
+  category: 'kit',
+  partner_key: 'kit'
+)
+
 
 # ----------------------------------------------------------------------------
 # Organizations
@@ -115,17 +122,40 @@ end
 # Partners
 # ----------------------------------------------------------------------------
 
+note = [
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac enim orci. Donec id consequat est. Vivamus luctus vel erat quis tincidunt. Nunc quis varius justo. Integer quam augue, dictum vitae bibendum in, fermentum quis felis. Nam euismod ultrices velit a tristique. Vestibulum sed tincidunt erat. Vestibulum et ullamcorper sem. Sed ante leo, molestie vitae augue ac, aliquam ultrices enim."
+]
+
 [
-  { name: "Pawnee Parent Service",         email: "someone@pawneeparent.org",      status: :approved },
-  { name: "Pawnee Homeless Shelter",       email: "anyone@pawneehomelss.com",      status: :invited },
-  { name: "Pawnee Pregnancy Center",       email: "contactus@pawneepregnancy.com", status: :invited },
-  { name: "Pawnee Senior Citizens Center", email: "help@pscc.org",                 status: :recertification_required }
+  {
+    name: "Pawnee Parent Service",
+    email: "someone@pawneeparent.org",
+    status: :approved,
+    notes: note.sample
+  },
+  {
+    name: "Pawnee Homeless Shelter",
+    email: "anyone@pawneehomelss.com",
+    status: :invited,
+    notes: note.sample
+  },
+  {
+    name: "Pawnee Pregnancy Center",
+    email: "contactus@pawneepregnancy.com",
+    status: :invited,
+    notes: note.sample
+  },
+  {
+    name: "Pawnee Senior Citizens Center",
+    email: "help@pscc.org",
+    status: :recertification_required,
+    notes: note.sample
+  }
 ].each do |partner_option|
   Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
   end
 end
-
 
 # ----------------------------------------------------------------------------
 # Storage Locations
@@ -314,7 +344,8 @@ end
   distribution = Distribution.create!(storage_location: storage_location,
                                       partner:          random_record_for_org(pdx_org, Partner),
                                       organization:     pdx_org,
-                                      issued_at:        Faker::Date.between(from: 4.days.ago, to: Time.zone.today))
+                                      issued_at:        Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
+                                      delivery_method:  Distribution.delivery_methods.keys.sample)
 
   stored_inventory_items_sample.each do |stored_inventory_item|
     distribution_qty = rand(stored_inventory_item.quantity / 2)
@@ -395,3 +426,34 @@ end
 # ----------------------------------------------------------------------------
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
+
+# ----------------------------------------------------------------------------
+# Feedback Messages
+# ----------------------------------------------------------------------------
+# Add some FeedbackMessages to fill up the feedback dashboard
+
+users = User.all
+comments = [
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam faucibus, neque eu mattis varius, eros erat elementum sem, quis volutpat erat tortor quis mauris. In condimentum vel sapien in elementum. Pellentesque porttitor mattis orci eu congue. Donec nec ipsum bibendum dolor tempus pellentesque vel ac ante.",
+  "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.",
+  "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
+]
+paths = [
+  "https://diaper.app/diaper_bank/requests",
+  "https://diaper.app/diaper_bank/donations",
+  "https://diaper.app/diaper_bank/partners",
+  "https://diaper.app/diaper_bank/audits"
+]
+
+users.each do |user|
+  2.times do
+    FeedbackMessage.create(
+      message: comments.sample,
+      path: paths.sample,
+      user: user,
+      resolved: [true, false].sample
+    )
+  end
+end
+
+

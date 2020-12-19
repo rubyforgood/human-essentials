@@ -3,7 +3,7 @@
 # Table name: feedback_messages
 #
 #  id         :bigint           not null, primary key
-#  message    :string
+#  message    :text
 #  path       :string
 #  resolved   :boolean
 #  created_at :datetime         not null
@@ -16,6 +16,17 @@
 
 RSpec.describe FeedbackMessage, type: :model do
   let(:user) { FactoryBot.build(:user) }
+
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:message) }
+    it { is_expected.to validate_length_of(:message).is_at_least(10) }
+
+    it "allows long messages" do
+      message = FeedbackMessage.new(message: "Diapers! " * 1000, user: user)
+
+      expect(message).to be_valid
+    end
+  end
 
   describe "relations and attributes" do
     it "belongs to a user" do

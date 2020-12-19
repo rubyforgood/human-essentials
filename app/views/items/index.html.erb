@@ -37,24 +37,26 @@
             <%= form_tag(items_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= label_tag "Filter by Base Item" %>
-                  <%= collection_select(:filters, :by_base_item, BaseItem.alphabetized, :partner_key, :name, {include_blank: true, selected: @selected_base_item}, class: "form-control") %>
+                  <%= filter_select(scope: :by_base_item, collection: BaseItem.alphabetized, key: :partner_key, selected: @selected_base_item) %>
                 </div>
               </div>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= check_box_tag("include_inactive_items", 1, @include_inactive_items) %>
-                  <%= label_tag "Also include inactive items" %>
+                  <%= filter_checkbox(label: "Also include inactive items", scope: "include_inactive_items", selected: @include_inactive_items) %>
                 </div>
               </div>
               </div>
               <div class="card-footer">
                 <%= filter_button %>
-                <%= cancel_button_to items_path, {text: "Clear Filters"} %>
+                <%= clear_filter_button %>
                 <span class="float-right">
 
-                  <%= download_button_to(csv_path(format: :csv, type: "Item"), {text: "Export Items"}) if @items.any? %>
+                  <%= download_button_to(items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Items", size: "md"}) if @items.any? %>
+
                   <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+                  <% if Flipper.enabled?(:kits) %>
+                    <%= new_button_to new_kit_path(organization_id: current_organization), {text: "New Kit"} %>
+                  <% end %>
                   </span>
               </div>
             <% end # form %>
@@ -82,14 +84,20 @@
                 <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Items,
                   Quantity, and Location</a>
               </li>
+              <% if Flipper.enabled?(:kits) %>
+                <li class="nav-item">
+                  <a class="nav-link" id="custom-tabs-three-kits-tab" data-toggle="pill" href="#custom-tabs-three-kits" role="tab" aria-controls="custom-tabs-three-kits" aria-selected="false">Kits</a>
+                </li>
+              <% end %>
             </ul>
           </div>
           <div class="card-body">
             <div class="tab-content" id="custom-tabs-three-tabContent">
-
               <%= render partial: 'item_list' %>
-
               <%= render partial: 'items_quantity_and_location' %>
+              <% if Flipper.enabled?(:kits) %>
+                <%= render partial: 'kits' %>
+              <% end %>
             </div>
           </div>
         </div>

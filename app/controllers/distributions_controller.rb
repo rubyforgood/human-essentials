@@ -39,18 +39,24 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .where(issued_at: selected_range)
-                     .includes(:partner, :storage_location, :line_items, :items)
-                     .order(issued_at: :desc)
-                     .class_filter(filter_params)
-                     .during(helpers.selected_range)
+                     .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
     @total_value_paginated_distributions = total_value(@paginated_distributions)
     @total_items_all_distributions = total_items(@distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
-    @partners = @distributions.collect(&:partner).uniq.sort
+    @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
+    @selected_item = filter_params[:by_item_id]
+    @selected_partner = filter_params[:by_partner]
+    @selected_status = filter_params[:by_state]
+    # FIXME: one of these needs to be removed but it's unclear which at this point
+    @statuses = Distribution.states.transform_keys(&:humanize)
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data Distribution.generate_csv(@distributions), filename: "Distributions-#{Time.zone.today}.csv" }
+    end
   end
 
   def create
@@ -58,12 +64,15 @@ class DistributionsController < ApplicationController
 
     if result.success?
       session[:created_distribution_id] = result.distribution.id
-      redirect_to(distributions_path, notice: "Distribution created!") && return
+      @distribution = result.distribution
+      flash[:notice] = "Distribution created!"
+
+      perform_inventory_check
+      redirect_to(distribution_path(result.distribution)) && return
     else
       @distribution = result.distribution
       flash[:error] = insufficient_error_message(result.error.message)
-      # NOTE: Can we just do @distribution.line_items.build, regardless?
-      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
       render :new
@@ -90,7 +99,7 @@ class DistributionsController < ApplicationController
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     if (!@distribution.complete? && @distribution.future?) || current_user.organization_admin?
-      @distribution.line_items.build
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
     else
@@ -106,14 +115,15 @@ class DistributionsController < ApplicationController
 
     if result.success?
       if result.resend_notification? && @distribution.partner&.send_reminders
-        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution New Schedule Date is #{@distribution.issued_at}")
+        send_notification(current_organization.id, @distribution.id, subject: "Your Distribution Has Changed", distribution_changes: result.distribution_content.changes)
       end
       schedule_reminder_email(@distribution)
 
+      perform_inventory_check
       redirect_to @distribution, notice: "Distribution updated!"
     else
       flash[:error] = insufficient_error_message(result.error.message)
-      @distribution.line_items.build if @distribution.line_items.count.zero?
+      @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
       render :edit
@@ -121,7 +131,7 @@ class DistributionsController < ApplicationController
   end
 
   # TODO: This needs a little more context. Is it JSON only? HTML?
-  def pick_ups
+  def schedule
     @pick_ups = current_organization.distributions
   end
 
@@ -129,9 +139,9 @@ class DistributionsController < ApplicationController
     distribution = current_organization.distributions.find(params[:id])
 
     if !distribution.complete? && distribution.complete!
-      flash[:notice] = 'This distribution has been marked as being picked up!'
+      flash[:notice] = 'This distribution has been marked as being completed!'
     else
-      flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being picked up'
+      flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being completed'
     end
 
     redirect_back(fallback_location: distribution_path)
@@ -139,6 +149,7 @@ class DistributionsController < ApplicationController
 
   def pickup_day
     @pick_ups = current_organization.distributions.during(pickup_date).order(issued_at: :asc)
+    @daily_items = daily_items(@pick_ups)
     @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
 
@@ -148,8 +159,8 @@ class DistributionsController < ApplicationController
     "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{details}"
   end
 
-  def send_notification(org, dist, subject: 'Your Distribution')
-    PartnerMailerJob.perform_now(org, dist, subject) if Flipper.enabled?(:email_active)
+  def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
+    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes) if Flipper.enabled?(:email_active)
   end
 
   def schedule_reminder_email(distribution)
@@ -159,7 +170,7 @@ class DistributionsController < ApplicationController
   end
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, line_items_attributes: %i(item_id quantity _destroy))
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, :delivery_method, line_items_attributes: %i(item_id quantity _destroy))
   end
 
   def request_id
@@ -174,9 +185,32 @@ class DistributionsController < ApplicationController
     distributions.sum(&:value_per_itemizable)
   end
 
-  def filter_params
+  def daily_items(pick_ups)
+    item_groups = LineItem.where(itemizable_type: "Distribution", itemizable_id: pick_ups.pluck(:id)).group_by(&:item_id)
+    item_groups.map do |_id, items|
+      {
+        name: items.first.item.name,
+        quantity: items.sum(&:quantity),
+        package_count: items.sum { |item| item.package_count.to_i }
+      }
+    end
+  end
+
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_item_id, :by_partner)
+    params.require(:filters).permit(:by_item_id, :by_partner, :by_state)
+  end
+
+  def perform_inventory_check
+    inventory_check_result = InventoryCheckService.new(@distribution).call
+
+    if inventory_check_result.error.present?
+      flash[:error] = inventory_check_result.error
+    end
+    if inventory_check_result.alert.present?
+      flash[:alert] = inventory_check_result.alert
+    end
   end
 end
