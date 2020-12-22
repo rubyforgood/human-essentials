@@ -48,9 +48,9 @@ class Distribution < ApplicationRecord
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
-  # location scope to allow filtering by partner
+  # location scope to allow filtering distributions by location
   scope :by_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
-  # state scope to allow filtering distributions by location
+  # state scope to allow filtering by state
   scope :by_state, ->(state) { where(state: state) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :future, -> { where("issued_at >= :tomorrow", tomorrow: Time.zone.tomorrow) }
