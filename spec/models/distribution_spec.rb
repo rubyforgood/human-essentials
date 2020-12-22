@@ -123,6 +123,18 @@ RSpec.describe Distribution, type: :model do
         expect(Distribution.by_partner(partner1.id).size).to eq(1)
       end
     end
+
+    describe "by_location >" do
+      let!(:location_1) { create(:storage_location) }
+      let!(:location_2) { create(:storage_location) }
+
+      it "only returns distributions with given location id" do
+        create(:distribution, storage_location: location_1)
+        create(:distribution, storage_location: location_2)
+
+        expect(Distribution.by_location(location_1.id).size).to eq(1)
+      end
+    end
   end
 
   context "Callbacks >" do
