@@ -60,6 +60,7 @@ test:
 
 staging:
   <<: *default
+  public_root_path: public
 
   # Staging depends on precompilation of packs prior to booting for performance.
   compile: false
