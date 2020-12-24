@@ -21,6 +21,8 @@ staging:
   # This is really staging! However, we inherit the
   # same configurations as production because staging
   # use to run through environments/production.rb configuration
+  #
+  # TODO - update database name in staging
   database: diaper_production
   password: <%= ENV['DIAPER_DATABASE_PASSWORD'] %>
 
