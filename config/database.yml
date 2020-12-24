@@ -16,6 +16,14 @@ test:
   database: diaper_test
   timeout: 5000
 
+staging:
+  <<: *default
+  # This is really staging! However, we inherit the
+  # same configurations as production because staging
+  # use to run through environments/production.rb configuration
+  database: diaper_production
+  password: <%= ENV['DIAPER_DATABASE_PASSWORD'] %>
+
 production:
   <<: *default
   database: diaper_production

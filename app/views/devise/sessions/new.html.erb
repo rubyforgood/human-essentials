@@ -61,11 +61,10 @@
   </div>
 <% end %>
 <script>
-  $(document).ready(function () {
-
-    if (document.URL == "https://diaperbase.org/users/sign_in") {
+  $(document).ready(function() {
+    <% if Rails.env.staging? %>
       $('#exampleModal').modal('show');
-    }
+    <% end %>
   });
 </script>
 
