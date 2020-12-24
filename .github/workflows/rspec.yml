@@ -85,4 +85,4 @@ jobs:
           KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
           KNAPSACK_PRO_LOG_LEVEL: info
         run: |
-          RUBYOPT='-W:no-deprecated -W:no-experimental' bundle exec rake knapsack_pro:queue:rspec
+          RUBYOPT='-W:no-deprecated -W:no-experimental' bin/knapsack_pro_rspec
