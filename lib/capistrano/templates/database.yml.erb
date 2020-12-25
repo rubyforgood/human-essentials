@@ -23,12 +23,7 @@ default: &default
 
 staging:
   <<: *default
-  # This is really staging! However, we inherit the
-  # same configurations as production because staging
-  # use to run through environments/production.rb configuration
-  #
-  # TODO - update database name in staging
-  database: diaper_base_production
+  database: diaper_base_staging
   username: diaper_base
   password: <%= ENV['DIAPER_BASE_DATABASE_PASSWORD'] %>
 
