@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-between mx-3 my-2 ">
   <div class="w-50">
   <%= link_to purchase do %>
-    <%= purchase.line_items.total %> items 
+    <%= purchase.line_items.total %> items from <%= purchase.purchased_from_view %>
   <% end %>
   </div>
   <div class="w-100 text-left">
