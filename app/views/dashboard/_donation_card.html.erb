@@ -3,7 +3,7 @@
     <h3 class="card-title text-semibold">Donations - All Sources</h3>
     <div class="card-tools">
       <button type="button" class="btn btn-tool" data-card-widget="collapse">
-        <i class="fas fa-minus"></i>
+        <%= fa_icon 'minus' %>
       </button>
     </div>
   </div>
@@ -11,20 +11,20 @@
     <div class="d-flex justify-content-between pt-3">
       <div class="px-3 mb-3">
         <h2 class="m-0"><b><%= total_received_donations %></b></h2>
-        <span class="text-muted">Items Received</span>
+        <span>Items Received</span>
       </div>
       <div class="px-3 mb-3 text-right">
         <h2 class="m-0"><b><%= dollar_value(total_received_money_donations) %></b></h2>
-        <span class="text-muted">Funds Raised</span>
+        <span>Funds Raised</span>
       </div>
     </div>
     <div class="border-bottom">
-      <small class="d-flex justify-content-between text-muted px-3 mb-1">
+      <small class="d-flex justify-content-between px-3 mb-1">
         <span>Recent Donations</span>
         <%= link_to "View All Donations", donations_path %>
       </small>
     </div>
-    <div class="d-flex justify-content-between mx-3 my-2 text-muted ">
+    <div class="d-flex justify-content-between mx-3 my-2">
       <div class="w-50">
         <small>Quantity</small>
       </div>

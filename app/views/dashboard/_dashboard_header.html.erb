@@ -2,21 +2,21 @@
   <div class="container-fluid">
     <div class="w-100">
       <div class="content">
-        
+
         <div class="row">
           <%= render partial: "getting_started_prompt", locals: {org_stats: @org_stats} %>
         </div>
-    
+
         <div class="d-flex justify-content-between flex-wrap align-items-center">
           <div class=" d-flex flex-grow-1 ">
             <%= simple_form_for :filters, url: dashboard_path(current_organization), method: :get do |f| %>
               <div class="d-flex flex-grow-1"  style="width:110%;">
                 <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
-                <button class="btn btn-secondary ml-2" >Filter</button>
+                <button class="btn btn-info ml-2" >Filter</button>
               </div>
             <% end %>
           </div>
-          <h4 class="text-muted"><%= @selected_date_range %></h4>
+          <h4><%= @selected_date_range %></h4>
         </div>
 
       </div>
@@ -29,9 +29,9 @@
     <div class="d-flex flex-column mb-3 card ">
 
         <div class="d-flex align-items-center justify-content-between border-bottom p-4 flex-wrap-reverse">
-          
+
           <div class="d-flex flex-column align-items-start ">
-            <span class="text-muted">Items on-hand</span>
+            <span>Items on-hand</span>
             <h1><strong><%= total_on_hand(@total_inventory) %></strong></h1>
           </div>
 
