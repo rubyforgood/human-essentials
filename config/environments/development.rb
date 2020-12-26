@@ -55,6 +55,10 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = false
 
+  # Prevent raising error if an asset is not precompiled
+  # Error example: Sprockets::rails::Helper::AssetNotPrecompiled
+  config.assets.check_precompiled_asset = false
+
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
