@@ -63,7 +63,20 @@
 <script>
   $(document).ready(function() {
     <% if Rails.env.staging? %>
-      $('#exampleModal').modal('show');
+      //Prevents users from closing the modal by clicking outside of it or pressing the esc key
+      $('#exampleModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
+      //Adds click event handler on the checkbox
+      $('#defaultCheck1').click(function(){
+        //If the checkbox is checked, enable the continue button
+        if($(this).is(':checked')){
+          $('.continue-btn').attr("disabled", false);
+        } else{
+          $('.continue-btn').attr("disabled", true);
+        }
+      });
     <% end %>
   });
 </script>
@@ -73,14 +86,25 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title" id="exampleModalLabel">Demo Site Reminder</h3>
+        <h3 class="modal-title" id="exampleModalLabel"><b>This site is for TEST purposes only!</b></h3>
       </div>
       <div class="modal-body">
-        Please be aware that diaperbase.org is a demo/test server for <a href="https://diaper.app">diaper.app</a>.
-        Multiple people have access to the test accounts so please do not save or upload any sensitive data.
+        You're visiting diaperbase.org, a demo/test site for the full site at <a href="https://diaper.app">diaper.app</a>.<br>
+        It is not safe to upload, enter or save any sensitive data here.<br>
+        <div class="modal-body-warning-text">
+          To safely login or reset your password, please visit <a href="https://diaper.app/users/sign_in">diaper.app</a>
+        </div>
+        <br>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+          <label class="form-check-label" for="defaultCheck1">
+            I Understand
+          </label>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">I Understand</button>
+        <button type="button" class="btn btn-warning continue-btn" data-dismiss="modal" disabled>Continue in Test Site</button>
+        <a href="https://diaper.app/users/sign_in" class="btn btn-primary" role="button">Safely Sign In</a>
       </div>
     </div>
   </div>

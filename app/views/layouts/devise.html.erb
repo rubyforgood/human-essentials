@@ -17,7 +17,7 @@
   }
 </style>
 </head>
-<body id="devise" class="hold-transition login-page">
+<body id="devise" class="hold-transition login-page <%= Rails.env.staging? ? 'login-page-test' : '' %>">
 <div class="login-box">
   <div class="login-logo">
 
