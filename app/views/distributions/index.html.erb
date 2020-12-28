@@ -47,7 +47,7 @@
                   </div>
                 <% end %>
                 <% if @storage_locations.present? %>
-                  <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                     <%= filter_select(label: "Filter by Source Inventory", scope: :by_location, collection: @storage_locations, selected: @selected_location) %>
                   </div>
                 <% end %>
