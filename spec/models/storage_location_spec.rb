@@ -22,6 +22,19 @@ RSpec.describe StorageLocation, type: :model do
     end
   end
 
+  context "Callbacks >" do
+    describe "before_destroy" do
+      let!(:item) { create(:item) }
+      subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization) }
+
+      it "does not delete storage locations with inventory items on it" do
+        subject.destroy
+
+        expect(subject.errors.messages[:base]).to include("Cannot delete storage location containing inventory items")
+      end
+    end
+  end
+
   context "Filtering >" do
     it "->containing yields only inventories that have that item" do
       item = create(:item)
