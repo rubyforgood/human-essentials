@@ -18,7 +18,7 @@
   </style>
   <script>
     $(document).ready(function() {
-      <% if Rails.env.development? %>
+      <% if Rails.env.staging? %>
         // Prevents users from closing the modal by clicking outside of it or pressing the esc key
         $('#warningModal').modal({
           backdrop: 'static',
@@ -37,7 +37,7 @@
     });
   </script>
 </head>
-<body id="devise" class="hold-transition login-page <%= Rails.env.development? ? 'login-page-test' : '' %>">
+<body id="devise" class="hold-transition login-page <%= Rails.env.staging? ? 'login-page-test' : '' %>">
   <div class="login-box">
     <div class="login-logo">
       <img id="MastheadLogo" src="/img/diaper-base-logo-full-white-text.svg" style="width: 80%; height: 80%; " alt="Diaperbase" title="Diaperbase" class="serv_icon"/>
