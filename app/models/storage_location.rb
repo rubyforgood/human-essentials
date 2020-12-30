@@ -7,6 +7,8 @@
 #  latitude        :float
 #  longitude       :float
 #  name            :string
+#  square_footage  :integer
+#  warehouse_type  :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -14,6 +16,13 @@
 
 class StorageLocation < ApplicationRecord
   require "csv"
+
+  WAREHOYSE_TYPES = [
+    'Residential space used',
+    'Consumer, self-storage or container space',
+    'Commercial/office/business space that includes storage space',
+    'Warehouse with loading bay'
+  ].freeze
 
   belongs_to :organization
   has_many :inventory_items, -> { includes(:item).order("items.name") },
