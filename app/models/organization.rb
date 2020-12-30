@@ -45,6 +45,7 @@ class Organization < ApplicationRecord
     has_many :donations
     has_many :manufacturers
     has_many :partners
+    has_many :partner_groups
     has_many :purchases
     has_many :requests
     has_many :storage_locations

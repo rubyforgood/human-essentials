@@ -11,6 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20_210_107_175_100) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -289,6 +290,23 @@ ActiveRecord::Schema.define(version: 20_210_107_175_100) do
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
+  create_table "partner_group_memberships", force: :cascade do |t|
+    t.bigint "partner_group_id"
+    t.bigint "partner_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["partner_group_id"], name: "index_partner_group_memberships_on_partner_group_id"
+    t.index ["partner_id"], name: "index_partner_group_memberships_on_partner_id"
+  end
+
+  create_table "partner_groups", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
+  end
+
   create_table "partners", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -418,6 +436,9 @@ ActiveRecord::Schema.define(version: 20_210_107_175_100) do
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
+  add_foreign_key "partner_group_memberships", "partner_groups"
+  add_foreign_key "partner_group_memberships", "partners"
+  add_foreign_key "partner_groups", "organizations"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end
