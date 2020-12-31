@@ -40,6 +40,8 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, :organization, presence: true
+  validates :warehouse_type, inclusion: { in: WAREHOYSE_TYPES },
+                             allow_blank: true
 
   include Geocodable
   include Filterable
