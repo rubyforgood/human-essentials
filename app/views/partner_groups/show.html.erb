@@ -30,6 +30,7 @@
           <div class="card-footer">
             <%= edit_button_to edit_partner_group_path(@partner_group) %>
             <%= delete_button_to partner_group_path(@partner_group), {confirm: confirm_delete_msg(@partner_group.name)} %>
+            <%= modal_button_to("#addPartnerModal", {text: "Add Partner to group", size: "xs"}) if can_administrate? %>
           </div>
         </div>
       </div>
@@ -53,14 +54,22 @@
                 <tr>
                   <th>Partner</th>
                   <th>E-mail</th>
-                  <th>Monthly Limit</th>
-                  <th>Status</th>
-                  <th>Action</th>
                   <th>&nbsp;</th>
                 </tr>
                 </thead>
                 <tbody>
-                <%= render partial: "partners/partner_row", collection: @partner_group.partners %>
+                <% @partner_group.partner_group_memberships.each do |partner_group_membership| %>
+                  <% partner = partner_group_membership.partner %>
+                  <tr>
+                    <td><%= link_to partner.name, partner_path(partner) %></td>
+                    <td><%= link_to partner.email, "mailto:#{partner.email}" %></td>
+                    <td><%= delete_button_to(
+                                partner_group_membership_path(partner_group_id: @partner_group.id, id: partner_group_membership.id),
+                                {confirm: confirm_delete_msg("#{partner.name} from this group")}
+                            ) %>
+                    </td>
+                  </tr>
+                <% end %>
                 </table>
             </div><!-- /.box-body.table-responsive -->
           </div>
@@ -68,4 +77,31 @@
       </div>
     </div>
   </div>
+  <div id="addPartnerModal" class="modal fade">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add a partner to <%= @partner_group.name %></h4>
+        </div><!-- modal-header -->
+        <div class="modal-body">
+          <div class="box-body">
+            <p>
+              This will add a partner to this group.
+            </p>
+            <br/>
+            <%= form_tag partner_group_memberships_path(@partner_group.id) do %>
+
+              <%= label_tag 'Partner: ' %>
+              <%= select_tag :partner_id,
+                             options_from_collection_for_select(@partners_not_in_group, :id, :name)
+              %>
+              <br>
+              <%= submit_button({text: "Add Partner", icon: "plus"}) %>
+            <% end # form %>
+          </div><!-- box-body -->
+        </div><!-- modal-body -->
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- addPartnerModal-->
 </section>

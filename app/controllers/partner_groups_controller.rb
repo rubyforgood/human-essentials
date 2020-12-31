@@ -10,6 +10,8 @@ class PartnerGroupsController < ApplicationController
   def show
     @partner_group = current_organization.partner_groups.find(params[:id])
 
+    @partners_not_in_group = current_organization.partners.alphabetized - @partner_group.partners
+
     respond_to do |format|
       format.html
     end

@@ -143,6 +143,7 @@ Rails.application.routes.draw do
     end
 
     resources :partner_groups do
+      resources :memberships, controller: :partner_group_memberships, only: %i(create destroy)
     end
 
     resources :diaper_drives
