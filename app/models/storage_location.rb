@@ -187,10 +187,10 @@ class StorageLocation < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Address", "Total Inventory"]
+    ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
   end
 
   def csv_export_attributes
-    [name, address, size]
+    [name, address, square_footage, warehouse_type, size]
   end
 end
