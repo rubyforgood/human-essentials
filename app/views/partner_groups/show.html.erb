@@ -1,0 +1,71 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Partner Groups - #{@partner_group.name} - #{current_organization.name}" %>
+        <h1>
+          Partner Group info
+          <small>for <%= @partner_group.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Partner Groups", (partner_groups_path) %></li>
+          <li class="breadcrumb-item"><a href="#"><%= @partner_group.name %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-info card-outline">
+          <div class="card-footer">
+            <%= edit_button_to edit_partner_group_path(@partner_group) %>
+            <%= delete_button_to partner_group_path(@partner_group), {confirm: confirm_delete_msg(@partner_group.name)} %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h2 class="card-title">Partners in this group</h2>
+          </div>
+          <div class="card-body p-0">
+            <div class="tab-content" id="custom-tabs-three-tabContent">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>E-mail</th>
+                  <th>Monthly Limit</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                  <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%= render partial: "partners/partner_row", collection: @partner_group.partners %>
+                </table>
+            </div><!-- /.box-body.table-responsive -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

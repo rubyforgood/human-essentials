@@ -142,6 +142,9 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :partner_groups do
+    end
+
     resources :diaper_drives
     resources :donations do
       # collection do

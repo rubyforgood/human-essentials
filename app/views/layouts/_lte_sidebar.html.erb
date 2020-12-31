@@ -96,6 +96,13 @@
     <% end %>
   </li>
 
+  <li class="nav-item <%= 'active' if current_page?(partner_groups_path) %>">
+    <%= link_to(partner_groups_path, class: "nav-link #{"active" if current_page?(partner_groups_path)}") do %>
+      <i class="nav-icon fas fa-group"></i>
+      <p>Partner Groups</p>
+    <% end %>
+  </li>
+
   <li class="nav-item has-treeview <%= menu_open?(['items', 'kits', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
     <a href="#" class="nav-link <%= active_class(['items', 'kits', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
       <i class="nav-icon fa fa-pie-chart"></i>
