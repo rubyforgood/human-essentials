@@ -164,7 +164,7 @@ GEM
       i18n (>= 1.6, < 2)
     fakeredis (0.8.0)
       redis (~> 4.1)
-    ffi (1.13.1)
+    ffi (1.14.2)
     filterrific (5.2.1)
     flipper (0.19.1)
     flipper-active_record (0.19.1)
@@ -240,7 +240,7 @@ GEM
     letter_opener (1.7.0)
       launchy (~> 2.2)
     libv8 (8.4.255.0)
-    listen (3.3.3)
+    listen (3.4.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     loofah (2.7.0)
@@ -563,7 +563,7 @@ DEPENDENCIES
   knapsack_pro
   launchy
   letter_opener
-  listen (~> 3.3.3)
+  listen (~> 3.4.0)
   mini_racer (~> 0.3.1)
   momentjs-rails
   newrelic_rpm

@@ -86,7 +86,7 @@ group :development do
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
   gem "letter_opener"
-  gem "listen", "~> 3.3.3"
+  gem "listen", "~> 3.4.0"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
