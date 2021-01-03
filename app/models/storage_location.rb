@@ -17,7 +17,7 @@
 class StorageLocation < ApplicationRecord
   require "csv"
 
-  WAREHOYSE_TYPES = [
+  WAREHOUSE_TYPES = [
     'Residential space used',
     'Consumer, self-storage or container space',
     'Commercial/office/business space that includes storage space',
@@ -40,7 +40,7 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, :organization, presence: true
-  validates :warehouse_type, inclusion: { in: WAREHOYSE_TYPES },
+  validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
 
   include Geocodable

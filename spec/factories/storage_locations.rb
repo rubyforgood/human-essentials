@@ -20,7 +20,7 @@ FactoryBot.define do
     address { "1500 Remount Road, Front Royal, VA 22630" }
     organization { Organization.try(:first) || create(:organization) }
     square_footage { 100 }
-    warehouse_type { StorageLocation::WAREHOYSE_TYPES.sample }
+    warehouse_type { StorageLocation::WAREHOUSE_TYPES.sample }
 
     trait :with_items do
       transient do
