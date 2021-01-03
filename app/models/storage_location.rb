@@ -7,6 +7,8 @@
 #  latitude        :float
 #  longitude       :float
 #  name            :string
+#  square_footage  :integer
+#  warehouse_type  :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -14,6 +16,13 @@
 
 class StorageLocation < ApplicationRecord
   require "csv"
+
+  WAREHOUSE_TYPES = [
+    'Residential space used',
+    'Consumer, self-storage or container space',
+    'Commercial/office/business space that includes storage space',
+    'Warehouse with loading bay'
+  ].freeze
 
   belongs_to :organization
   has_many :inventory_items, -> { includes(:item).order("items.name") },
@@ -31,6 +40,8 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, :organization, presence: true
+  validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
+                             allow_blank: true
 
   include Geocodable
   include Filterable
@@ -176,10 +187,10 @@ class StorageLocation < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Address", "Total Inventory"]
+    ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
   end
 
   def csv_export_attributes
-    [name, address, size]
+    [name, address, square_footage, warehouse_type, size]
   end
 end

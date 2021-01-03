@@ -19,6 +19,13 @@
                   <span class="input-group-text"><i class="fa fa-address-card-o"></i></span>
                   <%= f.input_field :address, class: "form-control" %>
                 <% end %>
+
+                <%= f.input :square_footage, label: "Square Footage", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-th"></i></span>
+                  <%= f.input_field :square_footage, class: "form-control" %>
+                <% end %>
+
+                <%= f.input :warehouse_type, label: "Warehouse Type", wrapper: :input_group, collection: StorageLocation::WAREHOUSE_TYPES %>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
