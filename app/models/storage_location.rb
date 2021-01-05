@@ -194,8 +194,6 @@ class StorageLocation < ApplicationRecord
   end
 
   def empty_inventory_items?
-    items_quantity = inventory_items.map(&:quantity).uniq
-
-    items_quantity.empty? || (items_quantity.length == 1 && items_quantity.first.zero?)
+    inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
   end
 end

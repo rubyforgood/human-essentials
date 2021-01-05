@@ -32,6 +32,13 @@ RSpec.describe StorageLocation, type: :model do
 
         expect(subject.errors.messages[:base]).to include("Cannot delete storage location containing inventory items")
       end
+
+      it "deletes storage locations with no inventory items on it" do
+        subject.inventory_items.destroy_all
+        subject.destroy
+
+        expect(StorageLocation.count).to eq(0)
+      end
     end
   end
 
