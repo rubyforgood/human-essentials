@@ -21,19 +21,31 @@ RSpec.describe "Authentication", type: :system, js: true do
     end
   end
 
-  example "Check for modal in staging env" do
+  example "Check for modal in login page for staging env" do
     allow(Rails.env).to receive_message_chain(:staging?).and_return(true)
     # allow(Rails).to receive_message_chain(:env, :staging?).and_return(true)
-    visit "users/sign_in"
+    visit "/users/sign_in"
     find('#warningModal')
     expect(page).to have_content 'This site is for TEST purposes only!'
   end
 
-  example "Check there is no modal for non staging env" do
+  example "Check for modal in password reset page for staging env" do
+    allow(Rails.env).to receive_message_chain(:staging?).and_return(true)
+    # allow(Rails).to receive_message_chain(:env, :staging?).and_return(true)
+    visit "/users/password/new"
+    find('#warningModal')
+    expect(page).to have_content 'This site is for TEST purposes only!'
+  end
+
+  example "Check there is no modal in login page for non staging env" do
     allow(Rails.env).to receive_message_chain(:staging?).and_return(false)
-    visit "users/sign_in"
+    visit "/users/sign_in"
     page.assert_no_selector('#warningModal')
   end
 
-  # TODO: write tests for /users/password/new
+  example "Check there is no modal in password reset page for non staging env" do
+    allow(Rails.env).to receive_message_chain(:staging?).and_return(false)
+    visit "/users/password/new"
+    page.assert_no_selector('#warningModal')
+  end
 end
