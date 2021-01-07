@@ -24,6 +24,12 @@
                             as: :date,
                             html5: true %>
               </div>
+
+              <div class="form-group">
+                <%= f.input :virtual, label: "Diaper Drive is Virtual?", wrapper: :input_group do %>
+                  <%= f.check_box :virtual, {class: "input-group-text", id: "virtual"}, "true" %>
+                <% end %>
+              </div>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">

@@ -6,6 +6,7 @@
 #  end_date        :date
 #  name            :string
 #  start_date      :date
+#  virtual         :boolean
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :bigint
