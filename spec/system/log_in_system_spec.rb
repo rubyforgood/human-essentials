@@ -21,31 +21,29 @@ RSpec.describe "Authentication", type: :system, js: true do
     end
   end
 
-  example "Check for modal in login page for staging env" do
-    allow(Rails.env).to receive_message_chain(:staging?).and_return(true)
-    # allow(Rails).to receive_message_chain(:env, :staging?).and_return(true)
-    visit "/users/sign_in"
-    find('#warningModal')
-    expect(page).to have_content 'This site is for TEST purposes only!'
-  end
+  describe 'Showing the modal warning in staging' do
+    ["/users/sign_in", "/users/password/new"].each do |path|
+      context "when accessing #{path} in the staging environment" do
+        before do
+          allow(Rails.env).to receive(:staging?).and_return(true)
+          visit path
+        end
 
-  example "Check for modal in password reset page for staging env" do
-    allow(Rails.env).to receive_message_chain(:staging?).and_return(true)
-    # allow(Rails).to receive_message_chain(:env, :staging?).and_return(true)
-    visit "/users/password/new"
-    find('#warningModal')
-    expect(page).to have_content 'This site is for TEST purposes only!'
-  end
+        it 'should render the modal' do
+          expect(page).to have_content 'This site is for TEST purposes only!'
+        end
+      end
 
-  example "Check there is no modal in login page for non staging env" do
-    allow(Rails.env).to receive_message_chain(:staging?).and_return(false)
-    visit "/users/sign_in"
-    page.assert_no_selector('#warningModal')
-  end
+      context "when accessing #{path} not in the staging environment" do
+        before do
+          allow(Rails.env).to receive(:staging?).and_return(false)
+          visit path
+        end
 
-  example "Check there is no modal in password reset page for non staging env" do
-    allow(Rails.env).to receive_message_chain(:staging?).and_return(false)
-    visit "/users/password/new"
-    page.assert_no_selector('#warningModal')
+        it 'should not render the modal' do
+          page.assert_no_selector('#warningModal')
+        end
+      end
+    end
   end
 end
