@@ -17,8 +17,8 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
 
     before(:each) do
       @diaper_drives = [
-        create(:diaper_drive, name: "Test name 1", start_date: 3.weeks.ago, end_date: 2.weeks.ago),
-        create(:diaper_drive, name: "Test name 2", start_date: 2.weeks.ago, end_date: 1.week.ago)
+        create(:diaper_drive, name: "Test name 1", start_date: 3.weeks.ago, end_date: 2.weeks.ago, virtual: true),
+        create(:diaper_drive, name: "Test name 2", start_date: 2.weeks.ago, end_date: 1.week.ago, virtual: false)
       ]
       visit subject
     end
@@ -33,6 +33,14 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
         expect(page).to have_xpath('//table/tbody/tr/td', text: d.name)
         expect(page).to have_xpath('//table/tbody/tr/td', text: d.name)
       end
+    end
+
+    it 'shows only one virtual diaper drive' do
+      expect(page).to have_text(/Yes/, maximum: 1)
+    end
+
+    it 'shows only one presential diaper drive' do
+      expect(page).to have_text(/No/, maximum: 1)
     end
   end
 
