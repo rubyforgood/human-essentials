@@ -96,6 +96,12 @@ class DistributionsController < ApplicationController
   def show
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @line_items = @distribution.line_items
+
+    @total_quantity = @line_items.sum(&:quantity)
+    @total_package_count = @line_items.sum { |item| item.has_packages&.ceil || 0 }
+    if @total_package_count.zero?
+      @total_package_count = nil
+    end
   end
 
   def edit
