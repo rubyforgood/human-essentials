@@ -164,10 +164,14 @@ end
 inv_arbor = StorageLocation.find_or_create_by!(name: "Bulk Storage Location") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = pdx_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[0]
+  inventory.square_footage = 10000
 end
 inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = pdx_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[1]
+  inventory.square_footage = 20000
 end
 
 # ----------------------------------------------------------------------------
