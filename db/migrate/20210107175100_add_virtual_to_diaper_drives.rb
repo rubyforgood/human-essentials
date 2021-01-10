@@ -2,7 +2,7 @@
 class AddVirtualToDiaperDrives < ActiveRecord::Migration[5.2]
   def change
     change_table :diaper_drives do |t|
-      t.boolean :virtual
+      t.boolean :virtual, default: false, null: false
     end
   end
 end
