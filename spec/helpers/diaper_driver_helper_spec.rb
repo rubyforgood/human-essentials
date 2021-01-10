@@ -16,7 +16,7 @@ RSpec.describe DiaperDriveHelper, type: :helper do
       it { is_expected.to eq('No') }
     end
 
-    context 'when a diaper drive is was not provided' do
+    context 'when a diaper drive was not provided' do
       it 'without argument' do
         expect { helper.is_virtual }.to raise_error(ArgumentError, 'missing keyword: :diaper_drive')
       end
