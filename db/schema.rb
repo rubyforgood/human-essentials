@@ -127,7 +127,7 @@ ActiveRecord::Schema.define(version: 20_210_107_175_100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
-    t.boolean "virtual"
+    t.boolean "virtual", default: false, null: false
     t.index ["organization_id"], name: "index_diaper_drives_on_organization_id"
   end
 

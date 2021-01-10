@@ -39,7 +39,7 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
       expect(page).to have_text(/Yes/, maximum: 1)
     end
 
-    it 'shows only one presential diaper drive' do
+    it 'shows only one non-virtual diaper drive' do
       expect(page).to have_text(/No/, maximum: 1)
     end
   end
