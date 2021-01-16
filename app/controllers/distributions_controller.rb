@@ -98,7 +98,7 @@ class DistributionsController < ApplicationController
     @line_items = @distribution.line_items
 
     @total_quantity = @line_items.sum(&:quantity)
-    @total_package_count = @line_items.sum { |item| item.has_packages&.ceil || 0 }
+    @total_package_count = @line_items.sum { |item| item.has_packages || 0 }
     if @total_package_count.zero?
       @total_package_count = nil
     end
