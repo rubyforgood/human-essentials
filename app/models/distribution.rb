@@ -128,7 +128,7 @@ class Distribution < ApplicationRecord
       partner.name,
       issued_at.strftime("%F"),
       storage_location.name,
-      line_items.total,
+      total_quantity,
       cents_to_dollar(line_items.total_value),
       delivery_method,
       state,

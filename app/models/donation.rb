@@ -145,10 +145,6 @@ class Donation < ApplicationRecord
     storage_location.nil? ? "N/A" : storage_location.name
   end
 
-  def total_quantity
-    line_items.sum(:quantity)
-  end
-
   def self.csv_export_headers
     ["Source", "Date", "Donation Site", "Storage Location", "Quantity of Items", "Variety of Items"]
   end
