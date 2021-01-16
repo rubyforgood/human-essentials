@@ -10,8 +10,11 @@
 #
 class PartnerGroup < ApplicationRecord
   belongs_to :organization
-  has_many :partner_group_memberships
+  has_many :partner_group_memberships, dependent: :destroy
   has_many :partners, through: :partner_group_memberships
+
+  has_many :partner_group_items, dependent: :destroy
+  has_many :items, through: :partner_group_items
 
   validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }

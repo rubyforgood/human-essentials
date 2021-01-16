@@ -290,6 +290,15 @@ ActiveRecord::Schema.define(version: 20_210_107_175_100) do
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
+  create_table "partner_group_items", force: :cascade do |t|
+    t.bigint "partner_group_id", null: false
+    t.bigint "item_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["item_id"], name: "index_partner_group_items_on_item_id"
+    t.index ["partner_group_id"], name: "index_partner_group_items_on_partner_group_id"
+  end
+
   create_table "partner_group_memberships", force: :cascade do |t|
     t.bigint "partner_group_id"
     t.bigint "partner_id"
@@ -436,6 +445,8 @@ ActiveRecord::Schema.define(version: 20_210_107_175_100) do
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
+  add_foreign_key "partner_group_items", "items"
+  add_foreign_key "partner_group_items", "partner_groups"
   add_foreign_key "partner_group_memberships", "partner_groups"
   add_foreign_key "partner_group_memberships", "partners"
   add_foreign_key "partner_groups", "organizations"

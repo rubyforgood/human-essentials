@@ -45,6 +45,74 @@
         <!-- Default box -->
         <div class="card card-primary card-outline">
           <div class="card-header">
+            <h2 class="card-title mr-2">Items requestable by this partner group</h2>
+            <%= modal_button_to("#addItemModal", {text: "Add Item to group", size: "xs"}) if can_administrate? %>
+          </div>
+          <div class="card-body p-0">
+            <div class="tab-content" id="custom-tabs-three-tabContent">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Item name</th>
+                  <th>Base item name</th>
+                  <th></th>
+                </thead>
+                <tbody>
+                <% @partner_group.partner_group_items.each do |partner_group_item| %>
+                  <% item = partner_group_item.item %>
+                  <tr>
+                    <td><%= item.name %></td>
+                    <td><%= item.base_item.name %></td>
+                    <td><%= delete_button_to(
+                                partner_group_item_path(partner_group_id: @partner_group.id, id: partner_group_item.id),
+                                {confirm: confirm_delete_msg("#{item.name} from this group")}
+                            ) %>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            </div><!-- /.box-body.table-responsive -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="addItemModal" class="modal fade">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add an item to <%= @partner_group.name %></h4>
+        </div><!-- modal-header -->
+        <div class="modal-body">
+          <div class="box-body">
+            <p>
+              This item can be requested by members of this group.
+            </p>
+            <br/>
+            <%= form_tag partner_group_items_path(@partner_group.id) do %>
+
+              <%= label_tag 'Item: ' %>
+              <%= select_tag :item_id,
+                             options_from_collection_for_select(@items_not_in_group, :id, :name)
+              %>
+              <br>
+              <%= submit_button({text: "Add Item", icon: "plus"}) %>
+            <% end # form %>
+          </div><!-- box-body -->
+        </div><!-- modal-body -->
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- addItemModal-->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
             <h2 class="card-title">Partners in this group</h2>
           </div>
           <div class="card-body p-0">
