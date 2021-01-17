@@ -30,6 +30,10 @@ class Partner < ApplicationRecord
 
   has_many :requests, dependent: :destroy
 
+  has_many :partner_group_memberships, dependent: :destroy
+  has_many :partner_groups, through: :partner_group_memberships
+  has_many :requestable_items, through: :partner_groups, source: :items
+
   has_many_attached :documents
 
   validates :organization, presence: true
