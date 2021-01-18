@@ -180,7 +180,7 @@ class StorageLocation < ApplicationRecord
 
   def verify_inventory_items
     unless empty_inventory_items?
-      errors.add(:base, "Cannot delete storage location containing inventory items")
+      errors.add(:base, "Cannot delete storage location containing inventory items with non-zero quantities")
       throw(:abort)
     end
   end

@@ -24,13 +24,13 @@ RSpec.describe StorageLocation, type: :model do
 
   context "Callbacks >" do
     describe "before_destroy" do
-      let!(:item) { create(:item) }
+      let(:item) { create(:item) }
       subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization) }
 
       it "does not delete storage locations with inventory items on it" do
         subject.destroy
 
-        expect(subject.errors.messages[:base]).to include("Cannot delete storage location containing inventory items")
+        expect(subject.errors.messages[:base]).to include("Cannot delete storage location containing inventory items with non-zero quantities")
       end
 
       it "deletes storage locations with no inventory items on it" do
