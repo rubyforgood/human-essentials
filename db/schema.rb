@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_04_124133) do
-
+ActiveRecord::Schema.define(version: 20_210_107_175_100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -33,7 +32,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.bigint "record_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+    t.index %w(record_type record_id name), name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -43,7 +42,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+    t.index %w(record_type record_id name blob_id), name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
@@ -91,7 +90,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.datetime "updated_at", null: false
     t.integer "organization_id"
     t.string "barcodeable_type", default: "Item"
-    t.index ["barcodeable_type", "barcodeable_id"], name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
+    t.index %w(barcodeable_type barcodeable_id), name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
   end
 
@@ -118,7 +117,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.string "business_name"
     t.float "latitude"
     t.float "longitude"
-    t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
+    t.index %w(latitude longitude), name: "index_diaper_drive_participants_on_latitude_and_longitude"
   end
 
   create_table "diaper_drives", force: :cascade do |t|
@@ -128,6 +127,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
+    t.boolean "virtual", default: false, null: false
     t.index ["organization_id"], name: "index_diaper_drives_on_organization_id"
   end
 
@@ -156,7 +156,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
-    t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
+    t.index %w(latitude longitude), name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
 
@@ -203,7 +203,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+    t.index %w(feature_key key value), name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
   create_table "inventory_items", id: :serial, force: :cascade do |t|
@@ -243,7 +243,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.boolean "active", default: true
     t.boolean "visible_to_partners", default: true, null: false
     t.integer "value_in_cents", default: 0
-    t.index ["name", "organization_id"], name: "index_kits_on_name_and_organization_id", unique: true
+    t.index %w(name organization_id), name: "index_kits_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_kits_on_organization_id"
   end
 
@@ -254,7 +254,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.string "itemizable_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
+    t.index %w(itemizable_id itemizable_type), name: "index_line_items_on_itemizable_id_and_itemizable_type"
   end
 
   create_table "manufacturers", force: :cascade do |t|
@@ -285,7 +285,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.integer "default_storage_location"
     t.text "partner_form_fields", default: [], array: true
     t.integer "account_request_id"
-    t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
+    t.index %w(latitude longitude), name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
@@ -338,7 +338,9 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
-    t.index ["latitude", "longitude"], name: "index_storage_locations_on_latitude_and_longitude"
+    t.integer "square_footage"
+    t.string "warehouse_type"
+    t.index %w(latitude longitude), name: "index_storage_locations_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end
 
@@ -384,7 +386,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index %w(invited_by_type invited_by_id), name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -400,7 +402,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.float "longitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
+    t.index %w(latitude longitude), name: "index_vendors_on_latitude_and_longitude"
   end
 
   add_foreign_key "adjustments", "organizations"

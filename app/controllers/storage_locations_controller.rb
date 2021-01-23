@@ -87,7 +87,7 @@ class StorageLocationsController < ApplicationController
   private
 
   def storage_location_params
-    params.require(:storage_location).permit(:name, :address)
+    params.require(:storage_location).permit(:name, :address, :square_footage, :warehouse_type)
   end
 
   helper_method \

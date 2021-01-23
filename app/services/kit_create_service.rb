@@ -30,7 +30,10 @@ class KitCreateService
         }
       )
 
-      item_creation.call
+      item_creation_result = item_creation.call
+      unless item_creation_result.success?
+        raise item_creation_result.error
+      end
     rescue StandardError => e
       errors.add(:base, e.message)
       raise ActiveRecord::Rollback

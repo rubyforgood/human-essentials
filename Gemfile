@@ -8,7 +8,7 @@ end
 ruby "2.7.2"
 
 gem "api-auth", "~> 2.4"
-gem 'bootstrap', '~> 4.5.2'
+gem 'bootstrap', '~> 4.5.3'
 gem 'bootstrap-daterangepicker-rails'
 gem 'bootstrap-select-rails'
 gem "bugsnag"
@@ -35,7 +35,6 @@ gem "jwt"
 gem "kaminari"
 gem "mini_racer", "~> 0.3.1"
 gem "momentjs-rails"
-gem "newrelic_rpm"
 gem "nokogiri", ">= 1.10.4"
 gem "paperclip" # needed for legacy migrations
 gem "pg", "~> 1.2.3"
@@ -55,18 +54,23 @@ gem "webpacker", "> 4.0"
 gem "yajl-ruby"
 gem "recaptcha"
 
+group :production do
+  gem "newrelic_rpm"
+end
+
 group :development, :test do
   gem "awesome_print"
   gem "brakeman"
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
+  gem "knapsack_pro"
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
-  gem 'rb-readline', '~> 0.5.3'
-  gem "rspec-rails", "~> 4.0.1"
+  gem "rb-readline", "~> 0.5.3"
+  gem "rspec-rails", "~> 4.0.2"
   gem "rubocop"
-  gem "rubocop-rails", "~> 2.8.1"
+  gem "rubocop-rails", "~> 2.9.1"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
   gem "faker"
@@ -83,7 +87,7 @@ group :development do
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
   gem "letter_opener"
-  gem "listen", "~> 3.2.1"
+  gem "listen", "~> 3.4.1"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
@@ -91,7 +95,7 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 3.33"
+  gem "capybara", "~> 3.34"
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "factory_bot_rails"
@@ -99,9 +103,9 @@ group :test do
   gem "rails-controller-testing"
   gem "rspec-sidekiq"
   gem 'simplecov'
-  gem 'shoulda-matchers', '~> 4.4'
+  gem 'shoulda-matchers', '~> 4.5'
   gem 'webdrivers', '~> 4.4'
-  gem "webmock", "~> 3.9"
+  gem "webmock", "~> 3.10"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
