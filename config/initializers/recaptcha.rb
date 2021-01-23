@@ -1,5 +1,13 @@
+# See https://github.com/ambethia/recaptcha for details on configuring
+
 Recaptcha.configure do |config|
-  # Call keys from .env file here
-  config.site_key   = '6LdBfekZAAAAAAmEgaeLe3S2KxW3DPUNVoIKT6wE'
-  config.secret_key = '6LdBfekZAAAAAElU4F2gSspPkJ_LtXMa1gPFX6E5'
+  config.site_key   = ENV["RECAPTCHA_SITE_KEY"]
+  config.secret_key = ENV["RECAPTCHA_PRIVATE_KEY"]
+
+  # To disable requiring (OR rendering) Recaptcha in a particular env,
+  # add that env to the config.skip_verify_env array. E.g.,
+  #
+  #   config.skip_verify_env.push("some_environment")
+  #
+  # By default, this array already contains "test" and "cucumber"
 end

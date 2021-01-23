@@ -24,9 +24,7 @@ class AccountRequestsController < ApplicationController
   def create
     @account_request = AccountRequest.new(account_request_params)
 
-    if @account_request.save
-      verify_recaptcha(model: @account_request) if Rails.env.production? || Rails.env.staging?
-
+    if verify_recaptcha(model: @account_request) && @account_request.save
       AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_later
 
       redirect_to received_account_requests_path(token: @account_request.identity_token),
