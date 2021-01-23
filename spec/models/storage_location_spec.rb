@@ -35,7 +35,6 @@ RSpec.describe StorageLocation, type: :model do
 
       it "deletes storage locations with no inventory items on it" do
         subject.inventory_items.destroy_all
-        expect(subject.destroy).to eq(true)
 
         expect(StorageLocation.count).to eq(0)
       end
