@@ -84,7 +84,7 @@ GEM
       railties (>= 4.0)
     bootstrap-select-rails (1.13.8)
     brakeman (4.10.1)
-    bugsnag (6.18.0)
+    bugsnag (6.19.0)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
     capistrano (3.14.1)
