@@ -24,7 +24,10 @@ class AccountRequestsController < ApplicationController
   def create
     @account_request = AccountRequest.new(account_request_params)
 
-    if verify_recaptcha(model: @account_request) && @account_request.save
+    if !verify_recaptcha(model: @account_request)
+      flash[:alert] = "Invalid captcha submission"
+      render :new
+    elsif @account_request.save
       AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_later
 
       redirect_to received_account_requests_path(token: @account_request.identity_token),
