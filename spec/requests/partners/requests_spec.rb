@@ -74,7 +74,7 @@ RSpec.describe "/partners/requests", type: :request do
     context 'when given invalid parameters' do
       let(:partners_request_attributes) do
         {
-          comments: 'this is not going to work',
+          comments: 'this is not going to work'
         }
       end
 

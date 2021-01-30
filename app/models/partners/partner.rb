@@ -97,7 +97,7 @@ module Partners
     end
 
     def organization
-      Organization.find_by!(id: self.diaper_bank_id)
+      Organization.find_by!(id: diaper_bank_id)
     end
   end
 end

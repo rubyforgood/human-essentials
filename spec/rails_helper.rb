@@ -167,10 +167,7 @@ RSpec.configure do |config|
       -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
     ASCIIART
 
-    current_db = Rails.configuration.database_configuration[Rails.env]
-
-
-    DatabaseCleaner[:active_record, { model: Partners::Base  }]
+    DatabaseCleaner[:active_record, { model: Partners::Base }]
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
 

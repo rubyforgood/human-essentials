@@ -49,7 +49,6 @@ module Partners
                                                  :_destroy
                                                ])
     end
-
   end
 end
 

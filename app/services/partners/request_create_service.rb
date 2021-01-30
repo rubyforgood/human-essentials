@@ -23,20 +23,18 @@ module Partners
       return self if errors.present?
 
       Partners::Base.transaction do
-        begin
-          @partner_request.save!
+        @partner_request.save!
 
-          @organization_request = build_organization_request(@partner_request)
-          @organization_request.save!
+        @organization_request = build_organization_request(@partner_request)
+        @organization_request.save!
 
-          NotifyPartnerJob.perform_now(@organization_request.id)
-        rescue => e
-          errors.add(:base, e.message)
-          raise ActiveRecord::Rollback
-        end
+        NotifyPartnerJob.perform_now(@organization_request.id)
+      rescue StandardError => e
+        errors.add(:base, e.message)
+        raise ActiveRecord::Rollback
       end
 
-      return self
+      self
     end
 
     private
@@ -81,7 +79,7 @@ module Partners
     end
 
     def partner
-      @partner_id ||= Partners::User.find_by(partner_id: partner_user_id).partner
+      @partner ||= Partners::User.find_by(partner_id: partner_user_id).partner
     end
 
     def build_organization_request(partner_request)
@@ -97,6 +95,5 @@ module Partners
         end
       )
     end
-
   end
 end
