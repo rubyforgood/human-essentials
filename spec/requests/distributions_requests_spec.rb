@@ -90,6 +90,26 @@ RSpec.describe "Distributions", type: :request do
         get distribution_path(default_params.merge(id: create(:distribution).id))
         expect(response).to be_successful
       end
+
+      it "sums distribution totals accurately" do
+        distribution = create(:distribution, :with_items, item_quantity: 0)
+
+        item_quantity = 6
+        package_size = 2
+
+        item = create(:item, package_size: package_size)
+        create(
+          :line_item,
+          :distribution,
+          itemizable_id: distribution.id,
+          item_id: item.id,
+          quantity: item_quantity
+        )
+        get distribution_path(default_params.merge(id: distribution.id))
+
+        expect(assigns(:total_quantity)).to eq(item_quantity)
+        expect(assigns(:total_package_count)).to eq(item_quantity / package_size)
+      end
     end
 
     describe "GET #schedule" do

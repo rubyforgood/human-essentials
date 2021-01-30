@@ -21,6 +21,26 @@ RSpec.describe StorageLocation, type: :model do
     it { is_expected.to validate_presence_of(:organization) }
   end
 
+  context "Callbacks >" do
+    describe "before_destroy" do
+      let(:item) { create(:item) }
+      subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization) }
+
+      it "does not delete storage locations with inventory items on it" do
+        subject.destroy
+
+        expect(subject.errors.messages[:base]).to include("Cannot delete storage location containing inventory items with non-zero quantities")
+      end
+
+      it "deletes storage locations with no inventory items on it" do
+        subject.inventory_items.destroy_all
+        subject.destroy
+
+        expect(StorageLocation.count).to eq(0)
+      end
+    end
+  end
+
   context "Filtering >" do
     it "->containing yields only inventories that have that item" do
       item = create(:item)

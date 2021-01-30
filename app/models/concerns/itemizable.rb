@@ -85,6 +85,10 @@ module Itemizable
     line_items.sum(&:value_per_line_item)
   end
 
+  def total_quantity
+    line_items.total
+  end
+
   def to_a
     line_items.map do |l|
       # When the item isn't found, it's probably just inactive. This ensures it's available.

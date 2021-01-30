@@ -26,7 +26,8 @@ class StorageLocation < ApplicationRecord
 
   belongs_to :organization
   has_many :inventory_items, -> { includes(:item).order("items.name") },
-           inverse_of: :storage_location
+           inverse_of: :storage_location,
+           dependent: :destroy
   has_many :donations, dependent: :destroy
   has_many :distributions, dependent: :destroy
   has_many :items, through: :inventory_items
@@ -42,6 +43,7 @@ class StorageLocation < ApplicationRecord
   validates :name, :address, :organization, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
+  before_destroy :verify_inventory_items, prepend: true
 
   include Geocodable
   include Filterable
@@ -186,11 +188,22 @@ class StorageLocation < ApplicationRecord
     log
   end
 
+  def verify_inventory_items
+    unless empty_inventory_items?
+      errors.add(:base, "Cannot delete storage location containing inventory items with non-zero quantities")
+      throw(:abort)
+    end
+  end
+
   def self.csv_export_headers
     ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
   end
 
   def csv_export_attributes
     [name, address, square_footage, warehouse_type, size]
+  end
+
+  def empty_inventory_items?
+    inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
   end
 end
