@@ -4,7 +4,6 @@ RSpec.describe "/partners/requests", type: :request do
   describe "GET #index" do
     subject { -> { get partners_requests_path } }
     let(:partner_user) { FactoryBot.create(:partners_user) }
-    include_examples 'requiring a authenticated partner user'
 
     before do
       sign_in(partner_user, scope: :partner_user)
@@ -23,8 +22,6 @@ RSpec.describe "/partners/requests", type: :request do
     before do
       sign_in(partner_user, scope: :partner_user)
     end
-
-    include_examples 'requiring a authenticated partner user'
 
     it 'should render without any issues' do
       subject.call
@@ -50,8 +47,6 @@ RSpec.describe "/partners/requests", type: :request do
     before do
       sign_in(partner_user, scope: :partner_user)
     end
-
-    include_examples 'requiring a authenticated partner user'
 
     context 'when given valid parameters' do
       let(:partners_request_attributes) do

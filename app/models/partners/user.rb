@@ -36,10 +36,5 @@ module Partners
 
     has_many :requests, class_name: 'Partners::Request', foreign_key: :partner_id, dependent: :destroy, inverse_of: :user
     belongs_to :partner, dependent: :destroy
-
-    def devise_scope
-      # Needed so that `sign_out` works when its passed a Partners::User record
-      :partner_users
-    end
   end
 end
