@@ -13,7 +13,7 @@
 #
 module Partners
   class ItemRequest < Base
-    belongs_to :request, class_name: 'Partners::ItemRequest', foreign_key: :partner_request_id, inverse_of: :request
+    belongs_to :request, class_name: 'Partners::Request', foreign_key: :partner_request_id, inverse_of: :item_requests
 
     validates :quantity, presence: true
     validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
