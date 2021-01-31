@@ -14,10 +14,10 @@ describe Partners::RequestCreateService do
     let(:comments) { Faker::Lorem.paragraph }
     let(:item_requests_attributes) do
       [
-        {
+        ActionController::Parameters.new(
           item_id: FactoryBot.create(:item).id,
           quantity: Faker::Number.within(range: 1..10)
-        }
+        )
       ]
     end
 
@@ -56,10 +56,10 @@ describe Partners::RequestCreateService do
       let(:items_to_request) { BaseItem.all.sample(3) }
       let(:item_requests_attributes) do
         items_to_request.map do |item|
-          {
+          ActionController::Parameters.new(
             item_id: item.id,
             quantity: Faker::Number.within(range: 1..10)
-          }
+          )
         end
       end
       let(:fake_organization_valid_items) do

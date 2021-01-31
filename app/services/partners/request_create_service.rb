@@ -43,7 +43,6 @@ module Partners
 
     def populate_item_request(partner_request)
       item_requests = item_requests_attributes.map do |ira|
-        ira = ira.with_indifferent_access
         Partners::ItemRequest.new(
           item_id: ira['item_id'],
           quantity: ira['quantity'],
