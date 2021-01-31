@@ -23,7 +23,8 @@
         <tbody>
           <% @partner_requests.each do |partner_request| %>
             <tr class="row">
-              <td class="col-1"><%= link_to 'TODO' %></th>
+              <td class="col-1"><%= link_to partner_request.id, partners_request_path(id: partner_request.id) %></th>
+
               <% # TODO - Make the following section an ordered list it isn't easy to read %>
               <td class="col-6"><%= partner_request.item_requests.map {|item| "#{item.quantity} of #{item.name}"}.join(", ") %></td>
               <td class="col text-right"><%= link_to '<i class="fa fa-edit"></i>&nbsp;&nbsp;Pickup Sheet'.html_safe, '', class: 'btn btn-sm btn-primary' %></td>

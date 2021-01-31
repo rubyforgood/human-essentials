@@ -19,6 +19,10 @@ module Partners
       end.sort
     end
 
+    def show
+      @partner_request = current_partner_user.partner.requests.find(params[:id])
+    end
+
     def create
       create_service = Partners::RequestCreateService.new(
         partner_user_id: current_partner_user.id,

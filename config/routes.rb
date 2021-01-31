@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   get 'partners/dashboard' => 'partners/dashboards#show', as: :partner_user_root
   namespace :partners do
     resource :dashboard, only: [:show]
-    resources :requests
+    resources :requests, only: [:show, :new, :index, :create]
   end
 
   # This is where a superadmin CRUDs all the things

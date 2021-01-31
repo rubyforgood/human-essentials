@@ -29,6 +29,13 @@ RSpec.describe "/partners/requests", type: :request do
     end
   end
 
+  describe "GET #shows" do
+    # TODO: write this spec
+    # Ensure to cover that:
+    # - Authorization, other partners should not be able to see this
+    # - Ensure it shows 404 if the partner request id doesn't exist
+  end
+
   describe "POST #create" do
     subject { -> { post partners_requests_path, params: { partners_request: partners_request_attributes } } }
     let(:partners_request_attributes) do
