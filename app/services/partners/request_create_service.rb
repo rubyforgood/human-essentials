@@ -89,7 +89,7 @@ module Partners
         comments: partner_request.comments,
         request_items: partner_request.item_requests.map do |ir|
           {
-            item_id: ir.id,
+            item_id: ir.item_id,
             quantity: ir.quantity
           }
         end
