@@ -186,9 +186,12 @@ We will now want to inform the stakeholders that we've recently made a deploymen
 1. Fetch all the emails of our users by accessing our diaperbase production database
 ```ruby
 cap production rails:console
-User.all.pluck(:email) # Copy the output of this!
+emails = User.all.pluck(:email) 
+puts "Email Address\n" + emails.join("\n") # Copy this output
 ```
-2. Use the list of the emails copied from the output from the previous step to send a update email via [Mailchimp](https://mailchimp.com/)
+2. Use the list of the emails copied from the output from the previous step to send a update audience via [Mailchimp](https://mailchimp.com/). Go to Audience > Manage Audience > Import Contacts and select "Copy and paste" option. Then paste the output of step 1. Complete the subsequent steps.
+
+3. Draft the email and send it with updates.
 
 # Acknowledgements
 
