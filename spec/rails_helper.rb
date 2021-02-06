@@ -177,8 +177,6 @@ RSpec.configure do |config|
 
     raise if Partners::Partner.count > 0
     raise if Organization.count > 0
-
-    seed_base_items_for_tests
   end
 
   config.before(:each) do
