@@ -19,7 +19,7 @@ Please verify the following before continuing
 
 # Configure Applications
 
-You must setup the ENV variables properly on both applications before proceeding to the following sections of this guide. 
+You must setup the ENV variables properly on both applications before proceeding to the following sections of this guide.
 
 In your `diaper` application ensure that you have a `.env` folder with these contents:
 ```
@@ -35,7 +35,11 @@ SIDEKIQ_USERNAME="admin"
 SIDEKIQ_PASSWORD="password"
 DIAPERBANK_KEY="secretpassword"
 DIAPERBANK_ENDPOINT="https://diaper.test/api/v1"
+RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+RECAPTCHA_PRIVATE_KEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 ```
+Note: The `RECAPTCHA_*_KEY`'s above are the [test keys Google provides](https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do).
+
 In your `partner` application ensure that you have a `.env` folder with these contents:
 ```
 DIAPERBANK_KEY="secretpassword"
@@ -55,8 +59,8 @@ brew install puma/puma/puma-dev
 ```
 Setup & Install `puma-dev`
 ```
-sudo puma-dev -setup 
-puma-dev -install 
+sudo puma-dev -setup
+puma-dev -install
 ```
 
 Link the applications. Replace the `{diaper_dir}` and `{partner_dir}` with the **absolute directory path of the repos you've cloned.**
@@ -67,7 +71,7 @@ puma-dev link -n partner {partner_dir}
 
  For example, if your diaper repo clone is in `~/ruby/diaper` directory and `partner` is in `~/ruby/partner`. You would run these:
 ```
-puma-dev link -n diaper ~/ruby/diaper 
+puma-dev link -n diaper ~/ruby/diaper
 puma-dev link -n partner ~/ruby/partner
 ```
 
@@ -86,7 +90,7 @@ Please refer to the [linux guide]([https://github.com/puma/puma-dev#linux-suppor
 
 If you are running MacOSX, you can view the logs of `puma-dev` (not application) located at `~/Library/Logs/puma-dev.log`.  **Does not include in-depth information of your application requests or processes.**
 
-The application logs which contains a-lot more details about how your application's activities can be found in the `/log/development.log` file within your application's repo. 
+The application logs which contains a-lot more details about how your application's activities can be found in the `/log/development.log` file within your application's repo.
 
 To simplify development, you can choose to tail and follow the logs. This way you do not have to re-open the log file every-time you want to see changes.
 ```bash
@@ -107,4 +111,3 @@ Try running `puma-dev -uninstall` and then running `puma-dev -install` again. It
 
 ##### Creating a partner on the diaper app does not seem to trigger a invite on the partner application.
 As of today, you need to explicitly tell `Flipper` to enable sending emails locally. You can do this by opening up the rails console in diaper and running `Flipper.activate(:email_active).` You will need to re-queue the invitation request again.
-
