@@ -177,6 +177,8 @@ RSpec.configure do |config|
 
     raise if Partners::Partner.count > 0
     raise if Organization.count > 0
+
+
   end
 
   config.before(:each) do
@@ -187,12 +189,13 @@ RSpec.configure do |config|
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
-    DatabaseCleaner.strategy = :truncation, {
-      except: %w(ar_internal_metadata base_items)
-    }
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
   end
 
   config.before(:each) do
+    # seed_base_items_for_tests
+
     # The database cleaner will now begin at this point
     # up anything after this point when `.clean` is called.
     DatabaseCleaner.start
@@ -206,6 +209,7 @@ RSpec.configure do |config|
     #
     # If you are using :truncation, it will erase everything once `.clean`
     # is called.
+    seed_base_items_for_tests
     seed_with_default_records
   end
 
