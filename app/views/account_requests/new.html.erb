@@ -7,6 +7,7 @@
     <div class='card-text'>
       <%= simple_form_for(@account_request) do |f| %>
         <%= f.error_notification %>
+        <%= render partial: "shared/flash" %>
 
         <div class="form-inputs">
           <div class="form-inputs">
@@ -30,6 +31,10 @@
           </div>
         </div>
 
+        <div class="my-2">
+          <%= recaptcha_tags %>
+        </div>
+
         <div class="card-footer">
           <%= submit_button({text: 'Submit', icon: nil}) %>
         </div>
@@ -37,4 +42,3 @@
     </div>
   </div>
 </div>
-
