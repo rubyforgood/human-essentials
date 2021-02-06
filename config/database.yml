@@ -11,10 +11,6 @@ development:
   primary:
     <<: *default
     timeout: 5000
-  primary_replica:
-    <<: *default
-    replica: true
-    timeout: 5000
   partners:
     adapter: postgresql
     encoding: unicode
