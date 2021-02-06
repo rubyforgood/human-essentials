@@ -1,4 +1,8 @@
 RSpec.describe "Authentication", type: :system, js: true do
+  before do
+    allow(DiaperPartnerClient).to receive(:get).and_return([])
+  end
+
   describe "Success" do
     it "should show dashboard upon signin" do
       sign_in(@user)

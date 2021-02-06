@@ -160,6 +160,39 @@
             </div>
           </div>
         </div>
+
+        <div class="card" id="partners">
+          <div class="card-header border-0 bg-gradient-primary">
+            <h3 class="card-title"> Partner Agencies and Service Area <small><%= @selected_date_range %></small></h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="box-body text-center float-center">
+              <%= new_button_to new_partner_path, {text: "New Partner"} %>
+              <h3 class="text-center"><%= @partner_agencies.count %> Parterns <%= @selected_date_range_label %></h3>
+              <div class="box-body">
+                <div class="row">
+                  <% if @total_agencies_types.present? %>
+                    <div class="col-md-6">
+                      <h4>Partner Agencies types</h4>
+                      <%= render partial: 'partner_agencies_types' %>
+                    </div>
+                  <% end %>
+                  <% if @service_area.present? %>
+                    <div class="col-md-6">
+                      <h4>Service Area - zip codes</h4>
+                      <%= render partial: 'service_area' %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="col-lg-6">
 

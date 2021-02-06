@@ -48,6 +48,8 @@ class Partner < ApplicationRecord
       .order(:name)
   }
 
+  scope :during, ->(range) { where(created_at: range) }
+
   scope :alphabetized, -> { order(:name) }
 
   include Filterable

@@ -1,4 +1,8 @@
 RSpec.describe "Dashboard", type: :system, js: true do
+  before do
+    allow(DiaperPartnerClient).to receive(:get).and_return([])
+  end
+
   context "With a new Diaper bank" do
     before :each do
       @new_organization = create(:organization)
@@ -83,7 +87,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
     describe "Inventory Totals" do
       let(:date_to_view) { Time.zone.parse("June 1 2018") }
       let(:last_year_date) { Time.zone.parse("June 1, 2017") }
-      let(:beginning_of_2018) { Time.zone.parse("January 1, 2018 12:01am") }
+      let(:beginningof2018) { Time.zone.parse("January 1, 2018 12:01am") }
 
       describe "Summary" do
         before do
@@ -107,6 +111,140 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             within "#summary" do
               expect(page).to have_content("333")
+            end
+          end
+        end
+      end
+
+      describe 'Partnert Agencies and Service Area' do
+        include_examples 'partner reporter service stubs'
+        let!(:partner1) { create(:partner, created_at: Time.zone.today) }
+        let!(:partner2) { create(:partner, created_at: Time.zone.today - 1.day) }
+        let!(:partner3) { create(:partner, created_at: Time.zone.today - 7.days) }
+        let!(:partner4) { create(:partner, created_at: Time.zone.today - 2.years) }
+        before do
+          partners = @organization.partners.during(Time.zone.today.beginning_of_year.beginning_of_day..Time.zone.today.end_of_year.end_of_day)
+          results = prepare_results(partners)
+          partners.each do |partner|
+            stub_partner_call_result(partner: partner, results: results)
+          end
+        end
+
+        it 'has a link to create a new partner agency' do
+          visit subject
+          expect(page).to have_css('#partners')
+          within '#partners' do
+            expect(page).to have_xpath("//a[@href='#{new_partner_path(organization_id: @organization.to_param)}']", visible: false)
+          end
+        end
+
+        it 'must have two partners in count' do
+          visit subject
+          within '#partners' do
+            expect(page).to have_content('3')
+          end
+
+          partner2.update(created_at: Time.zone.today - 2.years)
+          visit subject
+          within '#partners' do
+            expect(page).to have_content('2')
+          end
+        end
+
+        describe "This Year" do
+          before do
+            visit subject
+            date_range_picker_select_range "This Year"
+            click_on "Filter"
+          end
+
+          it "has a widget displaying the year-to-date Partner Totals, only using partners created this year" do
+            within "#partners" do
+              expect(page).to have_content('3')
+            end
+          end
+        end
+
+        describe "Today" do
+          before do
+            visit subject
+            fill_in "filters_date_range", with: "#{Time.zone.now.strftime('%m/%d/%Y')} - #{Time.zone.now.strftime('%m/%d/%Y')}"
+            find(:id, 'filters_date_range').native.send_keys(:enter)
+            click_on "Filter"
+          end
+
+          it "has a widget displaying today's Parnters, only using partners created today" do
+            within "#partners" do
+              expect(page).to have_content('1')
+            end
+          end
+        end
+
+        describe "Yesterday" do
+          before do
+            visit subject
+            fill_in "filters_date_range", with: "#{(Time.zone.now - 1.day).strftime('%m/%d/%Y')} - #{(Time.zone.now - 1.day).strftime('%m/%d/%Y')}"
+            find(:id, 'filters_date_range').native.send_keys(:enter)
+            click_on "Filter"
+          end
+
+          it "has a widget displaying today's Parnters, only using partners created yesterday" do
+            within "#partners" do
+              expect(page).to have_content('1')
+            end
+          end
+        end
+
+        describe "This Week" do
+          let(:total) { Partner.where(created_at: Time.zone.now..(Time.zone.now - 7.days)).count }
+          before do
+            visit subject
+            date_range_picker_select_range "Last 7 Days"
+            click_on "Filter"
+          end
+
+          it "has a widget displaying today's Parnters, only using partners created an week period" do
+            within "#partners" do
+              expect(page).to have_content(total.to_s)
+            end
+          end
+        end
+
+        describe "This Month" do
+          let(:total) { Partner.where(created_at: Time.zone.now..(Time.zone.now - 30.days)).count }
+          before do
+            visit subject
+            date_range_picker_select_range "Last 30 Days"
+            click_on "Filter"
+          end
+
+          it "has a widget displaying today's Parnters, only using partners created in an month period" do
+            within "#partners" do
+              expect(page).to have_content(total.to_s)
+            end
+          end
+        end
+
+        describe 'Partner Agencies types' do
+          before do
+            visit subject
+          end
+
+          it 'total of Family Resource Center' do
+            within "#partners" do
+              expect(page).to have_content('Family Resource Center (2)')
+            end
+          end
+
+          it 'total of Child Abuse Resource Center' do
+            within "#partners" do
+              expect(page).to have_content('Child Abuse Resource Center (1)')
+            end
+          end
+
+          it 'total of Some kind of type' do
+            within "#partners" do
+              expect(page).to have_content('Some kind of type (1)')
             end
           end
         end
@@ -151,7 +289,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               today: create(:donation, :with_items, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:diaper_drive_donation, :with_items, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
               earlier_this_week: create(:donation_site_donation, :with_items, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:manufacturer_donation, :with_items, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
+              beginning_of_year: create(:manufacturer_donation, :with_items, issued_at: beginningof2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_donations = create_list(:donation, 2, :with_items, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
             visit subject
@@ -325,7 +463,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               today: create(:purchase, :with_items, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:purchase, :with_items, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
               earlier_this_week: create(:purchase, :with_items, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:purchase, :with_items, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
+              beginning_of_year: create(:purchase, :with_items, issued_at: beginningof2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_purchases = create_list(:purchase, 2, :with_items, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
             visit subject
@@ -486,7 +624,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               today: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
               earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
+              beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: beginningof2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
 
             @last_years_donations = create_list(:diaper_drive_donation, 2, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
@@ -693,7 +831,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               today: create(:manufacturer_donation, :with_items, manufacturer: manufacturer1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:manufacturer_donation, :with_items, manufacturer: manufacturer2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
               earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer3, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
+              beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: beginningof2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_donations = create_list(:manufacturer_donation, 2, :with_items, manufacturer: manufacturer1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
             visit subject
@@ -860,7 +998,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             today: create(:distribution, :with_items, partner: partner1, issued_at: date_to_view, item_quantity: 10, storage_location: storage_location, organization: @organization),
             yesterday: create(:distribution, :with_items, partner: partner2, issued_at: date_to_view.yesterday, item_quantity: 11, storage_location: storage_location, organization: @organization),
             earlier_this_week: create(:distribution, :with_items, partner: partner3, issued_at: date_to_view.beginning_of_week, item_quantity: 12, storage_location: storage_location, organization: @organization),
-            beginning_of_year: create(:distribution, :with_items, partner: partner4, issued_at: beginning_of_2018, item_quantity: 13, storage_location: storage_location, organization: @organization)
+            beginning_of_year: create(:distribution, :with_items, partner: partner4, issued_at: beginningof2018, item_quantity: 13, storage_location: storage_location, organization: @organization)
           }
           @last_years_distributions = create_list(:distribution, 2, :with_items, partner: partner1, issued_at: last_year_date, item_quantity: 14, storage_location: storage_location, organization: @organization)
           visit subject
