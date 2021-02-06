@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe Partners::Request, type: :model do
-
   describe 'associations' do
     it { should belong_to(:partner) }
     it { should have_many(:item_requests).dependent(:destroy) }
@@ -13,7 +12,6 @@ RSpec.describe Partners::Request, type: :model do
     it { should validate_presence_of(:item_requests) }
     it { should accept_nested_attributes_for(:item_requests) }
   end
-
 end
 
 

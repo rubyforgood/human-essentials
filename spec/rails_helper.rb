@@ -177,8 +177,6 @@ RSpec.configure do |config|
 
     raise if Partners::Partner.count > 0
     raise if Organization.count > 0
-
-
   end
 
   config.before(:each) do
