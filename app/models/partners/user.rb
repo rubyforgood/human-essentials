@@ -1,5 +1,6 @@
 # == Schema Information
-# # Table name: users
+#
+# Table name: users
 #
 #  id                     :bigint           not null, primary key
 #  current_sign_in_at     :datetime
