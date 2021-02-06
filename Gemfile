@@ -42,7 +42,7 @@ gem "simple_form"
 gem 'popper_js'
 gem "prawn-rails"
 gem "puma"
-gem "rails", "~> 6.0.3"
+gem "rails", "~> 6.1.1"
 gem "sass-rails"
 gem "sidekiq"
 gem 'sidekiq-scheduler'
