@@ -190,6 +190,8 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :truncation, {
       except: %w(ar_internal_metadata)
     }
+
+    seed_base_items_for_tests
   end
 
   config.before(:each) do
@@ -207,7 +209,6 @@ RSpec.configure do |config|
     # If you are using :truncation, it will erase everything once `.clean`
     # is called.
     seed_with_default_records
-    seed_base_items_for_tests
   end
 
   config.after(:each) do
