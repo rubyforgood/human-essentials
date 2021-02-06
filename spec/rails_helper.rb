@@ -188,10 +188,8 @@ RSpec.configure do |config|
     # appears that transactions won't work since it really does
     # depend on the database to have records.
     DatabaseCleaner.strategy = :truncation, {
-      except: %w(ar_internal_metadata)
+      except: %w(ar_internal_metadata base_items)
     }
-
-    seed_base_items_for_tests
   end
 
   config.before(:each) do
