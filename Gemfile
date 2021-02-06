@@ -94,7 +94,7 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 3.34"
+  gem "capybara", "~> 3.35"
   gem "capybara-screenshot"
   gem "database_cleaner"
   gem "factory_bot_rails"
@@ -104,7 +104,7 @@ group :test do
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 4.5'
   gem 'webdrivers', '~> 4.4'
-  gem "webmock", "~> 3.10"
+  gem "webmock", "~> 3.11"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
