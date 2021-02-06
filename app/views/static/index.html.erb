@@ -29,7 +29,9 @@
                 <a class="nav-link text-white flex-fill" href="#testimonials">Testimonials</a>
                 <a class="nav-link text-white flex-fill" href="#contact">Contact</a>
                 <a class="nav-link text-white flex-fill" href=<%= new_user_session_path(organization_id: nil) %> >User Sign In</a>
-                <a class="nav-link text-white flex-fill" href=<%= new_partner_user_session_path %> >Partner User Sign In</a>
+                <% if Flipper.enabled?(:onebase) %>
+                  <a class="nav-link text-white flex-fill" href=<%= new_partner_user_session_path %> >Partner User Sign In</a>
+                <% end %>
               </div>
             </div>
           </div>
