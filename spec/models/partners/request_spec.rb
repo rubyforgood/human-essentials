@@ -17,7 +17,7 @@ RSpec.describe Partners::Request, type: :model do
   describe 'associations' do
     it { should belong_to(:partner) }
     it { should have_many(:item_requests).dependent(:destroy) }
-    # it { should have_many(:child_item_requests).through(:item_requests) }
+    it { should have_many(:child_item_requests).through(:item_requests) }
   end
 
   describe 'validations' do

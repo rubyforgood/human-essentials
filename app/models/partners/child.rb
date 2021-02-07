@@ -53,6 +53,7 @@ module Partners
       "Other Wipes (Baby)"
     ].freeze
     belongs_to :family
+    has_many :child_item_requests, dependent: :destroy
   end
 end
 
