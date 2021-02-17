@@ -182,21 +182,9 @@
           <!-- /.card-body -->
         </div>
         <div id="approve-application-button">
-          <span id="pending-approval-request-tooltip"
-            title="<%=
-              unless @partner.awaiting_review?
-                "Partner has not requested approval yet. Partners are able to request approval going into 'My Organization' and clicking 'Request Approval' button" 
-              end
-            %>">
-            <%= print_button_to approve_application_partner_path(@partner),
-              { 
-                text: "Approve Partner",
-                icon: "thumbs-o-up",
-                type: "success",
-                size: "md",
-                enabled: @partner.awaiting_review?
-              }
-            %>
+          <% tooltip_message = "Partner has not requested approval yet. Partners are able to request approval going into 'My Organization' and clicking 'Request Approval' button" %>
+          <span id="pending-approval-request-tooltip" title="<%= tooltip_message unless @partner.awaiting_review? %>">
+            <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.awaiting_review? } %>
           </span>
         </div>
       </div>
