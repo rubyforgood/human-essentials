@@ -30,28 +30,9 @@
         <!-- Default box -->
         <div class="card card-info card-outline">
           <div class="card-header">
-            <div class="clearfix">
-              <h1 class="card-title"><strong><%= @partner.name %> - Application Details
-                - <%= link_to @partner.email, "mailto:#{@partner.email}" %></strong>
-              </h1>
-              <span id="pending_approval_request_tooltip"
-                class="pull-right"
-                title="<%=
-                  unless @partner.awaiting_review?
-                    "Partner has not requested approval yet. Partners are able to request approval going into 'My Organization' and clicking 'Request Approval' button" 
-                  end
-                %>">
-                <%= print_button_to approve_application_partner_path(@partner),
-                  { 
-                    text: "Approve Partner",
-                    icon: "thumbs-o-up",
-                    type: "success",
-                    size: "md",
-                    enabled: @partner.awaiting_review?
-                  }
-                %>
-              </span>
-            </div>
+            <h1 class="card-title"><strong><%= @partner.name %> - Application Details
+              - <%= link_to @partner.email, "mailto:#{@partner.email}" %></strong>
+            </h1>
           </div>
           <div class="card-body p-6">
             <div class="row">
@@ -200,12 +181,30 @@
           </div>
           <!-- /.card-body -->
         </div>
+        <div id="approve-application-button">
+          <span id="pending-approval-request-tooltip"
+            title="<%=
+              unless @partner.awaiting_review?
+                "Partner has not requested approval yet. Partners are able to request approval going into 'My Organization' and clicking 'Request Approval' button" 
+              end
+            %>">
+            <%= print_button_to approve_application_partner_path(@partner),
+              { 
+                text: "Approve Partner",
+                icon: "thumbs-o-up",
+                type: "success",
+                size: "md",
+                enabled: @partner.awaiting_review?
+              }
+            %>
+          </span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 <script>
 $(function () {
-  $('#pending_approval_request_tooltip').tooltip()
+  $('#pending-approval-request-tooltip').tooltip()
 })
 </script>

@@ -48,3 +48,19 @@ i.fa {
 div#partner-notes {
   padding: 0px 20px;
 }
+
+div#approve-application-button {
+  background: none;
+  position: fixed;
+  bottom:0px;
+  right:0px;
+  margin-right:50px;
+  margin-bottom:50px;
+}
+
+@media only screen and (max-width: 500px) {
+  div#approve-application-button {
+    margin-right:30px;
+    margin-bottom:15px;
+  }
+}
