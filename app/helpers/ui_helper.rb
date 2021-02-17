@@ -133,7 +133,9 @@ module UiHelper
     # user sparingly.
     center = options[:center].present? ? "center-block" : ""
 
-    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center}") do
+    disabled = options[:enabled] || options[:enabled].nil? ? "" : "disabled"
+
+    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center} #{disabled}") do
       fa_icon icon, text: text
     end
   end

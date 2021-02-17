@@ -34,16 +34,23 @@
               <h1 class="card-title"><strong><%= @partner.name %> - Application Details
                 - <%= link_to @partner.email, "mailto:#{@partner.email}" %></strong>
               </h1>
-              <div class="pull-right">
+              <span id="pending_approval_request_tooltip"
+                class="pull-right"
+                title="<%=
+                  unless @partner.awaiting_review?
+                    "Partner has not requested approval yet. Partners are able to request approval going into 'My Organization' and clicking 'Request Approval' button" 
+                  end
+                %>">
                 <%= print_button_to approve_application_partner_path(@partner),
                   { 
                     text: "Approve Partner",
                     icon: "thumbs-o-up",
                     type: "success",
-                    size: "md" 
-                  } if @partner.awaiting_review?
+                    size: "md",
+                    enabled: @partner.awaiting_review?
+                  }
                 %>
-              </div>
+              </span>
             </div>
           </div>
           <div class="card-body p-6">
@@ -197,3 +204,8 @@
     </div>
   </div>
 </section>
+<script>
+$(function () {
+  $('#pending_approval_request_tooltip').tooltip()
+})
+</script>
