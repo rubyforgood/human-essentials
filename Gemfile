@@ -52,6 +52,7 @@ gem "toastr-rails"
 gem "uglifier", ">= 1.3.0"
 gem "webpacker", "> 4.0"
 gem "yajl-ruby"
+gem "recaptcha"
 
 group :production do
   gem "newrelic_rpm"
