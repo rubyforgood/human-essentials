@@ -91,8 +91,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     end
 
     it "User can filter the #index by those that contain certain items" do
-      item = create(:item, name: Faker::Lorem.word)
-      create(:item, name: Faker::Lorem.word)
+      item = create(:item, name: Faker::Lorem.unique.word)
+      create(:item, name: Faker::Lorem.unique.word)
       location1 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Foo")
       location2 = create(:storage_location, name: "Bar")
       visit subject
