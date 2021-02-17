@@ -29,7 +29,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
             end
 
             last_row = find_all('tr').last
-            last_row.find('option', text: item[:name]).select_option
+            last_row.find('option', text: item[:name], exact_text: true).select_option
             last_row.find_all('.form-control').last.fill_in(with: item[:quantity])
           end
         end
