@@ -196,4 +196,38 @@ RSpec.describe "Partner management", type: :system, js: true do
       expect(partner.send_reminders).to be false
     end
   end
+
+  describe "#approve_partner" do
+    let(:tooltip_message) do
+      "Partner has not requested approval yet. \
+Partners are able to request approval going into 'My Organization' \
+and clicking 'Request Approval' button"
+    end
+
+    context "invited" do
+      let!(:partner) { create(:partner, name: "Matthew", status: :invited) }
+
+      before do
+        visit url_prefix + "/partners"
+        stub_get_partner_request(partner.id)
+        within("table > tbody > tr:nth-child(2) > td:nth-child(5)") { click_on "Review Application" }
+      end
+
+      it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
+
+      it 'shows correct tooltip' do
+        page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
+        expect(page).to have_content tooltip_message
+      end
+    end
+  end
+end
+
+def stub_get_partner_request(partner_id)
+  stub_env('PARTNER_REGISTER_URL', 'https://partner-register.com')
+  stub_env('PARTNER_BASE_URL', 'https://partner-register.com')
+  stub_env('PARTNER_KEY', 'partner-key')
+
+  stub_request(:get, "https://partner-register.com/#{partner_id}")
+    .to_return(status: 200, body: File.read("spec/fixtures/partner_api/partner.json").to_s, headers: {})
 end
