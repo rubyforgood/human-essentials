@@ -203,21 +203,28 @@ RSpec.describe "Partner management", type: :system, js: true do
 Partners are able to request approval going into 'My Organization' \
 and clicking 'Request Approval' button"
     end
+    let!(:invited_partner) { create(:partner, name: "Amelia Ebonheart", status: :invited) }
+    let!(:awaiting_review_partner) { create(:partner, name: "Beau Brummel", status: :awaiting_review) }
 
-    context "invited" do
-      let!(:partner) { create(:partner, name: "Matthew", status: :invited) }
-
-      before do
-        visit url_prefix + "/partners"
-        stub_get_partner_request(partner.id)
-        within("table > tbody > tr:nth-child(2) > td:nth-child(5)") { click_on "Review Application" }
-      end
+    context "when partner has :invited status" do
+      before { visit_approval_page(invited_partner.id, 1) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
 
       it 'shows correct tooltip' do
         page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
         expect(page).to have_content tooltip_message
+      end
+    end
+
+    context "when partner has :awaiting_review status" do
+      before { visit_approval_page(awaiting_review_partner.id, 2) }
+
+      it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
+
+      it 'shows no tooltip' do
+        page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
+        expect(page).not_to have_content tooltip_message
       end
     end
   end
@@ -230,4 +237,10 @@ def stub_get_partner_request(partner_id)
 
   stub_request(:get, "https://partner-register.com/#{partner_id}")
     .to_return(status: 200, body: File.read("spec/fixtures/partner_api/partner.json").to_s, headers: {})
+end
+
+def visit_approval_page(partner_id, table_row)
+  visit url_prefix + "/partners"
+  stub_get_partner_request(partner_id)
+  within("table > tbody > tr:nth-child(#{table_row}) > td:nth-child(5)") { click_on "Review Application" }
 end
