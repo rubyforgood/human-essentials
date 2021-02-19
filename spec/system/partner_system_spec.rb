@@ -210,6 +210,7 @@ and clicking 'Request Approval' button"
       before { visit_approval_page(invited_partner.id, 1) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
+      it { expect(page).to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
 
       it 'shows correct tooltip' do
         page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
@@ -221,6 +222,7 @@ and clicking 'Request Approval' button"
       before { visit_approval_page(awaiting_review_partner.id, 2) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
+      it { expect(page).not_to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
 
       it 'shows no tooltip' do
         page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
