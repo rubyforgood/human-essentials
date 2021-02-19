@@ -12,10 +12,7 @@ development:
     <<: *default
     timeout: 5000
   partners:
-    adapter: postgresql
-    encoding: unicode
-    host: localhost
-    pool: 5
+    <<: *default
     username: postgres
     password: password
     database: partner_dev
@@ -27,15 +24,8 @@ test:
     <<: *default
     database: diaper_test
     timeout: 5000
-  primary_replica:
-    <<: *default
-    replica: true
-    timeout: 5000
   partners:
-    adapter: postgresql
-    encoding: unicode
-    host: localhost
-    pool: 5
+    <<: *default
     username: postgres
     password: password
     database: partner_test
