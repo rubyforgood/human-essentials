@@ -231,12 +231,15 @@ and clicking 'Request Approval' button"
 end
 
 def stub_get_partner_request(partner_id)
-  stub_env('PARTNER_REGISTER_URL', 'https://partner-register.com')
-  stub_env('PARTNER_BASE_URL', 'https://partner-register.com')
-  stub_env('PARTNER_KEY', 'partner-key')
+  allow(ENV).to receive(:[]).and_return(ENV)
+  allow(ENV).to receive(:[]).with("PARTNER_REGISTER_URL").and_return("https://partner-register.com")
+  allow(ENV).to receive(:[]).with("PARTNER_BASE_URL").and_return("https://partner-register.com")
+  allow(ENV).to receive(:[]).with("PARTNER_KEY").and_return("partner-key")
+
+  partner_response = File.read("spec/fixtures/partner_api/partner.json")
 
   stub_request(:get, "https://partner-register.com/#{partner_id}")
-    .to_return(status: 200, body: File.read("spec/fixtures/partner_api/partner.json").to_s, headers: {})
+    .to_return(status: 200, body: partner_response, headers: {})
 end
 
 def visit_approval_page(partner_id, table_row)
