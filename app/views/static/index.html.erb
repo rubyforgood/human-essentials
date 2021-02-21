@@ -28,9 +28,19 @@
                 <a class="nav-link text-white flex-fill" href="#about">About <span class="sr-only">(current)</span></a>
                 <a class="nav-link text-white flex-fill" href="#testimonials">Testimonials</a>
                 <a class="nav-link text-white flex-fill" href="#contact">Contact</a>
-                <a class="nav-link text-white flex-fill" href=<%= new_user_session_path(organization_id: nil) %> >User Sign In</a>
+
                 <% if Flipper.enabled?(:onebase) %>
-                  <a class="nav-link text-white flex-fill" href=<%= new_partner_user_session_path %> >Partner User Sign In</a>
+                  <div class="dropdown">
+                    <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Login
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href=<%= new_user_session_path(organization_id: nil) %>>Diaperbase</a>
+                      <a class="dropdown-item" href=<%= new_partner_user_session_path %>>Partnerbase</a>
+                    </div>
+                  </div>
+                <% else %>
+                  <a class="nav-link text-white flex-fill" href=<%= new_user_session_path(organization_id: nil) %> >User Sign In</a>
                 <% end %>
               </div>
             </div>
