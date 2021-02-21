@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>PartnerBase</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <%= csrf_meta_tags %>
+  <%= javascript_include_tag 'application' %>
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <a href="#" data-widget="pushmenu" data-auto-collapse-size="992">
+      <i class="fa fa-bars"></i>
+    </a>
+
+    <ul class="navbar-nav ml-auto">
+      <% if partner_user_signed_in?  %>
+        <%= render partial: "layouts/partners/navigation/navbar" %>
+      <% end %>
+    </ul>
+  </nav>
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <%= link_to "", class: "brand-link" do %>
+      PartnerBase
+    <% end %>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <% if partner_user_signed_in? %>
+            <%= render partial: "layouts/partners/navigation/sidebar" %>
+          <% end %>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <div class="content-wrapper">
+    <% flash.each do |key, value| %>
+      <div class="<%= flash_class(key) %> alert-dismissible fade show" role="alert">
+        <a href="#" class="close" data-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+        <%= sanitize(value, tags: %w(ul li)) %>
+      </div>
+    <% end %>
+    <%= yield %>
+  </div>
+
+  <footer class="main-footer">
+    <div class="pull-right hidden-xs">
+    </div>
+    <strong>PartnerBase was built with <i class="fa fa-heart fa-beat" style="color:red;"></i> by <a href="http://rubyforgood.org">Ruby for Good</a>.</strong>
+  </footer>
+
+  </aside>
+  <div class="control-sidebar-bg"></div>
+</div>
+
+</body>
+<div class="modal fade" id="modal_new" role="dialog"></div>
+</html>
+
+

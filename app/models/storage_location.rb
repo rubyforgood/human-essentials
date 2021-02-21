@@ -43,7 +43,6 @@ class StorageLocation < ApplicationRecord
   validates :name, :address, :organization, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
-
   before_destroy :verify_inventory_items, prepend: true
 
   include Geocodable

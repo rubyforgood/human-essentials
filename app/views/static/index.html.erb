@@ -14,70 +14,83 @@
   </head>
   <body>
     <div class="hero-background container-fluid py-5">
-        <div class="container mb-2">
-            <nav class="navbar navbar-expand-lg navbar-light ">
-                <div class="row d-flex align-items-center">
-                    <div class="navbar-header col-xs-6 col-sm-12 col-md-12 col-lg-6 pl-0 d-flex m-0">
-                     <a class="navbar-brand flex-grow-1" href="#"><h2 class="text-white">Diaper.App</h2></a>
-                        <button class="navbar-toggler pull-right text-white p-0 m-0" type="button" data-toggle="collapse" data-target="#myNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                            <%= image_tag("bars.svg") %>
-                        </button>
-                    </div>
-                    <div class="collapse navbar-collapse col-xs-6 col-sm-6" id="myNavbar">
-                        <div class="navbar-nav flex-fill d-flex">
-                            <a class="nav-link text-white flex-fill" href="#about">About <span class="sr-only">(current)</span></a>
-                            <a class="nav-link text-white flex-fill" href="#testimonials">Testimonials</a>
-                            <a class="nav-link text-white flex-fill" href="#contact">Contact</a>
-                            <a class="nav-link text-white flex-fill" href=<%= new_user_session_path(organization_id: nil) %> >User Sign In</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
-
-        <div class="container">
-            <div class="d-flex flex-wrap-reverse flex-sm-wrap-reverse flex-md-nowrap flex-lg-nowrap">
-                <div class="hero-copy d-flex align-items-center">
-                    <div>
-                        <h2 class="text-white">The easiest and most love-filled way to manage your Human Essentials bank.</h2>
-                        <p>Ready to make yourself more efficient?</p>
-                        <a href=<%="#{new_account_request_path}"%>><button type="button" class="btn btn-primary btn-lg mt-5">Request A Demo</button></a>
-                    </div>
-                </div>
-                <div class="hero-image">
-                    <%= image_tag("hero-image.svg") %>
-                </div>
+      <div class="container mb-2">
+        <nav class="navbar navbar-expand-lg navbar-light ">
+          <div class="row d-flex align-items-center">
+            <div class="navbar-header col-xs-6 col-sm-12 col-md-12 col-lg-6 pl-0 d-flex m-0">
+              <a class="navbar-brand flex-grow-1" href="#"><h2 class="text-white">Diaper.App</h2></a>
+              <button class="navbar-toggler pull-right text-white p-0 m-0" type="button" data-toggle="collapse" data-target="#myNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <%= image_tag("bars.svg") %>
+              </button>
             </div>
+            <div class="collapse navbar-collapse col-xs-6 col-sm-6" id="myNavbar">
+              <div class="navbar-nav flex-fill d-flex">
+                <a class="nav-link text-white flex-fill" href="#about">About <span class="sr-only">(current)</span></a>
+                <a class="nav-link text-white flex-fill" href="#testimonials">Testimonials</a>
+                <a class="nav-link text-white flex-fill" href="#contact">Contact</a>
+
+                <% if Flipper.enabled?(:onebase) %>
+                  <div class="dropdown">
+                    <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Login
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href=<%= new_user_session_path(organization_id: nil) %>>Diaperbase</a>
+                      <a class="dropdown-item" href=<%= new_partner_user_session_path %>>Partnerbase</a>
+                    </div>
+                  </div>
+                <% else %>
+                  <a class="nav-link text-white flex-fill" href=<%= new_user_session_path(organization_id: nil) %> >User Sign In</a>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <div class="container">
+        <div class="d-flex flex-wrap-reverse flex-sm-wrap-reverse flex-md-nowrap flex-lg-nowrap">
+          <div class="hero-copy d-flex align-items-center">
+            <div>
+              <h2 class="text-white">The easiest and most love-filled way to manage your Human Essentials bank.</h2>
+              <p>Ready to make yourself more efficient?</p>
+              <a href=<%="#{new_account_request_path}"%>><button type="button" class="btn btn-primary btn-lg mt-5">Request A Demo</button></a>
+            </div>
+          </div>
+          <div class="hero-image">
+            <%= image_tag("hero-image.svg") %>
+          </div>
         </div>
+      </div>
     </div>
     <div class="container description-container" id="about">
-        <div class="text-center">
-            <h2 class="text-header">The Human Essentials app removes the <br/> complexity from your day</h2>
-            <p class="text-body-color">and lets you spend time helping those who need it.</p>
-            <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top"><button type="button" class="btn btn-primary btn-lg mt-2">Get In Touch</button></a>
-        </div>
+      <div class="text-center">
+        <h2 class="text-header">The Human Essentials app removes the <br/> complexity from your day</h2>
+        <p class="text-body-color">and lets you spend time helping those who need it.</p>
+        <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top"><button type="button" class="btn btn-primary btn-lg mt-2">Get In Touch</button></a>
+      </div>
     </div>
     <div class="container py-5 px-0">
-        <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
-            <div class="app-images-block">
-                <div class="pb-2">
-                    <%= image_tag("partner-management.svg", :class => "app-images") %>
-                </div>
-                <div class="">
-                    <h3 class="text-header">Partner Management</h3>
-                    <p class="text-body-color">Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders. </p>
-                </div>
-            </div>
-            <div class="app-images-block">
-                <div class="pb-2">
-                    <%= image_tag("forecasting.svg", :class => "app-images") %>
-                </div>
-                <div class="">
-                    <h3 class="text-header">Forecasting</h3>
-                    <p class="text-body-color">View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
-                </div>
-            </div>
+      <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
+        <div class="app-images-block">
+          <div class="pb-2">
+            <%= image_tag("partner-management.svg", :class => "app-images") %>
+          </div>
+          <div class="">
+            <h3 class="text-header">Partner Management</h3>
+            <p class="text-body-color">Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders. </p>
+          </div>
         </div>
+        <div class="app-images-block">
+          <div class="pb-2">
+            <%= image_tag("forecasting.svg", :class => "app-images") %>
+          </div>
+          <div class="">
+            <h3 class="text-header">Forecasting</h3>
+            <p class="text-body-color">View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
+          </div>
+        </div>
+      </div>
       <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
         <div class="app-images-block">
           <div class="pb-2">
@@ -98,86 +111,86 @@
           </div>
         </div>
       </div>
-        <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
-            <div class="app-images-block">
-                <div class="pb-2">
-                    <%= image_tag("inventory-image.svg", :class => "app-images") %>
-                </div>
-                <div class="">
-                    <h3 class="text-header">Inventory Management</h3>
-                    <p class="text-body-color">Easily keep track of the items in your inventory regardless of their storage location.</p>
-                </div>
-            </div>
-            <div class="app-images-block">
-                <div class="pb-2">
-                    <%= image_tag("dashboard-image.svg", :class => "app-images") %>
-                </div>
-                <div class="">
-                    <h3 class="text-header">Dashboard Vizualization</h3>
-                    <p class="text-body-color">Quickly view your inventory, donations, purchases and distributions on a single page.</p>
-                </div>
-            </div>
+      <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
+        <div class="app-images-block">
+          <div class="pb-2">
+            <%= image_tag("inventory-image.svg", :class => "app-images") %>
+          </div>
+          <div class="">
+            <h3 class="text-header">Inventory Management</h3>
+            <p class="text-body-color">Easily keep track of the items in your inventory regardless of their storage location.</p>
+          </div>
         </div>
+        <div class="app-images-block">
+          <div class="pb-2">
+            <%= image_tag("dashboard-image.svg", :class => "app-images") %>
+          </div>
+          <div class="">
+            <h3 class="text-header">Dashboard Vizualization</h3>
+            <p class="text-body-color">Quickly view your inventory, donations, purchases and distributions on a single page.</p>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="py-5 px-0 green-bkg" id="testimonials">
-        <div class="container d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
-            <div class="quote-block">
-                <%= image_tag("quote.svg", :class => "quote-image") %>
-            </div>
-            <div class="quote-block pt-5">
-                <h3 class="text-header text-left text-white pl-5">Testimonials</h3>
-                <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                    </ol>
-                    <div class="carousel-inner text-left">
-                        <div class="carousel-item active p-5">
-                            <p class="text-testimonials">DiaperBase has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. DiaperBase has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
-                            <strong class="text-bold text-white">  Megan, Sweet Cheeks Diaper Bank</strong>
-                        </div>
-                        <div class="carousel-item p-5">
-                            <p class="text-testimonials">Finally, an inventory management system designed specifically for the unique needs of diaper banks!</p>
-                            <strong class="text-white"> Rachel Alston, PDX Diaper Bank </strong>
-                        </div>
-                    </div>
-                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
-            </div>
+      <div class="container d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
+        <div class="quote-block">
+          <%= image_tag("quote.svg", :class => "quote-image") %>
         </div>
+        <div class="quote-block pt-5">
+          <h3 class="text-header text-left text-white pl-5">Testimonials</h3>
+          <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
+            <ol class="carousel-indicators">
+              <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+              <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            </ol>
+            <div class="carousel-inner text-left">
+              <div class="carousel-item active p-5">
+                <p class="text-testimonials">DiaperBase has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. DiaperBase has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
+                <strong class="text-bold text-white">  Megan, Sweet Cheeks Diaper Bank</strong>
+              </div>
+              <div class="carousel-item p-5">
+                <p class="text-testimonials">Finally, an inventory management system designed specifically for the unique needs of diaper banks!</p>
+                <strong class="text-white"> Rachel Alston, PDX Diaper Bank </strong>
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="container bottom-cta" id="contact">
-        <div class="text-center">
-            <h2 class="text-header">Want to use the Human Essentials App?</h2>
-            <p class="text-body-color">After the demo, you will be able to request your own account.</p>
-            <a href=<%="#{new_account_request_path}"%>><button type="button" class="btn btn-primary btn-lg mt-2">Request A Demo</button></a>
-            <br/><br/>
-            <p class="text-body-color">Have questions? Email us at <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top" >info@diaper.app</a></p>
-        </div>
+      <div class="text-center">
+        <h2 class="text-header">Want to use the Human Essentials App?</h2>
+        <p class="text-body-color">After the demo, you will be able to request your own account.</p>
+        <a href=<%="#{new_account_request_path}"%>><button type="button" class="btn btn-primary btn-lg mt-2">Request A Demo</button></a>
+        <br/><br/>
+        <p class="text-body-color">Have questions? Email us at <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top" >info@diaper.app</a></p>
+      </div>
     </div>
     <div class="footer-content">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6">
-                    <h2 class="text-white">Diaper.App</h2>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-6">
-                    <strong class="text-white">Human Essentials App was lovingly built by:</strong>
-                    <br/>
-                    <a href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
-                    <a href="http://rubyforgood.org/">Ruby for Good</a>
-                    <br/><br/>
-                    <a href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
-                </div>
-            </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-6">
+            <h2 class="text-white">Diaper.App</h2>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-6">
+            <strong class="text-white">Human Essentials App was lovingly built by:</strong>
+            <br/>
+            <a href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
+            <a href="http://rubyforgood.org/">Ruby for Good</a>
+            <br/><br/>
+            <a href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
