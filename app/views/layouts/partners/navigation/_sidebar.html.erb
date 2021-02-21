@@ -1,0 +1,44 @@
+<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+  <li class="nav-item">
+    <%= link_to(partner_user_root_path, class: "nav-link") do %>
+      <i class="nav-icon fa fa-dashboard"></i>
+      <p>Dashboard</p>
+    <% end %>
+  </li>
+
+  <li class="nav-item">
+    <%= link_to('TODO', class: "nav-link") do %>
+      <i class="nav-icon fa fa-building"></i>
+      <p>(TODO) My Organization</p>
+    <% end %>
+  </li>
+
+  <li class="nav-item">
+    <%= link_to('TODO', class: "nav-link") do %>
+      <i class="nav-icon fa fa-cog"></i>
+      <p>(TODO) Edit My Organization</p>
+    <% end %>
+  </li>
+
+  <li class="nav-item">
+    <%= link_to(partners_requests_path, class: "nav-link") do %>
+      <i class="nav-icon fa fa-edit"></i>
+      <p>Essentials Requests</p>
+    <% end %>
+  </li>
+
+  <li class="nav-item">
+    <%= link_to('TODO', class: "nav-link") do %>
+      <i class="nav-icon fa fa-users"></i>
+      <p>(TODO) Families</p>
+    <% end %>
+  </li>
+
+  <li class="nav-item">
+    <%= link_to('TODO', class: "nav-link") do %>
+      <i class="nav-icon fa fa-child"></i>
+      <p>(TODO) Children</p>
+    <% end %>
+  </li>
+</ul>

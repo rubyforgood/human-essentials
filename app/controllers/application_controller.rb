@@ -37,7 +37,6 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_user
-    # params[:controller].include?("admin") ||
     verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
   end
 
