@@ -200,8 +200,8 @@ RSpec.describe "Partner management", type: :system, js: true do
   describe "#approve_partner" do
     let(:tooltip_message) do
       "Partner has not requested approval yet. \
-Partners are able to request approval going into 'My Organization' \
-and clicking 'Request Approval' button"
+Partners are able to request approval by going into 'My Organization' \
+and clicking 'Request Approval' button."
     end
     let!(:invited_partner) { create(:partner, name: "Amelia Ebonheart", status: :invited) }
     let!(:awaiting_review_partner) { create(:partner, name: "Beau Brummel", status: :awaiting_review) }
