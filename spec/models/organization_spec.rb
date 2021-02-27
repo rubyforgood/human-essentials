@@ -278,21 +278,6 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe "logo_path" do
-    it "returns the the default logo path when no logo attached" do
-      org = build(:organization, logo: nil)
-      expect(org.logo_path).to include("/img/diaperbase-logo-full.png")
-    end
-
-    it "returns the logo path attached for the organization" do
-      org = build(:organization,
-                  logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"),
-                                                     "image/jpeg"))
-
-      expect(org.logo_path).to include(Rails.root.join("tmp/storage").to_s)
-    end
-  end
-
   describe "geocode" do
     it "adds coordinates to the database" do
       expect(organization.latitude).to be_a(Float)
