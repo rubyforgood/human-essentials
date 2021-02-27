@@ -195,6 +195,16 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  config.before(:each, type: :request) do
+    Faker::Config.random = Random.new(42)
+
+    # Use truncation in the case of doing `browser` tests because it
+    # appears that transactions won't work since it really does
+    # depend on the database to have records.
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+  end
+
   config.before(:each) do
     # The database cleaner will now begin at this point
     # up anything after this point when `.clean` is called.
