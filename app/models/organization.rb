@@ -195,7 +195,7 @@ class Organization < ApplicationRecord
 
   def logo_path
     if logo.attached?
-      ActiveStorage::Blob.service.send(:path_for, logo.key).to_s
+      logo.service_url
     else
       Organization::DIAPER_APP_LOGO.to_s
     end

@@ -9,7 +9,7 @@ class DistributionPdf
     font "OpenSans"
     font_size 10
 
-    image organization.logo_path, fit: [325, 110]
+    image StringIO.open(organization.logo.download), fit: [325, 110]
 
     bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
       text organization.name, align: :right
