@@ -9,7 +9,13 @@ class DistributionPdf
     font "OpenSans"
     font_size 10
 
-    image StringIO.open(organization.logo.download), fit: [325, 110]
+    logo_image = if organization.logo.attached?
+                   StringIO.open(organization.logo.download)
+                 else
+                   Organization::DIAPER_APP_LOGO
+                 end
+
+    image logo_image, fit: [325, 110]
 
     bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
       text organization.name, align: :right
