@@ -58,13 +58,12 @@ class PartnersController < ApplicationController
     # TODO: create a service that abstracts all of this from PartnersController, like PartnerDetailRetriever.call(id: params[:id])
 
     # TODO: move this code to new service,
-    @diaper_partner = DiaperPartnerClient.get(id: params[:id])
-    @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true) if @diaper_partner
-    @agency = if @diaper_partner
-                @diaper_partner[:agency]
-              else
-                autovivifying_hash
-              end
+    # @diaper_partner = DiaperPartnerClient.get(id: params[:id])
+    # @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true) if @diaper_partner
+    @partners_partner = Partners::Partner.find_by(diaper_partner_id: @partner.id)
+    @partners_partner.sync_attachments_from_partnerbase!
+
+    @agency = @partners_partner.export_hash
   end
 
   def edit
