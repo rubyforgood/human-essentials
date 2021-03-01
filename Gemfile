@@ -106,7 +106,7 @@ group :test do
   gem "rspec-sidekiq"
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 4.5'
-  gem 'webdrivers', '~> 4.4'
+  gem 'webdrivers', '~> 4.6'
   gem "webmock", "~> 3.12"
 end
 
