@@ -87,6 +87,39 @@ RSpec.describe "Partners", type: :request do
     end
   end
 
+  describe "GET #approve_partner" do
+    subject { -> { get approve_partner_partner_path(id: partner.diaper_partner_id, organization_id: partner.diaper_bank_id) } }
+    let(:partner) { FactoryBot.create(:partners_user).partner }
+
+    it 'should contain the proper page header' do
+      subject.call
+      expect(response.body).to include("Partner Approval Request")
+      expect(response.body).to include("#{partner.name} - Application Details")
+    end
+
+    context 'when the partner is awaiting approval' do
+      before do
+        Partner.find(partner.diaper_partner_id).update!(status: 2)
+        subject.call
+      end
+
+      it 'should show the Approve Partner button' do
+        expect(response.body).to include("Approve Partner")
+      end
+    end
+
+    context 'when the partner is not awaiting approval' do
+      before do
+        Partner.find(partner.diaper_partner_id).update!(status: 0)
+        subject.call
+      end
+
+      it 'should not show the Approve Partner button' do
+        expect(response.body).not_to include("Approve Partner")
+      end
+    end
+  end
+
   describe "GET #new" do
     it "returns http success" do
       get new_partner_path(default_params)

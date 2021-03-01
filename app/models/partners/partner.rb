@@ -106,6 +106,10 @@ module Partners
       Organization.find_by!(id: diaper_bank_id)
     end
 
+    #
+    # TODO - deprecated this export_hash method and instead
+    # directly expose columns in the approve_partner.html.erb page
+    #
     def export_hash
       {
         name: name,

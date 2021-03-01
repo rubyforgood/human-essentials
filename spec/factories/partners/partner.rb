@@ -4,6 +4,7 @@ FactoryBot.define do
 
     after(:build) do |partners_partner, _option|
       org_partner = FactoryBot.create(:partner)
+      partners_partner.name = org_partner.name
       partners_partner.diaper_partner_id = org_partner.id
     end
   end
