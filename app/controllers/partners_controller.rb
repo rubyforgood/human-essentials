@@ -26,12 +26,12 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "approved")
-    if response.is_a?(Net::HTTPSuccess)
-      @partner.approved!
+    svc = PartnerApprovalService.new(partner: @partner)
+    svc.call
+    if svc.errors.none?
       redirect_to partners_path, notice: "Partner approved!"
     else
-      redirect_to partners_path, error: "Failed to update Partner data!"
+      redirect_to partners_path, error: svc.errors.full_messages
     end
   end
 
