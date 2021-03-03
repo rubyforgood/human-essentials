@@ -26,8 +26,10 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
+
     svc = PartnerApprovalService.new(partner: @partner)
     svc.call
+
     if svc.errors.none?
       redirect_to partners_path, notice: "Partner approved!"
     else
