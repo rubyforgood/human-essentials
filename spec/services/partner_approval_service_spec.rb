@@ -33,6 +33,9 @@ describe PartnerApprovalService do
 
       it 'should change the partner status to approved' do
         expect { subject }.to change { partner.reload.approved? }.from(false).to(true)
+      end
+
+      it 'should change the partners_partner partner_status' do
         expect { subject }.to change { partners_partner.reload.partner_status }.to('approval')
       end
 
@@ -50,6 +53,9 @@ describe PartnerApprovalService do
 
           it 'should not change the partner status to approved' do
             expect { subject }.not_to change { partner.reload.approved? }
+          end
+
+          it 'should not change the partners_partner partner_status' do
             expect { subject }.not_to change { partners_partner.reload.partner_status }
           end
         end
