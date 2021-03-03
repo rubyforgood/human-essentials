@@ -319,7 +319,7 @@ RSpec.describe "Partners", type: :request do
 
       it 'should redirect to the partners index page with a failure flash message' do
         expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
-        expect(flash[:error]).to eq(fake_error_msg)
+        expect(flash[:error]).to eq("Failed to approve partner because: #{fake_error_msg}")
       end
     end
   end

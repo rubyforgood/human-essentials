@@ -33,7 +33,7 @@ class PartnersController < ApplicationController
     if svc.errors.none?
       redirect_to partners_path, notice: "Partner approved!"
     else
-      redirect_to partners_path, error: svc.errors.full_messages
+      redirect_to partners_path, error: "Failed to approve partner because: #{svc.errors.full_messages}"
     end
   end
 
