@@ -494,6 +494,8 @@ GEM
       net-ssh (>= 2.8.0)
     sshkit-interactive (0.3.0)
       sshkit (~> 1.12)
+    strong_migrations (0.7.6)
+      activerecord (>= 5)
     terminal-notifier (2.0.0)
     terminal-notifier-guard (1.7.0)
     terrapin (0.6.0)
@@ -624,6 +626,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen
   sprockets (~> 4.0.2)
+  strong_migrations (~> 0.7.6)
   terminal-notifier
   terminal-notifier-guard
   toastr-rails
@@ -638,4 +641,4 @@ RUBY VERSION
    ruby 2.7.2p137
 
 BUNDLED WITH
-   2.1.4
+   2.2.13
