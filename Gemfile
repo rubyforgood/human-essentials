@@ -100,8 +100,8 @@ group :test do
   gem "capybara", "~> 3.35"
   gem "capybara-screenshot"
   gem "database_cleaner"
-  gem "factory_bot_rails"
   gem "launchy"
+  gem 'magic_test'
   gem "rails-controller-testing"
   gem "rspec-sidekiq"
   gem 'simplecov'

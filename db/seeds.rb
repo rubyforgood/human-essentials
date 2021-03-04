@@ -165,7 +165,7 @@ note = [
   # **We have two seperate database. One for diaperbase and the other for partnerbase**
   # ----------------------------------------------------------------------------
 
-  partner = Partners::Partner.create!(
+  partner = Partners::Partner.create!({
     executive_director_name: Faker::Name.name,
     program_contact_name: Faker::Name.name,
     name: p.name,
@@ -181,7 +181,7 @@ note = [
     executive_director_email: p.email,
     partner_status: partner_status_map[partner_option[:status]] || "pending",
     status_in_diaper_base: partner_option[:status]
-  )
+  })
 
   Partners::User.create!(
     name: Faker::Name.name,

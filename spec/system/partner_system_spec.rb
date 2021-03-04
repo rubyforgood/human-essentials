@@ -4,6 +4,25 @@ RSpec.describe "Partner management", type: :system, js: true do
   end
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
+  describe 'approving a partner that is awaiting approval' do
+    let!(:partner_awaiting_approval) { create(:partner, :awaiting_review) }
+
+    it 'should approve the partner' do
+      visit url_prefix + "/partners"
+
+      assert page.has_content? partner_awaiting_approval.name
+      click_on 'Review Application'
+      assert page.has_content? "Partner Approval Request for #{partner_awaiting_approval.name}"
+      assert page.has_content? "#{partner_awaiting_approval.name} - Application Details - #{partner_awaiting_approval.email}"
+
+      click_on 'Approve Partner'
+      assert page.has_content? 'Partner approved!'
+
+      expect(partner_awaiting_approval.reload.approved?).to eq(true)
+      expect(Partners::Partner.find_by(diaper_partner_id: partner_awaiting_approval.id).partner_status).to eq('approval')
+    end
+  end
+
   describe "#index" do
     before(:each) do
       @uninvited = create(:partner, name: "Bcd", status: :uninvited)
