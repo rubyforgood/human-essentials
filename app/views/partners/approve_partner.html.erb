@@ -44,7 +44,7 @@
                 <p>Proof of Agency Status
                   <% if @partners_partner.proof_of_partner_status.attached? %>
                     <!-- NOTE: The actual download link may not work in local storage mode due to file locations being seperate locally. -->
-                    (Link): <%= link_to @partners_partner.proof_of_partner_status.filename, @partners_partner.proof_of_partner_status.service_url %>
+                    (Link): <%= link_to @partners_partner.proof_of_partner_status.filename, rails_blob_path(@partners_partner.proof_of_partner_status, disposition: 'attachment') %>
                   <% end %>
                 </p>
                 <p>Agency Mission: <%= @agency[:agency_mission] %></p>
@@ -68,7 +68,7 @@
                   <p>Form 990
                   <% if @partners_partner.proof_of_form_990.attached? %>
                     <!-- NOTE: The actual download link may not work in local storage mode due to file locations being seperate locally. -->
-                    (Link): <%= link_to @partners_partner.proof_of_form_990.filename, @partners_partner.proof_of_form_990.service_url %>
+                    (Link): <%= link_to @partners_partner.proof_of_form_990.filename, rails_blob_path(@partners_partner.proof_of_form_990, disposition: 'attachment') %>
                   <% end %>
                   </p>
                   <p>Program Name <%= @agency[:stability][:program_name] %></p>
@@ -178,7 +178,7 @@
                   <h2>Other Documents</h2>
                   <ul>
                     <% @partners_partner.documents.each do |document| %>
-                      <li><%= link_to document.filename, document.service_url, target: :_blank %></li>
+                      <li><%= link_to document.filename, rails_blob_path(document, disposition: 'attachment') %></li>
                     <% end %>
                   </ul>
                   </div>
