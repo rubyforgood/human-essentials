@@ -33,9 +33,10 @@ FactoryBot.define do
       status { :awaiting_review }
     end
 
-    after(:create) do |partner, evaluator|
+    after(:create) do |partner, _evaluator|
       # Create associated records on partnerbase DB
-      create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+      partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+      create(:partners_user, partner_id: partners_partner.id)
     end
   end
 end
