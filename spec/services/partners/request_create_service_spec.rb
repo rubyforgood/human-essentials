@@ -10,7 +10,7 @@ describe Partners::RequestCreateService do
         item_requests_attributes: item_requests_attributes
       }
     end
-    let(:partner_user) { partners.partner.find_by(diaper_partner_id: partner.id).user }
+    let(:partner_user) { Partners::Partner.find_by(diaper_partner_id: partner.id).user }
     let(:partner) { create(:partner) }
     let(:comments) { Faker::Lorem.paragraph }
     let(:item_requests_attributes) do
