@@ -1,7 +1,7 @@
 RSpec.describe "Authentication", type: :system, js: true do
   describe 'logging in as a partner user' do
     let(:partner_user) do
-      user = Partners::Partner.find_by(diaper_partner_id: partner.id).user
+      user = create(:partner).primary_partner_user
       user.password = password
       user.save
       user

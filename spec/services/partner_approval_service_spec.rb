@@ -4,8 +4,7 @@ describe PartnerApprovalService do
   describe '#call' do
     subject { described_class.new(partner: partner).call }
     let(:partner) { create(:partner) }
-    let(:partners_partner) { Partners::Partner.find_by(diaper_partner_id: partner.id) }
-    let(:partner_status) { 'pending' }
+    let(:partner_profile) { partner.profile }
 
     before do
       partner.awaiting_review!
@@ -35,8 +34,8 @@ describe PartnerApprovalService do
         expect { subject }.to change { partner.reload.approved? }.from(false).to(true)
       end
 
-      it 'should change the partners_partner partner_status' do
-        expect { subject }.to change { partners_partner.reload.partner_status }.to('approval')
+      it 'should change the partner profile partner_status' do
+        expect { subject }.to change { partner_profile.reload.partner_status }.to('approval')
       end
 
       context 'but a unexpected error occured during the save' do
@@ -55,8 +54,8 @@ describe PartnerApprovalService do
             expect { subject }.not_to change { partner.reload.approved? }
           end
 
-          it 'should not change the partners_partner partner_status' do
-            expect { subject }.not_to change { partners_partner.reload.partner_status }
+          it 'should not change the partner_profile partner_status' do
+            expect { subject }.not_to change { partner_profile.reload.partner_status }
           end
         end
       end

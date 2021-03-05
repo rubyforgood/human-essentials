@@ -9,7 +9,7 @@ class PartnerApprovalService
     return self unless valid?
 
     Partners::Base.transaction do
-      partners_partner.update!(partner_status: 'approval')
+      partner.profile.update!(partner_status: 'approval')
       partner.approved!
     rescue StandardError => e
       errors.add(:base, e.message)
@@ -29,9 +29,5 @@ class PartnerApprovalService
     end
 
     errors.none?
-  end
-
-  def partners_partner
-    Partners::Partner.find_by!(diaper_partner_id: partner.id)
   end
 end

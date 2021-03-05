@@ -53,19 +53,17 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.new
   end
 
-  # NOTE(chaserx): this is confusing and could be renamed to reflect what it's returning/showing review_application
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
 
-    # TODO: create a service that abstracts all of this from PartnersController, like PartnerDetailRetriever.call(id: params[:id])
+    @partner_profile = partner.profile
+    # Ensure that the ActiveStorage records associated with the
+    # partner are available on the primary DB. If we do not do this,
+    # partners would be uploading files that the diaperbase application
+    # cannot see.
+    @partner_profile.sync_attachments_from_partnerbase!
 
-    # TODO: move this code to new service,
-    # @diaper_partner = DiaperPartnerClient.get(id: params[:id])
-    # @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true) if @diaper_partner
-    @partners_partner = Partners::Partner.find_by(diaper_partner_id: @partner.id)
-    @partners_partner.sync_attachments_from_partnerbase!
-
-    @agency = @partners_partner.export_hash
+    @agency = @partner_profile.export_hash
   end
 
   def edit

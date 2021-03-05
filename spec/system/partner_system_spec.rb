@@ -7,6 +7,10 @@ RSpec.describe "Partner management", type: :system, js: true do
   describe 'approving a partner that is awaiting approval' do
     let!(:partner_awaiting_approval) { create(:partner, :awaiting_review) }
 
+    before do
+      expect(partner_awaiting_approval.profile.partner_status).not_to eq('approval')
+    end
+
     it 'should approve the partner' do
       visit url_prefix + "/partners"
 
@@ -19,7 +23,7 @@ RSpec.describe "Partner management", type: :system, js: true do
       assert page.has_content? 'Partner approved!'
 
       expect(partner_awaiting_approval.reload.approved?).to eq(true)
-      expect(Partners::Partner.find_by(diaper_partner_id: partner_awaiting_approval.id).partner_status).to eq('approval')
+      expect(partner_awaiting_approval.profile.reload.partner_status).to eq('approval')
     end
   end
 

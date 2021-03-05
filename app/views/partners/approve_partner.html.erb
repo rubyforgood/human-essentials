@@ -42,9 +42,9 @@
                 <p>Distributor Type <%= @agency[:distributor_type] %></p>
                 <p>Agency Type: <%= @agency[:agency_type] %></p>
                 <p>Proof of Agency Status
-                  <% if @partners_partner.proof_of_partner_status.attached? %>
+                  <% if @partner_profile.proof_of_partner_status.attached? %>
                     <!-- NOTE: The actual download link may not work in local storage mode due to file locations being seperate locally. -->
-                    (Link): <%= link_to @partners_partner.proof_of_partner_status.filename, rails_blob_path(@partners_partner.proof_of_partner_status, disposition: 'attachment') %>
+                    (Link): <%= link_to @partner_profile.proof_of_partner_status.filename, rails_blob_path(@partner_profile.proof_of_partner_status, disposition: 'attachment') %>
                   <% end %>
                 </p>
                 <p>Agency Mission: <%= @agency[:agency_mission] %></p>
@@ -64,11 +64,11 @@
                 <% if @fields.include?('agency_stability') || @fields.empty? %>
                   <h2>Agency Stability</h2>
                   <p>Founded <%= @agency[:stability][:founded] %></p>
-                  <p>Form 990: <%= @partners_partner.proof_of_form_990.attached? ? 'Yes' : 'No' %></p>
+                  <p>Form 990: <%= @partner_profile.proof_of_form_990.attached? ? 'Yes' : 'No' %></p>
                   <p>Form 990
-                  <% if @partners_partner.proof_of_form_990.attached? %>
+                  <% if @partner_profile.proof_of_form_990.attached? %>
                     <!-- NOTE: The actual download link may not work in local storage mode due to file locations being seperate locally. -->
-                    (Link): <%= link_to @partners_partner.proof_of_form_990.filename, rails_blob_path(@partners_partner.proof_of_form_990, disposition: 'attachment') %>
+                    (Link): <%= link_to @partner_profile.proof_of_form_990.filename, rails_blob_path(@partner_profile.proof_of_form_990, disposition: 'attachment') %>
                   <% end %>
                   </p>
                   <p>Program Name <%= @agency[:stability][:program_name] %></p>
@@ -177,7 +177,7 @@
                 <% if @fields.include?('attached_documents') || @fields.empty? %>
                   <h2>Other Documents</h2>
                   <ul>
-                    <% @partners_partner.documents.each do |document| %>
+                    <% @partner_profile.documents.each do |document| %>
                       <li><%= link_to document.filename, rails_blob_path(document, disposition: 'attachment') %></li>
                     <% end %>
                   </ul>
