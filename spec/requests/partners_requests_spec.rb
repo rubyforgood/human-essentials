@@ -88,8 +88,8 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "GET #approve_partner" do
-    subject { -> { get approve_partner_partner_path(id: partner.diaper_partner_id, organization_id: partner.diaper_bank_id) } }
-    let(:partner) { FactoryBot.create(:partners_user).partner }
+    subject { -> { get approve_partner_partner_path(id: partner.id, organization_id: partner.organization_id) } }
+    let(:partner) { create(:partner) }
 
     it 'should contain the proper page header' do
       subject.call
@@ -97,9 +97,9 @@ RSpec.describe "Partners", type: :request do
       expect(response.body).to include("#{partner.name} - Application Details")
     end
 
-    context 'when the partner is awaiting approval' do
+    context 'when the partner is awaiting review' do
       before do
-        Partner.find(partner.diaper_partner_id).update!(status: 2)
+        partner.awaiting_review!
         subject.call
       end
 
@@ -108,9 +108,9 @@ RSpec.describe "Partners", type: :request do
       end
     end
 
-    context 'when the partner is not awaiting approval' do
+    context 'when the partner is not awaiting review' do
       before do
-        Partner.find(partner.diaper_partner_id).update!(status: 0)
+        partner.invited!
         subject.call
       end
 

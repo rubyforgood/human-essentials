@@ -3,8 +3,8 @@ require 'rails_helper'
 describe PartnerApprovalService do
   describe '#call' do
     subject { described_class.new(partner: partner).call }
-    let(:partner) { partners_partner.partner }
-    let(:partners_partner) { create(:partners_partner, partner_status: partner_status) }
+    let(:partner) { create(:partner) }
+    let(:partners_partner) { Partners::Partner.find_by(diaper_partner_id: partner.id) }
     let(:partner_status) { 'pending' }
 
     before do
