@@ -63,30 +63,6 @@ RSpec.describe Partner, type: :model do
       end
     end
   end
-  # context "Callbacks >" do
-  #   describe "when DIAPER_PARTNER_URL is present" do
-  #     let(:diaper_partner_url) { "http://diaper.partner.io" }
-  #     let(:callback_url) { "#{diaper_partner_url}/partners" }
-  #
-  #     before do
-  #       stub_env "DIAPER_PARTNER_URL", diaper_partner_url
-  #       stub_env "DIAPER_PARTNER_SECRET_KEY", "secretkey123"
-  #       stub_request :post, callback_url
-  #     end
-  #
-  #     it "notifies the Diaper Partner app" do
-  #       partner = create :partner
-  #       headers = {
-  #         "Authorization" => /APIAuth diaperbase:.*/,
-  #         "Content-Type" => "application/x-www-form-urlencoded"
-  #       }
-  #       body = URI.encode_www_form partner.attributes
-  #       expect(WebMock).to have_requested(:post, callback_url)
-  #         .with(headers: headers, body: body).once
-  #     end
-  #
-  #   end
-  # end
 
   describe '#deactivated?' do
     subject { partner.deactivated? }
@@ -110,6 +86,25 @@ RSpec.describe Partner, type: :model do
       it 'should return false' do
         expect(subject).to eq(false)
       end
+    end
+  end
+
+  describe '#profile' do
+    subject { partner.profile }
+    let(:partner) { create(:partner) }
+
+    it 'should return the associated Partners::Partner record' do
+      expect(subject).to eq(Partners::Partner.find_by(diaper_partner_id: partner.id))
+    end
+  end
+
+  describe '#primary_partner_user' do
+    subject { partner.primary_partner_user }
+    let(:partner) { create(:partner) }
+
+    it 'should return the asssociated primary Partners::User' do
+      primary_partner_user = Partners::User.find_by(partner_id: partner.profile.id)
+      expect(subject).to eq(primary_partner_user)
     end
   end
 
