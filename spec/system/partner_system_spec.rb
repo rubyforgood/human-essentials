@@ -36,7 +36,7 @@ RSpec.describe "Partner management", type: :system, js: true do
         allow_any_instance_of(PartnerApprovalService).to receive_message_chain(:errors, :full_messages).and_return(fake_error_msg)
       end
 
-      it 'should show an errror message and not approve the partner' do
+      it 'should show an error message and not approve the partner' do
         visit url_prefix + "/partners"
 
         assert page.has_content? partner_awaiting_approval.name
