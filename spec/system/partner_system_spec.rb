@@ -24,7 +24,7 @@ RSpec.describe "Partner management", type: :system, js: true do
         assert page.has_content? 'Partner approved!'
 
         expect(partner_awaiting_approval.reload.approved?).to eq(true)
-        expect(partner_awaiting_approval.profile.reload.partner_status).to eq('approval')
+        expect(partner_awaiting_approval.profile.reload.partner_status).to eq(Partners::Partner::VERIFIED_STATUS)
       end
     end
 
@@ -48,7 +48,7 @@ RSpec.describe "Partner management", type: :system, js: true do
         assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 
         expect(partner_awaiting_approval.reload.approved?).to eq(false)
-        expect(partner_awaiting_approval.profile.reload.partner_status).not_to eq('approval')
+        expect(partner_awaiting_approval.profile.reload.partner_status).not_to eq('verified')
       end
     end
   end
