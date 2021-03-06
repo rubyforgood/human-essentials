@@ -53,6 +53,64 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
   end
 
+  describe 'adding a new partner' do
+    context 'when adding a partner successfully' do
+      let(:partner_attributes) do
+        {
+          name: Faker::Name.name,
+          email: Faker::Internet.email,
+          quota: Faker::Number.within(range: 5..100),
+          notes: Faker::Lorem.paragraph
+        }
+      end
+      before do
+        visit url_prefix + "/partners"
+        assert page.has_content? "Partner Agencies for #{@organization.name}"
+
+        click_on 'New Partner Agency'
+
+        fill_in 'Name *', with: partner_attributes[:name]
+        fill_in 'E-mail *', with: partner_attributes[:email]
+        fill_in 'Quota', with: partner_attributes[:quota]
+        fill_in 'Notes', with: partner_attributes[:notes]
+        find('button', text: 'Add Partner Agency').click
+      end
+
+      it 'should have added the partner and indicate that it was successful' do
+        assert page.has_content? "Partner #{partner_attributes[:name]} added!"
+
+        partner = Partner.find_by(name: partner_attributes[:name])
+        expect(partner).not_to eq(nil)
+        expect(partner.profile).not_to eq(nil)
+      end
+    end
+
+    context 'when adding a partner incorrectly' do
+      let(:partner_attributes) do
+        {
+          name: Faker::Name.name
+        }
+      end
+      before do
+        visit url_prefix + "/partners"
+        assert page.has_content? "Partner Agencies for #{@organization.name}"
+        click_on 'New Partner Agency'
+
+        fill_in 'Name *', with: partner_attributes[:name]
+
+        find('button', text: 'Add Partner Agency').click
+      end
+
+      it 'should have not added a new partner and indicate the failure' do
+        assert page.has_content? "Failed to add partner due to: "
+        assert page.has_content? "New Partner for #{@organization.name}"
+
+        partner = Partner.find_by(name: partner_attributes[:name])
+        expect(partner).to eq(nil)
+      end
+    end
+  end
+
   describe "#index" do
     before(:each) do
       @uninvited = create(:partner, name: "Bcd", status: :uninvited)
