@@ -10,7 +10,8 @@ describe Partners::RequestCreateService do
         item_requests_attributes: item_requests_attributes
       }
     end
-    let(:partner_user) { FactoryBot.create(:partners_user) }
+    let(:partner_user) { partner.primary_partner_user }
+    let(:partner) { create(:partner) }
     let(:comments) { Faker::Lorem.paragraph }
     let(:item_requests_attributes) do
       [
