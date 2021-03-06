@@ -129,7 +129,7 @@ class Partner < ApplicationRecord
       name: profile.program_contact_name,
       email: profile.program_contact_email,
       phone: profile.program_contact_phone ||
-        profile.program_contact_mobile
+             profile.program_contact_mobile
     }
   end
 

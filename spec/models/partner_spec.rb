@@ -153,10 +153,10 @@ RSpec.describe Partner, type: :model do
 
     before do
       partner.profile.update({
-        program_contact_name: contact_name,
-        program_contact_email: contact_email,
-        program_contact_phone: contact_phone,
-      })
+                               program_contact_name: contact_name,
+                               program_contact_email: contact_email,
+                               program_contact_phone: contact_phone
+                             })
     end
 
     it "includes contact person information from parnerbase" do
