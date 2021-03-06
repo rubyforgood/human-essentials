@@ -32,6 +32,6 @@ class PartnerApprovalService
   end
 
   def approved_partner_status
-    'verified'
+    Partners::Partner::VERIFIED_STATUS
   end
 end

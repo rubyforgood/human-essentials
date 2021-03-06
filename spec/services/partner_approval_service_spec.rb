@@ -35,7 +35,7 @@ describe PartnerApprovalService do
       end
 
       it 'should change the partner profile partner_status' do
-        expect { subject }.to change { partner_profile.reload.partner_status }.to('verified')
+        expect { subject }.to change { partner_profile.reload.partner_status }.to(Partners::Partner::VERIFIED_STATUS)
       end
 
       context 'but a unexpected error occured during the save' do
