@@ -11,19 +11,45 @@ RSpec.describe "Partner management", type: :system, js: true do
       expect(partner_awaiting_approval.profile.partner_status).not_to eq('approval')
     end
 
-    it 'should approve the partner' do
-      visit url_prefix + "/partners"
+    context 'when the approval succeeds' do
+      it 'should approve the partner' do
+        visit url_prefix + "/partners"
 
-      assert page.has_content? partner_awaiting_approval.name
-      click_on 'Review Application'
-      assert page.has_content? "Partner Approval Request for #{partner_awaiting_approval.name}"
-      assert page.has_content? "#{partner_awaiting_approval.name} - Application Details - #{partner_awaiting_approval.email}"
+        assert page.has_content? partner_awaiting_approval.name
+        click_on 'Review Application'
+        assert page.has_content? "Partner Approval Request for #{partner_awaiting_approval.name}"
+        assert page.has_content? "#{partner_awaiting_approval.name} - Application Details - #{partner_awaiting_approval.email}"
 
-      click_on 'Approve Partner'
-      assert page.has_content? 'Partner approved!'
+        click_on 'Approve Partner'
+        assert page.has_content? 'Partner approved!'
 
-      expect(partner_awaiting_approval.reload.approved?).to eq(true)
-      expect(partner_awaiting_approval.profile.reload.partner_status).to eq('approval')
+        expect(partner_awaiting_approval.reload.approved?).to eq(true)
+        expect(partner_awaiting_approval.profile.reload.partner_status).to eq('approval')
+      end
+    end
+
+    context 'when the approval does not succeed' do
+      let(:fake_error_msg) { Faker::Games::ElderScrolls.dragon }
+      before do
+        allow_any_instance_of(PartnerApprovalService).to receive(:call)
+        allow_any_instance_of(PartnerApprovalService).to receive_message_chain(:errors, :none?).and_return(false)
+        allow_any_instance_of(PartnerApprovalService).to receive_message_chain(:errors, :full_messages).and_return(fake_error_msg)
+      end
+
+      it 'should show an errror message and not approve the partner' do
+        visit url_prefix + "/partners"
+
+        assert page.has_content? partner_awaiting_approval.name
+        click_on 'Review Application'
+        assert page.has_content? "Partner Approval Request for #{partner_awaiting_approval.name}"
+        assert page.has_content? "#{partner_awaiting_approval.name} - Application Details - #{partner_awaiting_approval.email}"
+
+        click_on 'Approve Partner'
+        assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
+
+        expect(partner_awaiting_approval.reload.approved?).to eq(false)
+        expect(partner_awaiting_approval.profile.reload.partner_status).not_to eq('approval')
+      end
     end
   end
 
