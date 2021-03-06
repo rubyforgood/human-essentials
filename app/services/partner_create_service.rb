@@ -1,27 +1,29 @@
 class PartnerCreateService
   include ServiceObjectErrorsMixin
 
+  attr_reader :partner
+
   def initialize(organization:, partner_attrs:)
     @organization = organization
     @partner_attrs = partner_attrs
   end
 
   def call
-    partner = organization.partners.build(partner_attrs)
+    @partner = organization.partners.build(partner_attrs)
 
-    unless partner.valid?
-      partner.errors.each do |k, v|
+    unless @partner.valid?
+      @partner.errors.each do |k, v|
         errors.add(k, v)
       end
     end
 
     ActiveRecord::Base.transaction do
-      partner.save!
+      @partner.save!
 
       Partners::Partner.create!({
                                   diaper_bank_id: organization.id,
-                                  diaper_partner_id: partner.id,
-                                  name: partner.name
+                                  diaper_partner_id: @partner.id,
+                                  name: @partner.name
                                 })
     rescue StandardError => e
       errors.add(:base, e.message)

@@ -38,6 +38,54 @@ RSpec.describe "Partners", type: :request do
     end
   end
 
+  describe 'POST #create' do
+    subject { -> { post partners_path(default_params.merge(partner_attrs)) } }
+
+    context 'when given valid partner attributes in the params' do
+      let(:partner_attrs) do
+        {
+          partner: FactoryBot.attributes_for(:partner)
+        }
+      end
+
+      it 'should create a new Partner record' do
+        expect { subject.call }.to change { Partner.all.count }.by(1)
+      end
+
+      it 'should create a new Partners::Partner record' do
+        expect { subject.call }.to change { Partners::Partner.all.count }.by(1)
+      end
+
+      it 'redirect to the partners index page' do
+        subject.call
+        expect(response).to redirect_to(partners_path(default_params))
+      end
+    end
+
+    context 'when given invalid partner attributes in the params' do
+      let(:partner_attrs) do
+        {
+          partner: {
+            name: nil
+          }
+        }
+      end
+
+      it 'should not create a new Partner record' do
+        expect { subject.call }.not_to change { Partner.all.count }
+      end
+
+      it 'should not create a new Partners::Partner record' do
+        expect { subject.call }.not_to change { Partners::Partner.all.count }
+      end
+
+      it 'should display the error message' do
+        subject.call
+        expect(response.body).to include("Failed to add partner due to: ")
+      end
+    end
+  end
+
   describe "GET #show" do
     subject do
       get partner_path(partner, default_params.merge(format: response_format))

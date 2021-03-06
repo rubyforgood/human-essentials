@@ -15,11 +15,15 @@ class PartnersController < ApplicationController
   end
 
   def create
-    @partner = current_organization.partners.new(partner_params)
-    if @partner.save
-      redirect_to partners_path, notice: "Partner added!"
+    svc = PartnerCreateService.new(organization: current_organization, partner_attrs: partner_params)
+    svc.call
+
+    @partner = svc.partner
+
+    if svc.errors.none?
+      redirect_to partners_path, notice: "Partner #{@partner.name} added!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Failed to add partner due to: #{svc.errors.full_messages}"
       render action: :new
     end
   end
