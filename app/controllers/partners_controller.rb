@@ -56,7 +56,7 @@ class PartnersController < ApplicationController
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
 
-    @partner_profile = partner.profile
+    @partner_profile = @partner.profile
     # Ensure that the ActiveStorage records associated with the
     # partner are available on the primary DB. If we do not do this,
     # partners would be uploading files that the diaperbase application
