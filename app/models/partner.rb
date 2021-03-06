@@ -139,7 +139,7 @@ class Partner < ApplicationRecord
                           name: partnerbase_partner.program_contact_name,
                           email: partnerbase_partner.program_contact_email,
                           phone: partnerbase_partner.program_contact_phone ||
-                          partnerbase_partner.program_contact_mobile,
+                            partnerbase_partner.program_contact_mobile
                         }
                       else
                         {}
