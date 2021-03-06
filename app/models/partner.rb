@@ -100,7 +100,7 @@ class Partner < ApplicationRecord
       name,
       email,
       contact_person[:name],
-      contact_person[:phone] || contact_person[:mobile],
+      contact_person[:phone],
       contact_person[:email]
     ]
   end
@@ -120,16 +120,30 @@ class Partner < ApplicationRecord
     AddDiaperPartnerJob.perform_now(id, options)
   end
 
-  def partnerbase_partner
-    @partnerbase_partner ||= Partnerbase::Partner.find(id) if id
-  end
-
   def contact_person
-    if partnerbase_partner&.agency
-      partnerbase_partner.agency.fetch(:contact_person)
-    else
-      {}
-    end
+    return @contact_person if @contact_person
+
+    partnerbase_partner = if id
+                            Partners::Partner.select(
+                              :program_contact_name,
+                              :program_contact_email,
+                              :program_contact_phone,
+                              :program_contact_mobile,
+                            ).find_by(diaper_partner_id: id)
+                          else
+                            return {}
+                          end
+
+    @contact_person = if partnerbase_partner
+                        {
+                          name: partnerbase_partner.program_contact_name,
+                          email: partnerbase_partner.program_contact_email,
+                          phone: partnerbase_partner.program_contact_phone ||
+                          partnerbase_partner.program_contact_mobile,
+                        }
+                      else
+                        {}
+                      end
   end
 
   def quantity_year_to_date

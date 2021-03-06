@@ -146,15 +146,11 @@ RSpec.describe Partner, type: :model do
 
   describe "#csv_export_attributes" do
     let!(:partner) { create(:partner) }
-    let(:partnerbase_partner) do
+    let(:contact_person) do
       {
-        agency: {
-          contact_person: {
-            name: "Jon Ralfeo",
-            phone: "1231231234",
-            email: "jon@entertainment720.com"
-          }
-        }
+        name: "Jon Ralfeo",
+        phone: "1231231234",
+        email: "jon@entertainment720.com"
       }.to_json
     end
 
