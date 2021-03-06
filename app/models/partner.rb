@@ -60,6 +60,21 @@ class Partner < ApplicationRecord
     status == 'deactivated'
   end
 
+  #
+  # Returns the Partners::Partner record which is stored in
+  # the partnerbase DB and contains mostly profile data of
+  # the partner user.
+  def profile
+    ::Partners::Partner.find_by(diaper_partner_id: id)
+  end
+
+  #
+  # Returns the primary Partners::User record which is the
+  # first & main user associated to a partner agency.
+  def primary_partner_user
+    profile&.user
+  end
+
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
     csv.each do |row|

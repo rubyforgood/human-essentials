@@ -1,6 +1,7 @@
 RSpec.describe "Managing requests", type: :system, js: true do
   describe 'creating a request' do
-    let!(:partner_user) { FactoryBot.create(:partners_user) }
+    let(:partner_user) { partner.primary_partner_user }
+    let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is permitted to make a request' do
       before do

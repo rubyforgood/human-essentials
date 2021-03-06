@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe "/partners/requests", type: :request do
   describe "GET #index" do
     subject { -> { get partners_requests_path } }
-    let(:partner_user) { FactoryBot.create(:partners_user) }
+    let(:partner_user) { Partners::Partner.find_by(diaper_partner_id: partner.id).user }
+    let(:partner) { create(:partner) }
 
     before do
       sign_in(partner_user, scope: :partner_user)
@@ -17,7 +18,8 @@ RSpec.describe "/partners/requests", type: :request do
 
   describe "GET #new" do
     subject { -> { get new_partners_request_path } }
-    let(:partner_user) { FactoryBot.create(:partners_user) }
+    let(:partner_user) { Partners::Partner.find_by(diaper_partner_id: partner.id).user }
+    let(:partner) { create(:partner) }
 
     before do
       sign_in(partner_user, scope: :partner_user)
@@ -49,7 +51,8 @@ RSpec.describe "/partners/requests", type: :request do
         }
       }
     end
-    let(:partner_user) { FactoryBot.create(:partners_user) }
+    let(:partner_user) { Partners::Partner.find_by(diaper_partner_id: partner.id).user }
+    let(:partner) { create(:partner) }
 
     before do
       sign_in(partner_user, scope: :partner_user)

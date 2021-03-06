@@ -265,6 +265,11 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.13)
+    magic_test (0.0.6)
+      capybara (~> 3.0)
+      pry
+      pry-stack_explorer
+      rails (~> 6.0)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
@@ -327,6 +332,9 @@ GEM
     pry-remote (0.1.8)
       pry (~> 0.9)
       slop (~> 3.0)
+    pry-stack_explorer (0.4.9.3)
+      binding_of_caller (>= 0.7)
+      pry (>= 0.9.11)
     public_suffix (4.0.6)
     puma (4.3.7)
       nio4r (~> 2.0)
@@ -595,6 +603,7 @@ DEPENDENCIES
   launchy
   letter_opener
   listen (~> 3.4.1)
+  magic_test
   mini_racer (~> 0.3.1)
   momentjs-rails
   newrelic_rpm
