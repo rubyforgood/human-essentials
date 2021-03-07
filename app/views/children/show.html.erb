@@ -1,65 +1,130 @@
-<div class="app-title">
-  <div>
-    <h1><i class="fa fa-child"></i>&nbsp;&nbsp;Child Details</h1>
-  </div>
-  <ul class="app-breadcrumb breadcrumb">
-    <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-    <li class="breadcrumb-item"><a href="<%= family_path(@child.family) %>">The <%= "#{@child.family.guardian_last_name}" %> Family</a></li>
-    <li class="breadcrumb-item"><a href="#">View Child</a></li>
-  </ul>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <% if notice %>
-      <div class="alert alert-dismissible alert-success">
-        <button class="close" type="button" data-dismiss="alert">×</button>
-        <p><%= notice %><a class="alert-link" href="#"></p>
-        </a></p>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Children - #{current_partner.name}" %>
+        <h1><i class="fa fa-child"></i>&nbsp;&nbsp;
+          Child Details
+          <small>for <%= current_partner.name %></small>
+        </h1>
       </div>
-    <% end %>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-home fa-lg"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="<%= family_path(@child.family) %>">
+            The <%= "#{@child.family.guardian_last_name}" %> Family</a></li>
+          <li class="breadcrumb-item"><a href="#">View Child</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
 
+<section class="content">
+  <div class="container-fluid">
     <div class="row">
-      <div class="col-12">
-        <div class="card mb-12">
-          <h5 class="card-header bg-primary text-white">Child Information</h5>
-          <div class="card-body">
-            <dl>
-              <dt>First name</dt>
-              <dd><%= child.first_name %></dd>
+      <div class="col-md-12">
+        <div class="card-transparent">
+          <div class="row">
+            <div class="col-3">
+              <div class="card mb-6">
+                <h5 class="card-header bg-primary text-white">Child Information</h5>
+                <div class="card-body">
+                  <dl>
+                    <dt>First name</dt>
+                    <dd><%= @child.first_name %></dd>
 
-              <dt>Last name:</dt>
-              <dd><%= child.last_name %></dd>
+                    <dt>Last name:</dt>
+                    <dd><%= @child.last_name %></dd>
 
-              <dt>Date of birth:</dt>
-              <dd><%= child.date_of_birth %></dd>
+                    <dt>Date of birth:</dt>
+                    <dd><%= @child.date_of_birth %></dd>
 
-              <dt>Gender:</dt>
-              <dd><%= child.gender %></dd>
+                    <dt>Gender:</dt>
+                    <dd><%= @child.gender %></dd>
 
-              <dt>Child lives with:</dt>
-              <dd><%= child.child_lives_with.join(', ') %></dd>
+                    <dt>Child lives with:</dt>
+                    <dd><%= @child.child_lives_with.join(', ') %></dd>
 
-              <dt>Race:</dt>
-              <dd><%= child.race %></dd>
+                    <dt>Race:</dt>
+                    <dd><%= @child.race %></dd>
 
-              <dt>Agency child:</dt>
-              <dd><%= child.agency_child_id %></dd>
+                    <dt>Agency child:</dt>
+                    <dd><%= @child.agency_child_id %></dd>
 
-              <dt>Health insurance:</dt>
-              <dd><%= child.health_insurance %></dd>
+                    <dt>Health insurance:</dt>
+                    <dd><%= @child.health_insurance %></dd>
 
-              <dt>Item needed:</dt>
-              <dd><%= item_id_to_display_string_map[child.item_needed_diaperid] %></dd>
+                    <dt>Item needed:</dt>
+                    <dd><%= item_id_to_display_string_map[@child.item_needed_diaperid] %></dd>
 
-              <dt>Comments:</dt>
-              <dd><%= child.comments %></dd>
-            </dl>
+                    <dt>Comments:</dt>
+                    <dd><%= @child.comments %></dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
 
-            <%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-success" %>
-            <%= link_to 'All Children', children_path, class: "btn btn-info pull-right" %>
+            <div class="col-9">
+              <div class="card mb-6">
+                <h5 class="card-header bg-primary text-white">Requested Items</h5>
+                <div class="card-body">
+                  <% if @child.child_item_requests.count > 0 %>
+                    <table class="table table-striped">
+                      <thead>
+                      <tr>
+                        <th scope="col">Request Date</th>
+                        <th scope="col">Item Ordered</th>
+                        <th scope="col">Item Picked Up</th>
+                        <th scope="col">Quantity Ordered</th>
+                        <th scope="col">Quantity Picked Up</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <% @child_item_requests.each do |child_item_request| %>
+                        <tr>
+                          <td><b><%= child_item_request.created_at.to_date.iso8601 %></b>
+                          </th>
+                          <td><%= fetch_valid_item(child_item_request.ordered_item_diaperid)&.dig('name')&.to_s %></th>
+                          <td><b>
+                            <% if (diaperid = child_item_request.picked_up_item_diaperid) && child_item_request.picked_up? %>
+                              <%= valid_items.dig(diaperid, 'name') %>
+                            <% elsif !child_item_request.picked_up? %>
+                              Not picked up
+                            <% else %>
+                              Ordered Item
+                            <% end %>
+                          </b>
+                          </th>
+                          <td><%= child_item_request.quantity %></th>
+                          <td>
+                            <% if child_item_request.picked_up? %>
+                              <%= child_item_request.quantity_picked_up ||
+                                      child_item_request.quantity %>
+                            <% else %>
+                              <b>Not picked up</b>
+                            <% end %>
+                            </th>
+                            </tr>
+                      <% end %>
+                      </tbody>
+                    </table>
+                  <% else %>
+                    No family requests recorded for this member.
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <%= link_to 'Edit Child Details', edit_child_path(@child), class: "btn btn-success" %>
+            <%= link_to 'All Children', children_path, class: "btn btn-info" %>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>

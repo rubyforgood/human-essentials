@@ -1,14 +1,22 @@
-<div class="app-title">
-  <div>
-    <h1><i class="fa fa-user-plus"></i>&nbsp;&nbsp;New Child</h1>
-  </div>
-  <ul class="app-breadcrumb breadcrumb">
-    <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-    <li class="breadcrumb-item"><a href="<%= family_path(@child.family) %>">The <%= "#{@child.family.guardian_last_name}" %> Family</a></li>
-    <li class="breadcrumb-item"><a href="#">New Child</a></li>
-  </ul>
-</div>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Families - #{current_partner.name}" %>
+        <h1><i class="fa fa-user-plus"></i>&nbsp;&nbsp;
+          New Child
+          <small>for <%= current_partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+          <li class="breadcrumb-item"><a href="<%= family_path(@child.family) %>">The <%= "#{@child.family.guardian_last_name}" %> Family</a></li>
+          <li class="breadcrumb-item"><a href="#">New Child</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
 
-<%= render 'form', child: child %>
-
-<%= link_to 'Back', children_path %>
+<%= render 'form', child: @child %>
