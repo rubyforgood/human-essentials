@@ -1,4 +1,4 @@
-<%= Child.csv_headers.join(',') %>
+<%= Partners::Child.csv_headers.join(',') %>
 <%=
   CSV.generate do |csv|
     @children.each do |child|

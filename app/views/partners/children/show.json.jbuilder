@@ -1,1 +1,1 @@
-json.partial! "children/child", child: child
+json.partial! "partners/children/child", child: child
