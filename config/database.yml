@@ -19,6 +19,19 @@ development:
     migrations_paths: db/partners_migrate
     timeout: 5000
 
+staging:
+  primary:
+    <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
+    timeout: 5000
+  partners:
+    <<: *default
+    username: postgres
+    password: password
+    database: partner_dev
+    migrations_paths: db/partners_migrate
+    timeout: 5000
+
 test:
   primary:
     <<: *default
