@@ -62,6 +62,7 @@ end
 
 group :development, :test, :staging do
   gem 'factory_bot_rails'
+  gem 'faker'
 end
 
 group :development, :test do
@@ -79,7 +80,6 @@ group :development, :test do
   gem "rubocop-rails", "~> 2.9.1"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
-  gem "faker"
 end
 
 group :development do
