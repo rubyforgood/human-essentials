@@ -16,5 +16,9 @@ module Partners
   class AuthorizedFamilyMember < Base
     belongs_to :family
     has_many :child_item_requests, dependent: :nullify
+
+    def display_name
+      "#{first_name} #{last_name}"
+    end
   end
 end

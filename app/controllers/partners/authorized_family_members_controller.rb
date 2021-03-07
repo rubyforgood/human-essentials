@@ -1,5 +1,7 @@
 module Partners
   class AuthorizedFamilyMembersController < BaseController
+    layout 'partners/application'
+
     def new
       @authorized_family_member = family.authorized_family_members.new
     end
@@ -36,7 +38,7 @@ module Partners
       @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
       if @authorized_family_member.present?
         @authorized_family_member.destroy
-        redirect_back fallback_location: families_url, notice: "Authorized family member removed."
+        redirect_back fallback_location: partners_families_url, notice: "Authorized family member removed."
       end
     end
 
@@ -47,7 +49,7 @@ module Partners
     end
 
     def authorized_family_member_params
-      params.require(:authorized_family_member).permit(
+      params.require(:partners_authorized_family_member).permit(
         :first_name,
         :last_name,
         :date_of_birth,
