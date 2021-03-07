@@ -1,130 +1,68 @@
-<%= form_with(model: child, local: true) do |form| %>
-  <div class="row">
-    <div class="col-md-12">
-        <% if child.errors.any? %>
-          <div id="error_explanation">
-            <h2><%= pluralize(child.errors.count, "error") %> prohibited this child from being saved:</h2>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
 
-            <ul>
-            <% child.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-            </ul>
-          </div>
-        <% end %>
+            <%= simple_form_for child, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+              <%= form.label :first_name, "First Name" %>
+              <%= form.text_field :first_name, class: "form-control" %>
 
-      <div class="tile">
-        <h3 class="tile-title">Child Information</h3>
+              <%= form.label :last_name, "Last Name" %>
+              <%= form.text_field :last_name, class: "form-control" %>
 
-        <div class="tile-body">
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :first_name, class: "control-label col-md-3"%>
-              <%= form.text_field :first_name, class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :last_name, class: "control-label col-md-3"%>
-              <%= form.text_field :last_name, class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :date_of_birth, class: "control-label col-md-3"%>
-              <%= form.date_select :date_of_birth, end_year: Date.today.year, start_year: Date.today.year - 10, class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :gender, class: "control-label col-md-3"%>
-              <%= form.select :gender, ["Male", "Female"], class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :child_lives_with, class: "control-label col-md-3"%>
-              <% Child::CAN_LIVE_WITH.each do |a_value| %>
-                <%= form.check_box(:child_lives_with, { :multiple => true }, a_value, nil) %>
-                <%= form.label "#{a_value}" %>
-            <% end %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :race, class: "control-label col-md-3" %>
-              <%= form.select :race, ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: "col-md-8 form-control", :include_blank => true %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :agency_child_id, class: "control-label col-md-3"%>
-              <%= form.text_field :agency_child_id, class: "col-md-8 form-control" %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :health_insurance, class: "control-label col-md-3"%>
-              <%= form.radio_button :health_insurance, 'Private Insurance' %>
-              <%= label :health_insurance, 'Private Insurance' %>
-              <%= form.radio_button :health_insurance, 'Medicaid' %>
-              <%= label :health_insurance, 'Medicaid' %>
-              <%= form.radio_button :health_insurance, 'Uninsured' %>
-              <%= label :health_insurance, 'Uninsured' %>
-            </div>
-          </div>
-
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :item_needed, class: "control-label col-md-3"%>
+              <%= form.label :item_needed, "Diaper/Item Used" %>
               <%= form.select :item_needed_diaperid, valid_items_for_select(valid_items),
-                {include_blank: 'Select an item'},
-                {class: 'form-control col-md-8'} %>
-            </div>
-          </div>
+                              {include_blank: 'Select an item'},
+                              {class: 'form-control'} %>
+              <br>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :comments, class: "control-label col-md-3"%>
-              <%= form.text_area :comments, class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              <%= form.input :date_of_birth, as: :date, label: "Date of Birth" %>
+              <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :family_id, class: "control-label col-md-3"%>
-              <%= form.label child.family.guardian_display_name, class: "col-md-8 control-label" %>
+              <%= form.label :child_lives_with, "Child Lives With" %><br>
+
+              <% Child::CAN_LIVE_WITH.each do |a_value| %>
+                <%= form.check_box(:child_lives_with, {:multiple => true}, a_value, nil) %>
+                <%= form.label "#{a_value}" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <% end %>
+              <br>
+              <%= form.input :race, collection: ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: "form-control", :include_blank => true %>
+              <%= form.input :agency_child_id, class: "form-control", label: "Agency Child" %>
+              <%#= form.label :health_insurance, 'Health Insurance' %>
+              <%= form.input :health_insurance, as: :radio_buttons,
+                             collection: [['Private Insurance', 'Private Insurance'],
+                                          ['Medicaid', 'Medicaid'],
+                                          ['Uninsured', 'Uninsured']],
+                             label: "Health Insurance",
+                              class: "form-control" %>
+
+              <%= form.label :comments %><br>
+              <%= form.text_area :comments, class: "form-control" %>
+
               <%= hidden_field_tag :family_id, child.family.id %>
-            </div>
-          </div>
+              <br>
+              <%= form.label :active %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= form.check_box :active %>
+              <br>
+              <%= form.label "Archived?" %>&nbsp;
+              <%= form.check_box :archived %>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label :active, class: "control-label col-md-3"%>
-              <%= form.check_box :active, class: "col-md-8 form-control" %>
-            </div>
-          </div>
+              </div>
+              <div class="card-footer">
+                <%= form.submit(class: 'btn btn-primary') %>
+              </div>
 
-          <div class="form-horizontal">
-            <div class="form-group row">
-              <%= form.label "Archived?", class: "control-label col-md-3"%>
-              <%= form.check_box :archived, class: "col-md-8 form-control" %>
+            <% end %>
             </div>
-          </div>
-
-          <div class="actions">
-            <%= form.submit(class: 'btn btn-primary') %>
-          </div>
-        </div>
+        <!-- /.card -->
       </div>
-    </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
   </div>
-<% end %>
+</section>
