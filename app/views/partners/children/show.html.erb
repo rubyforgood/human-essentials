@@ -10,11 +10,11 @@
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
               <i class="fa fa-home fa-lg"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><a href="<%= family_path(@child.family) %>">
+          <li class="breadcrumb-item"><a href="<%= partners_family_path(@child.family) %>">
             The <%= "#{@child.family.guardian_last_name}" %> Family</a></li>
           <li class="breadcrumb-item"><a href="#">View Child</a></li>
         </ol>
@@ -120,8 +120,8 @@
             </div>
           </div>
           <div class="card-footer">
-            <%= link_to 'Edit Child Details', edit_child_path(@child), class: "btn btn-success" %>
-            <%= link_to 'All Children', children_path, class: "btn btn-info" %>
+            <%= link_to 'Edit Child Details', edit_partners_child_path(@child), class: "btn btn-success" %>
+            <%= link_to 'All Children', partners_children_path, class: "btn btn-info" %>
           </div>
         </div>
       </div>

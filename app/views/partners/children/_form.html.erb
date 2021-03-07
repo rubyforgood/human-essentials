@@ -27,7 +27,7 @@
 
               <%= form.label :child_lives_with, "Child Lives With" %><br>
 
-              <% Child::CAN_LIVE_WITH.each do |a_value| %>
+              <% Partners::Child::CAN_LIVE_WITH.each do |a_value| %>
                 <%= form.check_box(:child_lives_with, {:multiple => true}, a_value, nil) %>
                 <%= form.label "#{a_value}" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <% end %>

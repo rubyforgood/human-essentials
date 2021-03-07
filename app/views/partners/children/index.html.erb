@@ -10,7 +10,7 @@
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
               <i class="fa fa-home fa-lg"></i> Home
             <% end %>
           </li>
@@ -81,7 +81,7 @@
           <div class="card-body p-0">
             <div id="filterrific_results">
               <%= render(
-                      partial: 'children/list',
+                      partial: 'partners/children/list',
                       locals: {children: @children}
                   ) %>
             </div>
@@ -110,7 +110,7 @@
 
           </div>
           <div class="card-footer">
-            <%= link_to 'Visit Family List', families_path, class: "btn btn-info" %>
+            <%= link_to 'Visit Family List', partners_families_path, class: "btn btn-info" %>
           </div>
           <!-- /.card -->
         </div>

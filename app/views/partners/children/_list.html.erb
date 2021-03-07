@@ -8,7 +8,7 @@
     <th scope="col">Guardian</th>
     <th scope="col">Comments</th>
     <th scope="col" colspan="2">
-      <%= link_to 'Export Results To CSV', children_path(nil, format: :csv), class: "btn btn-info pull-right" %>
+      <%= link_to 'Export Results To CSV', partners_children_path(nil, format: :csv), class: "btn btn-info pull-right" %>
     </th>
   </tr>
   </thead>
@@ -22,7 +22,7 @@
       <td><%= child.family.guardian_display_name %></td>
       <td><%= child.comments %></td>
       <td><%= link_to 'View Child Details', child, class: "btn btn-sm btn-info" %></td>
-      <td><%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-sm btn-success pull-right" %>
+      <td><%= link_to 'Edit Child Details', edit_partners_child_path(child), class: "btn btn-sm btn-success pull-right" %>
       </td>
     </tr>
   <% end %>
