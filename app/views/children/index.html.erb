@@ -1,91 +1,121 @@
-<div class="app-title">
-  <div>
-    <h1><i class="fa fa-child"></i>&nbsp;&nbsp;Children</h1><%= link_to 'Export a CSV file', children_path(nil, format: :csv) %>
-  </div>
-
-    <!-- Main content -->
-  <div>
-    <section id="filters">
-      <%= form_tag(children_path, method: :get) do |f| %>
-      <div class="row">
-        <% if @family.present? %>
-          <div class="col-xs-12 col-sm-6">
-            <%= label_tag "by Guardian name" %>
-            <%= collection_select(:filters, :from_family, @family || {}, :id, :guardian_display_name, { include_blank: true, selected: @selected_family }, class: "form-control") %>
-          </div>
-        <% end %>
-        <% if @children.present? %>
-          <div class="col-xs-12 col-sm-6">
-            <%= label_tag "by Children first name" %>
-            <%= collection_select(:filters, :from_children, @children || {}, :id, :first_name, { include_blank: true, selected: @selected_children_first_name }, class: "form-control") %>
-          </div>
-        <% end %>
-        <div class="col-xs-12 col-sm-6 mt-3">
-          <%= filter_button %>
-          <%= cancel_button_to children_path %>
-        </div><!-- /.row -->
-      <% end # form %>
-    </section><!-- /#filters -->
-  </div><!-- /.box-header -->
-  <ul class="app-breadcrumb breadcrumb">
-    <li class="breadcrumb-item"><a href="<%= dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
-    <li class="breadcrumb-item"><a href="#">Children</a></li>
-  </ul>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <% if notice %>
-      <div class="alert alert-dismissible alert-success">
-        <button class="close" type="button" data-dismiss="alert">×</button>
-        <p><%= notice %><a class="alert-link" href="#"></p>
-        </a></p>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Children - #{current_partner.name}" %>
+        <h1><i class="fa fa-child"></i>&nbsp;&nbsp;
+          Children
+          <small>for <%= current_partner.name %></small>
+        </h1>
       </div>
-    <% end %>
-    <div class="tile">
-      <h3><%= current_partner.name %> Children Served</h3>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-home fa-lg"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Children</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
 
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th scope="col">First name</th>
-          <th scope="col">Last name</th>
-          <th scope="col">Date of birth</th>
-          <th scope="col">Guardian</th>
-          <th scope="col">Comments</th>
-          <th scope="col"></th>
-          <th scope="col"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <% children.each do |child| %>
-          <tr>
-            <td><%= child.first_name %></td>
-            <td><%= child.last_name %></td>
-            <td><%= child.date_of_birth %></td>
-            <td><%= child.family.guardian_display_name %></td>
-            <td><%= child.comments %></td>
-            <td><%= link_to 'View Child Details', child, class: "btn btn-sm btn-success" %></td>
-            <td><%= link_to 'Edit Child Details', edit_child_path(child), class: "btn btn-sm btn-danger pull-right" %>
-            </td>
-        <% end %>
-        </tbody>
-      </table>
-      <hr>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header bg-primary">
+            <h3 class="card-title">Filters</h3>
+          </div>
+          <div class="card-body">
+            <%= form_for_filterrific @filterrific, remote: true do |f| %>
+              <div class="row">
+                <div class="col-3">
+                  <%= f.label :search_names, "Search By Child Name" %>
+                  <%= f.text_field(
+                          :search_names,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= f.label :search_families, "Search By Guardian Name" %>
+                  <%= f.text_field(
+                          :search_families,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= f.label :search_comments, "Show Active Only?" %>
+                  <%= f.check_box(
+                          :search_active,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= render_filterrific_spinner %>
+                </div>
+              </div>
+              </div><!-- /.row -->
+              <div class="card-footer">
+                <%= link_to(
+                        'Reset Search',
+                        reset_filterrific_url,
+                        class: 'btn btn-danger'
+                    ) %>
+                <span class="float-right">
+          </span>
+            <% end %>
+
+            </div>
+            </div>
+      </div>
     </div>
   </div>
-</div>
-
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="tile">
-      <h3>Adding Children</h3>
-
-      <hr>
-
-      Children must be added from their individual families to prevent accidentally associating the child with the wrong family in the situation where there are may families with similar names. Visit the family list below to view and confirm the family you'd like to associate a new child with.
-      <hr>
-      <%= link_to 'Visit Family List', families_path, class: "btn btn-info" %>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <div id="filterrific_results">
+              <%= render(
+                      partial: 'children/list',
+                      locals: {children: @children}
+                  ) %>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Adding Children</h3>
+          </div>
+          <div class="card-body">
+
+            Children must be added from their individual families to prevent accidentally associating the child with the
+            wrong
+            family in a situation where there are many families with similar names. Visit the family list below to view
+            and
+            confirm the family to which you would like to add a new child.
+
+          </div>
+          <div class="card-footer">
+            <%= link_to 'Visit Family List', families_path, class: "btn btn-info" %>
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+</section>
