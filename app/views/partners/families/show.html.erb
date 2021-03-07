@@ -10,11 +10,11 @@
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
               <i class="fa fa-home fa-lg"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><a href="<%= families_path %>">All Families</a></li>
+          <li class="breadcrumb-item"><a href="<%= partners_families_path %>">All Families</a></li>
           <li class="breadcrumb-item"><a href="#">The <%= "#{@family.guardian_last_name}" %> Family</a></li>
         </ol>
       </div>
@@ -28,8 +28,8 @@
       <div class="col-md-12">
         <div class="card mb-4">
           <h5 class="card-header bg-primary text-white">Family Information
-            <%= link_to 'Add An Authorized Member To This Family', new_authorized_family_member_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right", style: "margin-left:10px;" %>
-            <%= link_to 'Add Child To This Family', new_child_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right" %>
+            <%= link_to 'Add An Authorized Member To This Family', new_partners_authorized_family_member_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right", style: "margin-left:10px;" %>
+            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "btn btn-sm btn-warning pull-right" %>
           </h5>
           <div class="card-body">
             <dl>
@@ -83,9 +83,9 @@
             </dl>
           </div>
           <div class="card-footer">
-            <%= link_to 'Edit This Family', edit_family_path(@family), class: "btn btn-sm btn-primary" %>
-            <%= link_to 'Back to Families', families_path, class: "btn btn-sm btn-info pull-right" %>
-            <%= link_to 'Add Child To This Family', new_child_path(family_id: @family.id), class: "btn btn-sm btn-success" %>
+            <%= link_to 'Edit This Family', edit_partners_family_path(@family), class: "btn btn-sm btn-primary" %>
+            <%= link_to 'Back to Families', partners_families_path, class: "btn btn-sm btn-info pull-right" %>
+            <%= link_to 'Add Child To This Family', new_partners_child_path(family_id: @family.id), class: "btn btn-sm btn-success" %>
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@
                 <td><%= child.last_name %></td>
                 <td><%= child.date_of_birth %></td>
                 <td><%= child.gender %></td>
-                <td><%= link_to 'Edit', edit_child_path(child), class: "btn btn-sm btn-outline-primary" %></td>
+                <td><%= link_to 'Edit', edit_partners_child_path(child), class: "btn btn-sm btn-outline-primary" %></td>
             <% end %>
             </tbody>
           </table>
@@ -149,9 +149,9 @@
                 <td><%= member.date_of_birth %></td>
                 <td><%= member.comments %></td>
                 <td>
-                  <%= link_to 'Edit', edit_authorized_family_member_path(member), class: "btn btn-sm btn-outline-primary" %>
-                  <%= link_to 'View', authorized_family_member_path(member), class: "btn btn-sm btn-outline-info" %>
-                  <%= link_to 'Delete', authorized_family_member_path(member), class: "btn btn-sm btn-outline-danger",
+                  <%= link_to 'Edit', edit_partners_authorized_family_member_path(member), class: "btn btn-sm btn-outline-primary" %>
+                  <%= link_to 'View', partners_authorized_family_member_path(member), class: "btn btn-sm btn-outline-info" %>
+                  <%= link_to 'Delete', partners_authorized_family_member_path(member), class: "btn btn-sm btn-outline-danger",
                        data: { confirm: "Are you sure?" }, method: :delete %>
                 </td>
             <% end %>

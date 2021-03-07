@@ -42,7 +42,7 @@
               <%= f.label :sources_of_income, "Sources of Income" %>
               <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <br>
-              <% Family::INCOME_TYPES.each do |a_value| %>
+              <% Partners::Family::INCOME_TYPES.each do |a_value| %>
                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box(:sources_of_income, {:multiple => true}, a_value, nil) %>
                 <%= f.label "#{a_value}", "#{a_value}" %>
               <% end %>
