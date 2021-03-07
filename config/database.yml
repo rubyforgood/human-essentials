@@ -6,6 +6,7 @@ default: &default
   username: postgres
   password: password
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
 
 development:
   primary:
@@ -23,14 +24,10 @@ staging:
   primary:
     <<: *default
     url: <%= ENV['DATABASE_URL'] %>
-    timeout: 5000
   partners:
     <<: *default
-    username: postgres
-    password: password
-    database: partner_dev
+    url: <%= ENV['HEROKU_POSTGRESQL_ROSE_URL'] %>
     migrations_paths: db/partners_migrate
-    timeout: 5000
 
 test:
   primary:
