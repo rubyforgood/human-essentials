@@ -98,8 +98,10 @@ module Partners
     has_one_attached :proof_of_form_990
     has_many_attached :documents
 
+    VERIFIED_STATUS = 'verified'.freeze
+
     def verified?
-      partner_status == "verified"
+      partner_status == VERIFIED_STATUS
     end
 
     def organization
@@ -246,7 +248,7 @@ module Partners
           record_type: self.class.name,
           record_id: id
         )
-        old_blob_ids = old_acs_attachments.map(&:blob_id)
+        old_blob_ids = old_acs_attachments.pluck(:blob_id)
 
         # Using `delete_all` to avoid purging the actual file from the storage.
         # The purpose of this code is not to purge but to just copy over records.
@@ -272,4 +274,3 @@ module Partners
     end
   end
 end
-

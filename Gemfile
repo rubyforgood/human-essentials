@@ -47,6 +47,7 @@ gem "rails", "~> 6.0.3"
 gem "sass-rails"
 gem "sidekiq"
 gem 'sidekiq-scheduler'
+gem "strong_migrations", "~> 0.7.6"
 gem "skylight"
 gem "sprockets", "~> 4.0.2"
 gem "toastr-rails"
@@ -107,8 +108,8 @@ group :test do
   gem "rspec-sidekiq"
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 4.5'
-  gem 'webdrivers', '~> 4.4'
-  gem "webmock", "~> 3.11"
+  gem 'webdrivers', '~> 4.6'
+  gem "webmock", "~> 3.12"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
