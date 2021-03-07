@@ -1,57 +1,59 @@
-class AuthorizedFamilyMembersController < ApplicationController
-  def new
-    @authorized_family_member = family.authorized_family_members.new
-  end
-
-  def show
-    @authorized_family_member = current_partner.authorized_family_members.find(params[:id])
-  end
-
-  def edit
-    @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
-  end
-
-  def create
-    @authorized_family_member = family.authorized_family_members.new(authorized_family_member_params)
-
-    if @authorized_family_member.save
-      redirect_to @authorized_family_member, notice: "Authorized member was successfully created."
-    else
-      render :new
+module Partners
+  class AuthorizedFamilyMembersController < BaseController
+    def new
+      @authorized_family_member = family.authorized_family_members.new
     end
-  end
 
-  def update
-    @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
-
-    if @authorized_family_member.update(authorized_family_member_params)
-      redirect_to @authorized_family_member, notice: "Authorized family member was successfully updated."
-    else
-      render :edit
+    def show
+      @authorized_family_member = current_partner.authorized_family_members.find(params[:id])
     end
-  end
 
-  def destroy
-    @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
-    if @authorized_family_member.present?
-      @authorized_family_member.destroy
-      redirect_back fallback_location: families_url, notice: "Authorized family member removed."
+    def edit
+      @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
     end
-  end
 
-  private
+    def create
+      @authorized_family_member = family.authorized_family_members.new(authorized_family_member_params)
 
-  def family
-    @_family ||= current_partner.families.find_by(id: params[:family_id])
-  end
+      if @authorized_family_member.save
+        redirect_to @authorized_family_member, notice: "Authorized member was successfully created."
+      else
+        render :new
+      end
+    end
 
-  def authorized_family_member_params
-    params.require(:authorized_family_member).permit(
-      :first_name,
-      :last_name,
-      :date_of_birth,
-      :gender,
-      :comments
-    )
+    def update
+      @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
+
+      if @authorized_family_member.update(authorized_family_member_params)
+        redirect_to @authorized_family_member, notice: "Authorized family member was successfully updated."
+      else
+        render :edit
+      end
+    end
+
+    def destroy
+      @authorized_family_member = current_partner.authorized_family_members.find_by(id: params[:id])
+      if @authorized_family_member.present?
+        @authorized_family_member.destroy
+        redirect_back fallback_location: families_url, notice: "Authorized family member removed."
+      end
+    end
+
+    private
+
+    def family
+      @_family ||= current_partner.families.find_by(id: params[:family_id])
+    end
+
+    def authorized_family_member_params
+      params.require(:authorized_family_member).permit(
+        :first_name,
+        :last_name,
+        :date_of_birth,
+        :gender,
+        :comments
+      )
+    end
   end
 end
