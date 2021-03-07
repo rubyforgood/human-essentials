@@ -62,6 +62,7 @@ end
 
 group :development, :test, :staging do
   gem 'factory_bot_rails'
+  gem "database_cleaner"
   gem 'faker'
 end
 
@@ -104,7 +105,6 @@ end
 group :test do
   gem "capybara", "~> 3.35"
   gem "capybara-screenshot"
-  gem "database_cleaner"
   gem "launchy"
   gem 'magic_test'
   gem "rails-controller-testing"
