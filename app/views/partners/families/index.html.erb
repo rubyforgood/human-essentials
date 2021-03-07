@@ -11,7 +11,7 @@
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
@@ -61,7 +61,7 @@
                         class: 'btn btn-danger'
                     ) %>
                 <span class="float-right">
-                  <%= link_to 'Add New Family', new_family_path, class: "btn btn-info" %>
+                  <%= link_to 'Add New Family', new_partners_family_path, class: "btn btn-info" %>
                 </span>
             <% end %>
             </div>
@@ -82,7 +82,7 @@
           <div class="card-body">
             <div id="filterrific_results">
               <%= render(
-                      partial: 'families/list',
+                      partial: 'partners/families/list',
                       locals: {families: @families}
                   ) %>
             </div>

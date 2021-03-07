@@ -1,7 +1,8 @@
 require "csv"
 module Partners
   class FamiliesController < BaseController
-    before_action :authenticate_user!
+    layout 'partners/application'
+
     helper_method :sort_column, :sort_direction
 
     def index
@@ -66,7 +67,7 @@ module Partners
     private
 
     def family_params
-      params.require(:family).permit(
+      params.require(:partners_family).permit(
         :agency_guardian_id,
         :comments,
         :guardian_country,
