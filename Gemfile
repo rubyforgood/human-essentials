@@ -60,10 +60,13 @@ group :production do
   gem "newrelic_rpm"
 end
 
+group :development, :test, :staging do
+  gem 'factory_bot_rails'
+end
+
 group :development, :test do
   gem "awesome_print"
   gem "brakeman"
-  gem 'factory_bot_rails'
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "knapsack_pro"
