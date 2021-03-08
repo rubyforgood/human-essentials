@@ -8,7 +8,7 @@ module Partners
     def index
       @filterrific = initialize_filterrific(
         current_partner.families
-                       .order(sort_column + ' ' + sort_direction),
+                       .order(sort_order),
         params[:filterrific]
       ) || return
 
@@ -49,7 +49,7 @@ module Partners
       @family = current_partner.families.find(params[:id])
 
       if @family.update(family_params)
-        redirect_to @family, notice: "Family was successfully updated."
+        redirect_to partners_family_path(@family), notice: "Family was successfully updated."
       else
         render :edit
       end
@@ -85,6 +85,10 @@ module Partners
         :military,
         sources_of_income: []
       )
+    end
+
+    def sort_order
+      sort_column + ' ' + sort_direction
     end
 
     def sort_direction
