@@ -30,8 +30,8 @@ module Partners
     def show
       @child = current_partner.children.find_by(id: params[:id])
       @child_item_requests = @child
-                               .child_item_requests
-                               .includes(:item_request)
+                             .child_item_requests
+                             .includes(:item_request)
     end
 
     def new
@@ -71,7 +71,11 @@ module Partners
     private
 
     def family
+      # temporarily disable this rubocop rule because we have an instance variable named @family elsewhere,
+      # we should carefully test this before renaming it to @family
+      # rubocop:disable Naming/MemoizedInstanceVariableName
       @_family ||= current_partner.families.find_by(id: params[:family_id])
+      # rubocop:enable Naming/MemoizedInstanceVariableName
     end
 
     def child_params
