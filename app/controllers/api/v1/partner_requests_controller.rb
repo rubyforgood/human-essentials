@@ -12,6 +12,7 @@ class API::V1::PartnerRequestsController < ApplicationController
 
     if request.save
       NotifyPartnerJob.perform_now(request.id)
+
       render json: request, status: :created
     else
       render json: request.errors, status: :bad_request

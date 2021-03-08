@@ -68,6 +68,15 @@ GEM
     autoprefixer-rails (10.2.0.0)
       execjs
     awesome_print (1.8.0)
+    azure-core (0.1.15)
+      faraday (~> 0.9)
+      faraday_middleware (~> 0.10)
+      nokogiri (~> 1.6)
+    azure-storage (0.15.0.preview)
+      azure-core (~> 0.1)
+      faraday (~> 0.9)
+      faraday_middleware (~> 0.10)
+      nokogiri (~> 1.6, >= 1.6.8)
     bcrypt (3.1.16)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
@@ -87,6 +96,9 @@ GEM
     bugsnag (6.19.0)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
+    bullet (6.1.4)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     capistrano (3.14.1)
       airbrussh (>= 1.0.0)
       i18n
@@ -165,6 +177,10 @@ GEM
       i18n (>= 1.6, < 2)
     fakeredis (0.8.0)
       redis (~> 4.1)
+    faraday (0.17.4)
+      multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.14.0)
+      faraday (>= 0.7.4, < 1.0)
     ffi (1.14.2)
     filterrific (5.2.1)
     flipper (0.20.3)
@@ -208,7 +224,7 @@ GEM
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
     hashdiff (1.0.1)
-    i18n (1.8.8)
+    i18n (1.8.9)
       concurrent-ruby (~> 1.0)
     image_processing (1.12.1)
       mini_magick (>= 4.9.5, < 5)
@@ -249,6 +265,11 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.13)
+    magic_test (0.0.6)
+      capybara (~> 3.0)
+      pry
+      pry-stack_explorer
+      rails (~> 6.0)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
@@ -263,9 +284,10 @@ GEM
     mini_portile2 (2.5.0)
     mini_racer (0.3.1)
       libv8 (~> 8.4.255)
-    minitest (5.14.3)
+    minitest (5.14.4)
     momentjs-rails (2.20.1)
       railties (>= 3.1)
+    multipart-post (2.1.1)
     nenv (0.3.0)
     net-scp (3.0.0)
       net-ssh (>= 2.6.5, < 7.0.0)
@@ -310,6 +332,9 @@ GEM
     pry-remote (0.1.8)
       pry (~> 0.9)
       slop (~> 3.0)
+    pry-stack_explorer (0.4.9.3)
+      binding_of_caller (>= 0.7)
+      pry (>= 0.9.11)
     public_suffix (4.0.6)
     puma (4.3.7)
       nio4r (~> 2.0)
@@ -344,7 +369,7 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-erd (1.6.0)
+    rails-erd (1.6.1)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
       choice (~> 0.2.0)
@@ -410,7 +435,8 @@ GEM
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 0.90.0, < 2.0)
-    ruby-graphviz (1.2.4)
+    ruby-graphviz (1.2.5)
+      rexml
     ruby-progressbar (1.10.1)
     ruby-vips (2.0.17)
       ffi (~> 1.9)
@@ -476,6 +502,8 @@ GEM
       net-ssh (>= 2.8.0)
     sshkit-interactive (0.3.0)
       sshkit (~> 1.12)
+    strong_migrations (0.7.6)
+      activerecord (>= 5)
     terminal-notifier (2.0.0)
     terminal-notifier-guard (1.7.0)
     terrapin (0.6.0)
@@ -492,6 +520,7 @@ GEM
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.7.0)
+    uniform_notifier (1.14.1)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.1.0)
@@ -499,11 +528,11 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webdrivers (4.4.2)
+    webdrivers (4.6.0)
       nokogiri (~> 1.6)
       rubyzip (>= 1.3.0)
       selenium-webdriver (>= 3.0, < 4.0)
-    webmock (3.11.2)
+    webmock (3.12.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -527,6 +556,7 @@ DEPENDENCIES
   annotate
   api-auth (~> 2.4)
   awesome_print
+  azure-storage (~> 0.15.0.preview)
   better_errors
   binding_of_caller
   bootstrap (~> 4.6.0)
@@ -534,6 +564,7 @@ DEPENDENCIES
   bootstrap-select-rails
   brakeman
   bugsnag
+  bullet
   capistrano-bundler
   capistrano-rails
   capistrano-rails-console
@@ -572,6 +603,7 @@ DEPENDENCIES
   launchy
   letter_opener
   listen (~> 3.4.1)
+  magic_test
   mini_racer (~> 0.3.1)
   momentjs-rails
   newrelic_rpm
@@ -603,13 +635,14 @@ DEPENDENCIES
   spring
   spring-watcher-listen
   sprockets (~> 4.0.2)
+  strong_migrations (~> 0.7.6)
   terminal-notifier
   terminal-notifier-guard
   toastr-rails
   uglifier (>= 1.3.0)
   web-console
-  webdrivers (~> 4.4)
-  webmock (~> 3.11)
+  webdrivers (~> 4.6)
+  webmock (~> 3.12)
   webpacker (> 4.0)
   yajl-ruby
 
@@ -617,4 +650,4 @@ RUBY VERSION
    ruby 2.7.2p137
 
 BUNDLED WITH
-   2.1.4
+   2.2.13

@@ -1,0 +1,45 @@
+<div class='login-page'>
+  <div class="login-box">
+    <div class="login-logo">
+      <img id="MastheadLogo" src="/img/diaper-base-logo-full-white-text.svg" style="width: 80%; height: 80%; " alt="Partner" title="Partner" class="serv_icon"/>
+    </div>
+
+    <div class="login-box-body">
+      <div class="form-group has-feedback">
+        <%= render partial: "shared/flash" %>
+
+        <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+          <div class="login-box">
+            <!-- /.login-logo -->
+            <div class="card">
+              <div class="card-body login-card-body">
+                <p class="login-box-msg">Sign in to start your session</p>
+
+                <div class="form-inputs">
+                  <%= f.input :email, autofocus: true %>
+                </div>
+                <div class="form-inputs">
+                  <%= f.input :password, autofocus: true %>
+                </div>
+                <div class="col-12 text-center">
+                  <%= f.button :submit, "Log in", class: "btn btn-primary btn-block" %>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-3">
+                </div>
+                <div class="col-9">
+                  <p class="mb-1">
+                    <%= render "users/shared/links" %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    <% end %>
+    </div>
+  </div>
+</div>
+

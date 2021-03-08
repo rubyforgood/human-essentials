@@ -8,6 +8,7 @@ end
 ruby "2.7.2"
 
 gem "api-auth", "~> 2.4"
+gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'bootstrap', '~> 4.6.0'
 gem 'bootstrap-daterangepicker-rails'
 gem 'bootstrap-select-rails'
@@ -46,6 +47,7 @@ gem "rails", "~> 6.0.3"
 gem "sass-rails"
 gem "sidekiq"
 gem 'sidekiq-scheduler'
+gem "strong_migrations", "~> 0.7.6"
 gem "skylight"
 gem "sprockets", "~> 4.0.2"
 gem "toastr-rails"
@@ -61,6 +63,7 @@ end
 group :development, :test do
   gem "awesome_print"
   gem "brakeman"
+  gem 'factory_bot_rails'
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "knapsack_pro"
@@ -80,6 +83,7 @@ group :development do
   gem "annotate"
   gem "binding_of_caller"
   gem "better_errors"
+  gem "bullet"
   gem "capistrano-rails"
   gem "capistrano-rvm"
   gem "capistrano-bundler"
@@ -98,14 +102,14 @@ group :test do
   gem "capybara", "~> 3.35"
   gem "capybara-screenshot"
   gem "database_cleaner"
-  gem "factory_bot_rails"
   gem "launchy"
+  gem 'magic_test'
   gem "rails-controller-testing"
   gem "rspec-sidekiq"
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 4.5'
-  gem 'webdrivers', '~> 4.4'
-  gem "webmock", "~> 3.11"
+  gem 'webdrivers', '~> 4.6'
+  gem "webmock", "~> 3.12"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

@@ -78,7 +78,7 @@ Rails.application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   # Store files locally.
-  config.active_storage.service = :local
+  config.active_storage.service = :azure
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'

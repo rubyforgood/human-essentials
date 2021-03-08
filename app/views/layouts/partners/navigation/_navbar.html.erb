@@ -1,0 +1,21 @@
+<li class="nav-item dropdown">
+  <a class="nav-link" data-toggle="dropdown" href="#">
+    <%= current_partner_user.email %>
+    <i class="fa fa-caret-down"></i>
+  </a>
+  <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <%= link_to '', class:"dropdown-item" do %>
+    <i class="fa fa-cog text-aqua"></i> Organization Settings
+    <% end %>
+
+    <div class="dropdown-divider"></div>
+    <%= link_to '', class:"dropdown-item" do %>
+      <i class="fa fa-users mr-2"></i> My Co-Workers
+    <% end %>
+
+    <div class="dropdown-divider"></div>
+    <%= link_to destroy_partner_user_session_path, method: :delete, class: "dropdown-item" do %>
+      <i class="fa fa-sign-out fa-lg"></i> Logout
+    <% end %>
+  </div>
+</li>

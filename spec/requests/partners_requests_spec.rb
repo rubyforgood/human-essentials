@@ -45,17 +45,20 @@ RSpec.describe "Partners", type: :request do
     end
 
     let(:partner) { create(:partner, organization: @organization, status: :approved) }
-    let(:fake_get_return) do
-      { "agency" => {
-        "families_served" => Faker::Number.number,
-        "children_served" => Faker::Number.number,
-        "family_zipcodes" => Faker::Number.number,
-        "family_zipcodes_list" => [Faker::Number.number]
-      } }.to_json
-    end
+    let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner.profile) }
+    let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-126', partner: partner.profile) }
+    let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner.profile) }
 
-    before do
-      allow(DiaperPartnerClient).to receive(:get).with({ id: partner.to_param }, query_params: { impact_metrics: true }).and_return(fake_get_return)
+    let!(:child1) { FactoryBot.create_list(:partners_child, 2, family: family1) }
+    let!(:child2) { FactoryBot.create_list(:partners_child, 2, family: family3) }
+
+    let(:expected_impact_metrics) do
+      {
+        families_served: 3,
+        children_served: 4,
+        family_zipcodes: 2,
+        family_zipcodes_list: %w(45612-123 45612-126)
+      }
     end
 
     context "html" do
@@ -66,7 +69,7 @@ RSpec.describe "Partners", type: :request do
       context "when the partner is invited" do
         it "includes impact metrics" do
           subject
-          expect(assigns[:impact_metrics]).to eq(JSON.parse(fake_get_return))
+          expect(assigns[:impact_metrics]).to eq(expected_impact_metrics)
         end
       end
 
@@ -84,6 +87,39 @@ RSpec.describe "Partners", type: :request do
       let(:response_format) { 'csv' }
 
       it { is_expected.to be_successful }
+    end
+  end
+
+  describe "GET #approve_partner" do
+    subject { -> { get approve_partner_partner_path(id: partner.id, organization_id: partner.organization_id) } }
+    let(:partner) { create(:partner) }
+
+    it 'should contain the proper page header' do
+      subject.call
+      expect(response.body).to include("Partner Approval Request")
+      expect(response.body).to include("#{partner.name} - Application Details")
+    end
+
+    context 'when the partner is awaiting review' do
+      before do
+        partner.awaiting_review!
+        subject.call
+      end
+
+      it 'should show the Approve Partner button' do
+        expect(response.body).to include("Approve Partner")
+      end
+    end
+
+    context 'when the partner is not awaiting review' do
+      before do
+        partner.invited!
+        subject.call
+      end
+
+      it 'should not show the Approve Partner button' do
+        expect(response.body).not_to include("Approve Partner")
+      end
     end
   end
 
@@ -256,41 +292,37 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "GET #approve_application" do
+    subject { -> { get approve_application_partner_path(default_params.merge(id: partner.id)) } }
     let(:partner) { create(:partner, organization: @organization) }
+    let(:fake_partner_approval_service) { instance_double(PartnerApprovalService, call: -> {}) }
 
-    context "successful approval in partner app" do
+    before do
+      allow(PartnerApprovalService).to receive(:new).with(partner: partner).and_return(fake_partner_approval_service)
+    end
+
+    context 'when the approval was successful' do
       before do
-        stub_env('PARTNER_REGISTER_URL', 'https://partner-register.com')
-        stub_env('PARTNER_KEY', 'partner-key')
-        stub_request(:put, "https://partner-register.com/#{partner.id}").to_return({ status: 200, body: 'success', headers: {} })
+        allow(fake_partner_approval_service).to receive(:errors).and_return([])
+        subject.call
       end
 
-      it "responds with found status" do
-        get approve_application_partner_path(default_params.merge(id: partner.id))
-        expect(response).to have_http_status(:found)
-      end
-
-      it "redirects to #index" do
-        get approve_application_partner_path(default_params.merge(id: partner.id))
-        expect(response).to redirect_to(partners_path)
-      end
-
-      it "updates partner status to approved" do
-        get approve_application_partner_path(default_params.merge(id: partner.id))
-        expect(response).to redirect_to(partners_path)
-        expect(partner.reload.status).to eq('approved')
+      it 'should redirect to the partners index page with a success flash message' do
+        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(flash[:notice]).to eq("Partner approved!")
       end
     end
 
-    context "failed approval in partner app" do
+    context 'when the approval failed' do
+      let(:fake_error_msg) { Faker::Games::ElderScrolls.dragon }
       before do
-        response = double("Response", value: Net::HTTPNotFound)
-        allow(DiaperPartnerClient).to receive(:put).and_return(response)
+        allow(fake_partner_approval_service).to receive_message_chain(:errors, :none?).and_return(false)
+        allow(fake_partner_approval_service).to receive_message_chain(:errors, :full_messages).and_return(fake_error_msg)
+        subject.call
       end
 
-      it "redirects to #index" do
-        get approve_application_partner_path(default_params.merge(id: partner.id))
-        expect(response).to redirect_to(partners_path)
+      it 'should redirect to the partners index page with a failure flash message' do
+        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(flash[:error]).to eq("Failed to approve partner because: #{fake_error_msg}")
       end
     end
   end

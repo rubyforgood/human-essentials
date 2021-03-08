@@ -26,19 +26,20 @@ class PartnersController < ApplicationController
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "approved")
-    if response.is_a?(Net::HTTPSuccess)
-      @partner.approved!
+
+    svc = PartnerApprovalService.new(partner: @partner)
+    svc.call
+
+    if svc.errors.none?
       redirect_to partners_path, notice: "Partner approved!"
     else
-      redirect_to partners_path, error: "Failed to update Partner data!"
+      redirect_to partners_path, error: "Failed to approve partner because: #{svc.errors.full_messages}"
     end
   end
 
   def show
     @partner = current_organization.partners.find(params[:id])
-
-    @impact_metrics = JSON.parse(DiaperPartnerClient.get({ id: params[:id] }, query_params: { impact_metrics: true })) unless @partner.uninvited?
+    @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
 
     respond_to do |format|
@@ -51,20 +52,17 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.new
   end
 
-  # NOTE(chaserx): this is confusing and could be renamed to reflect what it's returning/showing review_application
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
 
-    # TODO: create a service that abstracts all of this from PartnersController, like PartnerDetailRetriever.call(id: params[:id])
+    @partner_profile = @partner.profile
+    # Ensure that the ActiveStorage records associated with the
+    # partner are available on the primary DB. If we do not do this,
+    # partners would be uploading files that the diaperbase application
+    # cannot see.
+    @partner_profile.sync_attachments_from_partnerbase!
 
-    # TODO: move this code to new service,
-    @diaper_partner = DiaperPartnerClient.get(id: params[:id])
-    @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true) if @diaper_partner
-    @agency = if @diaper_partner
-                @diaper_partner[:agency]
-              else
-                autovivifying_hash
-              end
+    @agency = @partner_profile.export_hash
   end
 
   def edit

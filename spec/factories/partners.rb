@@ -19,14 +19,28 @@ FactoryBot.define do
     sequence(:name) { |n| "Leslie Sue, the #{n}" }
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
     send_reminders { true }
-    organization { Organization.try(:first) || create(:organization) }
-  end
+    organization_id { Organization.try(:first).try(:id) || create(:organization).id }
 
-  trait :approved do
-    status { :approved }
-  end
+    trait :approved do
+      status { :approved }
+    end
 
-  trait :uninvited do
-    status { :uninvited }
+    trait :uninvited do
+      status { :uninvited }
+    end
+
+    trait :awaiting_review do
+      status { :awaiting_review }
+    end
+
+    after(:create) do |partner, _evaluator|
+      # Create associated records on partnerbase DB
+      partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+      Partners::User.create!(
+        email: partner.email,
+        partner: partners_partner,
+        password: 'password'
+      )
+    end
   end
 end
