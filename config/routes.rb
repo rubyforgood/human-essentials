@@ -81,6 +81,11 @@ Rails.application.routes.draw do
     resources :audits do
       post :finalize
     end
+
+    if Rails.env.development? || Rails.env.test?
+      resources :reports, only: [:show, :index], param: :year
+    end
+
     resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
       collection do
