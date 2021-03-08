@@ -9,7 +9,7 @@ module Partners
       @filterrific = initialize_filterrific(
         current_partner.children
                        .includes(:family)
-                       .order(sort_column + ' ' + sort_direction),
+                       .order(sort_order),
         params[:filterrific]
       ) || return
 
@@ -93,6 +93,10 @@ module Partners
         :archived,
         child_lives_with: []
       )
+    end
+
+    def sort_order
+      sort_column + ' ' + sort_direction
     end
 
     def sort_direction
