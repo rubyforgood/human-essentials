@@ -67,7 +67,7 @@ GEM
     ast (2.4.1)
     autoprefixer-rails (10.2.0.0)
       execjs
-    awesome_print (1.8.0)
+    awesome_print (1.9.2)
     azure-core (0.1.15)
       faraday (~> 0.9)
       faraday_middleware (~> 0.10)
