@@ -256,7 +256,7 @@ and clicking 'Request Approval' button."
     let!(:awaiting_review_partner) { create(:partner, name: "Beau Brummel", status: :awaiting_review) }
 
     context "when partner has :invited status" do
-      before { visit_approval_page(invited_partner.id, 1) }
+      before { visit_approval_page(1) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
       it { expect(page).to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
@@ -268,7 +268,7 @@ and clicking 'Request Approval' button."
     end
 
     context "when partner has :awaiting_review status" do
-      before { visit_approval_page(awaiting_review_partner.id, 2) }
+      before { visit_approval_page(2) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
       it { expect(page).not_to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
@@ -281,20 +281,7 @@ and clicking 'Request Approval' button."
   end
 end
 
-def stub_get_partner_request(partner_id)
-  allow(ENV).to receive(:[]).and_return(ENV)
-  allow(ENV).to receive(:[]).with("PARTNER_REGISTER_URL").and_return("https://partner-register.com")
-  allow(ENV).to receive(:[]).with("PARTNER_BASE_URL").and_return("https://partner-register.com")
-  allow(ENV).to receive(:[]).with("PARTNER_KEY").and_return("partner-key")
-
-  partner_response = File.read("spec/fixtures/partner_api/partner.json")
-
-  stub_request(:get, "https://partner-register.com/#{partner_id}")
-    .to_return(status: 200, body: partner_response, headers: {})
-end
-
-def visit_approval_page(partner_id, table_row)
+def visit_approval_page(table_row)
   visit url_prefix + "/partners"
-  stub_get_partner_request(partner_id)
   within("table > tbody > tr:nth-child(#{table_row}) > td:nth-child(5)") { click_on "Review Application" }
 end
