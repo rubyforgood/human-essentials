@@ -83,7 +83,8 @@ Rails.application.routes.draw do
     end
 
     if Rails.env.development? || Rails.env.test?
-      resources :reports, only: [:show, :index], param: :year
+      get 'reports/nbdn_annual', to: 'reports/nbdn_annual#index'
+      get 'reports/nbdn_annual/:year', to: 'reports/nbdn_annual#show'
     end
 
     resources :transfers, only: %i(index create new show destroy)

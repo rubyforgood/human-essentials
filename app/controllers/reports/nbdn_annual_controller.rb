@@ -1,4 +1,4 @@
-class ReportsController < ApplicationController
+class Reports::NbdnAnnualController < ApplicationController
   def index
     @years = get_reports_years
     @month_remaing_to_report = 12 - Time.current.month

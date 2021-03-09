@@ -23,8 +23,9 @@
 <section class="content">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12">
-        <h5 class="mb-3">Reports are available at the end of every year. <%= "#{@actual_year} will be ready in #{@month_remaing_to_report} months!" %></h5>
+      <div class="col-md-12 mb-2">
+        <h5 class="mb-1">Reports are available at the end of every year.</h5>
+        <span class="text-muted"> <%= "#{@actual_year} (available in #{pluralize(@month_remaing_to_report, 'month')})" %> </span>
       </div>
       <div class="col-md-12">
         <div class="card card-primary">
@@ -33,7 +34,7 @@
           </div>
           <ul class="list-group list-unstyled">
             <% @years.map do |year| %>
-              <li class="list-group-item-action"> <%= link_to "#{year}", "#{reports_path}/#{year}", class: "list-group-item" %> </li>
+              <li class="list-group-item-action"> <%= link_to "#{year}", "#{reports_nbdn_annual_path}/#{year}", class: "list-group-item" %> </li>
             <% end %>
           </ul>
         </div>
