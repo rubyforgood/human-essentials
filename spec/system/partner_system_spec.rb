@@ -245,4 +245,43 @@ RSpec.describe "Partner management", type: :system, js: true do
       expect(partner.send_reminders).to be false
     end
   end
+
+  describe "#approve_partner" do
+    let(:tooltip_message) do
+      "Partner has not requested approval yet. \
+Partners are able to request approval by going into 'My Organization' \
+and clicking 'Request Approval' button."
+    end
+    let!(:invited_partner) { create(:partner, name: "Amelia Ebonheart", status: :invited) }
+    let!(:awaiting_review_partner) { create(:partner, name: "Beau Brummel", status: :awaiting_review) }
+
+    context "when partner has :invited status" do
+      before { visit_approval_page(1) }
+
+      it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
+      it { expect(page).to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
+
+      it 'shows correct tooltip' do
+        page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
+        expect(page).to have_content tooltip_message
+      end
+    end
+
+    context "when partner has :awaiting_review status" do
+      before { visit_approval_page(2) }
+
+      it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
+      it { expect(page).not_to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
+
+      it 'shows no tooltip' do
+        page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
+        expect(page).not_to have_content tooltip_message
+      end
+    end
+  end
+end
+
+def visit_approval_page(table_row)
+  visit url_prefix + "/partners"
+  within("table > tbody > tr:nth-child(#{table_row}) > td:nth-child(5)") { click_on "Review Application" }
 end
