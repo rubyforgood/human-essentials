@@ -120,11 +120,6 @@ RSpec.describe "Partners", type: :request do
       it 'should show the Approve Partner button' do
         expect(response.body).to include("Approve Partner")
       end
-
-      it 'should show the tooltip text' do
-        expect(response.body).to include("Partner has not requested approval yet. \
-Partners are able to request approval by going into 'My Organization' and clicking 'Request Approval' button.")
-      end
     end
   end
 
