@@ -117,8 +117,8 @@ RSpec.describe "Partners", type: :request do
         subject.call
       end
 
-      it 'should not show the Approve Partner button' do
-        expect(response.body).not_to include("Approve Partner")
+      it 'should show the Approve Partner button' do
+        expect(response.body).to include("Approve Partner")
       end
     end
   end

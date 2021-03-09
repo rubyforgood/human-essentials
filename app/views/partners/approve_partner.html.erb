@@ -31,7 +31,8 @@
         <div class="card card-info card-outline">
           <div class="card-header">
             <h1 class="card-title"><strong><%= @partner.name %> - Application Details
-              - <%= link_to @partner.email, "mailto:#{@partner.email}" %></strong></h1>
+              - <%= link_to @partner.email, "mailto:#{@partner.email}" %></strong>
+            </h1>
           </div>
           <div class="card-body p-6">
             <div class="row">
@@ -187,11 +188,19 @@
                 </div>
           </div>
           <!-- /.card-body -->
-          <div class="card-footer">
-            <%= print_button_to approve_application_partner_path(@partner), {text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md"} if @partner.awaiting_review? %>
-          </div>
+        </div>
+        <div id="approve-application-button">
+          <% tooltip_message = "Partner has not requested approval yet. Partners are able to request approval by going into 'My Organization' and clicking 'Request Approval' button." %>
+          <span id="pending-approval-request-tooltip" title="<%= tooltip_message unless @partner.awaiting_review? %>">
+            <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.awaiting_review? } %>
+          </span>
         </div>
       </div>
     </div>
   </div>
 </section>
+<script>
+$(function () {
+  $('#pending-approval-request-tooltip').tooltip()
+})
+</script>
