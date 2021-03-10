@@ -28,7 +28,7 @@ staging:
     <<: *default
     url: <%= ENV['HEROKU_POSTGRESQL_ROSE_URL'] %>
     migrations_paths: db/partners_migrate
-    
+
 test:
   primary:
     <<: *default
