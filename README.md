@@ -1,5 +1,5 @@
 # Welcome Contributors!
-Thanks for checking us out!
+Thanks for checking us out! "Cat"
 
 If you're new here, here are some things you should know:
  - We actively curate issues and try to make them as self-contained as possible for people new to the application; those ones are tagged "Help Wanted"
