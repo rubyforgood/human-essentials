@@ -82,9 +82,8 @@ Rails.application.routes.draw do
       post :finalize
     end
 
-    if Rails.env.development? || Rails.env.test?
-      get 'reports/nbdn_annual', to: 'reports/nbdn_annual#index'
-      get 'reports/nbdn_annual/:year', to: 'reports/nbdn_annual#show'
+    namespace :reports do
+      resources :ndbn_annuals, only: [:index, :show], param: :year
     end
 
     resources :transfers, only: %i(index create new show destroy)
