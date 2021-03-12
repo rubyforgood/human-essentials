@@ -59,7 +59,7 @@
                     <dd><%= @child.health_insurance %></dd>
 
                     <dt>Item needed:</dt>
-                    <dd><%= item_id_to_display_string_map[@child.item_needed_diaperid] %></dd>
+                    <dd><%= current_partner.organization.item_id_to_display_string_map[@child.item_needed_diaperid] %></dd>
 
                     <dt>Comments:</dt>
                     <dd><%= @child.comments %></dd>
@@ -88,10 +88,10 @@
                         <tr>
                           <td><b><%= child_item_request.created_at.to_date.iso8601 %></b>
                           </th>
-                          <td><%= fetch_valid_item(child_item_request.ordered_item_diaperid)&.dig('name')&.to_s %></th>
+                          <td><%= fetch_valid_item_name(child_item_request.ordered_item_diaperid) %></th>
                           <td><b>
                             <% if (diaperid = child_item_request.picked_up_item_diaperid) && child_item_request.picked_up? %>
-                              <%= valid_items.dig(diaperid, 'name') %>
+                              <%= fetch_valid_item_name(diaperid) %>
                             <% elsif !child_item_request.picked_up? %>
                               Not picked up
                             <% else %>

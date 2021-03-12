@@ -3,8 +3,6 @@ module Partners
   class ChildrenController < BaseController
     layout 'partners/application'
 
-    helper_method :sort_column, :sort_direction
-
     def index
       @filterrific = initialize_filterrific(
         current_partner.children
@@ -105,6 +103,12 @@ module Partners
 
     def sort_column
       Child.column_names.include?(params[:sort]) ? params[:sort] : "last_name"
+    end
+
+    helper_method :fetch_valid_item_name
+    def fetch_valid_item_name(id)
+      @valid_items ||= current_partner.organization.valid_items
+      @valid_items.find { |vi| vi[:id] == id }&.fetch(:name)
     end
   end
 end
