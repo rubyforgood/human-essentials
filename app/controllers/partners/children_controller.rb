@@ -91,10 +91,12 @@ module Partners
       sort_column + ' ' + sort_direction
     end
 
+    helper_method :sort_direction # used in SortableHelper
     def sort_direction
       %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
     end
 
+    helper_method :sort_column # used in SortableHelper
     def sort_column
       Child.column_names.include?(params[:sort]) ? params[:sort] : "last_name"
     end
