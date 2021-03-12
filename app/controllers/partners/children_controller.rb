@@ -33,6 +33,7 @@ module Partners
     end
 
     def new
+      family = current_partner.families.find_by!(id: params[:family_id])
       @child = family.children.new
     end
 
@@ -47,6 +48,7 @@ module Partners
     end
 
     def create
+      family = current_partner.families.find_by!(id: params[:family_id])
       child = family.children.new(child_params)
 
       if child.save
@@ -67,14 +69,6 @@ module Partners
     end
 
     private
-
-    def family
-      # temporarily disable this rubocop rule because we have an instance variable named @family elsewhere,
-      # we should carefully test this before renaming it to @family
-      # rubocop:disable Naming/MemoizedInstanceVariableName
-      @_family ||= current_partner.families.find_by(id: params[:family_id])
-      # rubocop:enable Naming/MemoizedInstanceVariableName
-    end
 
     def child_params
       params.require(:partners_child).permit(
