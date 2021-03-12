@@ -203,6 +203,16 @@ class Organization < ApplicationRecord
     end
   end
 
+  def item_id_to_display_string_map
+    valid_items.each_with_object({}) do |item, hash|
+      hash[item[:id].to_i] = item[:name]
+    end
+  end
+
+  def valid_items_for_select
+    valid_items.map { |item| [item[:name], item[:id]] }.sort
+  end
+
   def from_email
     return get_admin_email if email.blank?
 
