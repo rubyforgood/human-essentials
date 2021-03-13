@@ -28,28 +28,23 @@
               <%= f.text_field :agency_guardian_id, class: "form-control" %>
 
               <%= f.label :home_adult_count, "Number of Adults Living In The Home" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <%= f.number_field :home_adult_count, class: "form-control" %>
 
               <%= f.label :home_child_count, 'How Many Children (5-17) Live In The Home?' %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <%= f.number_field :home_child_count, class: "form-control" %>
 
               <%= f.label :home_young_child_count, 'How Many Children (under 5) Live In The Home?' %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <%= f.number_field :home_young_child_count, class: "form-control" %>
 
               <%= f.label :sources_of_income, "Sources of Income" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <br>
               <% Partners::Family::INCOME_TYPES.each do |a_value| %>
-                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box(:sources_of_income, {:multiple => true}, a_value, nil) %>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box(:sources_of_income, {multiple: true}, a_value, nil) %>
                 <%= f.label "#{a_value}", "#{a_value}" %>
               <% end %>
               <br>
 
               <%= f.label :guardian_employed, "Is The Parent/Guardian Employed?" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_employed, 'Yes' %>
               <%= label :guardian_employed, 'Yes' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -58,7 +53,6 @@
               <br>
 
               <%= f.label :guardian_employment_type, "Guardian Employed Full-Time or Part-Time" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_employment_type, 'Full-Time' %>
               <%= label :guardian_employment_type, 'Full-Time' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -73,7 +67,6 @@
               <%= f.text_field :guardian_monthly_pay, class: "form-control" %>
 
               <%= f.label :guardian_health_insurance, "Guardian's Health Insurance Status" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_health_insurance, 'Private Insurance' %>
               <%= label :guardian_health_insurance, 'Private Insurance' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -84,13 +77,11 @@
               <br>
 
               <%= f.label :military, "Military Family" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, true %> <strong>Yes</strong>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, false %> <strong>No</strong>
               <br>
               <%= f.label :comments %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
               <%= f.text_area :comments, class: "form-control" %>
               </div>
               <!-- /.card-body -->
