@@ -296,7 +296,7 @@ RSpec.describe "Partner management", type: :system, js: true do
       fill_in "Name", with: ""
       click_button "Update Partner"
 
-      expect(page.find(".alert")).to have_content "Failed to add partner due to:"
+      expect(page.find(".alert")).to have_content "Something didn't work quite right -- try again?"
     end
 
     it "User can uncheck send_reminders" do
