@@ -23,5 +23,4 @@ class PartnerInviteService
 
     errors.blank?
   end
-
 end

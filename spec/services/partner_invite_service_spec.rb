@@ -36,5 +36,4 @@ describe PartnerInviteService do
       )
     end
   end
-
 end
