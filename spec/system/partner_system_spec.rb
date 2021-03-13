@@ -131,6 +131,8 @@ RSpec.describe "Partner management", type: :system, js: true do
 
     it "allows a user to invite a partner", :js do
       partner = create(:partner, name: 'Charities')
+      partner.profile.user.delete
+
       visit url_prefix + "/partners"
 
       within("table > tbody > tr:nth-child(4) > td:nth-child(5)") { click_on "Invite" }
@@ -271,7 +273,7 @@ RSpec.describe "Partner management", type: :system, js: true do
       visit subject
       click_button "Add Partner Agency"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find(".alert")).to have_content "Failed to add partner due to:"
     end
   end
 
@@ -294,7 +296,7 @@ RSpec.describe "Partner management", type: :system, js: true do
       fill_in "Name", with: ""
       click_button "Update Partner"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find(".alert")).to have_content "Failed to add partner due to:"
     end
 
     it "User can uncheck send_reminders" do
