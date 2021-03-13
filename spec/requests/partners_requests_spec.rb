@@ -93,17 +93,20 @@ RSpec.describe "Partners", type: :request do
     end
 
     let(:partner) { create(:partner, organization: @organization, status: :approved) }
-    let(:fake_get_return) do
-      { "agency" => {
-        "families_served" => Faker::Number.number,
-        "children_served" => Faker::Number.number,
-        "family_zipcodes" => Faker::Number.number,
-        "family_zipcodes_list" => [Faker::Number.number]
-      } }.to_json
-    end
+    let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner.profile) }
+    let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-126', partner: partner.profile) }
+    let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner.profile) }
 
-    before do
-      allow(DiaperPartnerClient).to receive(:get).with({ id: partner.to_param }, query_params: { impact_metrics: true }).and_return(fake_get_return)
+    let!(:child1) { FactoryBot.create_list(:partners_child, 2, family: family1) }
+    let!(:child2) { FactoryBot.create_list(:partners_child, 2, family: family3) }
+
+    let(:expected_impact_metrics) do
+      {
+        families_served: 3,
+        children_served: 4,
+        family_zipcodes: 2,
+        family_zipcodes_list: %w(45612-123 45612-126)
+      }
     end
 
     context "html" do
@@ -114,7 +117,7 @@ RSpec.describe "Partners", type: :request do
       context "when the partner is invited" do
         it "includes impact metrics" do
           subject
-          expect(assigns[:impact_metrics]).to eq(JSON.parse(fake_get_return))
+          expect(assigns[:impact_metrics]).to eq(expected_impact_metrics)
         end
       end
 
@@ -162,8 +165,8 @@ RSpec.describe "Partners", type: :request do
         subject.call
       end
 
-      it 'should not show the Approve Partner button' do
-        expect(response.body).not_to include("Approve Partner")
+      it 'should show the Approve Partner button' do
+        expect(response.body).to include("Approve Partner")
       end
     end
   end

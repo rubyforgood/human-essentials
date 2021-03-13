@@ -14,7 +14,17 @@ Rails.application.configure do
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
 
-  config.action_mailer.default_url_options = { host: "diaperbase.org" }
+  config.action_mailer.default_url_options = { host: "staging.humanessentials.app" }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    :user_name => ENV['MAILTRAP_USERNAME'],
+    :password => ENV['MAILTRAP_PASSWORD'],
+    :address => 'smtp.mailtrap.io',
+    :domain => 'smtp.mailtrap.io',
+    :port => '2525',
+    :authentication => :cram_md5
+  }
+
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true

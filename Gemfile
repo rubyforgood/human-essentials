@@ -60,10 +60,15 @@ group :production do
   gem "newrelic_rpm"
 end
 
+group :development, :test, :staging do
+  gem 'factory_bot_rails'
+  gem "database_cleaner"
+  gem 'faker'
+end
+
 group :development, :test do
   gem "awesome_print"
   gem "brakeman"
-  gem 'factory_bot_rails'
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "knapsack_pro"
@@ -71,12 +76,11 @@ group :development, :test do
   gem "pry-remote"
   gem "pry-nav"
   gem "rb-readline", "~> 0.5.3"
-  gem "rspec-rails", "~> 4.0.2"
+  gem "rspec-rails", "~> 5.0.0"
   gem "rubocop"
   gem "rubocop-rails", "~> 2.9.1"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
-  gem "faker"
 end
 
 group :development do
@@ -101,7 +105,6 @@ end
 group :test do
   gem "capybara", "~> 3.35"
   gem "capybara-screenshot"
-  gem "database_cleaner"
   gem "launchy"
   gem 'magic_test'
   gem "rails-controller-testing"

@@ -1,8 +1,8 @@
 # This file should contain all the record creation needed to seed the database with demo values.
 # The data can then be loaded with `rails db:seed` (or along with the creation of the db with `rails db:setup`).
 
-unless Rails.env.development?
-  puts "Database seeding has been configured to work only in development mode."
+if Rails.env.production?
+  puts "Database seeding has been configured to work only in non production settings"
   return
 end
 

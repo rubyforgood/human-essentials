@@ -81,6 +81,11 @@ Rails.application.routes.draw do
     resources :audits do
       post :finalize
     end
+
+    namespace :reports do
+      resources :ndbn_annuals, only: [:index, :show], param: :year
+    end
+
     resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
       collection do
