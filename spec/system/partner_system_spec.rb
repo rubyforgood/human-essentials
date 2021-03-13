@@ -53,8 +53,8 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
   end
 
-  describe 'adding a new partner' do
-    context 'when adding a partner successfully' do
+  describe 'adding a new partner and inviting them' do
+    context 'when adding & inviting a partner successfully' do
       let(:partner_attributes) do
         {
           name: Faker::Name.name,
@@ -74,14 +74,18 @@ RSpec.describe "Partner management", type: :system, js: true do
         fill_in 'Quota', with: partner_attributes[:quota]
         fill_in 'Notes', with: partner_attributes[:notes]
         find('button', text: 'Add Partner Agency').click
-      end
 
-      it 'should have added the partner and indicate that it was successful' do
         assert page.has_content? "Partner #{partner_attributes[:name]} added!"
 
-        partner = Partner.find_by(name: partner_attributes[:name])
-        expect(partner).not_to eq(nil)
-        expect(partner.profile).not_to eq(nil)
+        accept_confirm do
+          find('tr', text: partner_attributes[:name]).find_link('Invite').click
+        end
+
+        assert page.has_content? "Partner #{partner_attributes[:name]} invited!"
+      end
+
+      it 'should have added the partner and invited them' do
+        expect(Partner.find_by(email: partner_attributes[:email]).status).to eq('invited')
       end
     end
 
