@@ -294,7 +294,6 @@ RSpec.describe "Partners", type: :request do
 
   describe "POST #invite" do
     it "send the invite" do
-      expect(UpdateDiaperPartnerJob).to receive(:perform_now)
       post invite_partner_path(default_params.merge(id: create(:partner, organization: @organization)))
       expect(response).to have_http_status(:found)
     end
