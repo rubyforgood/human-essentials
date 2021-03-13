@@ -65,7 +65,7 @@ class Partner < ApplicationRecord
   # the partnerbase DB and contains mostly profile data of
   # the partner user.
   def profile
-    ::Partners::Partner.find_by(diaper_partner_id: id)
+    @profile ||= ::Partners::Partner.find_by(diaper_partner_id: id)
   end
 
   #
@@ -100,7 +100,7 @@ class Partner < ApplicationRecord
       name,
       email,
       contact_person[:name],
-      contact_person[:phone] || contact_person[:mobile],
+      contact_person[:phone],
       contact_person[:email]
     ]
   end
@@ -120,16 +120,17 @@ class Partner < ApplicationRecord
     AddDiaperPartnerJob.perform_now(id, options)
   end
 
-  def partnerbase_partner
-    @partnerbase_partner ||= Partnerbase::Partner.find(id) if id
-  end
-
   def contact_person
-    if partnerbase_partner&.agency
-      partnerbase_partner.agency.fetch(:contact_person)
-    else
-      {}
-    end
+    return @contact_person if @contact_person
+
+    return {} if profile.blank?
+
+    @contact_person = {
+      name: profile.program_contact_name,
+      email: profile.program_contact_email,
+      phone: profile.program_contact_phone ||
+             profile.program_contact_mobile
+    }
   end
 
   def quantity_year_to_date
