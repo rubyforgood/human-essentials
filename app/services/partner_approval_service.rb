@@ -31,7 +31,6 @@ class PartnerApprovalService
     errors.none?
   end
 
-
   def approved_partner_status
     Partners::Partner::VERIFIED_STATUS
   end

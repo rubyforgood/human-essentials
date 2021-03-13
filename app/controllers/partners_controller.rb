@@ -91,8 +91,15 @@ class PartnersController < ApplicationController
 
   def invite
     partner = current_organization.partners.find(params[:id])
-    partner.register_on_partnerbase
-    redirect_to partners_path, notice: "#{partner.name} invited!"
+
+    svc = PartnerInviteService.new(partner: partner)
+    svc.call
+
+    if svc.errors.none?
+      redirect_to partners_path, notice: "#{partner.name} invited!"
+    else
+      redirect_to partners_path, notice: "Failed to invite #{partner.name}! #{svc.errors.full_messages}"
+    end
   end
 
   def re_invite
