@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Partners::SessionsController < Devise::SessionsController
+  layout 'devise_partner_users'
   before_action :redirect_to_root, unless: -> { Rails.env.test? || Flipper.enabled?(:onebase) }
   before_action :configure_sign_in_params, only: [:create]
 
