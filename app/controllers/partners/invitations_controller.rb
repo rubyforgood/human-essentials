@@ -36,15 +36,10 @@ class Partners::InvitationsController < Devise::InvitationsController
   private
 
   def redirect_to_legacy_partnerbase_app?
-    if Rails.env.development?
-      false
-    else
-      true
-    end
+    !Rails.env.development?
   end
 
   def legacy_partnerbase_login_url
     ENV.fetch("PARTNER_BASE_URL") + "/users/sign_in"
   end
 end
-
