@@ -112,10 +112,6 @@ class Partner < ApplicationRecord
     end
   end
 
-  def register_on_partnerbase
-    UpdateDiaperPartnerJob.perform_now(id)
-  end
-
   def add_user_on_partnerbase(options = {})
     AddDiaperPartnerJob.perform_now(id, options)
   end

@@ -24,7 +24,7 @@ end
 
 Rails.application.routes.draw do
   devise_for :users
-  devise_for :partner_users, controllers: { sessions: "partners/sessions" }
+  devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations' }
 
   set_up_sidekiq
   set_up_flipper

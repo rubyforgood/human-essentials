@@ -48,7 +48,69 @@ RSpec.describe "Partner management", type: :system, js: true do
         assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 
         expect(partner_awaiting_approval.reload.approved?).to eq(false)
-        expect(partner_awaiting_approval.profile.reload.partner_status).not_to eq('verified')
+        expect(partner_awaiting_approval.profile.reload.partner_status).not_to eq(Partners::Partner::VERIFIED_STATUS)
+      end
+    end
+  end
+
+  describe 'adding a new partner and inviting them' do
+    context 'when adding & inviting a partner successfully' do
+      let(:partner_attributes) do
+        {
+          name: Faker::Name.name,
+          email: Faker::Internet.email,
+          quota: Faker::Number.within(range: 5..100),
+          notes: Faker::Lorem.paragraph
+        }
+      end
+      before do
+        visit url_prefix + "/partners"
+        assert page.has_content? "Partner Agencies for #{@organization.name}"
+
+        click_on 'New Partner Agency'
+
+        fill_in 'Name *', with: partner_attributes[:name]
+        fill_in 'E-mail *', with: partner_attributes[:email]
+        fill_in 'Quota', with: partner_attributes[:quota]
+        fill_in 'Notes', with: partner_attributes[:notes]
+        find('button', text: 'Add Partner Agency').click
+
+        assert page.has_content? "Partner #{partner_attributes[:name]} added!"
+
+        accept_confirm do
+          find('tr', text: partner_attributes[:name]).find_link('Invite').click
+        end
+
+        assert page.has_content? "Partner #{partner_attributes[:name]} invited!"
+      end
+
+      it 'should have added the partner and invited them' do
+        expect(Partner.find_by(email: partner_attributes[:email]).status).to eq('invited')
+      end
+    end
+
+    context 'when adding a partner incorrectly' do
+      let(:partner_attributes) do
+        {
+          name: Faker::Name.name
+        }
+      end
+      before do
+        visit url_prefix + "/partners"
+        assert page.has_content? "Partner Agencies for #{@organization.name}"
+        click_on 'New Partner Agency'
+
+        fill_in 'Name *', with: partner_attributes[:name]
+
+        find('button', text: 'Add Partner Agency').click
+      end
+
+      it 'should have not added a new partner and indicate the failure' do
+        assert page.has_content? "Failed to add partner due to: "
+        assert page.has_content? "New Partner for #{@organization.name}"
+
+        partner = Partner.find_by(name: partner_attributes[:name])
+        expect(partner).to eq(nil)
       end
     end
   end
@@ -69,6 +131,8 @@ RSpec.describe "Partner management", type: :system, js: true do
 
     it "allows a user to invite a partner", :js do
       partner = create(:partner, name: 'Charities')
+      partner.profile.user.delete
+
       visit url_prefix + "/partners"
 
       within("table > tbody > tr:nth-child(4) > td:nth-child(5)") { click_on "Invite" }
@@ -199,7 +263,7 @@ RSpec.describe "Partner management", type: :system, js: true do
       visit subject
       click_button "Add Partner Agency"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find(".alert")).to have_content "Failed to add partner due to:"
     end
   end
 
@@ -222,7 +286,7 @@ RSpec.describe "Partner management", type: :system, js: true do
       fill_in "Name", with: ""
       click_button "Update Partner"
 
-      expect(page.find(".alert")).to have_content "didn't work"
+      expect(page.find(".alert")).to have_content "Something didn't work quite right -- try again?"
     end
 
     it "User can uncheck send_reminders" do
