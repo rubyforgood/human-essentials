@@ -19,8 +19,14 @@ describe PartnerInviteService do
   end
 
   context 'when the partner user has not been invited yet' do
-    before do
+    let(:partner) do
+      partner = create(:partner)
       partner.profile.user.delete
+      partner.profile.reload
+      partner
+    end
+
+    before do
       allow(PartnerUser).to receive(:invite!)
     end
 

@@ -1,6 +1,6 @@
 # This exists so that we can override some of the devise resource
 class Partners::InvitationsController < Devise::InvitationsController
-  layout "devise"
+  layout "devise_partner_users"
 
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
