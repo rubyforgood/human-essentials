@@ -10,5 +10,10 @@ module Partners
     def redirect_to_root
       redirect_to root_path
     end
+
+    helper_method :current_partner
+    def current_partner
+      current_partner_user.partner
+    end
   end
 end

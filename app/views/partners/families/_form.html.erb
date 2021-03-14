@@ -1,0 +1,99 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= simple_form_for family, html: {role: 'form', class: 'form-horizontal'} do |f| %>
+              <%= f.input :guardian_first_name, label: "Guardian First Name", class: "form-control", wrapper: :input_group %>
+
+              <%= f.input :guardian_last_name, label: "Guardian Last Name", class: "form-control", wrapper: :input_group %>
+
+              <%= f.input :guardian_zip_code, label: "Guardian Zip Code", class: "form-control", wrapper: :input_group %>
+
+              <%= f.label :guardian_country, "Guardian County" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_country, class: "form-control" %>
+
+              <%= f.label :guardian_phone, "Guardian Phone" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_phone, class: "form-control" %>
+
+              <%= f.label :agency_guardian_id, "Agency Care Manager" %>
+              <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Person at the agency who is assigned to this family."></i>
+              <%= f.text_field :agency_guardian_id, class: "form-control" %>
+
+              <%= f.label :home_adult_count, "Number of Adults Living In The Home" %>
+              <%= f.number_field :home_adult_count, class: "form-control" %>
+
+              <%= f.label :home_child_count, 'How Many Children (5-17) Live In The Home?' %>
+              <%= f.number_field :home_child_count, class: "form-control" %>
+
+              <%= f.label :home_young_child_count, 'How Many Children (under 5) Live In The Home?' %>
+              <%= f.number_field :home_young_child_count, class: "form-control" %>
+
+              <%= f.label :sources_of_income, "Sources of Income" %>
+              <br>
+              <% Partners::Family::INCOME_TYPES.each do |a_value| %>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.check_box(:sources_of_income, {multiple: true}, a_value, nil) %>
+                <%= f.label "#{a_value}", "#{a_value}" %>
+              <% end %>
+              <br>
+
+              <%= f.label :guardian_employed, "Is The Parent/Guardian Employed?" %>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_employed, 'Yes' %>
+              <%= label :guardian_employed, 'Yes' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_employed, 'No' %>
+              <%= label :guardian_employed, 'No' %>
+              <br>
+
+              <%= f.label :guardian_employment_type, "Guardian Employed Full-Time or Part-Time" %>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_employment_type, 'Full-Time' %>
+              <%= label :guardian_employment_type, 'Full-Time' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_employment_type, 'Part-Time' %>
+              <%= label :guardian_employment_type, 'Part-Time' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_employment_type, 'N/A' %>
+              <%= label :guardian_employment_type, 'N/A', 'N/A' %>
+              <br>
+
+              <%= f.label :guardian_monthly_pay, "Guardian's Monthly Income" %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%= f.text_field :guardian_monthly_pay, class: "form-control" %>
+
+              <%= f.label :guardian_health_insurance, "Guardian's Health Insurance Status" %>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :guardian_health_insurance, 'Private Insurance' %>
+              <%= label :guardian_health_insurance, 'Private Insurance' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_health_insurance, 'Medicaid' %>
+              <%= label :guardian_health_insurance, 'Medicaid' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= f.radio_button :guardian_health_insurance, 'Uninsured' %>
+              <%= label :guardian_health_insurance, 'Uninsured' %>
+              <br>
+
+              <%= f.label :military, "Military Family" %>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, true %> <strong>Yes</strong>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= f.radio_button :military, false %> <strong>No</strong>
+              <br>
+              <%= f.label :comments %>
+              <%= f.text_area :comments, class: "form-control" %>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <%= f.submit(class: 'btn btn-primary') %>
+              </div>
+            <% end %>
+            </div>
+        <!-- /.card -->
+      </div>
+
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>

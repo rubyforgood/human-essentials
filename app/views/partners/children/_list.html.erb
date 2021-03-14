@@ -1,0 +1,30 @@
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col"><%= sortable "last_name", "Last Name" %></th>
+    <th scope="col"><%= sortable "first_name", "First Name" %></th>
+    <th scope="col"><%= sortable "date_of_birth", "Date of Birth" %></th>
+    <th scope="col"><%= sortable "active", "Active" %></th>
+    <th scope="col">Guardian</th>
+    <th scope="col">Comments</th>
+    <th scope="col" colspan="2">
+      <%= link_to 'Export Results To CSV', partners_children_path(nil, format: :csv), class: "btn btn-info pull-right" %>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @children.each do |child| %>
+    <tr>
+      <td><%= child.last_name %></td>
+      <td><%= child.first_name %></td>
+      <td><%= child.date_of_birth %></td>
+      <td><%= child.active ? "Yes" : "No" %></td>
+      <td><%= child.family.guardian_display_name %></td>
+      <td><%= child.comments %></td>
+      <td><%= link_to 'View Child Details', child, class: "btn btn-sm btn-info" %></td>
+      <td><%= link_to 'Edit Child Details', edit_partners_child_path(child), class: "btn btn-sm btn-success pull-right" %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

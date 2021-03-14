@@ -165,16 +165,6 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
 
     context "when exporting as CSV" do
-      let(:fake_get_return) do
-        { "agency" => {
-          "contact_person" => { name: "A Name" }
-        } }.to_json
-      end
-
-      before do
-        allow(DiaperPartnerClient).to receive(:get).and_return(fake_get_return)
-      end
-
       context "when filtering" do
         it "preserves the filter constraints in the CSV output" do
           approved_partners = Partner.approved.to_a

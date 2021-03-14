@@ -1,0 +1,24 @@
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col"><%= sortable "guardian_last_name", "Guardian last name" %></th>
+    <th scope="col"><%= sortable "guardian_first_name", "Guardian first name" %></th>
+    <th scope="col"><%= sortable "agency_guardian_id", "Agency guardian" %></th>
+    <th scope="col">Comments</th>
+    <th scope="col" colspan="2">
+      <%= link_to 'Export Results To CSV', partners_families_path(nil, format: :csv), class: "btn btn-info pull-right" %>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @families.each do |family| %>
+    <tr>
+      <td><%= family.guardian_last_name %></td>
+      <td><%= family.guardian_first_name %></td>
+      <td><%= family.agency_guardian_id %></td>
+      <td><%= family.comments %></td>
+      <td><%= link_to 'View Family', family, class: "btn btn-sm btn-info pull-right" %></td>
+      <td><%= link_to 'Edit Family Details', edit_partners_family_path(family), class: "btn btn-sm btn-success pull-right" %></td>
+  <% end %>
+  </tbody>
+</table>
