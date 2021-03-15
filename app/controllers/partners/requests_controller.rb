@@ -5,7 +5,7 @@ module Partners
     protect_from_forgery with: :exception
 
     def index
-      @partner = current_partner_user.partner
+      @partner = current_partner
       @partner_requests = @partner.requests.order(created_at: :desc).limit(10)
     end
 
@@ -14,13 +14,13 @@ module Partners
       @partner_request.item_requests.build
 
       # Fetch the valid items
-      @requestable_items = Organization.find(current_partner_user.partner.diaper_bank_id).valid_items.map do |item|
+      @requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
         [item[:name], item[:id]]
       end.sort
     end
 
     def show
-      @partner_request = current_partner_user.partner.requests.find(params[:id])
+      @partner_request = current_partner.requests.find(params[:id])
     end
 
     def create
@@ -36,7 +36,7 @@ module Partners
       else
         @partner_request = create_service.partner_request
         @errors = create_service.errors
-        @requestable_items = Organization.find(current_partner_user.partner.diaper_bank_id).valid_items.map do |item|
+        @requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
           [item[:name], item[:id]]
         end.sort
 

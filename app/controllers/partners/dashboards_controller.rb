@@ -7,7 +7,7 @@ module Partners
     def index; end
 
     def show
-      @partner = current_partner_user.partner
+      @partner = current_partner
       @partner_requests = @partner.requests.order(created_at: :desc).limit(10)
       @families = @partner.families
       @children = @partner.children
