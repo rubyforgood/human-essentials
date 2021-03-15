@@ -1,0 +1,65 @@
+<div class="card mb-4">
+  <h5 class="card-header bg-primary text-white">Population Served</h5>
+  <div class="card-body">
+    <dl>
+      <dt>Clients Have An Income Requirement to Work With You</dt>
+      <dd><%= humanize_boolean(@partner.income_requirement_desc) %></dd>
+
+      <dt>Serve Income Circumstances</dt>
+      <dd><%= humanize_boolean(@partner.serve_income_circumstances) %></dd>
+
+      <dt>Do You Verify The Income Of Your Clients</dt>
+      <dd><%= humanize_boolean(@partner.income_verification) %></dd>
+
+      <dt>Internal DB</dt>
+      <dd><%= humanize_boolean(@partner.internal_db) %></dd>
+
+      <dt>MAAC Program Participant</dt>                  <dd><%= humanize_boolean(@partner.maac) %></dd>
+
+      <h6>Ethnic Composition of Those Served</h6>
+      <dt>African American</dt>
+      <dd><%= @partner.population_black || t(:not_provided) %></dd>
+
+      <dt>Caucasian</dt>
+      <dd><%= @partner.population_white || t(:not_provided) %></dd>
+
+      <dt>Hispanic</dt>
+      <dd><%= @partner.population_hispanic || t(:not_provided) %></dd>
+
+      <dt>Asian</dt>
+      <dd><%= @partner.population_asian || t(:not_provided) %></dd>
+
+      <dt>American Indian</dt>
+      <dd><%= @partner.population_american_indian || t(:not_provided) %></dd>
+
+      <dt>Pacific Islander</dt>
+      <dd><%= @partner.population_island || t(:not_provided) %></dd>
+
+      <dt>Multi-racial</dt>
+      <dd><%= @partner.population_multi_racial || t(:not_provided) %></dd>
+
+      <dt>Other</dt>
+      <dd><%= @partner.population_other || t(:not_provided) %></dd>
+
+      <dt>Zip Codes Served</dt>
+      <dd><%= @partner.zips_served %></dd>
+
+      <h6>Poverty Information of Those Served</h6>
+      <dt>At FPL or below</dt>
+      <dd><%= @partner.at_fpl_or_below || t(:not_provided) %></dd>
+
+      <dt>Above 1-2 times FPL</dt>
+      <dd><%= @partner.above_1_2_times_fpl || t(:not_provided) %></dd>
+
+      <dt>Greater than 2 times FPL</dt>
+      <dd><%= @partner.greater_2_times_fpl || t(:not_provided) %></dd>
+
+      <dt>Poverty Unknown</dt>
+      <dd><%= @partner.poverty_unknown || t(:not_provided) %></dd>
+
+      <h6>Ages Served</h6>
+      <dt>Ages</dt>
+      <dd><%= @partner.ages_served || t(:not_provided) %></dd>
+    </dl>
+  </div>
+</div>

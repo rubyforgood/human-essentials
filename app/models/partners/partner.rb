@@ -100,6 +100,18 @@ module Partners
 
     VERIFIED_STATUS = 'verified'.freeze
 
+    ALL_PARTIALS = %w[
+      media_information
+      agency_stability
+      organizational_capacity
+      sources_of_funding
+      population_served
+      executive_director
+      diaper_pick_up_person
+      agency_distribution_information
+      attached_documents
+    ].freeze
+
     def verified?
       partner_status == VERIFIED_STATUS
     end
@@ -222,6 +234,10 @@ module Partners
       }
     end
 
+    def partials_to_show
+      partner_form&.sections || ALL_PARTIALS
+    end
+
     #
     # Creates the neccessary ActiveStorage records to be able to
     # fetch files uploaded on Partnerbase (legacy seperate app).
@@ -235,6 +251,7 @@ module Partners
     #
     def sync_attachments_from_partnerbase!
       ActiveRecord::Base.transaction do
+        # Fetch Blob data from Partner
         attachment_records = Partners::Base.connection.execute(
           <<-SQL
             SELECT asb.*, asa.* filename FROM active_storage_blobs asb
@@ -243,6 +260,9 @@ module Partners
               AND record_id = '#{id}'
           SQL
         )
+
+        # Must determine wither or not to keep or hide files depending on when it
+        # was added.
 
         old_acs_attachments = ActiveStorage::Attachment.where(
           record_type: self.class.name,

@@ -1,0 +1,69 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "My Organization - #{current_partner.name}" %>
+        <% if @partner.partner_status == "recertification_required" %>
+          <div class="alert alert-danger"><i class="fa fa-warning"></i>&nbsp;
+            Please review your application details and submit for approval.</div>
+        <% end %>
+        <h1><i class="fa fa-building"></i>&nbsp;&nbsp;Organization Details&nbsp;&nbsp;&nbsp;
+          <%= @partner.partner_status %>
+          <small>for <%= current_partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="<%= partner_user_root_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+          <li class="breadcrumb-item"><a href="#">Profile</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<div class="row">
+  <div class="col-md-12">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-6">
+            <%= render "partners/profiles/show/agency_information" %>
+          </div>
+          <% @partner.partials_to_show.each do |partial| %>
+            <div class="col-6">
+              <%= render "partners/profiles/show/#{partial}" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+</div>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-footer">
+            <%# <% if @partner.verified? %> %>
+              <%# <%= link_to "Request Diapers", partner_requests_path, class: 'btn btn-success' %> %>
+            <%# <% end %> %>
+            <%# <% unless @partner.verified? %> %>
+              <%# <%= link_to partner_approve_path(@partner), class: "btn btn-primary #{'disabled' unless @partner.pending? || @partner.partner_status == "recertification_required"}" do %> %>
+                <%# <i class="fa fa-paper-plane"></i> Submit for Approval %>
+              <%# <% end %> %>
+            <%# <% end %> %>
+            <%# <%= link_to edit_partner_path(@partner), class: 'btn btn-primary' do %> %>
+              <%# <i class="fa fa-pencil"></i> Update Information %>
+            <%# <% end %> %>
+          <%# </div> %>
+        </div>
+        <!-- /.card -->
+      </div>
+      <!--/.col (left) -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>

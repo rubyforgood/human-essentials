@@ -1,0 +1,63 @@
+<div class="card mb-4">
+  <h5 class="card-header bg-primary text-white">Agency Stability</h5>
+  <div class="card-body">
+    <dl>
+      <dt>Year Founded</dt>
+      <dd><%= @partner.founded %></dd>
+
+      <dt>Form 990 Filed</dt>
+      <dd><%= humanize_boolean(@partner.form_990) %></dd>
+
+      <dt>Form 990</dt>
+      <% if @partner.proof_of_form_990.attached? %>
+        <dd>Attached
+          file: <%= link_to @partner.proof_of_form_990.blob['filename'], rails_blob_path(@partner.proof_of_form_990), class: "font-weight-bold" %></dd>
+      <% else %>
+        <dd>Form 990 not on file</dd>
+      <% end %>
+
+      <dt>Program Name</dt>
+      <dd><%= @partner.program_name %></dd>
+
+      <dt>Program Description</dt>
+      <dd><%= @partner.program_description %></dd>
+
+      <dt>Agency Age</dt>
+      <dd><%= @partner.program_age %></dd>
+
+      <dt>Case Management</dt>
+      <dd><%= humanize_boolean(@partner.case_management) %></dd>
+
+      <dt>Evidence Based</dt>
+      <dd><%= humanize_boolean(@partner.evidence_based) %></dd>
+
+      <dt>Evidence Base Description</dt>
+      <dd><%= @partner.evidence_based_description %></dd>
+
+      <dt>Verified Successes of Program</dt>
+      <dd><%= @partner.program_client_improvement %></dd>
+
+      <dt>Diaper Use</dt>
+      <dd><%= @partner.diaper_use %></dd>
+
+      <dt>Do You Receive Diapers From Other Sources</dt>
+      <dd><%= @partner.other_diaper_use %></dd>
+
+      <dt>Current Providing Diapers</dt>
+      <dd><%= humanize_boolean(@partner.currently_provide_diapers) %></dd>
+
+      <dt>Turn Away Child Care</dt>
+      <dd><%= humanize_boolean(@partner.turn_away_child_care) %></dd>
+
+      <address>
+        <strong>Program Address</strong> <br>
+        <%= @partner.program_address1 %> <br>
+        <% unless @partner.program_address2.blank? %>
+          <%= @partner.program_address2 %> <br>
+        <% end %>
+        <%= @partner.program_city %> <%= @partner.program_state %> <br>
+        <%= @partner.program_zip_code %>
+      </address>
+    </dl>
+  </div>
+</div>

@@ -14,4 +14,8 @@ module PartnersHelper
       "col-sm-4 col-4 #{additional_classes}"
     end
   end
+
+  def humanize_boolean(boolean)
+    boolean ? 'Yes' : 'No'
+  end
 end
