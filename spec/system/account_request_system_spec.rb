@@ -4,7 +4,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
     # Check for staging
     if Rails.env.development? || Rails.env.production? || Rails.env.test?
-      expect(page).to have_text(/Account Request Form/i)
+      expect(page).to have_selector(id: 'new_account_request')
     else
       expect(page).to have_link('click here', href: 'https://diaper.app/account_requests/new')
     end
