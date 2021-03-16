@@ -3,19 +3,19 @@
   <div class="card-body">
     <dl>
       <dt>Max Serve</dt>
-      <dd><%= @partner.max_serve %></dd>
+      <dd><%= partner.max_serve %></dd>
 
       <dt>Incorporate Plan</dt>
-      <dd><%= @partner.incorporate_plan %></dd>
+      <dd><%= partner.incorporate_plan %></dd>
 
       <dt>Responsible Staff Position</dt>
-      <dd><%= humanize_boolean(@partner.responsible_staff_position) %></dd>
+      <dd><%= humanize_boolean(partner.responsible_staff_position) %></dd>
 
       <dt>Storage Space</dt>
-      <dd><%= humanize_boolean(@partner.storage_space) %></dd>
+      <dd><%= humanize_boolean(partner.storage_space) %></dd>
 
       <dt>Storage Space Description</dt>
-      <dd><%= @partner.describe_storage_space %></dd>
+      <dd><%= partner.describe_storage_space %></dd>
     </dl>
   </div>
 </div>

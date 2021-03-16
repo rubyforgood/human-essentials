@@ -9,10 +9,12 @@ module Partners
     end
 
     def show
-      @partner = current_partner
+      # @partner = current_partner
     end
 
-    def edit; end
+    def edit
+      # @partner = current_partner
+    end
 
     def approve
       @partner = Partner.find(params[:partner_id])
@@ -22,9 +24,9 @@ module Partners
     end
 
     def update
-      if @partner.update(partner_params)
+      if current_partner.update(partner_params)
         flash[:success] = "Details were successfully updated."
-        redirect_to @partner
+        redirect_to partners_profile_path
       else
         render :edit
       end
@@ -38,12 +40,8 @@ module Partners
 
     private
 
-    # def set_partner
-    # @partner = authorize Partner.find(params[:id])
-    # end
-
     def partner_params
-      params.require(:partner).permit(
+      params.require(:partners_partner).permit(
         :name,
         :agency_type,
         :other_agency_type,

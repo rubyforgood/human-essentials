@@ -1,0 +1,32 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header bg-white">
+            <h3 class="card-title"><strong>Additional Documents</strong></h3>
+          </div>
+          <div class="card-body">
+            <% if partner.documents.attached? %>
+              <div class="row">
+                <div class="col-6">
+                  Attached files:
+                  <ul>
+                    <% partner.documents.each do |doc| %>
+                      <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></li>
+                    <% end %>
+                  </ul>
+                </div>
+                <div class="col-6">
+                  <%= form.file_field :documents, multiple: true, class: "form-control-file" %>
+                </div>
+              </div>
+            <% else %>
+              <%= form.file_field :documents, multiple: true, class: "form-control-file" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

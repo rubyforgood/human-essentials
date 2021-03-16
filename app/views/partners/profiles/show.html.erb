@@ -3,12 +3,12 @@
     <div class="row mb-2">
       <div class="col-sm-6">
         <% content_for :title, "My Organization - #{current_partner.name}" %>
-        <% if @partner.partner_status == "recertification_required" %>
+        <% if current_partner.partner_status == "recertification_required" %>
           <div class="alert alert-danger"><i class="fa fa-warning"></i>&nbsp;
             Please review your application details and submit for approval.</div>
         <% end %>
         <h1><i class="fa fa-building"></i>&nbsp;&nbsp;Organization Details&nbsp;&nbsp;&nbsp;
-          <%= @partner.partner_status %>
+          <%= current_partner.partner_status %>
           <small>for <%= current_partner.name %></small>
         </h1>
       </div>
@@ -27,11 +27,11 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-6">
-            <%= render "partners/profiles/show/agency_information" %>
+            <%= render partial: "partners/profiles/show/agency_information", locals: { partner: current_partner } %>
           </div>
-          <% @partner.partials_to_show.each do |partial| %>
+          <% current_partner.partials_to_show.each do |partial| %>
             <div class="col-6">
-              <%= render "partners/profiles/show/#{partial}" %>
+              <%= render partial: "partners/profiles/show/#{partial}", locals: { partner: current_partner }%>
             </div>
           <% end %>
         </div>
@@ -47,18 +47,18 @@
         <!-- jquery validation -->
         <div class="card card-primary">
           <div class="card-footer">
-            <%# <% if @partner.verified? %> %>
-              <%# <%= link_to "Request Diapers", partner_requests_path, class: 'btn btn-success' %> %>
-            <%# <% end %> %>
-            <%# <% unless @partner.verified? %> %>
-              <%# <%= link_to partner_approve_path(@partner), class: "btn btn-primary #{'disabled' unless @partner.pending? || @partner.partner_status == "recertification_required"}" do %> %>
+            <% if current_partner.verified? %>
+              <%= link_to "My Essentials Requests", partners_requests_path, class: 'btn btn-success' %>
+            <% end %>
+            <% unless current_partner.verified? %>
+              <%# <%= link_to partner_approve_path(current_partner), class: "btn btn-primary #{'disabled' unless current_partner.pending? || current_partner.partner_status == "recertification_required"}" do %> %>
                 <%# <i class="fa fa-paper-plane"></i> Submit for Approval %>
               <%# <% end %> %>
-            <%# <% end %> %>
-            <%# <%= link_to edit_partner_path(@partner), class: 'btn btn-primary' do %> %>
-              <%# <i class="fa fa-pencil"></i> Update Information %>
-            <%# <% end %> %>
-          <%# </div> %>
+            <% end %>
+            <%= link_to edit_partners_profile_path, class: 'btn btn-primary' do %>
+              <i class="fa fa-pencil"></i> Update Information
+            <% end %>
+          </div>
         </div>
         <!-- /.card -->
       </div>
