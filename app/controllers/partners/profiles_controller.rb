@@ -1,26 +1,20 @@
 module Partners
   class ProfilesController < BaseController
     layout 'partners/application'
-    # before_action :set_partner, only: [:show, :edit, :update, :destroy]
 
-    def index
-      # @partners = Partner.all
-      # authorize @partners
-    end
+    def show; end
 
-    def show
-      # @partner = current_partner
-    end
-
-    def edit
-      # @partner = current_partner
-    end
+    def edit; end
 
     def approve
-      @partner = Partner.find(params[:partner_id])
-      @partner.approve_me
+      partner = current_partner
+
+
+      # Add service object here to request approval
+
+      # Set Submitted
       flash[:success] = "You have submitted your details for approval."
-      redirect_to @partner
+      redirect_to partners_profile_path
     end
 
     def update
@@ -30,12 +24,6 @@ module Partners
       else
         render :edit
       end
-    end
-
-    def destroy
-      @partner.destroy
-      flash[:success] = "Partner was successfully destroyed."
-      redirect_to partners_path
     end
 
     private

@@ -48,13 +48,19 @@
         <div class="card card-primary">
           <div class="card-footer">
             <% if current_partner.verified? %>
-              <%= link_to "My Essentials Requests", partners_requests_path, class: 'btn btn-success' %>
+              <%= link_to '', class: 'btn btn-info disabled' do %>
+                <i class="fa fa-check"></i> Approved
+              <% end %>
+            <% elsif current_partner.partner_status == 'submitted' %>
+              <%= link_to '', class: "btn btn-warning disabled" do %>
+                <i class="fa fa-clock"></i> Pending Approval
+              <% end %>
+            <% else %>
+              <%= link_to approve_partners_profile_path, class: "btn btn-success" do %>
+                <i class="fa fa-paper-plane"></i> Submit for Approval
+              <% end %>
             <% end %>
-            <% unless current_partner.verified? %>
-              <%# <%= link_to partner_approve_path(current_partner), class: "btn btn-primary #{'disabled' unless current_partner.pending? || current_partner.partner_status == "recertification_required"}" do %> %>
-                <%# <i class="fa fa-paper-plane"></i> Submit for Approval %>
-              <%# <% end %> %>
-            <% end %>
+
             <%= link_to edit_partners_profile_path, class: 'btn btn-primary' do %>
               <i class="fa fa-pencil"></i> Update Information
             <% end %>
