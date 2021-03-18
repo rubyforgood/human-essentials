@@ -4,7 +4,7 @@
       <div class="col-sm-6">
         <% content_for :title, "Editing - #{current_partner.name}" %>
         <h1><i class="fa fa-edit"></i>&nbsp;&nbsp;Edit My Organization&nbsp;&nbsp;&nbsp;
-          <%= current_partner.partner_status %>
+          <%= partner_status_badge(current_partner) %>
           <small>for <%= current_partner.name %></small>
         </h1>
       </div>

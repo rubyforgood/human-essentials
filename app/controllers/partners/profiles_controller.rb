@@ -6,17 +6,6 @@ module Partners
 
     def edit; end
 
-    def approve
-      partner = current_partner
-
-
-      # Add service object here to request approval
-
-      # Set Submitted
-      flash[:success] = "You have submitted your details for approval."
-      redirect_to partners_profile_path
-    end
-
     def update
       if current_partner.update(partner_params)
         flash[:success] = "Details were successfully updated."

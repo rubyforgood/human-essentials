@@ -34,11 +34,8 @@ Rails.application.routes.draw do
   namespace :partners do
     resource :dashboard, only: [:show]
     resources :requests, only: [:show, :new, :index, :create]
-    resource :profile, only: [:show, :edit, :update] do
-      collection do
-        get :approve
-      end
-    end
+    resource :profile, only: [:show, :edit, :update]
+    resource :approval_request, only: [:create]
 
     resources :children, except: [:destroy] do
       post :active

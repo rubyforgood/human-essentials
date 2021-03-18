@@ -1,8 +1,6 @@
 module Partners
-  class RequestApproval
+  class RequestApprovalService
     include ServiceObjectErrorsMixin
-
-    attr_reader :partner
 
     def initialize(partner:)
       @partner = partner
@@ -10,6 +8,9 @@ module Partners
 
     def call
       return self unless valid?
+
+      partner.profile.update(partner_status: 'submitted')
+      partner.awaiting_review!
 
       self
     end
@@ -19,12 +20,11 @@ module Partners
     attr_reader :partner
 
     def valid?
-      if partner.partner_status == 'submitted'
+      if partner.profile.partner_status == 'submitted'
         errors.add(:base, 'partner has already requested approval')
       end
 
       errors.none?
     end
-
   end
 end

@@ -8,7 +8,7 @@
             Please review your application details and submit for approval.</div>
         <% end %>
         <h1><i class="fa fa-building"></i>&nbsp;&nbsp;Organization Details&nbsp;&nbsp;&nbsp;
-          <%= current_partner.partner_status %>
+          <%= partner_status_badge(current_partner) %>
           <small>for <%= current_partner.name %></small>
         </h1>
       </div>
@@ -56,7 +56,7 @@
                 <i class="fa fa-clock"></i> Pending Approval
               <% end %>
             <% else %>
-              <%= link_to approve_partners_profile_path, class: "btn btn-success" do %>
+              <%= link_to partners_approval_request_path, method: :post, class: "btn btn-success" do %>
                 <i class="fa fa-paper-plane"></i> Submit for Approval
               <% end %>
             <% end %>
