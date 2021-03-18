@@ -277,7 +277,6 @@ module Partners
     #
     def sync_attachments_from_partnerbase!
       ActiveRecord::Base.transaction do
-        # Fetch Blob data from Partner
         attachment_records = Partners::Base.connection.execute(
           <<-SQL
             SELECT asb.*, asa.* filename FROM active_storage_blobs asb
@@ -286,9 +285,6 @@ module Partners
               AND record_id = '#{id}'
           SQL
         )
-
-        # Must determine wither or not to keep or hide files depending on when it
-        # was added.
 
         old_acs_attachments = ActiveStorage::Attachment.where(
           record_type: self.class.name,
