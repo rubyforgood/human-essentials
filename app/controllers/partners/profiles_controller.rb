@@ -1,7 +1,5 @@
 module Partners
   class ProfilesController < BaseController
-    layout 'partners/application'
-
     def show; end
 
     def edit; end
