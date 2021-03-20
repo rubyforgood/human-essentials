@@ -72,7 +72,7 @@ class Partner < ApplicationRecord
   # Returns the primary Partners::User record which is the
   # first & main user associated to a partner agency.
   def primary_partner_user
-    profile&.user
+    profile&.primary_user
   end
 
   # better to extract this outside of the model
