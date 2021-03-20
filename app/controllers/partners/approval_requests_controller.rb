@@ -7,7 +7,7 @@ module Partners
       if svc.errors.none?
         flash[:success] = "You have submitted your details for approval."
       else
-        flash[:error] = "Sorry we've encountered an issue. Please try this requesting approval again"
+        flash[:error] = "Sorry we've encountered an issue. Please try requesting this approval again"
       end
 
       redirect_to partners_profile_path
