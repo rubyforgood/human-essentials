@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe Partners::Partner, type: :model do
   describe 'associations' do
-    it { should have_one(:user).dependent(:destroy) }
     it { should have_many(:users).dependent(:destroy) }
     it { should have_many(:requests).dependent(:destroy) }
     it { should have_many(:families).dependent(:destroy) }
@@ -11,6 +10,20 @@ RSpec.describe Partners::Partner, type: :model do
     it { should have_one_attached(:proof_of_partner_status) }
     it { should have_one_attached(:proof_of_form_990) }
     it { should have_many_attached(:documents) }
+
+    describe 'primary_user' do
+      subject { partner.primary_user }
+      let(:partner) { create(:partner).profile }
+      before do
+        second_user = partner.primary_user.clone
+        second_user.email = Faker::Internet.email
+        second_user.save!
+      end
+
+      it 'should return the first user ever created for a partner' do
+        expect(subject).to eq(partner.primary_user)
+      end
+    end
   end
 
   describe '#verified?' do
