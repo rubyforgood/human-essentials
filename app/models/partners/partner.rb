@@ -88,6 +88,7 @@
 module Partners
   class Partner < Base
     has_one :user, dependent: :destroy
+    has_many :users, dependent: :destroy
     has_many :requests, dependent: :destroy
     has_many :families, dependent: :destroy
     has_many :children, through: :families

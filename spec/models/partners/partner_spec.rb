@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe Partners::Partner, type: :model do
   describe 'associations' do
     it { should have_one(:user).dependent(:destroy) }
+    it { should have_many(:users).dependent(:destroy) }
     it { should have_many(:requests).dependent(:destroy) }
     it { should have_many(:families).dependent(:destroy) }
     it { should have_many(:children).through(:families) }
