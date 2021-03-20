@@ -2,6 +2,11 @@ module Partners
   class RequestApprovalService
     include ServiceObjectErrorsMixin
 
+    # Creates a new instance of Partners::RequestApprovalService
+    #
+    # @param partner: [Partner] the partner record
+    #
+    # @return [Partners::RequestApprovalService]
     def initialize(partner:)
       @partner = partner
     end
