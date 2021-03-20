@@ -364,7 +364,7 @@ img {
                     <tr>
                       <td>
                         <% organization = @resource.partner.organization %>
-                        <% is_primary_partner = @resource.id == @resource.partner.primary_user.id %>
+                        <% is_primary_partner = @resource.id == @resource.partner.primary_user&.id %>
 
                         <p>Hello <%= @resource.email %>!</p>
 
