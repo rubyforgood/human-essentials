@@ -87,7 +87,7 @@
 #
 module Partners
   class Partner < Base
-    has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :user
+    has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :partner
     has_many :users, dependent: :destroy
     has_many :requests, dependent: :destroy
     has_many :families, dependent: :destroy
