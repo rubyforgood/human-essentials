@@ -153,4 +153,12 @@ module UiHelper
       fa_icon icon, text: text
     end
   end
+
+  def optional_data_text(field)
+    if field.present?
+      tag.span(field)
+    else
+      tag.span("Not-Provided", class: "text-muted font-weight-light")
+    end
+  end
 end

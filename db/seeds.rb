@@ -166,7 +166,6 @@ note = [
   # ----------------------------------------------------------------------------
 
   partner = Partners::Partner.create!({
-    executive_director_name: Faker::Name.name,
     program_contact_name: Faker::Name.name,
     name: p.name,
     address1: Faker::Address.street_address,
@@ -178,7 +177,16 @@ note = [
     zips_served: Faker::Address.zip,
     diaper_bank_id: pdx_org.id,
     diaper_partner_id: p.id,
+    executive_director_name: Faker::Name.name,
     executive_director_email: p.email,
+    executive_director_phone: Faker::PhoneNumber.phone_number,
+    program_contact_name: Faker::Name.name,
+    program_contact_email: Faker::Internet.email,
+    program_contact_phone: Faker::PhoneNumber.phone_number,
+    program_contact_mobile: Faker::PhoneNumber.phone_number,
+    pick_up_name: Faker::Name.name,
+    pick_up_email: Faker::Internet.email,
+    pick_up_phone: Faker::PhoneNumber.phone_number,
     partner_status: partner_status_map[partner_option[:status]] || "pending",
     status_in_diaper_base: partner_option[:status]
   })

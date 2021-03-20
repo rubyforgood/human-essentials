@@ -32,9 +32,80 @@
         <% else %>
           <%= render "show_header", partner: @partner, impact_metrics: @impact_metrics, partner_distributions: @partner_distributions %>
         <% end %>
-        <% if @partner.notes.present? %>
-          <%= render "notes", partner: @partner %>
-        <% end %>
+
+        <section class="card card-info card-outline">
+          <div class="card-header">
+            <h2 class="card-title">Contact Information</h2>
+          </div>
+          <div class="card-body p-3">
+            <div class="row px-2">
+              <div class="col-lg-4 col-sm-12">
+                <div>
+                  <h4> Executive Director </h4>
+                  <div>
+                    <label>Name:</label> <%= optional_data_text(@partner.profile.executive_director_name) %>
+                  </div>
+                  <div>
+                    <label>Email:</label> <%= optional_data_text(@partner.profile.executive_director_email) %>
+                  </div>
+                  <div>
+                    <label>Phone:</label> <%= optional_data_text(@partner.profile.executive_director_phone) %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-sm-12">
+                <div>
+                  <h4> Program Manager </h4>
+                  <div>
+                    <label>Name:</label> <%= optional_data_text(@partner.profile.program_contact_name) %>
+                  </div>
+                  <div>
+                    <label>Email:</label> <%= optional_data_text(@partner.profile.program_contact_email) %>
+                  </div>
+                  <div>
+                    <label>Phone:</label> <%= optional_data_text(@partner.profile.program_contact_phone) %>
+                  </div>
+                  <div>
+                    <% # NOTE! The reason why the Mobile field appears for Program Manager and not the others is %>
+                    <% # because the existing table doesn't have the mobile field for the others %>
+                    <label>Mobile:</label> <%= optional_data_text(@partner.profile.program_contact_mobile) %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-sm-12">
+                <div>
+                  <h4> Pickup Person </h4>
+                  <div>
+                    <label>Name:</label> <%= optional_data_text(@partner.profile.pick_up_name) %>
+                  </div>
+                  <div>
+                    <label>Email:</label> <%= optional_data_text(@partner.profile.pick_up_email) %>
+                  </div>
+                  <div>
+                    <label>Phone:</label> <%= optional_data_text(@partner.profile.pick_up_phone) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card card-info card-outline">
+          <div class="card-header">
+            <h2 class="card-title">Notes</h2>
+          </div>
+          <div class="card-body p-2">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12" id="partner-notes">
+                <% if @partner.notes %>
+                  <p><%= simple_format(@partner.notes) %></p>
+                <% else %>
+                  <p> None provided </p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <% if @partner.documents.present? %>
           <%= render "documents", partner: @partner %>
@@ -84,6 +155,7 @@
       </div>
     </div>
   </div>
+
   <div id="addUserModal" class="modal fade">
     <div class="modal-dialog">
       <!-- Modal content-->
