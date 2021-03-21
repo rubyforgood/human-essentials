@@ -231,17 +231,34 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe 'updating partner fields' do
-    it 'does not update the partner application when the partner_form_fields do not change' do
-      expect do
-        organization.save
-      end.to change(PartnerFieldsJob.jobs, :size).by(0)
-    end
+  describe 'sync_visible_partner_form_sections' do
+    context 'when the partner_form_fields change' do
+      let(:partner_fields) { Organization::ALL_PARTIALS.map { |t| t[0] }.sample(3) }
+      before do
+        organization.partner_form_fields = partner_fields
+      end
 
-    it 'does update the partner application when the partner_form_fields do not change' do
-      expect do
-        organization.update(partner_form_fields: ["test"])
-      end.to change(PartnerFieldsJob.jobs, :size).by(1)
+      context 'and a Partners::PartnerForm does not exist yet' do
+        before do
+          expect(Partners::PartnerForm.where(diaper_bank_id: organization.id).count).to eq(0)
+        end
+
+        it 'should create or update the new partner form with the correct section values' do
+          expect { organization.save }.to change {
+            Partners::PartnerForm.where(diaper_bank_id: organization.id, sections: organization.partner_form_fields).count
+          }.by(1)
+        end
+      end
+
+      context 'and a Partners::PartnerForm already exists' do
+        let!(:existing_partner_form) { Partners::PartnerForm.new(diaper_bank_id: organization.id, sections: []).tap(&:save!) }
+
+        it 'should update the existing partner form' do
+          expect { organization.save }.to change {
+            existing_partner_form.reload.sections
+          }.to(partner_fields)
+        end
+      end
     end
   end
 

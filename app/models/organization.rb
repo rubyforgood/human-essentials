@@ -88,7 +88,7 @@ class Organization < ApplicationRecord
     end
   end
 
-  before_update :update_partner_sections, if: :partner_form_fields_changed?
+  before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
 
   ALL_PARTIALS = [
     ['Media Information', 'media_information'],
@@ -221,8 +221,12 @@ class Organization < ApplicationRecord
 
   private
 
-  def update_partner_sections
-    PartnerFieldsJob.perform_async(id)
+  def sync_visible_partner_form_sections
+    partner_form = Partners::PartnerForm.where(
+      diaper_bank_id: id,
+    ).first_or_create
+
+    partner_form.update!(sections: partner_form_fields)
   end
 
   def correct_logo_mime_type
