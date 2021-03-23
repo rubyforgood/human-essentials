@@ -85,8 +85,6 @@ class StorageLocationsController < ApplicationController
                                            .includes(inventory_items: :item)
                                            .find(params[:id])
                                            .inventory_items
-
-    @inventory_items = @inventory_items.active unless params[:include_inactive_items] == "true"
     respond_to :json
   end
 

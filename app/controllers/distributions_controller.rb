@@ -89,7 +89,7 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
-    @items = current_organization.items.active.alphabetized
+    @items = current_organization.items.alphabetized
     @storage_locations = current_organization.storage_locations.alphabetized
   end
 
