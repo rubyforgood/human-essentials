@@ -116,22 +116,6 @@ RSpec.feature "Distributions", type: :system do
     end
   end
 
-  it "Does not include inactive items in the line item fields" do
-    visit @url_prefix + "/distributions/new"
-
-    item = Item.alphabetized.first
-
-    select @storage_location.name, from: "From storage location"
-    expect(page).to have_content(item.name)
-    select item.name, from: "distribution_line_items_attributes_0_item_id"
-
-    item.update(active: false)
-
-    page.refresh
-    select @storage_location.name, from: "From storage location"
-    expect(page).to have_no_content(item.name)
-  end
-
   it "errors if user does not fill storage_location" do
     visit @url_prefix + "/distributions/new"
 
@@ -319,7 +303,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       it "User creates a distribution from a donation then edits it" do
-        within "#edit_distribution_#{@distribution.to_param}" do
+        within ".distribution_line_items_quantity" do
           first(".numeric").set 13
         end
         click_on "Save"
@@ -328,7 +312,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       it "User creates a distribution from a donation then tries to make the quantity too big", js: true do
-        within "#edit_distribution_#{@distribution.to_param}" do
+        within ".distribution_line_items_quantity" do
           first(".numeric").set 999_999
         end
         click_on "Save"
@@ -345,10 +329,11 @@ RSpec.feature "Distributions", type: :system do
         diaper_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
         select(diaper_type, from: first_item_name_field)
-        find_all(".numeric")[0].set 1
+
+        find_all(".numeric")[1].set 1
 
         click_on "Add another item"
-        find_all(".numeric")[1].set 3
+        find_all(".numeric")[2].set 3
 
         first("button", text: "Save").click
 

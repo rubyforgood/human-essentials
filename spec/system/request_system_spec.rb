@@ -1,8 +1,9 @@
 RSpec.describe "Requests", type: :system, js: true do
   before do
     sign_in(@user)
-    @storage_location = create(:storage_location, organization: @organization)
+    @storage_location = create(:storage_location, :with_items, organization: @organization)
   end
+
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
   let(:item1) { create(:item, name: "Good item") }
