@@ -39,7 +39,7 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .order('created_at DESC')
+                     .order('created_at ASC')
                      .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
@@ -91,7 +91,7 @@ class DistributionsController < ApplicationController
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
     @items = current_organization.items.alphabetized
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
   end
 
   def show
@@ -110,7 +110,7 @@ class DistributionsController < ApplicationController
     if (!@distribution.complete? && @distribution.future?) || current_user.organization_admin?
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.alphabetized
+      @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
