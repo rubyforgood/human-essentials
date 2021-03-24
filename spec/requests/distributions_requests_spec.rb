@@ -60,7 +60,6 @@ RSpec.describe "Distributions", type: :request do
         params = default_params.merge(distribution)
         expect(storage_location).to be_valid
         expect(partner).to be_valid
-        expect(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
         expect do
           post distributions_path(params)
@@ -255,8 +254,6 @@ RSpec.describe "Distributions", type: :request do
 
       context "mail follow up" do
         subject { patch distribution_path(distribution_params) }
-
-        before { allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true) }
 
         it "does not send an e-mail" do
           expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
