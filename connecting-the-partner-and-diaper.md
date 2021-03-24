@@ -108,6 +108,3 @@ bundle exec sidekiq -q default
 #####  My ENV variables are incorrect even though I changed them in the `.env` file
 
 Try running `puma-dev -uninstall` and then running `puma-dev -install` again. It appears that the ENV variables (maybe initialization) doesn't change unless you re-install puma-dev.
-
-##### Creating a partner on the diaper app does not seem to trigger a invite on the partner application.
-As of today, you need to explicitly tell `Flipper` to enable sending emails locally. You can do this by opening up the rails console in diaper and running `Flipper.activate(:email_active).` You will need to re-queue the invitation request again.
