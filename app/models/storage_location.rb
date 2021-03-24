@@ -51,6 +51,9 @@ class StorageLocation < ApplicationRecord
   scope :containing, ->(item_id) {
     joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
   }
+  scope :has_inventory_items, -> {
+    includes(:inventory_items).where.not(inventory_items: { id: nil })
+  }
   scope :alphabetized, -> { order(:name) }
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
 
