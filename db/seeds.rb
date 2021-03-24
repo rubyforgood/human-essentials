@@ -166,7 +166,6 @@ note = [
   # ----------------------------------------------------------------------------
 
   partner = Partners::Partner.create!({
-    program_contact_name: Faker::Name.name,
     name: p.name,
     address1: Faker::Address.street_address,
     address2: "",
@@ -314,6 +313,19 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
   inventory.organization = pdx_org
   inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[1]
   inventory.square_footage = 20_000
+end
+
+#
+# Define all the InventoryItem for each of the StorageLocation
+#
+StorageLocation.all.each do |sl|
+  Item.all.each do |item|
+    InventoryItem.create!(
+      storage_location: sl,
+      item: item,
+      quantity: Faker::Number.within(range: 500..2000)
+    )
+  end
 end
 
 # ----------------------------------------------------------------------------
@@ -498,11 +510,19 @@ end
 
 20.times.each do |count|
   status = count > 15 ? 'fulfilled' : 'pending'
+
+  org_items = pdx_org.items.pluck(:id)
+  request_items = Array.new(Faker::Number.within(range: 3..8)).map do |item|
+    {
+      "item_id" => org_items.sample,
+      "quantity" => Faker::Number.within(range: 5..10)
+    }
+  end
+
   Request.create(
     partner: random_record_for_org(pdx_org, Partner),
     organization: pdx_org,
-    request_items: [{ "item_id" => Item.all.pluck(:id).sample, "quantity" => 3 },
-                    { "item_id" => Item.all.pluck(:id).sample, "quantity" => 2 }],
+    request_items: request_items,
     comments: "Urgent",
     status: status
   )
