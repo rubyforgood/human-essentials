@@ -188,7 +188,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.14.0)
       faraday (>= 0.7.4, < 1.0)
-    ffi (1.14.2)
+    ffi (1.15.0)
     filterrific (5.2.1)
     flipper (0.20.4)
     flipper-active_record (0.20.4)
@@ -265,7 +265,7 @@ GEM
     letter_opener (1.7.0)
       launchy (~> 2.2)
     libv8 (8.4.255.0)
-    listen (3.4.1)
+    listen (3.5.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     loofah (2.9.0)
@@ -610,7 +610,7 @@ DEPENDENCIES
   knapsack_pro
   launchy
   letter_opener
-  listen (~> 3.4.1)
+  listen (~> 3.5.0)
   magic_test
   mini_racer (~> 0.3.1)
   momentjs-rails
