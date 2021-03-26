@@ -17,7 +17,7 @@ class PartnerInviteService
   attr_reader :partner
 
   def valid?
-    if partner.profile.user
+    if partner.profile.primary_user
       errors.add(:base, "Partner has already been invited")
     end
 

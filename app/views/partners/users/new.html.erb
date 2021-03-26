@@ -1,0 +1,55 @@
+<div class="app-title">
+  <div>
+    <h1><i class="fa fa-new"></i>New User</h1>
+  </div>
+  <ul class="app-breadcrumb breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-users"></i></li>
+    <li class="breadcrumb-item"><a href="#">New User</a></li>
+  </ul>
+</div>
+
+<%= form_for @user, html: {method: :post} do |form| %>
+  <div class="row p-3">
+
+    <div class="col-md-12">
+      <% if @user.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+          <ul>
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="tile">
+        <h3 class="tile-title">Invite a New User to <%= current_partner.name %></h3>
+        <div class="tile-body">
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :name, class: "control-label col-md-3" %>
+              <%= form.text_field :name, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="form-horizontal">
+            <div class="form-group row">
+              <%= form.label :email, class: "control-label col-md-3" %>
+              <%= form.text_field :email, class: "col-md-8 form-control" %>
+            </div>
+          </div>
+
+          <div class="actions">
+            <%= form.submit(class: 'btn btn-primary') %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='p-3'>
+      <%= link_to 'Back', partners_users_path %>
+    </div>
+  </div>
+<% end %>
+

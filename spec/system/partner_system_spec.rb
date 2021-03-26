@@ -158,7 +158,7 @@ RSpec.describe "Partner management", type: :system, js: true do
 
     it "allows a user to invite a partner", :js do
       partner = create(:partner, name: 'Charities')
-      partner.profile.user.delete
+      partner.profile.primary_user.delete
 
       visit url_prefix + "/partners"
 
