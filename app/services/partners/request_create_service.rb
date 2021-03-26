@@ -51,6 +51,9 @@ module Partners
         )
       end
 
+      p item_requests_attributes
+      p item_requests
+
       partner_request.item_requests << item_requests
 
       partner_request
