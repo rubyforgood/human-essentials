@@ -114,10 +114,6 @@ class Partner < ApplicationRecord
     end
   end
 
-  def add_user_on_partnerbase(options = {})
-    AddDiaperPartnerJob.perform_now(id, options)
-  end
-
   def contact_person
     return @contact_person if @contact_person
 

@@ -170,7 +170,7 @@
               exists in the Partnerbase system. If a user with that email exists it will send them a password reminder.
             </p>
             <br/>
-            <%= form_tag re_invite_partner_path do %>
+            <%= form_tag invite_partner_user_partner_path do %>
               <div class="input-group">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
                 <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
