@@ -53,6 +53,33 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
   end
 
+  describe 'adding another user to a partner account' do
+    let(:partner) { create(:partner, status: 'invited') }
+    before do
+      @user.update(organization_admin: true)
+    end
+
+    context 'when adding a new user to a partner account succesfully' do
+      let(:email) { Faker::Internet.email }
+
+      before do
+        visit url_prefix + "/partners/#{partner.id}"
+
+        click_on 'Add/Remind Partner'
+        assert page.has_content? "Add a User or Send a Reminder for #{partner.name}"
+
+        fill_in 'email', with: email
+
+        find_button('Invite User').click
+        assert page.has_content? "We have invited #{email} to #{partner.name}!"
+      end
+
+      it 'should create a new user for that partner' do
+        expect(Partners::User.find_by(email: email, partner: partner.profile)).not_to eq(nil)
+      end
+    end
+  end
+
   describe 'adding a new partner and inviting them' do
     context 'when adding & inviting a partner successfully' do
       let(:partner_attributes) do
