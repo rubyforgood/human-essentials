@@ -47,10 +47,13 @@
             <div class="box">
               <div class="box-body">
 
-                <%= simple_form_for @distribution, html: {class: "storage-location-required"}, 
+                <%= simple_form_for @distribution, html: {class: "storage-location-required"},
                   wrapper_mappings: {
                     datetime: :custom_multi_select
                   } do |f| %>
+
+
+                  <%= f.input :id, disabled: true, label: "ID" %>
 
                   <%= f.association :partner,
                                     collection: current_organization.partners.alphabetized,

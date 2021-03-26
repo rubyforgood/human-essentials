@@ -25,11 +25,11 @@ RSpec.describe AccountRequestMailer, type: :mailer do
     end
 
     it 'should include the staging/demo account information' do
-      expect(mail.body.encoded).to match(%r{<a href='https://diaperbase.org/'>DiaperBase</a>})
+      expect(mail.body.encoded).to match(%r{<a href='https://staging.humanessentials.app/'>DiaperBase</a>})
       expect(mail.body.encoded).to match('Username: org_admin1@example.com')
       expect(mail.body.encoded).to match('Password: password')
 
-      expect(mail.body.encoded).to match(%r{<a href='https://partnerbase.org/'>PartnerBase</a>})
+      expect(mail.body.encoded).to match(%r{<a href='https://staging.partner.humanessentials.app/'>PartnerBase</a>})
       expect(mail.body.encoded).to match('Username: verified@example.com')
       expect(mail.body.encoded).to match('Password: password')
     end

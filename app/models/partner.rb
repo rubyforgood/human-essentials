@@ -77,11 +77,13 @@ class Partner < ApplicationRecord
 
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
+    organization = Organization.find(organization_id)
+
     csv.each do |row|
       hash_rows = Hash[row.to_hash.map { |k, v| [k.downcase, v] }]
-      loc = Partner.new(hash_rows)
-      loc.organization_id = organization_id
-      loc.save
+
+      svc = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
+      svc.call
     end
   end
 
