@@ -45,7 +45,7 @@ def fetch_latest_backups
   #
   [latest_diaper_backup, latest_partner_backup].each do |backup|
     filepath = fetch_file_path(backup)
-    puts "\nDownloading blob #{backup.name} to " + filepath
+    puts "\nDownloading blob #{backup.name} to #{filepath}"
     blob, content = blob_client.get_blob(BACKUP_CONTAINER_NAME, backup.name)
     File.open(filepath, "wb") { |f| f.write(content)  }
   end
