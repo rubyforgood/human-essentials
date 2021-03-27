@@ -48,7 +48,7 @@ describe PartnerRequestRecertificationService do
         expect(fake_recertification_request).to have_received(:deliver_later)
       end
 
-      context 'but a unexpected error occured during the save' do
+      context 'but a unexpected error occurred during the save' do
         let(:error_message) { 'boom' }
 
         context 'for partner approval' do
@@ -77,4 +77,3 @@ describe PartnerRequestRecertificationService do
     end
   end
 end
-
