@@ -1,8 +1,5 @@
 module Partners
   class IndividualsRequestsController < BaseController
-    # before_action :authenticate_user!
-    # before_action :verify_status_in_diaper_base
-    # before_action :authorize_verified_partners
 
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
@@ -14,8 +11,8 @@ module Partners
     def create
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_partner_user.id,
-        comments: family_request_params[:comments],
-        family_requests_attributes: family_request_params[:items_attributes]
+        comments: individuals_request_params[:comments],
+        family_requests_attributes: individuals_request_params[:items_attributes]
       )
 
       create_service.call
@@ -35,7 +32,7 @@ module Partners
 
     private
 
-    def family_request_params
+    def individuals_request_params
       params.require(:partners_family_request)
             .permit(:comments, items_attributes: %i[item_id person_count])
     end
