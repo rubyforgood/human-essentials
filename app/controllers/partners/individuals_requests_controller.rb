@@ -1,6 +1,5 @@
 module Partners
   class IndividualsRequestsController < BaseController
-
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
       @requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
@@ -12,7 +11,7 @@ module Partners
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_partner_user.id,
         comments: individuals_request_params[:comments],
-        family_requests_attributes: individuals_request_params[:items_attributes]
+        family_requests_attributes: individuals_request_params[:items_attributes]&.values
       )
 
       create_service.call

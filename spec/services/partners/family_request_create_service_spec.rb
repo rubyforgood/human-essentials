@@ -41,10 +41,10 @@ describe Partners::FamilyRequestCreateService do
       context 'because a unrecogonized item_id was provided' do
         let(:family_requests_attributes) do
           [
-            {
+            ActionController::Parameters.new({
               item_id: 0,
               person_count: Faker::Number.within(range: 1..10)
-            }
+            })
           ]
         end
 
@@ -75,14 +75,14 @@ describe Partners::FamilyRequestCreateService do
           }
         end
       end
-      let(:fake_request_create_service) { instance_double(Partners::RequestCreateService, call: -> {}) }
+      let(:fake_request_create_service) { instance_double(Partners::RequestCreateService, call: -> {}, errors: []) }
 
       before do
         allow(Partners::RequestCreateService).to receive(:new).with(partner_user_id: partner_user.id, comments: comments, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
       end
 
       it 'should send the correct request payload to the Partners::RequestCreateService and call it' do
-        subject.call
+        subject
         expect(fake_request_create_service).to have_received(:call)
       end
     end

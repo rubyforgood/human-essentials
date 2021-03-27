@@ -22,6 +22,7 @@ module Partners
         comments: comments,
         item_requests_attributes: item_requests_attributes
       )
+
       request_create_svc.call
 
       if request_create_svc.errors.any?
@@ -50,7 +51,7 @@ module Partners
     end
 
     def item_requests_attributes
-      @item_requests_attributes ||= family_requests_attributes.values.map do |fr_attr|
+      @item_requests_attributes ||= family_requests_attributes.map do |fr_attr|
         item = included_items.find { |i| i.id == fr_attr[:item_id].to_i }
 
         {
@@ -70,7 +71,7 @@ module Partners
     end
 
     def included_items
-      @included_items ||= Item.where(id: family_requests_attributes.values.map { |fr_attr| fr_attr[:item_id] })
+      @included_items ||= Item.where(id: family_requests_attributes.map { |fr_attr| fr_attr[:item_id] })
     end
   end
 end
