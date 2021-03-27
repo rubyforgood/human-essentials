@@ -7,7 +7,8 @@ describe Partners::RequestCreateService do
       {
         partner_user_id: partner_user.id,
         comments: comments,
-        item_requests_attributes: item_requests_attributes
+        item_requests_attributes: item_requests_attributes,
+        additional_attrs: additional_attrs
       }
     end
     let(:partner_user) { partner.primary_partner_user }
@@ -21,6 +22,7 @@ describe Partners::RequestCreateService do
         )
       ]
     end
+    let(:additional_attrs) { { for_families: true } }
 
     context 'when the arguments are incorrect' do
       context 'because no item_requests_attributes were defined' do
@@ -86,6 +88,11 @@ describe Partners::RequestCreateService do
 
       it 'should create a sent Partners::Request record' do
         expect { subject }.to change { Partners::Request.where(sent: true).count }.by(1)
+      end
+
+      it 'should set the additional_attrs provided' do
+        subject
+        expect(Partners::Request.last.for_families).to eq(true)
       end
 
       it 'should create a Request record' do

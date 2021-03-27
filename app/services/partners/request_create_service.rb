@@ -4,15 +4,17 @@ module Partners
 
     attr_reader :partner_request
 
-    def initialize(partner_user_id:, comments: nil, item_requests_attributes: [])
+    def initialize(partner_user_id:, comments: nil, item_requests_attributes: [], additional_attrs: {})
       @partner_user_id = partner_user_id
       @comments = comments
       @item_requests_attributes = item_requests_attributes
+      @additional_attrs = additional_attrs
     end
 
     def call
       @partner_request = Partners::Request.new(partner_id: partner.id, organization_id: organization_id, comments: comments, sent: true)
       @partner_request = populate_item_request(@partner_request)
+      @partner_request.assign_attributes(additional_attrs)
 
       unless @partner_request.valid?
         @partner_request.errors.each do |k, v|
@@ -39,7 +41,7 @@ module Partners
 
     private
 
-    attr_reader :partner_user_id, :comments, :item_requests_attributes
+    attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs
 
     def populate_item_request(partner_request)
       item_requests = item_requests_attributes.map do |ira|
@@ -50,9 +52,6 @@ module Partners
           partner_key: fetch_orgnaization_partner_key(ira['item_id'])
         )
       end
-
-      p item_requests_attributes
-      p item_requests
 
       partner_request.item_requests << item_requests
 
