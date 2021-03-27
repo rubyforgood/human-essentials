@@ -142,6 +142,26 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
   end
 
+  describe 'requesting recertification of a partner' do
+    context 'GIVEN a user goes through the process of requesting recertificaiton of partner' do
+      let!(:partner_to_request_recertification) { create(:partner, status: 'approved') }
+
+      before do
+        sign_in(@user)
+        visit partners_path(@organization)
+      end
+
+      it 'should notify the user that its been successful and change the partner status' do
+        accept_confirm do
+          find_button('Request Recertification').click
+        end
+
+        assert page.has_content? "#{partner_to_request_recertification.name} recertification successfully requested!"
+        expect(partner_to_request_recertification.reload.recertification_required?).to eq(true)
+      end
+    end
+  end
+
   describe "#index" do
     before(:each) do
       @uninvited = create(:partner, name: "Bcd", status: :uninvited)

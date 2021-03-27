@@ -111,13 +111,17 @@ class PartnersController < ApplicationController
 
   def recertify_partner
     @partner = current_organization.partners.find(params[:id])
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "recertification_required")
-    if response.is_a?(Net::HTTPSuccess)
-      @partner.recertification_required!
-      redirect_to partners_path, notice: "#{@partner.name} recertification successfully requested!"
+
+    svc = PartnerRequestRecertificationService.new(partner: @partner)
+    svc.call
+
+    if svc.errors.none?
+      flash[:success] = "#{@partner.name} recertification successfully requested!"
     else
-      redirect_to partners_path, error: "#{@partner.name} failed to update partner records"
+      flash[:error] = "#{@partner.name} failed to update partner records"
     end
+
+    redirect_to partners_path
   end
 
   def deactivate
