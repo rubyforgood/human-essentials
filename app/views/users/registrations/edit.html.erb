@@ -7,7 +7,12 @@
           Editing
           <small>your profile</small>
         </h1>
-      </div>
+        <% if Rails.env.staging? %>
+          <div class="staging-warning">
+            <p> <strong> You are accessing a demo version which does not allow changes to the demo account credentials </strong> </p>
+          </div>
+        <% end %>
+      </div> 
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
           <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
@@ -82,7 +87,11 @@
             <!-- /.row -->
           </div>
             <div class="card-footer text-right">
+            <% unless Rails.env.staging? %>
               <%= submit_button %>
+              <% else %>
+              <%= _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "pull-right" }, disabled: true) %>
+              <% end %>
             </div>
           <!-- ./card-body -->
           <!-- /.card-footer -->
