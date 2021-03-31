@@ -567,12 +567,16 @@ RSpec.describe "Donations", type: :system, js: true do
         end
       end
 
-      it "displays default message if no comment" do
-        donation = create(:donation, :with_items, comment: nil)
+      context 'when there is no comment defined' do
+        before do
+          donation = create(:donation, :with_items, comment: nil)
+          visit @url_prefix + "/donations/#{donation.id}"
+        end
 
-        visit @url_prefix + "/donations/#{donation.id}"
-        within "#donation-notes" do
-          expect(page).to have_content("None provided")
+        it 'displays the None provided as the comment ' do
+          within "#donation-notes" do
+            expect(page).to have_content("None provided")
+          end
         end
       end
     end
