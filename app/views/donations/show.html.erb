@@ -57,14 +57,12 @@
             <h2 class="card-title">Notes</h2>
           </div>
           <div class="card-body p-0">
-            <div class="card">
-              <div class="col-xs-12 col-sm-12" id="donation-notes">
-                <% if @donation.comment %>
-                  <p><%= simple_format(@donation.comment) %></p>
-                <% else %>
-                  <p class='font-italic'> None provided </p>
-                <% end %>
-              </div>
+            <div class="col-xs-12 col-sm-12" id="donation-notes">
+              <% if @donation.comment %>
+                <p><%= simple_format(@donation.comment) %></p>
+              <% else %>
+                <p class='font-italic'> None provided </p>
+              <% end %>
             </div>
           </div>
         </div>
