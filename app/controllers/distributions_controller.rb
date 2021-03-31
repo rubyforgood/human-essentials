@@ -39,7 +39,6 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .order('distributions.created_at DESC')
                      .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
