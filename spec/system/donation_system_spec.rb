@@ -561,8 +561,8 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it "displays donation comment" do
-        expect(page).to have_css("#donation-notes")
-        within "#donation-notes" do
+        expect(page).to have_css("#donation-comment")
+        within "#donation-comment" do
           expect(page).to have_content("It's a fine day for diapers.")
         end
       end
@@ -574,7 +574,7 @@ RSpec.describe "Donations", type: :system, js: true do
         end
 
         it 'displays the None provided as the comment ' do
-          within "#donation-notes" do
+          within "#donation-comment" do
             expect(page).to have_content("None provided")
           end
         end
