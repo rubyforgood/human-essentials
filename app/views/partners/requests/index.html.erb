@@ -41,7 +41,6 @@
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Contents</th>
-                <th scope="col">Pickup Sheet</th>
                 <th scope="col">Request Date</th>
               </tr>
               </thead>
@@ -50,13 +49,6 @@
                 <tr>
                   <th scope="row"><%= link_to partner_request.id, partners_request_path(id: partner_request.id) %></th>
                   <td><%= partner_request.item_requests.map { |item| "#{item.quantity} of #{item.name}" }.join(", ") %></td>
-                  <td>
-                    <% if partner_request.for_families? %>
-                      <%= link_to 'TODO', class: 'btn btn-sm btn-info' do %>
-                        <i class="fa fa-edit"></i> (TODO) Pickup Sheet
-                      <% end %>
-                    <% end %>
-                  </td>
                   <td><%= partner_request.created_at.strftime("%B %-d %Y") %></td>
                 </tr>
                 </tbody>
