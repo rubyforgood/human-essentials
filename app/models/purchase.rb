@@ -51,10 +51,6 @@ class Purchase < ApplicationRecord
     vendor.nil? ? purchased_from : vendor.business_name
   end
 
-  def total_quantity
-    line_items.sum(:quantity)
-  end
-
   def amount_spent_in_dollars
     amount_spent_in_cents.to_d / 100
   end

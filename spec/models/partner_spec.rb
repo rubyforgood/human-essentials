@@ -63,30 +63,6 @@ RSpec.describe Partner, type: :model do
       end
     end
   end
-  # context "Callbacks >" do
-  #   describe "when DIAPER_PARTNER_URL is present" do
-  #     let(:diaper_partner_url) { "http://diaper.partner.io" }
-  #     let(:callback_url) { "#{diaper_partner_url}/partners" }
-  #
-  #     before do
-  #       stub_env "DIAPER_PARTNER_URL", diaper_partner_url
-  #       stub_env "DIAPER_PARTNER_SECRET_KEY", "secretkey123"
-  #       stub_request :post, callback_url
-  #     end
-  #
-  #     it "notifies the Diaper Partner app" do
-  #       partner = create :partner
-  #       headers = {
-  #         "Authorization" => /APIAuth diaperbase:.*/,
-  #         "Content-Type" => "application/x-www-form-urlencoded"
-  #       }
-  #       body = URI.encode_www_form partner.attributes
-  #       expect(WebMock).to have_requested(:post, callback_url)
-  #         .with(headers: headers, body: body).once
-  #     end
-  #
-  #   end
-  # end
 
   describe '#deactivated?' do
     subject { partner.deactivated? }
@@ -110,6 +86,25 @@ RSpec.describe Partner, type: :model do
       it 'should return false' do
         expect(subject).to eq(false)
       end
+    end
+  end
+
+  describe '#profile' do
+    subject { partner.profile }
+    let(:partner) { create(:partner) }
+
+    it 'should return the associated Partners::Partner record' do
+      expect(subject).to eq(Partners::Partner.find_by(diaper_partner_id: partner.id))
+    end
+  end
+
+  describe '#primary_partner_user' do
+    subject { partner.primary_partner_user }
+    let(:partner) { create(:partner) }
+
+    it 'should return the asssociated primary Partners::User' do
+      primary_partner_user = Partners::User.find_by(partner_id: partner.profile.id)
+      expect(subject).to eq(primary_partner_user)
     end
   end
 
@@ -138,48 +133,27 @@ RSpec.describe Partner, type: :model do
         Partner.import_csv(csv, organization.id)
       end.to change { Partner.count }.by(20)
     end
-
-    it "not send emails after importing a csv file" do
-      expect(UpdateDiaperPartnerJob).not_to receive(:perform_now)
-
-      import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
-      data = File.read(import_file_path, encoding: "BOM|UTF-8")
-      csv = CSV.parse(data, headers: true)
-      Partner.import_csv(csv, organization.id)
-    end
   end
 
   describe "#csv_export_attributes" do
     let!(:partner) { create(:partner) }
-    let(:partnerbase_partner) do
-      {
-        agency: {
-          contact_person: {
-            name: "Jon Ralfeo",
-            phone: "1231231234",
-            email: "jon@entertainment720.com"
-          }
-        }
-      }.to_json
-    end
+
+    let(:contact_name) { "Jon Ralfeo" }
+    let(:contact_email) { "jon@entertainment720.com" }
+    let(:contact_phone) { "1231231234" }
 
     before do
-      allow(DiaperPartnerClient).to receive(:get).with({ id: partner.id }) { partnerbase_partner }
+      partner.profile.update({
+                               program_contact_name: contact_name,
+                               program_contact_email: contact_email,
+                               program_contact_phone: contact_phone
+                             })
     end
 
     it "includes contact person information from parnerbase" do
-      expect(partner.csv_export_attributes).to include("Jon Ralfeo")
-      expect(partner.csv_export_attributes).to include("1231231234")
-      expect(partner.csv_export_attributes).to include("jon@entertainment720.com")
-    end
-  end
-
-  describe '#contact_person' do
-    let(:partner) { create(:partner) }
-
-    it "checks for agency in response before fetching contact info" do
-      allow(partner).to receive(:partnerbase_partner) { instance_double('partnerbase_partner', agency: nil) }
-      expect(partner.contact_person).to eq({})
+      expect(partner.csv_export_attributes).to include(contact_name)
+      expect(partner.csv_export_attributes).to include(contact_phone)
+      expect(partner.csv_export_attributes).to include(contact_email)
     end
   end
 

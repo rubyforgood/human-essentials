@@ -88,7 +88,7 @@ class Organization < ApplicationRecord
     end
   end
 
-  before_update :update_partner_sections, if: :partner_form_fields_changed?
+  before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
 
   ALL_PARTIALS = [
     ['Media Information', 'media_information'],
@@ -193,14 +193,6 @@ class Organization < ApplicationRecord
     reload
   end
 
-  def logo_path
-    if logo.attached?
-      ActiveStorage::Blob.service.send(:path_for, logo.key).to_s
-    else
-      Organization::DIAPER_APP_LOGO.to_s
-    end
-  end
-
   def valid_items
     items.active.visible.map do |item|
       {
@@ -211,6 +203,16 @@ class Organization < ApplicationRecord
     end
   end
 
+  def item_id_to_display_string_map
+    valid_items.each_with_object({}) do |item, hash|
+      hash[item[:id].to_i] = item[:name]
+    end
+  end
+
+  def valid_items_for_select
+    valid_items.map { |item| [item[:name], item[:id]] }.sort
+  end
+
   def from_email
     return get_admin_email if email.blank?
 
@@ -219,8 +221,12 @@ class Organization < ApplicationRecord
 
   private
 
-  def update_partner_sections
-    PartnerFieldsJob.perform_async(id)
+  def sync_visible_partner_form_sections
+    partner_form = Partners::PartnerForm.where(
+      diaper_bank_id: id,
+    ).first_or_create
+
+    partner_form.update!(sections: partner_form_fields)
   end
 
   def correct_logo_mime_type

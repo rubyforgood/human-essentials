@@ -207,7 +207,6 @@ RSpec.describe DistributionsController, type: :controller do
 
         before do
           ActiveJob::Base.queue_adapter = :test
-          allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
         end
 
         it "redirects with a flash notice and send send_notification" do

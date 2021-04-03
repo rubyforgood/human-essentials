@@ -15,6 +15,17 @@ Rails.application.configure do
   config.eager_load = true
 
   config.action_mailer.default_url_options = { host: "diaper.app" }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.sendgrid.net',
+    port: '587',
+    authentication: :plain,
+    user_name: ENV['SENDGRID_USERNAME'],
+    password: ENV['SENDGRID_PASSWORD'],
+    domain: 'diaper.app',
+    enable_starttls_auto: true
+  }
+
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
@@ -48,9 +59,7 @@ Rails.application.configure do
   config.force_ssl = true
   config.ssl_options = { hsts: false }
 
-  # Use the lowest log level to ensure availability of diagnostic information
-  # when problems arise.
-  config.log_level = :debug
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
@@ -78,7 +87,7 @@ Rails.application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   # Store files locally.
-  config.active_storage.service = :local
+  config.active_storage.service = :azure
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'

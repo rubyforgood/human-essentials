@@ -128,7 +128,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
   # Location for fixtures (logo, etc)
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -138,6 +138,11 @@ RSpec.configure do |config|
 
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
+
+  # Stub out Geocoder or else...
+  config.before(:all) do
+    stub_addresses
+  end
 
   # set driver for system tests
   config.before(:each, type: :system) do
@@ -162,42 +167,70 @@ RSpec.configure do |config|
       -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
     ASCIIART
 
-    Rails.logger.info "-~=> Destroying all Base Items ... "
-    BaseItem.delete_all
-    # Base Items are independent of all other data, though other models depend on
-    # their existence, so we'll persist them
-    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata base_items))
-    DatabaseCleaner.strategy = :transaction
-    __start_db_cleaning_with_log
-    __sweep_up_db_with_log
-    seed_base_items_for_tests
+    DatabaseCleaner[:active_record, { model: Partners::Base }]
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+
+    DatabaseCleaner[:active_record, { model: ApplicationRecord }]
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+
+    raise if Partners::Partner.count > 0
+    raise if Organization.count > 0
   end
 
   config.before(:each) do
-    __start_db_cleaning_with_log
+    Faker::Config.random = Random.new(42)
 
-    # prepare a default @organization and @user to always be available for testing
-    Rails.logger.info "\n\n-~=> Creating DEFAULT organization & partner"
-    @organization = create(:organization, name: "DEFAULT")
-    @partner = create(:partner, organization: @organization)
-    Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
-    @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
-    @user = create(:user, organization: @organization, name: "DEFAULT USER")
-    @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
-    @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
+    DatabaseCleaner.strategy = :transaction
+  end
 
-    # Print the name of the example being run
-    Rails.logger.info "\n\n-~=> #{self.class.description} ::::::::::::::::::::::"
+  config.before(:each, type: :system) do
+    Faker::Config.random = Random.new(42)
+
+    # Use truncation in the case of doing `browser` tests because it
+    # appears that transactions won't work since it really does
+    # depend on the database to have records.
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+  end
+
+  config.before(:each, type: :request) do
+    Faker::Config.random = Random.new(42)
+
+    # Use truncation in the case of doing `browser` tests because it
+    # appears that transactions won't work since it really does
+    # depend on the database to have records.
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+  end
+
+  config.before(:each) do
+    # The database cleaner will now begin at this point
+    # up anything after this point when `.clean` is called.
+    DatabaseCleaner.start
+
+    # "Dirty" the database by adding the essential records
+    # necessary to run tests.
+    #
+    # If you are using :transaction, it will just rollback any additions
+    # when `.clean` is called. Any previous changes will be kept prior to
+    # the call `DatabaseCleaner.start`
+    #
+    # If you are using :truncation, it will erase everything once `.clean`
+    # is called.
+    seed_base_items_for_tests
+    seed_with_default_records
   end
 
   config.after(:each) do
-    __sweep_up_db_with_log
-    FileUtils.rm_rf(Dir["#{Rails.root}/tmp/storage"])
-  end
+    # Ensure to clean-up the database by whichever means
+    # were specified before the test ran
+    DatabaseCleaner.clean
 
-  # Stub out Geocoder or else...
-  config.before(:all) do
-    stub_addresses
+    # Remove any /tmp/storage files that might have been
+    # added as a consequence of the test.
+    FileUtils.rm_rf(Dir["#{Rails.root}/tmp/storage"])
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
@@ -274,4 +307,15 @@ def __sweep_up_db_with_log
           .`
       .-`
   ASCIIART
+end
+
+def seed_with_default_records
+  Rails.logger.info "\n\n-~=> Creating DEFAULT organization & partner"
+  @organization = create(:organization, name: "DEFAULT")
+  @partner = create(:partner, organization: @organization)
+  Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
+  @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
+  @user = create(:user, organization: @organization, name: "DEFAULT USER")
+  @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
+  @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
 end

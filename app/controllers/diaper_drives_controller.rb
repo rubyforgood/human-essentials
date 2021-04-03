@@ -75,7 +75,7 @@ class DiaperDrivesController < ApplicationController
 
   def diaper_drive_params
     params.require(:diaper_drive)
-          .permit(:name, :start_date, :end_date)
+          .permit(:name, :start_date, :end_date, :virtual)
   end
 
   def date_range_filter

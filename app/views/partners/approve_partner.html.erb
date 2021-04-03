@@ -31,7 +31,8 @@
         <div class="card card-info card-outline">
           <div class="card-header">
             <h1 class="card-title"><strong><%= @partner.name %> - Application Details
-              - <%= link_to @partner.email, "mailto:#{@partner.email}" %></strong></h1>
+              - <%= link_to @partner.email, "mailto:#{@partner.email}" %></strong>
+            </h1>
           </div>
           <div class="card-body p-6">
             <div class="row">
@@ -42,7 +43,11 @@
                 <p>Distributor Type <%= @agency[:distributor_type] %></p>
                 <p>Agency Type: <%= @agency[:agency_type] %></p>
                 <p>Proof of Agency Status
-                  (Link): <%= link_to File.basename(@agency[:proof_of_agency_status]), documentation_url(@agency[:proof_of_agency_status]), target: :_blank %></p>
+                  <% if @partner_profile.proof_of_partner_status.attached? %>
+                    <!-- NOTE: The actual download link may not work in local storage mode due to file locations being seperate locally. -->
+                    (Link): <%= link_to @partner_profile.proof_of_partner_status.filename, rails_blob_path(@partner_profile.proof_of_partner_status, disposition: 'attachment') %>
+                  <% end %>
+                </p>
                 <p>Agency Mission: <%= @agency[:agency_mission] %></p>
                 <p>Address Line 1: <%= @agency[:address][:address1] %></p>
                 <p>Address Line 2: <%= @agency[:address][:address2] %></p>
@@ -60,9 +65,13 @@
                 <% if @fields.include?('agency_stability') || @fields.empty? %>
                   <h2>Agency Stability</h2>
                   <p>Founded <%= @agency[:stability][:founded] %></p>
-                  <p>Form 990: <%= @agency[:stability][:form_990] ? 'Yes' : 'No' %></p>
+                  <p>Form 990: <%= @partner_profile.proof_of_form_990.attached? ? 'Yes' : 'No' %></p>
                   <p>Form 990
-                    Link: <%= link_to File.basename(@agency[:stability][:form_990_link]), documentation_url(@agency[:stability][:form_990_link]), target: :_blank %></p>
+                  <% if @partner_profile.proof_of_form_990.attached? %>
+                    <!-- NOTE: The actual download link may not work in local storage mode due to file locations being seperate locally. -->
+                    (Link): <%= link_to @partner_profile.proof_of_form_990.filename, rails_blob_path(@partner_profile.proof_of_form_990, disposition: 'attachment') %>
+                  <% end %>
+                  </p>
                   <p>Program Name <%= @agency[:stability][:program_name] %></p>
                   <p>Program Description <%= @agency[:stability][:program_description] %></p>
                   <p>Program Age <%= @agency[:stability][:program_age] %></p>
@@ -169,8 +178,8 @@
                 <% if @fields.include?('attached_documents') || @fields.empty? %>
                   <h2>Other Documents</h2>
                   <ul>
-                    <% @agency[:documents].each do |document| %>
-                      <li><%= link_to File.basename(document[:document_link]), documentation_url(document[:document_link]), target: :_blank %></li>
+                    <% @partner_profile.documents.each do |document| %>
+                      <li><%= link_to document.filename, rails_blob_path(document, disposition: 'attachment') %></li>
                     <% end %>
                   </ul>
                   </div>
@@ -179,11 +188,19 @@
                 </div>
           </div>
           <!-- /.card-body -->
-          <div class="card-footer">
-            <%= print_button_to approve_application_partner_path(@partner), {text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md"} if @partner.awaiting_review? %>
-          </div>
+        </div>
+        <div id="approve-application-button">
+          <% tooltip_message = "Partner has not requested approval yet. Partners are able to request approval by going into 'My Organization' and clicking 'Request Approval' button." %>
+          <span id="pending-approval-request-tooltip" title="<%= tooltip_message unless @partner.awaiting_review? %>">
+            <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.awaiting_review? } %>
+          </span>
         </div>
       </div>
     </div>
   </div>
 </section>
+<script>
+$(function () {
+  $('#pending-approval-request-tooltip').tooltip()
+})
+</script>

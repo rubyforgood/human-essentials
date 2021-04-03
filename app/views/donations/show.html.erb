@@ -49,7 +49,6 @@
       </div>
     </div>
   </div>
-
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
@@ -77,6 +76,25 @@
             <%= delete_button_to donation_path(@donation), { size: "md", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.organization_admin? %>
           </div>
           </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title font-bold"><strong>Comment</strong></h2>
+      </div>
+      <div class="card-body p-2">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12" id="donation-comment">
+            <% if @donation.comment %>
+              <p><%= simple_format(@donation.comment) %></p>
+            <% else %>
+              <p class='font-italic'> None provided </p>
+            <% end %>
+          </div>
+        </div>
       </div>
     </div>
   </div>

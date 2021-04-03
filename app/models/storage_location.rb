@@ -7,6 +7,8 @@
 #  latitude        :float
 #  longitude       :float
 #  name            :string
+#  square_footage  :integer
+#  warehouse_type  :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -15,9 +17,17 @@
 class StorageLocation < ApplicationRecord
   require "csv"
 
+  WAREHOUSE_TYPES = [
+    'Residential space used',
+    'Consumer, self-storage or container space',
+    'Commercial/office/business space that includes storage space',
+    'Warehouse with loading bay'
+  ].freeze
+
   belongs_to :organization
   has_many :inventory_items, -> { includes(:item).order("items.name") },
-           inverse_of: :storage_location
+           inverse_of: :storage_location,
+           dependent: :destroy
   has_many :donations, dependent: :destroy
   has_many :distributions, dependent: :destroy
   has_many :items, through: :inventory_items
@@ -31,12 +41,18 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, :organization, presence: true
+  validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
+                             allow_blank: true
+  before_destroy :verify_inventory_items, prepend: true
 
   include Geocodable
   include Filterable
   include Exportable
   scope :containing, ->(item_id) {
     joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
+  }
+  scope :has_inventory_items, -> {
+    includes(:inventory_items).where.not(inventory_items: { id: nil })
   }
   scope :alphabetized, -> { order(:name) }
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
@@ -175,11 +191,22 @@ class StorageLocation < ApplicationRecord
     log
   end
 
+  def verify_inventory_items
+    unless empty_inventory_items?
+      errors.add(:base, "Cannot delete storage location containing inventory items with non-zero quantities")
+      throw(:abort)
+    end
+  end
+
   def self.csv_export_headers
-    ["Name", "Address", "Total Inventory"]
+    ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
   end
 
   def csv_export_attributes
-    [name, address, size]
+    [name, address, square_footage, warehouse_type, size]
+  end
+
+  def empty_inventory_items?
+    inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
   end
 end

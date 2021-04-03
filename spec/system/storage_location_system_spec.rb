@@ -18,6 +18,18 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(page.find(".alert")).to have_content "added"
     end
 
+    it 'User creates a new storage location with optional fields' do
+      visit subject
+      storage_location_traits = attributes_for(:storage_location)
+      fill_in "Name", with: storage_location_traits[:name]
+      fill_in "Address", with: storage_location_traits[:address]
+      fill_in "Square Footage", with: storage_location_traits[:square_footage]
+      select StorageLocation::WAREHOUSE_TYPES.sample, from: 'Warehouse Type'
+      click_on "Save"
+
+      expect(page.find(".alert")).to have_content "added"
+    end
+
     it "User creates a new storage location with empty attributes" do
       visit subject
       click_on "Save"
@@ -32,6 +44,9 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     it "User updates an existing storage location" do
       visit subject
       fill_in "Address", with: storage_location.name + " new"
+      fill_in "Square Footage", with: storage_location.square_footage + 50
+      select (StorageLocation::WAREHOUSE_TYPES - [storage_location.warehouse_type]).sample, from: 'Warehouse Type'
+
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "updated"
@@ -76,8 +91,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     end
 
     it "User can filter the #index by those that contain certain items" do
-      item = create(:item, name: "1T Diapers")
-      create(:item, name: "2T Diapers")
+      item = create(:item, name: Faker::Lorem.unique.word)
+      create(:item, name: Faker::Lorem.unique.word)
       location1 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Foo")
       location2 = create(:storage_location, name: "Bar")
       visit subject

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_04_124133) do
+ActiveRecord::Schema.define(version: 2021_01_07_175100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -128,6 +128,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
+    t.boolean "virtual", default: false, null: false
     t.index ["organization_id"], name: "index_diaper_drives_on_organization_id"
   end
 
@@ -338,6 +339,8 @@ ActiveRecord::Schema.define(version: 2020_10_04_124133) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
+    t.integer "square_footage"
+    t.string "warehouse_type"
     t.index ["latitude", "longitude"], name: "index_storage_locations_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end

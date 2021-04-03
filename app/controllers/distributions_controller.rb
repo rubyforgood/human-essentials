@@ -46,16 +46,18 @@ class DistributionsController < ApplicationController
     @total_items_all_distributions = total_items(@distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
+    @storage_locations = current_organization.storage_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
     @selected_item = filter_params[:by_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
+    @selected_location = filter_params[:by_location]
     # FIXME: one of these needs to be removed but it's unclear which at this point
     @statuses = Distribution.states.transform_keys(&:humanize)
 
     respond_to do |format|
       format.html
-      format.csv { send_data Distribution.generate_csv(@distributions), filename: "Distributions-#{Time.zone.today}.csv" }
+      format.csv { send_data Distribution.generate_csv(@distributions, @items.collect(&:name).sort), filename: "Distributions-#{Time.zone.today}.csv" }
     end
   end
 
@@ -87,13 +89,19 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
-    @items = current_organization.items.active.alphabetized
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @items = current_organization.items.alphabetized
+    @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
   end
 
   def show
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @line_items = @distribution.line_items
+
+    @total_quantity = @distribution.total_quantity
+    @total_package_count = @line_items.sum { |item| item.has_packages || 0 }
+    if @total_package_count.zero?
+      @total_package_count = nil
+    end
   end
 
   def edit
@@ -101,7 +109,7 @@ class DistributionsController < ApplicationController
     if (!@distribution.complete? && @distribution.future?) || current_user.organization_admin?
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.alphabetized
+      @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
@@ -160,7 +168,7 @@ class DistributionsController < ApplicationController
   end
 
   def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
-    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes) if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes)
   end
 
   def schedule_reminder_email(distribution)
@@ -200,7 +208,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_partner, :by_state)
+    params.require(:filters).permit(:by_item_id, :by_partner, :by_state, :by_location)
   end
 
   def perform_inventory_check

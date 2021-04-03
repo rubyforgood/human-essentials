@@ -48,3 +48,31 @@ i.fa {
 div#partner-notes {
   padding: 0px 20px;
 }
+
+div#approve-application-button {
+  position: fixed;
+
+  background: #{$diaper-color-white};
+  border-top: 1px solid #{$diaper-color-neutral-67};
+  box-shadow: 1px 1px 5px #{$diaper-color-neutral-67};
+
+  bottom:0px;
+
+  width: calc(100%);
+  min-height: #{$diaper-footer-height}px;
+
+  padding: 12px 16px;
+  margin-left: -16px;
+
+  z-index: 1;
+}
+
+@media only screen and (max-width: 500px) {
+  div#approve-application-button {
+    display: flex;
+    justify-content: center;
+
+    margin-left: 0;
+    width: calc(100% - 32px);
+  }
+}

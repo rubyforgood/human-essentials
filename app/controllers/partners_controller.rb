@@ -15,30 +15,35 @@ class PartnersController < ApplicationController
   end
 
   def create
-    @partner = current_organization.partners.new(partner_params)
-    if @partner.save
-      redirect_to partners_path, notice: "Partner added!"
+    svc = PartnerCreateService.new(organization: current_organization, partner_attrs: partner_params)
+    svc.call
+
+    @partner = svc.partner
+
+    if svc.errors.none?
+      redirect_to partners_path, notice: "Partner #{@partner.name} added!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Failed to add partner due to: #{svc.errors.full_messages}"
       render action: :new
     end
   end
 
   def approve_application
     @partner = current_organization.partners.find(params[:id])
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "approved")
-    if response.is_a?(Net::HTTPSuccess)
-      @partner.approved!
+
+    svc = PartnerApprovalService.new(partner: @partner)
+    svc.call
+
+    if svc.errors.none?
       redirect_to partners_path, notice: "Partner approved!"
     else
-      redirect_to partners_path, error: "Failed to update Partner data!"
+      redirect_to partners_path, error: "Failed to approve partner because: #{svc.errors.full_messages}"
     end
   end
 
   def show
     @partner = current_organization.partners.find(params[:id])
-
-    @impact_metrics = JSON.parse(DiaperPartnerClient.get({ id: params[:id] }, query_params: { impact_metrics: true })) unless @partner.uninvited?
+    @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
 
     respond_to do |format|
@@ -51,20 +56,17 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.new
   end
 
-  # NOTE(chaserx): this is confusing and could be renamed to reflect what it's returning/showing review_application
   def approve_partner
     @partner = current_organization.partners.find(params[:id])
 
-    # TODO: create a service that abstracts all of this from PartnersController, like PartnerDetailRetriever.call(id: params[:id])
+    @partner_profile = @partner.profile
+    # Ensure that the ActiveStorage records associated with the
+    # partner are available on the primary DB. If we do not do this,
+    # partners would be uploading files that the diaperbase application
+    # cannot see.
+    @partner_profile.sync_attachments_from_partnerbase!
 
-    # TODO: move this code to new service,
-    @diaper_partner = DiaperPartnerClient.get(id: params[:id])
-    @diaper_partner = JSON.parse(@diaper_partner, symbolize_names: true) if @diaper_partner
-    @agency = if @diaper_partner
-                @diaper_partner[:agency]
-              else
-                autovivifying_hash
-              end
+    @agency = @partner_profile.export_hash
   end
 
   def edit
@@ -88,25 +90,38 @@ class PartnersController < ApplicationController
 
   def invite
     partner = current_organization.partners.find(params[:id])
-    partner.register_on_partnerbase
-    redirect_to partners_path, notice: "#{partner.name} invited!"
+
+    svc = PartnerInviteService.new(partner: partner)
+    svc.call
+
+    if svc.errors.none?
+      redirect_to partners_path, notice: "Partner #{partner.name} invited!"
+    else
+      redirect_to partners_path, notice: "Failed to invite #{partner.name}! #{svc.errors.full_messages}"
+    end
   end
 
-  def re_invite
+  def invite_partner_user
     partner = current_organization.partners.find(params[:partner])
-    partner.add_user_on_partnerbase(email: params[:email])
+    PartnerUser.invite!(email: params[:email], partner: partner.profile)
     redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"
+  rescue StandardError => e
+    redirect_to partner_path(partner), error: "Failed to invite #{params[:email]} to #{partner.name} due to: #{e.message}"
   end
 
   def recertify_partner
     @partner = current_organization.partners.find(params[:id])
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "recertification_required")
-    if response.is_a?(Net::HTTPSuccess)
-      @partner.recertification_required!
-      redirect_to partners_path, notice: "#{@partner.name} recertification successfully requested!"
+
+    svc = PartnerRequestRecertificationService.new(partner: @partner)
+    svc.call
+
+    if svc.errors.none?
+      flash[:success] = "#{@partner.name} recertification successfully requested!"
     else
-      redirect_to partners_path, error: "#{@partner.name} failed to update partner records"
+      flash[:error] = "#{@partner.name} failed to update partner records"
     end
+
+    redirect_to partners_path
   end
 
   def deactivate

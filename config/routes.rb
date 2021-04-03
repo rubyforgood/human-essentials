@@ -24,9 +24,26 @@ end
 
 Rails.application.routes.draw do
   devise_for :users
+  devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations' }
 
   set_up_sidekiq
   set_up_flipper
+
+  # Add route partners/dashboard so that we can define it as partner_user_root
+  get 'partners/dashboard' => 'partners/dashboards#show', as: :partner_user_root
+  namespace :partners do
+    resource :dashboard, only: [:show]
+    resources :requests, only: [:show, :new, :index, :create]
+    resources :users, only: [:index, :new, :create]
+    resource :profile, only: [:show, :edit, :update]
+    resource :approval_request, only: [:create]
+
+    resources :children, except: [:destroy] do
+      post :active
+    end
+    resources :families
+    resources :authorized_family_members
+  end
 
   # This is where a superadmin CRUDs all the things
   get :admin, to: "admin#dashboard"
@@ -73,6 +90,11 @@ Rails.application.routes.draw do
     resources :audits do
       post :finalize
     end
+
+    namespace :reports do
+      resources :ndbn_annuals, only: [:index, :show], param: :year
+    end
+
     resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
       collection do
@@ -135,7 +157,7 @@ Rails.application.routes.draw do
         get :approve_application
         get :approve_partner
         post :invite
-        post :re_invite
+        post :invite_partner_user
         post :recertify_partner
         put :deactivate
         put :reactivate

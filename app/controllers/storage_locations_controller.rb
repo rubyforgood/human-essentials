@@ -70,8 +70,14 @@ class StorageLocationsController < ApplicationController
   end
 
   def destroy
-    current_organization.storage_locations.find(params[:id]).destroy
-    redirect_to storage_locations_path
+    @storage_location = current_organization.storage_locations.find(params[:id])
+
+    if @storage_location.destroy
+      redirect_to storage_locations_path, notice: "Storage Location deleted successfully"
+    else
+      flash[:error] = @storage_location.errors.full_messages.join(', ')
+      redirect_to storage_locations_path
+    end
   end
 
   def inventory
@@ -79,15 +85,13 @@ class StorageLocationsController < ApplicationController
                                            .includes(inventory_items: :item)
                                            .find(params[:id])
                                            .inventory_items
-
-    @inventory_items = @inventory_items.active unless params[:include_inactive_items] == "true"
     respond_to :json
   end
 
   private
 
   def storage_location_params
-    params.require(:storage_location).permit(:name, :address)
+    params.require(:storage_location).permit(:name, :address, :square_footage, :warehouse_type)
   end
 
   helper_method \

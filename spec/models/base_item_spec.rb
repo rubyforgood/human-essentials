@@ -50,7 +50,7 @@ RSpec.describe BaseItem, type: :model do
     describe '->without_kit' do
       subject { BaseItem.without_kit }
 
-      let!(:kit_base_item) { FactoryBot.create(:base_item, name: 'Kit') }
+      let!(:kit_base_item) { BaseItem.find_by(name: 'Kit') }
       it 'should not include the Kit BaseItem' do
         expect(subject).not_to include(kit_base_item)
       end

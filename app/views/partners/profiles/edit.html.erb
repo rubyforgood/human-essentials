@@ -1,0 +1,51 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Editing - #{current_partner.name}" %>
+        <h1><i class="fa fa-edit"></i>&nbsp;&nbsp;Edit My Organization&nbsp;&nbsp;&nbsp;
+          <%= partner_status_badge(current_partner) %>
+          <small>for <%= current_partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="<%= partner_user_root_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+          <li class="breadcrumb-item">
+            <a href="<%= edit_partners_profile_path %>"><%= "#{current_partner.name}" %></a></li>
+          <li class="breadcrumb-item"><a href="#">Edit</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card-transparent">
+          <%= simple_form_for current_partner, url: partners_profile_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+            <div class="row">
+              <div class="col-6">
+                <%= render partial: "partners/profiles/edit/agency_information", locals: {form: form, partner: current_partner} %>
+              </div>
+              <% current_partner.partials_to_show.each do |partial| %>
+                <div class="col-6">
+                  <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: form, partner: current_partner} %>
+                </div>
+              <% end %>
+            </div>
+            <div class="card-footer">
+              <%= form.submit("Update Information", class: "btn btn-primary") %>
+              <%= link_to "Cancel Update", partners_profile_path, class: "btn btn-danger float-right" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

@@ -52,7 +52,7 @@ PG_PASSWORD=password
 If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplied`, it's because you have probably not done this.
 
 ### Database Configuration
-This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test`, respectively. This should all be handled with `rails db:setup`.
+This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev`, `diaper_test`, `partner_dev`, and `partner_test` respectively. This should all be handled with `rails db:setup`.
 Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called `database.yml.example` as an example and just change the credentials.
 
 ## Seed the database
@@ -64,15 +64,39 @@ Run `bundle exec rails s` and browse to http://localhost:3000/
 ## Login
 To login to the web application, use these default credentials:
 
-    Organization Admin
-      Email: org_admin1@example.com
-      Password: password
+#### Diaperbase Users
+```
+Organization Admin
+  Email: org_admin1@example.com
+  Password: password
 
-    User
-      Email: user_1@example.com
-      Password: password
-      
-## Connecting Diaper & Partner Apps Together Locally
+User
+  Email: user_1@example.com
+  Password: password
+```
+
+#### Partnerbase Users
+```
+Verified Partner
+  Email: verified@example.com
+  Password: password
+
+Invited Partner
+  Email: invited@pawneehomelss.com
+  Password: password
+  
+Unverified Partner
+  Email: unverified@pawneepregnancy.com
+  Password: password
+  
+Recertification Required Partner
+  Email: recertification_required@example.com
+  Password: password
+```
+
+## Connecting Diaper & Partner Apps Together Locally (Deprecating)
+
+**Deprecation Note: We are actively working on merging the two applications together to avoid the need to maintain an API. In the future, all API calls between diaper & partner will be replaced.**
 
 Depending on the issues or features you decided to undertake, you may need to get both the `diaper` and `partner` app running locally. This is true if you want to build a feature that depends on code changes in both repositories.
 
@@ -186,9 +210,12 @@ We will now want to inform the stakeholders that we've recently made a deploymen
 1. Fetch all the emails of our users by accessing our diaperbase production database
 ```ruby
 cap production rails:console
-User.all.pluck(:email) # Copy the output of this!
+emails = User.all.pluck(:email) 
+puts "Email Address\n" + emails.join("\n") # Copy this output
 ```
-2. Use the list of the emails copied from the output from the previous step to send a update email via [Mailchimp](https://mailchimp.com/)
+2. Use the list of the emails copied from the output from the previous step to send a update audience via [Mailchimp](https://mailchimp.com/). Go to Audience > Manage Audience > Import Contacts and select "Copy and paste" option. Then paste the output of step 1. Complete the subsequent steps.
+
+3. Draft the email and send it with updates.
 
 # Acknowledgements
 

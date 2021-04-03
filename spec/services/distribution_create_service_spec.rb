@@ -20,7 +20,6 @@ RSpec.describe DistributionCreateService, type: :service do
     context "partner has send reminders setting set to true" do
       it "Sends a PartnerMailer" do
         @partner.update!(send_reminders: true)
-        allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
         expect(PartnerMailerJob).to receive(:perform_now).once
         subject.new(distribution_params).call
@@ -30,7 +29,6 @@ RSpec.describe DistributionCreateService, type: :service do
     context "partner has send reminders setting set to false" do
       it "does not send a PartnerMailer" do
         @partner.update!(send_reminders: false)
-        allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
         expect(PartnerMailerJob).not_to receive(:perform_now)
         subject.new(distribution_params).call

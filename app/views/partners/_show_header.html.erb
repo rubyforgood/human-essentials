@@ -6,7 +6,7 @@
     <div class="row">
       <div class="<%= show_header_column_class(partner) %>">
         <div class="description-block border-right">
-          <h1 style="color:purple"><%= total_on_hand(impact_metrics.dig("agency", "families_served") || 0) %> </h1>
+          <h1 style="color:purple"><%= total_on_hand(impact_metrics[:families_served] || 0) %> </h1>
           <h5>Families served</h5>
         </div>
         <!-- /.description-block -->
@@ -14,7 +14,7 @@
       <!-- /.col -->
       <div class="<%= show_header_column_class(partner) %>">
         <div class="description-block border-right">
-          <h1 style="color:purple"><%= total_on_hand(impact_metrics.dig("agency", "children_served") || 0) %> </h1>
+          <h1 style="color:purple"><%= total_on_hand(impact_metrics[:children_served] || 0) %> </h1>
           <h5>Children served</h5>
         </div>
         <!-- /.description-block -->
@@ -22,9 +22,9 @@
       <!-- /.col -->
       <div class="<%= show_header_column_class(partner) %>">
         <div class="description-block border-right">
-          <h1 style="color:purple"><%= total_on_hand(impact_metrics.dig("agency", "family_zipcodes") || 0) %> </h1>
+          <h1 style="color:purple"><%= total_on_hand(impact_metrics[:family_zipcodes] || 0) %> </h1>
           <h5>Zipcodes served</h5>
-          <%= modal_button_to("#seeZipcodes", {text: "See Zipcodes?", size: "xs"}) if impact_metrics.dig("agency", "family_zipcodes_list").present? %>
+          <%= modal_button_to("#seeZipcodes", {text: "See Zipcodes?", size: "xs"}) if impact_metrics[:family_zipcodes_list].present? %>
         </div>
         <!-- /.description-block -->
       </div>
@@ -67,7 +67,7 @@
       <div class="modal-body">
         <div class="box-body">
           <ul>
-            <% @impact_metrics.dig("agency", "family_zipcodes_list").each do |zipcode| %>
+            <% @impact_metrics[:family_zipcodes_list].each do |zipcode| %>
               <li><%= zipcode %></li>
             <% end %>
           </ul>

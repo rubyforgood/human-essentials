@@ -21,6 +21,21 @@ default: &default
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
+staging:
+  primary:
+    <<: *default
+    database: diaper_base_staging
+    username: diaper_base
+    password: <%= ENV['DIAPER_BASE_DATABASE_PASSWORD'] %>
+    timeout: 5000
+  partners:
+    <<: *default
+    database: partner_production
+    username: diaper_base
+    password: <%= ENV['DIAPER_BASE_DATABASE_PASSWORD'] %>
+    migrations_paths: db/partners_migrate
+    timeout: 5000
+
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
 # ever seen by anyone, they now have access to your database.

@@ -133,7 +133,9 @@ module UiHelper
     # user sparingly.
     center = options[:center].present? ? "center-block" : ""
 
-    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center}") do
+    disabled = options[:enabled] || options[:enabled].nil? ? "" : "disabled"
+
+    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center} #{disabled}") do
       fa_icon icon, text: text
     end
   end
@@ -149,6 +151,14 @@ module UiHelper
 
     button_tag({ type: submit_type, id: id, class: "btn btn-#{type} btn-#{size} #{align}" }.merge(other_properties)) do
       fa_icon icon, text: text
+    end
+  end
+
+  def optional_data_text(field)
+    if field.present?
+      tag.span(field)
+    else
+      tag.span("Not-Provided", class: "text-muted font-weight-light")
     end
   end
 end
