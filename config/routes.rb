@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   namespace :partners do
     resource :dashboard, only: [:show]
     resources :requests, only: [:show, :new, :index, :create]
+    resources :individuals_requests, only: [:new, :create]
     resources :users, only: [:index, :new, :create]
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]

@@ -1,7 +1,5 @@
 module Partners
   class RequestsController < BaseController
-    layout 'partners/application'
-
     protect_from_forgery with: :exception
 
     def index
