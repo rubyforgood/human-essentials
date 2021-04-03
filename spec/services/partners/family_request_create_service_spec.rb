@@ -38,7 +38,7 @@ describe Partners::FamilyRequestCreateService do
         end
       end
 
-      context 'because a unrecogonized item_id was provided' do
+      context 'because a unrecognized item_id was provided' do
         let(:family_requests_attributes) do
           [
             ActionController::Parameters.new(item_id: 0, person_count: Faker::Number.within(range: 1..10))
@@ -85,4 +85,3 @@ describe Partners::FamilyRequestCreateService do
     end
   end
 end
-
