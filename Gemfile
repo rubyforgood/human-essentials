@@ -49,7 +49,6 @@ gem "sass-rails"
 gem "sidekiq"
 gem 'sidekiq-scheduler'
 gem "strong_migrations", "~> 0.7.6"
-gem "skylight"
 gem "sprockets", "~> 4.0.2"
 gem "toastr-rails"
 gem "uglifier", ">= 1.3.0"
@@ -59,6 +58,7 @@ gem "recaptcha"
 
 group :production do
   gem "newrelic_rpm"
+  gem "skylight"
 end
 
 group :development, :test, :staging do
@@ -96,7 +96,7 @@ group :development do
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
   gem "letter_opener"
-  gem "listen", "~> 3.4.1"
+  gem "listen", "~> 3.5.0"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"

@@ -407,40 +407,34 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "POST #recertify_partner" do
+    subject { -> { post recertify_partner_partner_path(default_params.merge(id: partner.id)) } }
     let(:partner) { create(:partner, organization: @organization) }
+    let(:fake_service) { instance_double(PartnerRequestRecertificationService, call: -> {}) }
 
-    context "successful approval in partner app" do
+    before do
+      allow(PartnerRequestRecertificationService).to receive(:new).with(partner: partner).and_return(fake_service)
+    end
+
+    context "when the request for recertification from the partner was successful" do
       before do
-        stub_env('PARTNER_REGISTER_URL', 'https://partner-register.com')
-        stub_env('PARTNER_KEY', 'partner-key')
-        stub_request(:put, "https://partner-register.com/#{partner.id}").to_return({ status: 200, body: 'success', headers: {} })
+        allow(fake_service).to receive_message_chain(:errors, :none?).and_return(true)
       end
 
-      it "responds with found status" do
-        post recertify_partner_partner_path(default_params.merge(id: partner.id))
-        expect(response).to have_http_status(:found)
-      end
-
-      it "redirects to #index" do
-        post recertify_partner_partner_path(default_params.merge(id: partner.id))
+      it 'should return back to the partners page with a success flash' do
+        subject.call
+        expect(flash[:success]).to eq("#{partner.name} recertification successfully requested!")
         expect(response).to redirect_to(partners_path)
-      end
-
-      it "require partner recertification" do
-        post recertify_partner_partner_path(default_params.merge(id: partner.id))
-        expect(response).to redirect_to(partners_path)
-        expect(partner.reload.status).to eq('recertification_required')
       end
     end
 
-    context "failed to update partner records" do
+    context "when the request for recertification from the partner was NOT successful" do
       before do
-        response = double("Response", value: Net::HTTPNotFound)
-        allow(DiaperPartnerClient).to receive(:put).and_return(response)
+        allow(fake_service).to receive_message_chain(:errors, :none?).and_return(false)
       end
 
-      it "redirects to #index" do
-        post recertify_partner_partner_path(default_params.merge(id: partner.id))
+      it 'should return back to the partners page with a success flash' do
+        subject.call
+        expect(flash[:error]).to eq("#{partner.name} failed to update partner records")
         expect(response).to redirect_to(partners_path)
       end
     end

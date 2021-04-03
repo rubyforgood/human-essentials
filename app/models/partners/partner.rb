@@ -100,6 +100,7 @@ module Partners
     has_many_attached :documents
 
     VERIFIED_STATUS = 'verified'.freeze
+    RECERTIFICATION_REQUESTED_STATUS = 'recertification_required'.freeze
 
     AGENCY_TYPES = {
       "CAREER" => "Career technical training",
