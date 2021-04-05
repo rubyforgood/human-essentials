@@ -71,7 +71,7 @@ RSpec.describe "Purchases", type: :request do
         it "renders GET#new with error" do
           post purchases_path(default_params.merge(purchase: { storage_location_id: nil, amount_spent_in_cents: nil }))
           expect(response).to be_successful # Will render :new
-          expect(response).to have_error(/error/i)
+          expect(response.body).to include('Failed to create purchase due to: ["Storage location must exist", "Vendor must exist", "Amount spent in cents is not a number"]')
         end
       end
     end
