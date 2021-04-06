@@ -36,7 +36,7 @@ class PurchasesController < ApplicationController
     else
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash[:error] = "There was an error starting this purchase, try again?"
+      flash[:error] = "Failed to create purchase due to: #{@purchase.errors.full_messages}"
       Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render action: :new
     end
