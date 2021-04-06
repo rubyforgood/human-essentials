@@ -6,6 +6,9 @@
     <%= quota_display(request_row.partner) %>
   </td>
   <td>
+    <%= request_row.comments %>
+  </td>  
+  <td>
     <%= render partial: "status", locals: {status: request_row.status} %>
   </td>
   <td class="text-right">
