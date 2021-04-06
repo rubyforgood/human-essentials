@@ -39,6 +39,7 @@
                 <th>Source location:</th>
                 <th>Agency representative:</th>
                 <th>Delivery method:</th>
+                <th>Comments:</th>
                 <th>State:</th>
               </tr>
               </thead>
@@ -48,6 +49,7 @@
                 <td><%= @distribution.storage_location.name %></td>
                 <td><%= @distribution.agency_rep %></td>
                 <td><%= @distribution.delivery_method.humanize %></td>
+                <td><%= @distribution.comment %></td>
                 <td><%= @distribution.state&.humanize %></td>
               </tr>
             </table>
