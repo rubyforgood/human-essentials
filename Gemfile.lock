@@ -302,7 +302,7 @@ GEM
     net-ssh (6.1.0)
     newrelic_rpm (6.13.1)
     nio4r (2.5.7)
-    nokogiri (1.11.2)
+    nokogiri (1.11.3)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     notiffany (0.1.3)
