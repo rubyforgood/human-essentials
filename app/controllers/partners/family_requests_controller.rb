@@ -1,5 +1,8 @@
 module Partners
   class FamilyRequestsController < BaseController
+    before_action :verify_status_in_diaper_base
+    before_action :authorize_verified_partners
+
     def new
       @filterrific = initialize_filterrific(
         current_partner.children
@@ -11,14 +14,28 @@ module Partners
     end
 
     def create
+      # the checkbox toggles in the frontend will directly set active/inactive children,
+      # so fetching them from the DB here instead of reading them from params works.
+      # However this is a bit of an odd pattern so we should consider taking in params as usual here
       children = current_partner.children.active.where.not(item_needed_diaperid: [nil, 0])
-      request = FamilyRequestPayloadService.execute(children: children, partner: current_partner)
 
-      FamilyRequestService.execute(request)
+      children_grouped_by_item_id = children.group_by(&:item_needed_diaperid)
+      family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
+        { item_id: item_id, person_count: children.count, children: item_requested_children }
+      end
 
-      redirect_to partner_requests_path, notice: "Requested items successfully!"
-    rescue ActiveModel::ValidationError
-      render :new
+      create_service = Partners::FamilyRequestCreateService.new(
+        partner_user_id: current_partner_user.id,
+        family_requests_attributes: family_requests_attributes
+      )
+
+      create_service.call
+
+      if create_service.errors.none?
+        redirect_to partners_request_path(create_service.partner_request), notice: "Requested items successfully!"
+      else
+        render :new
+      end
     end
   end
 end
