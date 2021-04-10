@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: item_requests
+#
+#  id                 :bigint           not null, primary key
+#  name               :string
+#  partner_key        :string
+#  quantity           :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  item_id            :integer
+#  partner_request_id :bigint
+#
 require "rails_helper"
 
 RSpec.describe Partners::ItemRequest, type: :model do
