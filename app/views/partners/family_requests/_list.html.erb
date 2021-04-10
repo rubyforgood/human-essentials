@@ -19,7 +19,7 @@
       </td>
       <td>
         <% if child.item_needed_diaperid %>
-          <%= item_id_to_display_string_map[child.item_needed_diaperid] %>
+          <%= current_partner.organization.item_id_to_display_string_map[child.item_needed_diaperid] %>
         <% else %>
           <%= "N/A" %>
         <% end %>
@@ -28,7 +28,7 @@
         <div class="custom-control custom-switch">
           <% if child.item_needed_diaperid %>
             <%= check_box_tag 'Active', child.active, child.active,
-                              data: {url: child_active_path(child),
+                              data: {url: partners_child_active_path(child),
                                      remote: true, method: :post },
                               class: "custom-control-input",
                               id: "child-#{child.id}" %>
