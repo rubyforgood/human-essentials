@@ -250,7 +250,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: Partners::Child::CHILD_ITEMS.sample
+        item_needed_diaperid: partner.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
       )
     end
 
@@ -268,7 +268,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: Partners::Child::CHILD_ITEMS.sample
+        item_needed_diaperid: partner.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
       )
     end
   end
