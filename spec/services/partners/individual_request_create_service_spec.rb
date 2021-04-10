@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Partners::FamilyRequestCreateService do
+describe Partners::IndividualRequestCreateService do
   describe '#call' do
     subject { described_class.new(args).call }
     let(:args) do
@@ -30,10 +30,10 @@ describe Partners::FamilyRequestCreateService do
       context 'because no family_requests_attributes were defined' do
         let(:family_requests_attributes) { [] }
 
-        it 'should return the Partners::FamilyRequestCreateService object with an error' do
+        it 'should return the Partners::IndividualRequestCreateService object with an error' do
           result = subject
 
-          expect(result).to be_a_kind_of(Partners::FamilyRequestCreateService)
+          expect(result).to be_a_kind_of(Partners::IndividualRequestCreateService)
           expect(result.errors[:base]).to eq(["family_requests_attributes cannot be empty"])
         end
       end
@@ -45,10 +45,10 @@ describe Partners::FamilyRequestCreateService do
           ]
         end
 
-        it 'should return the Partners::FamilyRequestCreateService object with an error' do
+        it 'should return the Partners::IndividualRequestCreateService object with an error' do
           result = subject
 
-          expect(result).to be_a_kind_of(Partners::FamilyRequestCreateService)
+          expect(result).to be_a_kind_of(Partners::IndividualRequestCreateService)
           expect(result.errors[:base]).to eq(["detected a unknown item_id"])
         end
       end

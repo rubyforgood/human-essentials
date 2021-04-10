@@ -1,9 +1,9 @@
 module Partners
-  class FamilyRequestCreateService
+  class IndividualRequestCreateService
     include ServiceObjectErrorsMixin
 
     #
-    # This service object is meant to transform a family request
+    # This service object is meant to transform an individual request
     # into the correct parameters that would be expected in a
     # regular request.
     #
