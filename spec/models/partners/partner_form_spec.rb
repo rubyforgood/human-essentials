@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: partner_forms
+#
+#  id             :bigint           not null, primary key
+#  sections       :text             default([]), is an Array
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  diaper_bank_id :integer
+#
 require "rails_helper"
 
 RSpec.describe Partners::PartnerForm, type: :model do
