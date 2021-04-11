@@ -14,7 +14,7 @@ module Partners
     end
 
     def create
-      # the checkbox toggles in the frontend will directly set active/inactive children,
+      # The checkbox toggles in the frontend will directly set active/inactive children,
       # so fetching them from the DB here instead of reading them from params works.
       # However this is a bit of an odd pattern so we should consider taking in params as usual here
       children = current_partner.children.active.where.not(item_needed_diaperid: [nil, 0])

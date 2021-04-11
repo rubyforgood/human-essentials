@@ -31,7 +31,7 @@ module Partners
           errors.add(:base, msg)
         end
       else
-        # store partner request so frontend can redirect to it
+        # Store partner request so the frontend can redirect to it
         @partner_request = request_create_svc.partner_request
       end
 
