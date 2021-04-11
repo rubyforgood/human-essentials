@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: child_item_requests
+#
+#  id                          :bigint           not null, primary key
+#  picked_up                   :boolean          default(FALSE)
+#  picked_up_item_diaperid     :integer
+#  quantity_picked_up          :integer
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  authorized_family_member_id :integer
+#  child_id                    :bigint
+#  item_request_id             :bigint
+#
 require 'rails_helper'
 
 RSpec.describe Partners::ChildItemRequest, type: :model do

@@ -170,16 +170,23 @@ RSpec.describe "Purchases", type: :system, js: true do
           expect(Purchase.last.line_items.first.quantity).to eq(16)
         end
 
-        # Bug fix -- Issue #71
-        # When a user creates a purchase without it passing validation, the items
-        # dropdown is not populated on the return trip.
-        it "items dropdown is still repopulated even if initial submission doesn't validate" do
-          item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
-          expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
-          click_button "Save"
+        context 'when creating a purchase incorrectly' do
+          # Bug fix -- Issue #71
+          # When a user creates a purchase without it passing validation, the items
+          # dropdown is not populated on the return trip.
+          it "items dropdown is still repopulated even if initial submission doesn't validate" do
+            item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
+            expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
+            click_button "Save"
 
-          expect(page).to have_content("error")
-          expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
+            expect(page).to have_content("Failed to create purchase due to:")
+            expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
+          end
+
+          it "should display failure with error messages" do
+            click_button "Save"
+            expect(page).to have_content('Failed to create purchase due to: ["Vendor must exist", "Amount spent in cents must be greater than 0"]')
+          end
         end
       end
 
