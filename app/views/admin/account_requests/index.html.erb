@@ -1,0 +1,103 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Open Account Requests" %>
+        <h1>
+          Open Account Requests
+        </h1>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table" id="open-account-requests">
+              <thead>
+              <tr>
+                <th>Date Submitted</th>
+                <th>Organization name</th>
+                <th>Organization website</th>
+                <th>Request details</th>
+                <th>Contact name</th>
+                <th>Contact email</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @open_account_requests.each do |account_request| %>
+                <tr>
+                  <td><%= account_request.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= account_request.organization_name %></td>
+                  <td><%= account_request.organization_website %></td>
+                  <td><%= account_request.request_details %></td>
+                  <td><%= account_request.name %></td>
+                  <td><%= account_request.email %></td>
+              <% end %>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Confirmed Account Requests" %>
+        <h1>
+          Closed Account Requests
+        </h1>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table" id="closed-account-requests">
+              <thead>
+              <tr>
+                <th>Date Confirmed</th>
+                <th>Organization name</th>
+                <th>Organization website</th>
+                <th>Request details</th>
+                <th>Contact name</th>
+                <th>Contact email</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @closed_account_requests.each do |account_request| %>
+                <tr>
+                  <td><%= account_request.confirmed_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= account_request.organization_name %></td>
+                  <td><%= account_request.organization_website %></td>
+                  <td><%= account_request.request_details %></td>
+                  <td><%= account_request.name %></td>
+                  <td><%= account_request.email %></td>
+              <% end %>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
