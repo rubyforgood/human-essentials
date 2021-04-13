@@ -55,6 +55,7 @@ Rails.application.routes.draw do
     resources :partners, except: %i[new create destroy]
     resources :users
     resources :barcode_items
+    resources :account_requests
     resources :feedback_messages do
       get :resolve
     end
