@@ -34,9 +34,9 @@ RSpec.describe Item, type: :model do
       expect(build(:item, name: item.name)).not_to be_valid
     end
     it "requires that items quantity are not a negative number" do
-      expect(build(:item, distribution_quantity: -1 )).not_to be_valid
-      expect(build(:item, on_hand_minimum_quantity: -1 )).not_to be_valid
-      expect(build(:item, on_hand_recommended_quantity: -1 )).not_to be_valid
+      expect(build(:item, distribution_quantity: -1)).not_to be_valid
+      expect(build(:item, on_hand_minimum_quantity: -1)).not_to be_valid
+      expect(build(:item, on_hand_recommended_quantity: -1)).not_to be_valid
     end
   end
 
