@@ -166,29 +166,29 @@ note = [
   # ----------------------------------------------------------------------------
 
   partner = Partners::Partner.create!({
-    name: p.name,
-    address1: Faker::Address.street_address,
-    address2: "",
-    city: Faker::Address.city,
-    state: Faker::Address.state_abbr,
-    zip_code: Faker::Address.zip,
-    website: Faker::Internet.domain_name,
-    zips_served: Faker::Address.zip,
-    diaper_bank_id: pdx_org.id,
-    diaper_partner_id: p.id,
-    executive_director_name: Faker::Name.name,
-    executive_director_email: p.email,
-    executive_director_phone: Faker::PhoneNumber.phone_number,
-    program_contact_name: Faker::Name.name,
-    program_contact_email: Faker::Internet.email,
-    program_contact_phone: Faker::PhoneNumber.phone_number,
-    program_contact_mobile: Faker::PhoneNumber.phone_number,
-    pick_up_name: Faker::Name.name,
-    pick_up_email: Faker::Internet.email,
-    pick_up_phone: Faker::PhoneNumber.phone_number,
-    partner_status: partner_status_map[partner_option[:status]] || "pending",
-    status_in_diaper_base: partner_option[:status]
-  })
+                                        name: p.name,
+                                        address1: Faker::Address.street_address,
+                                        address2: "",
+                                        city: Faker::Address.city,
+                                        state: Faker::Address.state_abbr,
+                                        zip_code: Faker::Address.zip,
+                                        website: Faker::Internet.domain_name,
+                                        zips_served: Faker::Address.zip,
+                                        diaper_bank_id: pdx_org.id,
+                                        diaper_partner_id: p.id,
+                                        executive_director_name: Faker::Name.name,
+                                        executive_director_email: p.email,
+                                        executive_director_phone: Faker::PhoneNumber.phone_number,
+                                        program_contact_name: Faker::Name.name,
+                                        program_contact_email: Faker::Internet.email,
+                                        program_contact_phone: Faker::PhoneNumber.phone_number,
+                                        program_contact_mobile: Faker::PhoneNumber.phone_number,
+                                        pick_up_name: Faker::Name.name,
+                                        pick_up_email: Faker::Internet.email,
+                                        pick_up_phone: Faker::PhoneNumber.phone_number,
+                                        partner_status: partner_status_map[partner_option[:status]] || "pending",
+                                        status_in_diaper_base: partner_option[:status]
+                                      })
 
   Partners::User.create!(
     name: Faker::Name.name,
@@ -513,7 +513,7 @@ end
   status = count > 15 ? 'fulfilled' : 'pending'
 
   org_items = pdx_org.items.pluck(:id)
-  request_items = Array.new(Faker::Number.within(range: 3..8)).map do |item|
+  request_items = Array.new(Faker::Number.within(range: 3..8)).map do |_item|
     {
       "item_id" => org_items.sample,
       "quantity" => Faker::Number.within(range: 5..10)
@@ -610,4 +610,25 @@ users.each do |user|
       resolved: [true, false].sample
     )
   end
+end
+
+# ----------------------------------------------------------------------------
+# Account Requests
+# ----------------------------------------------------------------------------
+# Add some Account Requests to fill up the account requests admin page
+
+[{ organization_name: "Telluride Diaper Bank",    website: "TDB.com", confirmed_at: nil },
+ { organization_name: "Ouray Diaper Bank",        website: "ODB.com",   confirmed_at: nil },
+ { organization_name: "Canon City Diaper Bank",   website: "CCDB.com",  confirmed_at: nil },
+ { organization_name: "Golden Diaper Bank",       website: "GDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
+ { organization_name: "Westminster Diaper Bank",  website: "WDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
+ { organization_name: "Lakewood Diaper Bank",     website: "LDB.com",   confirmed_at: (Time.zone.today - rand(15).days) }].each do |account_request|
+  AccountRequest.create(
+    name: Faker::Name.unique.name,
+    email: Faker::Internet.unique.email,
+    organization_name: account_request[:organization_name],
+    organization_website: account_request[:website],
+    request_details: Faker::Lorem.paragraphs.join(", "),
+    confirmed_at: account_request[:confirmed_at]
+  )
 end
