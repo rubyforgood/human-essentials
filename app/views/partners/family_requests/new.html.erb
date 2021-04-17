@@ -2,27 +2,19 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Children - #{current_partner.name}" %>
-        <h1><i class="fa fa-child"></i>&nbsp;&nbsp;
-          Children
+        <% content_for :title, "Families - #{current_partner.name}" %>
+        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
+          Family Details
           <small>for <%= current_partner.name %></small>
         </h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
-              <i class="fa fa-home fa-lg"></i> Home
-            <% end %>
-          </li>
-          <li class="breadcrumb-item"><a href="#">Children</a></li>
+          <li class="breadcrumb-item"><a href="<%= partner_user_root_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+          <li class="breadcrumb-item"><a href="#">New Family Request</a></li>
         </ol>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
-</section>
-
-<section class="content">
-  <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
         <div class="card">
@@ -64,56 +56,36 @@
                         reset_filterrific_url,
                         class: 'btn btn-danger'
                     ) %>
-                  <span class="float-right"></span>
-                <% end %>
-              </div>
+            <% end %>
             </div>
-      </div>
-    </div>
-  </div>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <div id="filterrific_results">
-              <%= render(
-                      partial: 'partners/children/list',
-                      locals: {children: @children}
-                  ) %>
-            </div>
-          </div>
         </div>
       </div>
     </div>
-  </div>
+  </div><!-- /.container-fluid -->
 </section>
 
 <section class="content">
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Adding Children</h3>
-          </div>
-          <div class="card-body">
+        <div class="card mb-4">
+          <%= form_tag(partners_family_requests_path) do %>
+            <div id="filterrific_results">
+              <%= render(
+                partial: 'partners/family_requests/list',
+                locals: {children: @children}
+              ) %>
+            </div>
 
-            Children must be added from their individual families to prevent accidentally associating the child with the
-            wrong
-            family in a situation where there are many families with similar names. Visit the family list below to view
-            and
-            confirm the family to which you would like to add a new child.
+            <hr>
 
-          </div>
-          <div class="card-footer">
-            <%= link_to 'Visit Family List', partners_families_path, class: "btn btn-info" %>
-          </div>
-          <!-- /.card -->
+            <div class="card-footer">
+              <%= submit_tag("Submit Essentials Request", class: "btn btn-primary") %>
+              <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
+            </div>
+          <% end %>
         </div>
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+    </div>
   </div>
 </section>

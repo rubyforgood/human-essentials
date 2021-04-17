@@ -101,6 +101,7 @@ module Partners
 
     VERIFIED_STATUS = 'verified'.freeze
     RECERTIFICATION_REQUESTED_STATUS = 'recertification_required'.freeze
+    DEACTIVATED_STATUS = "deactivated".freeze
 
     AGENCY_TYPES = {
       "CAREER" => "Career technical training",
@@ -142,6 +143,10 @@ module Partners
 
     def verified?
       partner_status == VERIFIED_STATUS
+    end
+
+    def deactivated?
+      status_in_diaper_base == DEACTIVATED_STATUS
     end
 
     def organization
