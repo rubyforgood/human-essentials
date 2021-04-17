@@ -48,8 +48,9 @@ module Partners
         Partners::ItemRequest.new(
           item_id: ira['item_id'],
           quantity: ira['quantity'],
+          children: ira['children'] || [], # will create ChildItemRequests if there are any
           name: fetch_organization_item_name(ira['item_id']),
-          partner_key: fetch_orgnaization_partner_key(ira['item_id'])
+          partner_key: fetch_organization_partner_key(ira['item_id'])
         )
       end
 
@@ -65,7 +66,7 @@ module Partners
       end
     end
 
-    def fetch_orgnaization_partner_key(item_id)
+    def fetch_organization_partner_key(item_id)
       item_data = organization_item_data.find { |item| item[:id] == item_id.to_i }
       if item_data.present?
         item_data[:partner_key]

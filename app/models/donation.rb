@@ -146,7 +146,7 @@ class Donation < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Source", "Date", "Donation Site", "Storage Location", "Quantity of Items", "Variety of Items"]
+    ["Source", "Date", "Donation Site", "Storage Location", "Quantity of Items", "Variety of Items", "Comments"]
   end
 
   def csv_export_attributes
@@ -156,7 +156,8 @@ class Donation < ApplicationRecord
       donation_site.try(:name),
       storage_location.name,
       line_items.total,
-      line_items.size
+      line_items.size,
+      comment
     ]
   end
 
