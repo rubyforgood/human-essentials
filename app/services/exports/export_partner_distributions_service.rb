@@ -1,8 +1,8 @@
 module Exports
   class ExportPartnerDistributionsService
-    def initialize(distributions)
+    def initialize(distributions, optional_headers = [])
       @data = distributions
-      @headers = ["Date", "Source Inventory", "Total Items"]
+      @headers = ["Date of Distribution", "Source Inventory", "Total Items"]|optional_headers
     end
 
     def call
@@ -22,9 +22,14 @@ module Exports
     def rows
       data.map do |distribution|
         {
-          "Date" => distribution.issued_at.strftime("%m/%d/%Y"),
+          "Partner" => distribution.partner.name,
+          "Date of Distribution" => distribution.issued_at.strftime("%m/%d/%Y"),
           "Source Inventory" => distribution.storage_location.name,
-          "Total Items" => distribution.line_items.total
+          "Total Items" => distribution.line_items.total,
+          "Total Value" => distribution.cents_to_dollar(distribution.line_items.total_value),
+          "Delivery Method" => distribution.delivery_method,
+          "State" => distribution.state,
+          "Agency Representative" => distribution.agency_rep
         }.tap do |row|
           distribution.line_items.quantities_by_name.each do |_id, item_ref|
             row[item_ref[:name]] = item_ref[:quantity]

@@ -114,11 +114,6 @@ class Distribution < ApplicationRecord
     end
   end
 
-  def self.csv_export_headers
-    ["Partner", "Date of Distribution", "Source Inventory", "Total items",
-     "Total Value (in $)", "Delivery Method", "State", "Agency Representative"]
-  end
-
   def combine_distribution
     line_items.combine!
   end
@@ -133,7 +128,7 @@ class Distribution < ApplicationRecord
       delivery_method,
       state,
       agency_rep
-    ] + quantity_per_line_item
+    ]
   end
 
   def future?
@@ -146,34 +141,10 @@ class Distribution < ApplicationRecord
 
   private
 
-  def quantity_per_line_item
-    item_hash = line_items.quantities_by_name
-    item_ids = item_hash.collect { |_, value| value[:item_id] }
-    organization.items.each { |item| item_hash[item.id] = { item_id: item.id, name: item.name, quantity: 0 } }
-
-    ### Hacky proof of concept
-    # item_hash returns all distribution items + all possible items for the organization
-    # even if the item is already listed in the item hash, a new line will be created for the organization items with a value of zero
-    # e.g. if the distribution has 20 items, then 65 lines will be returned - 20 distribution items with quantities + 45 org items with zeros
-    # we need to remove the zero quantity items if the item is already included in the distribution (merge makes no sense)
-
-    a2 = []                                               #blank array
-    item_hash.each do |_k,v|                              
-      q = v                                               #get each nested hash and place into array                          
-      a2 << q
+  def self.generate_distributions_csv(distributions, optional_headers = [])
+    rows = Exports::ExportPartnerDistributionsService.new(distributions, optional_headers).call
+    CSV.generate(headers: true) do |csv|
+      rows.each { |row| csv << row }
     end
-    x = a2.group_by{|k| k[:name]}.values                  #group items in the hash by the name value (some items with the same name can have different IDs)
-    a3=[]                                                 #another blank array
-    x.each do |a|
-      a3 << a[0]                                          #for each item in the grouped array, grab the first from the group (i.e. the item with a quantity)
-    end
-    h = {}                                                #blank hash
-    i = 1                                                 #to create an unused numeric key in order to match the original structure
-    a3.each do |a|
-      h[i] = a                                            #add each item to the hash
-      i += 1
-    end
-
-    h.sort_by { |_, value| value[:name] }.to_h.collect { |_, value| value[:quantity] } #export the items in alphabetical order
   end
 end
