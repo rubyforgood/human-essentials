@@ -9,10 +9,11 @@ module Partners
 
     attr_reader :partner_user_id, :comments, :family_requests_attributes, :partner_request
 
-    def initialize(partner_user_id:, comments: nil, family_requests_attributes: [])
+    def initialize(partner_user_id:, comments: nil, for_families: false, family_requests_attributes: [])
       @partner_user_id = partner_user_id
       @comments = comments
       @family_requests_attributes = family_requests_attributes
+      @for_families = for_families
     end
 
     def call
@@ -21,6 +22,7 @@ module Partners
       request_create_svc = Partners::RequestCreateService.new(
         partner_user_id: partner_user_id,
         comments: comments,
+        for_families: @for_families,
         item_requests_attributes: item_requests_attributes
       )
 
