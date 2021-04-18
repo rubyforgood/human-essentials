@@ -81,6 +81,10 @@ module ApplicationHelper
     ""
   end
 
+  def support_ticket_url
+    ENV["SUPPORT_TICKET_FORM_URL"]
+  end
+
   # h/t devise source code for devise_controller?
   def admin_namespace?
     request.path_info.include?('admin')
