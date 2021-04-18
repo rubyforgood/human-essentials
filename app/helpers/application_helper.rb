@@ -81,7 +81,7 @@ module ApplicationHelper
     ""
   end
 
-  def support_ticket_url
+  def support_ticket_form_url
     ENV["SUPPORT_TICKET_FORM_URL"]
   end
 

@@ -22,7 +22,7 @@
 
 <% if Rails.env.production? %>
   <li class="nav-item dropdown">
-    <%= link_to support_ticket_url, class: 'nav-link', target: :_blank do %>
+    <%= link_to support_ticket_form_url, class: 'nav-link', target: :_blank do %>
       <i class="fas fa-bug"></i>
     <% end %>
   </li>
