@@ -3,6 +3,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
 
   before do
     visit subject
+    allow(DiaperPartnerClient).to receive(:get).and_return([])
   end
 
   context "when users are invalid" do

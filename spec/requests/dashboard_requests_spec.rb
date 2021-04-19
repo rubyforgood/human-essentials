@@ -7,6 +7,7 @@ RSpec.describe "Dashboard", type: :request do
 
   context "While signed in" do
     before do
+      allow(DiaperPartnerClient).to receive(:get).and_return([])
       sign_in(@user)
     end
 

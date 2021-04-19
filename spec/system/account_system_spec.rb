@@ -2,6 +2,7 @@ RSpec.describe "User account management", type: :system, js: true do
   subject { "/users/edit" }
 
   before do
+    allow(DiaperPartnerClient).to receive(:get).and_return([])
     sign_in(@user)
   end
 

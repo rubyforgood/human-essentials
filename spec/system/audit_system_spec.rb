@@ -4,6 +4,10 @@ RSpec.describe "Audit management", type: :system, js: true do
   let(:item) { create(:item) }
   let!(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, organization: @organization) }
 
+  before do
+    allow(DiaperPartnerClient).to receive(:get).and_return([])
+  end
+
   context "while signed in as a normal user" do
     before do
       sign_in(@user)

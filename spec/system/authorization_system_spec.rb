@@ -1,4 +1,8 @@
 RSpec.describe "Authorization", type: :system, js: true do
+  before do
+    allow(DiaperPartnerClient).to receive(:get).and_return([])
+  end
+
   it "redirects to the dashboard when unauthorized user attempts access" do
     sign_in(@user)
     visit "/admin/dashboard"

@@ -1,4 +1,8 @@
 RSpec.describe "Base Item Admin", type: :system, js: true do
+  before do
+    allow(DiaperPartnerClient).to receive(:get).and_return([])
+  end
+
   context "While signed in as an Administrative User (super admin)" do
     before do
       sign_in(@super_admin)
