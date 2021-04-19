@@ -1,0 +1,19 @@
+<div class="col-md-4">
+  <div class="card card-success">
+    <div class="card-header">
+      <h3 class="card-title">Year end Summary <small><%= year %></small></h3>
+    </div>
+    <div class="card-body">
+      <% if @donations.blank? %>
+        <div class="alert alert-info">No donations found for <%= year %> </div>
+      <% else %>
+      <div class="row">
+        <div class="col-md-12">
+
+        </div>
+      </div>
+
+      <% end %>
+    </div>
+  </div>
+</div>

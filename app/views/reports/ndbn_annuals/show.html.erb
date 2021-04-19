@@ -20,6 +20,9 @@
       </div>
     </div>
 
-    <%= render partial: 'partner_agencies_service_area', locals: { year: params[:year] } %>
+    <div class="row mb-2">
+      <%= render partial: 'partner_agencies_service_area', locals: { year: params[:year] } %>
+      <%= render partial: 'summary_information', locals: { year: params[:year] } %>
+    </div>
   </div>
 </section>

@@ -1,0 +1,21 @@
+<div class="col-md-4">
+  <div class="card card-primary">
+    <div class="card-header">
+      <h3 class="card-title"> Partner Agencies and Service Area <small><%= year %></small></h3>
+    </div>
+    <div class="card-body">
+      <% if @partner_agencies.blank? %>
+        <div class="alert alert-info">No report found for <%= year %> </div>
+      <% else %>
+      <div class="row">
+        <div class="col-md-12">
+          <h3 id="partners">Total Partners in <%= year %>: <span><%= @partner_agencies.count %></span></h3>
+          <h3 id="partners-types">Partner Agencies types: <span><%= @total_agencies_types.map {  |type, total| "#{type} (#{total})" }.join(', ') %></span></h3>
+          <h3 id="service-areas">Service Area (zip codes): <span><%= @service_area.join(', ') %></span> </h3>
+        </div>
+      </div>
+
+      <% end %>
+    </div>
+  </div>
+</div>
