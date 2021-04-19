@@ -321,7 +321,7 @@ end
 # Define all the InventoryItem for each of the StorageLocation
 #
 StorageLocation.all.each do |sl|
-  Item.all.each do |item|
+  sl.organization.items.each do |item|
     InventoryItem.create!(
       storage_location: sl,
       item: item,
@@ -491,7 +491,6 @@ end
 20.times.each do
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   stored_inventory_items_sample = storage_location.inventory_items.sample(20)
-
   distribution = Distribution.create!(storage_location: storage_location,
                                       partner: random_record_for_org(pdx_org, Partner),
                                       organization: pdx_org,
