@@ -119,8 +119,6 @@ class Donation < ApplicationRecord
       storage_location.increase_inventory(to_a)
       # Apply the new changes to the storage location inventory
       original_storage_location.decrease_inventory(old_data)
-      # TODO: Discuss this -- *should* we be removing InventoryItems when they hit 0 count?
-      original_storage_location.inventory_items.where(quantity: 0).destroy_all
     end
   rescue ActiveRecord::RecordInvalid
     false

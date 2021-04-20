@@ -135,23 +135,6 @@ RSpec.describe DonationsController, type: :controller do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
           end.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
         end
-
-        it "deletes inventory item if line item and inventory item quantities are equal" do
-          donation = create(:donation, :with_items, item_quantity: 1)
-          line_item = donation.line_items.first
-          inventory_item = donation.storage_location.inventory_items.first
-          inventory_item.update(quantity: line_item.quantity)
-          line_item_params = {
-            "0" => {
-              "_destroy" => "true",
-              item_id: line_item.item_id,
-              id: line_item.id
-            }
-          }
-          donation_params = { source: donation.source, line_items_attributes: line_item_params }
-          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
-          expect { inventory_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
-        end
       end
     end
 

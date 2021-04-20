@@ -175,19 +175,6 @@ RSpec.describe Donation, type: :model do
                                                  .and change { Item.active.count }.by(1)
         end
       end
-
-      context "with empty line_items" do
-        let(:attributes) { { line_items_attributes: {} } }
-
-        it "removes the inventory item if the item's removal results in a 0 count" do
-          subject
-          expect do
-            subject.replace_increase!(attributes)
-            storage_location.reload
-          end.to change { storage_location.inventory_items.size }.by(-1)
-                                                                 .and change { InventoryItem.count }.by(-1)
-        end
-      end
     end
 
     describe "source_view" do
