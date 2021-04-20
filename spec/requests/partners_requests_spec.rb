@@ -30,10 +30,6 @@ RSpec.describe "Partners", type: :request do
         } }.to_json
       end
 
-      before do
-        allow(DiaperPartnerClient).to receive(:get).and_return(fake_get_return)
-      end
-
       it { is_expected.to be_successful }
     end
   end
@@ -306,34 +302,12 @@ RSpec.describe "Partners", type: :request do
     let(:partner) { create(:partner, organization: @organization, status: "approved") }
 
     context "when the partner successfully deactivates" do
-      before do
-        response = double
-
-        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(true)
-        allow(DiaperPartnerClient).to receive(:put).and_return(response)
-      end
       it "changes the partner status to deactivated and redirects with flash" do
         put deactivate_partner_path(default_params.merge(id: partner.id))
 
         expect(partner.reload.status).to eq("deactivated")
         expect(response).to redirect_to(partners_path)
         expect(flash[:notice]).to eq("#{partner.name} successfully deactivated!")
-      end
-    end
-
-    context "when the partner is not successfully deactivated" do
-      before do
-        response = double
-
-        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(false)
-        allow(DiaperPartnerClient).to receive(:put).and_return(response)
-      end
-      it "fails to change the partner status to deactivated and redirects with flash error message" do
-        put deactivate_partner_path(default_params.merge(id: partner.id))
-
-        expect(partner.reload.status).to eq("approved")
-        expect(response).to redirect_to(partners_path)
-        expect(flash[:error]).to eq("#{partner.name} failed to deactivate!")
       end
     end
   end
@@ -378,12 +352,6 @@ RSpec.describe "Partners", type: :request do
     context "when the partner successfully reactivates" do
       let(:partner) { create(:partner, organization: @organization, status: "deactivated") }
 
-      before do
-        response = double
-        allow(response).to receive(:is_a?).with(Net::HTTPSuccess).and_return(true)
-        allow(DiaperPartnerClient).to receive(:put).and_return(response)
-      end
-
       it "changes the partner status to approved, partner status on partner app to verified, and redirects with flash" do
         put reactivate_partner_path(default_params.merge(id: partner.id))
 
@@ -395,13 +363,8 @@ RSpec.describe "Partners", type: :request do
 
     context "when trying to reactivate a partner who is not deactivated " do
       let(:partner) { create(:partner, organization: @organization, status: "approved") }
-      before do
-        allow(DiaperPartnerClient).to receive(:put)
-      end
       it "fails to change the partner status to reactivated and redirects with flash error message" do
         put reactivate_partner_path(default_params.merge(id: partner.id))
-
-        expect(DiaperPartnerClient).not_to have_received(:put)
       end
     end
   end
