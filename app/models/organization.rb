@@ -118,6 +118,7 @@ class Organization < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
+  scope :needs_reminding, -> { where('reminder_day = ? and deadline_day is not null', Date.current.day) }
 
   def assign_attributes_from_account_request(account_request)
     assign_attributes(
