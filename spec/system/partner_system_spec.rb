@@ -269,10 +269,6 @@ RSpec.describe "Partner management", type: :system, js: true do
         } }.to_json
       end
 
-      before do
-        allow(DiaperPartnerClient).to receive(:get).with({ id: partner.to_param }, query_params: { impact_metrics: true }).and_return(fake_get_return)
-      end
-
       context "when filtering" do
         it "preserves the filter constraints in the CSV output" do
           visit subject
