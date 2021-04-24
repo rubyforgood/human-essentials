@@ -2,31 +2,37 @@
 // All this logic will automatically be available in application.js.
 
 $(document).ready(function() {
-  var rails_right_now = '<%= Time.zone.now.strftime('%Y%m%d') %>';
   $(function() {
     function callback(start, end, label) {
       $('#filters_date_range').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
       $('#filters_date_range_label').val(label);
     }
+
+    // Returns a clone of a single `moment`, since all the moment
+    // methods mutate the object.
+    const today = ((innerToday) => {
+      return () => innerToday.clone();
+    })(moment());
+
     if ($('#filters_date_range').length > 0) {
       $('#filters_date_range').daterangepicker({
           linkedCalendars: false,
           autoApply: true,
           ranges: {
-             'All Time': [moment(rails_right_now).subtract(100, 'years'), moment(rails_right_now)],
-             'Today': [moment(rails_right_now), moment(rails_right_now)],
-             'Yesterday': [moment(rails_right_now).subtract(1, 'days'), moment(rails_right_now).subtract(1, 'days')],
-             'Last 7 Days': [moment(rails_right_now).subtract(6, 'days'), moment(rails_right_now)],
-             'Last 30 Days': [moment(rails_right_now).subtract(29, 'days'), moment(rails_right_now)],
-             'This Month': [moment(rails_right_now).startOf('month'), moment(rails_right_now).endOf('month')],
-             'Last Month': [moment(rails_right_now).subtract(1, 'month').startOf('month'), moment(rails_right_now).subtract(1, 'month').endOf('month')],
-             'This Year': [moment(rails_right_now).startOf('year'), moment(rails_right_now).endOf('year')]
+             'All Time': [today().subtract(100, 'years'), today()],
+             'Today': [today(), today()],
+             'Yesterday': [today().subtract(1, 'days'), today().subtract(1, 'days')],
+             'Last 7 Days': [today().subtract(6, 'days'), today()],
+             'Last 30 Days': [today().subtract(29, 'days'), today()],
+             'This Month': [today().startOf('month'), today().endOf('month')],
+             'Last Month': [today().subtract(1, 'month').startOf('month'), today().subtract(1, 'month').endOf('month')],
+             'This Year': [today().startOf('year'), today().endOf('year')]
           }
       }, callback);
 
       start_date = $('#filters_date_range').data("initial-start-date");
       end_date = $('#filters_date_range').data("initial-end-date");
-      
+
       $('#filters_date_range').data('daterangepicker').setStartDate(start_date);
       $('#filters_date_range').data('daterangepicker').setEndDate(end_date);
     };
