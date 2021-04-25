@@ -58,7 +58,8 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
         first('.storage-location-source').all("option").last.select_option
         item_css = "#audit_line_items_attributes_0_item_id option[value='#{item.id}']"
-        item_text = find_all(item_css).first.text
+        item_text = find(item_css).text
+
         expect(item_text).to eq(item.name)
       end
     end
