@@ -585,35 +585,6 @@ end
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
 
 # ----------------------------------------------------------------------------
-# Feedback Messages
-# ----------------------------------------------------------------------------
-# Add some FeedbackMessages to fill up the feedback dashboard
-
-users = User.all
-comments = [
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam faucibus, neque eu mattis varius, eros erat elementum sem, quis volutpat erat tortor quis mauris. In condimentum vel sapien in elementum. Pellentesque porttitor mattis orci eu congue. Donec nec ipsum bibendum dolor tempus pellentesque vel ac ante.",
-  "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.",
-  "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
-]
-paths = [
-  "https://diaper.app/diaper_bank/requests",
-  "https://diaper.app/diaper_bank/donations",
-  "https://diaper.app/diaper_bank/partners",
-  "https://diaper.app/diaper_bank/audits"
-]
-
-users.each do |user|
-  2.times do
-    FeedbackMessage.create(
-      message: comments.sample,
-      path: paths.sample,
-      user: user,
-      resolved: [true, false].sample
-    )
-  end
-end
-
-# ----------------------------------------------------------------------------
 # Account Requests
 # ----------------------------------------------------------------------------
 # Add some Account Requests to fill up the account requests admin page
