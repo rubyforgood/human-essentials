@@ -47,7 +47,6 @@ gem "puma"
 gem "rails", "~> 6.0.3"
 gem "sass-rails"
 gem "sidekiq"
-gem 'sidekiq-scheduler'
 gem "strong_migrations", "~> 0.7.6"
 gem "sprockets", "~> 4.0.2"
 gem "toastr-rails"
