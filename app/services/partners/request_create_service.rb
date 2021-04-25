@@ -4,15 +4,16 @@ module Partners
 
     attr_reader :partner_request
 
-    def initialize(partner_user_id:, comments: nil, item_requests_attributes: [], additional_attrs: {})
+    def initialize(partner_user_id:, comments: nil, for_families: false, item_requests_attributes: [], additional_attrs: {})
       @partner_user_id = partner_user_id
       @comments = comments
+      @for_families = for_families
       @item_requests_attributes = item_requests_attributes
       @additional_attrs = additional_attrs
     end
 
     def call
-      @partner_request = Partners::Request.new(partner_id: partner.id, organization_id: organization_id, comments: comments, sent: true)
+      @partner_request = Partners::Request.new(partner_id: partner.id, organization_id: organization_id, comments: comments, for_families: @for_families, sent: true)
       @partner_request = populate_item_request(@partner_request)
       @partner_request.assign_attributes(additional_attrs)
 
