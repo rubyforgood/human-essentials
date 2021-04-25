@@ -16,18 +16,18 @@ $(document).ready(function() {
 
     if ($('#filters_date_range').length > 0) {
       $('#filters_date_range').daterangepicker({
-          linkedCalendars: false,
-          autoApply: true,
-          ranges: {
-             'All Time': [today().subtract(100, 'years'), today()],
-             'Today': [today(), today()],
-             'Yesterday': [today().subtract(1, 'days'), today().subtract(1, 'days')],
-             'Last 7 Days': [today().subtract(6, 'days'), today()],
-             'Last 30 Days': [today().subtract(29, 'days'), today()],
-             'This Month': [today().startOf('month'), today().endOf('month')],
-             'Last Month': [today().subtract(1, 'month').startOf('month'), today().subtract(1, 'month').endOf('month')],
-             'This Year': [today().startOf('year'), today().endOf('year')]
-          }
+        linkedCalendars: false,
+        autoApply: true,
+        ranges: {
+          'All Time': [today().subtract(100, 'years'), today()],
+          'Today': [today(), today()],
+          'Yesterday': [today().subtract(1, 'days'), today().subtract(1, 'days')],
+          'Last 7 Days': [today().subtract(6, 'days'), today()],
+          'Last 30 Days': [today().subtract(29, 'days'), today()],
+          'This Month': [today().startOf('month'), today().endOf('month')],
+          'Last Month': [today().subtract(1, 'month').startOf('month'), today().subtract(1, 'month').endOf('month')],
+          'This Year': [today().startOf('year'), today().endOf('year')]
+        }
       }, callback);
 
       start_date = $('#filters_date_range').data("initial-start-date");
