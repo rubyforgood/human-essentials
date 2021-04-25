@@ -41,11 +41,7 @@ RSpec.describe AccountRequest, type: :model do
 
       it 'should not allow the email' do
         expect(subject.valid?).to eq(false)
-        expect(subject.errors.messages).to include({
-                                                     email: [
-                                                       "already used by an existing Organization"
-                                                     ]
-                                                   })
+        expect(subject.errors.messages[:email]).to match_array(["already used by an existing Organization"])
       end
     end
 
@@ -56,11 +52,7 @@ RSpec.describe AccountRequest, type: :model do
 
       it 'should not allow the email' do
         expect(subject.valid?).to eq(false)
-        expect(subject.errors.messages).to include({
-                                                     email: [
-                                                       "already used by an existing User"
-                                                     ]
-                                                   })
+        expect(subject.errors.messages[:email]).to match_array(["already used by an existing User"])
       end
     end
   end
