@@ -1,6 +1,5 @@
 def set_up_sidekiq
   require 'sidekiq/web'
-  require 'sidekiq-scheduler/web'
 
   if Rails.env.production?
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
@@ -57,13 +56,7 @@ Rails.application.routes.draw do
     resources :users
     resources :barcode_items
     resources :account_requests, only: [:index]
-    resources :feedback_messages do
-      get :resolve
-    end
   end
-
-  # These are globally accessible
-  resources :feedback_message, only: [:create]
 
   namespace :api, defaults: { format: "json" } do
     namespace :v1 do

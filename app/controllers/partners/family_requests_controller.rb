@@ -26,7 +26,8 @@ module Partners
 
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_partner_user.id,
-        family_requests_attributes: family_requests_attributes
+        family_requests_attributes: family_requests_attributes,
+        for_families: true
       )
 
       create_service.call
