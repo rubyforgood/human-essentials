@@ -101,12 +101,6 @@
     </ul>
   </li>
 
-  <li class="nav-item <%= active_class(['feedback_messages']) %>">
-    <%= link_to(admin_feedback_messages_path, class: "nav-link #{"active" if current_page?(admin_feedback_messages_path)}") do %>
-      <i class="nav-icon fa fa-sticky-note"></i> User Feedback
-    <% end %>
-  </li>
-
   <li class="nav-item <%= active_class(['account_requests']) %>">
     <%= link_to(admin_account_requests_path, class: "nav-link #{"active" if current_page?(admin_account_requests_path)}") do %>
       <i class="nav-icon fa fa-sticky-note"></i> Account Requests
