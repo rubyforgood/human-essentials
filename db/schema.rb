@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_210_409_194_754) do
+ActiveRecord::Schema.define(version: 20_210_425_013_259) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -105,6 +105,16 @@ ActiveRecord::Schema.define(version: 20_210_409_194_754) do
     t.string "partner_key"
   end
 
+  create_table "deprecated_feedback_messages", force: :cascade do |t|
+    t.bigint "user_id"
+    t.text "message"
+    t.string "path"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "resolved"
+    t.index ["user_id"], name: "index_deprecated_feedback_messages_on_user_id"
+  end
+
   create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
     t.string "contact_name"
     t.string "email"
@@ -178,16 +188,6 @@ ActiveRecord::Schema.define(version: 20_210_409_194_754) do
     t.index ["manufacturer_id"], name: "index_donations_on_manufacturer_id"
     t.index ["organization_id"], name: "index_donations_on_organization_id"
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
-  end
-
-  create_table "feedback_messages", force: :cascade do |t|
-    t.bigint "user_id"
-    t.text "message"
-    t.string "path"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "resolved"
-    t.index ["user_id"], name: "index_feedback_messages_on_user_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|

@@ -41,10 +41,6 @@ RSpec.describe User, type: :model do
       expect(described_class.reflect_on_association(:organization).macro)
         .to eq(:belongs_to)
     }
-    it {
-      expect(described_class.reflect_on_association(:feedback_messages).macro)
-        .to eq(:has_many)
-    }
   end
 
   context "Validations >" do
