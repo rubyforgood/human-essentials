@@ -7,12 +7,14 @@ describe Partners::FamilyRequestCreateService do
       {
         partner_user_id: partner_user.id,
         comments: comments,
+        for_families: for_families,
         family_requests_attributes: family_requests_attributes
       }
     end
     let(:partner_user) { partner.primary_partner_user }
     let(:partner) { create(:partner) }
     let(:comments) { Faker::Lorem.paragraph }
+    let(:for_families) { false }
 
     context 'when the arguments are incorrect' do
       context 'because no family_requests_attributes were defined' do
@@ -76,12 +78,23 @@ describe Partners::FamilyRequestCreateService do
 
           partner_request = Partners::Request.last
           expect(partner_request.item_requests.count).to eq(2)
+          expect(partner_request).to_not be_for_families
 
           first_item_request = partner_request.item_requests.find_by(item_id: first_item_id)
           expect(first_item_request.children).to contain_exactly(child1)
 
           second_item_request = partner_request.item_requests.find_by(item_id: second_item_id)
           expect(second_item_request.children).to contain_exactly(child1, child2)
+        end
+
+        context 'with for_families = true' do
+          let(:for_families) { true }
+
+          it 'set for_families on the partner_request' do
+            subject
+            partner_request = Partners::Request.last
+            expect(partner_request).to be_for_families
+          end
         end
       end
 
@@ -107,7 +120,7 @@ describe Partners::FamilyRequestCreateService do
         let(:fake_request_create_service) { instance_double(Partners::RequestCreateService, call: -> {}, errors: [], partner_request: -> {}) }
 
         before do
-          allow(Partners::RequestCreateService).to receive(:new).with(partner_user_id: partner_user.id, comments: comments, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
+          allow(Partners::RequestCreateService).to receive(:new).with(partner_user_id: partner_user.id, comments: comments, for_families: false, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
         end
 
         it 'should send the correct request payload to the Partners::RequestCreateService and call it' do
