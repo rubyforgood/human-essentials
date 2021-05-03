@@ -144,7 +144,7 @@ GEM
     capybara-screenshot (1.0.25)
       capybara (>= 1.0, < 4)
       launchy
-    chartkick (3.4.2)
+    chartkick (4.0.4)
     childprocess (3.0.0)
     choice (0.2.0)
     climate_control (0.2.0)
@@ -505,8 +505,6 @@ GEM
     terrapin (0.6.0)
       climate_control (>= 0.0.3, < 1.0)
     thor (1.1.0)
-    thwait (0.1.0)
-    thread_safe (0.3.6)
     tilt (2.0.10)
     toastr-rails (1.0.3)
       railties (>= 3.1.0)
