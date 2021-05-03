@@ -141,8 +141,8 @@ class Distribution < ApplicationRecord
 
   private
 
-  def self.generate_distributions_csv(distributions, optional_headers = [])
-    rows = Exports::ExportPartnerDistributionsService.new(distributions, optional_headers).call
+  def self.generate_distributions_csv(distributions)
+    rows = Exports::ExportDistributionsCSVService.new(distributions).call
     CSV.generate(headers: true) do |csv|
       rows.each { |row| csv << row }
     end

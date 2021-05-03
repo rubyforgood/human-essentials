@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Exports::ExportPartnerDistributionsService do
+describe Exports::ExportDistributionsCSVService do
   let(:item) { create(:item) }
   let(:distribution) { create(:distribution, :with_items, item: item, organization: @organization, issued_at: 3.days.ago) }
   let(:distributions) { Array.new(3, distribution)}
@@ -12,8 +12,9 @@ describe Exports::ExportPartnerDistributionsService do
   describe ".call" do
 
     it "includes default headers in the first row" do
-      expect(subject.call.first).to include("Date of Distribution", "Source Inventory",
-                                            "Total Items", item.name)
+      expect(subject.call.first).to include("Partner", "Date of Distribution", "Source Inventory",
+                                            "Total Items", "Total Value", "Delivery Method", 
+                                            "State", "Agency Representative", item.name)
     end
 
     it "includes rows for each distribution" do

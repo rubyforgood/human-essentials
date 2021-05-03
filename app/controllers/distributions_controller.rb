@@ -57,9 +57,7 @@ class DistributionsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv { send_data Distribution.generate_distributions_csv(@distributions, ["Partner", "Total Value", "Delivery Method", 
-                                                                                      "State", "Agency Representative"]),
-                                                                                      filename: "Distributions-#{Time.zone.today}.csv" }
+      format.csv { send_data Distribution.generate_distributions_csv(@distributions), filename: "Distributions-#{Time.zone.today}.csv" }
     end
   end
 

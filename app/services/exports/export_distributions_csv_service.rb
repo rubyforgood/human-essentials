@@ -1,14 +1,15 @@
 module Exports
-  class ExportPartnerDistributionsService
+  class ExportDistributionsCSVService
     def initialize(distributions)
       @data = distributions
-      @headers = ["Date of Distribution", "Source Inventory", "Total Items"]
-    end
+      @headers = ["Partner", "Date of Distribution", "Source Inventory",
+                  "Total Items", "Total Value", "Delivery Method", 
+                  "State", "Agency Representative"]
+    end 
 
     def call
       [].tap do |csv_data|
         csv_data << headers
-
         rows.each do |request_row|
           csv_data << headers.map { |header| request_row[header] }
         end
@@ -33,10 +34,25 @@ module Exports
         }.tap do |row|
           distribution.line_items.quantities_by_name.each do |_id, item_ref|
             row[item_ref[:name]] = item_ref[:quantity]
-            headers << item_ref[:name] unless headers.include?(item_ref[:name])
+            (headers<<item_ref[:name]).to_set
           end
         end
+      end.tap do |distribution|
+        distribution.each do |row|
+          headers.each do |header|
+            unless header == "Agency Representative"
+              if row[header].blank?
+                row[header] = 0
+              end
+            else
+              if row[header].blank?
+                row[header] = "None"
+              end
+            end
+          end
+        end  
       end
     end
+
   end
 end
