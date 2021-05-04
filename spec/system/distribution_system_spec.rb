@@ -429,7 +429,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "filters by state" do
-      distribution1 = create(:distribution, state: "started")
+      distribution1 = create(:distribution, state: "scheduled")
       create(:distribution, state: "complete")
 
       visit subject
