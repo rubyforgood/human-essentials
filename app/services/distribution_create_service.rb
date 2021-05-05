@@ -9,7 +9,6 @@ class DistributionCreateService < DistributionService
   def call
     perform_distribution_service do
       distribution.save!
-      distribution.scheduled!
       distribution.storage_location.decrease_inventory distribution
       distribution.reload
       @request&.update!(distribution_id: distribution.id, status: 'fulfilled')
