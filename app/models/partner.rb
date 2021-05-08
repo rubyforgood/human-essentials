@@ -107,13 +107,6 @@ class Partner < ApplicationRecord
     ]
   end
 
-  def self.generate_distributions_csv(distributions)
-    rows = Exports::ExportDistributionsCSVService.new(distributions.map(&:id)).generate_csv
-    CSV.generate(headers: true) do |csv|
-      rows.each { |row| csv << row }
-    end
-  end
-
   def contact_person
     return @contact_person if @contact_person
 

@@ -1,7 +1,7 @@
 describe Exports::ExportDistributionsCSVService do
-
-  describe '#generate_csv' do
-    subject { described_class.new(distributions).generate_csv }
+  describe '#generate_csv_data' do
+    subject { described_class.new(distribution_ids: distribution_ids).generate_csv_data }
+    let(:distribution_ids) { distributions.map(&:id) }
     let(:distributions) do
       Array.new(3) do
         create(
@@ -9,9 +9,9 @@ describe Exports::ExportDistributionsCSVService do
           :with_items,
           item:
           FactoryBot.create(:item, name: Faker::Appliance.equipment),
-          issued_at: 3.days.ago
+          issued_at: Time.current
         )
-      end
+      end.reverse
     end
     let(:expected_headers) do
       [
@@ -26,9 +26,9 @@ describe Exports::ExportDistributionsCSVService do
       ] + expected_item_headers
     end
     let(:expected_item_headers) do
-      item_names = distributions.map(&:line_items).flatten.map(&:item).map do |item|
-        item.name
-      end
+      item_names = distributions.map do |distribution|
+        distribution.line_items.map(&:item).map(&:name)
+      end.flatten
 
       item_names.sort.uniq
     end
@@ -48,7 +48,7 @@ describe Exports::ExportDistributionsCSVService do
           distribution.agency_rep
         ]
 
-        row = row + Array.new(expected_item_headers.size, 0)
+        row += Array.new(expected_item_headers.size, 0)
 
         distribution.line_items.includes(:item).each do |line_item|
           item_name = line_item.item.name
