@@ -505,8 +505,6 @@ GEM
     terrapin (0.6.0)
       climate_control (>= 0.0.3, < 1.0)
     thor (1.1.0)
-    thwait (0.1.0)
-    thread_safe (0.3.6)
     tilt (2.0.10)
     toastr-rails (1.0.3)
       railties (>= 3.1.0)
@@ -646,4 +644,4 @@ RUBY VERSION
    ruby 2.7.2p137
 
 BUNDLED WITH
-   2.2.13
+   2.2.16
