@@ -1,0 +1,74 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: rubocop
+    versions:
+    - 1.10.0
+    - 1.11.0
+    - 1.12.0
+    - 1.12.1
+    - 1.13.0
+    - 1.9.0
+    - 1.9.1
+  - dependency-name: jwt
+    versions:
+    - 2.2.3
+  - dependency-name: geocoder
+    versions:
+    - 1.6.7
+  - dependency-name: devise_invitable
+    versions:
+    - 2.0.4
+  - dependency-name: knapsack_pro
+    versions:
+    - 2.13.0
+  - dependency-name: chartkick
+    versions:
+    - 4.0.0
+    - 4.0.2
+    - 4.0.3
+  - dependency-name: mini_racer
+    versions:
+    - 0.4.0
+  - dependency-name: nokogiri
+    versions:
+    - 1.11.3
+  - dependency-name: sidekiq
+    versions:
+    - 6.2.0
+    - 6.2.1
+  - dependency-name: listen
+    versions:
+    - 3.5.1
+  - dependency-name: rails
+    versions:
+    - 6.1.1
+    - 6.1.2
+    - 6.1.2.1
+    - 6.1.3
+  - dependency-name: skylight
+    versions:
+    - 5.0.0
+    - 5.0.1
+  - dependency-name: flipper-ui
+    versions:
+    - 0.20.4
+  - dependency-name: capistrano3-puma
+    versions:
+    - 5.0.3
+    - 5.0.4
+  - dependency-name: database_cleaner
+    versions:
+    - 2.0.0
+    - 2.0.1
+  - dependency-name: jbuilder
+    versions:
+    - 2.11.2
+  - dependency-name: capybara
+    versions:
+    - 3.35.1
