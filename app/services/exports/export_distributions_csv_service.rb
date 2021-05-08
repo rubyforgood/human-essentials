@@ -1,57 +1,71 @@
 module Exports
   class ExportDistributionsCSVService
     def initialize(distributions)
-      @data = distributions
-      @headers = ["Partner", "Date of Distribution", "Source Inventory",
-                  "Total Items", "Total Value", "Delivery Method", 
-                  "State", "Agency Representative"]
-    end 
+      @distributions = distributions
+    end
 
-    def call
-      [].tap do |csv_data|
-        csv_data << headers
-        rows.each do |request_row|
-          csv_data << headers.map { |header| request_row[header] }
-        end
+    def generate_csv
+      csv_data = []
+
+      csv_data << headers
+
+      distributions.each do |distribution|
+        csv_data << build_row_data(distribution)
       end
+
+      csv_data
     end
 
     private
 
-    attr_reader :data, :headers
+    attr_reader :distributions
 
-    def rows
-      data.map do |distribution|
-        {
-          "Partner" => distribution.partner.name,
-          "Date of Distribution" => distribution.issued_at.strftime("%m/%d/%Y"),
-          "Source Inventory" => distribution.storage_location.name,
-          "Total Items" => distribution.line_items.total,
-          "Total Value" => distribution.cents_to_dollar(distribution.line_items.total_value),
-          "Delivery Method" => distribution.delivery_method,
-          "State" => distribution.state,
-          "Agency Representative" => distribution.agency_rep
-        }.tap do |row|
-          distribution.line_items.quantities_by_name.each do |_id, item_ref|
-            row[item_ref[:name]] = item_ref[:quantity]
-            (headers<<item_ref[:name]).to_set
-          end
-        end
-      end.tap do |distribution|
-        distribution.each do |row|
-          headers.each do |header|
-            unless header == "Agency Representative"
-              if row[header].blank?
-                row[header] = 0
-              end
-            else
-              if row[header].blank?
-                row[header] = "None"
-              end
-            end
-          end
-        end  
+    def headers
+      base_headers + item_headers
+    end
+
+    def base_headers
+      [
+        "Partner",
+        "Date of Distribution",
+        "Source Inventory",
+        "Total Items",
+        "Total Value",
+        "Delivery Method",
+        "State",
+        "Agency Representative"
+      ]
+    end
+
+    def item_headers
+      item_names = distributions.map(&:line_items).flatten.map(&:item).map do |item|
+        item.name
       end
+
+      item_names.sort.uniq
+    end
+
+    def build_row_data(distribution)
+      row = [
+        distribution.partner.name,
+        distribution.issued_at.strftime("%m/%d/%Y"),
+        distribution.storage_location.name,
+        distribution.line_items.total,
+        distribution.cents_to_dollar(distribution.line_items.total_value),
+        distribution.delivery_method,
+        distribution.state,
+        distribution.agency_rep
+      ]
+
+      row = row + Array.new(item_headers.size, 0)
+
+      distribution.line_items.includes(:item).each do |line_item|
+        item_name = line_item.item.name
+        item_column_idx = headers.index(item_name)
+        row[item_column_idx] = line_item.quantity
+      end
+
+      row
     end
 
   end
