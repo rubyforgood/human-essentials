@@ -1,7 +1,7 @@
 module Exports
   class ExportDistributionsCSVService
-    def initialize(distributions)
-      @distributions = distributions
+    def initialize(distribution_ids)
+      @distributions = Distribution.includes(:partner, :storage_location, line_items: [:item]).where(id: distribution_ids)
     end
 
     def generate_csv
@@ -38,14 +38,15 @@ module Exports
     end
 
     def item_headers
-      item_names = distributions.map(&:line_items).flatten.map(&:item).map do |item|
-        item.name
-      end
+      item_names = distributions.map do |distribution|
+        distribution.line_items.map(&:item).map(&:name)
+      end.flatten
 
       item_names.sort.uniq
     end
 
     def build_row_data(distribution)
+      # Maybe utilize hash instead of array.
       row = [
         distribution.partner.name,
         distribution.issued_at.strftime("%m/%d/%Y"),
@@ -57,9 +58,9 @@ module Exports
         distribution.agency_rep
       ]
 
-      row = row + Array.new(item_headers.size, 0)
+      row += Array.new(item_headers.size, 0)
 
-      distribution.line_items.includes(:item).each do |line_item|
+      distribution.line_items.each do |line_item|
         item_name = line_item.item.name
         item_column_idx = headers.index(item_name)
         row[item_column_idx] = line_item.quantity
@@ -67,6 +68,5 @@ module Exports
 
       row
     end
-
   end
 end

@@ -108,7 +108,7 @@ class Partner < ApplicationRecord
   end
 
   def self.generate_distributions_csv(distributions)
-    rows = Exports::ExportPartnerDistributionsService.new(distributions).call
+    rows = Exports::ExportDistributionsCSVService.new(distributions.map(&:id)).generate_csv
     CSV.generate(headers: true) do |csv|
       rows.each { |row| csv << row }
     end
