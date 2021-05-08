@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_210_425_024_157) do
+ActiveRecord::Schema.define(version: 20_210_504_164_328) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -160,7 +160,7 @@ ActiveRecord::Schema.define(version: 20_210_425_024_157) do
     t.datetime "issued_at"
     t.string "agency_rep"
     t.boolean "reminder_email_enabled", default: false, null: false
-    t.integer "state", default: 0, null: false
+    t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"

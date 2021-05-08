@@ -9,7 +9,7 @@ require 'time_util'
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
-#  state                  :integer          default("started"), not null
+#  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  organization_id        :integer
@@ -41,7 +41,7 @@ class Distribution < ApplicationRecord
 
   before_save :combine_distribution
 
-  enum state: { started: 0, scheduled: 5, complete: 10 }
+  enum state: { scheduled: 5, complete: 10 }
   enum delivery_method: { pick_up: 0, delivery: 1 }
 
   # add item_id scope to allow filtering distributions by item
