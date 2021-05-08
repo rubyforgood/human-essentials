@@ -1,6 +1,9 @@
 module Exports
   class ExportDistributionsCSVService
     def initialize(distribution_ids)
+      # Use a where lookup so that I can eager load all the resources needed
+      # rather than depending on external code to do it for me. This makes
+      # this code more self contained and efficient!
       @distributions = Distribution.includes(:partner, :storage_location, line_items: [:item]).where(id: distribution_ids)
     end
 
@@ -8,7 +11,6 @@ module Exports
       csv_data = []
 
       csv_data << headers
-
       distributions.each do |distribution|
         csv_data << build_row_data(distribution)
       end
@@ -21,6 +23,7 @@ module Exports
     attr_reader :distributions
 
     def headers
+      # Build the headers in the correct order
       base_headers + item_headers
     end
 
@@ -38,6 +41,8 @@ module Exports
     end
 
     def item_headers
+      # Define the item_headers by taking each item name
+      # and sort them alphabetically
       item_names = distributions.map do |distribution|
         distribution.line_items.map(&:item).map(&:name)
       end.flatten
@@ -46,7 +51,7 @@ module Exports
     end
 
     def build_row_data(distribution)
-      # Maybe utilize hash instead of array.
+      # Maybe utilize hash instead of array. (scott add comments that make senses)
       row = [
         distribution.partner.name,
         distribution.issued_at.strftime("%m/%d/%Y"),
