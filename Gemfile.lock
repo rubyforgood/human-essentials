@@ -155,7 +155,7 @@ GEM
     crack (0.4.5)
       rexml
     crass (1.0.6)
-    database_cleaner (1.8.5)
+    database_cleaner (1.99.0)
     debug_inspector (1.0.0)
     devise (4.8.0)
       bcrypt (~> 3.0)
