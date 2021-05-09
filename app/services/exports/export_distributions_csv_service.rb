@@ -35,17 +35,48 @@ module Exports
       base_headers + item_headers
     end
 
+    # This method keeps the base headers associated with the lambdas
+    # for extracting the values for the base columns from the given
+    # distribution.
+    #
+    # Doing so (as opposed to expressing them in distinct methods) makes
+    # it less likely that a future edit will inadvertently modify the
+    # order of the headers in a way that isn't also reflected in the
+    # values for the these base columns.
+    #
+    # Reminder: Since Ruby 1.9, Hashes are ordered based on insertion
+    # (or on the order of the literal).
+    def base_table
+      {
+        "Partner" => ->(distribution) {
+          distribution.partner.name
+        },
+        "Date of Distribution" => ->(distribution) {
+          distribution.issued_at.strftime("%m/%d/%Y")
+        },
+        "Source Inventory" => ->(distribution) {
+          distribution.storage_location.name
+        },
+        "Total Items" => ->(distribution) {
+          distribution.line_items.total
+        },
+        "Total Value" => ->(distribution) {
+          distribution.cents_to_dollar(distribution.line_items.total_value)
+        },
+        "Delivery Method" => ->(distribution) {
+          distribution.delivery_method
+        },
+        "State" => ->(distribution) {
+          distribution.state
+        },
+        "Agency Representative" => ->(distribution) {
+          distribution.agency_rep
+        }
+      }
+    end
+
     def base_headers
-      [
-        "Partner",
-        "Date of Distribution",
-        "Source Inventory",
-        "Total Items",
-        "Total Value",
-        "Delivery Method",
-        "State",
-        "Agency Representative"
-      ]
+      base_table.keys
     end
 
     def item_headers
@@ -59,17 +90,7 @@ module Exports
     end
 
     def build_row_data(distribution)
-      # Maybe utilize hash instead of array. (scott add comments that make senses)
-      row = [
-        distribution.partner.name,
-        distribution.issued_at.strftime("%m/%d/%Y"),
-        distribution.storage_location.name,
-        distribution.line_items.total,
-        distribution.cents_to_dollar(distribution.line_items.total_value),
-        distribution.delivery_method,
-        distribution.state,
-        distribution.agency_rep
-      ]
+      row = base_table.values.map { |closure| closure.call(distribution) }
 
       row += Array.new(item_headers.size, 0)
 
