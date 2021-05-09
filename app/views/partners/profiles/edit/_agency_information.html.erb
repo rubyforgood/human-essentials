@@ -13,7 +13,7 @@
             <div class="form-group row">
               <label class="control-label col-md-3">501(c)(3) IRS Determination Letter</label>
               <% if true %>
-                <strong> Deactivated Until Merger Is Completed </strong>
+                <strong style='color: orange'> Deactivated Upload Option Until Merger Is Completed </strong>
               <% elsif partner.proof_of_partner_status.attached? %>
                 <div class="col-md-8">
                   Attached
