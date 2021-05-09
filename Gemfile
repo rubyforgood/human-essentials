@@ -72,6 +72,7 @@ group :development, :test do
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "knapsack_pro"
+  gem "pry-doc"
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
