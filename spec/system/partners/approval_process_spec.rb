@@ -26,7 +26,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
 
       context 'AND they fill out the form and submit it' do
         before do
-          click_on 'My Profile'
+          click_on 'My Organization'
           assert page.has_content? 'pending'
           click_on 'Update Information'
 

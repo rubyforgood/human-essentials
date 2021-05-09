@@ -11,7 +11,7 @@
             <%= form.input :form_990, label: "Form 990 Filed", as: :boolean, class: "form-control", wrapper: :input_group %>
             <label class="control-label col-md-3">Form 990</label>
             <% if true %>
-              <strong> Deactivated Until Merger Is Completed </strong>
+              <strong style='color: orange'> Deactivated Upload Option Until Merger Is Completed </strong>
             <% elsif partner.proof_of_form_990.attached? %>
               <div class="col-md-8">
                 Attached
