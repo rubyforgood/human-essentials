@@ -35,6 +35,12 @@ module Exports
       base_headers + item_headers
     end
 
+    # Returns a Hash of keys to indexes so that obtaining the index
+    # doesn't require a linear scan.
+    def headers_with_indexes
+      @headers_with_indexes ||= headers.each_with_index.to_h
+    end
+
     # This method keeps the base headers associated with the lambdas
     # for extracting the values for the base columns from the given
     # distribution.
@@ -96,7 +102,7 @@ module Exports
 
       distribution.line_items.each do |line_item|
         item_name = line_item.item.name
-        item_column_idx = headers.index(item_name)
+        item_column_idx = headers_with_indexes[item_name]
         row[item_column_idx] = line_item.quantity
       end
 
