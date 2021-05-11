@@ -56,7 +56,6 @@ gem "yajl-ruby"
 gem "recaptcha"
 
 group :production do
-  gem "newrelic_rpm"
   gem "skylight"
 end
 

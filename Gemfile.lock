@@ -298,7 +298,6 @@ GEM
     net-scp (3.0.0)
       net-ssh (>= 2.6.5, < 7.0.0)
     net-ssh (6.1.0)
-    newrelic_rpm (6.13.1)
     nio4r (2.5.7)
     nokogiri (1.11.2)
       mini_portile2 (~> 2.5.0)
@@ -601,7 +600,6 @@ DEPENDENCIES
   magic_test
   mini_racer (~> 0.3.1)
   momentjs-rails
-  newrelic_rpm
   nokogiri (>= 1.10.4)
   paperclip
   pg (~> 1.2.3)
