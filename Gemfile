@@ -7,7 +7,7 @@ end
 
 ruby "2.7.2"
 
-gem "api-auth", "~> 2.4"
+gem "api-auth", "~> 2.5"
 gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'azure-storage-blob'
 gem 'bootstrap', '~> 4.6.0'
