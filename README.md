@@ -134,7 +134,7 @@ At that point, someone will work with you on doing a code review (typically pret
 
 Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/diaper/issues/new)
 
-### Testing
+### Writing Tests/Specs
 
 Run all the tests with:
 
@@ -154,19 +154,29 @@ example:
   end
 ```
 
-##### Feature specs
+### On Writing Browser/System/Feature Specs
 
-If you need to see a feature spec run in the browser, you can use the following env variable:
+If you need to see a browser/system spec run in the browser, you can use the following env variable:
 
 ```
 NOT_HEADLESS=true bundle exec rspec
 ```
 
-Keep in mind that you need js to be enabled. For example:
+##### Use magic_test to simplify browser/system/feature spec writing
+We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It does this by giving you the ability to record actions on the browser running the specs and easily paste them into the spec.
 
+For example you can do this by adding `magic_test` within your system spec:
+```rb
+ it "does some browser stuff" do
+   magic_test
+ end
 ```
-describe "PickupSheet", type: :feature, js: true do
+and run the spec using this command:
 ```
+MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
+```
+
+**See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
 ### In-flight Pull Requests
 
