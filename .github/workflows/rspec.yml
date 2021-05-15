@@ -65,7 +65,7 @@ jobs:
           yarn
           bundle exec rake db:create
           bundle exec rake db:schema:load
-          bundle exec rails webpacker:compile
+          bundle exec rails assets:precompile
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
