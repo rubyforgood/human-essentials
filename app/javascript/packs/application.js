@@ -14,3 +14,5 @@ require("highcharts/modules/exporting")(Highcharts)
 require("highcharts/modules/offline-exporting")(Highcharts)
 require("highcharts/modules/map")(Highcharts)
 window.Highcharts = Highcharts;
+
+import "stylesheets/application.scss"
