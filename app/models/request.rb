@@ -24,6 +24,7 @@ class Request < ApplicationRecord
 
   enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
 
+  validates :distribution_id, uniqueness: true, allow_nil: true
   before_save :sanitize_items_data
 
   include Filterable
