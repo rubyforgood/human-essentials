@@ -63,10 +63,13 @@ RSpec.describe 'Requests', type: :request do
       end
 
       context 'When the request does not exist' do
-        it 'responds with not found' do
-          delete request_path(1, default_params)
+        let(:request_id) { 0 }
 
-          expect(response).to have_http_status(:not_found)
+        it 'responds with not found' do
+          delete request_path(request_id, default_params)
+
+          expect(response).to redirect_to(requests_path)
+          expect(flash[:notice]).to eq("Request #{request_id} could not be removed because request_id is invalid")
         end
       end
     end

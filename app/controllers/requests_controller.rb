@@ -38,13 +38,18 @@ class RequestsController < ApplicationController
     redirect_to new_distribution_path(request_id: request.id)
   end
 
-  # TODO: kick off job to send email
   def destroy
-    ActiveRecord::Base.transaction do
-      Request.find(params[:id]).destroy!
+    svc = RequestDestroyService.new(request_id: params[:id])
+    svc.call
+
+    if svc.errors.none?
+      flash[:notice] = "Request #{params[:id]} has been removed!"
+      redirect_to requests_path
+    else
+      errors = svc.errors.full_messages.join(", ")
+      flash[:notice] = "Request #{params[:id]} could not be removed because #{errors}"
+      redirect_to requests_path
     end
-    flash[:notice] = "Request #{params[:id]} has been removed!"
-    redirect_to requests_path
   end
 
   private
