@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_200_518_010_905) do
+ActiveRecord::Schema.define(version: 20_210_515_232_423) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -145,12 +145,17 @@ ActiveRecord::Schema.define(version: 20_200_518_010_905) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "for_families"
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_partner_requests_on_discarded_at"
     t.index ["organization_id"], name: "index_partner_requests_on_organization_id"
     t.index ["partner_id"], name: "index_partner_requests_on_partner_id"
   end
 
   create_table "partners", force: :cascade do |t|
-    t.bigint "diaper_bank_id"
+    t.integer "diaper_bank_id"
+    t.string "executive_director_name"
+    t.string "program_contact_name"
+    t.string "pick_up_name"
     t.text "application_data"
     t.integer "diaper_partner_id"
     t.string "partner_status", default: "pending"
@@ -209,15 +214,12 @@ ActiveRecord::Schema.define(version: 20_200_518_010_905) do
     t.integer "greater_2_times_fpl"
     t.integer "poverty_unknown"
     t.string "ages_served"
-    t.string "executive_director_name"
     t.string "executive_director_phone"
     t.string "executive_director_email"
-    t.string "program_contact_name"
     t.string "program_contact_phone"
     t.string "program_contact_mobile"
     t.string "program_contact_email"
     t.string "pick_up_method"
-    t.string "pick_up_name"
     t.string "pick_up_phone"
     t.string "pick_up_email"
     t.string "distribution_times"
