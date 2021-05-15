@@ -13,10 +13,6 @@
 #
 
 RSpec.describe Request, type: :model do
-  describe 'validations' do
-    it { should validate_uniqueness_of(:distribution_id).allow_nil }
-  end
-
   describe "Enums >" do
     describe "#status" do
       let!(:request_pending) { create(:request) }

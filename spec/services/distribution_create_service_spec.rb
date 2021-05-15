@@ -46,14 +46,14 @@ RSpec.describe DistributionCreateService, type: :service do
       end
 
       context 'and the request already has a distribution associated with it' do
+        let(:distribution) { create(:distribution) }
         before do
-          distribution = create(:distribution)
           request.update!(distribution_id: distribution.id)
         end
 
         it 'should not be successful' do
           result = subject.new(distribution_params, request.id).call
-          expect(result.error.message).to eq("Request has already been fulfilled by Distribution #{existing_distribution.id}")
+          expect(result.error.message).to eq("Request has already been fulfilled by Distribution #{distribution.id}")
           expect(result).not_to be_success
         end
       end
