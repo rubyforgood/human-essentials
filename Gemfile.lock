@@ -635,7 +635,7 @@ DEPENDENCIES
   web-console
   webdrivers (~> 4.6)
   webmock (~> 3.12)
-  webpacker (> 4.0)
+  webpacker (~> 5.0)
   yajl-ruby
 
 RUBY VERSION
