@@ -20,6 +20,7 @@
     "mixin-deep": "^2.0.1",
     "set-value": "^3.0.1",
     "webpack": "^4.46.0",
+    "tailwindcss": "^2.1.2",
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
@@ -28,7 +29,6 @@
     "lint-staged": "^10.5.3",
     "postcss": "^8.2.15",
     "postcss-cssnext": "^3.1.0",
-    "tailwindcss": "^2.1.2",
     "webpack-dev-server": "^3.11.2"
   },
   "husky": {
