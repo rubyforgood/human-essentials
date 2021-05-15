@@ -150,7 +150,10 @@ ActiveRecord::Schema.define(version: 20_200_518_010_905) do
   end
 
   create_table "partners", force: :cascade do |t|
-    t.bigint "diaper_bank_id"
+    t.integer "diaper_bank_id"
+    t.string "executive_director_name"
+    t.string "program_contact_name"
+    t.string "pick_up_name"
     t.text "application_data"
     t.integer "diaper_partner_id"
     t.string "partner_status", default: "pending"
@@ -209,15 +212,12 @@ ActiveRecord::Schema.define(version: 20_200_518_010_905) do
     t.integer "greater_2_times_fpl"
     t.integer "poverty_unknown"
     t.string "ages_served"
-    t.string "executive_director_name"
     t.string "executive_director_phone"
     t.string "executive_director_email"
-    t.string "program_contact_name"
     t.string "program_contact_phone"
     t.string "program_contact_mobile"
     t.string "program_contact_email"
     t.string "pick_up_method"
-    t.string "pick_up_name"
     t.string "pick_up_phone"
     t.string "pick_up_email"
     t.string "distribution_times"
