@@ -60,12 +60,13 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
+          RAILS_ENV: test
         run: |
           bundle exec skylight disable_dev_warning
           yarn
           bundle exec rake db:create
           bundle exec rake db:schema:load
-          bundle exec rails assets:precompile
+          bundle exec rails webpacker:compile
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           chmod +x ./cc-test-reporter
           ./cc-test-reporter before-build
