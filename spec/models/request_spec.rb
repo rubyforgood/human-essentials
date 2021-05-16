@@ -1,5 +1,4 @@
-# == Schema Information
-#
+# == Schema Information #
 # Table name: requests
 #
 #  id              :bigint           not null, primary key

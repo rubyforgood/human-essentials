@@ -82,7 +82,7 @@
 #  zips_served                :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  diaper_bank_id             :bigint
+#  diaper_bank_id             :integer
 #  diaper_partner_id          :integer
 #
 module Partners

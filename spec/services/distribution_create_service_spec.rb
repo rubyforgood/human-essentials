@@ -44,6 +44,19 @@ RSpec.describe DistributionCreateService, type: :service do
           request.reload
         end.to change { request.status }
       end
+
+      context 'and the request already has a distribution associated with it' do
+        let(:distribution) { create(:distribution) }
+        before do
+          request.update!(distribution_id: distribution.id)
+        end
+
+        it 'should not be successful' do
+          result = subject.new(distribution_params, request.id).call
+          expect(result.error.message).to eq("Request has already been fulfilled by Distribution #{distribution.id}")
+          expect(result).not_to be_success
+        end
+      end
     end
 
     context "when there's not sufficient inventory" do
