@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2021_05_15_232237) do
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -338,6 +337,7 @@ ActiveRecord::Schema.define(version: 2021_05_15_232237) do
     t.integer "status", default: 0
     t.datetime "discarded_at"
     t.index ["discarded_at"], name: "index_requests_on_discarded_at"
+    t.index ["distribution_id"], name: "index_requests_on_distribution_id", unique: true
     t.index ["organization_id"], name: "index_requests_on_organization_id"
     t.index ["partner_id"], name: "index_requests_on_partner_id"
     t.index ["status"], name: "index_requests_on_status"
@@ -432,6 +432,7 @@ ActiveRecord::Schema.define(version: 2021_05_15_232237) do
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
+  add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end
