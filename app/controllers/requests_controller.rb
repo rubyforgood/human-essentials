@@ -5,6 +5,7 @@ class RequestsController < ApplicationController
 
     @requests = current_organization
                 .ordered_requests
+                .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
 
@@ -44,12 +45,12 @@ class RequestsController < ApplicationController
 
     if svc.errors.none?
       flash[:notice] = "Request #{params[:id]} has been removed!"
-      redirect_to requests_path
     else
       errors = svc.errors.full_messages.join(", ")
       flash[:notice] = "Request #{params[:id]} could not be removed because #{errors}"
-      redirect_to requests_path
     end
+
+    redirect_to requests_path
   end
 
   private
