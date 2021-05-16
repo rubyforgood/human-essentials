@@ -4,7 +4,6 @@
 #
 #  id              :bigint           not null, primary key
 #  comments        :text
-#  discarded_at    :datetime
 #  for_families    :boolean
 #  sent            :boolean          default(FALSE), not null
 #  created_at      :datetime         not null
@@ -14,7 +13,6 @@
 #
 module Partners
   class Request < Base
-    include Discard::Model
     self.table_name = "partner_requests"
 
     belongs_to :partner, dependent: :destroy

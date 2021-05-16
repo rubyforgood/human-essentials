@@ -4,7 +4,6 @@
 #
 #  id              :bigint           not null, primary key
 #  comments        :text
-#  discarded_at    :datetime
 #  for_families    :boolean
 #  sent            :boolean          default(FALSE), not null
 #  created_at      :datetime         not null
