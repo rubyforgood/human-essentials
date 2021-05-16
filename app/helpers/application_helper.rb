@@ -14,7 +14,7 @@ module ApplicationHelper
     if current_organization
       current_organization.name
     else
-      "DiaperBank"
+      "Humanessentials"
     end
   end
 
