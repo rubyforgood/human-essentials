@@ -9,6 +9,7 @@ class RequestDestroyService
     return self unless valid?
 
     request.discard!
+    RequestMailer.request_cancel_partner_notification(request_id: request.id).deliver_later
 
     self
   end
@@ -30,5 +31,4 @@ class RequestDestroyService
   def request
     @request ||= Request.find_by(id: request_id)
   end
-
 end

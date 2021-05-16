@@ -27,11 +27,20 @@ RSpec.describe RequestDestroyService, type: :service do
     end
 
     context 'when there are no validation errors' do
+      let(:fake_mailer) { double('fake_mailer', deliver_later: -> {}) }
+      before do
+        allow(RequestMailer).to receive(:request_cancel_partner_notification).with(request_id: request.id).and_return(fake_mailer)
+      end
+
       it 'should update the discarded_at column on the request' do
         expect { subject }.to change { request.reload.discarded? }.from(false).to(true)
       end
-    end
 
+      it 'should send a email notification to the partner' do
+        subject
+        expect(fake_mailer).to have_received(:deliver_later)
+      end
+    end
   end
 end
 

@@ -1,403 +1,351 @@
-<!doctype html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width" />
+<!DOCTYPE html><html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
+  <title> Request Cancelation Notice </title>
+  <!--[if !mso]><!-- -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!--<![endif]-->
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Simple Transactional Email</title>
-  <style>
-    /* -------------------------------------
-        GLOBAL RESETS
-    ------------------------------------- */
-
-    /*All the styling goes here*/
-
-    img {
-      border: none;
-      -ms-interpolation-mode: bicubic;
-      max-width: 100%;
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style type="text/css">
+    #outlook a {
+      padding: 0;
     }
 
     body {
-      background-color: #f6f6f6;
-      font-family: sans-serif;
-      -webkit-font-smoothing: antialiased;
-      font-size: 14px;
-      line-height: 1.4;
       margin: 0;
       padding: 0;
-      -ms-text-size-adjust: 100%;
       -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
     }
 
-    table {
-      border-collapse: separate;
+    table,
+    td {
+      border-collapse: collapse;
       mso-table-lspace: 0pt;
       mso-table-rspace: 0pt;
-      width: 100%; }
-    table td {
-      font-family: sans-serif;
-      font-size: 14px;
-      vertical-align: top;
     }
 
-    /* -------------------------------------
-        BODY & CONTAINER
-    ------------------------------------- */
-
-    .body {
-      background-color: #f6f6f6;
-      width: 100%;
-    }
-
-    /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
-    .container {
-      display: block;
-      Margin: 0 auto !important;
-      /* makes it centered */
-      max-width: 580px;
-      padding: 10px;
-      width: 580px;
-    }
-
-    /* This should also be a block element, so that it will fill 100% of the .container */
-    .content {
-      box-sizing: border-box;
-      display: block;
-      Margin: 0 auto;
-      max-width: 580px;
-      padding: 10px;
-    }
-
-    /* -------------------------------------
-        HEADER, FOOTER, MAIN
-    ------------------------------------- */
-    .main {
-      background: #ffffff;
-      border-radius: 3px;
-      width: 100%;
-    }
-
-    .wrapper {
-      box-sizing: border-box;
-      padding: 20px;
-    }
-
-    .content-block {
-      padding-bottom: 10px;
-      padding-top: 10px;
-    }
-
-    .footer {
-      clear: both;
-      Margin-top: 10px;
-      text-align: center;
-      width: 100%;
-    }
-    .footer td,
-    .footer p,
-    .footer span,
-    .footer a {
-      color: #999999;
-      font-size: 12px;
-      text-align: center;
-    }
-
-    /* -------------------------------------
-        TYPOGRAPHY
-    ------------------------------------- */
-    h1,
-    h2,
-    h3,
-    h4 {
-      color: #000000;
-      font-family: sans-serif;
-      font-weight: 400;
-      line-height: 1.4;
-      margin: 0;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      font-size: 35px;
-      font-weight: 300;
-      text-align: center;
-      text-transform: capitalize;
-    }
-
-    p,
-    ul,
-    ol {
-      font-family: sans-serif;
-      font-size: 14px;
-      font-weight: normal;
-      margin: 0;
-      margin-bottom: 15px;
-    }
-    p li,
-    ul li,
-    ol li {
-      list-style-position: inside;
-      margin-left: 5px;
-    }
-
-    a {
-      color: #3498db;
-      text-decoration: underline;
-    }
-
-    /* -------------------------------------
-        BUTTONS
-    ------------------------------------- */
-    .btn {
-      box-sizing: border-box;
-      width: 100%; }
-    .btn > tbody > tr > td {
-      padding-bottom: 15px; }
-    .btn table {
-      width: auto;
-    }
-    .btn table td {
-      background-color: #ffffff;
-      border-radius: 5px;
-      text-align: center;
-    }
-    .btn a {
-      background-color: #ffffff;
-      border: solid 1px #3498db;
-      border-radius: 5px;
-      box-sizing: border-box;
-      color: #3498db;
-      cursor: pointer;
-      display: inline-block;
-      font-size: 14px;
-      font-weight: bold;
-      margin: 0;
-      padding: 12px 25px;
-      text-decoration: none;
-      text-transform: capitalize;
-    }
-
-    .btn-primary table td {
-      background-color: #3498db;
-    }
-
-    .btn-primary a {
-      background-color: #3498db;
-      border-color: #3498db;
-      color: #ffffff;
-    }
-
-    /* -------------------------------------
-        OTHER STYLES THAT MIGHT BE USEFUL
-    ------------------------------------- */
-    .last {
-      margin-bottom: 0;
-    }
-
-    .first {
-      margin-top: 0;
-    }
-
-    .align-center {
-      text-align: center;
-    }
-
-    .align-right {
-      text-align: right;
-    }
-
-    .align-left {
-      text-align: left;
-    }
-
-    .clear {
-      clear: both;
-    }
-
-    .mt0 {
-      margin-top: 0;
-    }
-
-    .mb0 {
-      margin-bottom: 0;
-    }
-
-    .preheader {
-      color: transparent;
-      display: none;
-      height: 0;
-      max-height: 0;
-      max-width: 0;
-      opacity: 0;
-      overflow: hidden;
-      mso-hide: all;
-      visibility: hidden;
-      width: 0;
-    }
-
-    .powered-by a {
-      text-decoration: none;
-    }
-
-    hr {
+    img {
       border: 0;
-      border-bottom: 1px solid #f6f6f6;
-      Margin: 20px 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
     }
 
-    /* -------------------------------------
-        RESPONSIVE AND MOBILE FRIENDLY STYLES
-    ------------------------------------- */
-    @media only screen and (max-width: 620px) {
-      table[class=body] h1 {
-        font-size: 28px !important;
-        margin-bottom: 10px !important;
+    p {
+      display: block;
+      margin: 13px 0;
+    }
+  </style>
+  <!--[if mso]>
+        <xml>
+        <o:OfficeDocumentSettings>
+          <o:AllowPNG/>
+          <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+        </xml>
+        <![endif]-->
+  <!--[if lte mso 11]>
+        <style type="text/css">
+          .mj-outlook-group-fix { width:100% !important; }
+        </style>
+        <![endif]-->
+  <style type="text/css">
+    @media only screen and (min-width:480px) {
+      .mj-column-per-100 {
+        width: 100% !important;
+        max-width: 100%;
       }
-      table[class=body] p,
-      table[class=body] ul,
-      table[class=body] ol,
-      table[class=body] td,
-      table[class=body] span,
-      table[class=body] a {
-        font-size: 16px !important;
-      }
-      table[class=body] .wrapper,
-      table[class=body] .article {
-        padding: 10px !important;
-      }
-      table[class=body] .content {
-        padding: 0 !important;
-      }
-      table[class=body] .container {
-        padding: 0 !important;
+    }
+  </style>
+  <style type="text/css">
+    @media only screen and (max-width:480px) {
+      table.mj-full-width-mobile {
         width: 100% !important;
       }
-      table[class=body] .main {
-        border-left-width: 0 !important;
-        border-radius: 0 !important;
-        border-right-width: 0 !important;
-      }
-      table[class=body] .btn table {
-        width: 100% !important;
-      }
-      table[class=body] .btn a {
-        width: 100% !important;
-      }
-      table[class=body] .img-responsive {
-        height: auto !important;
-        max-width: 100% !important;
+
+      td.mj-full-width-mobile {
         width: auto !important;
       }
     }
-
-    /* -------------------------------------
-        PRESERVE THESE STYLES IN THE HEAD
-    ------------------------------------- */
-    @media all {
-      .ExternalClass {
-        width: 100%;
-      }
-      .ExternalClass,
-      .ExternalClass p,
-      .ExternalClass span,
-      .ExternalClass font,
-      .ExternalClass td,
-      .ExternalClass div {
-        line-height: 100%;
-      }
-      .apple-link a {
-        color: inherit !important;
-        font-family: inherit !important;
-        font-size: inherit !important;
-        font-weight: inherit !important;
-        line-height: inherit !important;
-        text-decoration: none !important;
-      }
-      .btn-primary table td:hover {
-        background-color: #34495e !important;
-      }
-      .btn-primary a:hover {
-        background-color: #34495e !important;
-        border-color: #34495e !important;
-      }
+  </style>
+  <style type="text/css">
+    a,
+    span,
+    td,
+    th {
+      -webkit-font-smoothing: antialiased !important;
+      -moz-osx-font-smoothing: grayscale !important;
     }
-
   </style>
 </head>
-<body class="">
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
-  <tr>
-    <td>&nbsp;</td>
-    <td class="container">
-      <div class="content">
 
-        <!-- START CENTERED WHITE CONTAINER -->
-        <span class="preheader">Your request has been canceled</span>
-        <table role="presentation" class="main">
-
-          <!-- START MAIN CONTENT AREA -->
+<body style="background-color:#ffffff;" data-new-gr-c-s-check-loaded="14.1010.0" data-gr-ext-installed="">
+  <div style="background-color:#ffffff;">
+    <!--[if mso | IE]>
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    <div style="margin:0px auto;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tbody>
           <tr>
-            <td class="wrapper">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td>
-                    <p>Your request submitted on <%= @request.created_at.strftime("%D") %> to <%= @organization.name %> has been canceled. </p>
-                  </td>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;padding-bottom:0px;text-align:center;">
+              <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
 
+        <tr>
 
-                  <tr>
-                    <td>
-                      <strong>Items In The Request</strong>
-                      <br>
-                      <% @request.request_items.each do |rt| %>
-                        <%= Item.find(rt['item_id']).name %> x <%= rt['quantity'] %>
-                        <br>
-                      <% end %>
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tbody><tr>
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
+                        <tbody>
+                          <tr>
+                            <td style="width:50px;">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="75" height="75" fill="currentColor" style='color:#7A0B1F' class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                              </svg>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </td>
                   </tr>
-
                   <tr>
-                    <td>
-                      <br>
-                      Reach out to <%= @organization.email %> for more information
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:24px;text-align:left;color:#434245;">
+                        <h1 style="margin: 0; font-size: 24px; line-height: normal; font-weight: bold;"> <%= @organization.name %> </br> has canceled one of your requests. </h1>
+                      </div>
                     </td>
                   </tr>
+                </tbody></table>
+              </div>
+              <!--[if mso | IE]>
+            </td>
 
-                  <tr>
-                  </tr>
-                  <tr>
-                  </tr>
-                </tr>
-              </table>
+        </tr>
+
+                  </table>
+                <![endif]-->
             </td>
           </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
 
-          <!-- END MAIN CONTENT AREA -->
-        </table>
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    <div style="margin:0px auto;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+              <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
 
-        <!-- START FOOTER -->
-        <div class="footer">
-          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-            <tr>
-              <td class="content-block">
-                <span class="apple-link">This email was sent with ❤ by <a href="https://diaper.app">Diaperbase</a>.️</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="content-block powered-by">
-                Supported by <a href="https://rubyforgood.org">Ruby for Good</a>.
-              </td>
-            </tr>
-          </table>
-        </div>
-        <!-- END FOOTER -->
+        <tr>
 
-        <!-- END CENTERED WHITE CONTAINER -->
-      </div>
-    </td>
-    <td>&nbsp;</td>
-  </tr>
-</table>
-</body>
-</html>
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tbody><tr>
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:24px;text-align:left;color:#434245;">
+                        <p style="margin: 0;">Hello there, <strong><%= @partner.name %></strong> </p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:24px;text-align:left;color:#434245;">
+                        <p style="margin: 0;"> Your request <strong>#<%= @request.id %> (ID may not match what you see on the platform)</strong> created on <strong><%= @request.created_at.strftime("%D") %> to <%= @organization.name %></strong> has been <strong style='color:#7A0B1F'>canceled</strong></p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody></table>
+              </div>
+              <!--[if mso | IE]>
+            </td>
 
+        </tr>
+
+                  </table>
+                <![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    <div style="background:#FFCDB0;background-color:#FFCDB0;margin:0px auto;border-radius:4px;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#FFCDB0;background-color:#FFCDB0;width:100%;border-radius:4px;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+              <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+
+        <tr>
+
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tbody><tr>
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:bold;line-height:24px;text-align:left;color:#7A0B1F;">
+                        <p class="date" style="margin: 0; margin-bottom: 5px; font-size: 16px;"></p>
+                        <h2 style="margin: 0; font-size: 24px; font-weight: bold; line-height: 24px;">Canceled Request Details</h2>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:24px;text-align:left;color:#7A0B1F;">
+                        <p style="margin: 0;">Your request had been canceled. Here are the items you've requested:</p>
+                        <ul>
+                          <% @formatted_requested_items.each do |rt| %>
+                            <li> <%= rt[:quantity] %> x <%= rt[:name] %> </li>
+                          <% end %>
+                        <ul>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                </tbody></table>
+              </div>
+              <!--[if mso | IE]>
+            </td>
+
+        </tr>
+
+                  </table>
+                <![endif]-->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!--[if mso | IE]>
+          </td>
+        </tr>
+      </table>
+
+      <table
+         align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:600px;" width="600"
+      >
+        <tr>
+          <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+      <![endif]-->
+    <div style="margin:0px auto;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+              <!--[if mso | IE]>
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+
+        <tr>
+
+            <td
+               class="" style="vertical-align:top;width:600px;"
+            >
+          <![endif]-->
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tbody><tr>
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:24px;text-align:left;color:#434245;">If you need any help, don’t hesitate to reach out to us at <a href="#" style="color: #2e58ff; text-decoration: none;"><%= @organization.email %></a>!</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:bold;line-height:24px;text-align:left;color:#434245;">Supported By HumanEssentials.app</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                    </td>
+                  </tr>
+                </tbody></table>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;padding-top:0;text-align:center;">
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tbody><tr>
+                    <td style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                      <p style="border-top: dashed 1px lightgrey; font-size: 1px; margin: 0px auto; width: 100%;"></p>
+                    </td>
+                  </tr>
+                </tbody></table>
+              </div>
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin:0px auto;max-width:600px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tbody>
+          <tr>
+            <td style="direction:ltr;font-size:0px;padding:20px 0;text-align:center;">
+              <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                  <tbody><tr>
+                    <td style="font-size:0px;word-break:break-word;">
+                    </td>
+                  </tr>
+                </tbody></table>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+</body></html>
