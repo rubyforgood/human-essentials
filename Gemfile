@@ -111,7 +111,7 @@ group :test do
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 4.5'
   gem 'webdrivers', '~> 4.6'
-  gem "webmock", "~> 3.12"
+  gem "webmock", "~> 3.13"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
