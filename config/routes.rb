@@ -179,6 +179,7 @@ Rails.application.routes.draw do
     end
 
     resources :requests, except: %i(destroy) do
+      resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'
       get :print, on: :member
       post :cancel, on: :member
       collection do

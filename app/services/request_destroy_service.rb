@@ -1,14 +1,18 @@
 class RequestDestroyService
   include ServiceObjectErrorsMixin
 
-  def initialize(request_id:)
+  def initialize(request_id:, reason: nil)
     @request_id = request_id
+    @reason = reason
   end
 
   def call
     return self unless valid?
 
-    request.discard!
+    request.discarded_at = Time.current
+    request.discard_reason = reason
+    request.save!
+
     RequestMailer.request_cancel_partner_notification(request_id: request.id).deliver_later
 
     self
@@ -16,7 +20,7 @@ class RequestDestroyService
 
   private
 
-  attr_reader :request_id
+  attr_reader :request_id, :reason
 
   def valid?
     if request.blank?

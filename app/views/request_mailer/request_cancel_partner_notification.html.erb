@@ -124,7 +124,7 @@
                   <tr>
                     <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                       <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:24px;text-align:left;color:#434245;">
-                        <h1 style="margin: 0; font-size: 24px; line-height: normal; font-weight: bold;"> <%= @organization.name %> </br> has canceled one of your requests. </h1>
+                        <h1 style="margin: 0; font-size: 24px; line-height: normal; font-weight: bold;"> One of your essentials requests have been canceled.</h1>
                       </div>
                     </td>
                   </tr>
@@ -179,7 +179,7 @@
                   <tr>
                     <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                       <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:24px;text-align:left;color:#434245;">
-                        <p style="margin: 0;"> Your request <strong>#<%= @request.id %> (ID may not match what you see on the platform)</strong> created on <strong><%= @request.created_at.strftime("%D") %> to <%= @organization.name %></strong> has been <strong style='color:#7A0B1F'>canceled</strong></p>
+                        <p style="margin: 0;"> We are emailing you to notify you that a essentials request you've made to <strong><%= @organization.name %></strong> has been canceled. See below for details: </p>
                       </div>
                     </td>
                   </tr>
@@ -235,7 +235,11 @@
                   <tr>
                     <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                       <div style="font-family:Helvetica, Arial, sans-serif;font-size:18px;font-weight:400;line-height:24px;text-align:left;color:#7A0B1F;">
-                        <p style="margin: 0;">Your request had been canceled. Here are the items you've requested:</p>
+                        <strong style="margin: 0;">Request ID</strong>
+                        <p><%= @request.id %></p>
+                        <strong style="margin: 0;">Reason Provided:</strong>
+                        <p><%= @request.discard_reason || 'N/A' %></p>
+                        <strong style="margin: 0;">Items requested:</strong>
                         <ul>
                           <% @formatted_requested_items.each do |rt| %>
                             <li> <%= rt[:quantity] %> x <%= rt[:name] %> </li>
