@@ -51,29 +51,6 @@ RSpec.describe 'Requests', type: :request do
       end
     end
 
-    describe 'DELETE #destroy' do
-      context 'When the request exists' do
-        let(:request) { create(:request, organization: @organization) }
-
-        it 'redirects to requests index' do
-          delete request_path(request, default_params)
-
-          expect(response).to redirect_to(requests_path)
-        end
-      end
-
-      context 'When the request does not exist' do
-        let(:request_id) { 0 }
-
-        it 'responds with not found' do
-          delete request_path(request_id, default_params)
-
-          expect(response).to redirect_to(requests_path)
-          expect(flash[:notice]).to eq("Request #{request_id} could not be removed because request_id is invalid")
-        end
-      end
-    end
-
     describe 'POST #start' do
       context 'When request exists' do
         let(:request) { create(:request, organization: @organization) }
