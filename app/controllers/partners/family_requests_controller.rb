@@ -21,7 +21,7 @@ module Partners
 
       children_grouped_by_item_id = children.group_by(&:item_needed_diaperid)
       family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
-        { item_id: item_id, person_count: children.count, children: item_requested_children }
+        { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
       end
 
       create_service = Partners::FamilyRequestCreateService.new(
