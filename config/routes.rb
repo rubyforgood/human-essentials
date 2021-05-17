@@ -172,7 +172,7 @@ Rails.application.routes.draw do
 
     resources :purchases
     # MODIFIED route by adding destroy to
-    resources :requests, only: %i(index new show destroy) do
+    resources :requests, only: %i(index new show) do
       member do
         post :start
       end
@@ -181,7 +181,6 @@ Rails.application.routes.draw do
     resources :requests, except: %i(destroy) do
       resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'
       get :print, on: :member
-      post :cancel, on: :member
       collection do
         get :partner_requests
       end

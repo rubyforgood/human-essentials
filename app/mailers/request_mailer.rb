@@ -7,10 +7,10 @@ class RequestMailer < ApplicationMailer
     # Generate the request_items in a formatted way so
     # I can render Item names
     item_ids = @request.request_items.map { |r| r['item_id'] }
-    items = Item.where(id: item_ids)
+    item_lookup_hash = Item.where(id: item_ids).index_by(&:id)
     @formatted_requested_items = @request.request_items.map do |rt|
       {
-        name: items.find { |i| i.id == rt['item_id'] }&.name,
+        name: item_lookup_hash[rt['item_id']]&.name || 'Unknown Item',
         quantity: rt['quantity']
       }
     end

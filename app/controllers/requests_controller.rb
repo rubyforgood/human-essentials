@@ -39,20 +39,6 @@ class RequestsController < ApplicationController
     redirect_to new_distribution_path(request_id: request.id)
   end
 
-  def destroy
-    svc = RequestDestroyService.new(request_id: params[:id])
-    svc.call
-
-    if svc.errors.none?
-      flash[:notice] = "Request #{params[:id]} has been removed!"
-    else
-      errors = svc.errors.full_messages.join(", ")
-      flash[:notice] = "Request #{params[:id]} could not be removed because #{errors}"
-    end
-
-    redirect_to requests_path
-  end
-
   private
 
   def load_items

@@ -5,7 +5,7 @@ RSpec.describe RequestMailer, type: :mailer do
 
     it "renders the body with correct text with partner information" do
       expect(subject.body.encoded).to include("Hello there, <strong>#{request.partner.name}</strong>")
-      expect(subject.body.encoded).to include("Your request <strong>##{request.id} (ID may not match what you see on the platform)</strong>")
+      expect(subject.body.encoded).to include("One of your essentials requests (##{request.id}) have been canceled.")
     end
 
     it "should be sent to the partner main email with the correct subject line" do
