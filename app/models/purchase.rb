@@ -87,7 +87,7 @@ class Purchase < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent in Cents"]
+    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent in Cents", "Purchased Date"]
   end
 
   def csv_export_attributes
@@ -97,6 +97,7 @@ class Purchase < ApplicationRecord
       line_items.total,
       line_items.size,
       amount_spent_in_cents,
+      issued_at.time.strftime("%Y-%m-%d")
     ]
   end
 
