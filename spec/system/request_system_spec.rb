@@ -180,7 +180,7 @@ RSpec.describe "Requests", type: :system, js: true do
 
         expect(page).to have_content("Request #{request.id} has been removed")
         expect(request.reload.discarded_at).not_to eq(nil)
-        expect(request.reload.reason).to eq(reason)
+        expect(request.reload.discard_reason).to eq(reason)
       end
     end
   end
