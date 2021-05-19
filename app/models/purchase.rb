@@ -87,17 +87,17 @@ class Purchase < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Purchases from", "Storage Location", "Quantity of Items", "Variety of Items", "Amount spent in Cents", "Purchased Date"]
+    ["Purchases from", "Storage Location", "Purchased Date", "Quantity of Items", "Variety of Items", "Amount spent in Cents"]
   end
 
   def csv_export_attributes
     [
       purchased_from_view,
       storage_location.name,
+      issued_at.strftime("%Y-%m-%d"),
       line_items.total,
       line_items.size,
-      amount_spent_in_cents,
-      issued_at.time.strftime("%Y-%m-%d")
+      amount_spent_in_cents
     ]
   end
 
