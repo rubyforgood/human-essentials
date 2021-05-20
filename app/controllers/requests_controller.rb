@@ -5,6 +5,7 @@ class RequestsController < ApplicationController
 
     @requests = current_organization
                 .ordered_requests
+                .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
 
@@ -36,15 +37,6 @@ class RequestsController < ApplicationController
     request.status_started!
     flash[:notice] = "Request started"
     redirect_to new_distribution_path(request_id: request.id)
-  end
-
-  # TODO: kick off job to send email
-  def destroy
-    ActiveRecord::Base.transaction do
-      Request.find(params[:id]).destroy!
-    end
-    flash[:notice] = "Request #{params[:id]} has been removed!"
-    redirect_to requests_path
   end
 
   private

@@ -85,10 +85,10 @@
               </tbody>
             </table>
           </div>
-          <div class="card-footer">
+          <div class="card-footer flex flex-row space-x-2">
             <%= submit_button_to start_request_path(@request), {text: "Fulfill request", size: "md"} unless @request.distribution %>
             <%= view_button_to(distribution_path(@request.distribution), {text: "View Associated Distribution", size: "md"}) if @request.distribution %>
-            <%= delete_button_to :request, {text: 'Cancel request', size: 'md'} unless @request.distribution %>          </div>
+            <%= button_to 'Cancel', new_request_cancelation_path(organization: @organization, request_id: @request.id), method: :get, class: 'btn btn-danger btn-md' %>
         </div>
       </div>
     </div>
