@@ -163,4 +163,25 @@ RSpec.describe "Requests", type: :system, js: true do
       end
     end
   end
+
+  describe 'canceling a request as a bank user' do
+    let!(:request) { create(:request, organization: @organization) }
+
+    context 'when a bank user cancels a request' do
+      let(:reason) { Faker::Lorem.sentence }
+      before do
+        visit url_prefix + "/requests"
+      end
+
+      it 'should set the request as canceled/discarded and contain the reason' do
+        click_on 'Cancel'
+        fill_in 'Cancelation reason *', with: reason
+        click_on 'Yes. Cancel Request'
+
+        expect(page).to have_content("Request #{request.id} has been removed")
+        expect(request.reload.discarded_at).not_to eq(nil)
+        expect(request.reload.discard_reason).to eq(reason)
+      end
+    end
+  end
 end

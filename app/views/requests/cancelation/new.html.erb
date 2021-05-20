@@ -1,0 +1,48 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Do you want to cancel request #{@request.id}?" %>
+        <span class='text-red-600 text-4xl'>
+          Do you want to cancel request #<%= @request.id %>?
+        </span>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+            <i class="fa fa-dashboard"></i> Home
+          <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Requests", (requests_path) %></li>
+          <li class="breadcrumb-item"><a href="#"> Request Cancelation </a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-body">
+            <div class="box w-1/2">
+              <%= simple_form_for :cancelation, url: request_cancelation_path(organization: @organization, request_id: @request.id), method: :post do |f| %>
+                <div class='flex flex-col'>
+                  <%= f.input :reason, label: "Cancelation reason" %>
+                  <span class='font-light text-md text-yellow-600'>This will be included in the email notification we send to the partner</span>
+                </div>
+
+                <div class='flex flex-row justify-end'>
+                  <%= f.submit 'Yes. Cancel Request', class: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-2' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
