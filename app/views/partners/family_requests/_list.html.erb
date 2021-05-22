@@ -27,9 +27,7 @@
       <td>
         <div class="custom-control custom-switch">
           <% if child.item_needed_diaperid %>
-            <%= check_box_tag 'Active', child.active, child.active,
-                              data: {url: partners_child_active_path(child),
-                                     remote: true, method: :post },
+            <%= check_box_tag "child-#{child.id}", child.active, child.active,
                               class: "custom-control-input",
                               id: "child-#{child.id}" %>
             <label class="custom-control-label" for="child-<%= child.id %>"></label>
