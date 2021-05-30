@@ -55,17 +55,22 @@ If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplie
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev`, `diaper_test`, `partner_dev`, and `partner_test` respectively. This should all be handled with `rails db:setup`.
 Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called `database.yml.example` as an example and just change the credentials.
 
-## Seed the database
+### Seed the database
 From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
+### Installing foreman
+Run the following command to install [foreman](https://github.com/ddollar/foreman).
+```bash
+gem install foreman
+```
 
-## Start the app
-Run `bundle exec rails s` and browse to http://localhost:3000/
+### Start the app
+Run `bundle exec rails s` or `bin/start` (recommended since it runs webpacker in the background!) and browse to http://localhost:3000/
 
-## Login
+### Login
 To login to the web application, use these default credentials:
 
-#### Diaperbase Users
+**Diaperbase Users**
 ```
 Organization Admin
   Email: org_admin1@example.com
@@ -76,7 +81,7 @@ User
   Password: password
 ```
 
-#### Partnerbase Users
+**Partnerbase Users**
 ```
 Verified Partner
   Email: verified@example.com
