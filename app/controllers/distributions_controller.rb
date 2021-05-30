@@ -75,6 +75,11 @@ class DistributionsController < ApplicationController
       redirect_to(distribution_path(result.distribution)) && return
     else
       @distribution = result.distribution
+      if params[:request_id].present?
+        # Using .find here instead of .find_by so we can raise a error if request_id
+        # does not match any known Request
+        @distribution.request = Request.find(params[:request_id])
+      end
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
