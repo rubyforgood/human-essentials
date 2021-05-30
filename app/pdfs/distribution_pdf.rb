@@ -4,7 +4,7 @@ class DistributionPdf
   include ItemsHelper
 
   def initialize(organization, distribution)
-    @distribution = distribution
+    @distribution = Distribution.includes(:partner, line_items: [:item]).find_by(id: distribution.id)
     font_families["OpenSans"] = PrawnRails.config["font_families"][:OpenSans]
     font "OpenSans"
     font_size 10
