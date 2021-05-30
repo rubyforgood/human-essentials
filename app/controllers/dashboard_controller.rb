@@ -5,11 +5,11 @@ class DashboardController < ApplicationController
   def index
     setup_date_range_picker
 
-    @donations = current_organization.donations.includes(line_items: [:item]).during(helpers.selected_range)
+    @donations = current_organization.donations.includes(:diaper_drive, line_items: [:item]).during(helpers.selected_range)
     @recent_donations = @donations.recent
-    @purchases = current_organization.purchases.includes(line_items: [:item]).during(helpers.selected_range)
+    @purchases = current_organization.purchases.includes(:vendor, line_items: [:item]).during(helpers.selected_range)
     @recent_purchases = @purchases.recent
-    @recent_distributions = current_organization.distributions.includes(line_items: [:item]).during(helpers.selected_range).recent
+    @recent_distributions = current_organization.distributions.includes(:partner, line_items: [:item]).during(helpers.selected_range).recent
 
     if Flipper.enabled?(:itemized_distributions, current_user)
       @itemized_distributions = current_organization.distributions.includes(line_items: [:item]).during(helpers.selected_range)
@@ -24,7 +24,7 @@ class DashboardController < ApplicationController
 
     # calling .recent on recent donations by manufacturers will only count the last 3 donations
     # which may not make sense when calculating total count using a date range
-    @recent_donations_from_manufacturers = current_organization.donations.includes(line_items: [:item]).during(helpers.selected_range).by_source(:manufacturer)
+    @recent_donations_from_manufacturers = current_organization.donations.includes(:manufacturer, line_items: [:item]).during(helpers.selected_range).by_source(:manufacturer)
     @top_manufacturers = current_organization.manufacturers.by_donation_count
   end
 end
