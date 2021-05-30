@@ -58,6 +58,7 @@ Create a `database.yml` file on `config/` directory with your database configura
 ## Seed the database
 From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
+
 ## Start the app
 Run `bundle exec rails s` and browse to http://localhost:3000/
 
@@ -93,14 +94,6 @@ Recertification Required Partner
   Email: recertification_required@example.com
   Password: password
 ```
-
-## Connecting Diaper & Partner Apps Together Locally (Deprecating)
-
-**Deprecation Note: We are actively working on merging the two applications together to avoid the need to maintain an API. In the future, all API calls between diaper & partner will be replaced.**
-
-Depending on the issues or features you decided to undertake, you may need to get both the `diaper` and `partner` app running locally. This is true if you want to build a feature that depends on code changes in both repositories.
-
-Please follow this [guide](connecting-the-partner-and-diaper.md) to get your local environment setup properly.
 
 ## Contributing
 
