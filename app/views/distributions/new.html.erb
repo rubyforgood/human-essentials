@@ -35,6 +35,7 @@
             <!-- Default box -->
             <div class="box">
               <%= simple_form_for @distribution, method: :post,
+                url: distributions_path(organization: @organization, request_id: params[:request_id]),
                 html: {class: "storage-location-required"},
                 wrapper_mappings: {
                   datetime: :custom_multi_select
