@@ -475,7 +475,7 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.2)
-    skylight (5.1.0)
+    skylight (5.1.1)
       activesupport (>= 5.2.0)
     slop (3.6.0)
     spring (2.1.1)
