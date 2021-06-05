@@ -11,6 +11,7 @@ class RequestDestroyService
 
     request.discarded_at = Time.current
     request.discard_reason = reason
+    request.status = :discarded
     request.save!
 
     RequestMailer.request_cancel_partner_notification(request_id: request.id).deliver_later

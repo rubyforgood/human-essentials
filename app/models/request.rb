@@ -25,7 +25,7 @@ class Request < ApplicationRecord
   belongs_to :organization
   belongs_to :distribution, optional: true
 
-  enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
+  enum status: { pending: 0, started: 1, fulfilled: 2, discarded: 3 }, _prefix: true
 
   validates :distribution_id, uniqueness: true, allow_nil: true
   before_save :sanitize_items_data
