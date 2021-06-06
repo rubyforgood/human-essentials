@@ -44,7 +44,13 @@ html, body {
 }
 
 .navbar-brand {
-    margin-right: none !important;
+  margin-right: none !important;
+
+  @media (max-width: 568px) {
+    h2 {
+      font-size: 0.8em;
+    }
+  }
 }
 .navbar-light .navbar-toggler {
     border: none;
