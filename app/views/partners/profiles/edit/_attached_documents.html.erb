@@ -7,9 +7,7 @@
             <h3 class="card-title"><strong>Additional Documents</strong></h3>
           </div>
           <div class="card-body">
-            <% if true %>
-              <strong style='color: orange'> Deactivated Upload Option Until Merger Is Completed </strong>
-            <% elsif partner.documents.attached? %>
+            <% if partner.documents.attached? %>
               <div class="row">
                 <div class="col-6">
                   Attached files:
