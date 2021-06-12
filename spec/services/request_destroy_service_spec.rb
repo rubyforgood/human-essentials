@@ -36,6 +36,10 @@ RSpec.describe RequestDestroyService, type: :service do
         expect { subject }.to change { request.reload.discarded? }.from(false).to(true)
       end
 
+      it 'should update the status column on the request' do
+        expect { subject }.to change { request.reload.status_discarded? }.from(false).to(true)
+      end
+
       it 'should send a email notification to the partner' do
         subject
         expect(fake_mailer).to have_received(:deliver_later)
