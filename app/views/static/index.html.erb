@@ -14,8 +14,8 @@
     </style>
   </head>
   <body>
-  <div class='pt-2' style="background: linear-gradient(135deg, #3023AE, #C86DD7)">
 
+  <div class='pt-2' style="background: linear-gradient(135deg, #3023AE, #C86DD7)">
       <div class="container mx-auto pt-5 px-5">
         <nav class="">
           <div class="flex justify-between items-center">
@@ -84,8 +84,7 @@
     </div>
 
 
-    <div class="w-3/4 mx-auto">
-
+    <div class="w-3/4 mx-auto py-24">
       <div class="flex justify-center">
         <div class="flex flex-col justify-center items-center w-1/2">
           <div class="pb-2">
@@ -152,26 +151,22 @@
       </div>
     </div>
 
-    <div class="py-5 px-0 green-bkg" id="testimonials">
-      <div class="container d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
-        <div class="quote-block">
-          <%= image_tag("quote.svg", :class => "quote-image") %>
+    <div class="py-5 px-0 bg-green-600 text-white" id="testimonials">
+      <div class="container mx-auto flex py-5">
+        <div class="w-1/2 flex justify-center">
+          <%= image_tag("quote.svg", class: "quote-image", style: 'width: 300px') %>
         </div>
-        <div class="quote-block pt-5">
-          <h3 class="text-header text-left text-white pl-5">Testimonials</h3>
-          <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
-            <ol class="carousel-indicators">
-              <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-            </ol>
-            <div class="carousel-inner text-left">
-              <div class="carousel-item active p-5">
-                <p class="text-testimonials">DiaperBase has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. DiaperBase has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
-                <strong class="text-bold text-white">  Megan, Sweet Cheeks Diaper Bank</strong>
+        <div class="pt-5 w-1/2">
+          <h3 class="text-4xl">Testimonials</h3>
+          <div class='mt-5'>
+            <div class='space-y-12'>
+              <div>
+                <p>DiaperBase has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. DiaperBase has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
+                <strong class='mt-2'> - Megan, Sweet Cheeks Diaper Bank</strong>
               </div>
-              <div class="carousel-item p-5">
+              <div>
                 <p class="text-testimonials">Finally, an inventory management system designed specifically for the unique needs of diaper banks!</p>
-                <strong class="text-white"> Rachel Alston, PDX Diaper Bank </strong>
+                <strong> - Rachel Alston, PDX Diaper Bank </strong>
               </div>
             </div>
             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
