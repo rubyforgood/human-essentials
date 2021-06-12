@@ -62,12 +62,6 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.find(params[:id])
 
     @partner_profile = @partner.profile
-    # Ensure that the ActiveStorage records associated with the
-    # partner are available on the primary DB. If we do not do this,
-    # partners would be uploading files that the diaperbase application
-    # cannot see.
-    @partner_profile.sync_attachments_from_partnerbase!
-
     @agency = @partner_profile.export_hash
   end
 
