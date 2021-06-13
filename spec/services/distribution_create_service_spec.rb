@@ -21,7 +21,7 @@ RSpec.describe DistributionCreateService, type: :service do
       it "Sends a PartnerMailer" do
         @partner.update!(send_reminders: true)
 
-        expect(PartnerMailerJob).to receive(:perform_now).once
+        expect(PartnerMailerJob).to receive(:perform_later).once
         subject.new(distribution_params).call
       end
     end
@@ -30,7 +30,7 @@ RSpec.describe DistributionCreateService, type: :service do
       it "does not send a PartnerMailer" do
         @partner.update!(send_reminders: false)
 
-        expect(PartnerMailerJob).not_to receive(:perform_now)
+        expect(PartnerMailerJob).not_to receive(:perform_later)
         subject.new(distribution_params).call
       end
     end

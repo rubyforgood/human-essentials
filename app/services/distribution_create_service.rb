@@ -21,7 +21,7 @@ class DistributionCreateService < DistributionService
   private
 
   def send_notification
-    PartnerMailerJob.perform_now(distribution_organization.id, distribution.id, 'Your Distribution')
+    PartnerMailerJob.perform_later(distribution_organization.id, distribution.id, 'Your Distribution')
   end
 
   def validate_request_not_yet_processed!
