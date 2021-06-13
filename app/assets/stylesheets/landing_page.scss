@@ -10,34 +10,34 @@ html, body {
     width: 100%;
     color: white;
     height: 660px;
-        @media (max-width: 1200px) { 
+        @media (max-width: 1200px) {
             height: 590px;
         }
-        @media (max-width: 992px) { 
+        @media (max-width: 992px) {
             height: auto;
         }
-        @media (max-width: 768px) { 
+        @media (max-width: 768px) {
             height: auto;
         }
-        @media (max-width: 576px) { 
+        @media (max-width: 576px) {
             height: auto;
         }
     }
     &-image {
         flex-basis: 1400px;
-        @media (max-width: 576px) { 
+        @media (max-width: 576px) {
             margin-bottom: 20px;
         }
-        @media (max-width: 768px) { 
+        @media (max-width: 768px) {
             margin-bottom: 20px;
         }
     }
     &-copy {
         z-index: 1;
-        @media (max-width: 768px) { 
+        @media (max-width: 768px) {
             text-align: center;
         }
-        @media (max-width: 576px) { 
+        @media (max-width: 576px) {
             text-align: center;
         }
     }
@@ -52,6 +52,7 @@ html, body {
     }
   }
 }
+
 .navbar-light .navbar-toggler {
     border: none;
     margin-top: 13px;
@@ -95,7 +96,7 @@ button:hover, button:focus, .button:hover, .button:focus {
 
 .description-container {
     margin-top: 120px;
-    @media (max-width: 576px) { 
+    @media (max-width: 576px) {
         margin-top: 80px;
     }
 }
@@ -103,7 +104,7 @@ button:hover, button:focus, .button:hover, .button:focus {
 .bottom-cta {
     margin-top: 80px;
     margin-bottom: 80px;
-    @media (max-width: 576px) { 
+    @media (max-width: 576px) {
         margin-top: 50px;
         margin-bottom: 50px;
     }

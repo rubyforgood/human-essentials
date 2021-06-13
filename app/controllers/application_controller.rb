@@ -25,6 +25,10 @@ class ApplicationController < ActionController::Base
   # override Rails' default_url_options to ensure organization_id is added to
   # each URL generated
   def default_url_options(options = {})
+    # Early return if the request is not authenticated and no
+    # current_user is defined
+    return options if current_user.blank?
+
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
     elsif current_user && !current_user.super_admin? && current_user.organization.present?
