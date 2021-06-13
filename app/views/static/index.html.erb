@@ -17,9 +17,9 @@
 
   <div class='pt-2' style="background: linear-gradient(135deg, #3023AE, #C86DD7)">
       <div class="container max-w-7xl mx-auto pt-5 px-5">
-        <nav class="">
+        <nav>
           <div class="flex justify-between items-center">
-            <div class="navbar-header">
+            <div>
               <a class="text-3xl lg:text-4xl" href="#"><h2 class="text-white font-bold">HumanEssentials.app</h2></a>
             </div>
 
@@ -48,9 +48,9 @@
                 <button class="hidden btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Login
                 </button>
-                <div class="dropdown-menu hidden" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href=<%= new_user_session_path(organization_id: nil) %>>Diaperbase</a>
-                  <a class="dropdown-item" href=<%= new_partner_user_session_path %>>Partnerbase</a>
+                <div class="hidden" aria-labelledby="dropdownMenuButton">
+                  <a href=<%= new_user_session_path(organization_id: nil) %>>Diaperbase</a>
+                  <a href=<%= new_partner_user_session_path %>>Partnerbase</a>
                 </div>
               </div>
             </div>
@@ -78,7 +78,7 @@
     <div class="container max-w-7xl mx-auto pt-5" id="about">
       <div class="text-center mt-10">
         <h2 class="text-4xl text-gray-600">The Human Essentials app removes the <br/> complexity from your day</h2>
-        <p class="text-body-color mt-1 text-gray-400">and lets you spend time helping those who need it.</p>
+        <p class="mt-1 text-gray-400">and lets you spend time helping those who need it.</p>
         <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest"><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 rounded-2xl mt-5">Get In Touch</button></a>
       </div>
     </div>
@@ -98,7 +98,7 @@
         </div>
         <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("forecasting.svg", :class => "app-images") %>
+            <%= image_tag("forecasting.svg", class: "app-images") %>
           </div>
           <div class="text-center">
             <h3 class="text-3xl">Forecasting</h3>
@@ -110,7 +110,7 @@
       <div class="flex flex-col md:flex-row justify-center">
         <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("report-image.svg", :class => "app-images") %>
+            <%= image_tag("report-image.svg", class: "app-images") %>
           </div>
           <div class="text-center">
             <h3 class="text-3xl">Report Generation</h3>
@@ -120,7 +120,7 @@
 
         <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("barcode.svg", :class => "app-images") %>
+            <%= image_tag("barcode.svg", class: "app-images") %>
           </div>
           <div class="text-center">
             <h3 class="text-3xl">Barcode Scanning</h3>
@@ -132,7 +132,7 @@
       <div class="flex flex-col md:flex-row justify-center">
         <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("inventory-image.svg", :class => "app-images") %>
+            <%= image_tag("inventory-image.svg", class: "app-images") %>
           </div>
           <div class="text-center">
             <h3 class="text-3xl">Inventory Management</h3>
@@ -142,7 +142,7 @@
 
         <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("dashboard-image.svg", :class => "app-images") %>
+            <%= image_tag("dashboard-image.svg", class: "app-images") %>
           </div>
           <div class="text-center">
             <h3 class="text-3xl">Dashboard Vizualization</h3>
@@ -170,19 +170,11 @@
                 <strong> - Rachel Alston, PDX Diaper Bank </strong>
               </div>
             </div>
-            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
           </div>
         </div>
       </div>
     </div>
-    <div class="container max-w-7xl mx-auto py-10" id="contact">
+    <div class="container max-w-7xl mx-auto py-32" id="contact">
       <div class="text-center">
         <h2 class="text-4xl">Want to use the Human Essentials App?</h2>
         <p class="text-gray-500 mt-2">After the demo, you will be able to request your own account.</p>
