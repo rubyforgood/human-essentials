@@ -19,9 +19,8 @@ RSpec.feature "Distributions", type: :system do
 
       fill_in "Comment", with: "Take my wipes... please"
 
-      expect do
-        click_button "Save", match: :first
-      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect(PartnerMailerJob).to receive(:perform_later).once
+      click_button "Save", match: :first
 
       expect(page).to have_content "Distributions"
       expect(page.find(".alert-info")).to have_content "reated"
