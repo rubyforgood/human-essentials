@@ -20,12 +20,12 @@
         <nav class="">
           <div class="flex justify-between items-center">
             <div class="navbar-header">
-              <a class="text-3xl lg:text-4xl" href="#"><h2 class="text-white font-bold">HumanEssentials</h2></a>
+              <a class="text-3xl lg:text-4xl" href="#"><h2 class="text-white font-bold">HumanEssentials.app</h2></a>
             </div>
 
             <div class="flex" id="myNavbar">
               <div class="flex text-white space-x-4 md:space-x-10 text-md lg:text-2xl items-center">
-                <a class="hidden md:block" href="#about">About <span class="sr-only">(current)</span></a>
+                <a class="hidden md:block" href="#about">About</a>
                 <a class="hidden md:block" href="#testimonials">Testimonials</a>
                 <a class="hidden md:block" href="#contact">Contact</a>
 
@@ -182,28 +182,30 @@
         </div>
       </div>
     </div>
-    <div class="container max-w-7xl bottom-cta" id="contact">
+    <div class="container max-w-7xl mx-auto py-10" id="contact">
       <div class="text-center">
-        <h2 class="text-header">Want to use the Human Essentials App?</h2>
-        <p class="text-body-color">After the demo, you will be able to request your own account.</p>
-        <a href=<%="#{new_account_request_path}"%>><button type="button" class="btn btn-primary btn-lg mt-2">Request A Demo</button></a>
+        <h2 class="text-4xl">Want to use the Human Essentials App?</h2>
+        <p class="text-gray-500 mt-2">After the demo, you will be able to request your own account.</p>
+        <a href=<%="#{new_account_request_path}"%>><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 mt-5 rounded-2xl">Request A Demo</button></a>
+
         <br/><br/>
-        <p class="text-body-color">Have questions? Email us at <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top" >info@diaper.app</a></p>
+        <p class="text-gray-500">Have questions? Email us at <a class='text-blue-500' href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top" >info@diaper.app</a></p>
       </div>
     </div>
-    <div class="footer-content">
-      <div class="container max-w-7xl">
-        <div class="row">
-          <div class="col-xs-12 col-sm-12 col-md-6">
-            <h2 class="text-white">Humanessentials.app</h2>
+
+    <div class="bg-gray-500">
+      <div class="container max-w-7xl mx-auto py-32 text-white">
+        <div class="flex flex-col mx-auto text-center sm:text-left sm:flex-row space-y-10 sm:space-y-0">
+          <div class="w-full sm:w-1/2">
+            <h2 class="text-3xl">HumanEssentials.app</h2>
           </div>
-          <div class="col-xs-12 col-sm-12 col-md-6">
-            <strong class="text-white">Human Essentials App was lovingly built by:</strong>
+          <div class="w-full sm:w-1/2">
+            <strong class="text-white">The Human Essentials App was lovingly built by:</strong>
             <br/>
-            <a href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
-            <a href="http://rubyforgood.org/">Ruby for Good</a>
+            <a class='text-blue-400' href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
+            <a class='text-blue-400' href="http://rubyforgood.org/">Ruby for Good</a>
             <br/><br/>
-            <a href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
+            <a class='text-blue-400' href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
           </div>
         </div>
       </div>
