@@ -19,5 +19,15 @@ RSpec.describe NotifyPartnerJob, job: true do
       expect(RequestsConfirmationMailer).to have_received(:confirmation_email).with(request)
       expect(mailer).to have_received(:deliver_later)
     end
+
+    context "when the request's partner is deactivated" do
+      let(:partner) { create(:partner, status: "deactivated") }
+      let(:request) { create(:request, partner: partner) }
+
+      it "does not send the confirmation email" do
+        NotifyPartnerJob.perform_now(request.id)
+        expect(RequestsConfirmationMailer).to_not have_received(:confirmation_email)
+      end
+    end
   end
 end
