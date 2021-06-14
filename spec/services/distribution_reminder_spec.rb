@@ -36,6 +36,16 @@ RSpec.describe DistributionReminder do
       DistributionReminder.perform(distribution_with_reminder.id)
       expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution_with_reminder.id).until distribution_with_reminder.issued_at - 1.day
     end
+
+    context "when the partner is deactivated" do
+      let(:deactivated_partner) { create(:partner, send_reminders: true, status: "deactivated") }
+      let(:distribution) { create(:distribution, partner: deactivated_partner) }
+
+      it "does not send mail" do
+        DistributionReminder.perform(distribution.id)
+        expect(DistributionMailer.method(:reminder_email)).not_to be_delayed(past_distribution)
+      end
+    end
   end
 end
 

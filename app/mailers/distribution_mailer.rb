@@ -6,7 +6,7 @@ class DistributionMailer < ApplicationMailer
   #   en.distribution_mailer.partner_mailer.subject
   #
   def partner_mailer(current_organization, distribution, subject, distribution_changes)
-    return if distribution.past?
+    return if distribution.past? || distribution.partner.deactivated?
 
     @partner = distribution.partner
     @distribution = distribution
@@ -22,7 +22,7 @@ class DistributionMailer < ApplicationMailer
     distribution = Distribution.find(distribution_id)
     @partner = distribution.partner
     @distribution = distribution
-    return if @distribution.past? || !@partner.send_reminders
+    return if @distribution.past? || !@partner.send_reminders || @partner.deactivated?
 
     mail(to: @partner.email, from: @distribution.organization.email, subject: "#{@partner.name} Distribution Reminder")
   end

@@ -45,6 +45,15 @@ RSpec.describe RequestDestroyService, type: :service do
         expect(fake_mailer).to have_received(:deliver_later)
       end
     end
+
+    context "when the request's partner is deactivated" do
+      let!(:partner) { create(:partner, status: 'deactivated') }
+      let(:request) { create(:request, partner: partner) }
+
+      it 'should have errors' do
+        expect(subject.errors.full_messages).to eq(['partner is deactivated'])
+      end
+    end
   end
 end
 

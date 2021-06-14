@@ -1,4 +1,6 @@
 RSpec.describe DistributionCreateService, type: :service do
+  include ActiveJob::TestHelper
+
   subject { DistributionCreateService }
   describe "call" do
     let!(:storage_location) { create(:storage_location, :with_items, item_count: 2) }
@@ -21,8 +23,11 @@ RSpec.describe DistributionCreateService, type: :service do
       it "Sends a PartnerMailer" do
         @partner.update!(send_reminders: true)
 
-        expect(PartnerMailerJob).to receive(:perform_later).once
-        subject.new(distribution_params).call
+        expect do
+          perform_enqueued_jobs only: PartnerMailerJob do
+            subject.new(distribution_params).call
+          end
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
 
@@ -32,6 +37,18 @@ RSpec.describe DistributionCreateService, type: :service do
 
         expect(PartnerMailerJob).not_to receive(:perform_later)
         subject.new(distribution_params).call
+      end
+    end
+
+    context "partner is deactivated" do
+      it "does not send an email" do
+        @partner.update!(send_reminders: true, status: "deactivated")
+
+        expect do
+          perform_enqueued_jobs only: PartnerMailerJob do
+            subject.new(distribution_params).call
+          end
+        end.not_to change { ActionMailer::Base.deliveries.count }
       end
     end
 
