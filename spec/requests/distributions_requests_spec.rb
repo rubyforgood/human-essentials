@@ -61,13 +61,12 @@ RSpec.describe "Distributions", type: :request do
         expect(storage_location).to be_valid
         expect(partner).to be_valid
 
-        expect do
-          post distributions_path(params)
+        expect(PartnerMailerJob).to receive(:perform_later).once
+        post distributions_path(params)
 
-          expect(response).to have_http_status(:redirect)
-          last_distribution = Distribution.last
-          expect(response).to redirect_to(distribution_path(last_distribution))
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        expect(response).to have_http_status(:redirect)
+        last_distribution = Distribution.last
+        expect(response).to redirect_to(distribution_path(last_distribution))
       end
 
       it "renders #new again on failure, with notice" do
