@@ -18,9 +18,7 @@
     "lodash.template": "^4.5.0",
     "mem": "^5.1.1",
     "mixin-deep": "^2.0.1",
-    "set-value": "^3.0.1",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12"
+    "set-value": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.5",
@@ -29,6 +27,8 @@
     "postcss": "^8.2.15",
     "postcss-cssnext": "^3.1.0",
     "tailwindcss": "^2.1.2",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.2"
   },
   "husky": {

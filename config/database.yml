@@ -6,7 +6,6 @@ default: &default
   username: postgres
   password: password
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
 
 development:
   primary:
@@ -14,20 +13,9 @@ development:
     timeout: 5000
   partners:
     <<: *default
-    username: postgres
-    password: password
     database: partner_dev
     migrations_paths: db/partners_migrate
     timeout: 5000
-
-staging:
-  primary:
-    <<: *default
-    url: <%= ENV['DATABASE_URL'] %>
-  partners:
-    <<: *default
-    url: <%= ENV['HEROKU_POSTGRESQL_ROSE_URL'] %>
-    migrations_paths: db/partners_migrate
 
 test:
   primary:
@@ -36,29 +24,11 @@ test:
     timeout: 5000
   partners:
     <<: *default
-    username: postgres
-    password: password
     database: partner_test
     migrations_paths: db/partners_migrate
     timeout: 5000
 
 production:
-  primary:
-    adapter: postgresql
-    encoding: unicode
-    host: <%= ENV["DIAPER_DB_HOST"] %>
-    pool: 5
-    username: <%= ENV["DIAPER_DB_USERNAME"] %>
-    password: <%= ENV["DIAPER_DB_PASSWORD"] %>
-    database: <%= ENV["DIAPER_DB_DATABASE"] %>
-    timeout: 5000
-  partners:
-    adapter: postgresql
-    encoding: unicode
-    host: <%= ENV["PARTNER_DB_HOST"] %>
-    pool: 5
-    username: <%= ENV["PARTNER_DB_USERNAME"] %>
-    password: <%= ENV["PARTNER_DB_PASSWORD"] %>
-    database: <%= ENV["PARTNER_DB_DATABASE"] %>
-    migrations_paths: db/partners_migrate
-    timeout: 5000
+  <<: *default
+  database: diaper_production
+  password: <%= ENV['DIAPER_DATABASE_PASSWORD'] %>
