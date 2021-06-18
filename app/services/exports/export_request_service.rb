@@ -25,6 +25,8 @@ module Exports
 
     private
 
+    attr_reader :requests
+
     def headers
       # Build the headers in the correct order
       base_headers + item_headers
@@ -68,9 +70,17 @@ module Exports
       row += Array.new(item_headers.size, 0)
 
       request.request_items.each do |request_item|
-        item_name = fetch_item_name(request_item['item_id'])
+        item_name = fetch_item_name(request_item['item_id']) || deleted_item_column_header
         item_column_idx = headers_with_indexes[item_name]
-        row[item_column_idx] = request_item['quantity']
+
+        if item_name == deleted_item_column_header
+          # Add to the deleted column for every item that
+          # does not match any existing Item.
+          row[item_column_idx] ||= 0
+          row[item_column_idx] += request_item['quantity']
+        else
+          row[item_column_idx] = request_item['quantity']
+        end
       end
 
       row
@@ -82,11 +92,11 @@ module Exports
         acc
       end
 
-      @item_name_to_id_map.fetch(item_id, deleted_item_column_header)
+      @item_name_to_id_map[item_id]
     end
 
     def deleted_item_column_header
-      "<DELETED ITEM>"
+      "<DELETED ITEMS>"
     end
 
     def items
