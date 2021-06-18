@@ -18,22 +18,41 @@ describe Exports::ExportRequestService do
            organization: org,
            request_items: [{ item_id: item_2t.id, quantity: 100 }])
   end
-
-  subject do
-    described_class.new([request_3t, request_2t])
+  let!(:request_with_deleted_item) do
+    create(:request,
+           :fulfilled,
+           organization: org,
+           request_items: [{ item_id: 0, quantity: 200 }])
   end
 
-  describe ".call" do
-    it "includes headers as the first row" do
-      expect(subject.call.first).to include("Date", "Requestor", "Status", item_3t.name, item_2t.name)
+  subject do
+    described_class.new([request_3t, request_2t, request_with_deleted_item]).generate_csv_data
+  end
+
+  describe ".generate_csv_data" do
+    let(:expected_headers) do
+      expected_headers_item_headers = [item_2t, item_3t].map(&:name).sort
+      expected_headers_item_headers << '<DELETED_ITEM>'
+      %w(Date Requestor Status) + expected_headers_item_headers
     end
 
-    it "includes rows for each request" do
-      expect(subject.call.second).to include(request_3t.created_at.strftime("%m/%d/%Y").to_s)
-      expect(subject.call.second).to include(150)
+    it "includes headers as the first row with ordered item names alphabetically with deleted item included at the end" do
+      expect(subject.first).to eq(expected_headers)
+    end
 
-      expect(subject.call.third).to include(request_2t.created_at.strftime("%m/%d/%Y").to_s)
-      expect(subject.call.third).to include(100)
+    it "includes rows for each request with correct columns of item quantity" do
+      expect(subject.second).to include(request_3t.created_at.strftime("%m/%d/%Y").to_s)
+
+      item_column_idx = expected_headers.each_with_index.to_h[item_3t.name]
+      expect(subject.second[item_column_idx]).to eq(150)
+
+      expect(subject.third).to include(request_2t.created_at.strftime("%m/%d/%Y").to_s)
+      item_column_idx = expected_headers.each_with_index.to_h[item_2t.name]
+      expect(subject.third[item_column_idx]).to eq(100)
+
+      expect(subject.fourth).to include(request_3t.created_at.strftime("%m/%d/%Y").to_s)
+      item_column_idx = expected_headers.each_with_index.to_h["<DELETED_ITEM>"]
+      expect(subject.fourth[item_column_idx]).to eq(200)
     end
   end
 end
