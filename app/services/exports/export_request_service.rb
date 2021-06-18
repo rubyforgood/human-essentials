@@ -1,6 +1,5 @@
 module Exports
   class ExportRequestService
-
     DELETED_ITEMS_COLUMN_HEADER = '<DELETED_ITEMS>'.freeze
 
     def initialize(requests)
@@ -97,7 +96,6 @@ module Exports
 
       @item_name_to_id_map[item_id]
     end
-
 
     def items
       return @items if @items
