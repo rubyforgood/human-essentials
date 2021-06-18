@@ -1,5 +1,8 @@
 module Exports
   class ExportRequestService
+
+    DELETED_ITEMS_COLUMN_HEADER = '<DELETED_ITEMS>'.freeze
+
     def initialize(requests)
       @requests = requests.includes(:partner)
     end
@@ -61,7 +64,7 @@ module Exports
       # has been deleted. Normally this wouldn't be neccessary,
       # but previous versions of the application would cause
       # this orphaned data
-      item_names.sort.uniq << deleted_item_column_header
+      item_names.sort.uniq << DELETED_ITEMS_COLUMN_HEADER
     end
 
     def build_row_data(request)
@@ -70,10 +73,10 @@ module Exports
       row += Array.new(item_headers.size, 0)
 
       request.request_items.each do |request_item|
-        item_name = fetch_item_name(request_item['item_id']) || deleted_item_column_header
+        item_name = fetch_item_name(request_item['item_id']) || DELETED_ITEMS_COLUMN_HEADER
         item_column_idx = headers_with_indexes[item_name]
 
-        if item_name == deleted_item_column_header
+        if item_name == DELETED_ITEMS_COLUMN_HEADER
           # Add to the deleted column for every item that
           # does not match any existing Item.
           row[item_column_idx] ||= 0
@@ -95,16 +98,13 @@ module Exports
       @item_name_to_id_map[item_id]
     end
 
-    def deleted_item_column_header
-      "<DELETED ITEMS>"
-    end
 
     def items
       return @items if @items
 
-      item_ids = requests.map do |request|
+      item_ids = requests.flat_map do |request|
         request.request_items.map { |item| item['item_id'] }
-      end.flatten
+      end
 
       @items ||= Item.where(id: item_ids)
     end

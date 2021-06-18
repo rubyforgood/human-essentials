@@ -32,7 +32,7 @@ describe Exports::ExportRequestService do
   describe ".generate_csv_data" do
     let(:expected_headers) do
       expected_headers_item_headers = [item_2t, item_3t].map(&:name).sort
-      expected_headers_item_headers << '<DELETED_ITEMS>'
+      expected_headers_item_headers << Exports::ExportRequestService::DELETED_ITEMS_COLUMN_HEADER
       %w(Date Requestor Status) + expected_headers_item_headers
     end
 
@@ -51,7 +51,7 @@ describe Exports::ExportRequestService do
       expect(subject.third[item_column_idx]).to eq(100)
 
       expect(subject.fourth).to include(request_3t.created_at.strftime("%m/%d/%Y").to_s)
-      item_column_idx = expected_headers.each_with_index.to_h["<DELETED_ITEM>"]
+      item_column_idx = expected_headers.each_with_index.to_h[Exports::ExportRequestService::DELETED_ITEMS_COLUMN_HEADER]
       expect(subject.fourth[item_column_idx]).to eq(400)
     end
   end
