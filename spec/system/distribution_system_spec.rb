@@ -18,7 +18,7 @@ RSpec.feature "Distributions", type: :system do
       choose "Pick up"
 
       fill_in "Comment", with: "Take my wipes... please"
-      fill_in 'Distribution date', with: '01/01/2001 10:15'
+      fill_in "distribution_issued_at", with: '01/01/2001 10:15'
 
       expect(PartnerMailerJob).to receive(:perform_later).once
       click_button "Save", match: :first
