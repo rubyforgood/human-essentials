@@ -17,7 +17,6 @@ There are numerous other folks that can chime in and answer questions -- please 
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/maintainability)](https://codeclimate.com/github/rubyforgood/diaper/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/test_coverage)](https://codeclimate.com/github/rubyforgood/diaper/test_coverage)
-[![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=main)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
 [![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
 
@@ -29,7 +28,9 @@ For a general overview of the application, please see the [Application Overview]
 
 ### Origins
 
+
 This project took what we built for the [Portland Diaper Bank in 2016](https://github.com/rubyforgood/pdx_diaper) and turned it into a multitenant application, something that all diaper banks can use. We re-used models, code and other documentation where applicable as well as implemented new features and functionality requested by the prime stakeholder (PDXDB). We're super excited to have had Rachel Alston, the director of the Portland Diaper Bank, attending our event in 2017, providing guidance and giving us the best chance of success!
+
 
 ## Development
 
