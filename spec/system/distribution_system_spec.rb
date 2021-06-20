@@ -18,7 +18,7 @@ RSpec.feature "Distributions", type: :system do
       choose "Pick up"
 
       fill_in "Comment", with: "Take my wipes... please"
-      fill_in "distribution_issued_at", with: '01/01/2001 10:15'
+      fill_in "Distribution date", with: '01/01/2001 10:15'
 
       expect(PartnerMailerJob).to receive(:perform_later).once
       click_button "Save", match: :first
@@ -152,11 +152,8 @@ RSpec.feature "Distributions", type: :system do
     it "allows the user can change the issued_at date" do
       click_on "Edit", match: :first
       expect do
-        select('2018', from: 'distribution_issued_at_1i')
-        select('May', from: 'distribution_issued_at_2i')
-        select('7', from: 'distribution_issued_at_3i')
-        select('02 PM', from: 'distribution_issued_at_4i')
-        select('15', from: 'distribution_issued_at_5i')
+        fill_in "Distribution date", with: '07/05/2018 14:15'
+
         click_on "Save", match: :first
         distribution.reload
       end.to change { distribution.issued_at }.to(Time.zone.parse("2018-05-07 14:15:00"))
