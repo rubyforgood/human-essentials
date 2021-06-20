@@ -1,6 +1,6 @@
 # Welcome Contributors!
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-97-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-98-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 Thanks for checking us out!
 
@@ -248,7 +248,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/edwinthinks"><img src="https://avatars.githubusercontent.com/u/11335191?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Edwin Mak</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=edwinthinks" title="Code">💻</a> <a href="#projectManagement-edwinthinks" title="Project Management">📆</a> <a href="#infra-edwinthinks" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#ideas-edwinthinks" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-edwinthinks" title="Answering Questions">💬</a> <a href="#security-edwinthinks" title="Security">🛡️</a></td>
     <td align="center"><a href="https://rubyforgood.org/"><img src="https://avatars.githubusercontent.com/u/667909?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sean Marcia</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=seanmarcia" title="Code">💻</a> <a href="#business-seanmarcia" title="Business development">💼</a> <a href="#financial-seanmarcia" title="Financial">💵</a> <a href="#fundingFinding-seanmarcia" title="Funding Finding">🔍</a> <a href="#eventOrganizing-seanmarcia" title="Event Organizing">📋</a></td>
-    <td align="center"><a href="https://armahillo.dev/"><img src="https://avatars.githubusercontent.com/u/502363?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aaron H</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=armahillo" title="Code">💻</a></td>
+    <td align="center"><a href="https://armahillo.dev/"><img src="https://avatars.githubusercontent.com/u/502363?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aaron H</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=armahillo" title="Code">💻</a> <a href="#projectManagement-armahillo" title="Project Management">📆</a></td>
     <td align="center"><a href="https://gitlab.com/IlinDmitry"><img src="https://avatars.githubusercontent.com/u/13395396?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dmitry</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=IlinDmitry" title="Code">💻</a></td>
     <td align="center"><a href="http://adambachman.org/"><img src="https://avatars.githubusercontent.com/u/13002?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Adam Bachman</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=abachman" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/jcavena"><img src="https://avatars.githubusercontent.com/u/200333?v=4?s=100" width="100px;" alt=""/><br /><sub><b>JC Avena</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=jcavena" title="Code">💻</a></td>
@@ -369,6 +369,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/stanleypliu"><img src="https://avatars.githubusercontent.com/u/53650048?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stanley Liu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=stanleypliu" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/c-bartell"><img src="https://avatars.githubusercontent.com/u/60277914?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Curtis Bartell</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=c-bartell" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/librod89"><img src="https://avatars.githubusercontent.com/u/4965672?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Libby Rodriguez</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=librod89" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/joshuacgraves"><img src="https://avatars.githubusercontent.com/u/53875700?v=4?s=100" width="100px;" alt=""/><br /><sub><b>joshuacgraves</b></sub></a><br /><a href="#question-joshuacgraves" title="Answering Questions">💬</a></td>
   </tr>
 </table>
 

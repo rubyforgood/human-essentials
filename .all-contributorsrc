@@ -38,7 +38,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/502363?v=4",
       "profile": "https://armahillo.dev/",
       "contributions": [
-        "code"
+        "code",
+        "projectManagement"
       ]
     },
     {
@@ -887,6 +888,15 @@
       "profile": "https://github.com/librod89",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "joshuacgraves",
+      "name": "joshuacgraves",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53875700?v=4",
+      "profile": "https://github.com/joshuacgraves",
+      "contributions": [
+        "question"
       ]
     }
   ],
