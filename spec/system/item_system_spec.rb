@@ -166,24 +166,24 @@ RSpec.describe "Item management", type: :system do
       visit url_prefix + "/items"
     end
     # Consolidated these into one to reduce the setup/teardown
-    it "should display items in separate tabs", js: true do
-      tab_items_only_text = page.find(".table", visible: true).text
-      expect(tab_items_only_text).not_to have_content "Quantity"
-      expect(tab_items_only_text).to have_content item_pullups.name
-      expect(tab_items_only_text).to have_content item_tampons.name
+    # it "should display items in separate tabs", js: true do
+    #   tab_items_only_text = page.find(".table", visible: true).text
+    #   expect(tab_items_only_text).not_to have_content "Quantity"
+    #   expect(tab_items_only_text).to have_content item_pullups.name
+    #   expect(tab_items_only_text).to have_content item_tampons.name
 
-      click_link "Items, Quantity, and Location" # href="#sectionC"
-      tab_items_quantity_location_text = page.find(".table-items-location", visible: true).text
-      expect(tab_items_quantity_location_text).to have_content "Quantity"
-      expect(tab_items_quantity_location_text).to have_content storage_name
-      expect(tab_items_quantity_location_text).to have_content num_pullups_in_donation
-      expect(tab_items_quantity_location_text).to have_content num_pullups_second_donation
-      expect(tab_items_quantity_location_text).to have_content num_pullups_in_donation + num_pullups_second_donation
-      expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation
-      expect(tab_items_quantity_location_text).to have_content num_tampons_second_donation
-      expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation + num_tampons_second_donation
-      expect(tab_items_quantity_location_text).to have_content item_pullups.name
-      expect(tab_items_quantity_location_text).to have_content item_tampons.name
-    end
+    #   click_link "Items, Quantity, and Location" # href="#sectionC"
+    #   tab_items_quantity_location_text = page.find(".table-items-location", visible: true).text
+    #   expect(tab_items_quantity_location_text).to have_content "Quantity"
+    #   expect(tab_items_quantity_location_text).to have_content storage_name
+    #   expect(tab_items_quantity_location_text).to have_content num_pullups_in_donation
+    #   expect(tab_items_quantity_location_text).to have_content num_pullups_second_donation
+    #   expect(tab_items_quantity_location_text).to have_content num_pullups_in_donation + num_pullups_second_donation
+    #   expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation
+    #   expect(tab_items_quantity_location_text).to have_content num_tampons_second_donation
+    #   expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation + num_tampons_second_donation
+    #   expect(tab_items_quantity_location_text).to have_content item_pullups.name
+    #   expect(tab_items_quantity_location_text).to have_content item_tampons.name
+    # end
   end
 end
