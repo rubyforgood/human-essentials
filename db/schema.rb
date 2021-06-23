@@ -430,6 +430,17 @@ ActiveRecord::Schema.define(version: 2021_06_26_170605) do
     t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.jsonb "object"
+    t.datetime "created_at"
+    t.jsonb "object_changes"
+    t.index %w(item_type item_id), name: "index_versions_on_item_type_and_item_id"
+  end
+
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
