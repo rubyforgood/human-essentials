@@ -73,8 +73,9 @@ class Donation < ApplicationRecord
   # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   scope :by_source, ->(source) {
-    source = SOURCES[source] if source.is_a?(Symbol)
-    where(source: source)
+    return where(source: source) unless source.is_a?(Symbol)
+
+    includes(source).where(source: SOURCES[source])
   }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
 

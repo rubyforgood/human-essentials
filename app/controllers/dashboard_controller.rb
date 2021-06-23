@@ -5,14 +5,14 @@ class DashboardController < ApplicationController
   def index
     setup_date_range_picker
 
-    @donations = current_organization.donations.includes(:diaper_drive, line_items: [:item]).during(helpers.selected_range)
+    @donations = current_organization.donations.during(helpers.selected_range)
     @recent_donations = @donations.recent
-    @purchases = current_organization.purchases.includes(:vendor, line_items: [:item]).during(helpers.selected_range)
-    @recent_purchases = @purchases.recent
-    @recent_distributions = current_organization.distributions.includes(:partner, line_items: [:item]).during(helpers.selected_range).recent
+    @purchases = current_organization.purchases.during(helpers.selected_range)
+    @recent_purchases = @purchases.recent.includes(:vendor)
+    @recent_distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range).recent
 
     if Flipper.enabled?(:itemized_distributions, current_user)
-      @itemized_distributions = current_organization.distributions.includes(line_items: [:item]).during(helpers.selected_range)
+      @itemized_distributions = current_organization.distributions.includes(:line_items).during(helpers.selected_range)
       @onhand_quantities = current_organization.inventory_items.group("items.name").sum(:quantity)
       @onhand_minimums = current_organization.inventory_items
                                              .group("items.name")
@@ -24,7 +24,7 @@ class DashboardController < ApplicationController
 
     # calling .recent on recent donations by manufacturers will only count the last 3 donations
     # which may not make sense when calculating total count using a date range
-    @recent_donations_from_manufacturers = current_organization.donations.includes(:manufacturer, line_items: [:item]).during(helpers.selected_range).by_source(:manufacturer)
+    @recent_donations_from_manufacturers = current_organization.donations.during(helpers.selected_range).by_source(:manufacturer)
     @top_manufacturers = current_organization.manufacturers.by_donation_count
   end
 end
