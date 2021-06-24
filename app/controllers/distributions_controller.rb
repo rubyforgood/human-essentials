@@ -125,7 +125,6 @@ class DistributionsController < ApplicationController
 
   def update
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
