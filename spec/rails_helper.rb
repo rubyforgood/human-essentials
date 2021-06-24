@@ -157,6 +157,9 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
+    # Compile assets neccessary for browser tests to pass
+    `NODE_ENV=test bin/webpack`
+
     Rails.logger.info <<~ASCIIART
       -~~==]}>        ######## ###########  ####      ########    ###########
       -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
