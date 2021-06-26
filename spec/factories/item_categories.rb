@@ -12,7 +12,7 @@
 FactoryBot.define do
   factory :item_category do
     association :organization
-    name { Faker::Appliance.brand }
-    description { Faker::Lorem.sentence(word_count: 10) }
+    name { Faker::Appliance.unique.brand }
+    description { Faker::Lorem.sentence(word_count: 30) }
   end
 end

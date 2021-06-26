@@ -60,10 +60,6 @@ pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organiz
 end
 Organization.seed_items(pdx_org)
 
-# Randomly associate Items to ItemCategories
-# Add seed. assocate the item to item catogories
-
-
 sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
   organization.name    = "SF Diaper Bank"
   organization.street  = "P.O. Box 12345"
@@ -78,6 +74,27 @@ Organization.seed_items(sf_org)
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
     item.update(value_in_cents: 100)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Item Categories
+# ----------------------------------------------------------------------------
+
+Organization.all.each do |org|
+  FactoryBot.create_list(:item_category, 6, organization: org)
+end
+
+# ----------------------------------------------------------------------------
+# Item < - > ItemCategory
+# ----------------------------------------------------------------------------
+
+Organization.all.each do |org|
+  # Added `nil` to randomly choose to not categorize items sometimes via sample
+  item_category_ids = org.item_categories.map(&:id) + [nil]
+
+  org.items.each do |item|
+    item.update_column(:item_category_id, item_category_ids.sample)
   end
 end
 

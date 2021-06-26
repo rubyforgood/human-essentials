@@ -3,7 +3,7 @@ class ItemCategoriesController < ApplicationController
   end
 
   def index
-    @item_categories = current_organization.item_categories
+    @item_categories = current_organization.item_categories.includes(:items)
   end
 
   def show
