@@ -82,7 +82,9 @@ end
 # ----------------------------------------------------------------------------
 
 Organization.all.each do |org|
-  FactoryBot.create_list(:item_category, 6, organization: org)
+  ['A', 'B', 'C'].each do |letter|
+    FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
+  end
 end
 
 # ----------------------------------------------------------------------------

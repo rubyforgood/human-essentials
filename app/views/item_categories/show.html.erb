@@ -1,2 +1,74 @@
-<h1>ItemCategories#show</h1>
-<p>Find me in app/views/item_categories/show.html.erb</p>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Items - #{@item_category.name} - Inventory - #{current_organization.name}" %>
+        <h1>
+          Item Information
+          <small>for <%= @item_category.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+            <i class="fa fa-dashboard"></i> Home
+          <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Item Types", (items_path) %></li>
+          <li class="breadcrumb-item"><a href="#"><%= @item_category.name %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Category Name</th>
+                  <th>Category Descriptiown</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><%= @item_category.name %></td>
+                  <td><%= @item_category.description %></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-info">
+          <div class="card-header">
+            <h2 class="card-title">Items In This Category</h2>
+          </div>
+          <div class="card-body p-0">
+            <%= render partial: 'items/item_list', locals: { items: @item_category.items } %>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
