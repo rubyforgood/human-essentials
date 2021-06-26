@@ -60,6 +60,10 @@ pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organiz
 end
 Organization.seed_items(pdx_org)
 
+# Randomly associate Items to ItemCategories
+# Add seed. assocate the item to item catogories
+
+
 sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
   organization.name    = "SF Diaper Bank"
   organization.street  = "P.O. Box 12345"

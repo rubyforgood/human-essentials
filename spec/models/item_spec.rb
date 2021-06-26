@@ -16,11 +16,15 @@
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  item_category_id             :integer
 #  kit_id                       :integer
 #  organization_id              :integer
 #
 
 RSpec.describe Item, type: :model do
+  describe 'Assocations >' do
+    it { should belong_to(:item_category).optional }
+  end
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:item, organization_id: nil)).not_to be_valid

@@ -22,6 +22,10 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
+  get 'item_categories/new'
+  get 'item_categories/index'
+  get 'item_categories/show'
+  get 'item_categories/edit'
   devise_for :users
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
 
@@ -145,6 +149,7 @@ Rails.application.routes.draw do
     resources :items do
       patch :restore, on: :member
     end
+    resources :item_categories
     resources :partners do
       collection do
         post :import_csv

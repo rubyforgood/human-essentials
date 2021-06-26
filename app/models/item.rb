@@ -16,6 +16,7 @@
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  item_category_id             :integer
 #  kit_id                       :integer
 #  organization_id              :integer
 #
@@ -28,6 +29,7 @@ class Item < ApplicationRecord
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
   belongs_to :kit, optional: true
+  belongs_to :item_category, optional: true
 
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
