@@ -159,8 +159,8 @@ ActiveRecord::Schema.define(version: 20_210_623_140_308) do
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
-    t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
+    t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
@@ -438,7 +438,6 @@ ActiveRecord::Schema.define(version: 20_210_623_140_308) do
   add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "item_categories", "organizations"
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
