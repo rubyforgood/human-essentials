@@ -53,7 +53,7 @@
   </div>
 </section>
 
-<section class="content">
+<section class="content w-1/2">
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
@@ -63,7 +63,20 @@
             <h2 class="card-title">Items In This Category</h2>
           </div>
           <div class="card-body p-0">
-            <%= render partial: 'items/item_list', locals: { items: @item_category.items } %>
+            <table class='table'>
+              <thead>
+                <th>Name</th>
+                <th>Actions</th>
+              </thead>
+              <tbody>
+                <% @item_category.items.each do |item| %>
+                  <tr>
+                    <td><%= item.name %> </td>
+                    <td><%= view_button_to item_path(item) %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
           </div>
           <!-- /.card-footer-->
         </div>
