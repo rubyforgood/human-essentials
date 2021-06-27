@@ -16,6 +16,11 @@
                 <span class="input-group-text"><i class="fa fa-tag"></i></span>
                 <%= f.input_field :name, class: "form-control" %>
               <% end %>
+
+              <div class='w-1/4'>
+                <%= f.input :item_category_id, label: 'Category', collection: @item_categories, hint: 'Categories can help organize and identify items' %>
+              </div>
+
               <%= f.input :name, label: "Value per item", wrapper: :input_group do %>
                 <span class="input-group-text"><i class="fa fa-money"></i></span>
                 <%= f.input_field :value_in_dollars, class: "form-control" %>

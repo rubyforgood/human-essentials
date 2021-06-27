@@ -44,11 +44,13 @@ class ItemsController < ApplicationController
 
   def new
     @base_items = BaseItem.without_kit.alphabetized
+    @item_categories = current_organization.item_categories
     @item = current_organization.items.new
   end
 
   def edit
     @base_items = BaseItem.without_kit.alphabetized
+    @item_categories = current_organization.item_categories
     @item = current_organization.items.find(params[:id])
   end
 
@@ -114,6 +116,7 @@ class ItemsController < ApplicationController
     clean_item_value_in_dollars
     @item_params = params.require(:item).permit(
       :name,
+      :item_category_id,
       :partner_key,
       :value_in_cents,
       :package_size,
