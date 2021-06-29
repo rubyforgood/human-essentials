@@ -55,6 +55,7 @@ gem "yajl-ruby"
 gem "recaptcha"
 
 group :production do
+  gem 'lograge' # Reduce the noise of logs and include custom fields to it for easier access
   gem "skylight"
 end
 
