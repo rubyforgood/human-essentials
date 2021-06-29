@@ -99,6 +99,27 @@ Rails.application.configure do
     config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
 
+  #
+  # Add lograge to enhance logs with information on
+  # who the user or partner_user is. In addition, this
+  # contains parameters (excluding password) that can
+  # help with debugging
+  #
+  config.lograge.enabled = true
+  config.lograge.custom_payload do |controller|
+    {
+      host: controller.request.host,
+      user_id: controller.current_user.try(:id),
+      partner_user_id: controller.current_partner_user.try(:id)
+    }
+  end
+  config.lograge.custom_options = lambda do |event|
+    exceptions = %w(controller action format id)
+    {
+      params: event.payload[:params].except(*exceptions)
+    }
+  end
+
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 end
