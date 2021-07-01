@@ -86,5 +86,5 @@ def replace_user_passwords
   encrypted_password = u.encrypted_password
 
   User.all.update_all(encrypted_password: encrypted_password)
-  Partners::User.all.update_all(encrypted_password: encrypted_password)
+  PartnerUser.all.update_all(encrypted_password: encrypted_password)
 end
