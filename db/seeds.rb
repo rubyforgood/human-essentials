@@ -192,7 +192,7 @@ note = [
                                         status_in_diaper_base: partner_option[:status]
                                       })
 
-  Partners::User.create!(
+  PartnerUser.create!(
     name: Faker::Name.name,
     password: "password",
     password_confirmation: "password",
