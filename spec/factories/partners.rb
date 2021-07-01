@@ -36,7 +36,7 @@ FactoryBot.define do
     after(:create) do |partner, _evaluator|
       # Create associated records on partnerbase DB
       partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
-      Partners::User.create!(
+      PartnerUser.create!(
         email: partner.email,
         partner: partners_partner,
         password: 'password'
