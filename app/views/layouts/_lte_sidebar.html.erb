@@ -101,12 +101,6 @@
         <% end %>
       </li>
 
-      <li class="nav-item <%= active_class(['item_categories']) %>">
-        <%= link_to(item_categories_path(organization_id: current_user.organization), class: "nav-link #{active_class(['item_categories'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Item Categories
-        <% end %>
-      </li>
-
       <li class="nav-item <%= active_class(['kits']) %>">
         <%= link_to(kits_path(organization_id: current_user.organization), class: "nav-link #{active_class(['kits'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Kits

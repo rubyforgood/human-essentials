@@ -3,6 +3,7 @@
 class ItemsController < ApplicationController
   def index
     @items = current_organization.items.includes(:base_item, :kit).alphabetized.class_filter(filter_params)
+    @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
     @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location)
     @storages = current_organization.storage_locations.order(id: :asc)
 

@@ -22,10 +22,6 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
-  get 'item_categories/new'
-  get 'item_categories/index'
-  get 'item_categories/show'
-  get 'item_categories/edit'
   devise_for :users
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
 
