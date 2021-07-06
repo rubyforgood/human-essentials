@@ -440,6 +440,7 @@ ActiveRecord::Schema.define(version: 2021_06_26_170605) do
   add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "item_categories", "organizations"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
