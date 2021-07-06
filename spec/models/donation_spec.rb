@@ -92,17 +92,47 @@ RSpec.describe Donation, type: :model do
     end
 
     describe "by_source >" do
+      subject(:by_source) { Donation.by_source(source).count }
+
       before(:each) do
         create(:donation, source: Donation::SOURCES[:misc])
         create(:diaper_drive_donation)
       end
 
-      it "returns all donations with the provided source" do
-        expect(Donation.by_source(Donation::SOURCES[:diaper_drive]).count).to eq(1)
+      context "when source is not a symbol" do
+        context "when source comes from the SOURCES hash" do
+          let(:source) { Donation::SOURCES[:diaper_drive] }
+
+          it "returns all donations with the provided source" do
+            is_expected.to eq(1)
+          end
+        end
+
+        context "when source is invalid" do
+          let(:source) { "Invalid String" }
+
+          it "does not throw errors, returns no results" do
+            is_expected.to be_zero
+          end
+        end
       end
 
-      it "allows a symbol as an argument, referencing the SOURCES hash" do
-        expect(Donation.by_source(:diaper_drive).count).to eq(1)
+      context "when source is a symbol" do
+        context "when source is valid" do
+          let(:source) { :diaper_drive }
+
+          it "allows a symbol as an argument, referencing the SOURCES hash" do
+            is_expected.to eq(1)
+          end
+        end
+
+        context "when source is invalid" do
+          let(:source) { :invalid }
+
+          it "does not throw errors, returns no results" do
+            is_expected.to be_zero
+          end
+        end
       end
     end
   end
