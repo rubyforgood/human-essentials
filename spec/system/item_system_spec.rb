@@ -2,6 +2,7 @@ RSpec.describe "Item management", type: :system do
   before do
     sign_in(@user)
   end
+
   let!(:url_prefix) { "/#{@organization.to_param}" }
   it "can create a new item as a user" do
     visit url_prefix + "/items/new"
@@ -186,4 +187,58 @@ RSpec.describe "Item management", type: :system do
       expect(tab_items_quantity_location_text).to have_content item_tampons.name
     end
   end
+
+  describe 'Item Category Management' do
+    before do
+      visit url_prefix + "/items"
+    end
+
+    describe 'creating a new item category and associating to a new item' do
+      let(:new_item_name) { 'Test Item' }
+      let(:new_item_category) { 'Test Category' }
+
+      before do
+        click_on 'Item Categories'
+        click_on 'New Item Category'
+        fill_in 'Category Name *', with: new_item_category
+        fill_in 'Category Description', with: 'A test category description'
+        click_on 'Save'
+      end
+
+      context 'and associating to a existing item' do
+        let(:item) { Item.first }
+
+        before do
+          find('tr', text: item.name).find('a', text: 'Edit').click
+          select new_item_category, from: 'Category'
+          click_on 'Save'
+        end
+
+        it 'should associate the item with the category' do
+          item_category = ItemCategory.find_by(name: new_item_category)
+          expect(item.reload.item_category).to eq(item_category)
+        end
+      end
+
+      context 'and associating to a new item' do
+        let(:new_item_name) { 'Test Item' }
+
+        before do
+          click_on 'New Item'
+          select BaseItem.first.name, from: 'Base Item'
+          fill_in 'Name *', with: new_item_name
+          select new_item_category, from: 'Category'
+
+          click_on 'Save'
+          expect(page).to have_content("#{new_item_name} added!")
+        end
+
+        it 'should create the new item with the correct category' do
+          item_category = ItemCategory.find_by(name: new_item_category)
+          expect(Item.find_by(name: new_item_name, item_category_id: item_category.id)).not_to be_nil
+        end
+      end
+    end
+  end
 end
+
