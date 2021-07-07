@@ -43,7 +43,7 @@
   </div>
   <!-- /.card-body -->
   <div class="card-footer">
-    <%= view_button_to approve_partner_partner_path(partner) %>
+    <%= view_button_to profile_path(partner), { text: "View Partner Details" } %>
     <%= edit_button_to edit_partner_path(partner) %>
     <% if partner.deactivated? %>
       <%= reactivate_button_to reactivate_partner_path(partner), {confirm: confirm_reactivate_msg(partner.name)} %>

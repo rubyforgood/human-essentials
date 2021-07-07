@@ -58,13 +58,6 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.new
   end
 
-  def approve_partner
-    @partner = current_organization.partners.find(params[:id])
-
-    @partner_profile = @partner.profile
-    @agency = @partner_profile.export_hash
-  end
-
   def edit
     @partner = current_organization.partners.find(params[:id])
   end
@@ -157,10 +150,6 @@ class PartnersController < ApplicationController
   end
 
   private
-
-  def autovivifying_hash
-    Hash.new { |ht, k| ht[k] = autovivifying_hash }
-  end
 
   def partner_params
     params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, documents: [])

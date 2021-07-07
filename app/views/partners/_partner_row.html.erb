@@ -26,9 +26,9 @@
     <% when "uninvited" %>
       <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
     <% when "invited" %>
-      <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
+      <%= view_button_to profile_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
     <% when "awaiting_review" %>
-      <%= view_button_to approve_partner_partner_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
+      <%= view_button_to profile_path(partner_row), { text: "Review Application", icon: "check", type: "warning" } %>
     <% when "approved" %>
       <%= button_to recertify_partner_partner_path(partner_row), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" do %>
         <i class="fa fa-refresh"></i> Request Recertification
