@@ -38,7 +38,7 @@
             <div class="row">
               <div class="col-md-6">
                 <!-- /.box-header -->
-                <h2>Agency Information</h2>
+                <h2 class='text-2xl underline'>Agency Information</h2>
                 <p>Name: <%= @agency[:name] %></p>
                 <p>Distributor Type <%= @agency[:distributor_type] %></p>
                 <p>Agency Type: <%= @agency[:agency_type] %></p>
@@ -56,14 +56,14 @@
                 <p>Zip Code: <%= @agency[:address][:zip_code] %></p>
                 <br>
                 <% if @fields.include?('media_information') || @fields.empty? %>
-                  <h2>Media Information</h2>
+                  <h2 class='text-2xl underline'>Media Information</h2>
                   <p>Website: <%= @agency[:media][:website] %></p>
                   <p>Facebook: <%= @agency[:media][:facebook] %></p>
                   <p>Twitter: <%= @agency[:media][:twitter] %></p>
                   <br>
                 <% end %>
                 <% if @fields.include?('agency_stability') || @fields.empty? %>
-                  <h2>Agency Stability</h2>
+                  <h2 class='text-2xl underline'>Agency Stability</h2>
                   <p>Founded <%= @agency[:stability][:founded] %></p>
                   <p>Form 990: <%= @partner_profile.proof_of_form_990.attached? ? 'Yes' : 'No' %></p>
                   <p>Form 990
@@ -93,7 +93,7 @@
                   <br>
                 <% end %>
                 <% if @fields.include?('organizational_capacity') || @fields.empty? %>
-                  <h2>Organizational Capacity</h2>
+                  <h2 class='text-2xl underline'>Organizational Capacity</h2>
                   <p>Max Serve <%= @agency[:capacity][:max_serve] %></p>
                   <p>Incorporate Plan: <%= @agency[:capacity][:incorporate_plan] %></p>
                   <p>Responsible Staff Position: <%= @agency[:capacity][:responsible_staff_position] %></p>
@@ -103,7 +103,7 @@
                   <br>
                 <% end %>
                 <% if @fields.include?('population_served') || @fields.empty? %>
-                  <h2>Population Served</h2>
+                  <h2 class='text-2xl underline'>Population Served</h2>
                   <p>Income Requirement
                     Description: <%= @agency[:population_served][:income_requirement_description] %></p>
                   <p>Serve Income Circumstances: <%= @agency[:population_served][:serve_income_circumstances] %></p>
@@ -141,12 +141,12 @@
                   <br>
                 <% end %>
                 <% if @fields.include?('executive_director') || @fields.empty? %>
-                  <h2>Executive Director</h2>
+                  <h2 class='text-2xl underline'>Executive Director</h2>
                   <p>Executive Director Name: <%= @agency[:executive_director][:name] %></p>
                   <p>Executive Director Phone: <%= @agency[:executive_director][:phone] %></p>
                   <p>Executive Director Email: <%= @agency[:executive_director][:email] %></p>
                   <br>
-                  <h2>Program Contact Person</h2>
+                  <h2 class='text-2xl underline'>Program Contact Person</h2>
                   <p>Program Contact Name: <%= @agency[:contact_person][:name] %></p>
                   <p>Program Contact Phone: <%= @agency[:contact_person][:phone] %></p>
                   <p>Program Contact Mobile: <%= @agency[:contact_person][:mobile] %></p>
@@ -154,7 +154,7 @@
                   <br>
                 <% end %>
                 <% if @fields.include?('diaper_pick_up_person') || @fields.empty? %>
-                  <h2>Diaper Pick Up Person</h2>
+                  <h2 class='text-2xl underline'>Diaper Pick Up Person</h2>
                   <p>Pick Up Method: <%= @agency[:pick_up_person][:method] %></p>
                   <p>Pick Up Name: <%= @agency[:pick_up_person][:name] %></p>
                   <p>Pick Up Phone: <%= @agency[:pick_up_person][:phone] %></p>
@@ -162,21 +162,21 @@
                   <br>
                 <% end %>
                 <% if @fields.include?('agency_distribution_information') || @fields.empty? %>
-                  <h2>Agency Distribution Information</h2>
+                  <h2 class='text-2xl underline'>Agency Distribution Information</h2>
                   <p>Distribution Times: <%= @agency[:distribution][:distribution_times] %> </p>
                   <p>New Client Times: <%= @agency[:distribution][:new_client_times] %></p>
                   <p>More Docs Required: <%= @agency[:distribution][:more_docs_required] %></p>
                   <br>
                 <% end %>
                 <% if @fields.include?('sources_of_funding') || @fields.empty? %>
-                  <h2>Sources of Funding</h2>
+                  <h2 class='text-2xl underline'>Sources of Funding</h2>
                   <p>Sources of Funding: <%= @agency[:funding][:source] %></p>
                   <p>Sources of Diapers: <%= @agency[:funding][:diapers] %> </p>
                   <p>Diaper Budget:<%= @agency[:funding][:budget] %></p>
                   <p>Diaper Funding Source: <%= @agency[:funding][:diaper_funding_source] %></p>
                 <% end %>
                 <% if @fields.include?('attached_documents') || @fields.empty? %>
-                  <h2>Other Documents</h2>
+                  <h2 class='text-2xl underline'>Other Documents</h2>
                   <ul>
                     <% @partner_profile.documents.each do |document| %>
                       <li><%= link_to document.filename, rails_blob_path(document, disposition: 'attachment') %></li>
