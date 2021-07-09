@@ -255,7 +255,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.1)
     kaminari-core (1.2.1)
-    knapsack_pro (2.17.0)
+    knapsack_pro (2.18.0)
       rake
     launchy (2.5.0)
       addressable (~> 2.7)
@@ -391,7 +391,7 @@ GEM
       rake (>= 0.13)
       thor (~> 1.0)
     rainbow (3.0.0)
-    rake (13.0.3)
+    rake (13.0.6)
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
