@@ -1,7 +1,7 @@
 # Human Essentials 
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-99-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-100-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
@@ -375,6 +375,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://focused-wescoff-bfb488.netlify.app/"><img src="https://avatars.githubusercontent.com/u/65963997?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Himanshu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=himanshu007-creator" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/MohamedHegab"><img src="https://avatars.githubusercontent.com/u/7612401?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mohamed Hegab</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=MohamedHegab" title="Code">💻</a></td>
   </tr>
 </table>
 
