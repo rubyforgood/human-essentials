@@ -18,6 +18,7 @@ module Diaper
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.0
     config.action_dispatch.return_only_media_type_on_content_type = false
+    config.exceptions_app = routes
 
     config.active_job.queue_adapter = :sidekiq
     # Settings in config/environments/* take precedence over those specified here.
