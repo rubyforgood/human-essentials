@@ -16,5 +16,4 @@ class ItemCategory < ApplicationRecord
 
   belongs_to :organization
   has_many :items, -> { order(name: :asc) }
-
 end

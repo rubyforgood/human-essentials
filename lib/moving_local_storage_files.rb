@@ -1,6 +1,7 @@
 # Description TBA
 class ActiveStorageBlob < ApplicationRecord
 end
+
 # Description TBA
 class ActiveStorageAttachment < ApplicationRecord
   belongs_to :blob, class_name: "ActiveStorageBlob"
