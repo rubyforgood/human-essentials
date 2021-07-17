@@ -203,6 +203,7 @@ GEM
       railties (>= 3.2, < 7)
     font-ionicons-rails (2.0.1.6)
       railties (>= 3.2, < 7.0)
+    foreman (0.87.2)
     formatador (0.2.5)
     fullcalendar-rails (3.9.0.0)
       jquery-rails (>= 4.0.5, < 5.0.0)
@@ -586,6 +587,7 @@ DEPENDENCIES
   flipper-ui
   font-awesome-rails
   font-ionicons-rails
+  foreman
   fullcalendar-rails
   geocoder
   groupdate (~> 5.2)

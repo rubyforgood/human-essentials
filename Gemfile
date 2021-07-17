@@ -93,6 +93,7 @@ group :development do
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
   gem 'capistrano-sidekiq'
+  gem 'foreman'
   gem "letter_opener"
   gem "listen", "~> 3.5.0"
   gem "rails-erd"
