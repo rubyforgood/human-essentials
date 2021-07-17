@@ -8,6 +8,8 @@
   <!-- Bootstrap 3.3.7 -->
   <%= csrf_meta_tags %>
   <%= javascript_include_tag 'application' %>
+  <%= javascript_pack_tag 'application' %>
+  <%= stylesheet_pack_tag 'application' %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <style>
@@ -37,10 +39,10 @@
   </script>
 </head>
 
-<body id="devise" class="hold-transition login-page <%= Rails.env.staging? ? 'login-page-test' : '' %>">
+<body id="devise" style="background: linear-gradient(135deg, #3023AE, #C86DD7)" class="hold-transition login-page <%= Rails.env.staging? ? 'login-page-test' : '' %>">
   <div class="login-box">
-    <div class="login-logo">
-      <img id="MastheadLogo" src="/img/diaper-base-logo-full-white-text.svg" style="width: 80%;" alt="Diaperbase" title="Diaperbase" class="serv_icon"/>
+    <div class="login-logo text-center">
+      <img id="MastheadLogo" src="/img/essentials.svg" alt="Diaperbase" title="Diaperbase" class="serv_icon"/>
     </div>
 
     <!-- /.login-logo -->

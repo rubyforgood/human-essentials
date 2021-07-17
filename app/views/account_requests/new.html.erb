@@ -1,8 +1,13 @@
 <% unless Rails.env.staging? %>
-  <div class="card" style='width: 30rem'>
-    <div class="card-body">
-      <div class="card-title mb-10">
-        <h3>Account Request Form</h3>
+  <div class="bg-white" style='width: 35rem'>
+    <div class="p-3">
+      <div class="mb-10 text-center">
+        <h1 class='text-3xl'>Essentials Bank Account Request Form</h1>
+        <p class='p-2 text-bold bg-yellow-200 text-center'>
+          This request form is only for banks that intend to distribute and manage relationships with their partners.
+          <br><br>
+          If you are a partner please go <%= link_to 'here', new_partner_user_session_path %> to login.
+        </p>
       </div>
 
       <div class='card-text'>
@@ -37,7 +42,7 @@
           </div>
 
           <div class="card-footer">
-            <%= submit_button({text: 'Submit', icon: nil}) %>
+            <%= submit_button({text: 'Submit Bank Account Request Form', icon: nil}) %>
           </div>
         <% end %>
       </div>
