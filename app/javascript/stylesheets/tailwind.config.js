@@ -4,7 +4,11 @@ module.exports = {
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        'pulse-once': 'pulse 1s ease-in-out'
+      }
+    },
   },
   variants: {
     extend: {},

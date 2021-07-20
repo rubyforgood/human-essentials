@@ -26,12 +26,11 @@
         <div class="card">
           <div class="card-body">
 
-
-            <% # TODO - handle the @errors cleanly %>
-            <% # @errors.full_messages %>
+            <% if @errors.present? %>
+              <%= render partial: 'error' %>
+            <% end %>
 
             <%= simple_form_for @partner_request, html: {role: 'form', class: 'form-horizontal'} do |form| %>
-
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
               <table class='table'>

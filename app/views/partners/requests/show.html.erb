@@ -29,24 +29,47 @@
           </div>
           <div class="card-body">
             <div>
-              <h2><%= @partner_request.partner.name %> Request ID: <%= @partner_request.id %></h2>
+              <span class='text-2xl font-bold'>Request ID:</span>
+              <p class='text-lg'>
+                <%= @partner_request.id %>
+              </p>
             </div>
 
             <div>
-              Comments:
-              <p><%= @partner_request.comments %></p>
-            </div>
-
-            <div>
-              Requested Items:
-              <ul>
-                <% @partner_request.item_requests.each do |item| %>
-                  <li><%= item.quantity %> of <%= item.name %></li>
+              <span class='text-2xl font-bold'>Comments:</span>
+              <p>
+                <% if @partner_request.comments.present? %>
+                  <%= @partner_request.comments %>
+                <% else %>
+                  <span class='italic text-gray-400'> None Provided </span>
                 <% end %>
-              </ul>
+              </p>
+            </div>
+
+            <div>
+              <span class='text-2xl font-bold'>Requested Items:</span>
+              <div class='w-96 text-lg mt-1'>
+                <table class='table'>
+                  <thead>
+                    <tr>
+                      <th>Quantity</th>
+                      <th>Item</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @partner_request.item_requests.each do |item| %>
+                      <tr>
+                        <td><%= item.quantity %></td>
+                        <td><%= item.name %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div>
-              <p>Submitted: <%= @partner_request.created_at.localtime.strftime('%F %T') %></p>
+              <span class='text-2xl font-bold'>Submitted:</span>
+              <p class='text-lg'><%= @partner_request.created_at.localtime.strftime('%F %T') %></p>
             </div>
             <p><%= link_to "Your Previous Requests", partners_requests_path, class: 'btn btn-success' %></p>
           </div>
