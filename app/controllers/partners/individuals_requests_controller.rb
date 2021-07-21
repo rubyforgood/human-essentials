@@ -17,7 +17,8 @@ module Partners
       create_service.call
 
       if create_service.errors.none?
-        redirect_to partner_user_root_path, notice: "Request was successfully created."
+        flash[:success] = 'Request was successfully created.'
+        redirect_to partners_request_path(create_service.partner_request.id)
       else
         @request = FamilyRequest.new({}, initial_items: 1)
         @errors = create_service.errors
@@ -25,7 +26,7 @@ module Partners
           [item[:name], item[:id]]
         end.sort
 
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 

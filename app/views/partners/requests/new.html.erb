@@ -27,7 +27,7 @@
           <div class="card-body">
 
             <% if @errors.present? %>
-              <%= render partial: 'error' %>
+              <%= render partial: 'partners/requests/error' %>
             <% end %>
 
             <%= simple_form_for @partner_request, html: {role: 'form', class: 'form-horizontal'} do |form| %>
