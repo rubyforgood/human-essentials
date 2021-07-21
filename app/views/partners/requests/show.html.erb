@@ -18,7 +18,6 @@
   </div><!-- /.container-fluid -->
 </section>
 
-
 <section class="content">
   <div class="container-fluid">
     <div class="row">
@@ -28,25 +27,40 @@
             <h3 class="card-title">Request Details</h3>
           </div>
           <div class="card-body">
+
+            <% if flash[:success] %>
+              <%= render partial: 'partners/requests/success' %>
+            <% end %>
+
             <div>
-              <h2><%= @partner_request.partner.name %> Request ID: <%= @partner_request.id %></h2>
+              <span class='text-2xl font-bold'>Request ID:</span>
+              <p class='text-lg'>
+                <%= @partner_request.id %>
+              </p>
             </div>
 
             <div>
-              Comments:
-              <p><%= @partner_request.comments %></p>
+              <span class='text-2xl font-bold'>Comments:</span>
+              <p>
+                <% if @partner_request.comments.present? %>
+                  <%= @partner_request.comments %>
+                <% else %>
+                  <span class='italic text-gray-400'> None Provided </span>
+                <% end %>
+              </p>
             </div>
 
             <div>
-              Requested Items:
-              <ul>
+              <span class='text-2xl font-bold'>Requested Items:</span>
+              <ul class='text-lg'>
                 <% @partner_request.item_requests.each do |item| %>
                   <li><%= item.quantity %> of <%= item.name %></li>
                 <% end %>
               </ul>
             </div>
             <div>
-              <p>Submitted: <%= @partner_request.created_at.localtime.strftime('%F %T') %></p>
+              <span class='text-2xl font-bold'>Submitted:</span>
+              <p class='text-lg'><%= @partner_request.created_at.localtime.strftime('%F %T') %></p>
             </div>
             <p><%= link_to "Your Previous Requests", partners_requests_path, class: 'btn btn-success' %></p>
           </div>
