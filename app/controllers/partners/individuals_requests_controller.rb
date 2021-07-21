@@ -26,6 +26,8 @@ module Partners
           [item[:name], item[:id]]
         end.sort
 
+        Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_partner_user.id} reason=#{@errors.full_messages}")
+
         render :new, status: :unprocessable_entity
       end
     end
