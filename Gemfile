@@ -95,7 +95,7 @@ group :development do
   gem 'capistrano-sidekiq'
   gem 'foreman'
   gem "letter_opener"
-  gem "listen", "~> 3.5.0"
+  gem "listen", "~> 3.6.0"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
