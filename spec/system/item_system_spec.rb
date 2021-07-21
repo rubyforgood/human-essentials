@@ -165,10 +165,10 @@ RSpec.describe "Item management", type: :system do
     before do
       visit url_prefix + "/items"
     end
+
     # Consolidated these into one to reduce the setup/teardown
     it "should display items in separate tabs", js: true do
       tab_items_only_text = page.find(".table", visible: true).text
-      expect(tab_items_only_text).not_to have_content "Quantity"
       expect(tab_items_only_text).to have_content item_pullups.name
       expect(tab_items_only_text).to have_content item_tampons.name
 
