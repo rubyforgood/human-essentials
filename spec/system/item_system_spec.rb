@@ -69,7 +69,7 @@ RSpec.describe "Item management", type: :system do
     visit url_prefix + "/items"
     select BaseItem.first.name, from: "filters_by_base_item"
     click_button "Filter"
-    within ".table" do
+    within "#items-table" do
       expect(page).to have_css("tbody tr", count: 1)
     end
   end
@@ -135,7 +135,7 @@ RSpec.describe "Item management", type: :system do
         visit url_prefix + "/items"
         check "include_inactive_items"
         click_on "Filter"
-        within ".table" do
+        within "#items-table" do
           expect(page).to have_content(item.name)
         end
 
@@ -169,7 +169,7 @@ RSpec.describe "Item management", type: :system do
 
     # Consolidated these into one to reduce the setup/teardown
     it "should display items in separate tabs", js: true do
-      tab_items_only_text = page.find(".table", visible: true).text
+      tab_items_only_text = page.find("#items-table", visible: true).text
       expect(tab_items_only_text).to have_content item_pullups.name
       expect(tab_items_only_text).to have_content item_tampons.name
 
