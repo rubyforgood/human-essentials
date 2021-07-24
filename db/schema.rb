@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_210_517_000_207) do
+ActiveRecord::Schema.define(version: 20_210_724_194_811) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 20_210_517_000_207) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.integer "line_items_total", default: 0, null: false
     t.index ["organization_id"], name: "index_adjustments_on_organization_id"
     t.index ["storage_location_id"], name: "index_adjustments_on_storage_location_id"
     t.index ["user_id"], name: "index_adjustments_on_user_id"
@@ -85,6 +86,7 @@ ActiveRecord::Schema.define(version: 20_210_517_000_207) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "line_items_total", default: 0, null: false
     t.index ["adjustment_id"], name: "index_audits_on_adjustment_id"
     t.index ["organization_id"], name: "index_audits_on_organization_id"
     t.index ["storage_location_id"], name: "index_audits_on_storage_location_id"
@@ -162,6 +164,7 @@ ActiveRecord::Schema.define(version: 20_210_517_000_207) do
     t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
+    t.integer "line_items_total", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -192,6 +195,7 @@ ActiveRecord::Schema.define(version: 20_210_517_000_207) do
     t.integer "money_raised"
     t.bigint "manufacturer_id"
     t.bigint "diaper_drive_id"
+    t.integer "line_items_total", default: 0, null: false
     t.index ["diaper_drive_id"], name: "index_donations_on_diaper_drive_id"
     t.index ["donation_site_id"], name: "index_donations_on_donation_site_id"
     t.index ["manufacturer_id"], name: "index_donations_on_manufacturer_id"
@@ -253,6 +257,7 @@ ActiveRecord::Schema.define(version: 20_210_517_000_207) do
     t.boolean "active", default: true
     t.boolean "visible_to_partners", default: true, null: false
     t.integer "value_in_cents", default: 0
+    t.integer "line_items_total", default: 0, null: false
     t.index %w(name organization_id), name: "index_kits_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_kits_on_organization_id"
   end
@@ -322,6 +327,7 @@ ActiveRecord::Schema.define(version: 20_210_517_000_207) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "vendor_id"
+    t.integer "line_items_total", default: 0, null: false
     t.index ["organization_id"], name: "index_purchases_on_organization_id"
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end
@@ -365,6 +371,7 @@ ActiveRecord::Schema.define(version: 20_210_517_000_207) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "organization_id"
+    t.integer "line_items_total", default: 0, null: false
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
 

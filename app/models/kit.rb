@@ -4,6 +4,7 @@
 #
 #  id                  :bigint           not null, primary key
 #  active              :boolean          default(TRUE)
+#  line_items_total    :integer          default(0), not null
 #  name                :string           not null
 #  value_in_cents      :integer          default(0)
 #  visible_to_partners :boolean          default(TRUE), not null

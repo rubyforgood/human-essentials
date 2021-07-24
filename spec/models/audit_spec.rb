@@ -3,6 +3,7 @@
 # Table name: audits
 #
 #  id                  :bigint           not null, primary key
+#  line_items_total    :integer          default(0), not null
 #  status              :integer          default("in_progress"), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null

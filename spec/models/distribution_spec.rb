@@ -7,6 +7,7 @@
 #  comment                :text
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
+#  line_items_total       :integer          default(0), not null
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null

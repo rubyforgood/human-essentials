@@ -5,6 +5,7 @@
 #  id                          :integer          not null, primary key
 #  comment                     :text
 #  issued_at                   :datetime
+#  line_items_total            :integer          default(0), not null
 #  money_raised                :integer
 #  source                      :string
 #  created_at                  :datetime         not null

@@ -6,6 +6,7 @@
 #  amount_spent_in_cents :integer
 #  comment               :text
 #  issued_at             :datetime
+#  line_items_total      :integer          default(0), not null
 #  purchased_from        :string
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null

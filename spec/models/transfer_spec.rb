@@ -2,13 +2,14 @@
 #
 # Table name: transfers
 #
-#  id              :integer          not null, primary key
-#  comment         :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  from_id         :integer
-#  organization_id :integer
-#  to_id           :integer
+#  id               :integer          not null, primary key
+#  comment          :string
+#  line_items_total :integer          default(0), not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  from_id          :integer
+#  organization_id  :integer
+#  to_id            :integer
 #
 
 RSpec.describe Transfer, type: :model do

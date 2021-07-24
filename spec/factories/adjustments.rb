@@ -4,6 +4,7 @@
 #
 #  id                  :integer          not null, primary key
 #  comment             :text
+#  line_items_total    :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  organization_id     :integer
