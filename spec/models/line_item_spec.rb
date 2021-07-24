@@ -50,6 +50,25 @@ RSpec.describe LineItem, type: :model do
     end
   end
 
+  describe 'Counter Culture >' do
+    describe 'line_items_total' do
+      let(:line_item) { create(:line_item, quantity: 5) }
+      let(:itemizable) { line_item.itemizable }
+
+      it 'increments the itemizable value when created' do
+        expect { create(:line_item, itemizable: itemizable, quantity: 5) }.to change { itemizable.reload.line_items_total }.by(5)
+      end
+
+      it 'adjusts the itemizable value when updated' do
+        expect { line_item.update(quantity: 15) }.to change { itemizable.reload.line_items_total }.by(10)
+      end
+
+      it 'decrements the itemizable value when destroyed' do
+        expect { line_item.destroy }.to change { itemizable.reload.line_items_total }.by(-5)
+      end
+    end
+  end
+
   describe 'Methods >' do
     context '#value_per_line_item' do
       subject { line_item.value_per_line_item }

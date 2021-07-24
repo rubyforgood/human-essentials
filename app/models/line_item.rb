@@ -17,6 +17,7 @@ class LineItem < ApplicationRecord
 
   belongs_to :itemizable, polymorphic: true, inverse_of: :line_items, optional: false
   belongs_to :item
+  counter_culture :itemizable, column_name: 'line_items_total', delta_column: 'quantity'
 
   validates :item_id, presence: true
   validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT }

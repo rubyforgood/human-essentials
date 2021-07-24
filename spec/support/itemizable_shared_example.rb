@@ -94,7 +94,7 @@ shared_examples_for "itemizable" do
       it "has an item total" do
         expect do
           2.times { subject.line_items << create(:line_item, model_f.to_sym, quantity: 5) }
-        end.to change { subject.line_items.total }.by(10)
+        end.to change { subject.reload.line_items_total }.by(10)
       end
     end
   end
