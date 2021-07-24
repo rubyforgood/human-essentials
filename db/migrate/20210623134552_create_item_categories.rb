@@ -3,7 +3,7 @@ class CreateItemCategories < ActiveRecord::Migration[6.1]
 
   def change
     create_table :item_categories do |t|
-      t.string :name, nil: false
+      t.string :name, null: false
       t.text :description
       t.integer :organization_id, null: false
 

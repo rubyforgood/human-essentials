@@ -60,7 +60,7 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     airbrussh (1.4.0)
       sshkit (>= 1.6.1, != 1.7.0)
@@ -102,7 +102,7 @@ GEM
     bootstrap-daterangepicker-rails (3.0.4)
       railties (>= 4.0)
     bootstrap-select-rails (1.13.8)
-    brakeman (5.0.4)
+    brakeman (5.1.1)
     bugsnag (6.21.0)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
@@ -189,7 +189,7 @@ GEM
     faraday_middleware (0.14.0)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.15.0)
-    filterrific (5.2.1)
+    filterrific (5.2.2)
     flipper (0.20.4)
     flipper-active_record (0.20.4)
       activerecord (>= 5.0, < 7)
@@ -203,6 +203,7 @@ GEM
       railties (>= 3.2, < 7)
     font-ionicons-rails (2.0.1.6)
       railties (>= 3.2, < 7.0)
+    foreman (0.87.2)
     formatador (0.2.5)
     fullcalendar-rails (3.9.0.0)
       jquery-rails (>= 4.0.5, < 5.0.0)
@@ -255,7 +256,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.1)
     kaminari-core (1.2.1)
-    knapsack_pro (2.18.0)
+    knapsack_pro (2.18.1)
       rake
     launchy (2.5.0)
       addressable (~> 2.7)
@@ -396,7 +397,7 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     rb-readline (0.5.5)
-    recaptcha (5.8.0)
+    recaptcha (5.8.1)
       json
     redis (4.1.4)
     regexp_parser (2.0.3)
@@ -466,8 +467,8 @@ GEM
       rubyzip (>= 1.2.2)
     semantic_range (3.0.0)
     shellany (0.0.1)
-    shoulda-matchers (4.5.1)
-      activesupport (>= 4.2.0)
+    shoulda-matchers (5.0.0)
+      activesupport (>= 5.2.0)
     sidekiq (5.2.9)
       connection_pool (~> 2.2, >= 2.2.2)
       rack (~> 2.0)
@@ -586,6 +587,7 @@ DEPENDENCIES
   flipper-ui
   font-awesome-rails
   font-ionicons-rails
+  foreman
   fullcalendar-rails
   geocoder
   groupdate (~> 5.2)
@@ -623,7 +625,7 @@ DEPENDENCIES
   rubocop
   rubocop-rails (~> 2.9.1)
   sass-rails
-  shoulda-matchers (~> 4.5)
+  shoulda-matchers (~> 5.0)
   sidekiq
   simple_form
   simplecov

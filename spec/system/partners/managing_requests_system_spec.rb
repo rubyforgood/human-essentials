@@ -9,6 +9,18 @@ RSpec.describe "Managing requests", type: :system, js: true do
         visit new_partners_individuals_request_path
       end
 
+      context 'WHEN they create a request inproperly' do
+        before do
+          click_button 'Submit Essentials Request'
+        end
+
+        it 'should show an error message with the instructions ' do
+          expect(page).to have_content('Opps! Something went wrong with your Request')
+          expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
+          expect(page).to have_content('Still need help? Submit a support ticket here and we do our best to follow up with you via email.')
+        end
+      end
+
       context 'WHEN they create a request properly' do
         let(:items_to_select) { Organization.find(partner_user.partner.diaper_bank_id).valid_items.sample(3) }
         let(:item_details) do
@@ -42,16 +54,12 @@ RSpec.describe "Managing requests", type: :system, js: true do
           before do
             expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
 
-            expect(current_path).to eq(partners_dashboard_path)
-            expect(page).to have_content('Request was successfully created.')
+            expect(current_path).to eq(partners_request_path(Request.last.id))
+            expect(page).to have_content('Request has been successfully created!')
           end
 
           it 'AND the partner_user can view the details of the created individuals request in a seperate page' do
-            partner_request_id = Partners::Request.last.id
-
             visit partners_request_path(id: Partners::Request.last.id)
-
-            expect(page).to have_content("#{partner_user.partner.name} Request ID: #{partner_request_id}")
 
             # Should have the proper quantity per each item.
             item_details.each do |item|
@@ -71,6 +79,18 @@ RSpec.describe "Managing requests", type: :system, js: true do
       before do
         login_as(partner_user, scope: :partner_user)
         visit new_partners_request_path
+      end
+
+      context 'WHEN they create a request inproperly' do
+        before do
+          click_button 'Submit Essentials Request'
+        end
+
+        it 'should show an error message with the instructions ' do
+          expect(page).to have_content('Opps! Something went wrong with your Request')
+          expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
+          expect(page).to have_content('Still need help? Submit a support ticket here and we do our best to follow up with you via email.')
+        end
       end
 
       context 'WHEN they create a request properly' do
@@ -103,16 +123,14 @@ RSpec.describe "Managing requests", type: :system, js: true do
           before do
             expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
 
-            expect(current_path).to eq(partners_dashboard_path)
-            expect(page).to have_content('Request was successfully created.')
+            expect(current_path).to eq(partners_request_path(Request.last.id))
+            expect(page).to have_content('Request has been successfully created!')
+            expect(page).to have_content("#{partner.organization.name} should have received the request.")
           end
 
           it 'AND the partner_user can view the details of the created request in a seperate page' do
-            partner_request_id = Partners::Request.last.id
-
             visit partners_request_path(id: Partners::Request.last.id)
 
-            expect(page).to have_content("#{partner_user.partner.name} Request ID: #{partner_request_id}")
             item_details.each do |item|
               expect(page).to have_content("#{item[:quantity]} of #{item[:name]}")
             end
