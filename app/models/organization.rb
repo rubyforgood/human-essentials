@@ -77,7 +77,7 @@ class Organization < ApplicationRecord
         .limit(limit)
     end
   end
-  has_many :item_categories
+  has_many :item_categories, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
     def all
       unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
