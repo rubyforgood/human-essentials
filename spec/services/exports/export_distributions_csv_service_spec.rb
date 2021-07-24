@@ -37,11 +37,13 @@ describe Exports::ExportDistributionsCSVService do
       expect(subject[0]).to eq(expected_headers)
 
       distributions.each_with_index do |distribution, idx|
+        distribution.reload
+
         row = [
           distribution.partner.name,
           distribution.issued_at.strftime("%m/%d/%Y"),
           distribution.storage_location.name,
-          distribution.line_items.total,
+          distribution.line_items_total,
           distribution.cents_to_dollar(distribution.line_items.total_value),
           distribution.delivery_method,
           distribution.state,

@@ -236,7 +236,7 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <h3 class="text-center"><%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }) %>
+                <h3 class="text-center"><%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items_total }) %>
                   items donated <%= @selected_date_range_label %>
                   by <%= pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, 'Manufacturer') %></h3>
                 <div class="box-body">

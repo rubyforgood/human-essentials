@@ -64,7 +64,7 @@ module Exports
           distribution.storage_location.name
         },
         "Total Items" => ->(distribution) {
-          distribution.line_items.total
+          distribution.line_items_total
         },
         "Total Value" => ->(distribution) {
           distribution.cents_to_dollar(distribution.line_items.total_value)

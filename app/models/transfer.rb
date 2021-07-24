@@ -53,7 +53,7 @@ class Transfer < ApplicationRecord
       from.name,
       to.name,
       comment || "none",
-      line_items.total
+      line_items_total
     ]
   end
 

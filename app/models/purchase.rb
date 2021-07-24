@@ -96,7 +96,7 @@ class Purchase < ApplicationRecord
       purchased_from_view,
       storage_location.name,
       issued_at.strftime("%Y-%m-%d"),
-      line_items.total,
+      line_items_total,
       line_items.size,
       amount_spent_in_dollars
     ]

@@ -25,6 +25,6 @@ class Vendor < ApplicationRecord
   scope :alphabetized, -> { order(:business_name) }
 
   def volume
-    purchases.map { |d| d.line_items.total }.reduce(:+)
+    purchases.map(&:line_items_total).reduce(:+)
   end
 end

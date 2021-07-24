@@ -2,7 +2,7 @@
   <td><%= pickup_day_row.partner.name %></td>
   <td><%= pickup_day_row.issued_at.strftime("%l:%M %p") %> </td>
   <td><%= pickup_day_row.storage_location.name %></td>
-  <td><%= pickup_day_row.line_items.total %></td>
+  <td><%= pickup_day_row.line_items_total %></td>
   <td>
     <% if pickup_day_row.complete? %>
       Complete

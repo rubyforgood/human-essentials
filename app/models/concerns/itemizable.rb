@@ -86,7 +86,7 @@ module Itemizable
   end
 
   def total_quantity
-    line_items.total
+    line_items_total
   end
 
   def to_a

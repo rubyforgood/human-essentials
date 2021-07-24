@@ -28,7 +28,7 @@ class DiaperDriveParticipant < ApplicationRecord
   scope :alphabetized, -> { order(:contact_name) }
 
   def volume
-    donations.map { |d| d.line_items.total }.reduce(:+)
+    donations.map(&:line_items_total).reduce(:+)
   end
 
   def donation_source_view

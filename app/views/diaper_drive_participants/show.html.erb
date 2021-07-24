@@ -77,7 +77,7 @@
               <% @diaper_drive_participant.donations.each do |donation| %>
                 <tr>
                   <td><%= donation.created_at.strftime("%m/%d/%Y") %></td>
-                  <td><%= donation.line_items.total %></td>
+                  <td><%= donation.line_items_total %></td>
                   <td><%= view_button_to donation, { text: "View donation details" } %></td>
                 </tr>
               <% end %>

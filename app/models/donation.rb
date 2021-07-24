@@ -155,7 +155,7 @@ class Donation < ApplicationRecord
       issued_at.strftime("%F"),
       donation_site.try(:name),
       storage_location.name,
-      line_items.total,
+      line_items_total,
       line_items.size,
       comment
     ]

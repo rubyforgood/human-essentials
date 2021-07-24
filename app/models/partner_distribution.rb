@@ -16,7 +16,7 @@ class PartnerDistribution
       {
         "Date" => distribution.issued_at.strftime("%m/%d/%Y"),
         "Source Inventory" => distribution.storage_location.name,
-        "Total Items" => distribution.line_items.total
+        "Total Items" => distribution.line_items_total
       }.tap do |row|
         distribution.line_items.quantities_by_name.each do |_id, item_ref|
           row[item_ref[:name]] = item_ref[:quantity]

@@ -30,7 +30,7 @@ class TransfersController < ApplicationController
         @transfer.to.increase_inventory @transfer
       end
 
-      redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
+      redirect_to transfers_path, notice: "#{@transfer.reload.line_items_total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
     else
       raise StandardError.new(@transfer.errors.full_messages.join("</br>"))
     end
@@ -50,7 +50,7 @@ class TransfersController < ApplicationController
 
   def show
     @transfer = current_organization.transfers.includes(:line_items).includes(:from).includes(:to).includes(:items).find(params[:id])
-    @total = @transfer.line_items.total
+    @total = @transfer.line_items_total
     @line_items = @transfer.line_items.sorted
   end
 

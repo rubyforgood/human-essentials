@@ -72,7 +72,7 @@
               <% @donation_site.donations.each do |donation| %>
                 <tr>
                   <td><%= donation.storage_location&.name %></td>
-                  <td><%= donation.line_items.total %></td>
+                  <td><%= donation.line_items_total %></td>
                   <td><%= donation.line_items.size %></td>
                   <td><%= link_to "View donation details", donation %></td>
                 </tr>
