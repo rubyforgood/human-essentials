@@ -34,20 +34,6 @@ RSpec.describe LineItem, type: :model do
     end
   end
 
-  describe "package_count" do
-    it "is equal to the quanity divided by the package_size" do
-      item = create(:item, package_size: 10)
-      line_item = create(:line_item, :purchase, quantity: 100, item_id: item.id)
-      expect(line_item.package_count).to eq("10")
-    end
-
-    it "is nil if there is no package_size" do
-      item = create(:item)
-      line_item = create(:line_item, :purchase, quantity: 100, item_id: item.id)
-      expect(line_item.package_count).to be_nil
-    end
-  end
-
   describe "Scopes >" do
     describe "->active" do
       let!(:active_item) { create(:item, :active) }
@@ -116,10 +102,21 @@ RSpec.describe LineItem, type: :model do
           end
 
           it { is_expected.to eq((quantity / package_size).to_s) }
+
+          it "is equal to the quanity divided by the package_size" do
+            expect(line_item.package_count).to eq("1")
+          end
         end
 
         describe 'does not have packages' do
+          let(:package_size) { nil }
+          let(:quantity) { 100 }
+
           it { is_expected.to be_falsy }
+
+          it "is nil if there is no package_size" do
+            expect(line_item.package_count).to be_nil
+          end
         end
       end
     end
