@@ -31,7 +31,7 @@ class ItemCategoriesController < ApplicationController
     @item_category.assign_attributes(item_category_params)
 
     if @item_category.save
-      redirect_to items_path(organization: current_organization)
+      redirect_to item_category_path(@item_category)
     else
       render :edit
     end
