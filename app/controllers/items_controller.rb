@@ -3,6 +3,7 @@
 class ItemsController < ApplicationController
   def index
     @items = current_organization.items.includes(:base_item, :kit).alphabetized.class_filter(filter_params)
+    @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
     @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location)
     @storages = current_organization.storage_locations.order(id: :asc)
 
@@ -44,11 +45,13 @@ class ItemsController < ApplicationController
 
   def new
     @base_items = BaseItem.without_kit.alphabetized
+    @item_categories = current_organization.item_categories
     @item = current_organization.items.new
   end
 
   def edit
     @base_items = BaseItem.without_kit.alphabetized
+    @item_categories = current_organization.item_categories
     @item = current_organization.items.find(params[:id])
   end
 
@@ -114,6 +117,7 @@ class ItemsController < ApplicationController
     clean_item_value_in_dollars
     @item_params = params.require(:item).permit(
       :name,
+      :item_category_id,
       :partner_key,
       :value_in_cents,
       :package_size,

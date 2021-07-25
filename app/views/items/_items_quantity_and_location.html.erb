@@ -1,4 +1,8 @@
 <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
+  <div class='flex justify-end mb-4'>
+    <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+  </div>
+
   <table class="table table-items-location">
     <thead>
     <tr>
