@@ -254,9 +254,10 @@ RSpec.describe "Partner management", type: :system, js: true do
 
       let(:partner) do
         partner = create(:partner, :approved)
-        partner.distributions << create(:distribution, :with_items, item_quantity: 1231)
-        partner.distributions << create(:distribution, :with_items, item_quantity: 4564)
-        partner.distributions << create(:distribution, :with_items, item_quantity: 7897)
+        create(:distribution, :with_items, item_quantity: 1231, partner: partner)
+        create(:distribution, :with_items, item_quantity: 4564, partner: partner)
+        create(:distribution, :with_items, item_quantity: 7897, partner: partner)
+
         partner
       end
 
