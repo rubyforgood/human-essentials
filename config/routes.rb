@@ -148,6 +148,7 @@ Rails.application.routes.draw do
     resources :items do
       patch :restore, on: :member
     end
+    resources :item_categories
     resources :partners do
       collection do
         post :import_csv

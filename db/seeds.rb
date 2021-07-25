@@ -78,6 +78,29 @@ Organization.all.each do |org|
 end
 
 # ----------------------------------------------------------------------------
+# Item Categories
+# ----------------------------------------------------------------------------
+
+Organization.all.each do |org|
+  ['A', 'B', 'C'].each do |letter|
+    FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Item < - > ItemCategory
+# ----------------------------------------------------------------------------
+
+Organization.all.each do |org|
+  # Added `nil` to randomly choose to not categorize items sometimes via sample
+  item_category_ids = org.item_categories.map(&:id) + [nil]
+
+  org.items.each do |item|
+    item.update_column(:item_category_id, item_category_ids.sample)
+  end
+end
+
+# ----------------------------------------------------------------------------
 # Users
 # ----------------------------------------------------------------------------
 
