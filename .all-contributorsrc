@@ -918,6 +918,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kinduff",
+      "name": "Alejandro AR",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1270156?v=4",
+      "profile": "http://kinduff.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
