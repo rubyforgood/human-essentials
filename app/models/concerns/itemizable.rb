@@ -65,7 +65,7 @@ module Itemizable
       end
 
       def total
-        sum(:quantity)
+        pluck(:quantity).compact.sum
       end
 
       def total_value
