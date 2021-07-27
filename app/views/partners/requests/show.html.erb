@@ -1,0 +1,72 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Bulk Request - #{current_partner.name}" %>
+        <h1><i class="fa fa-doc"></i>&nbsp;&nbsp;
+          Request
+          <small>for <%= current_partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="<%= partners_dashboard_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+          <li class="breadcrumb-item"><a href="#">Request</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header bg-primary">
+            <h3 class="card-title">Request Details</h3>
+          </div>
+          <div class="card-body">
+
+            <% if flash[:success] %>
+              <%= render partial: 'partners/requests/success' %>
+            <% end %>
+
+            <div>
+              <span class='text-2xl font-bold'>Request ID:</span>
+              <p class='text-lg'>
+                <%= @partner_request.id %>
+              </p>
+            </div>
+
+            <div>
+              <span class='text-2xl font-bold'>Comments:</span>
+              <p>
+                <% if @partner_request.comments.present? %>
+                  <%= @partner_request.comments %>
+                <% else %>
+                  <span class='italic text-gray-400'> None Provided </span>
+                <% end %>
+              </p>
+            </div>
+
+            <div>
+              <span class='text-2xl font-bold'>Requested Items:</span>
+              <ul class='text-lg'>
+                <% @partner_request.item_requests.each do |item| %>
+                  <li><%= item.quantity %> of <%= item.name %></li>
+                <% end %>
+              </ul>
+            </div>
+            <div>
+              <span class='text-2xl font-bold'>Submitted:</span>
+              <p class='text-lg'><%= @partner_request.created_at.localtime.strftime('%F %T') %></p>
+            </div>
+            <p><%= link_to "Your Previous Requests", partners_requests_path, class: 'btn btn-success' %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

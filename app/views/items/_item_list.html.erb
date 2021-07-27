@@ -1,15 +1,20 @@
 <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
-  <table class="table">
+  <div class='flex justify-end mb-4'>
+    <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+  </div>
+
+  <table id='items-table' class="table">
     <thead>
     <tr>
+      <th>Category</th>
       <th>Name</th>
-      <th>Base Item</th>
+      <th>Quantity Per Individual</th>
       <th>Fair Market Value (per item)</th>
       <th class="text-center">Actions</th>
     </tr>
     </thead>
     <tbody>
-    <%= render partial: "item_row", collection: @items, as: :item_row %>
+      <%= render partial: "items/item_row", collection: items, as: :item_row %>
     </tbody>
   </table>
 </div><!-- /.box-body.table-responsive -->

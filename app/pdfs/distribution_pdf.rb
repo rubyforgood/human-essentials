@@ -4,12 +4,18 @@ class DistributionPdf
   include ItemsHelper
 
   def initialize(organization, distribution)
-    @distribution = distribution
+    @distribution = Distribution.includes(:partner, line_items: [:item]).find_by(id: distribution.id)
     font_families["OpenSans"] = PrawnRails.config["font_families"][:OpenSans]
     font "OpenSans"
     font_size 10
 
-    image organization.logo_path, fit: [325, 110]
+    logo_image = if organization.logo.attached?
+                   StringIO.open(organization.logo.download)
+                 else
+                   Organization::DIAPER_APP_LOGO
+                 end
+
+    image logo_image, fit: [325, 110]
 
     bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
       text organization.name, align: :right

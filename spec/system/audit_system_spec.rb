@@ -53,13 +53,12 @@ RSpec.describe "Audit management", type: :system, js: true do
         expect(page).to have_content(item.name)
       end
 
-      it "hides the items quantity in the display" do
+      it "does not display quantities in line-item drop down selector" do
         create(:storage_location, :with_items, item: item, item_quantity: 10)
         visit subject
         first('.storage-location-source').all("option").last.select_option
-        item_css = "option[value='#{item.id}']"
-        item_text = find(item_css).text
-        expect(item_text).to eq(item.name)
+
+        find('option', text: item.name.to_s, exact: true)
       end
     end
 

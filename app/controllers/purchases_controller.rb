@@ -16,9 +16,9 @@ class PurchasesController < ApplicationController
     @purchases_quantity = @purchases.collect(&:total_quantity).sum
     @paginated_purchases_quantity = @paginated_purchases.collect(&:total_quantity).sum
     @total_value_all_purchases = @purchases.sum(&:amount_spent_in_cents)
-    @storage_locations = @purchases.collect(&:storage_location).compact.uniq
+    @storage_locations = current_organization.storage_locations
     @selected_storage_location = filter_params[:at_storage_location]
-    @vendors = @purchases.collect(&:vendor).compact.uniq.sort_by { |vendor| vendor.business_name.downcase }
+    @vendors = current_organization.vendors.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
 
     respond_to do |format|
@@ -36,7 +36,7 @@ class PurchasesController < ApplicationController
     else
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash[:error] = "There was an error starting this purchase, try again?"
+      flash[:error] = "Failed to create purchase due to: #{@purchase.errors.full_messages}"
       Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
       render action: :new
     end

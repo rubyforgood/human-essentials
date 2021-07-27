@@ -1,0 +1,41 @@
+<div class="card mb-4">
+  <h5 class="card-header bg-info">Families Served</h5>
+  <div class="card-body">
+    <div class=container-fluid>
+      <div class="row text-center">
+        <div class="col">
+          <h2>Our Impact</h2>
+        </div>
+      </div>
+      <div class="card-deck row justify-content-center dashboard">
+        <div class="card col-lg-3 dashboard">
+          <div class="card-body">
+            <h2 class="card-text display-2"><%= @families.count %></h2>
+            <p class="card-text text-right">Our total year-to-date</p>
+          </div>
+          <div class="card-footer text-right">
+            <h5>Number of Families Served</h5>
+          </div>
+        </div>
+        <div class="card col-lg-3 dashboard">
+          <div class="card-body">
+            <h2 class="card-text display-2"><%= @children.count %></h2>
+            <p class="card-text text-right">Our total year-to-date</p>
+          </div>
+          <div class="card-footer text-right">
+            <h5>Number of Children Served</h5>
+          </div>
+        </div>
+        <div class="card col-lg-6 dashboard">
+          <div class="card-body">
+            <h2 class="card-text display-4 zip" data-test="zip-codes">
+              <%= @families.pluck(:guardian_zip_code).uniq.join(", ") %>
+            </h2>
+          </div>
+          <div class="card-footer text-right">
+            <h5>Areas Served</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

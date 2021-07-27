@@ -26,7 +26,8 @@ class StorageLocation < ApplicationRecord
 
   belongs_to :organization
   has_many :inventory_items, -> { includes(:item).order("items.name") },
-           inverse_of: :storage_location
+           inverse_of: :storage_location,
+           dependent: :destroy
   has_many :donations, dependent: :destroy
   has_many :distributions, dependent: :destroy
   has_many :items, through: :inventory_items
@@ -42,12 +43,16 @@ class StorageLocation < ApplicationRecord
   validates :name, :address, :organization, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
+  before_destroy :verify_inventory_items, prepend: true
 
   include Geocodable
   include Filterable
   include Exportable
   scope :containing, ->(item_id) {
     joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
+  }
+  scope :has_inventory_items, -> {
+    includes(:inventory_items).where.not(inventory_items: { id: nil })
   }
   scope :alphabetized, -> { order(:name) }
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
@@ -65,7 +70,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def item_total(item_id)
-    inventory_items.select(:quantity).find_by(item_id: item_id).try(:quantity) || 0
+    inventory_items.where(item_id: item_id).pick(:quantity) || 0
   end
 
   def size
@@ -186,11 +191,22 @@ class StorageLocation < ApplicationRecord
     log
   end
 
+  def verify_inventory_items
+    unless empty_inventory_items?
+      errors.add(:base, "Cannot delete storage location containing inventory items with non-zero quantities")
+      throw(:abort)
+    end
+  end
+
   def self.csv_export_headers
     ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
   end
 
   def csv_export_attributes
     [name, address, square_footage, warehouse_type, size]
+  end
+
+  def empty_inventory_items?
+    inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
   end
 end

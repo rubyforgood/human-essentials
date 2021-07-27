@@ -559,6 +559,26 @@ RSpec.describe "Donations", type: :system, js: true do
       it "does not allow deletion of a donation" do
         expect(page).to_not have_link("Delete")
       end
+
+      it "displays donation comment" do
+        expect(page).to have_css("#donation-comment")
+        within "#donation-comment" do
+          expect(page).to have_content("It's a fine day for diapers.")
+        end
+      end
+
+      context 'when there is no comment defined' do
+        before do
+          donation = create(:donation, :with_items, comment: nil)
+          visit @url_prefix + "/donations/#{donation.id}"
+        end
+
+        it 'displays the None provided as the comment ' do
+          within "#donation-comment" do
+            expect(page).to have_content("None provided")
+          end
+        end
+      end
     end
   end
 

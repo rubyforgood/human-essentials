@@ -14,7 +14,19 @@ Rails.application.configure do
   # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
 
-  config.action_mailer.default_url_options = { host: "diaper.app" }
+  routes.default_url_options[:host] = 'humanessentials.app'
+  config.action_mailer.default_url_options = { host: "www.humanessentials.app" }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.sendgrid.net',
+    port: '587',
+    authentication: :plain,
+    user_name: ENV['SENDGRID_USERNAME'],
+    password: ENV['SENDGRID_PASSWORD'],
+    domain: 'diaper.app',
+    enable_starttls_auto: true
+  }
+
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
@@ -48,9 +60,7 @@ Rails.application.configure do
   config.force_ssl = true
   config.ssl_options = { hsts: false }
 
-  # Use the lowest log level to ensure availability of diagnostic information
-  # when problems arise.
-  config.log_level = :debug
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
@@ -78,7 +88,7 @@ Rails.application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   # Store files locally.
-  config.active_storage.service = :local
+  config.active_storage.service = :azure
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
@@ -88,6 +98,27 @@ Rails.application.configure do
     logger = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger = ActiveSupport::TaggedLogging.new(logger)
+  end
+
+  #
+  # Add lograge to enhance logs with information on
+  # who the user or partner_user is. In addition, this
+  # contains parameters (excluding password) that can
+  # help with debugging
+  #
+  config.lograge.enabled = true
+  config.lograge.custom_payload do |controller|
+    {
+      host: controller.request.host,
+      user_id: controller.current_user.try(:id),
+      partner_user_id: controller.current_partner_user.try(:id)
+    }
+  end
+  config.lograge.custom_options = lambda do |event|
+    exceptions = %w(controller action format id)
+    {
+      params: event.payload[:params].except(*exceptions)
+    }
   end
 
   # Do not dump schema after migrations.

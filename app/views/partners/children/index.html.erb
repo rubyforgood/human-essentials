@@ -1,0 +1,119 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Children - #{current_partner.name}" %>
+        <h1><i class="fa fa-child"></i>&nbsp;&nbsp;
+          Children
+          <small>for <%= current_partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(partner_user_root_path) do %>
+              <i class="fa fa-home fa-lg"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Children</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header bg-primary">
+            <h3 class="card-title">Filters</h3>
+          </div>
+          <div class="card-body">
+            <%= form_for_filterrific @filterrific, remote: true do |f| %>
+              <div class="row">
+                <div class="col-3">
+                  <%= f.label :search_names, "Search By Child Name" %>
+                  <%= f.text_field(
+                          :search_names,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= f.label :search_families, "Search By Guardian Name" %>
+                  <%= f.text_field(
+                          :search_families,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= f.label :search_comments, "Show Active Only?" %>
+                  <%= f.check_box(
+                          :search_active,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= render_filterrific_spinner %>
+                </div>
+              </div>
+              </div><!-- /.row -->
+              <div class="card-footer">
+                <%= link_to(
+                        'Reset Search',
+                        reset_filterrific_url,
+                        class: 'btn btn-danger'
+                    ) %>
+                  <span class="float-right"></span>
+                <% end %>
+              </div>
+            </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <div id="filterrific_results">
+              <%= render(
+                      partial: 'partners/children/list',
+                      locals: {children: @children}
+                  ) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Adding Children</h3>
+          </div>
+          <div class="card-body">
+
+            Children must be added from their individual families to prevent accidentally associating the child with the
+            wrong
+            family in a situation where there are many families with similar names. Visit the family list below to view
+            and
+            confirm the family to which you would like to add a new child.
+
+          </div>
+          <div class="card-footer">
+            <%= link_to 'Visit Family List', partners_families_path, class: "btn btn-info" %>
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+</section>

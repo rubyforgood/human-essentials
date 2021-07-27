@@ -64,13 +64,30 @@ class Partner < ApplicationRecord
     status == 'deactivated'
   end
 
+  #
+  # Returns the Partners::Partner record which is stored in
+  # the partnerbase DB and contains mostly profile data of
+  # the partner user.
+  def profile
+    @profile ||= ::Partners::Partner.find_by(diaper_partner_id: id)
+  end
+
+  #
+  # Returns the primary Partners::User record which is the
+  # first & main user associated to a partner agency.
+  def primary_partner_user
+    profile&.primary_user
+  end
+
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
+    organization = Organization.find(organization_id)
+
     csv.each do |row|
       hash_rows = Hash[row.to_hash.map { |k, v| [k.downcase, v] }]
-      loc = Partner.new(hash_rows)
-      loc.organization_id = organization_id
-      loc.save
+
+      svc = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
+      svc.call
     end
   end
 
@@ -89,36 +106,40 @@ class Partner < ApplicationRecord
       name,
       email,
       contact_person[:name],
-      contact_person[:phone] || contact_person[:mobile],
+      contact_person[:phone],
       contact_person[:email]
     ]
   end
 
-  def self.generate_distributions_csv(distributions)
-    rows = Exports::ExportPartnerDistributionsService.new(distributions).call
-    CSV.generate(headers: true) do |csv|
-      rows.each { |row| csv << row }
+  def meow
+    partners = Partner.where.not(status: 'deactivated')
+    users = partners.map(&:profile).map(&:users).flatten
+    emails = users.map(&:email)
+    partner_emails = emails.flatten
+
+    user_emails = User.where(discarded_at: nil).pluck(:email)
+
+    emails = [partner_emails + user_emails].flatten
+
+    CSV.open("contact_emails.csv", "wb") do |csv|
+      csv << ["Email Address"]
+      emails.each do |email|
+        csv << [email]
+      end
     end
-  end
-
-  def register_on_partnerbase
-    UpdateDiaperPartnerJob.perform_now(id)
-  end
-
-  def add_user_on_partnerbase(options = {})
-    AddDiaperPartnerJob.perform_now(id, options)
-  end
-
-  def partnerbase_partner
-    @partnerbase_partner ||= Partnerbase::Partner.find(id) if id
   end
 
   def contact_person
-    if partnerbase_partner&.agency
-      partnerbase_partner.agency.fetch(:contact_person)
-    else
-      {}
-    end
+    return @contact_person if @contact_person
+
+    return {} if profile.blank?
+
+    @contact_person = {
+      name: profile.program_contact_name,
+      email: profile.program_contact_email,
+      phone: profile.program_contact_phone ||
+             profile.program_contact_mobile
+    }
   end
 
   def quantity_year_to_date

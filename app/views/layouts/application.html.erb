@@ -10,6 +10,7 @@
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= javascript_pack_tag 'application' %>
+  <%= stylesheet_pack_tag 'application' %>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -17,7 +18,7 @@
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-
+  <%= render 'magic_test/support' if Rails.env.test? %>
 </head>
 <body id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/,'_') %>" class="<%= params.fetch(:action, '') %> hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
@@ -50,7 +51,7 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <%= link_to dashboard_path, class: "brand-link" do %>
-      <img src="/img/diaper-base-logo-words-white.svg" alt="DiaperBase Logo (icon)" title="DiaperBase" class="main_logo">
+      <img src="/img/essentials.svg" alt="DiaperBase Logo (icon)" title="DiaperBase" class="main_logo">
     <% end %>
 
     <!-- Sidebar -->

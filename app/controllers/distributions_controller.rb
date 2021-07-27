@@ -57,7 +57,9 @@ class DistributionsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv { send_data Distribution.generate_csv(@distributions, @items.collect(&:name).sort), filename: "Distributions-#{Time.zone.today}.csv" }
+      format.csv do
+        send_data Exports::ExportDistributionsCSVService.new(distribution_ids: @distributions.map(&:id)).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+      end
     end
   end
 
@@ -73,6 +75,11 @@ class DistributionsController < ApplicationController
       redirect_to(distribution_path(result.distribution)) && return
     else
       @distribution = result.distribution
+      if params[:request_id].present?
+        # Using .find here instead of .find_by so we can raise a error if request_id
+        # does not match any known Request
+        @distribution.request = Request.find(params[:request_id])
+      end
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
@@ -89,13 +96,19 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
-    @items = current_organization.items.active.alphabetized
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @items = current_organization.items.alphabetized
+    @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
   end
 
   def show
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @line_items = @distribution.line_items
+
+    @total_quantity = @distribution.total_quantity
+    @total_package_count = @line_items.sum { |item| item.has_packages || 0 }
+    if @total_package_count.zero?
+      @total_package_count = nil
+    end
   end
 
   def edit
@@ -103,7 +116,7 @@ class DistributionsController < ApplicationController
     if (!@distribution.complete? && @distribution.future?) || current_user.organization_admin?
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.alphabetized
+      @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
@@ -112,7 +125,6 @@ class DistributionsController < ApplicationController
 
   def update
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
@@ -162,7 +174,7 @@ class DistributionsController < ApplicationController
   end
 
   def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
-    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes) if Flipper.enabled?(:email_active)
+    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes)
   end
 
   def schedule_reminder_email(distribution)

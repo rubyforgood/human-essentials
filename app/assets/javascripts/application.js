@@ -69,19 +69,6 @@ $(document).ready(function() {
   Filterrific.init();
 });
 
-$(document).ready(function () {
-  const feedbackSubmitButton = $('.feedback_message button');
-  feedbackSubmitButton.addClass('disabled');
-
-  $('#feedback_message_message').keyup(e => {
-    if (!e.target.value) {
-      feedbackSubmitButton.addClass('disabled');
-    } else {
-      feedbackSubmitButton.removeClass('disabled');
-    }
-  })
-});
-
 function order_by_occurrence(arr) {
   var counts = {};
   arr.forEach(function (value) {

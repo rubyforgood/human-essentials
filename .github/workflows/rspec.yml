@@ -1,6 +1,9 @@
 name: rspec
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -57,6 +60,7 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
+          RAILS_ENV: test
         run: |
           bundle exec skylight disable_dev_warning
           yarn

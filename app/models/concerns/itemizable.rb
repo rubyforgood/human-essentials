@@ -65,7 +65,7 @@ module Itemizable
       end
 
       def total
-        sum(:quantity)
+        pluck(:quantity).compact.sum
       end
 
       def total_value
@@ -83,6 +83,10 @@ module Itemizable
 
   def value_per_itemizable
     line_items.sum(&:value_per_line_item)
+  end
+
+  def total_quantity
+    line_items.total
   end
 
   def to_a

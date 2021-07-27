@@ -1,0 +1,29 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= simple_form_for authorized_family_member, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+
+              <%= form.input :first_name, label: "First Name", class: "form-control", wrapper: :input_group %>
+              <%= form.input :last_name, label: "Last Name", class: "form-control", wrapper: :input_group %>
+              <%= form.input :date_of_birth, as: :date, label: "Date of Birth" %>
+              <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>
+              <%= form.input :comments, label: "Comments", as: :text, class: "form-control", wrapper: :input_group %>
+              <%= hidden_field_tag :family_id, authorized_family_member.family.id %>
+
+              </div>
+              <div class="card-footer">
+                <%= form.submit(class: 'btn btn-primary') %>
+              </div>
+            <% end %>
+            </div>
+      </div>
+    </div>
+  </div>
+</section>

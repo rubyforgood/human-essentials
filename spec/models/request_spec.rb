@@ -4,6 +4,8 @@
 #
 #  id              :bigint           not null, primary key
 #  comments        :text
+#  discard_reason  :text
+#  discarded_at    :datetime
 #  request_items   :jsonb
 #  status          :integer          default("pending")
 #  created_at      :datetime         not null

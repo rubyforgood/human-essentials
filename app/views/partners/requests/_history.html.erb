@@ -1,0 +1,35 @@
+
+<div class="card mb-4">
+  <h5 class="card-header bg-info">Essentials Request History</h5>
+  <div class="card-body">
+    <div class=container-fluid>
+      <div class="row justify-content-around">
+        <div class="col-6-lg">
+          <h2>Your recent essentials requests</h2>
+        </div>
+        <div class="col-6-lg">
+        </div>
+      </div>
+      <table class="table table-striped dashboard">
+        <thead>
+          <tr class="row">
+            <th scope="col" class="col-1">No.</th>
+            <th scope="col" class="col-9">Contents</th>
+            <th scope="col" class="col-2">Request Date</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @partner_requests.each do |partner_request| %>
+            <tr class="row">
+              <td class="col-1"><%= link_to partner_request.id, partners_request_path(id: partner_request.id) %></th>
+              <td class="col-9"><%= partner_request.item_requests.map {|item| "#{item.quantity} of #{item.name}"}.join(", ") %></td>
+              <td class="col-2"><%= partner_request.created_at.strftime("%B %-d %Y") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

@@ -1,4 +1,0 @@
-# config/scheduler.yml
-  ReminderDeadlineJob:
-    cron: '0 0 0 * * *'   # Runs once every day at 00:00 UTC
-    class: ReminderDeadlineJob

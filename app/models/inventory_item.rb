@@ -13,6 +13,8 @@
 class InventoryItem < ApplicationRecord
   MAX_INT = 2**31
 
+  has_paper_trail
+
   belongs_to :storage_location
   belongs_to :item
 

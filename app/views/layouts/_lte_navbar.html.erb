@@ -20,24 +20,13 @@
 </li>
 <% end %>
 
-<li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
-    <i class="fas fa-bug"></i>
-  </a>
-  <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-    <li class="wrapper-form-feedback">
-      <%= simple_form_for :feedback_message, :url => "/feedback_message" do |f| %>
-      <div class="form-group">
-        <%= f.label "Submit Your Bug/Message/Input" %>
-        <%= f.text_area :message, class: 'form-control', required: true %>
-      </div>
-      <div class="form-actions">
-        <%= submit_button({text: "Send Message", icon: "envelope", size: "md"}) %>
-      </div>
-      <% end %>
-    </li>
-  </ul>
-</li>
+<% if Rails.env.production? %>
+  <li class="nav-item dropdown">
+    <%= link_to support_ticket_form_url, class: 'nav-link', target: :_blank do %>
+      <i class="fas fa-bug"></i>
+    <% end %>
+  </li>
+<% end %>
 
 <li class="nav-item dropdown">
   <a class="nav-link" data-toggle="dropdown" href="#">

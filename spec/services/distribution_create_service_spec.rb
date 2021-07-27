@@ -1,4 +1,6 @@
 RSpec.describe DistributionCreateService, type: :service do
+  include ActiveJob::TestHelper
+
   subject { DistributionCreateService }
   describe "call" do
     let!(:storage_location) { create(:storage_location, :with_items, item_count: 2) }
@@ -20,20 +22,33 @@ RSpec.describe DistributionCreateService, type: :service do
     context "partner has send reminders setting set to true" do
       it "Sends a PartnerMailer" do
         @partner.update!(send_reminders: true)
-        allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        expect(PartnerMailerJob).to receive(:perform_now).once
-        subject.new(distribution_params).call
+        expect do
+          perform_enqueued_jobs only: PartnerMailerJob do
+            subject.new(distribution_params).call
+          end
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
 
     context "partner has send reminders setting set to false" do
       it "does not send a PartnerMailer" do
         @partner.update!(send_reminders: false)
-        allow(Flipper).to receive(:enabled?).with(:email_active).and_return(true)
 
-        expect(PartnerMailerJob).not_to receive(:perform_now)
+        expect(PartnerMailerJob).not_to receive(:perform_later)
         subject.new(distribution_params).call
+      end
+    end
+
+    context "partner is deactivated" do
+      it "does not send an email" do
+        @partner.update!(send_reminders: true, status: "deactivated")
+
+        expect do
+          perform_enqueued_jobs only: PartnerMailerJob do
+            subject.new(distribution_params).call
+          end
+        end.not_to change { ActionMailer::Base.deliveries.count }
       end
     end
 
@@ -45,6 +60,19 @@ RSpec.describe DistributionCreateService, type: :service do
           subject.new(distribution_params, request.id).call
           request.reload
         end.to change { request.status }
+      end
+
+      context 'and the request already has a distribution associated with it' do
+        let(:distribution) { create(:distribution) }
+        before do
+          request.update!(distribution_id: distribution.id)
+        end
+
+        it 'should not be successful' do
+          result = subject.new(distribution_params, request.id).call
+          expect(result.error.message).to eq("Request has already been fulfilled by Distribution #{distribution.id}")
+          expect(result).not_to be_success
+        end
       end
     end
 

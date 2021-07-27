@@ -21,6 +21,26 @@ RSpec.describe StorageLocation, type: :model do
     it { is_expected.to validate_presence_of(:organization) }
   end
 
+  context "Callbacks >" do
+    describe "before_destroy" do
+      let(:item) { create(:item) }
+      subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization) }
+
+      it "does not delete storage locations with inventory items on it" do
+        subject.destroy
+
+        expect(subject.errors.messages[:base]).to include("Cannot delete storage location containing inventory items with non-zero quantities")
+      end
+
+      it "deletes storage locations with no inventory items on it" do
+        subject.inventory_items.destroy_all
+        subject.destroy
+
+        expect(StorageLocation.count).to eq(0)
+      end
+    end
+  end
+
   context "Filtering >" do
     it "->containing yields only inventories that have that item" do
       item = create(:item)
@@ -163,7 +183,7 @@ RSpec.describe StorageLocation, type: :model do
     describe "import_csv" do
       it "imports storage locations from a csv file" do
         before_import = StorageLocation.count
-        import_file_path = Rails.root.join("spec", "fixtures", "storage_locations.csv")
+        import_file_path = Rails.root.join("spec", "fixtures", "files", "storage_locations.csv")
         data = File.read(import_file_path, encoding: "BOM|UTF-8")
         csv = CSV.parse(data, headers: true)
         StorageLocation.import_csv(csv, @organization.id)
@@ -175,7 +195,7 @@ RSpec.describe StorageLocation, type: :model do
       it "imports storage locations from a csv file" do
         donations_count = Donation.count
         storage_location = create(:storage_location, organization_id: @organization.id)
-        import_file_path = Rails.root.join("spec", "fixtures", "inventory.csv").read
+        import_file_path = Rails.root.join("spec", "fixtures", "files", "inventory.csv").read
         StorageLocation.import_inventory(import_file_path, @organization.id, storage_location.id)
         expect(storage_location.size).to eq 14_842
         expect(donations_count).to eq Donation.count

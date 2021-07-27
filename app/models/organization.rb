@@ -78,6 +78,7 @@ class Organization < ApplicationRecord
         .limit(limit)
     end
   end
+  has_many :item_categories, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
     def all
       unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
@@ -89,7 +90,7 @@ class Organization < ApplicationRecord
     end
   end
 
-  before_update :update_partner_sections, if: :partner_form_fields_changed?
+  before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
 
   ALL_PARTIALS = [
     ['Media Information', 'media_information'],
@@ -119,6 +120,7 @@ class Organization < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
+  scope :needs_reminding, -> { where('reminder_day = ? and deadline_day is not null', Date.current.day) }
 
   def assign_attributes_from_account_request(account_request)
     assign_attributes(
@@ -194,14 +196,6 @@ class Organization < ApplicationRecord
     reload
   end
 
-  def logo_path
-    if logo.attached?
-      ActiveStorage::Blob.service.send(:path_for, logo.key).to_s
-    else
-      Organization::DIAPER_APP_LOGO.to_s
-    end
-  end
-
   def valid_items
     items.active.visible.map do |item|
       {
@@ -212,6 +206,16 @@ class Organization < ApplicationRecord
     end
   end
 
+  def item_id_to_display_string_map
+    valid_items.each_with_object({}) do |item, hash|
+      hash[item[:id].to_i] = item[:name]
+    end
+  end
+
+  def valid_items_for_select
+    valid_items.map { |item| [item[:name], item[:id]] }.sort
+  end
+
   def from_email
     return get_admin_email if email.blank?
 
@@ -220,8 +224,12 @@ class Organization < ApplicationRecord
 
   private
 
-  def update_partner_sections
-    PartnerFieldsJob.perform_async(id)
+  def sync_visible_partner_form_sections
+    partner_form = Partners::PartnerForm.where(
+      diaper_bank_id: id,
+    ).first_or_create
+
+    partner_form.update!(sections: partner_form_fields)
   end
 
   def correct_logo_mime_type

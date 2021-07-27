@@ -63,30 +63,6 @@ RSpec.describe Partner, type: :model do
       end
     end
   end
-  # context "Callbacks >" do
-  #   describe "when DIAPER_PARTNER_URL is present" do
-  #     let(:diaper_partner_url) { "http://diaper.partner.io" }
-  #     let(:callback_url) { "#{diaper_partner_url}/partners" }
-  #
-  #     before do
-  #       stub_env "DIAPER_PARTNER_URL", diaper_partner_url
-  #       stub_env "DIAPER_PARTNER_SECRET_KEY", "secretkey123"
-  #       stub_request :post, callback_url
-  #     end
-  #
-  #     it "notifies the Diaper Partner app" do
-  #       partner = create :partner
-  #       headers = {
-  #         "Authorization" => /APIAuth diaperbase:.*/,
-  #         "Content-Type" => "application/x-www-form-urlencoded"
-  #       }
-  #       body = URI.encode_www_form partner.attributes
-  #       expect(WebMock).to have_requested(:post, callback_url)
-  #         .with(headers: headers, body: body).once
-  #     end
-  #
-  #   end
-  # end
 
   describe '#deactivated?' do
     subject { partner.deactivated? }
@@ -113,17 +89,36 @@ RSpec.describe Partner, type: :model do
     end
   end
 
+  describe '#profile' do
+    subject { partner.profile }
+    let(:partner) { create(:partner) }
+
+    it 'should return the associated Partners::Partner record' do
+      expect(subject).to eq(Partners::Partner.find_by(diaper_partner_id: partner.id))
+    end
+  end
+
+  describe '#primary_partner_user' do
+    subject { partner.primary_partner_user }
+    let(:partner) { create(:partner) }
+
+    it 'should return the asssociated primary Partners::User' do
+      primary_partner_user = Partners::User.find_by(partner_id: partner.profile.id)
+      expect(subject).to eq(primary_partner_user)
+    end
+  end
+
   describe "import_csv" do
     let(:organization) { create(:organization) }
 
     it "imports partners from a csv file and prevents multiple imports" do
       before_import = Partner.count
-      import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
+      import_file_path = Rails.root.join("spec", "fixtures", "files", "partners.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       Partner.import_csv(csv, organization.id)
       expect(Partner.count).to eq before_import + 3
-      import_file_path2 = Rails.root.join("spec", "fixtures", "partners_with_duplicates.csv")
+      import_file_path2 = Rails.root.join("spec", "fixtures", "files", "partners_with_duplicates.csv")
       data2 = File.read(import_file_path2, encoding: "BOM|UTF-8")
       csv2 = CSV.parse(data2, headers: true)
       Partner.import_csv(csv2, organization.id)
@@ -131,55 +126,34 @@ RSpec.describe Partner, type: :model do
     end
 
     it "imports partners from a csv file with BOM encodings" do
-      import_file_path = Rails.root.join("spec", "fixtures", "partners_with_bom_encoding.csv")
+      import_file_path = Rails.root.join("spec", "fixtures", "files", "partners_with_bom_encoding.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       expect do
         Partner.import_csv(csv, organization.id)
       end.to change { Partner.count }.by(20)
     end
-
-    it "not send emails after importing a csv file" do
-      expect(UpdateDiaperPartnerJob).not_to receive(:perform_now)
-
-      import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
-      data = File.read(import_file_path, encoding: "BOM|UTF-8")
-      csv = CSV.parse(data, headers: true)
-      Partner.import_csv(csv, organization.id)
-    end
   end
 
   describe "#csv_export_attributes" do
     let!(:partner) { create(:partner) }
-    let(:partnerbase_partner) do
-      {
-        agency: {
-          contact_person: {
-            name: "Jon Ralfeo",
-            phone: "1231231234",
-            email: "jon@entertainment720.com"
-          }
-        }
-      }.to_json
-    end
+
+    let(:contact_name) { "Jon Ralfeo" }
+    let(:contact_email) { "jon@entertainment720.com" }
+    let(:contact_phone) { "1231231234" }
 
     before do
-      allow(DiaperPartnerClient).to receive(:get).with({ id: partner.id }) { partnerbase_partner }
+      partner.profile.update({
+                               program_contact_name: contact_name,
+                               program_contact_email: contact_email,
+                               program_contact_phone: contact_phone
+                             })
     end
 
     it "includes contact person information from parnerbase" do
-      expect(partner.csv_export_attributes).to include("Jon Ralfeo")
-      expect(partner.csv_export_attributes).to include("1231231234")
-      expect(partner.csv_export_attributes).to include("jon@entertainment720.com")
-    end
-  end
-
-  describe '#contact_person' do
-    let(:partner) { create(:partner) }
-
-    it "checks for agency in response before fetching contact info" do
-      allow(partner).to receive(:partnerbase_partner) { instance_double('partnerbase_partner', agency: nil) }
-      expect(partner.contact_person).to eq({})
+      expect(partner.csv_export_attributes).to include(contact_name)
+      expect(partner.csv_export_attributes).to include(contact_phone)
+      expect(partner.csv_export_attributes).to include(contact_email)
     end
   end
 
@@ -203,11 +177,11 @@ RSpec.describe Partner, type: :model do
 
   describe "ActiveStorage validation" do
     it "validates that attachments are pdf or docs" do
-      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"), "image/jpeg")])
+      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg")])
 
       expect(partner).to_not be_valid
 
-      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/dbase.pdf"), "application/pdf")])
+      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/dbase.pdf"), "application/pdf")])
 
       expect(partner).to be_valid
     end

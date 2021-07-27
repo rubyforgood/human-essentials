@@ -51,26 +51,6 @@ RSpec.describe 'Requests', type: :request do
       end
     end
 
-    describe 'DELETE #destroy' do
-      context 'When the request exists' do
-        let(:request) { create(:request, organization: @organization) }
-
-        it 'redirects to requests index' do
-          delete request_path(request, default_params)
-
-          expect(response).to redirect_to(requests_path)
-        end
-      end
-
-      context 'When the request does not exist' do
-        it 'responds with not found' do
-          delete request_path(1, default_params)
-
-          expect(response).to have_http_status(:not_found)
-        end
-      end
-    end
-
     describe 'POST #start' do
       context 'When request exists' do
         let(:request) { create(:request, organization: @organization) }

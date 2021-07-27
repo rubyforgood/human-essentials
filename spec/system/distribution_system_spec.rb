@@ -11,40 +11,36 @@ RSpec.feature "Distributions", type: :system do
 
   context "When creating a new distribution manually" do
     it "Allows a distribution to be created" do
-      with_features email_active: true do
-        visit @url_prefix + "/distributions/new"
+      visit @url_prefix + "/distributions/new"
 
-        select @partner.name, from: "Partner"
-        select @storage_location.name, from: "From storage location"
-        choose "Pick up"
+      select @partner.name, from: "Partner"
+      select @storage_location.name, from: "From storage location"
+      choose "Pick up"
 
-        fill_in "Comment", with: "Take my wipes... please"
+      fill_in "Comment", with: "Take my wipes... please"
+      fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
 
-        expect do
-          click_button "Save", match: :first
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect(PartnerMailerJob).to receive(:perform_later).once
+      click_button "Save", match: :first
 
-        expect(page).to have_content "Distributions"
-        expect(page.find(".alert-info")).to have_content "reated"
-      end
+      expect(page).to have_content "Distributions"
+      expect(page.find(".alert-info")).to have_content "reated"
     end
 
     it "Displays a complete form after validation errors" do
-      with_features email_active: true do
-        visit @url_prefix + "/distributions/new"
+      visit @url_prefix + "/distributions/new"
 
-        # verify line items appear on initial load
-        expect(page).to have_selector "#distribution_line_items"
+      # verify line items appear on initial load
+      expect(page).to have_selector "#distribution_line_items"
 
-        select @partner.name, from: "Partner"
-        expect do
-          click_button "Save"
-        end.not_to change { ActionMailer::Base.deliveries.count }
+      select @partner.name, from: "Partner"
+      expect do
+        click_button "Save"
+      end.not_to change { ActionMailer::Base.deliveries.count }
 
-        # verify line items appear on reload
-        expect(page).to have_content "New Distribution"
-        expect(page).to have_selector "#distribution_line_items"
-      end
+      # verify line items appear on reload
+      expect(page).to have_content "New Distribution"
+      expect(page).to have_selector "#distribution_line_items"
     end
 
     context "when the quantity is lower than the on hand minminum quantity" do
@@ -116,22 +112,6 @@ RSpec.feature "Distributions", type: :system do
     end
   end
 
-  it "Does not include inactive items in the line item fields" do
-    visit @url_prefix + "/distributions/new"
-
-    item = Item.alphabetized.first
-
-    select @storage_location.name, from: "From storage location"
-    expect(page).to have_content(item.name)
-    select item.name, from: "distribution_line_items_attributes_0_item_id"
-
-    item.update(active: false)
-
-    page.refresh
-    select @storage_location.name, from: "From storage location"
-    expect(page).to have_no_content(item.name)
-  end
-
   it "errors if user does not fill storage_location" do
     visit @url_prefix + "/distributions/new"
 
@@ -161,27 +141,22 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "sends an email if reminders are enabled" do
-      with_features email_active: true do
-        visit @url_prefix + "/distributions"
-        click_on "Edit", match: :first
-        fill_in "Agency representative", with: "SOMETHING DIFFERENT"
-        click_on "Save", match: :first
-        distribution.reload
-        expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution.id)
-      end
+      visit @url_prefix + "/distributions"
+      click_on "Edit", match: :first
+      fill_in "Agency representative", with: "SOMETHING DIFFERENT"
+      click_on "Save", match: :first
+      distribution.reload
+      expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution.id)
     end
 
     it "allows the user can change the issued_at date" do
       click_on "Edit", match: :first
       expect do
-        select('2018', from: 'distribution_issued_at_1i')
-        select('May', from: 'distribution_issued_at_2i')
-        select('7', from: 'distribution_issued_at_3i')
-        select('02 PM', from: 'distribution_issued_at_4i')
-        select('15', from: 'distribution_issued_at_5i')
+        fill_in "Distribution date", with: Time.zone.parse("2001-10-01 10:00")
+
         click_on "Save", match: :first
         distribution.reload
-      end.to change { distribution.issued_at }.to(Time.zone.parse("2018-05-07 14:15:00"))
+      end.to change { distribution.issued_at }.to(Time.zone.parse("2001-10-01 10:00"))
     end
 
     it "disallows the user from changing the quantity above the inventory quantity" do
@@ -319,7 +294,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       it "User creates a distribution from a donation then edits it" do
-        within "#edit_distribution_#{@distribution.to_param}" do
+        within ".distribution_line_items_quantity" do
           first(".numeric").set 13
         end
         click_on "Save"
@@ -328,7 +303,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       it "User creates a distribution from a donation then tries to make the quantity too big", js: true do
-        within "#edit_distribution_#{@distribution.to_param}" do
+        within ".distribution_line_items_quantity" do
           first(".numeric").set 999_999
         end
         click_on "Save"
@@ -450,7 +425,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "filters by state" do
-      distribution1 = create(:distribution, state: "started")
+      distribution1 = create(:distribution, state: "scheduled")
       create(:distribution, state: "complete")
 
       visit subject

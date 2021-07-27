@@ -41,7 +41,7 @@ FactoryBot.define do
     reminder_day { 10 }
     deadline_day { 20 }
 
-    logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"), "image/jpeg") }
+    logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg") }
 
     after(:create) do |instance, evaluator|
       Organization.seed_items(instance) unless evaluator.skip_items

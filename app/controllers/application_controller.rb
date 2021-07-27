@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   before_action :log_active_user
   before_action :swaddled
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :set_paper_trail_whodunnit
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
@@ -25,6 +26,10 @@ class ApplicationController < ActionController::Base
   # override Rails' default_url_options to ensure organization_id is added to
   # each URL generated
   def default_url_options(options = {})
+    # Early return if the request is not authenticated and no
+    # current_user is defined
+    return options if current_user.blank?
+
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
     elsif current_user && !current_user.super_admin? && current_user.organization.present?
@@ -37,7 +42,6 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_user
-    # params[:controller].include?("admin") ||
     verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
   end
 

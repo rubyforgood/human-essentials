@@ -4,6 +4,8 @@
 #
 #  id              :bigint           not null, primary key
 #  comments        :text
+#  discard_reason  :text
+#  discarded_at    :datetime
 #  request_items   :jsonb
 #  status          :integer          default("pending")
 #  created_at      :datetime         not null
@@ -14,6 +16,7 @@
 #
 
 class Request < ApplicationRecord
+  include Discard::Model
   include Exportable
 
   class MismatchedItemIdsError < StandardError; end
@@ -22,8 +25,9 @@ class Request < ApplicationRecord
   belongs_to :organization
   belongs_to :distribution, optional: true
 
-  enum status: { pending: 0, started: 1, fulfilled: 2 }, _prefix: true
+  enum status: { pending: 0, started: 1, fulfilled: 2, discarded: 3 }, _prefix: true
 
+  validates :distribution_id, uniqueness: true, allow_nil: true
   before_save :sanitize_items_data
 
   include Filterable
@@ -73,13 +77,6 @@ class Request < ApplicationRecord
         }
       end
     request
-  end
-
-  def self.generate_csv(requests)
-    rows = Exports::ExportRequestService.new(requests).call
-    CSV.generate(headers: true) do |csv|
-      rows.each { |row| csv << row }
-    end
   end
 
   def total_items

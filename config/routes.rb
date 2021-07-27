@@ -1,6 +1,5 @@
 def set_up_sidekiq
   require 'sidekiq/web'
-  require 'sidekiq-scheduler/web'
 
   if Rails.env.production?
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
@@ -24,9 +23,28 @@ end
 
 Rails.application.routes.draw do
   devise_for :users
+  devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
 
   set_up_sidekiq
   set_up_flipper
+
+  # Add route partners/dashboard so that we can define it as partner_user_root
+  get 'partners/dashboard' => 'partners/dashboards#show', as: :partner_user_root
+  namespace :partners do
+    resource :dashboard, only: [:show]
+    resources :requests, only: [:show, :new, :index, :create]
+    resources :individuals_requests, only: [:new, :create]
+    resources :family_requests, only: [:new, :create]
+    resources :users, only: [:index, :new, :create]
+    resource :profile, only: [:show, :edit, :update]
+    resource :approval_request, only: [:create]
+
+    resources :children, except: [:destroy] do
+      post :active
+    end
+    resources :families
+    resources :authorized_family_members
+  end
 
   # This is where a superadmin CRUDs all the things
   get :admin, to: "admin#dashboard"
@@ -37,13 +55,8 @@ Rails.application.routes.draw do
     resources :partners, except: %i[new create destroy]
     resources :users
     resources :barcode_items
-    resources :feedback_messages do
-      get :resolve
-    end
+    resources :account_requests, only: [:index]
   end
-
-  # These are globally accessible
-  resources :feedback_message, only: [:create]
 
   namespace :api, defaults: { format: "json" } do
     namespace :v1 do
@@ -52,6 +65,9 @@ Rails.application.routes.draw do
       resources :family_requests, only: %i(create show)
     end
   end
+
+  match "/404", to: "errors#not_found", via: :all
+  match "/500", to: "errors#internal_server_error", via: :all
 
   scope path: ":organization_id" do
     resources :users
@@ -73,6 +89,11 @@ Rails.application.routes.draw do
     resources :audits do
       post :finalize
     end
+
+    namespace :reports do
+      resources :ndbn_annuals, only: [:index, :show], param: :year
+    end
+
     resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
       collection do
@@ -127,6 +148,7 @@ Rails.application.routes.draw do
     resources :items do
       patch :restore, on: :member
     end
+    resources :item_categories
     resources :partners do
       collection do
         post :import_csv
@@ -135,7 +157,7 @@ Rails.application.routes.draw do
         get :approve_application
         get :approve_partner
         post :invite
-        post :re_invite
+        post :invite_partner_user
         post :recertify_partner
         put :deactivate
         put :reactivate
@@ -159,15 +181,15 @@ Rails.application.routes.draw do
 
     resources :purchases
     # MODIFIED route by adding destroy to
-    resources :requests, only: %i(index new show destroy) do
+    resources :requests, only: %i(index new show) do
       member do
         post :start
       end
     end
 
     resources :requests, except: %i(destroy) do
+      resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'
       get :print, on: :member
-      post :cancel, on: :member
       collection do
         get :partner_requests
       end

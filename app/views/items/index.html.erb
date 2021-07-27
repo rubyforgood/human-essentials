@@ -50,13 +50,7 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
-
                   <%= download_button_to(items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Items", size: "md"}) if @items.any? %>
-
-                  <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
-                  <% if Flipper.enabled?(:kits) %>
-                    <%= new_button_to new_kit_path(organization_id: current_organization), {text: "New Kit"} %>
-                  <% end %>
                   </span>
               </div>
             <% end # form %>
@@ -74,30 +68,31 @@
       <div class="col-12">
         <!-- Default box -->
         <div class="card card-primary card-outline card-outline-tabs">
-          <div class="card-header p-0 border-bottom-0">
-            <ul class="nav nav-tas" id="custom-tabs-three-tab" role="tablist">
+          <div class="card-header p-0 border-bottom-0 text-md">
+            <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
               <li class="nav-item" class="active">
                 <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Item
                   List</a>
+              </li>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-categories" role="tab" aria-controls="custom-tabs-three-categories" aria-selected="false">Item Categories</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Items,
                   Quantity, and Location</a>
               </li>
-              <% if Flipper.enabled?(:kits) %>
-                <li class="nav-item">
-                  <a class="nav-link" id="custom-tabs-three-kits-tab" data-toggle="pill" href="#custom-tabs-three-kits" role="tab" aria-controls="custom-tabs-three-kits" aria-selected="false">Kits</a>
-                </li>
-              <% end %>
+              <li class="nav-item">
+                <a class="nav-link" id="custom-tabs-three-kits-tab" data-toggle="pill" href="#custom-tabs-three-kits" role="tab" aria-controls="custom-tabs-three-kits" aria-selected="false">Kits</a>
+              </li>
             </ul>
           </div>
           <div class="card-body">
             <div class="tab-content" id="custom-tabs-three-tabContent">
-              <%= render partial: 'item_list' %>
+              <%= render partial: 'item_list', locals: { items: @items } %>
+              <%= render partial: 'item_categories', locals: { item_categories: @item_categories } %>
               <%= render partial: 'items_quantity_and_location' %>
-              <% if Flipper.enabled?(:kits) %>
-                <%= render partial: 'kits' %>
-              <% end %>
+              <%= render partial: 'kits' %>
             </div>
           </div>
         </div>

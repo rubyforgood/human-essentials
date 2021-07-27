@@ -9,7 +9,7 @@ require 'time_util'
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
-#  state                  :integer          default("started"), not null
+#  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  organization_id        :integer
@@ -41,7 +41,7 @@ class Distribution < ApplicationRecord
 
   before_save :combine_distribution
 
-  enum state: { started: 0, scheduled: 5, complete: 10 }
+  enum state: { scheduled: 5, complete: 10 }
   enum delivery_method: { pick_up: 0, delivery: 1 }
 
   # add item_id scope to allow filtering distributions by item
@@ -114,11 +114,6 @@ class Distribution < ApplicationRecord
     end
   end
 
-  def self.csv_export_headers
-    ["Partner", "Date of Distribution", "Source Inventory", "Total items",
-     "Total Value (in $)", "Delivery Method", "State", "Agency Representative"]
-  end
-
   def combine_distribution
     line_items.combine!
   end
@@ -128,12 +123,12 @@ class Distribution < ApplicationRecord
       partner.name,
       issued_at.strftime("%F"),
       storage_location.name,
-      line_items.total,
+      total_quantity,
       cents_to_dollar(line_items.total_value),
       delivery_method,
       state,
       agency_rep
-    ] + quantity_per_line_item
+    ]
   end
 
   def future?
@@ -142,15 +137,5 @@ class Distribution < ApplicationRecord
 
   def past?
     issued_at < Time.zone.today
-  end
-
-  private
-
-  def quantity_per_line_item
-    item_hash = line_items.quantities_by_name
-    item_ids = item_hash.collect { |_, value| value[:item_id] }
-    filtered_items = organization.items.filter { |item| item.active && item.visible_to_partners && !item_ids.include?(item.id) }
-    filtered_items.each { |item| item_hash[item.id] = { item_id: item.id, name: item.name, quantity: 0 } }
-    item_hash.sort_by { |_, value| value[:name] }.to_h.collect { |_, value| value[:quantity] }
   end
 end
