@@ -1,6 +1,6 @@
-require 'sidekiq'
+# require 'sidekiq'
 
-Sidekiq::Extensions.enable_delay!
+# Sidekiq::Extensions.enable_delay!
 
 #
 # Added this conditional to run the async jobs immediately
@@ -12,7 +12,7 @@ Sidekiq::Extensions.enable_delay!
 #
 # Refer to https://makandracards.com/makandra/28125-perform-sidekiq-jobs-immediately-in-development
 # for context and details.
-if Rails.env.development?
-  require 'sidekiq/testing'
-  Sidekiq::Testing.inline!
-end
+# if Rails.env.development?
+#   require 'sidekiq/testing'
+#   Sidekiq::Testing.inline!
+# end

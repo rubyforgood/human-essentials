@@ -125,7 +125,6 @@ GEM
     cocoon (1.2.15)
     coderay (1.1.3)
     concurrent-ruby (1.1.9)
-    connection_pool (2.2.3)
     crack (0.4.5)
       rexml
     crass (1.0.6)
@@ -405,9 +404,6 @@ GEM
       rspec-expectations (~> 3.10)
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
-    rspec-sidekiq (3.1.0)
-      rspec-core (~> 3.0, >= 3.0.0)
-      sidekiq (>= 2.4.0)
     rspec-support (3.10.2)
     rubocop (1.1.0)
       parallel (~> 1.10)
@@ -447,11 +443,6 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (5.0.0)
       activesupport (>= 5.2.0)
-    sidekiq (5.2.9)
-      connection_pool (~> 2.2, >= 2.2.2)
-      rack (~> 2.0)
-      rack-protection (>= 1.5.0)
-      redis (>= 3.3.5, < 4.2)
     simple_form (5.1.0)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
@@ -590,13 +581,11 @@ DEPENDENCIES
   rails-erd
   rb-readline (~> 0.5.3)
   recaptcha
-  rspec-rails (~> 5.0.2)
-  rspec-sidekiq
+  rspec-rails (~> 5.0.1)
   rubocop
   rubocop-rails (~> 2.9.1)
   sass-rails
   shoulda-matchers (~> 5.0)
-  sidekiq
   simple_form
   simplecov
   skylight
@@ -618,4 +607,4 @@ RUBY VERSION
    ruby 2.7.2p137
 
 BUNDLED WITH
-   2.2.16
+   2.2.24
