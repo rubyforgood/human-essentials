@@ -256,7 +256,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.1)
     kaminari-core (1.2.1)
-    knapsack_pro (2.18.1)
+    knapsack_pro (2.18.2)
       rake
     launchy (2.5.0)
       addressable (~> 2.7)
