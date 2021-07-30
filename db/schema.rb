@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_210_729_003_516) do
+ActiveRecord::Schema.define(version: 2021_07_29_003516) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,7 +33,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.bigint "record_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index %w(record_type record_id name), name: "index_action_text_rich_texts_uniqueness", unique: true
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -42,7 +43,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index %w(record_type record_id name blob_id), name: "index_active_storage_attachments_uniqueness", unique: true
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
@@ -62,7 +63,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.string "variation_digest", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index %w(blob_id variation_digest), name: "index_active_storage_variant_records_uniqueness", unique: true
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "adjustments", id: :serial, force: :cascade do |t|
@@ -99,7 +100,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.datetime "updated_at", null: false
     t.integer "organization_id"
     t.string "barcodeable_type", default: "Item"
-    t.index %w(barcodeable_type barcodeable_id), name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
+    t.index ["barcodeable_type", "barcodeable_id"], name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
     t.index ["organization_id"], name: "index_barcode_items_on_organization_id"
   end
 
@@ -136,7 +137,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.string "business_name"
     t.float "latitude"
     t.float "longitude"
-    t.index %w(latitude longitude), name: "index_diaper_drive_participants_on_latitude_and_longitude"
+    t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
   end
 
   create_table "diaper_drives", force: :cascade do |t|
@@ -175,7 +176,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
-    t.index %w(latitude longitude), name: "index_donation_sites_on_latitude_and_longitude"
+    t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
 
@@ -212,7 +213,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index %w(feature_key key value), name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+    t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
   create_table "inventory_items", id: :serial, force: :cascade do |t|
@@ -229,7 +230,16 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.integer "organization_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index %w(name organization_id), name: "index_item_categories_on_name_and_organization_id", unique: true
+    t.index ["name", "organization_id"], name: "index_item_categories_on_name_and_organization_id", unique: true
+  end
+
+  create_table "item_categories_partner_groups", force: :cascade do |t|
+    t.bigint "partner_group_id", null: false
+    t.bigint "item_category_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["item_category_id"], name: "index_item_categories_partner_groups_on_item_category_id"
+    t.index ["partner_group_id"], name: "index_item_categories_partner_groups_on_partner_group_id"
   end
 
   create_table "items", id: :serial, force: :cascade do |t|
@@ -263,7 +273,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.boolean "active", default: true
     t.boolean "visible_to_partners", default: true, null: false
     t.integer "value_in_cents", default: 0
-    t.index %w(name organization_id), name: "index_kits_on_name_and_organization_id", unique: true
+    t.index ["name", "organization_id"], name: "index_kits_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_kits_on_organization_id"
   end
 
@@ -274,7 +284,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.string "itemizable_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index %w(itemizable_id itemizable_type), name: "index_line_items_on_itemizable_id_and_itemizable_type"
+    t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
   end
 
   create_table "manufacturers", force: :cascade do |t|
@@ -305,7 +315,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.integer "default_storage_location"
     t.text "partner_form_fields", default: [], array: true
     t.integer "account_request_id"
-    t.index %w(latitude longitude), name: "index_organizations_on_latitude_and_longitude"
+    t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
@@ -314,17 +324,8 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index %w(name organization_id), name: "index_partner_groups_on_name_and_organization_id", unique: true
+    t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
-  end
-
-  create_table "partner_groups_item_categories", force: :cascade do |t|
-    t.bigint "partner_id"
-    t.bigint "item_categories_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["item_categories_id"], name: "index_partner_groups_item_categories_on_item_categories_id"
-    t.index ["partner_id"], name: "index_partner_groups_item_categories_on_partner_id"
   end
 
   create_table "partners", id: :serial, force: :cascade do |t|
@@ -337,9 +338,9 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.boolean "send_reminders", default: false, null: false
     t.text "notes"
     t.integer "quota"
-    t.bigint "partner_groups_id"
+    t.bigint "partner_group_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
-    t.index ["partner_groups_id"], name: "index_partners_on_partner_groups_id"
+    t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
   end
 
   create_table "purchases", force: :cascade do |t|
@@ -384,7 +385,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.float "longitude"
     t.integer "square_footage"
     t.string "warehouse_type"
-    t.index %w(latitude longitude), name: "index_storage_locations_on_latitude_and_longitude"
+    t.index ["latitude", "longitude"], name: "index_storage_locations_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end
 
@@ -430,7 +431,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index %w(invited_by_type invited_by_id), name: "index_users_on_invited_by"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -446,7 +447,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.float "longitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index %w(latitude longitude), name: "index_vendors_on_latitude_and_longitude"
+    t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 
   create_table "versions", force: :cascade do |t|
@@ -457,7 +458,7 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
     t.jsonb "object"
     t.datetime "created_at"
     t.jsonb "object_changes"
-    t.index %w(item_type item_id), name: "index_versions_on_item_type_and_item_id"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
@@ -471,14 +472,14 @@ ActiveRecord::Schema.define(version: 20_210_729_003_516) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "item_categories", "organizations"
+  add_foreign_key "item_categories_partner_groups", "item_categories"
+  add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "partner_groups", "organizations"
-  add_foreign_key "partner_groups_item_categories", "item_categories", column: "item_categories_id"
-  add_foreign_key "partner_groups_item_categories", "partners"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"

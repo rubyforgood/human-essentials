@@ -9,6 +9,11 @@
 #  organization_id :bigint
 #
 RSpec.describe PartnerGroup, type: :model do
+  describe 'associations' do
+    it { should belong_to(:organization) }
+    it { should have_many(:partners) }
+    it { should have_and_belong_to_many(:item_categories) }
+  end
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:partner_group, organization_id: nil)).not_to be_valid

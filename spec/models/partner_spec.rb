@@ -2,19 +2,30 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
-#  email           :string
-#  name            :string
-#  notes           :text
-#  quota           :integer
-#  send_reminders  :boolean          default(FALSE), not null
-#  status          :integer          default("uninvited")
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :integer
+#  id               :integer          not null, primary key
+#  email            :string
+#  name             :string
+#  notes            :text
+#  quota            :integer
+#  send_reminders   :boolean          default(FALSE), not null
+#  status           :integer          default("uninvited")
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  organization_id  :integer
+#  partner_group_id :bigint
 #
 
 RSpec.describe Partner, type: :model do
+  describe 'associations' do
+    it { should belong_to(:organization) }
+    it { should belong_to(:partner_group).optional }
+    it { should have_many(:item_categories).through(:partner_group) }
+    it { should have_many(:items).through(:item_categories) }
+    it { should have_many(:requests) }
+    it { should have_many(:distributions) }
+    it { should have_many(:requests) }
+  end
+
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:partner, organization_id: nil)).not_to be_valid

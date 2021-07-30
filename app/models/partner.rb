@@ -2,16 +2,17 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
-#  email           :string
-#  name            :string
-#  notes           :text
-#  quota           :integer
-#  send_reminders  :boolean          default(FALSE), not null
-#  status          :integer          default("uninvited")
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :integer
+#  id               :integer          not null, primary key
+#  email            :string
+#  name             :string
+#  notes            :text
+#  quota            :integer
+#  send_reminders   :boolean          default(FALSE), not null
+#  status           :integer          default("uninvited")
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  organization_id  :integer
+#  partner_group_id :bigint
 #
 
 class Partner < ApplicationRecord
@@ -26,13 +27,12 @@ class Partner < ApplicationRecord
   enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, error: 4, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
+  belongs_to :partner_group, optional: true
+  has_many :item_categories, through: :partner_group
+  has_many :items, through: :item_categories
+
   has_many :distributions, dependent: :destroy
-
   has_many :requests, dependent: :destroy
-
-  has_many :partner_group_memberships, dependent: :destroy
-  has_many :partner_groups, through: :partner_group_memberships
-  has_many :requestable_items, through: :partner_groups, source: :items
 
   has_many_attached :documents
 

@@ -4,7 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  description     :text
-#  name            :string
+#  name            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer          not null
@@ -24,5 +24,6 @@ RSpec.describe ItemCategory, type: :model do
   describe 'assocations' do
     it { should belong_to(:organization) }
     it { should have_many(:items) }
+    it { should have_and_belong_to_many(:partner_groups) }
   end
 end

@@ -4,7 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  description     :text
-#  name            :string
+#  name            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer          not null
@@ -16,4 +16,5 @@ class ItemCategory < ApplicationRecord
 
   belongs_to :organization
   has_many :items, -> { order(name: :asc) }, inverse_of: :item_category
+  has_and_belongs_to_many :partner_groups
 end

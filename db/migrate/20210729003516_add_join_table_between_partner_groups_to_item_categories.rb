@@ -1,8 +1,8 @@
 class AddJoinTableBetweenPartnerGroupsToItemCategories < ActiveRecord::Migration[6.1]
   def change
-    create_table :partner_groups_item_categories do |t|
-      t.references :partner, foreign_key: true
-      t.references :item_categories, foreign_key: true
+    create_table :item_categories_partner_groups do |t|
+      t.references :partner_group, foreign_key: true, null: false
+      t.references :item_category, foreign_key: true, null: false
 
       t.timestamps
     end
