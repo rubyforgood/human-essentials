@@ -15,6 +15,8 @@ gem 'bootstrap-select-rails'
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
+gem 'daemons'
+gem 'delayed_job_active_record'
 gem "devise", '>= 4.7.1'
 gem 'discard', '~> 1.2'
 gem "devise_invitable"
