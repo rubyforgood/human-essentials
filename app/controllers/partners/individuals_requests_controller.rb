@@ -2,9 +2,11 @@ module Partners
   class IndividualsRequestsController < BaseController
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
-      @requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
-        [item[:name], item[:id]]
-      end.sort
+
+      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.partner.id).call
+      @formatted_requestable_items = requestable_items.map do |rt|
+        [rt.name, rt.id]
+      end
     end
 
     def create

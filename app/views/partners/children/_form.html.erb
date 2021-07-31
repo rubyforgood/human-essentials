@@ -17,7 +17,7 @@
               <%= form.text_field :last_name, class: "form-control" %>
 
               <%= form.label :item_needed, "Diaper/Item Used" %>
-              <%= form.select :item_needed_diaperid, current_partner.organization.valid_items_for_select,
+              <%= form.select :item_needed_diaperid, @formatted_requestable_items,
                               {include_blank: 'Select an item'},
                               {class: 'form-control'} %>
               <br>

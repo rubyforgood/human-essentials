@@ -198,6 +198,8 @@ note = [
     partner.partner_group = pdx_org.partner_groups.first
   end
 
+
+
   # ----------------------------------------------------------------------------
   # Creating associated records within the Partnerbase database
   #
