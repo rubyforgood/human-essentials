@@ -24,6 +24,7 @@ require "capistrano/rails/migrations"
 require "capistrano/puma"
 require "capistrano/rails/console"
 require "capistrano/scm/git"
+require "capistrano/delayed_job"
 
 install_plugin Capistrano::SCM::Git
 install_plugin Capistrano::Puma # Default puma tasks
