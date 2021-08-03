@@ -1,17 +1,3 @@
-def set_up_sidekiq
-  # require 'sidekiq/web'
-
-  # if Rails.env.production?
-  #   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-  #     compare = ->(s1, s2) { ActiveSupport::SecurityUtils.secure_compare(s1, s2) }
-  #     compare.call(username, ENV["SIDEKIQ_USERNAME"]) && compare.call(password, ENV["SIDEKIQ_PASSWORD"])
-  #   end
-  # end
-
-  # mount Sidekiq::Web => '/sidekiq'
-  # Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
-end
-
 def set_up_flipper
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
@@ -25,7 +11,6 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { sessions: "users/sessions" }
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
 
-  # set_up_sidekiq
   set_up_flipper
 
   # Add route partners/dashboard so that we can define it as partner_user_root
