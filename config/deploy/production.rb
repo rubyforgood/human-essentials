@@ -54,7 +54,6 @@ set :rvm_ruby_version, "2.7.2"
 #    user: 'deploy'
 # }
 
-# set :pty, false # capistrano-sidekiq config
 #
 # The server-based syntax can be used to override options:
 # ------------------------------------

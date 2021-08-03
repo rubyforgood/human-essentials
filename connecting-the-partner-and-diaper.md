@@ -104,10 +104,6 @@ Communication between the partner and diaper app mostly occur in jobs that run i
 bin/delayed_job start
 ``` -->
 
-<!-- Communication between the partner and diaper app mostly occur in jobs that run in the background via sidekiq. To enable this you need to start sidekiq in the diaper repo and have it handle the default queue.
-```bash
-bundle exec sidekiq -q default
-``` -->
 # Troubleshooting
 
 #####  My ENV variables are incorrect even though I changed them in the `.env` file

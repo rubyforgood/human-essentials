@@ -47,7 +47,6 @@ gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 6.1.4"
 gem "sass-rails"
-# gem "sidekiq"
 gem "strong_migrations", "~> 0.7.7"
 gem "sprockets", "~> 4.0.2"
 gem "toastr-rails"
@@ -95,7 +94,6 @@ group :development do
   gem "capistrano-bundler"
   gem "capistrano3-puma"
   gem "capistrano-rails-console", require: false
-  # gem 'capistrano-sidekiq'
   gem 'foreman'
   gem "letter_opener"
   gem "listen", "~> 3.7.0"
@@ -111,7 +109,6 @@ group :test do
   gem "launchy"
   gem 'magic_test'
   gem "rails-controller-testing"
-  # gem "rspec-sidekiq"
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 5.0'
   gem 'webdrivers', '~> 4.6'
