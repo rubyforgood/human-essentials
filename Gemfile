@@ -17,6 +17,7 @@ gem "chartkick"
 gem "cocoon"
 gem 'daemons'
 gem 'delayed_job_active_record'
+gem 'delayed_job_web'
 gem "devise", '>= 4.7.1'
 gem 'discard', '~> 1.2'
 gem "devise_invitable"
