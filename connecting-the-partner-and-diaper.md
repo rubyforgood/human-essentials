@@ -102,7 +102,7 @@ tail -F /log/development.log
 Communication between the partner and diaper app mostly occur in jobs that run in the background via delayed_job. To enable this you need to start delayed_job in the diaper repo and have it handle the default queue.
 
 ```bash
-bin/delayed_job start
+bundle exec rails jobs:work
 ```
 
 # Troubleshooting
