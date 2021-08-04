@@ -136,6 +136,11 @@ GEM
     delayed_job_active_record (4.1.6)
       activerecord (>= 3.0, < 6.2)
       delayed_job (>= 3.0, < 5)
+    delayed_job_web (1.4.4)
+      activerecord (> 3.0.0)
+      delayed_job (> 2.0.3)
+      rack-protection (>= 1.5.5)
+      sinatra (>= 1.4.4)
     devise (4.8.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -279,6 +284,8 @@ GEM
     momentjs-rails (2.20.1)
       railties (>= 3.1)
     multipart-post (2.1.1)
+    mustermann (1.1.1)
+      ruby2_keywords (~> 0.0.1)
     nenv (0.3.0)
     nio4r (2.5.8)
     nokogiri (1.12.4)
@@ -431,7 +438,8 @@ GEM
     ruby-progressbar (1.10.1)
     ruby-vips (2.0.17)
       ffi (~> 1.9)
-    rubyzip (2.3.2)
+    ruby2_keywords (0.0.5)
+    rubyzip (2.3.0)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
@@ -458,6 +466,11 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.2)
+    sinatra (2.1.0)
+      mustermann (~> 1.0)
+      rack (~> 2.2)
+      rack-protection (= 2.1.0)
+      tilt (~> 2.0)
     skylight (5.1.1)
       activesupport (>= 5.2.0)
     slop (3.6.0)
@@ -541,6 +554,7 @@ DEPENDENCIES
   daemons
   database_cleaner
   delayed_job_active_record
+  delayed_job_web
   devise (>= 4.7.1)
   devise_invitable
   discard (~> 1.2)

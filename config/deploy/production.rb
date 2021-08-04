@@ -40,8 +40,6 @@ server "104.45.147.100", roles: %w{web app db}, primary: true,
 set :rvm_type, :user
 set :rvm_ruby_version, "2.7.2"
 
-set :delayed_job_workers, 2
-
 # Custom SSH Options
 # ==================
 # You may pass any option but keep in mind that net/ssh understands a
