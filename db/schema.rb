@@ -160,8 +160,8 @@ ActiveRecord::Schema.define(version: 2021_07_29_003516) do
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
-    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 5, null: false
+    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
@@ -431,7 +431,7 @@ ActiveRecord::Schema.define(version: 2021_07_29_003516) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
