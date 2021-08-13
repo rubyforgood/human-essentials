@@ -20,6 +20,7 @@ class PartnerGroupsController < ApplicationController
 
   def new
     @partner_group = current_organization.partner_groups.new
+    @item_categories = current_organization.item_categories
   end
 
   def create

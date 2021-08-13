@@ -14,6 +14,10 @@
                 <%= f.input_field :name, class: "form-control" %>
               <% end %>
             </div>
+
+            <%= f.association :item_categories, collection: @item_categories, as: :check_boxes%>
+
+
             <!-- /.card-body -->
             <div class="card-footer">
               <%= submit_button(submit_btn_options) %>
