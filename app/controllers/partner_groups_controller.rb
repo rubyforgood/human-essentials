@@ -25,7 +25,8 @@ class PartnerGroupsController < ApplicationController
   def create
     @partner_group = current_organization.partner_groups.new(partner_group_params)
     if @partner_group.save
-      redirect_to partner_groups_path, notice: "Partner group added!"
+      # Redirect to groups tab in Partner page.
+      redirect_to partners_path + "#nav-partner-groups", notice: "Partner group added!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
