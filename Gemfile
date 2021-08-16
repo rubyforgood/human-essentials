@@ -76,7 +76,7 @@ group :development, :test do
   gem "pry-remote"
   gem "pry-nav"
   gem "rb-readline", "~> 0.5.3"
-  gem "rspec-rails", "~> 5.0.1"
+  gem "rspec-rails", "~> 5.0.2"
   gem "rubocop"
   gem "rubocop-rails", "~> 2.9.1"
   gem "terminal-notifier-guard"
