@@ -9,7 +9,7 @@ ruby "2.7.2"
 
 gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'azure-storage-blob'
-gem 'bootstrap', '~> 4.6.0'
+gem 'bootstrap', '~> 5.1.0'
 gem 'bootstrap-daterangepicker-rails'
 gem 'bootstrap-select-rails'
 gem "bugsnag"
