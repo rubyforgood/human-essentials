@@ -15,7 +15,8 @@
                 <tr>
                   <th>Group Name</th>
                   <th>Members</th>
-                  <th>Actions</th>
+                  <th>Requestable Item Categories</th>
+                  <th class='pull-right'>Actions</th>
                 </tr>
               </thead>
 
@@ -30,8 +31,18 @@
                         <% end %>
                       </ul>
                     </td>
+                    <td>
+                      <% if pg.item_categories.present? %>
+                        <ul class='list-disc'>
+                          <% pg.item_categories.each do |ic| %>
+                            <li> <%= ic.name %> </li>
+                          <% end %>
+                        </ul>
+                      <% else %>
+                        <span class='text-red-600 text-bold font-italic'>No Items Requestable</span>
+                      <% end %>
+                    </td>
                     <td class="text-right">
-                      <%= view_button_to partner_group_path(pg) %>
                       <%= edit_button_to edit_partner_group_path(pg) %>
                     </td>
                   </tr>

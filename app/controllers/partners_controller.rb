@@ -6,8 +6,8 @@ class PartnersController < ApplicationController
 
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
-    @partners = Partner.where(organization: current_organization).class_filter(filter_params).alphabetized
-    @partner_groups = PartnerGroup.where(organization: current_organization)
+    @partners = Partner.includes(:partner_group).where(organization: current_organization).class_filter(filter_params).alphabetized
+    @partner_groups = PartnerGroup.includes(:partners, :item_categories).where(organization: current_organization)
 
     respond_to do |format|
       format.html
