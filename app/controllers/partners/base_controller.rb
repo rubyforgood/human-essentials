@@ -2,7 +2,6 @@ module Partners
   class BaseController < ApplicationController
     layout 'partners/application'
 
-    before_action :redirect_to_root, unless: -> { Rails.env.test? || Flipper.enabled?(:onebase) }
     skip_before_action :authenticate_user!
     skip_before_action :authorize_user
     before_action :authenticate_partner_user!
