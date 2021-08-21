@@ -70,7 +70,13 @@ Run `bundle exec rails server` or `bundle exec bin/start` (recommended since it 
 ### Login
 To login to the web application, use these default credentials:
 
-**Diaperbase Users**
+**Super Users**
+```
+username: superadmin@example.com
+password: password
+```
+
+**Bank users**
 ```
 Organization Admin
   Email: org_admin1@example.com

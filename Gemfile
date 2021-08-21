@@ -46,7 +46,7 @@ gem "puma"
 gem "rails", "~> 6.1.4"
 gem "sass-rails"
 gem "sidekiq"
-gem "strong_migrations", "~> 0.7.7"
+gem "strong_migrations", "~> 0.7.8"
 gem "sprockets", "~> 4.0.2"
 gem "toastr-rails"
 gem "uglifier", ">= 1.3.0"
@@ -76,7 +76,7 @@ group :development, :test do
   gem "pry-remote"
   gem "pry-nav"
   gem "rb-readline", "~> 0.5.3"
-  gem "rspec-rails", "~> 5.0.1"
+  gem "rspec-rails", "~> 5.0.2"
   gem "rubocop"
   gem "rubocop-rails", "~> 2.9.1"
   gem "terminal-notifier-guard"
@@ -96,7 +96,7 @@ group :development do
   gem 'capistrano-sidekiq'
   gem 'foreman'
   gem "letter_opener"
-  gem "listen", "~> 3.5.0"
+  gem "listen", "~> 3.7.0"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
@@ -113,7 +113,7 @@ group :test do
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 5.0'
   gem 'webdrivers', '~> 4.6'
-  gem "webmock", "~> 3.12"
+  gem "webmock", "~> 3.14"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
