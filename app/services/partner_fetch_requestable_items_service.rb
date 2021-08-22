@@ -1,5 +1,4 @@
 class PartnerFetchRequestableItemsService
-
   def initialize(partner_id:)
     @partner_id = partner_id
   end

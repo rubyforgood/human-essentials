@@ -10,7 +10,7 @@
 #
 class PartnerGroup < ApplicationRecord
   belongs_to :organization
-  has_many :partners
+  has_many :partners, dependent: :nullify
   has_and_belongs_to_many :item_categories
 
   validates :organization, presence: true

@@ -11,6 +11,7 @@ AllCops:
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
+    - "db/partners_schema.rb"
     - "db/seeds.rb"
     - "db/migrate/*"
     - "bin/*"
@@ -440,5 +441,8 @@ Rails/WhereExists:
   Enabled: false
 Rails/WhereNot:
   Enabled: false
+Rails/HasAndBelongsToMany:
+  Enabled: false
 Lint/EnsureReturn: # The service objects return self in an ensure block. Not using an explicit return does not do correct behavior
   Enabled: false
+

@@ -16,5 +16,5 @@ class ItemCategory < ApplicationRecord
 
   belongs_to :organization
   has_many :items, -> { order(name: :asc) }, inverse_of: :item_category
-  has_and_belongs_to_many :partner_groups
+  has_many :partner_groups, dependent: :nullify
 end
