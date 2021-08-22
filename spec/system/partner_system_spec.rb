@@ -182,7 +182,8 @@ RSpec.describe "Partner management", type: :system, js: true do
 
       visit url_prefix + "/partners"
 
-      within("table > tbody > tr:nth-child(4) > td:nth-child(5)") { click_on "Invite" }
+      ele = find('tr', text: partner.name)
+      within(ele) { click_on "Invite" }
       invite_alert = page.driver.browser.switch_to.alert
       expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
 
@@ -191,9 +192,9 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
 
     it "shows invite button only for unapproved partners" do
-      expect(page.find(:xpath, "//table/tbody/tr[1]/td[5]")).to have_no_content('Invite')
-      expect(page.find(:xpath, "//table/tbody/tr[2]/td[5]")).to have_content('Invite')
-      expect(page.find(:xpath, "//table/tbody/tr[3]/td[5]")).to have_no_content('Invite')
+      expect(page.find('tr', text: 'Abc')).to have_content('Invited')
+      expect(page.find('tr', text: 'Bcd')).to have_content('Invite')
+      expect(page.find('tr', text: 'Cde')).to have_no_content('Invite')
     end
 
     context "when filtering" do
@@ -353,7 +354,7 @@ and clicking 'Request Approval' button."
     let!(:awaiting_review_partner) { create(:partner, name: "Beau Brummel", status: :awaiting_review) }
 
     context "when partner has :invited status" do
-      before { visit_approval_page(1) }
+      before { visit_approval_page(partner_name: invited_partner.name) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
       it { expect(page).to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
@@ -365,7 +366,7 @@ and clicking 'Request Approval' button."
     end
 
     context "when partner has :awaiting_review status" do
-      before { visit_approval_page(2) }
+      before { visit_approval_page(partner_name: awaiting_review_partner.name) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
       it { expect(page).not_to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
@@ -500,7 +501,8 @@ and clicking 'Request Approval' button."
 
 end
 
-def visit_approval_page(table_row)
+def visit_approval_page(partner_name:)
   visit url_prefix + "/partners"
-  within("table > tbody > tr:nth-child(#{table_row}) > td:nth-child(5)") { click_on "Review Application" }
+  ele = find('tr', text: partner_name)
+  within(ele) { click_on "Review Application" }
 end
