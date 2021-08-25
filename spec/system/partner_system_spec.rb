@@ -498,7 +498,6 @@ and clicking 'Request Approval' button."
       end
     end
   end
-
 end
 
 def visit_approval_page(partner_name:)
