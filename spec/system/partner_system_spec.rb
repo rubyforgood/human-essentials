@@ -470,7 +470,7 @@ and clicking 'Request Approval' button."
     end
 
     describe 'editing a existing partner group' do
-      let!(:existing_partner_group) { create(:partner_group) }
+      let!(:existing_partner_group) { create(:partner_group, organization: @organization) }
       before do
         existing_partner_group.item_categories << item_category_1
       end
