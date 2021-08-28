@@ -337,6 +337,25 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
       end
 
+      context "when viewing a partner's users" do
+        subject { url_prefix + "/partners/#{partner.id}" }
+        let(:partner) { create(:partner, name: "Partner") }
+        let(:partner_user) { partner.profile.users.first }
+        let(:invitation_sent_at) { partner_user.invitation_sent_at.strftime('%B %-d, %Y') }
+        let(:last_sign_in_at) { partner_user.last_sign_in_at.strftime('%B %-d, %Y') }
+
+        it 'can show users of a partner' do
+          visit subject
+
+          within("#partner-users") do
+            expect(page).to have_content(partner_user.name)
+            expect(page).to have_content(partner_user.email)
+            expect(page).to have_content(invitation_sent_at)
+            expect(page).to have_content(last_sign_in_at)
+          end
+        end
+      end
+
       context "when partner has :awaiting_review status" do
         before { visit_approval_page(partner_name: awaiting_review_partner.name) }
 
