@@ -104,6 +104,7 @@ group :test do
   gem "capybara-screenshot"
   gem "launchy"
   gem 'magic_test'
+  gem "orderly", "~> 0.1"
   gem "rails-controller-testing"
   gem "rspec-sidekiq"
   gem 'simplecov'
