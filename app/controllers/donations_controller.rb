@@ -34,10 +34,8 @@ class DonationsController < ApplicationController
 
     respond_to do |format|
       format.html
-      # TODO: can we do something fancy here to eagerly load the line
-      # items? (or maybe that's already been done for us?)
       format.csv do
-        send_data Exports::ExportDonationsCSVService.new(@donations).generate_csv, filename: "Donations-#{Time.zone.today}.csv"
+        send_data Exports::ExportDonationsCSVService.new(donation_ids: @donations.map(&:id)).generate_csv, filename: "Donations-#{Time.zone.today}.csv"
       end
     end
   end

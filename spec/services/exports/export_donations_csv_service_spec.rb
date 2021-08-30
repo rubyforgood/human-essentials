@@ -1,19 +1,21 @@
 describe Exports::ExportDonationsCSVService do
   describe '#generate_csv_data' do
-    subject { described_class.new(Donation.where(id: donation_ids)).generate_csv_data }
+    subject { described_class.new(donation_ids: donation_ids).generate_csv_data }
     let(:donation_ids) { donations.map(&:id) }
     let(:donations) do
-      Array.new(3) do
+      start_time = Time.current
+      Array.new(3) do |i|
         create(
           :donation,
           :with_items,
           donation_site: create(
-            :donation_site, name: "Space Needle",
+            :donation_site, name: "Space Needle #{i}",
           ),
           item: FactoryBot.create(
             :item, name: Faker::Appliance.equipment
           ),
-          issued_at: Time.current
+          issued_at: start_time + i.days,
+          comment: "This is the #{i}-th donation in the test."
         )
       end
     end
@@ -33,6 +35,8 @@ describe Exports::ExportDonationsCSVService do
         donation.line_items.map(&:item).map(&:name)
       end.flatten
 
+      expect(item_names).not_to be_empty
+
       item_names.sort.uniq
     end
 
@@ -44,7 +48,7 @@ describe Exports::ExportDonationsCSVService do
           donation.source_view,
           donation.issued_at.strftime("%F"),
           donation.donation_site.try(:name),
-          donation.storage_location.name,
+          donation.storage_view,
           donation.line_items.total,
           donation.line_items.size,
           donation.comment

@@ -1,13 +1,18 @@
 module Exports
   class ExportDonationsCSVService
-    def initialize(donations)
-      # TODO: remove this comment unless we actually do some kind of
-      # clever lookup
-      #
+    def initialize(donation_ids:)
       # Use a where lookup so that I can eager load all the resources
       # needed rather than depending on external code to do it for me.
       # This makes this code more self contained and efficient!
-      @donations = donations
+      @donations = Donation.includes(
+        :storage_location,
+        :donation_site,
+        :diaper_drive,
+        :diaper_drive_participant,
+        line_items: [:item]
+      ).where(
+        id: donation_ids,
+      ).order(created_at: :asc)
     end
 
     def generate_csv
@@ -67,7 +72,7 @@ module Exports
           donation.donation_site.try(:name)
         },
         "Storage Location" => ->(donation) {
-          donation.storage_location.name
+          donation.storage_view
         },
         "Quantity of Items" => ->(donation) {
           donation.line_items.total
