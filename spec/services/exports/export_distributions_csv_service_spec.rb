@@ -61,4 +61,3 @@ describe Exports::ExportDistributionsCSVService do
     end
   end
 end
-
