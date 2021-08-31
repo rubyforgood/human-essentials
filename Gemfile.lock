@@ -603,7 +603,7 @@ DEPENDENCIES
   rails-erd
   rb-readline (~> 0.5.3)
   recaptcha
-  rspec-rails (~> 5.0.1)
+  rspec-rails (~> 5.0.2)
   rubocop
   rubocop-rails (~> 2.9.1)
   sass-rails
