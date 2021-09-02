@@ -48,6 +48,22 @@ class AccountRequest < ApplicationRecord
     organization.present?
   end
 
+  def approved?
+    "Approved" if confirmed? && AccountRequest.includes([:organization])
+  end
+
+  def pending_approval?
+    "Pending Approval" if confirmed? && !AccountRequest.includes([:organization])
+  end
+
+  def requested?
+    "Requested" unless confirmed?
+  end
+
+  def status
+    approved? || pending_approval? || requested?
+  end
+
   private
 
   def email_not_already_used_by_organization
