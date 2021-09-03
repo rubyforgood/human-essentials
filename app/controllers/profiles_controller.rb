@@ -1,11 +1,4 @@
 class ProfilesController < ApplicationController
-  def show
-    @partner = current_organization.partners.find(params[:id])
-
-    @partner_profile = @partner.profile
-    @fields = current_organization.partner_form_fields
-  end
-
   def edit
     @partner = current_organization.partners.find(params[:id]).profile
   end

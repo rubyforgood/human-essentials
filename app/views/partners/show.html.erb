@@ -107,6 +107,28 @@
           </div>
         </section>
 
+        <section class="card card-info card-outline" id='partner-information'>
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Information</h2>
+            </div>
+            <div class='pull-right'>
+              <% tooltip_message = "Partner has not requested approval yet. Partners are able to request approval by going into 'My Organization' and clicking 'Request Approval' button." %>
+              <span id="pending-approval-request-tooltip" title="<%= tooltip_message unless @partner.awaiting_review? %>">
+                <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.awaiting_review? } %>
+              </span>
+              <%= edit_button_to edit_profile_path(@partner), { text: "Edit Information", size: "md" } %>
+            </div>
+          </div>
+          <div class="card-body p-2">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 p-4">
+                <%= render partial: 'profiles/show', locals: { partner_profile: @partner.profile, partner_profile_fields: @partner_profile_fields  } %>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <% if @partner.documents.present? %>
           <%= render "documents", partner: @partner %>
         <% end %>
@@ -185,3 +207,9 @@
     </div><!-- modal-dialog -->
   </div><!-- addUserModal -->
 </section>
+
+<script>
+$(function () {
+  $('#pending-approval-request-tooltip').tooltip()
+})
+</script>

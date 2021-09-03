@@ -45,6 +45,7 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.find(params[:id])
     @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
+    @partner_profile_fields = current_organization.partner_form_fields
 
     respond_to do |format|
       format.html

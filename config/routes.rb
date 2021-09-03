@@ -145,7 +145,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :profiles, only: %i(edit show update)
+    resources :profiles, only: %i(edit update)
     resources :items do
       patch :restore, on: :member
     end
