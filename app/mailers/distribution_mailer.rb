@@ -10,7 +10,15 @@ class DistributionMailer < ApplicationMailer
 
     @partner = distribution.partner
     @distribution = distribution
+
+    delivery_method = @distribution.delivery? ? 'delivered' : 'picked up'
     @default_email_text = current_organization.default_email_text
+    @default_email_text_interpolated = TextInterpolatorService.new(@default_email_text.body.to_s, {
+                                                                     delivery_method: delivery_method,
+                                                                     distribution_date: @distribution.issued_at.strftime("%m/%d/%Y"),
+                                                                     partner_name: @partner.name
+                                                                   }).call
+
     @comment = distribution.comment
     @from_email = current_organization.email.presence || current_organization.users.first.email
     @distribution_changes = distribution_changes
