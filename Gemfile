@@ -88,12 +88,6 @@ group :development do
   gem "binding_of_caller"
   gem "better_errors"
   gem "bullet"
-  gem "capistrano-rails"
-  gem "capistrano-rvm"
-  gem "capistrano-bundler"
-  gem "capistrano3-puma"
-  gem "capistrano-rails-console", require: false
-  gem 'capistrano-sidekiq'
   gem 'foreman'
   gem "letter_opener"
   gem "listen", "~> 3.7.0"
