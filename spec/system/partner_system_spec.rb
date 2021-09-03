@@ -316,12 +316,13 @@ RSpec.describe "Partner management", type: :system, js: true do
 
     it "User can update a partner" do
       visit subject
-      fill_in "Name", with: "Franklin"
+      name = Faker::Name.first_name
+      fill_in "Name", with: name
       click_button "Update Partner"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page).to have_current_path(url_prefix + "/partners/#{partner.id}")
       partner.reload
-      expect(partner.name).to eq("Franklin")
+      expect(partner.name).to eq(name)
     end
 
     it "prevents a user from updating a partner with empty name" do

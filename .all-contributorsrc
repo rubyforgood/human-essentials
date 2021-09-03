@@ -918,6 +918,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kinduff",
+      "name": "Alejandro AR",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1270156?v=4",
+      "profile": "http://kinduff.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "hatsu38",
+      "name": "hatsu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16137809?v=4",
+      "profile": "https://github.com/hatsu38",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

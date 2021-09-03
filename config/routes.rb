@@ -58,14 +58,6 @@ Rails.application.routes.draw do
     resources :account_requests, only: [:index]
   end
 
-  namespace :api, defaults: { format: "json" } do
-    namespace :v1 do
-      resources :partner_requests, only: %i(create show)
-      resources :partner_approvals, only: :create
-      resources :family_requests, only: %i(create show)
-    end
-  end
-
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_server_error", via: :all
 
@@ -149,6 +141,7 @@ Rails.application.routes.draw do
     resources :items do
       patch :restore, on: :member
     end
+    resources :item_categories
     resources :partners do
       collection do
         post :import_csv
