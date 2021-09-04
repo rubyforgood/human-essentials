@@ -17,9 +17,8 @@ RSpec.describe "Partner management", type: :system, js: true do
 
         assert page.has_content? partner_awaiting_approval.name
         click_on 'Review Application'
-        assert page.has_content? "Profile / Application Details for #{partner_awaiting_approval.name}"
-        assert page.has_content? "#{partner_awaiting_approval.name} - Application Details - #{partner_awaiting_approval.email}"
 
+        assert page.has_content?('Application & Information')
         click_on 'Approve Partner'
         assert page.has_content? 'Partner approved!'
 
@@ -40,10 +39,8 @@ RSpec.describe "Partner management", type: :system, js: true do
         visit url_prefix + "/partners"
 
         assert page.has_content? partner_awaiting_approval.name
-        click_on 'Review Application'
-        assert page.has_content? "Profile / Application Details for #{partner_awaiting_approval.name}"
-        assert page.has_content? "#{partner_awaiting_approval.name} - Application Details - #{partner_awaiting_approval.email}"
 
+        click_on 'Review Application'
         click_on 'Approve Partner'
         assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 

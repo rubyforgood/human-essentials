@@ -134,39 +134,6 @@ RSpec.describe "Partners", type: :request do
     end
   end
 
-  describe "GET #approve_partner" do
-    subject { -> { get profile_path(id: partner.id, organization_id: partner.organization_id) } }
-    let(:partner) { create(:partner) }
-
-    it 'should contain the proper page header' do
-      subject.call
-      expect(response.body).to include("Profile / Application Details")
-      expect(response.body).to include("#{partner.name} - Application Details")
-    end
-
-    context 'when the partner is awaiting review' do
-      before do
-        partner.awaiting_review!
-        subject.call
-      end
-
-      it 'should show the Approve Partner button' do
-        expect(response.body).to include("Approve Partner")
-      end
-    end
-
-    context 'when the partner is not awaiting review' do
-      before do
-        partner.invited!
-        subject.call
-      end
-
-      it 'should show the Approve Partner button' do
-        expect(response.body).to include("Approve Partner")
-      end
-    end
-  end
-
   describe "GET #new" do
     it "returns http success" do
       get new_partner_path(default_params)

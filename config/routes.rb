@@ -150,7 +150,6 @@ Rails.application.routes.draw do
         get :profile
         patch :profile
         get :approve_application
-        get :approve_partner
         post :invite
         post :invite_partner_user
         post :recertify_partner
