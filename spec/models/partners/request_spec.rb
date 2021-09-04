@@ -22,7 +22,6 @@ RSpec.describe Partners::Request, type: :model do
 
   describe 'validations' do
     it { should validate_presence_of(:partner) }
-    it { should validate_presence_of(:item_requests) }
     it { should accept_nested_attributes_for(:item_requests) }
   end
 end
