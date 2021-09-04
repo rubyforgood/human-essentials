@@ -31,7 +31,7 @@ RSpec.describe "Profiles", type: :request do
 
       it "redirects to #show" do
         put profile_path(default_params.merge(id: partner, partners_partner: profiles_params))
-        expect(response).to redirect_to(partner_path(partner))
+        expect(response).to redirect_to(partner_path(partner) + "#partner-information")
       end
     end
   end
