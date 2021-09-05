@@ -25,24 +25,25 @@ describe Partners::RequestCreateService do
     let(:additional_attrs) { { for_families: true } }
 
     context 'when the arguments are incorrect' do
-      context 'because no item_requests_attributes were defined' do
+      context 'because no item_requests_attributes and comments were defined' do
         let(:item_requests_attributes) { [] }
+        let(:comments) { "" }
 
         it 'should return the Partners::Request object with an error' do
           result = subject
 
           expect(result).to be_a_kind_of(Partners::RequestCreateService)
-          expect(result.errors[:item_requests]).to eq(["can't be blank"])
+          expect(result.errors[:base]).to eq(["completely empty request"])
         end
       end
 
       context 'because a unrecogonized item_id was provided' do
         let(:item_requests_attributes) do
           [
-            {
+            ActionController::Parameters.new(
               item_id: 0,
               quantity: Faker::Number.within(range: 1..10)
-            }
+            )
           ]
         end
 
