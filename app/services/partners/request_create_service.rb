@@ -23,6 +23,10 @@ module Partners
         end
       end
 
+      if @partner_request.comments.blank? && @partner_request.item_requests.blank?
+        errors.add(:base, 'completely empty request')
+      end
+
       return self if errors.present?
 
       Partners::Base.transaction do
@@ -45,7 +49,12 @@ module Partners
     attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs
 
     def populate_item_request(partner_request)
-      item_requests = item_requests_attributes.map do |ira|
+      # Exclude any line item that is completely empty
+      formatted_line_items = item_requests_attributes.reject do |attrs|
+        attrs['item_id'].blank? && attrs['quantity'].blank?
+      end
+
+      item_requests = formatted_line_items.map do |ira|
         Partners::ItemRequest.new(
           item_id: ira['item_id'],
           quantity: ira['quantity'],
