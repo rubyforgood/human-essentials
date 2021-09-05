@@ -45,6 +45,7 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.find(params[:id])
     @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
+    @partner_profile_fields = current_organization.partner_form_fields
 
     respond_to do |format|
       format.html
@@ -56,13 +57,6 @@ class PartnersController < ApplicationController
 
   def new
     @partner = current_organization.partners.new
-  end
-
-  def approve_partner
-    @partner = current_organization.partners.find(params[:id])
-
-    @partner_profile = @partner.profile
-    @agency = @partner_profile.export_hash
   end
 
   def edit
@@ -157,10 +151,6 @@ class PartnersController < ApplicationController
   end
 
   private
-
-  def autovivifying_hash
-    Hash.new { |ht, k| ht[k] = autovivifying_hash }
-  end
 
   def partner_params
     params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, documents: [])
