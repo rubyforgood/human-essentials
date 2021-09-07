@@ -17,9 +17,8 @@ RSpec.describe "Partner management", type: :system, js: true do
 
         assert page.has_content? partner_awaiting_approval.name
         click_on 'Review Application'
-        assert page.has_content? "Partner Approval Request for #{partner_awaiting_approval.name}"
-        assert page.has_content? "#{partner_awaiting_approval.name} - Application Details - #{partner_awaiting_approval.email}"
 
+        assert page.has_content?('Application & Information')
         click_on 'Approve Partner'
         assert page.has_content? 'Partner approved!'
 
@@ -40,42 +39,13 @@ RSpec.describe "Partner management", type: :system, js: true do
         visit url_prefix + "/partners"
 
         assert page.has_content? partner_awaiting_approval.name
-        click_on 'Review Application'
-        assert page.has_content? "Partner Approval Request for #{partner_awaiting_approval.name}"
-        assert page.has_content? "#{partner_awaiting_approval.name} - Application Details - #{partner_awaiting_approval.email}"
 
+        click_on 'Review Application'
         click_on 'Approve Partner'
         assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 
         expect(partner_awaiting_approval.reload.approved?).to eq(false)
         expect(partner_awaiting_approval.profile.reload.partner_status).not_to eq(Partners::Partner::VERIFIED_STATUS)
-      end
-    end
-  end
-
-  describe 'adding another user to a partner account' do
-    let(:partner) { create(:partner, status: 'invited') }
-    before do
-      @user.update(organization_admin: true)
-    end
-
-    context 'when adding a new user to a partner account succesfully' do
-      let(:email) { Faker::Internet.email }
-
-      before do
-        visit url_prefix + "/partners/#{partner.id}"
-
-        click_on 'Add/Remind Partner'
-        assert page.has_content? "Add a User or Send a Reminder for #{partner.name}"
-
-        fill_in 'email', with: email
-
-        find_button('Invite User').click
-        assert page.has_content? "We have invited #{email} to #{partner.name}!"
-      end
-
-      it 'should create a new user for that partner' do
-        expect(Partners::User.find_by(email: email, partner: partner.profile)).not_to eq(nil)
       end
     end
   end
@@ -317,12 +287,13 @@ RSpec.describe "Partner management", type: :system, js: true do
 
     it "User can update a partner" do
       visit subject
-      fill_in "Name", with: "Franklin"
+      name = Faker::Name.first_name
+      fill_in "Name", with: name
       click_button "Update Partner"
 
-      expect(page.find(".alert")).to have_content "updated"
+      expect(page).to have_current_path(url_prefix + "/partners/#{partner.id}")
       partner.reload
-      expect(partner.name).to eq("Franklin")
+      expect(partner.name).to eq(name)
     end
 
     it "prevents a user from updating a partner with empty name" do

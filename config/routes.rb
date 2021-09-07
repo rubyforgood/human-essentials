@@ -137,6 +137,7 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :profiles, only: %i(edit update)
     resources :items do
       patch :restore, on: :member
     end
@@ -146,8 +147,9 @@ Rails.application.routes.draw do
         post :import_csv
       end
       member do
+        get :profile
+        patch :profile
         get :approve_application
-        get :approve_partner
         post :invite
         post :invite_partner_user
         post :recertify_partner

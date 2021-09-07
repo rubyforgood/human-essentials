@@ -128,6 +128,7 @@ $(document).on('turbolinks:load', load_quagga);
  * Handle loading on specified tab in the URL parameter. In case we would like
  * to direct a user to a specific tab on a page rather than the default.
  */
+
 $(document).ready(function () {
   var hash = location.hash.replace(/^#/, '');  // ^ means starting, meaning only match the first hash
   if (hash) {

@@ -22,7 +22,7 @@
                               {class: 'form-control'} %>
               <br>
 
-              <%= form.input :date_of_birth, as: :date, label: "Date of Birth" %>
+              <%= form.input :date_of_birth, as: :date, start_year: 20.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
               <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>
 
               <%= form.label :child_lives_with, "Child Lives With" %><br>

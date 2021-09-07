@@ -26,18 +26,8 @@
   "devDependencies": {
     "all-contributors-cli": "^6.20.0",
     "autoprefixer": "^10.2.5",
-    "husky": "^4.3.4",
-    "lint-staged": "^10.5.3",
     "postcss": "^8.2.15",
     "postcss-cssnext": "^3.1.0",
     "webpack-dev-server": "^3.11.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.rb": "rubocop -a"
   }
 }
