@@ -157,7 +157,9 @@ RSpec.describe "Partner management", type: :system, js: true do
       expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
 
       invite_alert.accept
-      expect(page.find(".alert")).to have_content "invited!"
+      Capybara.using_wait_time 5 do
+        expect(page.find(".alert")).to have_content "invited!"
+      end
     end
 
     it "shows invite button only for unapproved partners" do
