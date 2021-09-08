@@ -63,7 +63,7 @@ RSpec.describe "Partner management", type: :system, js: true do
         visit url_prefix + "/partners/#{partner.id}"
 
         click_on 'Add/Remind Partner'
-        assert page.has_content? "Add a User or Send a Reminder for #{partner.name}"
+        assert page.has_content?("Add a User or Send a Reminder for #{partner.name}", wait: 5)
 
         fill_in 'email', with: email
 
