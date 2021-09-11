@@ -352,6 +352,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             expect(page).to have_content(partner_user.email)
             expect(page).to have_content(invitation_sent_at)
             expect(page).to have_content(last_sign_in_at)
+            expect("Invitation Sent").to appear_before("Last Logged In")
+            expect(invitation_sent_at).to appear_before(last_sign_in_at)
           end
         end
       end

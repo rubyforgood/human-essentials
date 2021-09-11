@@ -41,8 +41,8 @@ FactoryBot.define do
         email: partner.email,
         partner: partners_partner,
         password: 'password!',
-        invitation_sent_at: Time.utc('2019-08-20'),
-        last_sign_in_at: Time.utc('2019-08-21')
+        invitation_sent_at: Time.utc(2021, 9, 8, 12, 43, 4),
+        last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
       )
     end
   end
