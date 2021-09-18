@@ -1,7 +1,7 @@
 # Human Essentials 
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-102-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-103-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
@@ -378,6 +378,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/MohamedHegab"><img src="https://avatars.githubusercontent.com/u/7612401?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mohamed Hegab</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=MohamedHegab" title="Code">💻</a></td>
     <td align="center"><a href="http://kinduff.com"><img src="https://avatars.githubusercontent.com/u/1270156?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alejandro AR</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=kinduff" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/hatsu38"><img src="https://avatars.githubusercontent.com/u/16137809?v=4?s=100" width="100px;" alt=""/><br /><sub><b>hatsu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=hatsu38" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/matt-glover"><img src="https://avatars.githubusercontent.com/u/850480?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matt Glover</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=matt-glover" title="Code">💻</a></td>
   </tr>
 </table>
 
