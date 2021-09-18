@@ -15,7 +15,7 @@ RSpec.describe PartnerMailer, type: :mailer do
 
     it "should be sent to the partner main email with the correct subject line" do
       expect(subject.to).to eq([partner.email])
-      expect(subject.from).to eq(['info@diaper.app'])
+      expect(subject.from).to eq(['info@humanessentials.app'])
       expect(subject.subject).to eq("[Action Required] Please Update Your Agency Information")
     end
   end
