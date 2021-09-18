@@ -1,5 +1,5 @@
 class PartnerMailer < ApplicationMailer
-  default from: "info@diaper.app"
+  default from: "info@humanessentials.app"
 
   def recertification_request(partner:)
     @partner = partner
