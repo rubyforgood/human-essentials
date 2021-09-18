@@ -104,7 +104,7 @@ group :test do
   gem "capybara-screenshot"
   gem "launchy"
   gem 'magic_test'
-  gem "orderly", "~> 0.1"
+  gem "orderly", "~> 0.1" # used for feature testing where this appears before that
   gem "rails-controller-testing"
   gem "rspec-sidekiq"
   gem 'simplecov'
