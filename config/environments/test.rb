@@ -10,10 +10,13 @@ Rails.application.configure do
   # and recreated between test runs. Don't rely on the data there!
   config.cache_classes = true
 
-  # Do not eager load code on boot. This avoids loading your whole application
-  # just for the purpose of running a single test. If you are using a tool that
-  # preloads Rails for running tests, you may have to set it to true.
-  config.eager_load = false
+  # Eager load code on boot in CI. This produces slightly more consistent behavior from
+  # various system specs, may improve the accuracy of the simplecov coverage metrics when
+  # running with spring, and can improve the runtime of the full test suite in some cases.
+  # Disable eager load in local development because the average the additional load time when
+  # running a single test file at the time of this comment was around 2-3 seconds slower with
+  # eager loading enabled. For a single test within a file it lost even more time.
+  config.eager_load = ENV["CI"] == "true"
 
   config.action_mailer.default_url_options = { host: "localhost" }
 
