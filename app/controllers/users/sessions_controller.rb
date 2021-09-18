@@ -2,6 +2,12 @@
 class Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
   layout "devise"
+  before_action :check_failed_login
+  skip_before_action :authorize_user
+  skip_before_action :authenticate_user!
+  # This one causes a redirect require_no_authentication
+  skip_before_action :require_no_authentication
+
   # GET /resource/sign_in
   def new
     super
@@ -23,4 +29,10 @@ class Users::SessionsController < Devise::SessionsController
   # def configure_sign_in_params
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   # end
+
+  private
+
+  def check_failed_login
+    @failed_login = (options = request.env["warden.options"]) && options[:action] == "unauthenticated" && options[:message] == :not_found_in_database
+  end
 end
