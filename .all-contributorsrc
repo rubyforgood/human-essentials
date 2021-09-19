@@ -936,6 +936,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "matt-glover",
+      "name": "Matt Glover",
+      "avatar_url": "https://avatars.githubusercontent.com/u/850480?v=4",
+      "profile": "https://github.com/matt-glover",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "js-sapphire",
+      "name": "js-sapphire",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41758940?v=4",
+      "profile": "https://github.com/js-sapphire",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

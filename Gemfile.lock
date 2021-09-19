@@ -310,6 +310,9 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
+    pry-doc (1.1.0)
+      pry (~> 0.11)
+      yard (~> 0.9.11)
     pry-nav (0.3.0)
       pry (>= 0.9.10, < 0.13.0)
     pry-rails (0.3.9)
@@ -358,7 +361,7 @@ GEM
       activesupport (>= 4.2)
       choice (~> 0.2.0)
       ruby-graphviz (~> 1.2)
-    rails-html-sanitizer (1.4.1)
+    rails-html-sanitizer (1.4.2)
       loofah (~> 2.3)
     railties (6.1.4.1)
       actionpack (= 6.1.4.1)
@@ -504,7 +507,7 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    webpacker (5.4.2)
+    webpacker (5.4.3)
       activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
@@ -515,6 +518,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yajl-ruby (1.4.1)
+    yard (0.9.26)
     zeitwerk (2.4.2)
 
 PLATFORMS
@@ -576,6 +580,7 @@ DEPENDENCIES
   pg (~> 1.2.3)
   popper_js
   prawn-rails
+  pry-doc
   pry-nav
   pry-rails
   pry-remote

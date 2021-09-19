@@ -203,7 +203,7 @@ note = [
   # ----------------------------------------------------------------------------
   # Creating associated records within the Partnerbase database
   #
-  # **We have two seperate database. One for diaperbase and the other for partnerbase**
+  # **We have two separate database. One for diaperbase and the other for partnerbase**
   # ----------------------------------------------------------------------------
 
   partner = Partners::Partner.create!({
