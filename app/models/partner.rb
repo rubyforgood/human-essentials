@@ -29,7 +29,7 @@ class Partner < ApplicationRecord
   belongs_to :organization
   belongs_to :partner_group, optional: true
   has_many :item_categories, through: :partner_group
-  has_many :items, through: :item_categories
+  has_many :requestable_items, through: :item_categories, source: :items
 
   has_many :distributions, dependent: :destroy
   has_many :requests, dependent: :destroy

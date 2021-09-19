@@ -33,7 +33,7 @@ describe PartnerFetchRequestableItemsService do
       end
 
       it 'should return all active and visible items specified by the item associated with' do
-        expect(subject).to eq(partner.items.active.visible)
+        expect(subject).to eq(partner.requestable_items.active.visible)
       end
     end
   end

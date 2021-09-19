@@ -6,7 +6,7 @@ class PartnerFetchRequestableItemsService
   def call
     return organization.items.active.visible if partner.partner_group.blank?
 
-    partner.items.active.visible
+    partner.requestable_items.active.visible
   end
 
   private

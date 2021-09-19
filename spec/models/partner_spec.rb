@@ -20,7 +20,7 @@ RSpec.describe Partner, type: :model do
     it { should belong_to(:organization) }
     it { should belong_to(:partner_group).optional }
     it { should have_many(:item_categories).through(:partner_group) }
-    it { should have_many(:items).through(:item_categories) }
+    it { should have_many(:requestable_items).through(:item_categories).source(:items) }
     it { should have_many(:requests) }
     it { should have_many(:distributions) }
     it { should have_many(:requests) }
