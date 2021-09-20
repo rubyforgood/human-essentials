@@ -52,11 +52,11 @@
                 <div>
                   <h4>Default Intake Location</h4>
                   <p><%= fa_icon "building" %>
-                    <%= @organization.intake_location.blank? ? 'Not defined' : StorageLocation.find(@organization.intake_location).name %>
+                    <%= StorageLocation.find_by(id: @organization.intake_location)&.name || "Not Defined" %>
                   </p>
                   <h4>Default Storage Location</h4>
                   <p><%= fa_icon "building-o" %>
-                    <%= @organization.default_storage_location.blank? ? 'Not defined' : StorageLocation.find(@organization.default_storage_location).name %>
+                    <%= StorageLocation.find_by(id: @organization.default_storage_location)&.name || "Not Defined" %>
                   </p>
                 </div>
               </div>
