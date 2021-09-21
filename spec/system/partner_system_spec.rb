@@ -152,7 +152,8 @@ RSpec.describe "Partner management", type: :system, js: true do
 
       visit url_prefix + "/partners"
 
-      within("table > tbody > tr:nth-child(4) > td:nth-child(5)") { click_on "Invite" }
+      ele = find('tr', text: partner.name)
+      within(ele) { click_on "Invite" }
       invite_alert = page.driver.browser.switch_to.alert
       expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
 
@@ -163,9 +164,9 @@ RSpec.describe "Partner management", type: :system, js: true do
     end
 
     it "shows invite button only for unapproved partners" do
-      expect(page.find(:xpath, "//table/tbody/tr[1]/td[5]")).to have_no_content('Invite')
-      expect(page.find(:xpath, "//table/tbody/tr[2]/td[5]")).to have_content('Invite')
-      expect(page.find(:xpath, "//table/tbody/tr[3]/td[5]")).to have_no_content('Invite')
+      expect(page.find('tr', text: 'Abc')).to have_content('Invited')
+      expect(page.find('tr', text: 'Bcd')).to have_content('Invite')
+      expect(page.find('tr', text: 'Cde')).to have_no_content('Invite')
     end
 
     context "when filtering" do
@@ -326,7 +327,7 @@ and clicking 'Request Approval' button."
     let!(:awaiting_review_partner) { create(:partner, name: "Beau Brummel", status: :awaiting_review) }
 
     context "when partner has :invited status" do
-      before { visit_approval_page(1) }
+      before { visit_approval_page(partner_name: invited_partner.name) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
       it { expect(page).to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
@@ -338,7 +339,7 @@ and clicking 'Request Approval' button."
     end
 
     context "when partner has :awaiting_review status" do
-      before { visit_approval_page(2) }
+      before { visit_approval_page(partner_name: awaiting_review_partner.name) }
 
       it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
       it { expect(page).not_to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
@@ -349,9 +350,131 @@ and clicking 'Request Approval' button."
       end
     end
   end
+
+  describe 'changing partner group association' do
+    before do
+      sign_in(@user)
+      visit url_prefix + "/partners/#{@partner.id}"
+    end
+    let!(:existing_partner_group) { create(:partner_group) }
+
+    context 'when the partner has no partner group' do
+      before do
+        expect(@partner.partner_group).to be_nil
+      end
+
+      it 'it should say they can request every item' do
+        assert page.has_content? 'All Items Requestable'
+        assert page.has_content? 'Settings'
+        expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(@organization.items.active.visible)
+      end
+    end
+
+    context 'when a partner is assigned to partner group' do
+      before do
+        assert page.has_content? 'All Items Requestable'
+        expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(@organization.items.active.visible)
+      end
+
+      context 'that has requestable item categories' do
+        let!(:item_category) do
+          ic = create(:item_category, organization: @organization)
+          existing_partner_group.item_categories << ic
+          ic
+        end
+        let!(:items_in_category) { create_list(:item, 3, item_category_id: item_category.id) }
+
+        before do
+          click_on 'Edit'
+          select existing_partner_group.name
+          click_on 'Update Partner'
+        end
+
+        it 'should properly indicate the requestable items and adjust the partners requestable items' do
+          assert page.has_content? item_category.name
+          expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(items_in_category)
+        end
+      end
+
+      context 'that has no requestable item categories' do
+        before do
+          expect(existing_partner_group.item_categories).to be_empty
+          click_on 'Edit'
+          select existing_partner_group.name
+          click_on 'Update Partner'
+        end
+
+        it 'should properly indicate the requestable items and adjust the partners requestable items' do
+          assert page.has_content? 'No Items Requestable'
+          expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq([])
+        end
+      end
+    end
+  end
+
+  describe "partner group management", type: :system, js: true do
+    before do
+      sign_in(@user)
+    end
+
+    let!(:url_prefix) { "/#{@organization.to_param}" }
+    let!(:item_category_1) { create(:item_category, organization: @organization) }
+    let!(:item_category_2) { create(:item_category, organization: @organization) }
+    let!(:items_in_category_1) { create_list(:item, 3, item_category_id: item_category_1.id) }
+    let!(:items_in_category_2) { create_list(:item, 3, item_category_id: item_category_2.id) }
+
+    describe 'creating a new partner group' do
+      it 'should allow creating a new partner group with item categories' do
+        visit url_prefix + "/partners"
+
+        click_on 'Groups'
+        click_on 'New Partner Group'
+        fill_in 'Name *', with: 'Test Group'
+
+        # Click on the second item category
+        find("input#partner_group_item_category_ids_#{item_category_2.id}").click
+
+        find_button('Add Partner Group').click
+
+        assert page.has_content? 'Group Name'
+        assert page.has_content? 'Test Group'
+        assert page.has_content? item_category_2.name
+      end
+    end
+
+    describe 'editing a existing partner group' do
+      let!(:existing_partner_group) { create(:partner_group, organization: @organization) }
+      before do
+        existing_partner_group.item_categories << item_category_1
+      end
+
+      it 'should allow updating the partner name' do
+        visit url_prefix + "/partners"
+
+        click_on 'Groups'
+        assert page.has_content? existing_partner_group.name
+        assert page.has_content? item_category_1.name
+
+        click_on 'Edit'
+        fill_in 'Name *', with: 'New Group Name'
+
+        # Unset the existing category
+        find("input#partner_group_item_category_ids_#{item_category_1.id}").click
+        # Set a new one on the category
+        find("input#partner_group_item_category_ids_#{item_category_2.id}").click
+
+        find_button('Update Partner Group').click
+
+        assert page.has_content? 'New Group Name'
+        refute page.has_content? item_category_1.name
+        assert page.has_content? item_category_2.name
+      end
+    end
+  end
 end
 
-def visit_approval_page(table_row)
+def visit_approval_page(partner_name:)
   visit url_prefix + "/partners"
-  within("table > tbody > tr:nth-child(#{table_row}) > td:nth-child(5)") { click_on "Review Application" }
+  ele = find('tr', text: partner_name)
+  within(ele) { click_on "Review Application" }
 end

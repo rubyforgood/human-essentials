@@ -1,0 +1,47 @@
+<div class="tab-pane fade show active" id="nav-partners" role="tabpanel" aria-labelledby="nav-partners-tab">
+  <div class="col-md-12">
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Partner Filters</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <%= render partial: "statuses", object: @unfiltered_partners_for_statuses, as: :partners %>
+        </div>
+        <div class="card-footer">
+          <div class="pull-right">
+            <%= modal_button_to("#csvImportModal", {text: "Import Partners", icon: "upload", size: "md"}) %>
+            <%= download_button_to(partners_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Partner Agencies", size: "md"}) if @partners.any? %>
+            <%= new_button_to new_partner_path(organization_id: current_organization), {text: "New Partner Agency"} %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead class='sticky top-0 bg-white'>
+                <tr>
+                  <th>Partner</th>
+                  <th>E-mail</th>
+                  <th>Group</th>
+                  <th>Quota</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "partner_row", collection: partners %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

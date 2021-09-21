@@ -1,7 +1,8 @@
 <% status = partner_row.status%>
 <tr>
-  <td><%= link_to partner_row.name, partner_path(partner_row) %></td>
+  <td class='text-blue-500'><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
+  <td><%= partner_row.partner_group&.name %></td>
   <td><%= partner_row.quota %></td>
   <td>
     <% case status %>

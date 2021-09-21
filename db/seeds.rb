@@ -101,6 +101,19 @@ Organization.all.each do |org|
 end
 
 # ----------------------------------------------------------------------------
+# Partner Group & Item Categories
+# ----------------------------------------------------------------------------
+Organization.all.each do |org|
+  # Setup the Partner Group & their item categories
+  partner_group = FactoryBot.create(:partner_group, organization: org)
+
+  total_item_categories_to_add = Faker::Number.between(from: 0, to: 2)
+  org.item_categories.sample(total_item_categories_to_add).each do |item_category|
+    partner_group.item_categories << item_category
+  end
+end
+
+# ----------------------------------------------------------------------------
 # Users
 # ----------------------------------------------------------------------------
 
@@ -182,7 +195,10 @@ note = [
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
+    partner.partner_group = pdx_org.partner_groups.first
   end
+
+
 
   # ----------------------------------------------------------------------------
   # Creating associated records within the Partnerbase database
