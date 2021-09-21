@@ -92,6 +92,41 @@
 
         <section class="card card-info card-outline">
           <div class="card-header">
+            <h2 class="card-title">Settings</h2>
+          </div>
+          <div class="card-body p-2">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12" id="partner-notes">
+                <div>
+                  <h4 class='text-2xl underline'> Partner Group: </h4>
+                  <div>
+                    <label><%= @partner.partner_group&.name || "None" %></label>
+                  </div>
+                </div>
+
+                <h4 class='text-2xl underline'> Requestable Item Categories: </h4>
+                <p class='text-sm font-light mb-1'> You can change this through their partner group.</p>
+
+                <% if @partner.item_categories.present? %>
+                  <ul class='list-disc ml-3'>
+                    <% @partner.item_categories.each do |ic| %>
+                      <li>
+                        <span class='text-lg'><%= ic.name %></span>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% elsif @partner.partner_group.present? %>
+                  <span class='text-red-600 text-bold font-italic'>No Items Requestable</span>
+                <% else %>
+                  <span class='text-blue-600 text-bold font-italic'>All Items Requestable</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card card-info card-outline">
+          <div class="card-header">
             <h2 class="card-title">Notes</h2>
           </div>
           <div class="card-body p-2">

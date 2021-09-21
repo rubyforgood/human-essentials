@@ -8,15 +8,20 @@
           <div class="card card-primary">
             <!-- /.card-header -->
             <!-- form start -->
-            <div class="card-body">
+            <div class="card-body w-50">
               <%= f.input :name, label: "Name", wrapper: :input_group do %>
                 <span class="input-group-text"><i class="fa fa-user"></i></span>
                 <%= f.input_field :name, class: "form-control" %>
               <% end %>
               <%= f.input :email, label: "E-mail", wrapper: :input_group do %>
                 <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                <%= f.input_field :email, class: "form-control" %>
+                <%= f.input_field :email, class: "form-control"%>
               <% end %>
+              <div class='w-50'>
+                <%= f.input :partner_group_id, label: "Group", wrapper: :input_group do %>
+                  <%= f.input_field :partner_group_id, collection: @partner_groups, class: "form-control", include_blank: "None" %>
+                <% end %>
+              </div>
               <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :input_group do %>
                 <%= f.check_box :send_reminders, {class: "input-group-text", id: "send_reminders"}, "true", "false" %>
               <% end %>

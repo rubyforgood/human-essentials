@@ -6,7 +6,8 @@ class PartnersController < ApplicationController
 
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
-    @partners = Partner.where(organization: current_organization).class_filter(filter_params).alphabetized
+    @partners = Partner.includes(:partner_group).where(organization: current_organization).class_filter(filter_params).alphabetized
+    @partner_groups = PartnerGroup.includes(:partners, :item_categories).where(organization: current_organization)
 
     respond_to do |format|
       format.html
@@ -57,10 +58,12 @@ class PartnersController < ApplicationController
 
   def new
     @partner = current_organization.partners.new
+    @partner_groups = current_organization.partner_groups
   end
 
   def edit
     @partner = current_organization.partners.find(params[:id])
+    @partner_groups = PartnerGroup.where(organization: current_organization)
   end
 
   def update
@@ -153,7 +156,7 @@ class PartnersController < ApplicationController
   private
 
   def partner_params
-    params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, documents: [])
+    params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, :partner_group_id, documents: [])
   end
 
   helper_method \
