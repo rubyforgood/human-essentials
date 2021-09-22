@@ -101,7 +101,7 @@ GEM
       railties (>= 4.0)
     bootstrap-select-rails (1.13.8)
     brakeman (5.1.1)
-    bugsnag (6.22.1)
+    bugsnag (6.23.0)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
     bullet (6.1.5)
