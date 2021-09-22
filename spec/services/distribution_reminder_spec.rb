@@ -12,44 +12,49 @@ RSpec.describe DistributionReminder do
 
     context 'when the distribution_id does not match any Distribution' do
       it "does not send mail for non existent distributions" do
-        job = double(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
+        job = spy(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
         allow(DistributionMailer).to receive(:delay).and_return(job)
+
         DistributionReminder.perform(0)
 
-        expect(job).not_to receive(:reminder_email)
+        expect(job).not_to have_received(:reminder_email)
       end
     end
 
     it "does not send mail for past distributions" do
-      job = double(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
+      job = spy(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
       allow(DistributionMailer).to receive(:delay).and_return(job)
+
       DistributionReminder.perform(past_distribution.id)
 
-      expect(job).not_to receive(:reminder_email)
+      expect(job).not_to have_received(:reminder_email)
     end
 
     it "sends mail for future distributions" do
-      job = double(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
+      job = spy(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
       allow(DistributionMailer).to receive(:delay).and_return(job)
+
       DistributionReminder.perform(future_distribution.id)
 
-      expect(job).to receive(:reminder_email).with(future_distribution.id)
+      expect(job).to have_received(:reminder_email).with(future_distribution.id)
     end
 
     it "does not send mail for future distributions if the partner wants no reminders" do
-      job = double(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
+      job = spy(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
       allow(DistributionMailer).to receive(:delay).and_return(job)
+
       DistributionReminder.perform(distribution_without_reminder.id)
 
-      expect(job).not_to receive(:reminder_email)
+      expect(job).not_to have_received(:reminder_email)
     end
 
     it "sends mail for future distributions where the partner wants reminders" do
-      job = double(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
+      job = spy(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
       allow(DistributionMailer).to receive(:delay).and_return(job)
+
       DistributionReminder.perform(distribution_with_reminder.id)
 
-      expect(job).to receive(:reminder_email).with(distribution_with_reminder.id)
+      expect(job).to have_received(:reminder_email).with(distribution_with_reminder.id)
     end
 
     context "when the partner is deactivated" do
@@ -57,11 +62,12 @@ RSpec.describe DistributionReminder do
       let(:distribution) { create(:distribution, partner: deactivated_partner) }
 
       it "does not send mail" do
-        job = double(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
+        job = spy(Delayed::Backend::ActiveRecord::Job, reminder_email: nil)
         allow(DistributionMailer).to receive(:delay).and_return(job)
+
         DistributionReminder.perform(distribution.id)
 
-        expect(job).not_to receive(:reminder_email)
+        expect(job).not_to have_received(:reminder_email)
       end
     end
   end

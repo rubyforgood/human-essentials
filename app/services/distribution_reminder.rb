@@ -13,7 +13,11 @@ class DistributionReminder
     private
 
     def send_reminder?(distribution)
-      !(distribution.nil? || distribution.past? || !distribution.partner.send_reminders)
+      return false if distribution.nil? || distribution.past?
+      return false unless distribution.partner.send_reminders
+      return false if distribution.partner.deactivated?
+
+      true
     end
   end
 end
