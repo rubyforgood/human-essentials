@@ -34,6 +34,10 @@ FactoryBot.define do
       status { :awaiting_review }
     end
 
+    trait :without_reminders do
+      send_reminders { false }
+    end
+
     after(:create) do |partner, _evaluator|
       # Create associated records on partnerbase DB
       partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)

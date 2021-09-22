@@ -178,7 +178,7 @@ RSpec.describe "Distributions", type: :request do
 
     describe "POST #update" do
       let(:location) { create(:storage_location) }
-      let(:partner) { create(:partner) }
+      let(:partner) { create(:partner, :without_reminders) }
 
       let(:distribution) { create(:distribution, partner: partner) }
       let(:issued_at) { distribution.issued_at }
@@ -259,10 +259,11 @@ RSpec.describe "Distributions", type: :request do
         end
 
         context "sending" do
+          let(:partner) { create(:partner) }
           let(:issued_at) { distribution.issued_at + 1.day }
 
           it "does send an e-mail" do
-            expect { subject }.to change { ActionMailer::Base.deliveries.count }.by(1)
+            expect { subject }.to change { ActionMailer::Base.deliveries.count }.by(2)
           end
         end
 
