@@ -3,8 +3,8 @@ default: &default
   encoding: unicode
   host: localhost
   database: diaper_dev
-  username: postgres
-  password: password
+  username: <%= ENV.fetch("PG_USERNAME", 'postgres') %>
+  password: <%= ENV.fetch("PG_PASSWORD", 'password') %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
@@ -14,8 +14,6 @@ development:
     timeout: 5000
   partners:
     <<: *default
-    username: postgres
-    password: password
     database: partner_dev
     migrations_paths: db/partners_migrate
     timeout: 5000
@@ -36,8 +34,6 @@ test:
     timeout: 5000
   partners:
     <<: *default
-    username: postgres
-    password: password
     database: partner_test
     migrations_paths: db/partners_migrate
     timeout: 5000
