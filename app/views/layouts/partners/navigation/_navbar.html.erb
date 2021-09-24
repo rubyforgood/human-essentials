@@ -3,6 +3,7 @@
     <%= current_partner_user.email %>
     <i class="fa fa-caret-down"></i>
   </a>
+  
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
     <%= link_to '', class:"dropdown-item" do %>
     <i class="fa fa-cog text-aqua"></i> Organization Settings
@@ -12,16 +13,13 @@
     <%= link_to partners_users_path, class:"dropdown-item" do %>
       <i class="fa fa-users mr-2"></i> My Co-Workers
     <% end %>
-
-    <% if Rails.env.production? %>
+    
       <div class="dropdown-divider"></div>
-      <li class="nav-item dropdown">
-        <%= link_to support_ticket_form_url, class: 'nav-link', target: :_blank do %>
-          <i class="fas fa-bug"></i>
-        <% end %>
-      </li>
-    <% end %>
-
+     <li id="help", class="nav-item dropdown">
+       <%= link_to 'Need Help?', partners_help_path, class: 'nav-link' %>
+     </li>
+        
+    
     <div class="dropdown-divider"></div>
     <%= link_to destroy_partner_user_session_path, method: :delete, class: "dropdown-item" do %>
       <i class="fa fa-sign-out fa-lg"></i> Logout

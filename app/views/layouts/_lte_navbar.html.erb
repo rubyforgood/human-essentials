@@ -20,13 +20,9 @@
 </li>
 <% end %>
 
-<% if Rails.env.production? %>
-  <li class="nav-item dropdown">
-    <%= link_to support_ticket_form_url, class: 'nav-link', target: :_blank do %>
-      <i class="fas fa-bug"></i>
-    <% end %>
-  </li>
-<% end %>
+<li class="nav-item dropdown">
+  <%= link_to 'Need Help?', help_path, class: 'nav-link' %>
+</li>
 
 <li class="nav-item dropdown">
   <a class="nav-link" data-toggle="dropdown" href="#">
