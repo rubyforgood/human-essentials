@@ -17,6 +17,7 @@ module Partners
       partner.profile.update(partner_status: 'submitted')
       partner.awaiting_review!
 
+      OrganizationMailer.partner_approval_request(organization: partner.organization, partner: partner).deliver_later
       self
     end
 
