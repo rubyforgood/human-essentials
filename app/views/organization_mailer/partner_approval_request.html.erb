@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1> You've received a request to approve the account for <%= @partner.name %>. </h1>
+
+    <br>
+
+    <%= link_to 'Review This Organization', partner_url(organization_id: @organization.short_name, id: @partner.id, anchor: "partner-information") %>
+  </body>
+</html>
