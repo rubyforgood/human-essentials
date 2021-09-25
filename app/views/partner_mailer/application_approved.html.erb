@@ -1,0 +1,16 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p>Hi <%= @partner.name %></p>
+
+    <p>
+      <%= @organization.name %> has approved your application.
+      <br>
+      <%= link_to "Check out your dashboard", partners_dashboard_url %>
+    </p>
+  </body>
+</html>

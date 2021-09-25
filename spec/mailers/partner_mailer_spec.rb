@@ -19,5 +19,21 @@ RSpec.describe PartnerMailer, type: :mailer do
       expect(subject.subject).to eq("[Action Required] Please Update Your Agency Information")
     end
   end
-end
 
+  describe "#application_approved" do
+    subject { PartnerMailer.application_approved(partner: partner) }
+    let(:partner) { create(:partner) }
+
+    it "should be sent to the partner main email with the correct subject line" do
+      expect(subject.to).to eq([partner.email])
+      expect(subject.from).to eq(['info@humanessentials.app'])
+      expect(subject.subject).to eq("Application Approved")
+    end
+
+    it "renders the body with text that indicates the result and a link to their dashboard" do
+      expect(subject.body.encoded).to include("Hi #{partner.name}")
+      expect(subject.body.encoded).to include("#{partner.organization.name} has approved your application.")
+      expect(subject.body.encoded).to include("/partners/dashboard")
+    end
+  end
+end
