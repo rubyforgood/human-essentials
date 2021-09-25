@@ -465,6 +465,8 @@ GEM
       activesupport (>= 5.2.0)
     slop (3.6.0)
     spring (2.1.1)
+    spring-commands-rspec (1.0.4)
+      spring (>= 0.9.1)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
       spring (>= 1.2, < 3.0)
@@ -601,6 +603,7 @@ DEPENDENCIES
   simplecov
   skylight
   spring
+  spring-commands-rspec
   spring-watcher-listen
   sprockets (~> 4.0.2)
   strong_migrations (~> 0.7.8)
