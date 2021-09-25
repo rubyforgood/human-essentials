@@ -34,11 +34,11 @@ RSpec.describe Request, type: :model do
   describe "item data" do
     it "coerces item quantity and id to always be an integer before saving" do
       request = create(:request,
-                  partner_user: Partners::User.first,
-                  request_items: [
-                    { item_id: "25", quantity: "15" },
-                    { item_id: "35", quantity: 18 },
-                  ])
+                       partner_user: Partners::User.first,
+                       request_items: [
+                         { item_id: "25", quantity: "15" },
+                         { item_id: "35", quantity: 18 }
+                       ])
       expect(request.request_items.first["item_id"]).to be 25
       expect(request.request_items.first["quantity"]).to be 15
       expect(request.request_items.last["item_id"]).to be 35
