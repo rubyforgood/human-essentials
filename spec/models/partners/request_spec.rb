@@ -10,6 +10,7 @@
 #  updated_at      :datetime         not null
 #  organization_id :bigint
 #  partner_id      :bigint
+#  partner_user_id :integer
 #
 require "rails_helper"
 
