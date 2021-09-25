@@ -21,11 +21,11 @@
 
               <fieldset style="margin-bottom: 2rem;" class='w-50'>
                 <legend>Items in this Kit</legend>
-                <%= f.simple_fields_for :line_items do |item| %>
-                  <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
+                <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
+                  <%= f.simple_fields_for :line_items do |item| %>
                     <%= render 'line_items/line_item_fields', f: item %>
-                  </div>
-                <% end %>
+                  <% end %>
+                </div>
                 <div class="row links col-xs-12 justify-content-end">
                   <div class="col-xs-12">
                     <%= add_line_item_button f, "#kit_line_items" %>

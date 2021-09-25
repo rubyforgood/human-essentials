@@ -17,11 +17,11 @@
                   <%= render partial: "storage_locations/source", object: f, locals: {include_inactive_items: true} %>
                   <fieldset style="margin-bottom: 2rem;"">
                     <legend>Items in this audit</legend>
-                    <%= f.simple_fields_for :line_items do |item| %>
-                      <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">
+                    <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">
+                      <%= f.simple_fields_for :line_items do |item| %>
                         <%= render 'line_items/line_item_fields', f: item %>
-                      </div>
-                    <% end %>
+                      <% end %>
+                    </div>
                     <div class="row links">
                       <div class="col-xs-12 p-3">
                         <%= add_line_item_button f, "#audit_line_items" %>
