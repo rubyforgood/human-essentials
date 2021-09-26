@@ -24,6 +24,9 @@ end
 Rails.application.routes.draw do
   devise_for :users, controllers: { sessions: "users/sessions" }
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
+  namespace :users do
+    resources :lookups, only: [:new, :create]
+  end
 
   set_up_sidekiq
   set_up_flipper

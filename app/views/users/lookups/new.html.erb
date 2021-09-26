@@ -1,0 +1,30 @@
+<%= simple_form_for(resource, as: resource_name, url: users_lookups_path) do |f| %>
+  <div class="login-box">
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">Let's get started!</p>
+        <div class="form-inputs">
+          <%= f.input :email, autofocus: true %>
+        </div>
+        <% if resource.organization %>
+          <div class="form-inputs">
+            <%= f.input :organization, collection: resource.organizations %>
+          </div>
+        <% end %>
+        <div class="col-12 text-center">
+          <%= f.button :submit, "Continue", class: "btn btn-primary btn-block" %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-12 text-center">
+          <p class="mb-1">
+          <%= link_to "Sign up", new_account_request_path %><br />
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+

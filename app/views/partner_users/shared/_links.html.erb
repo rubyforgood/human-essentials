@@ -1,4 +1,4 @@
-<%- if controller_name != 'sessions' %>
+<%- if !%w[sessions lookups].include?(controller_name) %>
   <%= link_to "Log in", new_session_path(resource_name) %><br />
 <% end %>
 
