@@ -1,7 +1,7 @@
 # Human Essentials 
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-104-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-105-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
@@ -380,6 +380,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/hatsu38"><img src="https://avatars.githubusercontent.com/u/16137809?v=4?s=100" width="100px;" alt=""/><br /><sub><b>hatsu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=hatsu38" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/matt-glover"><img src="https://avatars.githubusercontent.com/u/850480?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matt Glover</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=matt-glover" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/js-sapphire"><img src="https://avatars.githubusercontent.com/u/41758940?v=4?s=100" width="100px;" alt=""/><br /><sub><b>js-sapphire</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=js-sapphire" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/exbinary"><img src="https://avatars.githubusercontent.com/u/8330?v=4?s=100" width="100px;" alt=""/><br /><sub><b>lasitha</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=exbinary" title="Code">💻</a></td>
   </tr>
 </table>
 
