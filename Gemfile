@@ -95,6 +95,7 @@ group :development do
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
+  gem "spring-commands-rspec"
   gem "web-console"
 end
 
