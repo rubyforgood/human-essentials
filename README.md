@@ -65,7 +65,7 @@ Create a `database.yml` file on `config/` directory with your database configura
 From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
 ### Start the app
-Run `bundle exec rails server` or `bundle exec bin/start` (recommended since it runs webpacker in the background!) and browse to http://localhost:3000/
+Run `bundle exec rails server` or `bin/start` (recommended since it runs webpacker in the background!) and browse to http://localhost:3000/
 
 ### Login
 To login to the web application, use these default credentials:
