@@ -117,10 +117,24 @@ RSpec.describe "Requests", type: :system, js: true do
 
     let!(:request) { create(:request, organization: @organization) }
 
-    it "should show the request" do
+    it "should show the request with a request sender if a partner user is set" do
       visit subject
       expect(page).to have_content("Request from #{request.partner.name}")
       expect(page).to have_content("Estimated on-hand")
+      expect(page).to have_content("Request Sender:")
+      partner_user = request.partner_user
+      expect(page).to have_content("#{partner_user.name} <#{partner_user.email}>")
+    end
+
+    it "should show the request without a request sender if a partner user is not set" do
+      partner_user = request.partner_user
+      request.partner_user_id = nil
+      request.save!
+      visit subject
+      expect(page).to have_content("Request from #{request.partner.name}")
+      expect(page).to have_content("Estimated on-hand")
+      expect(page).to have_content("Request Sender:")
+      expect(page).not_to have_content("#{partner_user.name} <#{partner_user.email}>")
     end
 
     it "should show the number of items on-hand" do

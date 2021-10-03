@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_18_010905) do
+ActiveRecord::Schema.define(version: 2021_09_24_155700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -146,6 +146,7 @@ ActiveRecord::Schema.define(version: 2020_05_18_010905) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "for_families"
+    t.integer "partner_user_id"
     t.index ["organization_id"], name: "index_partner_requests_on_organization_id"
     t.index ["partner_id"], name: "index_partner_requests_on_partner_id"
   end
@@ -274,5 +275,6 @@ ActiveRecord::Schema.define(version: 2020_05_18_010905) do
   add_foreign_key "children", "families"
   add_foreign_key "families", "partners"
   add_foreign_key "item_requests", "partner_requests"
+  add_foreign_key "partner_requests", "users", column: "partner_user_id"
   add_foreign_key "users", "partners"
 end

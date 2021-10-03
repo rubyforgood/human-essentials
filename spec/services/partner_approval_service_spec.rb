@@ -26,6 +26,11 @@ describe PartnerApprovalService do
     end
 
     context 'when the arguments are correct' do
+      let(:fake_mailer) { double('fake_mailer', deliver_later: -> {}) }
+      before do
+        allow(PartnerMailer).to receive(:application_approved).with(partner: partner).and_return(fake_mailer)
+      end
+
       it 'should have no errors' do
         expect(subject.errors).to be_empty
       end
@@ -36,6 +41,11 @@ describe PartnerApprovalService do
 
       it 'should change the partner profile partner_status' do
         expect { subject }.to change { partner_profile.reload.partner_status }.to(Partners::Partner::VERIFIED_STATUS)
+      end
+
+      it 'should send an email notification to the partner' do
+        subject
+        expect(fake_mailer).to have_received(:deliver_later)
       end
 
       context 'but a unexpected error occured during the save' do
@@ -57,9 +67,13 @@ describe PartnerApprovalService do
           it 'should not change the partner_profile partner_status' do
             expect { subject }.not_to change { partner_profile.reload.partner_status }
           end
+
+          it 'should not send an email notification to the partner' do
+            subject
+            expect(fake_mailer).to_not have_received(:deliver_later)
+          end
         end
       end
     end
   end
 end
-
