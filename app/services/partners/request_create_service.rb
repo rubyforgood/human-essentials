@@ -13,7 +13,7 @@ module Partners
     end
 
     def call
-      @partner_request = Partners::Request.new(partner_id: partner.id, organization_id: organization_id, comments: comments, for_families: @for_families, sent: true)
+      @partner_request = Partners::Request.new(partner_id: partner.id, organization_id: organization_id, comments: comments, for_families: @for_families, sent: true, partner_user_id: partner_user_id)
       @partner_request = populate_item_request(@partner_request)
       @partner_request.assign_attributes(additional_attrs)
 
@@ -99,6 +99,7 @@ module Partners
       ::Request.new(
         organization_id: partner_request.organization_id,
         partner_id: partner_request.partner.diaper_partner_id,
+        partner_user_id: partner_user_id,
         comments: partner_request.comments,
         request_items: partner_request.item_requests.map do |ir|
           {

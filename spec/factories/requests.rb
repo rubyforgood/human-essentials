@@ -13,6 +13,7 @@
 #  distribution_id :integer
 #  organization_id :bigint
 #  partner_id      :bigint
+#  partner_user_id :integer
 #
 
 def random_request_items
@@ -26,6 +27,7 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     request_items { random_request_items }
     comments { "Urgent" }
+    partner_user { Partners::User.try(:first) || create(:partners_user) }
   end
 
   trait :started do
