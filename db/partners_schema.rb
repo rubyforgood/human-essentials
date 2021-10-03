@@ -275,5 +275,6 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
   add_foreign_key "children", "families"
   add_foreign_key "families", "partners"
   add_foreign_key "item_requests", "partner_requests"
+  add_foreign_key "partner_requests", "users", column: "partner_user_id"
   add_foreign_key "users", "partners"
 end
