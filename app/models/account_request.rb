@@ -49,11 +49,11 @@ class AccountRequest < ApplicationRecord
   end
 
   def approved?
-    "Approved" if confirmed? && AccountRequest.includes([:organization])
+    "Approved" if confirmed? && Organization.present?
   end
 
   def pending_approval?
-    "Pending Approval" if confirmed? && !AccountRequest.includes([:organization])
+    "Pending Approval" if confirmed? && Organization.blank?
   end
 
   def requested?
