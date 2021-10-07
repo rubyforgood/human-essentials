@@ -8,7 +8,7 @@
         </div>
         <% if resource.organization %>
           <div class="form-inputs">
-            <%= f.input :organization, collection: resource.organizations %>
+            <%= f.input :organization, collection: resource.organizations, include_blank: false %>
           </div>
         <% end %>
         <div class="col-12 text-center">
