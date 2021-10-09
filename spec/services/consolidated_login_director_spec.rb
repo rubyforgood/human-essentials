@@ -11,6 +11,11 @@ RSpec.describe ConsolidatedLoginDirector do
     instance_double(Partners::User, email: "partner@example.com", partner: double(name: "A Partner"))
   end
 
+  before do
+    allow(User).to receive(:find_by).and_return(user)
+    allow(Partners::User).to receive(:find_by).and_return(partner_user)
+  end
+
   context "before lookup" do
     it "has defaults for the initial /new page" do
       expect(director.render).to eq :new
@@ -21,10 +26,7 @@ RSpec.describe ConsolidatedLoginDirector do
   end
 
   context "given a bank user's email" do
-    before do
-      allow(User).to receive(:find_by).and_return(user)
-      allow(Partners::User).to receive(:find_by).and_return(nil)
-    end
+    let(:partner_user) { nil }
 
     it "directs to the bank login" do
       director.lookup("email" => "bank@example.com")
@@ -37,10 +39,7 @@ RSpec.describe ConsolidatedLoginDirector do
   end
 
   context "given a partner user's email" do
-    before do
-      allow(Partners::User).to receive(:find_by).and_return(partner_user)
-      allow(User).to receive(:find_by).and_return(nil)
-    end
+    let(:user) { nil }
 
     it "directs to the partner login" do
       director.lookup("email" => "partner@example.com")
@@ -59,11 +58,6 @@ RSpec.describe ConsolidatedLoginDirector do
 
     let(:partner_user) do
       instance_double(Partners::User, email: "both@example.com", partner: double(name: "A Partner"))
-    end
-
-    before do
-      allow(User).to receive(:find_by).and_return(user)
-      allow(Partners::User).to receive(:find_by).and_return(partner_user)
     end
 
     it "directs the user to pick an organization" do
@@ -90,6 +84,22 @@ RSpec.describe ConsolidatedLoginDirector do
         expect(director.layout).to eq "devise_partner_users"
         expect(director.resource_name).to eq "partner_user"
       end
+    end
+  end
+
+  context "given a non-existent email" do
+    let(:user) { nil }
+    let(:partner_user) { nil }
+
+    it "directs back with a validation error" do
+      director.lookup("email" => "non-existent@example.com")
+
+      expect(director.errors.messages).to eq(email: ["not found"])
+      expect(director.email).to eq "non-existent@example.com"
+
+      expect(director.render).to eq :new
+      expect(director.layout).to eq "devise"
+      expect(director.resource_name).to eq "user"
     end
   end
 end

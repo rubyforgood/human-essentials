@@ -1,4 +1,6 @@
 class ConsolidatedLoginDirector
+  include ActiveModel::Validations
+
   attr_reader :email, :organization, :organizations, :render, :layout, :resource_name
 
   def initialize
@@ -16,7 +18,8 @@ class ConsolidatedLoginDirector
     render_selected_login(selection) ||
       render_options ||
       render_bank_login ||
-      render_partner_login # TODO: handle email not found
+      render_partner_login ||
+      render_email_not_found(email)
   end
 
   private
@@ -60,5 +63,12 @@ class ConsolidatedLoginDirector
       @render = "partner_users/sessions/new"
       @layout = "devise_partner_users"
     end
+  end
+
+  def render_email_not_found(email)
+    fail if @user || @partner_user # this method shouldn't be called if either are present
+
+    errors.add :email, "not found"
+    @email = email
   end
 end
