@@ -42,9 +42,11 @@
 
 <body id="devise" class="hold-transition login-page <%= body_class %> <%= Rails.env.staging? ? 'login-page-test' : '' %>">
   <div class="login-box">
-    <div class="login-logo text-center">
-      <img id="MastheadLogo" src=<%= masthead_img_src %> alt="Human Essentials" title="Human Essentials" class="serv_icon"/>
-    </div>
+    <% if masthead_img_src %>
+      <div class="login-logo text-center">
+        <img id="MastheadLogo" src=<%= masthead_img_src %> alt="Human Essentials" title="Human Essentials" class="serv_icon"/>
+      </div>
+    <% end %>
 
     <!-- /.login-logo -->
     <div class="login-box-body">

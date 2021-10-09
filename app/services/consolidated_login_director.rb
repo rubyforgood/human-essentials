@@ -5,7 +5,7 @@ class ConsolidatedLoginDirector
 
   def initialize
     @render = :new
-    @layout = "devise"
+    @layout = "devise_consolidated_login"
     @resource_name = "user"
   end
 
@@ -43,7 +43,7 @@ class ConsolidatedLoginDirector
       @email = @user.email
       @resource_name = "user"
       @render = :new
-      @layout = "devise"
+      @layout = "devise_consolidated_login"
     end
   end
 

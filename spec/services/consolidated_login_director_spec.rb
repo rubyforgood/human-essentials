@@ -19,7 +19,7 @@ RSpec.describe ConsolidatedLoginDirector do
   context "before lookup" do
     it "has defaults for the initial /new page" do
       expect(director.render).to eq :new
-      expect(director.layout).to eq "devise"
+      expect(director.layout).to eq "devise_consolidated_login"
       expect(director.resource_name).to eq "user"
       expect(director.organizations).to be nil
     end
@@ -71,7 +71,7 @@ RSpec.describe ConsolidatedLoginDirector do
 
       expect(director.email).to eq "both@example.com"
       expect(director.render).to eq :new
-      expect(director.layout).to eq "devise"
+      expect(director.layout).to eq "devise_consolidated_login"
       expect(director.resource_name).to eq "user"
     end
 
@@ -98,7 +98,7 @@ RSpec.describe ConsolidatedLoginDirector do
       expect(director.email).to eq "non-existent@example.com"
 
       expect(director.render).to eq :new
-      expect(director.layout).to eq "devise"
+      expect(director.layout).to eq "devise_consolidated_login"
       expect(director.resource_name).to eq "user"
     end
   end
