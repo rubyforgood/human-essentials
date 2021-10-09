@@ -339,38 +339,11 @@
           <tr>
             <td class="wrapper">
               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                <% if @default_email_text.empty? %>
-                  <tr>
-                    <td>
-                      <% delivery_method = (@distribution.delivery?) ? 'delivered' : 'picked up' %>
-                      <p><%= @partner.name %>,</p>
-                      <p>Your diaper request has been approved and you can find attached to this email a copy of the distribution you will be receiving.</p>
-                      <p>Your distribution has been set to be <b><%= delivery_method %></b> on <b><%= @distribution.issued_at.strftime("%m/%d/%Y") %></b>.</p>
-                    </td>
-                  <tr>
-                    <td>
-                      <% if !@distribution_changes.empty? %>
-                        <%= render partial: "distribution_changes", object: @distribution_changes %>
-                      <% end %>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <p>See you soon!</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <%= @comment %>
-                    </td>
-                  </tr>
-                <% else %>
-                  <tr>
-                    <td>
-                      <%= @default_email_text_interpolated.html_safe %>
-                    </td>
-                  </tr>
-                <% end %>
+                <tr>
+                  <td>
+                    <%= @default_email_text_interpolated.html_safe %>
+                  </td>
+                </tr>
               </table>
             </td>
           </tr>
