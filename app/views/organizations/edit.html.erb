@@ -87,7 +87,8 @@
                   <%= f.text_area :invitation_text, class: "form-control" %>
                 <% end %>
 
-                <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails" do %>
+                <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code> to include the partner's name, delivery method, and distribution date in the email." %>
+                <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails", hint: default_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :default_email_text %>
                 <% end %>
 
