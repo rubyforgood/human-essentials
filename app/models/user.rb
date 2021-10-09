@@ -37,7 +37,7 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   # :invitable is from the devise_invitable gem
-  # If you change any of these options, adjust Users::LookupsController::DeviseMappingShunt accordingly
+  # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
          :timeoutable, :password_has_required_content

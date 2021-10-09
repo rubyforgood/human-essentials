@@ -1,4 +1,4 @@
-class Users::LookupsController < ApplicationController
+class ConsolidatedLoginsController < ApplicationController
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
 

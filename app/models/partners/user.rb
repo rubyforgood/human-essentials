@@ -30,7 +30,7 @@ module Partners
   class User < Base
     self.table_name = "users"
 
-    # If you change any of these options, adjust Users::LookupsController::DeviseMappingShunt accordingly
+    # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
     devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable,
            :invitable, :trackable, :password_has_required_content
 
