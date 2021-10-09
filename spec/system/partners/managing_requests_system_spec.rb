@@ -17,7 +17,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         it 'should show an error message with the instructions ' do
           expect(page).to have_content('Opps! Something went wrong with your Request')
           expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
-          expect(page).to have_content('Still need help? Submit a support ticket here and we do our best to follow up with you via email.')
+          expect(page).to have_content('Still need help? Submit a support ticket here and we will do our best to follow up with you via email.')
         end
       end
 
@@ -89,7 +89,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         it 'should show an error message with the instructions ' do
           expect(page).to have_content('Opps! Something went wrong with your Request')
           expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
-          expect(page).to have_content('Still need help? Submit a support ticket here and we do our best to follow up with you via email.')
+          expect(page).to have_content('Still need help? Submit a support ticket here and we will do our best to follow up with you via email.')
         end
       end
 
