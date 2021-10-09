@@ -1,10 +1,4 @@
-<!DOCTYPE html><html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
-  <title> Request Cancelation Notice </title>
-  <!--[if !mso]><!-- -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!--<![endif]-->
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<% content_for(:head) do %>
   <style type="text/css">
     #outlook a {
       padding: 0;
@@ -37,29 +31,26 @@
       display: block;
       margin: 13px 0;
     }
-  </style>
+  
   <!--[if mso]>
-        <xml>
-        <o:OfficeDocumentSettings>
-          <o:AllowPNG/>
-          <o:PixelsPerInch>96</o:PixelsPerInch>
-        </o:OfficeDocumentSettings>
-        </xml>
-        <![endif]-->
+    <xml>
+    <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+    </xml>
+  <![endif]-->
   <!--[if lte mso 11]>
-        <style type="text/css">
-          .mj-outlook-group-fix { width:100% !important; }
-        </style>
-        <![endif]-->
-  <style type="text/css">
+    .mj-outlook-group-fix { width:100% !important; }
+  <![endif]-->
+
     @media only screen and (min-width:480px) {
       .mj-column-per-100 {
         width: 100% !important;
         max-width: 100%;
       }
     }
-  </style>
-  <style type="text/css">
+
     @media only screen and (max-width:480px) {
       table.mj-full-width-mobile {
         width: 100% !important;
@@ -69,8 +60,7 @@
         width: auto !important;
       }
     }
-  </style>
-  <style type="text/css">
+  
     a,
     span,
     td,
@@ -79,9 +69,9 @@
       -moz-osx-font-smoothing: grayscale !important;
     }
   </style>
-</head>
+<% end %>
+<% content_for(:body) do %>
 
-<body style="background-color:#ffffff;" data-new-gr-c-s-check-loaded="14.1010.0" data-gr-ext-installed="">
   <div style="background-color:#ffffff;">
     <!--[if mso | IE]>
       <table
@@ -350,6 +340,4 @@
       </table>
     </div>
   </div>
-
-
-</body></html>
+<% end %>
