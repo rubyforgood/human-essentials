@@ -88,7 +88,7 @@
                 <% end %>
 
                 <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code> to include the partner's name, delivery method, and distribution date in the email." %>
-                <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails", hint: default_email_text_hint.html_safe do %>
+                <%= f.input :default_email_text, label: "Distribution Email Content", hint: default_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :default_email_text %>
                 <% end %>
 
