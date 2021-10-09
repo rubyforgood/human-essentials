@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   get 'partners/dashboard' => 'partners/dashboards#show', as: :partner_user_root
   namespace :partners do
     resource :dashboard, only: [:show]
+    resource :help, only: [:show]
     resources :requests, only: [:show, :new, :index, :create]
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
@@ -195,7 +196,7 @@ Rails.application.routes.draw do
   resources :attachments, only: %i(destroy)
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-
+  get "help", to: "help#show"
   get "pages/:name", to: "static#page"
   get "/register", to: "static#register"
   resources :account_requests, only: [:new, :create] do
