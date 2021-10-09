@@ -15,24 +15,24 @@ class ConsolidatedLoginDirector
     @user = User.find_by(email: email)
     @partner_user = Partners::User.find_by(email: email)
 
-    render_selected_login(selection) ||
-      render_options ||
-      render_bank_login ||
-      render_partner_login ||
-      render_email_not_found(email)
+    selected_login(selection) ||
+      options ||
+      bank_login ||
+      partner_login ||
+      email_not_found(email)
   end
 
   private
 
-  def render_selected_login(selection)
+  def selected_login(selection)
     case selection
-    when "Bank" then render_bank_login
-    when "Partner" then render_partner_login
+    when "Bank" then bank_login
+    when "Partner" then partner_login
     else false
     end
   end
 
-  def render_options
+  def options
     if @user && @partner_user
       @organization = "Bank"
       @organizations = [
@@ -47,7 +47,7 @@ class ConsolidatedLoginDirector
     end
   end
 
-  def render_bank_login
+  def bank_login
     if @user
       @email = @user.email
       @resource_name = "user"
@@ -56,7 +56,7 @@ class ConsolidatedLoginDirector
     end
   end
 
-  def render_partner_login
+  def partner_login
     if @partner_user
       @email = @partner_user.email
       @resource_name = "partner_user"
@@ -65,7 +65,7 @@ class ConsolidatedLoginDirector
     end
   end
 
-  def render_email_not_found(email)
+  def email_not_found(email)
     fail if @user || @partner_user # this method shouldn't be called if either are present
 
     errors.add :email, "not found"
