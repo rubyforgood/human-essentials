@@ -10,16 +10,17 @@ class DistributionMailer < ApplicationMailer
 
     @partner = distribution.partner
     @distribution = distribution
+    @comment = distribution.comment
 
     delivery_method = @distribution.delivery? ? 'delivered' : 'picked up'
     @default_email_text = current_organization.default_email_text
     @default_email_text_interpolated = TextInterpolatorService.new(@default_email_text.body.to_s, {
                                                                      delivery_method: delivery_method,
                                                                      distribution_date: @distribution.issued_at.strftime("%m/%d/%Y"),
-                                                                     partner_name: @partner.name
+                                                                     partner_name: @partner.name,
+                                                                     comment: @comment
                                                                    }).call
 
-    @comment = distribution.comment
     @from_email = current_organization.email.presence || current_organization.users.first.email
     @distribution_changes = distribution_changes
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = DistributionPdf.new(current_organization, @distribution).render
