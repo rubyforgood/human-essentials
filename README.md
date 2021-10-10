@@ -14,11 +14,11 @@ Thanks for checking us out!
 If you're new here, here are some things you should know:
  - We actively curate issues and try to make them as self-contained as possible for people new to the application; those ones are tagged "Help Wanted"
  - We're actively watching for Pull Requests and you shouldn't have to wait very long for a review. Try to make sure your build passes (`rubocop -a` is a frequent need) and that you've addressed the requirements in the issue
- - There is a wiki article called [Application Overview](https://github.com/rubyforgood/diaper/wiki/Application-Overview). It needs a tiny bit of updating, but is mostly still accurate. It will introduce you to some vocabulary and general concepts, if you find something confusing and want to find the answer on your own.
+ - There is a wiki article called [Application Overview](https://github.com/rubyforgood/human-essentials/wiki/Application-Overview). It needs a tiny bit of updating, but is mostly still accurate. It will introduce you to some vocabulary and general concepts, if you find something confusing and want to find the answer on your own.
  - Check the `CONTRIBUTING.md` file for a guide on how to get started
  - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
-Please feel free to join us on Slack! You can sign up at https://rubyforgood.herokuapp.com We're in #diaper
+Please feel free to join us on Slack! You can sign up at https://rubyforgood.herokuapp.com We're in #human-essentials
 
 The core team leads are: @edwinmak @albert @gia @sean @scott
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
@@ -29,7 +29,7 @@ There are numerous other folks that can chime in and answer questions -- please 
 
 This application is an inventory management system that is built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need-facts/) as directly and explicitly as possible. Diaper Banks maintain inventory, receive donations and other means of intaking diapers (and related supplies), and issue Distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data, and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
 
-For a general overview of the application, please see the [Application Overview](https://github.com/rubyforgood/diaper/wiki/Application-Overview) wiki article.
+For a general overview of the application, please see the [Application Overview](https://github.com/rubyforgood/human-essentials/wiki/Application-Overview) wiki article.
 
 ### Origins
 
@@ -41,7 +41,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 
 ### Installation Instructions
 
-The `installation.md` file ([https://github.com/rubyforgood/diaper/blob/main/installation.md](https://github.com/rubyforgood/diaper/blob/main/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
+The `installation.md` file ([https://github.com/rubyforgood/human-essentials/blob/main/installation.md](https://github.com/rubyforgood/human-essentials/blob/main/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
 
 ### Ruby Version
 This app uses Ruby version 2.7.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
@@ -136,7 +136,7 @@ At that point, someone will work with you on doing a code review (typically pret
 
 ### Stay Scoped
 
-Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/diaper/issues/new)
+Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/human-essentials/issues/new)
 
 ### Writing Tests/Specs
 
@@ -198,19 +198,19 @@ Sometimes we want to get a PR up there and going so that other people can review
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
 
 # Deployment Process
-The diaper & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
+The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
 #### Requirements
-- You will need SSH access to our servers. Access is usually only given to core maintainers of the diaper & partner projects.
+- You will need SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
 #### Tag & Release
-1. You'll need to push up a tag with the proper semantic versioning. Check out the [releases](https://github.com/rubyforgood/diaper/releases) to get the correct semantic versioning tag to use. For example, if the last release was `2.1.0` and the update is a hotfix then the next one should be `2.1.1`
+1. You'll need to push up a tag with the proper semantic versioning. Check out the [releases](https://github.com/rubyforgood/human-essentials/releases) to get the correct semantic versioning tag to use. For example, if the last release was `2.1.0` and the update is a hotfix then the next one should be `2.1.1`
 ```sh
 git tag x.y.z
 git push --tags
 ```
-2. Publish a release associated to that tag pushed up in the previous step. You can do that [here](https://github.com/rubyforgood/diaper/releases/new). Make sure to include details on what the release's updates achieves (we use this to notify our stakeholders on updates via email).
+2. Publish a release associated to that tag pushed up in the previous step. You can do that [here](https://github.com/rubyforgood/human-essentials/releases/new). Make sure to include details on what the release's updates achieves (we use this to notify our stakeholders on updates via email).
 
 #### Deploying
 Start deploying the latest update by using capistrano and specifying the correct tag
