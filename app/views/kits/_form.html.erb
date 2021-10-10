@@ -19,7 +19,7 @@
                 <%= f.input_field :value_in_dollars, class: "form-control", min: 0 %>
               <% end %>
 
-              <fieldset style="margin-bottom: 2rem;" class='w-50'>
+              <fieldset style="margin-bottom: 2rem;" class='w-70'>
                 <legend>Items in this Kit</legend>
                 <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
                   <%= f.simple_fields_for :line_items do |item| %>
