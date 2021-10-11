@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_24_155700) do
+ActiveRecord::Schema.define(version: 2021_10_11_185310) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -233,6 +233,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.datetime "updated_at", null: false
     t.string "other_agency_type"
     t.string "status_in_diaper_base"
+    t.integer "population_middle_eastern"
+    t.integer "population_northern_african"
     t.index ["diaper_bank_id"], name: "index_partners_on_diaper_bank_id"
   end
 
