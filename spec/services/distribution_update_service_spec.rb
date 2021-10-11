@@ -15,12 +15,13 @@ RSpec.describe DistributionUpdateService, type: :service do
       result = subject.new(distribution, new_attributes).call
       expect(result).to be_instance_of(subject)
       expect(result).to be_success
-      expect(result.distribution).to be_valid
+      expect(distribution.reload).to be_valid
     end
 
     describe "#resend_notification?" do
       it "evaluates to true if the issued at has changed" do
         result = subject.new(distribution, { issued_at: distribution.issued_at + 1.week })
+        result.call
         expect(result).to be_resend_notification
       end
     end
