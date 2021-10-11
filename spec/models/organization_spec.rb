@@ -27,6 +27,7 @@
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
   context "Associations >" do
+    it { should have_many(:item_categories) }
     describe "barcode_items" do
       before do
         BarcodeItem.delete_all
@@ -214,11 +215,11 @@ RSpec.describe Organization, type: :model do
   describe "ActiveStorage validation" do
     it "validates that attachments are png or jpgs" do
       expect(build(:organization,
-                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"),
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"),
                                                       "image/jpeg")))
         .to be_valid
       expect(build(:organization,
-                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.gif"),
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.gif"),
                                                       "image/gif")))
         .to_not be_valid
     end

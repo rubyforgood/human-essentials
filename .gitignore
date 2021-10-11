@@ -67,3 +67,10 @@ coverage
 
 # Ignore node management configuration file
 .nvmrc
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity

@@ -6,7 +6,8 @@ class PartnersController < ApplicationController
 
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
-    @partners = Partner.where(organization: current_organization).class_filter(filter_params).alphabetized
+    @partners = Partner.includes(:partner_group).where(organization: current_organization).class_filter(filter_params).alphabetized
+    @partner_groups = PartnerGroup.includes(:partners, :item_categories).where(organization: current_organization)
 
     respond_to do |format|
       format.html
@@ -45,32 +46,24 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.find(params[:id])
     @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
+    @partner_profile_fields = current_organization.partner_form_fields
 
     respond_to do |format|
       format.html
-      format.csv { send_data Partner.generate_distributions_csv(@partner_distributions), filename: "PartnerDistributions-#{Time.zone.today}.csv" }
+      format.csv do
+        send_data Exports::ExportDistributionsCSVService.new(distribution_ids: @partner_distributions.map(&:id)).generate_csv, filename: "PartnerDistributions-#{Time.zone.today}.csv"
+      end
     end
   end
 
   def new
     @partner = current_organization.partners.new
-  end
-
-  def approve_partner
-    @partner = current_organization.partners.find(params[:id])
-
-    @partner_profile = @partner.profile
-    # Ensure that the ActiveStorage records associated with the
-    # partner are available on the primary DB. If we do not do this,
-    # partners would be uploading files that the diaperbase application
-    # cannot see.
-    @partner_profile.sync_attachments_from_partnerbase!
-
-    @agency = @partner_profile.export_hash
+    @partner_groups = current_organization.partner_groups
   end
 
   def edit
     @partner = current_organization.partners.find(params[:id])
+    @partner_groups = PartnerGroup.where(organization: current_organization)
   end
 
   def update
@@ -103,7 +96,13 @@ class PartnersController < ApplicationController
 
   def invite_partner_user
     partner = current_organization.partners.find(params[:partner])
-    PartnerUser.invite!(email: params[:email], partner: partner.profile)
+    existing_partner_user = PartnerUser.find_by(email: params[:email], partner: partner.profile)
+    if existing_partner_user
+      existing_partner_user.invite!
+    else
+      PartnerUser.invite!(email: params[:email], partner: partner.profile)
+    end
+
     redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"
   rescue StandardError => e
     redirect_to partner_path(partner), error: "Failed to invite #{params[:email]} to #{partner.name} due to: #{e.message}"
@@ -126,12 +125,14 @@ class PartnersController < ApplicationController
 
   def deactivate
     @partner = current_organization.partners.find(params[:id])
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "deactivated")
 
-    if response.is_a?(Net::HTTPSuccess) && @partner.update(status: "deactivated")
+    svc = PartnerDeactivateService.new(partner: @partner)
+    svc.call
+
+    if svc.errors.none?
       redirect_to partners_path, notice: "#{@partner.name} successfully deactivated!"
     else
-      redirect_to partners_path, error: "#{@partner.name} failed to deactivate!"
+      redirect_to partners_path, error: "#{@partner.name} failed to deactivate due to: #{svc.errors.full_messages}"
     end
   end
 
@@ -142,22 +143,20 @@ class PartnersController < ApplicationController
       redirect_to(partners_path, error: "#{@partner.name} is not deactivated!") && return
     end
 
-    response = DiaperPartnerClient.put(partner_id: @partner.id, status: "verified")
-    if response.is_a?(Net::HTTPSuccess) && @partner.update(status: "approved")
+    svc = PartnerReactivateService.new(partner: @partner)
+    svc.call
+
+    if svc.errors.none?
       redirect_to partners_path, notice: "#{@partner.name} successfully reactivated!"
     else
-      redirect_to partners_path, error: "#{@partner.name} failed to reactivate!"
+      redirect_to partners_path, error: "#{@partner.name} failed to reactivate due to: #{svc.errors.full_messages}"
     end
   end
 
   private
 
-  def autovivifying_hash
-    Hash.new { |ht, k| ht[k] = autovivifying_hash }
-  end
-
   def partner_params
-    params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, documents: [])
+    params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, :partner_group_id, documents: [])
   end
 
   helper_method \

@@ -75,5 +75,14 @@ describe PartnerRequestRecertificationService do
         end
       end
     end
+
+    context 'when the partner is deactivated' do
+      it 'does not send an email' do
+        partner.update!(status: 'deactivated')
+        expect(PartnerMailer).to_not receive(:recertification_request)
+        result = subject
+        expect(result.errors[:partner]).to eq(['has been deactivated'])
+      end
+    end
   end
 end

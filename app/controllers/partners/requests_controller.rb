@@ -1,7 +1,5 @@
 module Partners
   class RequestsController < BaseController
-    layout 'partners/application'
-
     protect_from_forgery with: :exception
 
     def index
@@ -13,10 +11,10 @@ module Partners
       @partner_request = Partners::Request.new
       @partner_request.item_requests.build
 
-      # Fetch the valid items
-      @requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
-        [item[:name], item[:id]]
-      end.sort
+      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.partner.id).call
+      @formatted_requestable_items = requestable_items.map do |rt|
+        [rt.name, rt.id]
+      end
     end
 
     def show
@@ -32,15 +30,18 @@ module Partners
 
       create_service.call
       if create_service.errors.none?
-        redirect_to partner_user_root_path, notice: "Request was successfully created."
+        flash[:success] = 'Request was successfully created.'
+        redirect_to partners_request_path(create_service.partner_request.id)
       else
         @partner_request = create_service.partner_request
         @errors = create_service.errors
-        @requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
+        @formatted_requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
           [item[:name], item[:id]]
         end.sort
 
-        render :new
+        Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_partner_user.id} reason=#{@errors.full_messages}")
+
+        render :new, status: :unprocessable_entity
       end
     end
 

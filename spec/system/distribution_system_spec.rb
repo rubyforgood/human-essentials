@@ -18,10 +18,10 @@ RSpec.feature "Distributions", type: :system do
       choose "Pick up"
 
       fill_in "Comment", with: "Take my wipes... please"
+      fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
 
-      expect do
-        click_button "Save", match: :first
-      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect(PartnerMailerJob).to receive(:perform_later).once
+      click_button "Save", match: :first
 
       expect(page).to have_content "Distributions"
       expect(page.find(".alert-info")).to have_content "reated"
@@ -152,14 +152,11 @@ RSpec.feature "Distributions", type: :system do
     it "allows the user can change the issued_at date" do
       click_on "Edit", match: :first
       expect do
-        select('2018', from: 'distribution_issued_at_1i')
-        select('May', from: 'distribution_issued_at_2i')
-        select('7', from: 'distribution_issued_at_3i')
-        select('02 PM', from: 'distribution_issued_at_4i')
-        select('15', from: 'distribution_issued_at_5i')
+        fill_in "Distribution date", with: Time.zone.parse("2001-10-01 10:00")
+
         click_on "Save", match: :first
         distribution.reload
-      end.to change { distribution.issued_at }.to(Time.zone.parse("2018-05-07 14:15:00"))
+      end.to change { distribution.issued_at }.to(Time.zone.parse("2001-10-01 10:00"))
     end
 
     it "disallows the user from changing the quantity above the inventory quantity" do
@@ -323,11 +320,10 @@ RSpec.feature "Distributions", type: :system do
         diaper_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
         select(diaper_type, from: first_item_name_field)
-
-        find_all(".numeric")[1].set 1
+        find_all(".numeric")[0].set 1
 
         click_on "Add another item"
-        find_all(".numeric")[2].set 3
+        find_all(".numeric")[1].set 3
 
         first("button", text: "Save").click
 
@@ -429,7 +425,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "filters by state" do
-      distribution1 = create(:distribution, state: "started")
+      distribution1 = create(:distribution, state: "scheduled")
       create(:distribution, state: "complete")
 
       visit subject

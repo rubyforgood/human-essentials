@@ -117,10 +117,24 @@ RSpec.describe "Requests", type: :system, js: true do
 
     let!(:request) { create(:request, organization: @organization) }
 
-    it "should show the request" do
+    it "should show the request with a request sender if a partner user is set" do
       visit subject
       expect(page).to have_content("Request from #{request.partner.name}")
       expect(page).to have_content("Estimated on-hand")
+      expect(page).to have_content("Request Sender:")
+      partner_user = request.partner_user
+      expect(page).to have_content("#{partner_user.name} <#{partner_user.email}>")
+    end
+
+    it "should show the request without a request sender if a partner user is not set" do
+      partner_user = request.partner_user
+      request.partner_user_id = nil
+      request.save!
+      visit subject
+      expect(page).to have_content("Request from #{request.partner.name}")
+      expect(page).to have_content("Estimated on-hand")
+      expect(page).to have_content("Request Sender:")
+      expect(page).not_to have_content("#{partner_user.name} <#{partner_user.email}>")
     end
 
     it "should show the number of items on-hand" do
@@ -160,6 +174,27 @@ RSpec.describe "Requests", type: :system, js: true do
           expect(request.reload.distribution_id).to eq Distribution.last.id
           expect(request.reload).to be_status_fulfilled
         end
+      end
+    end
+  end
+
+  describe 'canceling a request as a bank user' do
+    let!(:request) { create(:request, organization: @organization) }
+
+    context 'when a bank user cancels a request' do
+      let(:reason) { Faker::Lorem.sentence }
+      before do
+        visit url_prefix + "/requests"
+      end
+
+      it 'should set the request as canceled/discarded and contain the reason' do
+        click_on 'Cancel'
+        fill_in 'Cancelation reason *', with: reason
+        click_on 'Yes. Cancel Request'
+
+        expect(page).to have_content("Request #{request.id} has been removed")
+        expect(request.reload.discarded_at).not_to eq(nil)
+        expect(request.reload.discard_reason).to eq(reason)
       end
     end
   end

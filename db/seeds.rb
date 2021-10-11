@@ -2,7 +2,7 @@
 # The data can then be loaded with `rails db:seed` (or along with the creation of the db with `rails db:setup`).
 
 if Rails.env.production?
-  puts "Database seeding has been configured to work only in non production settings"
+  Rails.logger.info "Database seeding has been configured to work only in non production settings"
   return
 end
 
@@ -72,7 +72,45 @@ Organization.seed_items(sf_org)
 
 # Assign a value to some organization items to verify totals are working
 Organization.all.each do |org|
-  org.items.where(value_in_cents: 0).limit(10).update_all(value_in_cents: 100)
+  org.items.where(value_in_cents: 0).limit(10).each do |item|
+    item.update(value_in_cents: 100)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Item Categories
+# ----------------------------------------------------------------------------
+
+Organization.all.each do |org|
+  ['A', 'B', 'C'].each do |letter|
+    FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Item < - > ItemCategory
+# ----------------------------------------------------------------------------
+
+Organization.all.each do |org|
+  # Added `nil` to randomly choose to not categorize items sometimes via sample
+  item_category_ids = org.item_categories.map(&:id) + [nil]
+
+  org.items.each do |item|
+    item.update_column(:item_category_id, item_category_ids.sample)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Partner Group & Item Categories
+# ----------------------------------------------------------------------------
+Organization.all.each do |org|
+  # Setup the Partner Group & their item categories
+  partner_group = FactoryBot.create(:partner_group, organization: org)
+
+  total_item_categories_to_add = Faker::Number.between(from: 0, to: 2)
+  org.item_categories.sample(total_item_categories_to_add).each do |item_category|
+    partner_group.item_categories << item_category
+  end
 end
 
 # ----------------------------------------------------------------------------
@@ -157,38 +195,41 @@ note = [
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
+    partner.partner_group = pdx_org.partner_groups.first
   end
+
+
 
   # ----------------------------------------------------------------------------
   # Creating associated records within the Partnerbase database
   #
-  # **We have two seperate database. One for diaperbase and the other for partnerbase**
+  # **We have two separate database. One for diaperbase and the other for partnerbase**
   # ----------------------------------------------------------------------------
 
   partner = Partners::Partner.create!({
-    name: p.name,
-    address1: Faker::Address.street_address,
-    address2: "",
-    city: Faker::Address.city,
-    state: Faker::Address.state_abbr,
-    zip_code: Faker::Address.zip,
-    website: Faker::Internet.domain_name,
-    zips_served: Faker::Address.zip,
-    diaper_bank_id: pdx_org.id,
-    diaper_partner_id: p.id,
-    executive_director_name: Faker::Name.name,
-    executive_director_email: p.email,
-    executive_director_phone: Faker::PhoneNumber.phone_number,
-    program_contact_name: Faker::Name.name,
-    program_contact_email: Faker::Internet.email,
-    program_contact_phone: Faker::PhoneNumber.phone_number,
-    program_contact_mobile: Faker::PhoneNumber.phone_number,
-    pick_up_name: Faker::Name.name,
-    pick_up_email: Faker::Internet.email,
-    pick_up_phone: Faker::PhoneNumber.phone_number,
-    partner_status: partner_status_map[partner_option[:status]] || "pending",
-    status_in_diaper_base: partner_option[:status]
-  })
+                                        name: p.name,
+                                        address1: Faker::Address.street_address,
+                                        address2: "",
+                                        city: Faker::Address.city,
+                                        state: Faker::Address.state_abbr,
+                                        zip_code: Faker::Address.zip,
+                                        website: Faker::Internet.domain_name,
+                                        zips_served: Faker::Address.zip,
+                                        diaper_bank_id: pdx_org.id,
+                                        diaper_partner_id: p.id,
+                                        executive_director_name: Faker::Name.name,
+                                        executive_director_email: p.email,
+                                        executive_director_phone: Faker::PhoneNumber.phone_number,
+                                        program_contact_name: Faker::Name.name,
+                                        program_contact_email: Faker::Internet.email,
+                                        program_contact_phone: Faker::PhoneNumber.phone_number,
+                                        program_contact_mobile: Faker::PhoneNumber.phone_number,
+                                        pick_up_name: Faker::Name.name,
+                                        pick_up_email: Faker::Internet.email,
+                                        pick_up_phone: Faker::PhoneNumber.phone_number,
+                                        partner_status: partner_status_map[partner_option[:status]] || "pending",
+                                        status_in_diaper_base: partner_option[:status]
+                                      })
 
   Partners::User.create!(
     name: Faker::Name.name,
@@ -250,7 +291,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: Partners::Child::CHILD_ITEMS.sample
+        item_needed_diaperid: partner.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
       )
     end
 
@@ -268,7 +309,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: Partners::Child::CHILD_ITEMS.sample
+        item_needed_diaperid: partner.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
       )
     end
   end
@@ -319,7 +360,7 @@ end
 # Define all the InventoryItem for each of the StorageLocation
 #
 StorageLocation.all.each do |sl|
-  Item.all.each do |item|
+  sl.organization.items.each do |item|
     InventoryItem.create!(
       storage_location: sl,
       item: item,
@@ -388,7 +429,7 @@ end
 # ----------------------------------------------------------------------------
 
 def seed_quantity(item_name, organization, storage_location, quantity)
-  return if quantity == 0
+  return if quantity.zero?
 
   item = Item.find_by(name: item_name, organization: organization)
 
@@ -489,12 +530,12 @@ end
 20.times.each do
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   stored_inventory_items_sample = storage_location.inventory_items.sample(20)
-
   distribution = Distribution.create!(storage_location: storage_location,
                                       partner: random_record_for_org(pdx_org, Partner),
                                       organization: pdx_org,
                                       issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
-                                      delivery_method: Distribution.delivery_methods.keys.sample)
+                                      delivery_method: Distribution.delivery_methods.keys.sample,
+                                      comment: 'Urgent')
 
   stored_inventory_items_sample.each do |stored_inventory_item|
     distribution_qty = rand(stored_inventory_item.quantity / 2)
@@ -512,7 +553,7 @@ end
   status = count > 15 ? 'fulfilled' : 'pending'
 
   org_items = pdx_org.items.pluck(:id)
-  request_items = Array.new(Faker::Number.within(range: 3..8)).map do |item|
+  request_items = Array.new(Faker::Number.within(range: 3..8)).map do |_item|
     {
       "item_id" => org_items.sample,
       "quantity" => Faker::Number.within(range: 5..10)
@@ -544,8 +585,8 @@ end
     business_name: Faker::Company.name,
     latitude: rand(-90.000000000...90.000000000),
     longitude: rand(-180.000000000...180.000000000),
-    created_at: (Date.today - rand(15).days),
-    updated_at: (Date.today - rand(15).days),
+    created_at: (Time.zone.today - rand(15).days),
+    updated_at: (Time.zone.today - rand(15).days),
   )
 end
 
@@ -569,9 +610,9 @@ comments = [
     organization_id: pdx_org.id,
     storage_location_id: storage_location.id,
     amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Date.today - rand(15).days),
-    created_at: (Date.today - rand(15).days),
-    updated_at: (Date.today - rand(15).days),
+    issued_at: (Time.zone.today - rand(15).days),
+    created_at: (Time.zone.today - rand(15).days),
+    updated_at: (Time.zone.today - rand(15).days),
     vendor_id: vendor.id
   )
 end
@@ -583,30 +624,22 @@ end
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
 
 # ----------------------------------------------------------------------------
-# Feedback Messages
+# Account Requests
 # ----------------------------------------------------------------------------
-# Add some FeedbackMessages to fill up the feedback dashboard
+# Add some Account Requests to fill up the account requests admin page
 
-users = User.all
-comments = [
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam faucibus, neque eu mattis varius, eros erat elementum sem, quis volutpat erat tortor quis mauris. In condimentum vel sapien in elementum. Pellentesque porttitor mattis orci eu congue. Donec nec ipsum bibendum dolor tempus pellentesque vel ac ante.",
-  "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.",
-  "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
-]
-paths = [
-  "https://diaper.app/diaper_bank/requests",
-  "https://diaper.app/diaper_bank/donations",
-  "https://diaper.app/diaper_bank/partners",
-  "https://diaper.app/diaper_bank/audits"
-]
-
-users.each do |user|
-  2.times do
-    FeedbackMessage.create(
-      message: comments.sample,
-      path: paths.sample,
-      user: user,
-      resolved: [true, false].sample
-    )
-  end
+[{ organization_name: "Telluride Diaper Bank",    website: "TDB.com", confirmed_at: nil },
+ { organization_name: "Ouray Diaper Bank",        website: "ODB.com",   confirmed_at: nil },
+ { organization_name: "Canon City Diaper Bank",   website: "CCDB.com",  confirmed_at: nil },
+ { organization_name: "Golden Diaper Bank",       website: "GDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
+ { organization_name: "Westminster Diaper Bank",  website: "WDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
+ { organization_name: "Lakewood Diaper Bank",     website: "LDB.com",   confirmed_at: (Time.zone.today - rand(15).days) }].each do |account_request|
+  AccountRequest.create(
+    name: Faker::Name.unique.name,
+    email: Faker::Internet.unique.email,
+    organization_name: account_request[:organization_name],
+    organization_website: account_request[:website],
+    request_details: Faker::Lorem.paragraphs.join(", "),
+    confirmed_at: account_request[:confirmed_at]
+  )
 end

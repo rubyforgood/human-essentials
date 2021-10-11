@@ -41,7 +41,7 @@
             <div class="row px-2">
               <div class="col-lg-4 col-sm-12">
                 <div>
-                  <h4> Executive Director </h4>
+                  <h4 class='text-2xl underline'> Executive Director </h4>
                   <div>
                     <label>Name:</label> <%= optional_data_text(@partner.profile.executive_director_name) %>
                   </div>
@@ -55,7 +55,7 @@
               </div>
               <div class="col-lg-4 col-sm-12">
                 <div>
-                  <h4> Program Manager </h4>
+                  <h4 class='text-2xl underline'> Program Manager </h4>
                   <div>
                     <label>Name:</label> <%= optional_data_text(@partner.profile.program_contact_name) %>
                   </div>
@@ -74,7 +74,7 @@
               </div>
               <div class="col-lg-4 col-sm-12">
                 <div>
-                  <h4> Pickup Person </h4>
+                  <h4 class='text-2xl underline'> Pickup Person </h4>
                   <div>
                     <label>Name:</label> <%= optional_data_text(@partner.profile.pick_up_name) %>
                   </div>
@@ -92,6 +92,41 @@
 
         <section class="card card-info card-outline">
           <div class="card-header">
+            <h2 class="card-title">Settings</h2>
+          </div>
+          <div class="card-body p-2">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12" id="partner-notes">
+                <div>
+                  <h4 class='text-2xl underline'> Partner Group: </h4>
+                  <div>
+                    <label><%= @partner.partner_group&.name || "None" %></label>
+                  </div>
+                </div>
+
+                <h4 class='text-2xl underline'> Requestable Item Categories: </h4>
+                <p class='text-sm font-light mb-1'> You can change this through their partner group.</p>
+
+                <% if @partner.item_categories.present? %>
+                  <ul class='list-disc ml-3'>
+                    <% @partner.item_categories.each do |ic| %>
+                      <li>
+                        <span class='text-lg'><%= ic.name %></span>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% elsif @partner.partner_group.present? %>
+                  <span class='text-red-600 text-bold font-italic'>No Items Requestable</span>
+                <% else %>
+                  <span class='text-blue-600 text-bold font-italic'>All Items Requestable</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card card-info card-outline">
+          <div class="card-header">
             <h2 class="card-title">Notes</h2>
           </div>
           <div class="card-body p-2">
@@ -102,6 +137,28 @@
                 <% else %>
                   <p> None provided </p>
                 <% end %>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card card-info card-outline" id='partner-information'>
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Application & Information</h2>
+            </div>
+            <div class='pull-right'>
+              <% tooltip_message = "Partner has not requested approval yet. Partners are able to request approval by going into 'My Organization' and clicking 'Request Approval' button." %>
+              <span id="pending-approval-request-tooltip" title="<%= tooltip_message unless @partner.awaiting_review? %>">
+                <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.awaiting_review? } %>
+              </span>
+              <%= edit_button_to edit_profile_path(@partner), { text: "Edit Information", size: "md" } %>
+            </div>
+          </div>
+          <div class="card-body p-2">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 p-4">
+                <%= render partial: 'profiles/show', locals: { partner_profile: @partner.profile, partner_profile_fields: @partner_profile_fields  } %>
               </div>
             </div>
           </div>
@@ -185,3 +242,9 @@
     </div><!-- modal-dialog -->
   </div><!-- addUserModal -->
 </section>
+
+<script>
+$(function () {
+  $('#pending-approval-request-tooltip').tooltip()
+})
+</script>

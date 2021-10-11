@@ -1,4 +1,14 @@
+# Human Essentials 
+
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-107-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+[![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
+[![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
+
 # Welcome Contributors!
+
 Thanks for checking us out!
 
 If you're new here, here are some things you should know:
@@ -15,12 +25,6 @@ There are numerous other folks that can chime in and answer questions -- please 
 
 # README
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/maintainability)](https://codeclimate.com/github/rubyforgood/diaper/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/f100428ab2af34c142b7/test_coverage)](https://codeclimate.com/github/rubyforgood/diaper/test_coverage)
-[![Build Status](https://travis-ci.org/rubyforgood/diaper.svg?branch=main)](https://travis-ci.org/rubyforgood/diaper) [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
-[![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
-
 ## About
 
 This application is an inventory management system that is built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need-facts/) as directly and explicitly as possible. Diaper Banks maintain inventory, receive donations and other means of intaking diapers (and related supplies), and issue Distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data, and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
@@ -29,7 +33,9 @@ For a general overview of the application, please see the [Application Overview]
 
 ### Origins
 
+
 This project took what we built for the [Portland Diaper Bank in 2016](https://github.com/rubyforgood/pdx_diaper) and turned it into a multitenant application, something that all diaper banks can use. We re-used models, code and other documentation where applicable as well as implemented new features and functionality requested by the prime stakeholder (PDXDB). We're super excited to have had Rachel Alston, the director of the Portland Diaper Bank, attending our event in 2017, providing guidance and giving us the best chance of success!
+
 
 ## Development
 
@@ -55,16 +61,22 @@ If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplie
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev`, `diaper_test`, `partner_dev`, and `partner_test` respectively. This should all be handled with `rails db:setup`.
 Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called `database.yml.example` as an example and just change the credentials.
 
-## Seed the database
+### Seed the database
 From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
 
-## Start the app
-Run `bundle exec rails s` and browse to http://localhost:3000/
+### Start the app
+Run `bundle exec rails server` or `bin/start` (recommended since it runs webpacker in the background!) and browse to http://localhost:3000/
 
-## Login
+### Login
 To login to the web application, use these default credentials:
 
-#### Diaperbase Users
+**Super Users**
+```
+username: superadmin@example.com
+password: password
+```
+
+**Bank users**
 ```
 Organization Admin
   Email: org_admin1@example.com
@@ -75,7 +87,7 @@ User
   Password: password
 ```
 
-#### Partnerbase Users
+**Partnerbase Users**
 ```
 Verified Partner
   Email: verified@example.com
@@ -93,14 +105,6 @@ Recertification Required Partner
   Email: recertification_required@example.com
   Password: password
 ```
-
-## Connecting Diaper & Partner Apps Together Locally (Deprecating)
-
-**Deprecation Note: We are actively working on merging the two applications together to avoid the need to maintain an API. In the future, all API calls between diaper & partner will be replaced.**
-
-Depending on the issues or features you decided to undertake, you may need to get both the `diaper` and `partner` app running locally. This is true if you want to build a feature that depends on code changes in both repositories.
-
-Please follow this [guide](connecting-the-partner-and-diaper.md) to get your local environment setup properly.
 
 ## Contributing
 
@@ -134,7 +138,7 @@ At that point, someone will work with you on doing a code review (typically pret
 
 Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/diaper/issues/new)
 
-### Testing
+### Writing Tests/Specs
 
 Run all the tests with:
 
@@ -154,19 +158,29 @@ example:
   end
 ```
 
-##### Feature specs
+### On Writing Browser/System/Feature Specs
 
-If you need to see a feature spec run in the browser, you can use the following env variable:
+If you need to see a browser/system spec run in the browser, you can use the following env variable:
 
 ```
 NOT_HEADLESS=true bundle exec rspec
 ```
 
-Keep in mind that you need js to be enabled. For example:
+##### Use magic_test to simplify browser/system/feature spec writing
+We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It does this by giving you the ability to record actions on the browser running the specs and easily paste them into the spec.
 
+For example you can do this by adding `magic_test` within your system spec:
+```rb
+ it "does some browser stuff" do
+   magic_test
+ end
 ```
-describe "PickupSheet", type: :feature, js: true do
+and run the spec using this command:
 ```
+MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
+```
+
+**See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
 ### In-flight Pull Requests
 
@@ -224,3 +238,159 @@ Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assi
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_large)
 
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/edwinthinks"><img src="https://avatars.githubusercontent.com/u/11335191?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Edwin Mak</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=edwinthinks" title="Code">💻</a> <a href="#projectManagement-edwinthinks" title="Project Management">📆</a> <a href="#infra-edwinthinks" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#ideas-edwinthinks" title="Ideas, Planning, & Feedback">🤔</a> <a href="#question-edwinthinks" title="Answering Questions">💬</a> <a href="#security-edwinthinks" title="Security">🛡️</a></td>
+    <td align="center"><a href="https://rubyforgood.org/"><img src="https://avatars.githubusercontent.com/u/667909?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sean Marcia</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=seanmarcia" title="Code">💻</a> <a href="#business-seanmarcia" title="Business development">💼</a> <a href="#financial-seanmarcia" title="Financial">💵</a> <a href="#fundingFinding-seanmarcia" title="Funding Finding">🔍</a> <a href="#eventOrganizing-seanmarcia" title="Event Organizing">📋</a></td>
+    <td align="center"><a href="https://armahillo.dev/"><img src="https://avatars.githubusercontent.com/u/502363?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aaron H</b></sub></a><br /><a href="#projectManagement-armahillo" title="Project Management">📆</a> <a href="https://github.com/rubyforgood/human-essentials/commits?author=armahillo" title="Code">💻</a></td>
+    <td align="center"><a href="https://gitlab.com/IlinDmitry"><img src="https://avatars.githubusercontent.com/u/13395396?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dmitry</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=IlinDmitry" title="Code">💻</a></td>
+    <td align="center"><a href="http://adambachman.org/"><img src="https://avatars.githubusercontent.com/u/13002?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Adam Bachman</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=abachman" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jcavena"><img src="https://avatars.githubusercontent.com/u/200333?v=4?s=100" width="100px;" alt=""/><br /><sub><b>JC Avena</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=jcavena" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mdworken"><img src="https://avatars.githubusercontent.com/u/31595784?v=4?s=100" width="100px;" alt=""/><br /><sub><b>mdworken</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=mdworken" title="Code">💻</a> <a href="#projectManagement-mdworken" title="Project Management">📆</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/mlpinit"><img src="https://avatars.githubusercontent.com/u/1443346?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marius Pop</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=mlpinit" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ejuten"><img src="https://avatars.githubusercontent.com/u/10624016?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Elayne</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=ejuten" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/duaimei"><img src="https://avatars.githubusercontent.com/u/7873934?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Amy Detwiler</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=duaimei" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/designbygia"><img src="https://avatars.githubusercontent.com/u/56228717?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gia</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=designbygia" title="Code">💻</a></td>
+    <td align="center"><a href="https://medium.com/@adewusi"><img src="https://avatars.githubusercontent.com/u/42121379?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Amina Adewusi</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=Nirvikalpa108" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/albertchae"><img src="https://avatars.githubusercontent.com/u/217050?v=4?s=100" width="100px;" alt=""/><br /><sub><b>albertchae</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=albertchae" title="Code">💻</a> <a href="#ideas-albertchae" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/cattywampus"><img src="https://avatars.githubusercontent.com/u/1625840?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Keith Walters</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=cattywampus" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://southard.dev/"><img src="https://avatars.githubusercontent.com/u/7292?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Chase Southard</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=chaserx" title="Code">💻</a></td>
+    <td align="center"><a href="http://thelackthereof.org/"><img src="https://avatars.githubusercontent.com/u/8642?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Brock Wilcox</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=awwaiid" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/danquill"><img src="https://avatars.githubusercontent.com/u/16866776?v=4?s=100" width="100px;" alt=""/><br /><sub><b>danquill</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=danquill" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.bbs-software.com/"><img src="https://avatars.githubusercontent.com/u/28410?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Keith Bennett</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=keithrbennett" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/benreyn"><img src="https://avatars.githubusercontent.com/u/11561578?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Benjamin Reynolds</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=benreyn" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jtu0"><img src="https://avatars.githubusercontent.com/u/4042423?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jtu0</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=jtu0" title="Code">💻</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/juarezlustosa"><img src="https://avatars.githubusercontent.com/u/505372?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Juarez Lustosa</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=JuarezLustosa" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/JulienAmoros"><img src="https://avatars.githubusercontent.com/u/17905578?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Julien A.</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=JulienAmoros" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/EmersonManabuAraki"><img src="https://avatars.githubusercontent.com/u/26900611?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Emerson Manabu Araki</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=EmersonManabuAraki" title="Code">💻</a></td>
+    <td align="center"><a href="http://powerhrg.com/"><img src="https://avatars.githubusercontent.com/u/167131?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ben Klang</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=bklang" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/karolina-benitez"><img src="https://avatars.githubusercontent.com/u/28552912?v=4?s=100" width="100px;" alt=""/><br /><sub><b>karolina</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=karolina-benitez" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/joshcano"><img src="https://avatars.githubusercontent.com/u/5419597?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Josh Cano</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=joshcano" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/sbpipb"><img src="https://avatars.githubusercontent.com/u/2242652?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Julian Macmang</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=sbpipb" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/PhilipDeFraties"><img src="https://avatars.githubusercontent.com/u/65036872?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Philip DeFraties</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=PhilipDeFraties" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/GabrielRMuller"><img src="https://avatars.githubusercontent.com/u/33486409?v=4?s=100" width="100px;" alt=""/><br /><sub><b>GabrielRMuller</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=GabrielRMuller" title="Code">💻</a></td>
+    <td align="center"><a href="https://luchiago.github.io/"><img src="https://avatars.githubusercontent.com/u/30028621?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lucas Hiago</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=luchiago" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/chiefkikio"><img src="https://avatars.githubusercontent.com/u/3259878?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lanya Butler</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=chiefkikio" title="Code">💻</a></td>
+    <td align="center"><a href="https://edumoreira1506.github.io/blog"><img src="https://avatars.githubusercontent.com/u/49662698?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Eduardo Moreira</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=edumoreira1506" title="Code">💻</a></td>
+    <td align="center"><a href="https://aliciabarrett.dev/"><img src="https://avatars.githubusercontent.com/u/13841769?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alicia Barrett</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=Aliciawyse" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.forchaengineering.com/"><img src="https://avatars.githubusercontent.com/u/4605789?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bob Forcha</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=bobforcha" title="Code">💻</a></td>
+    <td align="center"><a href="http://willmurphyscode.net/"><img src="https://avatars.githubusercontent.com/u/12529630?v=4?s=100" width="100px;" alt=""/><br /><sub><b>William Murphy</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=willmurphyscode" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://www.katelovescode.com/"><img src="https://avatars.githubusercontent.com/u/8364647?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kate Donaldson</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=katelovescode" title="Code">💻</a></td>
+    <td align="center"><a href="http://matthewdodds.com/"><img src="https://avatars.githubusercontent.com/u/1717864?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matthew Russell Dodds</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=MatthewRDodds" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.daydreamsinruby.com/"><img src="https://avatars.githubusercontent.com/u/2354079?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Allison McMillan</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=asheren" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/a-jean"><img src="https://avatars.githubusercontent.com/u/9901121?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ashley Jean</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=a-jean" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jeduardo824"><img src="https://avatars.githubusercontent.com/u/27960597?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Eduardo Alencar</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=jeduardo824" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.thomashart.me/"><img src="https://avatars.githubusercontent.com/u/3099915?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Thomas Hart</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=myrridin" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/viamin"><img src="https://avatars.githubusercontent.com/u/260794?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bart Agapinan</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=viamin" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/NiquiCara"><img src="https://avatars.githubusercontent.com/u/45127691?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Monique</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=NiquiCara" title="Code">💻</a></td>
+    <td align="center"><a href="http://valerie.codes/"><img src="https://avatars.githubusercontent.com/u/5439589?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Valerie Woolard</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=valeriecodes" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/zak-kay"><img src="https://avatars.githubusercontent.com/u/79330383?v=4?s=100" width="100px;" alt=""/><br /><sub><b>zak-kay</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=zak-kay" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jjlahatte"><img src="https://avatars.githubusercontent.com/u/35351407?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jason LaHatte</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=jjlahatte" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/davetapley"><img src="https://avatars.githubusercontent.com/u/48232?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dave Tapley</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=davetapley" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Megchan"><img src="https://avatars.githubusercontent.com/u/11429067?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Meghan</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=Megchan" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/dropkickfish"><img src="https://avatars.githubusercontent.com/u/33702528?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Andy Thackray</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=dropkickfish" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/felipelovato"><img src="https://avatars.githubusercontent.com/u/2296173?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Felipe Lovato Flores</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=felipelovato" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/marcelkooi"><img src="https://avatars.githubusercontent.com/u/13142719?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marcel Kooi</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=marcelkooi" title="Code">💻</a></td>
+    <td align="center"><a href="http://leesharma.com/"><img src="https://avatars.githubusercontent.com/u/814638?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lee Sharma</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=leesharma" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/scooter-dangle"><img src="https://avatars.githubusercontent.com/u/934707?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Scott Steele</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=scooter-dangle" title="Code">💻</a> <a href="#ideas-scooter-dangle" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://www.sam-we.com/"><img src="https://avatars.githubusercontent.com/u/10361390?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sam Weerasinghe</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=oystersauce8" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/gerald"><img src="https://avatars.githubusercontent.com/u/46204?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gerald Abrencillo</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=gerald" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/rodolfoasantos"><img src="https://avatars.githubusercontent.com/u/754389?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Rodolfo Santos</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=rodolfoasantos" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.linkedin.com/in/gabrielbaldao/"><img src="https://avatars.githubusercontent.com/u/20587352?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gabriel Baldão</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=gabrielbaldao" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/melaniew"><img src="https://avatars.githubusercontent.com/u/1447452?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Melanie White</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=melaniew" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/holytoastr"><img src="https://avatars.githubusercontent.com/u/4822313?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Melissa Miller</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=holytoastr" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/marcheiligers"><img src="https://avatars.githubusercontent.com/u/173701?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marc Heiligers</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=marcheiligers" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/josephbhunt"><img src="https://avatars.githubusercontent.com/u/78151?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joe Hunt</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=josephbhunt" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/meg-gutshall"><img src="https://avatars.githubusercontent.com/u/37842352?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Meg Gutshall</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=meg-gutshall" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ozydingo"><img src="https://avatars.githubusercontent.com/u/4616431?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Andrew H Schwartz</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=ozydingo" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.turing.io/alumni/joseph-glass"><img src="https://avatars.githubusercontent.com/u/17987273?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joseph Glass</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=glassjoseph" title="Code">💻</a></td>
+    <td align="center"><a href="https://reesew.io/"><img src="https://avatars.githubusercontent.com/u/26661872?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Reese Williams</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=reese" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/perezperret"><img src="https://avatars.githubusercontent.com/u/4761084?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Santiago Perez</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=perezperret" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/SiriusDely"><img src="https://avatars.githubusercontent.com/u/511437?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sirius Dely</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=SiriusDely" title="Code">💻</a></td>
+    <td align="center"><a href="http://heatherherrington.github.io/"><img src="https://avatars.githubusercontent.com/u/17165242?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Heather Herrington</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=heatherherrington" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/moacirguedes"><img src="https://avatars.githubusercontent.com/u/11277348?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Moacir Guedes</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=moacirguedes" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/CraigJZ"><img src="https://avatars.githubusercontent.com/u/7053190?v=4?s=100" width="100px;" alt=""/><br /><sub><b>CraigJZ</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=CraigJZ" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.linkedin.com/in/semiharslanoglu/"><img src="https://avatars.githubusercontent.com/u/10260283?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Semih Arslanoğlu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=sarslanoglu" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/m-pereira"><img src="https://avatars.githubusercontent.com/u/47258878?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mauricio de Lima</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=m-pereira" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/dacur"><img src="https://avatars.githubusercontent.com/u/4250366?v=4?s=100" width="100px;" alt=""/><br /><sub><b>David Curtis</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=dacur" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/nataliagalan"><img src="https://avatars.githubusercontent.com/u/66537500?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Natalia Galán</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=nataliagalan" title="Code">💻</a></td>
+    <td align="center"><a href="http://andersonfernandes.dev/"><img src="https://avatars.githubusercontent.com/u/8173530?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anderson Fernandes</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=andersonfernandes" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/belgamo"><img src="https://avatars.githubusercontent.com/u/19699724?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gabriel Belgamo</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=belgamo" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jorgedjr21"><img src="https://avatars.githubusercontent.com/u/4561599?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jorge David C.T Junior</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=jorgedjr21" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/SethLieberman"><img src="https://avatars.githubusercontent.com/u/16119691?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seth Lieberman</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=SethLieberman" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jsantos"><img src="https://avatars.githubusercontent.com/u/32199?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jorge Oliveira Santos</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=jsantos" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.dandrinkard.com/"><img src="https://avatars.githubusercontent.com/u/72645?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Drinks</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=drinks" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/brunohkbx"><img src="https://avatars.githubusercontent.com/u/6487206?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bruno Castro</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=brunohkbx" title="Code">💻</a></td>
+    <td align="center"><a href="http://xjunior.me/"><img src="https://avatars.githubusercontent.com/u/8156?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Carlos Palhares</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=xjunior" title="Code">💻</a></td>
+    <td align="center"><a href="https://nepalmap.org/"><img src="https://avatars.githubusercontent.com/u/3824492?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Clifton McIntosh</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=cliftonmcintosh" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Beigelman"><img src="https://avatars.githubusercontent.com/u/50420424?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Beigelman</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=Beigelman" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/lmegviar"><img src="https://avatars.githubusercontent.com/u/23217560?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Meg Viar</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=lmegviar" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/svileshina"><img src="https://avatars.githubusercontent.com/u/7723308?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Svetlana Vileshina</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=svileshina" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/bpr3p"><img src="https://avatars.githubusercontent.com/u/43351221?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ben Reed</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=bpr3p" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/egiurleo"><img src="https://avatars.githubusercontent.com/u/9601737?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Emily Giurleo</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=egiurleo" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/alemtgetu"><img src="https://avatars.githubusercontent.com/u/36018687?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alem Getu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=alemtgetu" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/dejanbj"><img src="https://avatars.githubusercontent.com/u/7805837?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dejan Bjeloglav</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=dejanbj" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/cassianoblonski"><img src="https://avatars.githubusercontent.com/u/9721558?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cassiano Blonski Sampaio</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=cassianoblonski" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/gdombchik"><img src="https://avatars.githubusercontent.com/u/7111708?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Greg</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=gdombchik" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/finn2d"><img src="https://avatars.githubusercontent.com/u/84066080?v=4?s=100" width="100px;" alt=""/><br /><sub><b>finn</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=finn2d" title="Code">💻</a></td>
+    <td align="center"><a href="https://jaysonmandani.github.io/"><img src="https://avatars.githubusercontent.com/u/1963153?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jayson Mandani</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=JaysonMandani" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/stanleypliu"><img src="https://avatars.githubusercontent.com/u/53650048?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stanley Liu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=stanleypliu" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/c-bartell"><img src="https://avatars.githubusercontent.com/u/60277914?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Curtis Bartell</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=c-bartell" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/librod89"><img src="https://avatars.githubusercontent.com/u/4965672?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Libby Rodriguez</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=librod89" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/joshuacgraves"><img src="https://avatars.githubusercontent.com/u/53875700?v=4?s=100" width="100px;" alt=""/><br /><sub><b>joshuacgraves</b></sub></a><br /><a href="#question-joshuacgraves" title="Answering Questions">💬</a> <a href="#projectManagement-joshuacgraves" title="Project Management">📆</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://focused-wescoff-bfb488.netlify.app/"><img src="https://avatars.githubusercontent.com/u/65963997?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Himanshu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=himanshu007-creator" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/MohamedHegab"><img src="https://avatars.githubusercontent.com/u/7612401?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mohamed Hegab</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=MohamedHegab" title="Code">💻</a></td>
+    <td align="center"><a href="http://kinduff.com"><img src="https://avatars.githubusercontent.com/u/1270156?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alejandro AR</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=kinduff" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/hatsu38"><img src="https://avatars.githubusercontent.com/u/16137809?v=4?s=100" width="100px;" alt=""/><br /><sub><b>hatsu</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=hatsu38" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/matt-glover"><img src="https://avatars.githubusercontent.com/u/850480?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matt Glover</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=matt-glover" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/js-sapphire"><img src="https://avatars.githubusercontent.com/u/41758940?v=4?s=100" width="100px;" alt=""/><br /><sub><b>js-sapphire</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=js-sapphire" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/exbinary"><img src="https://avatars.githubusercontent.com/u/8330?v=4?s=100" width="100px;" alt=""/><br /><sub><b>lasitha</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=exbinary" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/patmccler"><img src="https://avatars.githubusercontent.com/u/28073714?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Patrick McClernan</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=patmccler" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/marc"><img src="https://avatars.githubusercontent.com/u/725?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marc Bellingrath</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=marc" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

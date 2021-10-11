@@ -8,8 +8,9 @@ class DistributionCreateService < DistributionService
 
   def call
     perform_distribution_service do
+      validate_request_not_yet_processed! if @request.present?
+
       distribution.save!
-      distribution.scheduled!
       distribution.storage_location.decrease_inventory distribution
       distribution.reload
       @request&.update!(distribution_id: distribution.id, status: 'fulfilled')
@@ -20,6 +21,13 @@ class DistributionCreateService < DistributionService
   private
 
   def send_notification
-    PartnerMailerJob.perform_now(distribution_organization.id, distribution.id, 'Your Distribution')
+    PartnerMailerJob.perform_later(distribution_organization.id, distribution.id, 'Your Distribution')
+  end
+
+  def validate_request_not_yet_processed!
+    existing_distribution = @request.distribution
+    if existing_distribution.present?
+      raise "Request has already been fulfilled by Distribution #{existing_distribution.id}"
+    end
   end
 end

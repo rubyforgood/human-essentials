@@ -73,8 +73,9 @@ class Donation < ApplicationRecord
   # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   scope :by_source, ->(source) {
-    source = SOURCES[source] if source.is_a?(Symbol)
-    where(source: source)
+    return where(source: source) unless source.is_a?(Symbol)
+
+    includes(source).where(source: SOURCES[source])
   }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
 
@@ -119,8 +120,6 @@ class Donation < ApplicationRecord
       storage_location.increase_inventory(to_a)
       # Apply the new changes to the storage location inventory
       original_storage_location.decrease_inventory(old_data)
-      # TODO: Discuss this -- *should* we be removing InventoryItems when they hit 0 count?
-      original_storage_location.inventory_items.where(quantity: 0).destroy_all
     end
   rescue ActiveRecord::RecordInvalid
     false
@@ -143,21 +142,6 @@ class Donation < ApplicationRecord
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
-  end
-
-  def self.csv_export_headers
-    ["Source", "Date", "Donation Site", "Storage Location", "Quantity of Items", "Variety of Items"]
-  end
-
-  def csv_export_attributes
-    [
-      source_view,
-      issued_at.strftime("%F"),
-      donation_site.try(:name),
-      storage_location.name,
-      line_items.total,
-      line_items.size
-    ]
   end
 
   private

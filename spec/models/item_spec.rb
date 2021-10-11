@@ -16,11 +16,15 @@
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  item_category_id             :integer
 #  kit_id                       :integer
 #  organization_id              :integer
 #
 
 RSpec.describe Item, type: :model do
+  describe 'Assocations >' do
+    it { should belong_to(:item_category).optional }
+  end
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:item, organization_id: nil)).not_to be_valid
@@ -32,6 +36,11 @@ RSpec.describe Item, type: :model do
       item = create(:item)
       expect(build(:item, name: nil)).not_to be_valid
       expect(build(:item, name: item.name)).not_to be_valid
+    end
+    it "requires that items quantity are not a negative number" do
+      expect(build(:item, distribution_quantity: -1)).not_to be_valid
+      expect(build(:item, on_hand_minimum_quantity: -1)).not_to be_valid
+      expect(build(:item, on_hand_recommended_quantity: -1)).not_to be_valid
     end
   end
 

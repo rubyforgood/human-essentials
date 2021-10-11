@@ -45,7 +45,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       let(:organization) { nil }
 
       it "returns a default name" do
-        expect(helper.default_title_content).to eq "DiaperBank"
+        expect(helper.default_title_content).to eq "Humanessentials"
       end
     end
   end

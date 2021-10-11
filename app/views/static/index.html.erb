@@ -3,201 +3,208 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DiaperBase</title>
+    <title>Human Essentials</title>
 
-    <!--    Stylesheet Files    -->
-    <link rel="stylesheet" href="css/normalize.css" />
-    <link rel="stylesheet" href="css/foundation.min.css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <%= stylesheet_link_tag 'landing_page'%>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <%= javascript_pack_tag 'application' %>
+    <%= stylesheet_pack_tag 'application' %>
 
+    <style>
+      .app-images {
+        height: 400px;
+      }
+    </style>
   </head>
   <body>
-    <div class="hero-background container-fluid py-5">
-      <div class="container mb-2">
-        <nav class="navbar navbar-expand-lg navbar-light ">
-          <div class="row d-flex align-items-center">
-            <div class="navbar-header col-xs-6 col-sm-12 col-md-12 col-lg-6 pl-0 d-flex m-0">
-              <a class="navbar-brand flex-grow-1" href="#"><h2 class="text-white">Diaper.App</h2></a>
-              <button class="navbar-toggler pull-right text-white p-0 m-0" type="button" data-toggle="collapse" data-target="#myNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <%= image_tag("bars.svg") %>
-              </button>
-            </div>
-            <div class="collapse navbar-collapse col-xs-6 col-sm-6" id="myNavbar">
-              <div class="navbar-nav flex-fill d-flex">
-                <a class="nav-link text-white flex-fill" href="#about">About <span class="sr-only">(current)</span></a>
-                <a class="nav-link text-white flex-fill" href="#testimonials">Testimonials</a>
-                <a class="nav-link text-white flex-fill" href="#contact">Contact</a>
 
-                <% if Flipper.enabled?(:onebase) %>
-                  <div class="dropdown">
-                    <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Login
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href=<%= new_user_session_path(organization_id: nil) %>>Diaperbase</a>
-                      <a class="dropdown-item" href=<%= new_partner_user_session_path %>>Partnerbase</a>
+  <div class='pt-2' style="background: linear-gradient(135deg, #3023AE, #C86DD7)">
+      <div class="container max-w-7xl mx-auto pt-5 px-5">
+        <nav>
+          <div class="flex justify-between items-center">
+            <div>
+              <a class="text-lg lg:text-3xl lg:text-4xl" href="#"><h2 class="text-white font-bold">HumanEssentials.app</h2></a>
+            </div>
+
+            <div class="flex" id="myNavbar">
+              <div class="flex text-white space-x-4 md:space-x-10 text-md lg:text-2xl items-center">
+                <a class="hidden md:block" href="#about">About</a>
+                <a class="hidden md:block" href="#testimonials">Testimonials</a>
+                <a class="hidden md:block" href="#contact">Contact</a>
+
+                <div @click.away="open = false" class="relative" x-data="{ open: false }">
+                  <button @click="open = !open" class="flex flex-row items-center w-full px-4 py-2 bg-green-500 hover:bg-green-600 rounded-2xl text-md">
+                    <span class='text-lg'>Login</span>
+                    <svg fill="currentColor" viewBox="0 0 20 20" :class="{'rotate-180': open, 'rotate-0': !open}" class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                  </button>
+                  <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 w-40 mt-2 origin-top-right rounded-md shadow-lg z-10">
+                    <div class="px-2 py-2 bg-white text-black rounded-md shadow dark-mode:bg-gray-800">
+                      <a class="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href=<%= new_user_session_path(organization_id: nil) %>>
+                        I'm a Bank
+                      </a>
+                      <a class="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href=<%= new_partner_user_session_path %>>
+                        I'm a Partner
+                      </a>
                     </div>
                   </div>
-                <% else %>
-                  <a class="nav-link text-white flex-fill" href=<%= new_user_session_path(organization_id: nil) %> >User Sign In</a>
-                <% end %>
+                </div>
+                <button class="hidden btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Login
+                </button>
+                <div class="hidden" aria-labelledby="dropdownMenuButton">
+                  <a href=<%= new_user_session_path(organization_id: nil) %>>Diaperbase</a>
+                  <a href=<%= new_partner_user_session_path %>>Partnerbase</a>
+                </div>
               </div>
             </div>
           </div>
         </nav>
       </div>
 
-      <div class="container">
-        <div class="d-flex flex-wrap-reverse flex-sm-wrap-reverse flex-md-nowrap flex-lg-nowrap">
-          <div class="hero-copy d-flex align-items-center">
+      <div class="container max-w-7xl mx-auto text-white font-bold flex px-5" style='height:60vh; min-height: 500px'>
+        <div class="flex flex-col justify-center items-center mx-auto lg:mx-0 text-center lg:text-left">
+          <div class="text-4xl">
             <div>
-              <h2 class="text-white">The easiest and most love-filled way to manage your Human Essentials bank.</h2>
-              <p>Ready to make yourself more efficient?</p>
-              <a href=<%="#{new_account_request_path}"%>><button type="button" class="btn btn-primary btn-lg mt-5">Request A Demo</button></a>
+              <h2 class="">The easiest and most love-filled <br/> way to manage your <br/> Human Essentials bank.</h2>
+              <p class='text-lg font-normal mb-3 mt-2'>Ready to make yourself more efficient?</p>
+              <a href=<%="#{new_account_request_path}"%>><button type="button" class="text-2xl bg-green-600 text-white px-3 py-2 rounded-2xl hover:bg-green-700">
+                Register your bank here for free!
+              </button></a>
             </div>
           </div>
-          <div class="hero-image">
+          <div class="hidden lg:block absolute right-52 w-1/4">
             <%= image_tag("hero-image.svg") %>
           </div>
         </div>
       </div>
     </div>
-    <div class="container description-container" id="about">
-      <div class="text-center">
-        <h2 class="text-header">The Human Essentials app removes the <br/> complexity from your day</h2>
-        <p class="text-body-color">and lets you spend time helping those who need it.</p>
-        <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top"><button type="button" class="btn btn-primary btn-lg mt-2">Get In Touch</button></a>
+
+
+    <div class="container max-w-7xl mx-auto pt-5" id="about">
+      <div class="text-center mt-10">
+        <h2 class="text-4xl text-gray-600">The Human Essentials app removes the <br/> complexity from your day</h2>
+        <p class="mt-1 text-gray-400">and lets you spend time helping those who need it.</p>
+        <a href="mailto:info@humanessentials.app?Subject=Diaperbase%20Interest"><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 rounded-2xl mt-5">Get In Touch</button></a>
       </div>
     </div>
-    <div class="container py-5 px-0">
-      <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
-        <div class="app-images-block">
+
+
+    <div class="w-3/4 mx-auto py-24">
+
+      <div class="flex flex-col md:flex-row justify-center">
+        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("partner-management.svg", :class => "app-images") %>
+            <%= image_tag("partner-management.svg", class: "app-images") %>
           </div>
-          <div class="">
-            <h3 class="text-header">Partner Management</h3>
-            <p class="text-body-color">Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders. </p>
+          <div class="text-center">
+            <h3 class="text-3xl">Partner Management</h3>
+            <p class="text-gray-400 mt-2">Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders. </p>
           </div>
         </div>
-        <div class="app-images-block">
+        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("forecasting.svg", :class => "app-images") %>
+            <%= image_tag("forecasting.svg", class: "app-images") %>
           </div>
-          <div class="">
-            <h3 class="text-header">Forecasting</h3>
-            <p class="text-body-color">View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
-          </div>
-        </div>
-      </div>
-      <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
-        <div class="app-images-block">
-          <div class="pb-2">
-            <%= image_tag("report-image.svg", :class => "app-images") %>
-          </div>
-          <div class="">
-            <h3 class="text-header">Report Generation</h3>
-            <p class="text-body-color">Generate pdfs of partner distribution invoices for easy printing and sending.</p>
-          </div>
-        </div>
-        <div class="app-images-block">
-          <div class="pb-2">
-            <%= image_tag("barcode.svg", :class => "app-images") %>
-          </div>
-          <div class="">
-            <h3 class="text-header">Barcode Scanning</h3>
-            <p class="text-body-color">Quickly add or remove inventory with the scan of a barcode. The adjusting and transfering of inventory is also supported as well as creating your own barcodes.</p>
+          <div class="text-center">
+            <h3 class="text-3xl">Forecasting</h3>
+            <p class="text-gray-400 mt-2">View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
           </div>
         </div>
       </div>
-      <div class="d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
-        <div class="app-images-block">
+
+      <div class="flex flex-col md:flex-row justify-center">
+        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("inventory-image.svg", :class => "app-images") %>
+            <%= image_tag("report-image.svg", class: "app-images") %>
           </div>
-          <div class="">
-            <h3 class="text-header">Inventory Management</h3>
-            <p class="text-body-color">Easily keep track of the items in your inventory regardless of their storage location.</p>
+          <div class="text-center">
+            <h3 class="text-3xl">Report Generation</h3>
+            <p class="text-gray-400 mt-2">Generate pdfs of partner distribution invoices for easy printing and sending.</p>
           </div>
         </div>
-        <div class="app-images-block">
+
+        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
           <div class="pb-2">
-            <%= image_tag("dashboard-image.svg", :class => "app-images") %>
+            <%= image_tag("barcode.svg", class: "app-images") %>
           </div>
-          <div class="">
-            <h3 class="text-header">Dashboard Vizualization</h3>
-            <p class="text-body-color">Quickly view your inventory, donations, purchases and distributions on a single page.</p>
+          <div class="text-center">
+            <h3 class="text-3xl">Barcode Scanning</h3>
+            <p class="text-gray-400 mt-2">Quickly add or remove inventory with the scan of a barcode. The adjusting and transfering of inventory is also supported as well as creating your own barcodes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row justify-center">
+        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
+          <div class="pb-2">
+            <%= image_tag("inventory-image.svg", class: "app-images") %>
+          </div>
+          <div class="text-center">
+            <h3 class="text-3xl">Inventory Management</h3>
+            <p class="text-gray-400 mt-2">Easily keep track of the items in your inventory regardless of their storage location.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
+          <div class="pb-2">
+            <%= image_tag("dashboard-image.svg", class: "app-images") %>
+          </div>
+          <div class="text-center">
+            <h3 class="text-3xl">Dashboard Vizualization</h3>
+            <p class="text-gray-400 mt-2">Quickly view your inventory, donations, purchases and distributions on a single page.</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="py-5 px-0 green-bkg" id="testimonials">
-      <div class="container d-flex justify-content-around flex-wrap flex-sm-wrap flex-md-nowrap flex-lg-nowrap text-center">
-        <div class="quote-block">
-          <%= image_tag("quote.svg", :class => "quote-image") %>
+
+    <div class="py-5 px-0 bg-green-600 text-white" id="testimonials">
+      <div class="container max-w-7xl mx-auto flex flex-col md:flex-row py-5 justify-center items-center">
+        <div class="w-1/2 flex justify-center">
+          <%= image_tag("quote.svg", class: "quote-image", style: 'width: 300px') %>
         </div>
-        <div class="quote-block pt-5">
-          <h3 class="text-header text-left text-white pl-5">Testimonials</h3>
-          <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
-            <ol class="carousel-indicators">
-              <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-              <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-            </ol>
-            <div class="carousel-inner text-left">
-              <div class="carousel-item active p-5">
-                <p class="text-testimonials">DiaperBase has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. DiaperBase has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
-                <strong class="text-bold text-white">  Megan, Sweet Cheeks Diaper Bank</strong>
+        <div class="pt-5 px-4 w-full sm:w-1/2">
+          <h3 class="text-4xl">Testimonials</h3>
+          <div class='mt-5'>
+            <div class='space-y-12'>
+              <div>
+                <p>DiaperBase has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. DiaperBase has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
+                <strong class='mt-2'> - Megan, Sweet Cheeks Diaper Bank</strong>
               </div>
-              <div class="carousel-item p-5">
+              <div>
                 <p class="text-testimonials">Finally, an inventory management system designed specifically for the unique needs of diaper banks!</p>
-                <strong class="text-white"> Rachel Alston, PDX Diaper Bank </strong>
+                <strong> - Rachel Alston, PDX Diaper Bank </strong>
               </div>
             </div>
-            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
           </div>
         </div>
       </div>
     </div>
-    <div class="container bottom-cta" id="contact">
+    <div class="container max-w-7xl mx-auto py-32" id="contact">
       <div class="text-center">
-        <h2 class="text-header">Want to use the Human Essentials App?</h2>
-        <p class="text-body-color">After the demo, you will be able to request your own account.</p>
-        <a href=<%="#{new_account_request_path}"%>><button type="button" class="btn btn-primary btn-lg mt-2">Request A Demo</button></a>
+        <h2 class="text-4xl">Want to use the Human Essentials App?</h2>
+        <p class="text-gray-500 mt-2">After the demo, you will be able to request your own account.</p>
+        <a href=<%="#{new_account_request_path}"%>><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 mt-5 rounded-2xl">Request A Demo</button></a>
+
         <br/><br/>
-        <p class="text-body-color">Have questions? Email us at <a href="mailto:info@diaper.app?Subject=Diaperbase%20Interest" target="_top" >info@diaper.app</a></p>
+        <p class="text-gray-500">Have questions? Email us at <a class='text-blue-500' href="mailto:info@humanessentials.app?Subject=Diaperbase%20Interest" target="_top" >info@humanessentials.app</a></p>
       </div>
     </div>
-    <div class="footer-content">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12 col-sm-12 col-md-6">
-            <h2 class="text-white">Diaper.App</h2>
+
+    <div class="bg-gray-500">
+      <div class="container max-w-7xl mx-auto py-32 text-white">
+        <div class="flex flex-col mx-auto text-center sm:text-left sm:flex-row space-y-10 sm:space-y-0">
+          <div class="w-full sm:w-1/2">
+            <h2 class="text-3xl">HumanEssentials.app</h2>
           </div>
-          <div class="col-xs-12 col-sm-12 col-md-6">
-            <strong class="text-white">Human Essentials App was lovingly built by:</strong>
+          <div class="w-full sm:w-1/2">
+            <strong class="text-white">The Human Essentials App was lovingly built by:</strong>
             <br/>
-            <a href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
-            <a href="http://rubyforgood.org/">Ruby for Good</a>
+            <a class='text-blue-400' href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
+            <a class='text-blue-400' href="http://rubyforgood.org/">Ruby for Good</a>
             <br/><br/>
-            <a href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
+            <a class='text-blue-400' href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
           </div>
         </div>
       </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
   </body>
 </html>

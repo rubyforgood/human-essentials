@@ -1,6 +1,5 @@
 def set_up_sidekiq
   require 'sidekiq/web'
-  require 'sidekiq-scheduler/web'
 
   if Rails.env.production?
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
@@ -23,8 +22,8 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
-  devise_for :users
-  devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations' }
+  devise_for :users, controllers: { sessions: "users/sessions" }
+  devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
 
   set_up_sidekiq
   set_up_flipper
@@ -33,7 +32,10 @@ Rails.application.routes.draw do
   get 'partners/dashboard' => 'partners/dashboards#show', as: :partner_user_root
   namespace :partners do
     resource :dashboard, only: [:show]
+    resource :help, only: [:show]
     resources :requests, only: [:show, :new, :index, :create]
+    resources :individuals_requests, only: [:new, :create]
+    resources :family_requests, only: [:new, :create]
     resources :users, only: [:index, :new, :create]
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
@@ -54,21 +56,11 @@ Rails.application.routes.draw do
     resources :partners, except: %i[new create destroy]
     resources :users
     resources :barcode_items
-    resources :feedback_messages do
-      get :resolve
-    end
+    resources :account_requests, only: [:index]
   end
 
-  # These are globally accessible
-  resources :feedback_message, only: [:create]
-
-  namespace :api, defaults: { format: "json" } do
-    namespace :v1 do
-      resources :partner_requests, only: %i(create show)
-      resources :partner_approvals, only: :create
-      resources :family_requests, only: %i(create show)
-    end
-  end
+  match "/404", to: "errors#not_found", via: :all
+  match "/500", to: "errors#internal_server_error", via: :all
 
   scope path: ":organization_id" do
     resources :users
@@ -146,16 +138,19 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :profiles, only: %i(edit update)
     resources :items do
       patch :restore, on: :member
     end
+    resources :item_categories
     resources :partners do
       collection do
         post :import_csv
       end
       member do
+        get :profile
+        patch :profile
         get :approve_application
-        get :approve_partner
         post :invite
         post :invite_partner_user
         post :recertify_partner
@@ -163,6 +158,8 @@ Rails.application.routes.draw do
         put :reactivate
       end
     end
+
+    resources :partner_groups, only: [:new, :create, :edit, :update]
 
     resources :diaper_drives
     resources :donations do
@@ -176,15 +173,15 @@ Rails.application.routes.draw do
 
     resources :purchases
     # MODIFIED route by adding destroy to
-    resources :requests, only: %i(index new show destroy) do
+    resources :requests, only: %i(index new show) do
       member do
         post :start
       end
     end
 
     resources :requests, except: %i(destroy) do
+      resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'
       get :print, on: :member
-      post :cancel, on: :member
       collection do
         get :partner_requests
       end
@@ -199,7 +196,7 @@ Rails.application.routes.draw do
   resources :attachments, only: %i(destroy)
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-
+  get "help", to: "help#show"
   get "pages/:name", to: "static#page"
   get "/register", to: "static#register"
   resources :account_requests, only: [:new, :create] do

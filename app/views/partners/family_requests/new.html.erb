@@ -1,0 +1,91 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Families - #{current_partner.name}" %>
+        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
+          Family Details
+          <small>for <%= current_partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="<%= partner_user_root_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+          <li class="breadcrumb-item"><a href="#">New Family Request</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header bg-primary">
+            <h3 class="card-title">Filters</h3>
+          </div>
+          <div class="card-body">
+            <%= form_for_filterrific @filterrific do |f| %>
+              <div class="row">
+                <div class="col-3">
+                  <%= f.label :search_names, "Search By Child Name" %>
+                  <%= f.text_field(
+                          :search_names,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= f.label :search_families, "Search By Guardian Name" %>
+                  <%= f.text_field(
+                          :search_families,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= f.label :search_comments, "Show Active Only?" %>
+                  <%= f.check_box(
+                          :search_active,
+                          class: 'filterrific-periodically-observed form-control'
+                      ) %>
+                </div>
+                <div class="col-3">
+                  <%= render_filterrific_spinner %>
+                </div>
+              </div>
+              </div><!-- /.row -->
+              <div class="card-footer">
+                <%= link_to(
+                        'Reset Search',
+                        reset_filterrific_url,
+                        class: 'btn btn-danger'
+                    ) %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mb-4">
+          <%= form_with(url: partners_family_requests_path, method: 'post') do %>
+            <div id="filterrific_results">
+              <%= render(
+                partial: 'partners/family_requests/list',
+                locals: {children: @children}
+              ) %>
+            </div>
+
+            <hr>
+
+            <div class="card-footer">
+              <%= submit_tag("Submit Essentials Request", class: "btn btn-primary") %>
+              <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

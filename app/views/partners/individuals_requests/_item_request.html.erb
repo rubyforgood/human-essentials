@@ -1,0 +1,7 @@
+<%= form.fields_for(:items) do |field| %>
+  <tr>
+    <td><%= field.input :item_id, collection: @formatted_requestable_items, label: false, allow_blank: true, class: 'form-control' %></td>
+    <td><%= field.number_field :person_count, as: :integer, label: false, step: 1, min: 1, class: 'form-control' %></td>
+    <td><%= remove_item_button "Remove" %></td>
+  </tr>
+<% end %>

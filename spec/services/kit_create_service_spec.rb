@@ -101,7 +101,7 @@ describe KitCreateService do
         end
 
         it 'should have errors saying why the kit_params are invalid' do
-          expect(subject.errors.full_messages.map(&:humanize)).to eq(kit_validation_errors.full_messages)
+          expect(subject.errors.full_messages.map(&:humanize)).to match_array(kit_validation_errors.full_messages)
         end
       end
     end

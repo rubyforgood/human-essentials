@@ -57,7 +57,9 @@ class DistributionsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv { send_data Distribution.generate_csv(@distributions, @items.collect(&:name).sort), filename: "Distributions-#{Time.zone.today}.csv" }
+      format.csv do
+        send_data Exports::ExportDistributionsCSVService.new(distribution_ids: @distributions.map(&:id)).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+      end
     end
   end
 
@@ -73,6 +75,11 @@ class DistributionsController < ApplicationController
       redirect_to(distribution_path(result.distribution)) && return
     else
       @distribution = result.distribution
+      if params[:request_id].present?
+        # Using .find here instead of .find_by so we can raise a error if request_id
+        # does not match any known Request
+        @distribution.request = Request.find(params[:request_id])
+      end
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
@@ -118,7 +125,6 @@ class DistributionsController < ApplicationController
 
   def update
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
-
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?

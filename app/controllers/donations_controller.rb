@@ -6,7 +6,7 @@ class DonationsController < ApplicationController
     setup_date_range_picker
 
     @donations = current_organization.donations
-                                     .includes(:line_items, :storage_location, :donation_site, :diaper_drive, :diaper_drive_participant, :manufacturer)
+                                     .includes(:storage_location, :donation_site, :diaper_drive, :diaper_drive_participant, :manufacturer, line_items: [:item])
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
@@ -34,7 +34,9 @@ class DonationsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv { send_data Donation.generate_csv(@donations), filename: "Donations-#{Time.zone.today}.csv" }
+      format.csv do
+        send_data Exports::ExportDonationsCSVService.new(donation_ids: @donations.map(&:id)).generate_csv, filename: "Donations-#{Time.zone.today}.csv"
+      end
     end
   end
 

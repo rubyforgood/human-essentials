@@ -30,12 +30,12 @@ module Partners
   class User < Base
     self.table_name = "users"
 
-    # Include default devise modules. Others available are:
-    # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-    devise :database_authenticatable, :registerable,
-           :recoverable, :rememberable, :validatable, :invitable
+    devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable, :invitable, :trackable
 
     has_many :requests, class_name: 'Partners::Request', foreign_key: :partner_id, dependent: :destroy, inverse_of: :user
+    has_many :submitted_partner_requests, class_name: 'Partners::Request', foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
+    has_many :submitted_requests, class_name: 'Request', foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
+
     belongs_to :partner, dependent: :destroy
   end
 end

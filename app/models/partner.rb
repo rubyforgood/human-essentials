@@ -2,16 +2,17 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
-#  email           :string
-#  name            :string
-#  notes           :text
-#  quota           :integer
-#  send_reminders  :boolean          default(FALSE), not null
-#  status          :integer          default("uninvited")
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :integer
+#  id               :integer          not null, primary key
+#  email            :string
+#  name             :string
+#  notes            :text
+#  quota            :integer
+#  send_reminders   :boolean          default(FALSE), not null
+#  status           :integer          default("uninvited")
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  organization_id  :integer
+#  partner_group_id :bigint
 #
 
 class Partner < ApplicationRecord
@@ -26,8 +27,11 @@ class Partner < ApplicationRecord
   enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, error: 4, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
-  has_many :distributions, dependent: :destroy
+  belongs_to :partner_group, optional: true
+  has_many :item_categories, through: :partner_group
+  has_many :requestable_items, through: :item_categories, source: :items
 
+  has_many :distributions, dependent: :destroy
   has_many :requests, dependent: :destroy
 
   has_many_attached :documents
@@ -107,10 +111,21 @@ class Partner < ApplicationRecord
     ]
   end
 
-  def self.generate_distributions_csv(distributions)
-    rows = Exports::ExportPartnerDistributionsService.new(distributions).call
-    CSV.generate(headers: true) do |csv|
-      rows.each { |row| csv << row }
+  def meow
+    partners = Partner.where.not(status: 'deactivated')
+    users = partners.map(&:profile).map(&:users).flatten
+    emails = users.map(&:email)
+    partner_emails = emails.flatten
+
+    user_emails = User.where(discarded_at: nil).pluck(:email)
+
+    emails = [partner_emails + user_emails].flatten
+
+    CSV.open("contact_emails.csv", "wb") do |csv|
+      csv << ["Email Address"]
+      emails.each do |email|
+        csv << [email]
+      end
     end
   end
 

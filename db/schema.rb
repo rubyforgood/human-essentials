@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_07_175100) do
+ActiveRecord::Schema.define(version: 2021_09_26_131330) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,7 +54,16 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "adjustments", id: :serial, force: :cascade do |t|
@@ -106,6 +115,16 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.string "partner_key"
   end
 
+  create_table "deprecated_feedback_messages", force: :cascade do |t|
+    t.bigint "user_id"
+    t.text "message"
+    t.string "path"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "resolved"
+    t.index ["user_id"], name: "index_deprecated_feedback_messages_on_user_id"
+  end
+
   create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
     t.string "contact_name"
     t.string "email"
@@ -141,8 +160,8 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
+    t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
-    t.integer "state", default: 0, null: false
     t.integer "delivery_method", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
@@ -181,16 +200,6 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
 
-  create_table "feedback_messages", force: :cascade do |t|
-    t.bigint "user_id"
-    t.text "message"
-    t.string "path"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "resolved"
-    t.index ["user_id"], name: "index_feedback_messages_on_user_id"
-  end
-
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "created_at", null: false
@@ -215,6 +224,24 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "item_categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.integer "organization_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name", "organization_id"], name: "index_item_categories_on_name_and_organization_id", unique: true
+  end
+
+  create_table "item_categories_partner_groups", force: :cascade do |t|
+    t.bigint "partner_group_id", null: false
+    t.bigint "item_category_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["item_category_id"], name: "index_item_categories_partner_groups_on_item_category_id"
+    t.index ["partner_group_id"], name: "index_item_categories_partner_groups_on_partner_group_id"
+  end
+
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "category"
@@ -231,9 +258,11 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.integer "on_hand_recommended_quantity"
     t.boolean "visible_to_partners", default: true, null: false
     t.integer "kit_id"
+    t.integer "item_category_id"
     t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
+    t.check_constraint "distribution_quantity >= 0", name: "distribution_quantity_nonnegative"
   end
 
   create_table "kits", force: :cascade do |t|
@@ -290,6 +319,15 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
+  create_table "partner_groups", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
+    t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
+  end
+
   create_table "partners", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -300,7 +338,9 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.boolean "send_reminders", default: false, null: false
     t.text "notes"
     t.integer "quota"
+    t.bigint "partner_group_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
+    t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
   end
 
   create_table "purchases", force: :cascade do |t|
@@ -326,6 +366,11 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.datetime "updated_at", null: false
     t.integer "distribution_id"
     t.integer "status", default: 0
+    t.datetime "discarded_at"
+    t.text "discard_reason"
+    t.integer "partner_user_id"
+    t.index ["discarded_at"], name: "index_requests_on_discarded_at"
+    t.index ["distribution_id"], name: "index_requests_on_distribution_id", unique: true
     t.index ["organization_id"], name: "index_requests_on_organization_id"
     t.index ["partner_id"], name: "index_requests_on_partner_id"
     t.index ["status"], name: "index_requests_on_status"
@@ -406,6 +451,18 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
     t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.jsonb "object"
+    t.datetime "created_at"
+    t.jsonb "object_changes"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
@@ -415,10 +472,16 @@ ActiveRecord::Schema.define(version: 2021_01_07_175100) do
   add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "item_categories", "organizations"
+  add_foreign_key "item_categories_partner_groups", "item_categories"
+  add_foreign_key "item_categories_partner_groups", "partner_groups"
+  add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
+  add_foreign_key "partner_groups", "organizations"
+  add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

@@ -70,7 +70,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def item_total(item_id)
-    inventory_items.select(:quantity).find_by(item_id: item_id).try(:quantity) || 0
+    inventory_items.where(item_id: item_id).pick(:quantity) || 0
   end
 
   def size
@@ -129,7 +129,8 @@ class StorageLocation < ApplicationRecord
       # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
       # Increase the quantity-on-record for that item
-      inventory_item.increment!(:quantity, item_hash[:quantity].to_i)
+      new_quantity = inventory_item.quantity + item_hash[:quantity].to_i
+      inventory_item.update!(quantity: new_quantity)
       # Record in the log that this has occurred
       log[item_hash[:item_id]] = "+#{item_hash[:quantity]}"
     end
@@ -181,7 +182,8 @@ class StorageLocation < ApplicationRecord
       # captured by the previous block.
       inventory_item = inventory_items.find_by(item_id: item_hash[:item_id])
       # Reduce the inventory box quantity
-      inventory_item.decrement!(:quantity, item_hash[:quantity])
+      new_quantity = inventory_item.quantity - item_hash[:quantity]
+      inventory_item.update(quantity: new_quantity)
       # Record in the log that this has occurred
       log[item_hash[:item_id]] = "-#{item_hash[:quantity]}"
     end

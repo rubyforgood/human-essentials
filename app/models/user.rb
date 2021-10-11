@@ -34,7 +34,6 @@
 class User < ApplicationRecord
   include Discard::Model
   belongs_to :organization, optional: proc { |u| u.super_admin? }
-  has_many :feedback_messages, dependent: :destroy
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   # :invitable is from the devise_invitable gem

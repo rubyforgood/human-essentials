@@ -2,6 +2,7 @@
 class StaticController < ApplicationController
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
+  skip_before_action :log_active_user
 
   layout false
 

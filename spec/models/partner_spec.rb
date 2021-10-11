@@ -2,19 +2,30 @@
 #
 # Table name: partners
 #
-#  id              :integer          not null, primary key
-#  email           :string
-#  name            :string
-#  notes           :text
-#  quota           :integer
-#  send_reminders  :boolean          default(FALSE), not null
-#  status          :integer          default("uninvited")
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :integer
+#  id               :integer          not null, primary key
+#  email            :string
+#  name             :string
+#  notes            :text
+#  quota            :integer
+#  send_reminders   :boolean          default(FALSE), not null
+#  status           :integer          default("uninvited")
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  organization_id  :integer
+#  partner_group_id :bigint
 #
 
 RSpec.describe Partner, type: :model do
+  describe 'associations' do
+    it { should belong_to(:organization) }
+    it { should belong_to(:partner_group).optional }
+    it { should have_many(:item_categories).through(:partner_group) }
+    it { should have_many(:requestable_items).through(:item_categories).source(:items) }
+    it { should have_many(:requests) }
+    it { should have_many(:distributions) }
+    it { should have_many(:requests) }
+  end
+
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:partner, organization_id: nil)).not_to be_valid
@@ -113,12 +124,12 @@ RSpec.describe Partner, type: :model do
 
     it "imports partners from a csv file and prevents multiple imports" do
       before_import = Partner.count
-      import_file_path = Rails.root.join("spec", "fixtures", "partners.csv")
+      import_file_path = Rails.root.join("spec", "fixtures", "files", "partners.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       Partner.import_csv(csv, organization.id)
       expect(Partner.count).to eq before_import + 3
-      import_file_path2 = Rails.root.join("spec", "fixtures", "partners_with_duplicates.csv")
+      import_file_path2 = Rails.root.join("spec", "fixtures", "files", "partners_with_duplicates.csv")
       data2 = File.read(import_file_path2, encoding: "BOM|UTF-8")
       csv2 = CSV.parse(data2, headers: true)
       Partner.import_csv(csv2, organization.id)
@@ -126,7 +137,7 @@ RSpec.describe Partner, type: :model do
     end
 
     it "imports partners from a csv file with BOM encodings" do
-      import_file_path = Rails.root.join("spec", "fixtures", "partners_with_bom_encoding.csv")
+      import_file_path = Rails.root.join("spec", "fixtures", "files", "partners_with_bom_encoding.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       expect do
@@ -177,11 +188,11 @@ RSpec.describe Partner, type: :model do
 
   describe "ActiveStorage validation" do
     it "validates that attachments are pdf or docs" do
-      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/logo.jpg"), "image/jpeg")])
+      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg")])
 
       expect(partner).to_not be_valid
 
-      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/dbase.pdf"), "application/pdf")])
+      partner = build(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/dbase.pdf"), "application/pdf")])
 
       expect(partner).to be_valid
     end

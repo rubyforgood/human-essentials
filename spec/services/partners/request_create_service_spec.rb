@@ -7,7 +7,8 @@ describe Partners::RequestCreateService do
       {
         partner_user_id: partner_user.id,
         comments: comments,
-        item_requests_attributes: item_requests_attributes
+        item_requests_attributes: item_requests_attributes,
+        additional_attrs: additional_attrs
       }
     end
     let(:partner_user) { partner.primary_partner_user }
@@ -21,26 +22,28 @@ describe Partners::RequestCreateService do
         )
       ]
     end
+    let(:additional_attrs) { { for_families: true } }
 
     context 'when the arguments are incorrect' do
-      context 'because no item_requests_attributes were defined' do
+      context 'because no item_requests_attributes and comments were defined' do
         let(:item_requests_attributes) { [] }
+        let(:comments) { "" }
 
         it 'should return the Partners::Request object with an error' do
           result = subject
 
           expect(result).to be_a_kind_of(Partners::RequestCreateService)
-          expect(result.errors[:item_requests]).to eq(["can't be blank"])
+          expect(result.errors[:base]).to eq(["completely empty request"])
         end
       end
 
       context 'because a unrecogonized item_id was provided' do
         let(:item_requests_attributes) do
           [
-            {
+            ActionController::Parameters.new(
               item_id: 0,
               quantity: Faker::Number.within(range: 1..10)
-            }
+            )
           ]
         end
 
@@ -86,6 +89,11 @@ describe Partners::RequestCreateService do
 
       it 'should create a sent Partners::Request record' do
         expect { subject }.to change { Partners::Request.where(sent: true).count }.by(1)
+      end
+
+      it 'should set the additional_attrs provided' do
+        subject
+        expect(Partners::Request.last.for_families).to eq(true)
       end
 
       it 'should create a Request record' do

@@ -45,6 +45,7 @@ class Organization < ApplicationRecord
     has_many :donations
     has_many :manufacturers
     has_many :partners
+    has_many :partner_groups
     has_many :purchases
     has_many :requests
     has_many :storage_locations
@@ -77,6 +78,7 @@ class Organization < ApplicationRecord
         .limit(limit)
     end
   end
+  has_many :item_categories, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
     def all
       unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
@@ -118,6 +120,7 @@ class Organization < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
+  scope :needs_reminding, -> { where('reminder_day = ? and deadline_day is not null', Date.current.day) }
 
   def assign_attributes_from_account_request(account_request)
     assign_attributes(

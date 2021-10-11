@@ -1,0 +1,41 @@
+<div class="tab-pane fade show active" id="custom-tabs-three-categories" role="tabpanel" aria-labelledby="custom-tabs-three-categories">
+
+  <div class='flex justify-end mb-4'>
+    <%= new_button_to new_item_category_path(organization_id: current_organization), {text: "New Item Category"} %>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Items In Category</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% item_categories.each do |item_category| %>
+        <tr class='hover:bg-gray-100' data-item-category-id="<%= item_category.id %>">
+          <td class='w-1/12'><%= item_category.name %></td>
+          <td class='w-4/12'><%= item_category.description %></td>
+          <td class='w-5/12'>
+            <ul>
+              <% item_category.items.each do |item| %>
+                <li>
+                  <%= link_to(item.name, item_path(item.id), class: 'text-blue-500') %>
+                </li>
+              <% end %>
+            </ul>
+          </td>
+          <td>
+            <%= view_button_to item_category_path(item_category) %>
+            <%= edit_button_to edit_item_category_path(item_category.id) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div><!-- /.box-body.table-responsive -->
+
+
+

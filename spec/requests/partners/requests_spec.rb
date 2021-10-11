@@ -72,14 +72,14 @@ RSpec.describe "/partners/requests", type: :request do
       end
       it 'should redirect to the dashboard' do
         subject.call
-        expect(response).to redirect_to(partners_dashboard_path)
+        expect(response).to redirect_to(partners_request_path(Request.last.id))
       end
     end
 
     context 'when given invalid parameters' do
       let(:partners_request_attributes) do
         {
-          comments: 'this is not going to work'
+          comments: ""
         }
       end
 

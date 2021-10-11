@@ -32,6 +32,8 @@ class PartnerRequestRecertificationService
   def valid?
     if partner.recertification_required?
       errors.add(:partner, 'has already been requested to recertify')
+    elsif partner.deactivated?
+      errors.add(:partner, 'has been deactivated')
     end
 
     errors.none?

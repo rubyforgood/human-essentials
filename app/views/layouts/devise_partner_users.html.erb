@@ -2,12 +2,14 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Diaperbase | Log in</title>
+  <title>Human Essentials | Partner | Log in</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <%= csrf_meta_tags %>
   <%= javascript_include_tag 'application' %>
+  <%= javascript_pack_tag 'application' %>
+  <%= stylesheet_pack_tag 'application' %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <style>
@@ -39,10 +41,9 @@
 
 <body id="devise" class="hold-transition login-page login-page--partner <%= Rails.env.staging? ? 'login-page-test' : '' %>">
   <div class="login-box">
-    <div class="login-logo">
+    <div class="login-logo flex justify-center">
       <img id="MastheadLogo" src="/img/partnerbase-logo.svg" style="width: 80%;" alt="Partner" title="Partner" class="serv_icon"/>
     </div>
-
     <!-- /.login-logo -->
     <div class="login-box-body">
       <div class="form-group has-feedback">
