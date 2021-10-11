@@ -112,7 +112,7 @@ class Item < ApplicationRecord
   end
 
   def to_h
-    { name: name, partner_key: partner_key }
+    { name: name, item_id: id }
   end
 
   def self.csv_export_headers
