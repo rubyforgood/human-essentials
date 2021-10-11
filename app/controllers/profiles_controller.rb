@@ -67,6 +67,8 @@ class ProfilesController < ApplicationController
       :population_asian,
       :population_american_indian,
       :population_island,
+      :population_middle_eastern,
+      :population_northern_african,
       :population_multi_racial,
       :population_other,
       :zips_served,
