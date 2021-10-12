@@ -40,7 +40,7 @@ FactoryBot.define do
       Partners::User.create!(
         email: partner.email,
         partner: partners_partner,
-        password: 'password'
+        password: 'password!'
       )
     end
   end
