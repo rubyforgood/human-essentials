@@ -18,7 +18,7 @@ class DashboardController < ApplicationController
                                              .group("items.name")
                                              .maximum("items.on_hand_minimum_quantity")
     end
-    @total_inventory = current_organization.donations.during(helpers.selected_range).map(&:total_quantity).sum
+    @total_inventory = current_organization.total_inventory
 
 
     @org_stats = OrganizationStats.new(current_organization)

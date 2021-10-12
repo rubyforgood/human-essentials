@@ -442,11 +442,15 @@ RSpec.describe "Dashboard", type: :system, js: true do
               click_on "Filter"
             end
 
-            let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum + @last_years_purchases.map(&:total_quantity).sum }
+            let(:total_purchases) { @last_years_purchases.map(&:total_quantity).sum }
 
-            it "has a widget displaying the Purchase totals from last year, only using purchases from last year" do
+            it "has a widget displaying the most 3 recent purchases" do
               within "#purchases" do
-                expect(page).to have_content(total_inventory)
+                expect(page).to have_content(100)
+                expect(page).to have_content(101)
+                expect(page).to have_content(102)
+                expect(page).to_not have_content(103)
+                expect(page).to_not have_content(104)
               end
             end
 
