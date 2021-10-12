@@ -341,6 +341,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             it "has a widget displaying the year-to-date Purchase totals, only using purchases from this year" do
               within "#purchases" do
+              binding.pry
                 expect(page).to have_content(total_inventory)
               end
             end
@@ -504,10 +505,16 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
-
+            let(:today_name) { @this_years_donations[:today].diaper_drive.name }
+            let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
+            let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
+            let(:year_name) { @this_years_donations[:beginning_of_year].diaper_drive.name }
             it "has a widget displaying the year-to-date Diaper drive totals, only using donations from this year" do
               within "#diaper_drives" do
-                expect(page).to have_content(/2 diaper drive/i)
+                expect(page).to have_content(today_name)
+                expect(page).to have_content(yesterday_name)
+                expect(page).to have_content(week_name)
+                expect(page).to have_content(year_name)
                 expect(page).to have_content(total_inventory)
               end
             end
@@ -526,10 +533,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
+            let(:name) { @this_years_donations[:today].diaper_drive.name }
 
             it "has a widget displaying today's Diaper drive totals, only using donations from today" do
               within "#diaper_drives" do
-                expect(page).to have_content(/1 diaper drive/i)
+                expect(page).to have_content(name)
                 expect(page).to have_content(total_inventory)
               end
             end
@@ -548,10 +556,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
+            let(:name) { @this_years_donations[:yesterday].diaper_drive.name }
 
             it "has a widget displaying the Diaper drive totals from yesterday, only using donations from yesterday" do
               within "#diaper_drives" do
-                expect(page).to have_content(/1 diaper drive participant/i)
+                expect(page).to have_content(name)
                 expect(page).to have_content(total_inventory)
               end
             end
@@ -570,10 +579,14 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
-
+            let(:today_name) { @this_years_donations[:today].diaper_drive.name }
+            let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
+            let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
             it "has a widget displaying the Diaper drive totals from this week, only using donations from this week" do
               within "#diaper_drives" do
-                expect(page).to have_content(/2 diaper drive/i)
+                expect(page).to have_content(today_name)
+                expect(page).to have_content(yesterday_name)
+                expect(page).to have_content(week_name)
                 expect(page).to have_content(total_inventory)
               end
             end
@@ -591,11 +604,16 @@ RSpec.describe "Dashboard", type: :system, js: true do
               click_on "Filter"
             end
 
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
+            let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
+            let(:today_name) { @this_years_donations[:today].diaper_drive.name }
+            let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
+            let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
 
             it "has a widget displaying the Diaper drive totals from this month, only using donations from this month" do
               within "#diaper_drives" do
-                expect(page).to have_content(/1 diaper drive/i)
+                expect(page).to have_content(today_name)
+                expect(page).to have_content(yesterday_name)
+                expect(page).to have_content(week_name)
                 expect(page).to have_content(total_inventory)
               end
             end
@@ -614,11 +632,19 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
-
+            let(:today_name) { @this_years_donations[:today].diaper_drive.name }
+            let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
+            let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
+            let(:year_name) { @this_years_donations[:beginning_of_year].diaper_drive.name }
+            let(:last_year_name) { @last_years_donations[0].diaper_drive.name }
             it "has a widget displaying the Diaper drive totals from last year, only using donations from last year" do
               within "#diaper_drives" do
                 expect(page).to have_content(total_inventory)
-                expect(page).to have_content(/2 diaper drive/i)
+                expect(page).to have_content(today_name)
+                expect(page).to have_content(yesterday_name)
+                expect(page).to have_content(week_name)
+                expect(page).to have_content(year_name)
+                expect(page).to have_content(last_year_name)
               end
             end
 
