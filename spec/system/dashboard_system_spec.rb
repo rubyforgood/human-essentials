@@ -81,9 +81,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
     end
 
     describe "Inventory Totals" do
-      let(:date_to_view) { Time.zone.parse("June 1 2018") }
-      let(:last_year_date) { Time.zone.parse("June 1, 2017") }
-      let(:beginning_of_2018) { Time.zone.parse("January 1, 2018 12:01am") }
+      let(:date_to_view) { Time.zone.now }
+      let(:last_year_date) { Time.zone.now - 1.year }
+      let(:beginning_of_year) { Time.zone.now.beginning_of_year }
 
       describe "Summary" do
         before do
@@ -145,13 +145,13 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
+            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
             @this_years_donations = {
               today: create(:donation, :with_items, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:diaper_drive_donation, :with_items, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
               earlier_this_week: create(:donation_site_donation, :with_items, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:manufacturer_donation, :with_items, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
+              beginning_of_year: create(:manufacturer_donation, :with_items, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_donations = create_list(:donation, 2, :with_items, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
             visit subject
@@ -318,14 +318,14 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
+            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.purchases.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             @this_years_purchases = {
               today: create(:purchase, :with_items, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:purchase, :with_items, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
               earlier_this_week: create(:purchase, :with_items, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:purchase, :with_items, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
+              beginning_of_year: create(:purchase, :with_items, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_purchases = create_list(:purchase, 2, :with_items, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
             visit subject
@@ -473,7 +473,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
+            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             diaper_drive1 = create(:diaper_drive, name: 'First Diaper Drive')
@@ -486,7 +486,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               today: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
               earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
+              beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
 
             @last_years_donations = create_list(:diaper_drive_donation, 2, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
@@ -681,7 +681,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
+            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             manufacturer1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
@@ -693,7 +693,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               today: create(:manufacturer_donation, :with_items, manufacturer: manufacturer1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:manufacturer_donation, :with_items, manufacturer: manufacturer2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
               earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer3, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
+              beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_donations = create_list(:manufacturer_donation, 2, :with_items, manufacturer: manufacturer1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
             visit subject
@@ -860,7 +860,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             today: create(:distribution, :with_items, partner: partner1, issued_at: date_to_view, item_quantity: 10, storage_location: storage_location, organization: @organization),
             yesterday: create(:distribution, :with_items, partner: partner2, issued_at: date_to_view.yesterday, item_quantity: 11, storage_location: storage_location, organization: @organization),
             earlier_this_week: create(:distribution, :with_items, partner: partner3, issued_at: date_to_view.beginning_of_week, item_quantity: 12, storage_location: storage_location, organization: @organization),
-            beginning_of_year: create(:distribution, :with_items, partner: partner4, issued_at: beginning_of_2018, item_quantity: 13, storage_location: storage_location, organization: @organization)
+            beginning_of_year: create(:distribution, :with_items, partner: partner4, issued_at: beginning_of_year, item_quantity: 13, storage_location: storage_location, organization: @organization)
           }
           @last_years_distributions = create_list(:distribution, 2, :with_items, partner: partner1, issued_at: last_year_date, item_quantity: 14, storage_location: storage_location, organization: @organization)
           visit subject
@@ -900,7 +900,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "When Date Filtering >" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
+            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
           end
 
           context "with year-to-date selected" do
