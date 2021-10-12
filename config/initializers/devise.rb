@@ -14,9 +14,6 @@ Devise.setup do |config|
   # with default "from" parameter.
   config.mailer_sender = '"Human Essentials" <accounts@humanessentials.app>'
 
-  # The number of special characters (!@#$%^&*()_+-=[]{}|') required in a password:
-  config.password_required_special_character_count = 1
-
   # Configure the class responsible to send e-mails.
   config.mailer = "CustomDeviseMailer"
 
