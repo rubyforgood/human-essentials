@@ -27,7 +27,7 @@ RSpec.describe Partners::Child, type: :model do
     it { should have_many(:child_item_requests).dependent(:destroy) }
   end
 
-  describe "display_name" do
+  describe "#display_name" do
     subject { partners_child }
     let(:partners_child) { FactoryBot.create(:partners_child) }
 
@@ -36,7 +36,7 @@ RSpec.describe Partners::Child, type: :model do
     end
   end
 
-  describe "csv_headers" do
+  describe "#csv_headers" do
     subject { Partners::Child }
     let(:csv_headers) do
       %w[
@@ -50,7 +50,7 @@ RSpec.describe Partners::Child, type: :model do
     end
   end
 
-  describe "to_csv" do
+  describe "#to_csv" do
     subject { partners_child }
     let(:partners_child) { FactoryBot.create(:partners_child) }
     let(:csv_array) do

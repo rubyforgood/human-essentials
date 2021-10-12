@@ -42,7 +42,7 @@ RSpec.describe Partners::Family, type: :model do
     it { should validate_presence_of(:guardian_zip_code) }
   end
 
-  describe "csv_headers" do
+  describe "#csv_headers" do
     subject { Partners::Family }
     let(:csv_headers) do
       %w[
@@ -58,7 +58,7 @@ RSpec.describe Partners::Family, type: :model do
     end
   end
 
-  describe "create_authorized" do
+  describe "#create_authorized" do
     subject { partners_family }
     let(:partners_family) { FactoryBot.create(:partners_family) }
     let(:authorized_family_member) { subject.create_authorized }
@@ -68,7 +68,7 @@ RSpec.describe Partners::Family, type: :model do
     end
   end
 
-  describe "guardian_display_name" do
+  describe "#guardian_display_name" do
     subject { partners_family }
     let(:partners_family) { FactoryBot.build(:partners_family) }
 
@@ -77,7 +77,7 @@ RSpec.describe Partners::Family, type: :model do
     end
   end
 
-  describe "total_children_count" do
+  describe "#total_children_count" do
     subject { partners_family }
     let(:partners_family) { FactoryBot.build(:partners_family) }
 
@@ -86,7 +86,7 @@ RSpec.describe Partners::Family, type: :model do
     end
   end
 
-  describe "to_csv" do
+  describe "#to_csv" do
     subject { partners_family }
     let(:partners_family) { FactoryBot.create(:partners_family) }
     let(:csv_array) do
