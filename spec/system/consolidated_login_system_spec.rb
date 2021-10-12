@@ -1,18 +1,23 @@
 RSpec.describe "Consolidated login with email lookup", type: :system, js: true do
-  describe "comprehensive flow for a user with both partner and bank logins" do
-    let(:user) { @user }
-    let(:partner_user) do
+  before do
+    visit "/"
+    click_button "Login"
+  end
+
+  describe "flow for a user with both partner and bank logins" do
+    let!(:user) do
+      @user.organization.update!(name: "A Bank")
+      @user
+    end
+
+    let!(:partner_user) do
       @partner.primary_partner_user.tap do |u|
         u.update!(email: user.email, password: "password!", password_confirmation: "password!")
+        u.partner.update!(name: "A Partner")
       end
     end
 
     before do
-      user.organization.update!(name: "A Bank")
-      partner_user.partner.update!(name: "A Partner")
-
-      visit "/"
-      click_button "Login"
       fill_in "Email", with: user.email
       click_button "Continue"
     end
@@ -30,6 +35,20 @@ RSpec.describe "Consolidated login with email lookup", type: :system, js: true d
       click_button "Log in"
 
       expect(page).to have_current_path "/partners/dashboard"
+    end
+  end
+
+  describe "feedback on an unregistered email" do
+    before do
+      fill_in "Email", with: "non-existent@example.com"
+      click_button "Continue"
+    end
+
+    it "lets the user know the email is not recognized" do
+      email_group = page.find ".form-group.user_email"
+      expect(email_group).to have_css "input.is-invalid"
+      expect(email_group).to have_text "Email not found"
+      expect(email_group.find_field("Email").value).to eq "non-existent@example.com"
     end
   end
 end
