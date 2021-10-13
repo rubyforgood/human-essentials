@@ -21,6 +21,7 @@ class Reports::NdbnAnnualsController < ApplicationController
     adult_incontinence_items = current_organization.items.where(partner_key: @adult_incontinence_types)
     @adult_incontinence = LineItem.where(item_id: adult_incontinence_items).map(&:quantity).sum
     @supplies_recieved = supplies_recieved
+    @supplies_purchased = supplies_purchased
 
     # Partner Information report values
     @partners = current_organization.partners
@@ -98,6 +99,18 @@ class Reports::NdbnAnnualsController < ApplicationController
                                    .map(&:line_items)
                                    .flatten
                                    .select { |a| a.itemizable_type == "Donation" }
+                                   .map(&:quantity)
+                                   .sum
+
+    (supplies / @adult_incontinence.to_f) * 100
+  end
+
+  def supplies_purchased
+    supplies = current_organization.items
+                                   .where(partner_key: @adult_incontinence_types)
+                                   .map(&:line_items)
+                                   .flatten
+                                   .select { |a| a.itemizable_type == "Purchase" }
                                    .map(&:quantity)
                                    .sum
 
