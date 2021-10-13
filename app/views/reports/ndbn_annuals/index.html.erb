@@ -63,8 +63,8 @@
 
         <tbody>
           <tr>
-            <td>1</td>
-            <td>2</td>
+            <td>?</td>
+            <td>?</td>
             <td><%= @diaper_drives.count %></td>
             <td><%= @number_of_diapers_from_drives %></td>
             <td><%= number_to_currency(@money_from_drives) %></td>
@@ -122,10 +122,11 @@
         <tbody>
           <tr>
             <td><%= @supplies_distributed %></td>
-            <td><%= @adult_incontinence/12 %></td>
+            <td><%= @adult_incontinence / 12 %></td>
             <td><%= @adult_incontinence %></td>
             <td><%= number_to_percentage(@supplies_recieved, precision: 2) %></td>
             <td><%= number_to_percentage(@supplies_purchased, precision: 2) %></td>
+            <td>?</td>
           </tr>
         </tbody>
       </table>
@@ -173,9 +174,9 @@
         <tbody>
           <td><%= @children_served_by_partner + " children" %></td>
           <td><%= @monthly_children_served + " children per month" %></td>
-          <td>***Come Back***</td>
-          <td>YES/NO</td>
-          <td>YES/NO</td>
+          <td>?</td>
+          <td>?</td>
+          <td>?</td>
         </tbody>
       </table>
     </div>
@@ -199,7 +200,7 @@
           <tr>
             <td><%= @donations.count %></td>
             <td><%= number_to_currency(@donations_amount) %></td>
-            <td><%=  %></td>
+            <td>?</td>
           </tr>
         </tbody>
       </table>
