@@ -1,9 +1,8 @@
 module Exports
   class ExportNdbnAnnualsCSVService
-    def initialize(year)
+    def initialize(year:, organization:)
       @year = year
-
-      @data_rows = ["this is just a test", "this is the second row"]
+      @organization = organization
     end
 
     def generate_csv
@@ -17,6 +16,7 @@ module Exports
     def generate_csv_data
       csv_data = []
 
+      # implement me !!!!
       csv_data << headers
       data_rows.each do |data|
         csv_data << build_row_data(data)
@@ -27,7 +27,7 @@ module Exports
 
     private
 
-    attr_reader :year, :data_rows
+    attr_reader :year, :organization
 
     def headers
       # Build the headers in the correct order
