@@ -318,7 +318,8 @@ note = [
     pr = Partners::Request.new(
       comments: Faker::Lorem.paragraph,
       partner: partner,
-      for_families: Faker::Boolean.boolean
+      for_families: Faker::Boolean.boolean,
+      partner_user: partner.primary_user
     )
 
     # Ensure that the item requests are valid with
