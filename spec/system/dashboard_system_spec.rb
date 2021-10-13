@@ -128,7 +128,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "doesn't count inactive items" do
-          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
           item = create(:donation, :with_items, item_quantity: 100, storage_location: storage_location).items.first
 
           visit subject
@@ -145,7 +144,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
             @this_years_donations = {
               today: create(:donation, :with_items, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
@@ -301,7 +299,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it 'does not count inactive items' do
-          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
           item = create(:purchase, :with_items, item_quantity: 100, storage_location: storage_location).items.first
 
           visit subject
@@ -318,7 +315,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.purchases.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             @this_years_purchases = {
@@ -384,7 +380,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             it "has a widget displaying the Purchase totals from yesterday, only using purchases from yesterday" do
               within "#purchases" do
-              expect(page).to_not have_content(100)
+                expect(page).to_not have_content(100)
                 expect(page).to have_content(total_inventory)
                 expect(page).to_not have_content(102)
               end
@@ -484,7 +480,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             diaper_drive1 = create(:diaper_drive, name: 'First Diaper Drive')
@@ -700,7 +695,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "doesn't count inactive items" do
-          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
           item = create(:manufacturer_donation, :with_items, item_quantity: 100, storage_location: storage_location).items.first
 
           visit subject
@@ -717,7 +711,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         context "when constrained to date range" do
           before do
-            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
             @organization.donations.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
             manufacturer1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
@@ -834,7 +827,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               click_on "Filter"
             end
 
-            let(:total_inventory) { @this_years_donations[:today].total_quantity + @this_years_donations[:yesterday].total_quantity + @this_years_donations[:earlier_this_week].total_quantity}
+            let(:total_inventory) { @this_years_donations[:today].total_quantity + @this_years_donations[:yesterday].total_quantity + @this_years_donations[:earlier_this_week].total_quantity }
             let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
 
             it "has a widget displaying the Donation totals from this month, only using donations from this month" do
@@ -910,7 +903,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "doesn't count inactive items" do
-          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
           item = create(:inventory_item, quantity: 100, storage_location: storage_location).item
           create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: storage_location)
 
@@ -924,19 +916,10 @@ RSpec.describe "Dashboard", type: :system, js: true do
           within "#distributions" do
             expect(page).to have_no_content("100")
           end
-
-          item = distribution.storage_location.items.first
-          visit subject
-          expect(page).to have_content("100 items distributed This Year")
-
-          item.update(active: false)
-          visit subject
-          expect(page).to_not have_content("100 items distributed This Year")
         end
 
         context "When Date Filtering >" do
           before do
-            # skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
           end
 
           context "with year-to-date selected" do
