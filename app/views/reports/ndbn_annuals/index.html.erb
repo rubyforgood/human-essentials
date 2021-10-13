@@ -104,6 +104,35 @@
 </section>
 <br />
 <section class="content">
+  <h1 class='text-3xl text-center'>Adult Incontinence</h1><br />
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th># of supplies distributed</th>
+            <th>Avergage # of adult incontinence supplies per adult per month</th>
+            <th>Adult incontinence supplies provided</th>
+            <th>Percent of adult incontinence supplies that you received in donation in 2020</th>
+            <th>Percent of adult incontinence supplies that you bought in 2020</th>
+            <th>Amount of money spent on adult incontinence supplies in 2020</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><%= @adult_incontinence %></td>
+            <td><%= @adult_incontinence/12 %></td>
+            <td><%=  %></td>
+            <td><%= number_to_percentage(@supplies_recieved, precision: 2) %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<br />
+<section class="content">
   <h1 class='text-3xl text-center'>Partner Information</h1><br />
   <div class="card">
     <div class="card-body p-0">

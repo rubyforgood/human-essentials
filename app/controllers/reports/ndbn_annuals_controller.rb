@@ -16,6 +16,12 @@ class Reports::NdbnAnnualsController < ApplicationController
     @square_footage = @storage_locations.pluck(:square_footage).sum.to_s
     @largest_location = @storage_locations.order(square_footage: :desc).first.name
 
+    # Adult Incontinence
+    @adult_incontinence_types = %w[adult_incontinence underpads pads liners]
+    adult_incontinence_items = current_organization.items.where(partner_key: @adult_incontinence_types)
+    @adult_incontinence = LineItem.where(item_id: adult_incontinence_items).map(&:quantity).sum
+    @supplies_recieved = supplies_recieved
+
     # Partner Information report values
     @partners = current_organization.partners
     @partner_agency_type = partner_agency_type
@@ -84,6 +90,18 @@ class Reports::NdbnAnnualsController < ApplicationController
     current_organization.partners.map do |partner|
       partner.profile.children.count
     end.sum
+  end
+
+  def supplies_recieved
+    supplies = current_organization.items
+                                   .where(partner_key: @adult_incontinence_types)
+                                   .map(&:line_items)
+                                   .flatten
+                                   .select { |a| a.itemizable_type == "Donation" }
+                                   .map(&:quantity)
+                                   .sum
+
+    (supplies / @adult_incontinence.to_f) * 100
   end
 
   def validate_show_params
