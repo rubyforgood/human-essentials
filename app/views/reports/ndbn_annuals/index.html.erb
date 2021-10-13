@@ -113,9 +113,9 @@
             <th># of supplies distributed</th>
             <th>Average # of adult incontinence supplies per adult per month</th>
             <th>Adult incontinence supplies provided</th>
-            <th>Percent of adult incontinence supplies that you received in donation in 2020</th>
-            <th>Percent of adult incontinence supplies that you bought in 2020</th>
-            <th>Amount of money spent on adult incontinence supplies in 2020</th>
+            <th>% of adult incontinence supplies that you received in donation</th>
+            <th>% of adult incontinence supplies that you bought</th>
+            <th>Amount of money spent on adult incontinence supplies</th>
           </tr>
         </thead>
 
@@ -127,6 +127,36 @@
             <td><%= number_to_percentage(@supplies_recieved, precision: 2) %></td>
             <td><%= number_to_percentage(@supplies_purchased, precision: 2) %></td>
             <td>?</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<br />
+<section class="content">
+  <h1 class='text-3xl text-center'>Other Incontinence</h1><br />
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>List of non-diaper products distributed</th>
+            <th>% of non-diaper supplies received as donation</th>
+            <th>% of non-diaper supplies bough</th>
+            <th>Total non-diaper items distributed</th>
+            <th>Amount of money spent on non-diaper supplies</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
           </tr>
         </tbody>
       </table>
