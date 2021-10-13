@@ -6,7 +6,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
     it 'should prompt prospective users to request an account on the live app' do
       visit new_account_request_path
-      expect(page).to have_link('click here', href: 'https://diaper.app/account_requests/new')
+      expect(page).to have_link('click here', href: 'https://diaper.app/account_requests/blah')
     end
   end
 
