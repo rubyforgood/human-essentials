@@ -36,17 +36,26 @@ module Reports
 
     def vendors_purchased_from
       # placeholder
-      ["some vendor"]
+      "Unknown"
+    end
+
+    def purchased_diapers
+      LineItem.where(item: disposable_diaper_items)
+              .where(itemizable: yearly_purchases)
+              .sum(:quantity)
+    end
+
+    def yearly_purchases
+      ::Purchase.where(organization: organization)
+                .where("extract(year  from issued_at) = ?", year)
     end
 
     def purchased_from
-      # placeholder
-      ["some store", "another store"]
+      yearly_purchases.select(:purchased_from).distinct.pluck(:purchased_from).compact
     end
 
-    def  money_spent_on_diapers
-      # placeholder
-      "10000"
+    def money_spent_on_diapers
+      yearly_purchases.sum(:amount_spent_in_cents) / 100.0
     end
 
     def percent_bought
@@ -64,19 +73,15 @@ module Reports
     end
 
     def donated_diapers
-      LineItem.where(item: diaper_items)
-              .where(itemizable: yearly_donations)
+      LineItem.where(item: disposable_diaper_items)
+              .where(itemizable: yearly_drive_donations)
               .sum(:quantity)
     end
 
-    def diaper_items
-      Item.where(base_item: ::BaseItem.where("lower(category) LIKE '%diaper%'"))
-    end
-
-    def yearly_donations
+    def yearly_drive_donations
       ::Donation.where(organization: organization)
+                .where(source: "Diaper Drive")
                 .where("extract(year  from issued_at) = ?", year)
-                .includes(line_items: :item)
     end
 
     def diaper_drives
@@ -100,16 +105,26 @@ module Reports
     end
 
     def money_from_virtual_drives
-      virtual_diaper_drives.map(&:donation_quantity).sum
-    end
-
-    def number_of_diapers_from_virtual_drives
       virtual_diaper_drives.map(&:in_kind_value).sum
     end
 
+    def number_of_diapers_from_virtual_drives
+      virtual_diaper_drives.map(&:donation_quantity).sum
+    end
+
+    def yearly_distributions
+      ::Distribution.where(organization: organization)
+                    .where("extract(year  from issued_at) = ?", year)
+    end
+
     def distributed_diapers
-      # placeholder
-      1000
+      LineItem.where(item: disposable_diaper_items)
+              .where(itemizable: yearly_distributions)
+              .sum(:quantity)
+    end
+
+    def disposable_diaper_items
+      Item.disposable
     end
 
     def monthly_disposable_diapers
