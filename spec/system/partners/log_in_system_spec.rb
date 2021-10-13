@@ -8,7 +8,7 @@ RSpec.describe "Authentication", type: :system, js: true do
     end
 
     let(:partner) { create(:partner) }
-    let(:password) { Faker::Alphanumeric.alpha(number: 10) }
+    let(:password) { Faker::Alphanumeric.alpha(number: 10) + "!" }
 
     context 'successfully through the partner user login page' do
       before do

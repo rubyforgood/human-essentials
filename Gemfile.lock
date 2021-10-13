@@ -137,6 +137,9 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    devise-secure_password (2.0.1)
+      devise (>= 4.0.0, < 5.0.0)
+      railties (>= 5.0.0, < 7.0.0)
     devise_invitable (2.0.5)
       actionmailer (>= 5.0)
       devise (>= 4.6)
@@ -545,6 +548,7 @@ DEPENDENCIES
   cocoon
   database_cleaner
   devise (>= 4.7.1)
+  devise-secure_password (~> 2.0)
   devise_invitable
   discard (~> 1.2)
   dotenv-rails
@@ -621,4 +625,4 @@ RUBY VERSION
    ruby 2.7.2p137
 
 BUNDLED WITH
-   2.2.16
+   2.2.29

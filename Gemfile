@@ -16,6 +16,7 @@ gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
 gem "devise", '>= 4.7.1'
+gem 'devise-secure_password', '~> 2.0'
 gem 'discard', '~> 1.2'
 gem "devise_invitable"
 gem "dotenv-rails"
