@@ -26,7 +26,7 @@ module Reports
       }
     end
 
-    def columns
+    def columns_for_csv
       %i[distributed_disposabed_diapers monthly_disposable_diapers diaper_drive_count disposabled_diapers_from_drives
          money_from_drives virtual_drive_count money_from_virtual_drives number_of_diapers_from_virtual_drives
          percent_donated percent_bought percent_bought money_spent_on_diapers purchased_from vendors_purchased_from]

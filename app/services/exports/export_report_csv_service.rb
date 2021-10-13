@@ -1,7 +1,7 @@
 module Exports
   class ExportReportCSVService
     def initialize(reporter:)
-      @columns = reporter.columns
+      @columns = reporter.columns_for_csv
       @report = reporter.report
     end
 
