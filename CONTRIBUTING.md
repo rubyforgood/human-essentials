@@ -26,11 +26,11 @@ Ruby for Good [code of conduct](https://github.com/rubyforgood/code-of-conduct).
  
  |      Username          | Password | Role               |
  | ---------------------- | -------- | ------------------ |
- | user_1@example.com     | password | Regular user       |
- | user_2@example.com     | password | Regular user       |
- | org_admin1@example.com | password | Organization Admin |
- | org_admin2@example.com | password | Organization Admin |
- | superadmin@example.com | password | Super Admin        |
+ | user_1@example.com     | password! | Regular user       |
+ | user_2@example.com     | password! | Regular user       |
+ | org_admin1@example.com | password! | Organization Admin |
+ | org_admin2@example.com | password! | Organization Admin |
+ | superadmin@example.com | password! | Super Admin        |
  
  When you start up `rails s`, you'll be able to sign in with these at whatever role-level you need to. The "1" and "2" represent different organizations. 
  

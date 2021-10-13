@@ -39,7 +39,7 @@ class User < ApplicationRecord
   # :invitable is from the devise_invitable gem
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :timeoutable
+         :timeoutable, :password_has_required_content
 
   validates :name, :email, presence: true
 
