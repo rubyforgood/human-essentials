@@ -42,3 +42,113 @@
     </div>
   </div>
 </section>
+
+<section class="content">
+  <h1 class='text-3xl text-center'>Diaper Acquisition</h1><br />
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th># of disposable diapers annually</th>
+            <th># of disposable diapers monthly</th>
+            <th># of diaper drives</th>
+            <th># disposable diapers collected from diaper drives</th>
+            <th>Money raised from diaper drives</th>
+            <th># of virtual diaper drives</th>
+            <th># disposable diapers collected from virtual diaper drives</th>
+            <th>Money raised from virtual diaper drives</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>2</td>
+            <td><%= @diaper_drives.count %></td>
+            <td><%= @number_of_diapers_from_drives %></td>
+            <td><%= number_to_currency(@money_from_drives) %></td>
+            <td><%= @virtual_diaper_drives.count %></td>
+            <td><%= @number_of_diapers_from_virtual_drives %></td>
+            <td><%= number_to_currency(@money_from_virtual_drives) %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<br />
+<section class="content">
+  <h1 class='text-3xl text-center'>Warehouse Information</h1><br />
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th># of warehouses/storage locations</th>
+            <th>Total square feet of storage location space</th>
+            <th>Largest storage location classification</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><%= @storage_locations.count %></td>
+            <td><%= @square_footage + " sqft" %></td>
+            <td><%= @largest_location %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<br />
+<section class="content">
+  <h1 class='text-3xl text-center'>Partner Information</h1><br />
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Number of Partner Agencies</th>
+            <th>Types of Partner Agencies</th>
+            <th>List of Zip Codes Served</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><%= @partners.count %></td>
+            <td><%= @partner_agency_type %></td>
+            <td><%= @partner_zipcodes_serviced %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<br />
+<section class="content">
+  <h1 class='text-3xl text-center'>Summary Information</h1><br />
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Number of Donations to Diaper Bank</th>
+            <th>Total amount of donations to Diaper Bank</th>
+            <th>List of Zip Codes Served</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><%= @donations.count %></td>
+            <td><%= number_to_currency(@donations_amount) %></td>
+            <td><%=  %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
