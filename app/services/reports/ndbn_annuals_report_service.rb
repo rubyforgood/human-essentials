@@ -32,8 +32,6 @@ module Reports
          percent_donated percent_bought percent_bought money_spent_on_diapers purchased_from vendors_purchased_from]
     end
 
-    private
-
     attr_reader :year, :organization
 
     def vendors_purchased_from
@@ -86,7 +84,7 @@ module Reports
     end
 
     def annual_drives
-      diaper_drives.within_date_range("2021-01-01 - 2021-12-31")
+      diaper_drives.within_date_range("#{year}-01-01 - #{year}-12-31")
     end
 
     def number_of_diapers_from_drives
