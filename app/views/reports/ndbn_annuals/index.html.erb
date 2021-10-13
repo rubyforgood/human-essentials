@@ -129,6 +129,30 @@
 </section>
 <br />
 <section class="content">
+  <h1 class='text-3xl text-center'>Children Served</h1><br />
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table">
+        <thead>
+          <th>Children served in 2021</th>
+          <th>Children served monthly</th>
+          <th>Diapers given per child (monthly)</th>
+          <th>Does the program repackage diapers?</th>
+          <th>Are diaper distributions held monthly?</th>
+        </thead>
+        <tbody>
+          <td><%= @children_served_by_partner + " children" %></td>
+          <td><%= @monthly_children_served + " children per month" %></td>
+          <td>***Come Back***</td>
+          <td>YES/NO</td>
+          <td>YES/NO</td>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<br />
+<section class="content">
   <h1 class='text-3xl text-center'>Summary Information</h1><br />
   <div class="card">
     <div class="card-body p-0">

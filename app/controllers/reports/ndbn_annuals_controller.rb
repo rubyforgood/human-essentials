@@ -21,6 +21,10 @@ class Reports::NdbnAnnualsController < ApplicationController
     @partner_agency_type = partner_agency_type
     @partner_zipcodes_serviced = partner_zipcodes_serviced
 
+    # Children Served report values
+    @children_served_by_partner = children_served_by_partner.to_s
+    @monthly_children_served = (children_served_by_partner / 12).to_s
+
     # Summary Information report values
     @donations = current_organization.donations
     @donations_amount = @donations.pluck(:money_raised).compact.sum.to_s
@@ -74,6 +78,12 @@ class Reports::NdbnAnnualsController < ApplicationController
     @partners.map do |partner|
       partner.profile.zips_served
     end
+  end
+
+  def children_served_by_partner
+    current_organization.partners.map do |partner|
+      partner.profile.children.count
+    end.sum
   end
 
   def validate_show_params
