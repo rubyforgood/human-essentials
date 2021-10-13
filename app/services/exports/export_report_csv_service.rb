@@ -1,3 +1,6 @@
+# Exports a generic report to csv
+# expects a reporter with a report method returns a hash with keys corresponding to columns and values corresponding to the reported value
+# It should also have a columns_for_csv method to determine the order of the columns
 module Exports
   class ExportReportCSVService
     def initialize(reporter:)
@@ -16,7 +19,6 @@ module Exports
     def generate_csv_data
       csv_data = []
 
-      # implement me !!!!
       csv_data << headers
       csv_data << build_row_data(@columns)
 
@@ -28,7 +30,7 @@ module Exports
     attr_reader :report
 
     def headers
-      @columns
+      @columns.map(&:to_s).map(&:humanize)
     end
 
     # Returns a Hash of keys to indexes so that obtaining the index
