@@ -20,8 +20,9 @@ class Reports::NdbnAnnualsController < ApplicationController
     @adult_incontinence_types = %w[adult_incontinence underpads pads liners]
     adult_incontinence_items = current_organization.items.where(partner_key: @adult_incontinence_types)
     @adult_incontinence = LineItem.where(item_id: adult_incontinence_items).map(&:quantity).sum
-    @supplies_recieved = supplies_recieved
-    @supplies_purchased = supplies_purchased
+    @supplies_distributed = supplies("Distribution")
+    @supplies_recieved = adult_incontinence_supplies("Donation")
+    @supplies_purchased = adult_incontinence_supplies("Purchase")
 
     # Partner Information report values
     @partners = current_organization.partners
@@ -93,28 +94,20 @@ class Reports::NdbnAnnualsController < ApplicationController
     end.sum
   end
 
-  def supplies_recieved
-    supplies = current_organization.items
-                                   .where(partner_key: @adult_incontinence_types)
-                                   .map(&:line_items)
-                                   .flatten
-                                   .select { |a| a.itemizable_type == "Donation" }
-                                   .map(&:quantity)
-                                   .sum
-
-    (supplies / @adult_incontinence.to_f) * 100
+  def supplies(type)
+    current_organization.items
+                        .where(partner_key: @adult_incontinence_types)
+                        .map(&:line_items)
+                        .flatten
+                        .select { |a| a.itemizable_type == type }
+                        .map(&:quantity)
+                        .sum
   end
 
-  def supplies_purchased
-    supplies = current_organization.items
-                                   .where(partner_key: @adult_incontinence_types)
-                                   .map(&:line_items)
-                                   .flatten
-                                   .select { |a| a.itemizable_type == "Purchase" }
-                                   .map(&:quantity)
-                                   .sum
+  def adult_incontinence_supplies(type)
+    supplies(type)
 
-    (supplies / @adult_incontinence.to_f) * 100
+    (supplies(type) / @adult_incontinence.to_f) * 100
   end
 
   def validate_show_params

@@ -111,7 +111,7 @@
         <thead>
           <tr>
             <th># of supplies distributed</th>
-            <th>Avergage # of adult incontinence supplies per adult per month</th>
+            <th>Average # of adult incontinence supplies per adult per month</th>
             <th>Adult incontinence supplies provided</th>
             <th>Percent of adult incontinence supplies that you received in donation in 2020</th>
             <th>Percent of adult incontinence supplies that you bought in 2020</th>
@@ -121,9 +121,9 @@
 
         <tbody>
           <tr>
-            <td><%= @adult_incontinence %></td>
+            <td><%= @supplies_distributed %></td>
             <td><%= @adult_incontinence/12 %></td>
-            <td><%=  %></td>
+            <td><%= @adult_incontinence %></td>
             <td><%= number_to_percentage(@supplies_recieved, precision: 2) %></td>
             <td><%= number_to_percentage(@supplies_purchased, precision: 2) %></td>
           </tr>
