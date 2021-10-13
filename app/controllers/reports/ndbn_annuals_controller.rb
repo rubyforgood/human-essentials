@@ -8,12 +8,13 @@ class Reports::NdbnAnnualsController < ApplicationController
     raise ActionController::RoutingError.new('Not Found') unless validate_show_params
 
     @year = params[:year]
-    @report =  Reports::NdbnAnnualsReportService.new(year: @year, organization: current_organization).report
+    reporter = Reports::NdbnAnnualsReportService.new(year: @year, organization: current_organization)
+    @report = reporter.report
 
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportNdbnAnnualsCSVService.new(year: @year, organization: current_organization).generate_csv, filename: "NdbnAnnuals-#{@year}-#{Time.zone.today}.csv"
+        send_data Exports::ExportReportCSVService.new(reporter: reporter).generate_csv, filename: "NdbnAnnuals-#{@year}-#{Time.zone.today}.csv"
       end
     end
   end
