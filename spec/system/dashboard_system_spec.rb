@@ -337,12 +337,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
               click_on "Filter"
             end
 
-            let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum }
-
             it "has a widget displaying the year-to-date Purchase totals, only using purchases from this year" do
               within "#purchases" do
-              binding.pry
-                expect(page).to have_content(total_inventory)
+                expect(page).to have_content(100)
+                expect(page).to have_content(101)
+                expect(page).to have_content(102)
               end
             end
 
@@ -364,6 +363,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             it "has a widget displaying today's Purchase totals, only using purchases from today" do
               within "#purchases" do
                 expect(page).to have_content(total_inventory)
+                expect(page).to_not have_content(101)
               end
             end
 
@@ -384,7 +384,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             it "has a widget displaying the Purchase totals from yesterday, only using purchases from yesterday" do
               within "#purchases" do
+              expect(page).to_not have_content(100)
                 expect(page).to have_content(total_inventory)
+                expect(page).to_not have_content(102)
               end
             end
 
@@ -401,11 +403,13 @@ RSpec.describe "Dashboard", type: :system, js: true do
               click_on "Filter"
             end
 
-            let(:total_inventory) { [@this_years_purchases[:today], @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week]].map(&:total_quantity).sum }
-
             it "has a widget displaying the Purchase totals from this week, only using purchases from this week" do
               within "#purchases" do
-                expect(page).to have_content(total_inventory)
+                expect(page).to have_content(100)
+                expect(page).to have_content(101)
+                expect(page).to have_content(102)
+                expect(page).to_not have_content(103)
+                expect(page).to_not have_content(104)
               end
             end
 
@@ -426,7 +430,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             it "has a widget displaying the Purchase totals from this month, only using purchases from this month" do
               within "#purchases" do
-                expect(page).to have_content(total_inventory)
+                expect(page).to have_content(100)
+                expect(page).to have_content(101)
+                expect(page).to have_content(102)
+                expect(page).to_not have_content(103)
+                expect(page).to_not have_content(104)
               end
             end
 
@@ -442,8 +450,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
               date_range_picker_select_range "All Time"
               click_on "Filter"
             end
-
-            let(:total_purchases) { @last_years_purchases.map(&:total_quantity).sum }
 
             it "has a widget displaying the most 3 recent purchases" do
               within "#purchases" do
@@ -620,7 +626,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             it "displays some recent donations" do
               within "#diaper_drives" do
-                expect(page).to have_css("a", text: /#{total_inventory} from first diaper drive/i, count: 1)
+                expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 3)
               end
             end
           end
@@ -828,7 +834,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               click_on "Filter"
             end
 
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
+            let(:total_inventory) { @this_years_donations[:today].total_quantity + @this_years_donations[:yesterday].total_quantity + @this_years_donations[:earlier_this_week].total_quantity}
             let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
 
             it "has a widget displaying the Donation totals from this month, only using donations from this month" do
