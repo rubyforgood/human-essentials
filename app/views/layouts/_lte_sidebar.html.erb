@@ -174,7 +174,7 @@
         <% if Flipper.enabled?(:reports, current_user) %>
           <li class="nav-item <%= active_class(['reports']) %>">
             <%= link_to(reports_ndbn_annuals_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports'])}") do %>
-              <i class="nav-icon fa fa-circle-o"></i> Reports
+              <i class="nav-icon fa fa-circle-o"></i> Annual Survey
             <% end %>
           </li>
         <% end %>

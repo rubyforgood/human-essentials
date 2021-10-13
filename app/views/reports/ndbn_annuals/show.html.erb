@@ -21,3 +21,19 @@
     </div>
   </div>
 </section>
+<!-- Main content -->
+<section class="content">
+  <div class="card-footer">
+    <div class="card-body">
+      <span class="float-right">
+        <%=
+            download_button_to(
+              reports_ndbn_annual_path(@year, format: :csv),
+              text: "Export NDBN Annual Report"
+            )
+        %>
+      </span>
+    </div>
+    </div>
+  </div>
+</section>

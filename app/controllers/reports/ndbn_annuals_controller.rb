@@ -6,6 +6,15 @@ class Reports::NdbnAnnualsController < ApplicationController
 
   def show
     raise ActionController::RoutingError.new('Not Found') unless validate_show_params
+
+    @year = params[:year]
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_data Exports::ExportNdbnAnnualsCSVService.new(@year).generate_csv, filename: "NdbnAnnuals-#{@year}-#{Time.zone.today}.csv"
+      end
+    end
   end
 
   private
