@@ -48,4 +48,15 @@ RSpec.describe Manufacturer, type: :model do
       end
     end
   end
+
+  context "Private Methods" do
+    describe "#exists_in_org?" do
+      let(:organization) { create(:organization) }
+
+      it "returns true if manufacturer exists in an organization" do
+        manufacturer = FactoryBot.create(:manufacturer, organization_id: organization.id)
+        expect(manufacturer.send(:exists_in_org?)).to eq(true)
+      end
+    end
+  end
 end
