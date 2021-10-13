@@ -100,11 +100,11 @@ module Reports
     end
 
     def money_from_virtual_drives
-      virtual_diaper_drives.map(&:donation_quantity).sum
+      virtual_diaper_drives.map(&:in_kind_value).sum
     end
 
     def number_of_diapers_from_virtual_drives
-      virtual_diaper_drives.map(&:in_kind_value).sum
+      virtual_diaper_drives.map(&:donation_quantity).sum
     end
 
     def distributed_diapers
