@@ -16,12 +16,18 @@ module Exports
     end
 
     def generate_csv_data
+      headers = []
+      data = []
+
       csv_data = []
 
       @reporters.each do |reporter|
-        csv_data << headers(reporter)
-        csv_data << build_row_data(reporter)
+        headers.concat(headers(reporter))
+        data.concat(build_row_data(reporter))
       end
+
+      csv_data << headers
+      csv_data << data
 
       csv_data
     end
