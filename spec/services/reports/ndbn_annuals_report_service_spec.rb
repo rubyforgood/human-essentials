@@ -36,26 +36,38 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
     end
   end
 
-  xdescribe "#percent_bought" do
+  describe "#percent_bought" do
     it "calculates percent of diapers bought" do
-    end
-  end
-
-  xdescribe "#percent_donated" do
-    it "calculates percent of diapers donated" do
-    end
-  end
-
-  xdescribe "#disposabled_diapers_from_drives" do
-    it "calculates number of disposable diapers from drivers" do
-    end
-  end
-
-  describe "#donated_diapers" do
-    it "calculates total quantity of diapers donated" do
+      create_purchase
       create_diaper_drive_donation
 
-      expect(report.donated_diapers).to eq 100
+      expect(report.percent_bought).to eq 50
+    end
+  end
+
+  describe "#percent_donated" do
+    it "calculates percent of diapers donated" do
+      create_purchase
+      create_diaper_drive_donation
+
+      expect(report.percent_donated).to eq 50
+    end
+  end
+
+  describe "#total_annual_incoming_disposable_diapers" do
+    it "calculates total diaper count income" do
+      create_purchase
+      create_diaper_drive_donation
+
+      expect(report.total_annual_incoming_disposable_diapers).to eq 200
+    end
+  end
+
+  describe "#disposabled_diapers_from_drives" do
+    it "calculates number of disposable diapers from drivers" do
+      create_diaper_drive_donation
+
+      expect(report.disposabled_diapers_from_drives).to eq 100
     end
   end
 
@@ -166,7 +178,7 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
   end
 
   def create_purchase
-    create(:purchase, :with_items)
+    create(:purchase, :with_items, organization: organization)
   end
 
   def create_diaper_drive_donation
@@ -178,7 +190,7 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
   end
 
   def create_diaper_drive(year: Time.zone.now.year, virtual: true)
-    create(:diaper_drive, organization: organization, start_date: Time.new(year, 1), end_date: Time.new(year, 2), virtual: virtual)
+    create(:diaper_drive, organization: organization, start_date: Time.new(year, 1).getlocal, end_date: Time.new(year, 2).getlocal, virtual: virtual)
   end
 
   def create_diaper_distribution

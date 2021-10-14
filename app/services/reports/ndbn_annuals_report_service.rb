@@ -59,20 +59,21 @@ module Reports
     end
 
     def percent_bought
-      # placeholder
-      "70"
+      (purchased_diapers.to_f / total_annual_incoming_disposable_diapers) * 100
     end
 
     def percent_donated
-      # placeholder
-      "30"
+      (disposabled_diapers_from_drives.to_f / total_annual_incoming_disposable_diapers) * 100
+    end
+
+    def total_annual_incoming_disposable_diapers
+      LineItem.where(item: disposable_diaper_items)
+              .where(itemizable: Purchase.where(organization: organization)).or(
+                LineItem.where(itemizable: Donation.where(organization: organization))
+              ).sum(:quantity)
     end
 
     def disposabled_diapers_from_drives
-      "1000 - placeholder"
-    end
-
-    def donated_diapers
       LineItem.where(item: disposable_diaper_items)
               .where(itemizable: yearly_drive_donations)
               .sum(:quantity)
