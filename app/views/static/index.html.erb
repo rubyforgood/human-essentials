@@ -16,7 +16,7 @@
     </style>
   </head>
   <body>
-
+  <%= render partial: "shared/flash_tailwind" %>
   <div class='pt-2' style="background: linear-gradient(135deg, #3023AE, #C86DD7)">
       <div class="container max-w-7xl mx-auto pt-5 px-5">
         <nav>
@@ -30,7 +30,7 @@
                 <a class="hidden md:block" href="#about">About</a>
                 <a class="hidden md:block" href="#testimonials">Testimonials</a>
                 <a class="hidden md:block" href="#contact">Contact</a>
-
+                
                 <div @click.away="open = false" class="relative" x-data="{ open: false }">
                   <button @click="open = !open" class="flex flex-row items-center w-full px-4 py-2 bg-green-500 hover:bg-green-600 rounded-2xl text-md">
                     <span class='text-lg'>Login</span>
