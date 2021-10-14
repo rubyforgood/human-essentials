@@ -25,6 +25,7 @@ RSpec.describe "Account Requests Admin", type: :system do
             expect(page).to have_content(request.organization_name)
             expect(page).to have_content(request.organization_website)
             expect(page).to have_content(request.request_details)
+            expect(page).to have_content(request.status)
             expect(page).to have_content(request.name)
             expect(page).to have_content(request.email)
           end
@@ -41,6 +42,7 @@ RSpec.describe "Account Requests Admin", type: :system do
             expect(page).to have_content(request.organization_name)
             expect(page).to have_content(request.organization_website)
             expect(page).to have_content(request.request_details)
+            expect(page).to have_content(request.status)
             expect(page).to have_content(request.name)
             expect(page).to have_content(request.email)
           end
