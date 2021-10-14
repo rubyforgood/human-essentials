@@ -73,37 +73,37 @@ To login to the web application, use these default credentials:
 **Super Users**
 ```
 username: superadmin@example.com
-password: password
+password: password!
 ```
 
 **Bank users**
 ```
 Organization Admin
   Email: org_admin1@example.com
-  Password: password
+  Password: password!
 
 User
   Email: user_1@example.com
-  Password: password
+  Password: password!
 ```
 
 **Partnerbase Users**
 ```
 Verified Partner
   Email: verified@example.com
-  Password: password
+  Password: password!
 
 Invited Partner
   Email: invited@pawneehomelss.com
-  Password: password
+  Password: password!
   
 Unverified Partner
   Email: unverified@pawneepregnancy.com
-  Password: password
+  Password: password!
   
 Recertification Required Partner
   Email: recertification_required@example.com
-  Password: password
+  Password: password!
 ```
 
 ## Contributing

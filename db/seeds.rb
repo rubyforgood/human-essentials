@@ -128,8 +128,8 @@ end
 ].each do |user|
   User.create(
     email: user[:email],
-    password: 'password',
-    password_confirmation: 'password',
+    password: 'password!',
+    password_confirmation: 'password!',
     organization_admin: user[:organization_admin],
     super_admin: user[:super_admin],
     organization: user[:organization]
@@ -233,8 +233,8 @@ note = [
 
   Partners::User.create!(
     name: Faker::Name.name,
-    password: "password",
-    password_confirmation: "password",
+    password: "password!",
+    password_confirmation: "password!",
     email: p.email,
     partner: partner
   )
@@ -318,7 +318,8 @@ note = [
     pr = Partners::Request.new(
       comments: Faker::Lorem.paragraph,
       partner: partner,
-      for_families: Faker::Boolean.boolean
+      for_families: Faker::Boolean.boolean,
+      partner_user: partner.primary_user
     )
 
     # Ensure that the item requests are valid with

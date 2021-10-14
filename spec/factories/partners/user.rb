@@ -3,7 +3,7 @@ FactoryBot.define do
     name { "Partner User" }
     email { "partner_user@example.com" }
     partner { Partners::Partner.first || create(:partners_partner) }
-    password { "password" }
-    password_confirmation { "password" }
+    password { "password!" }
+    password_confirmation { "password!" }
   end
 end

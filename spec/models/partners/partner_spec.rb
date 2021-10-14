@@ -134,6 +134,27 @@ RSpec.describe Partners::Partner, type: :model do
     end
   end
 
+  describe '#deactivated' do
+    subject { partner.deactivated? }
+    let(:partner) { FactoryBot.build(:partners_partner, status_in_diaper_base: status_in_diaper_base) }
+
+    context 'when the status_in_diaper_base is deactivated' do
+      let(:status_in_diaper_base) { 'deactivated' }
+
+      it 'should return true' do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context 'when the status_in_diaper_base is not deactivated' do
+      let(:status_in_diaper_base) { 'not-deactivated' }
+
+      it 'should return false' do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   describe '#organization' do
     subject { partner.organization }
     let(:partner) { FactoryBot.create(:partners_partner) }

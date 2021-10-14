@@ -79,6 +79,8 @@ class Donation < ApplicationRecord
   }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
 
+  scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
+
   def from_diaper_drive?
     source == SOURCES[:diaper_drive]
   end
