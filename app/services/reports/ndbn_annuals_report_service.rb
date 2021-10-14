@@ -7,9 +7,7 @@ module Reports
 
     def report
       {
-        diaper_drives: diaper_drives,
-        virtual_diaper_drives: virtual_diaper_drives,
-
+        total_annual_incoming_disposable_diapers: total_annual_incoming_disposable_diapers,
         distributed_disposabed_diapers: distributed_diapers,
         monthly_disposable_diapers: monthly_disposable_diapers,
         diaper_drive_count: diaper_drives.count,
@@ -98,7 +96,7 @@ module Reports
     end
 
     def money_from_drives
-      annual_drives.map(&:in_kind_value).sum
+      annual_drives.map(&:total_money_raised).sum / 100
     end
 
     def virtual_diaper_drives
@@ -106,7 +104,7 @@ module Reports
     end
 
     def money_from_virtual_drives
-      virtual_diaper_drives.map(&:in_kind_value).sum
+      virtual_diaper_drives.map(&:total_money_raised).sum / 100
     end
 
     def number_of_diapers_from_virtual_drives
@@ -129,7 +127,7 @@ module Reports
     end
 
     def monthly_disposable_diapers
-      distributed_diapers / 12
+      (distributed_diapers / 12.0).round
     end
   end
 end

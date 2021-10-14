@@ -113,7 +113,7 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
       create_virtual_diaper_drive_donation
       create_diaper_drive_donation
 
-      expect(report.money_from_drives).to eq 20000
+      expect(report.money_from_drives).to eq 1_100
     end
   end
 
@@ -132,7 +132,7 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
       create_virtual_diaper_drive_donation
       create_diaper_drive_donation
 
-      expect(report.money_from_virtual_drives).to eq 10000
+      expect(report.money_from_virtual_drives).to eq 500
     end
   end
 
@@ -182,11 +182,11 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
   end
 
   def create_diaper_drive_donation
-    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", diaper_drive: create(:diaper_drive, virtual: false))
+    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", money_raised: 60_000, diaper_drive: create(:diaper_drive, virtual: false))
   end
 
   def create_virtual_diaper_drive_donation
-    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", diaper_drive: create(:diaper_drive, virtual: true))
+    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", money_raised: 50_000, diaper_drive: create(:diaper_drive, virtual: true))
   end
 
   def create_diaper_drive(year: Time.zone.now.year, virtual: true)

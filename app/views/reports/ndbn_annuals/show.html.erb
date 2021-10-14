@@ -56,12 +56,12 @@
 
         <tbody>
           <tr>
-            <td>1</td>
-            <td>2</td>
-            <td><%= @report[:diaper_drives].count %></td>
-            <td><%= @report[:number_of_diapers_from_drives] %></td>
+            <td><%= @report[:total_annual_incoming_disposable_diapers] %></td>
+            <td><%= @report[:monthly_disposable_diapers] %></td>
+            <td><%= @report[:diaper_drive_count] %></td>
+            <td><%= @report[:disposabled_diapers_from_drives] %></td>
             <td><%= number_to_currency(@report[:money_from_drives]) %></td>
-            <td><%= @report[:virtual_diaper_drives].count %></td>
+            <td><%= @report[:virtual_drive_count] %></td>
             <td><%= @report[:number_of_diapers_from_virtual_drives] %></td>
             <td><%= number_to_currency(@report[:money_from_virtual_drives]) %></td>
           </tr>

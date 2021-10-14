@@ -11,7 +11,7 @@ module Exports
     def generate_csv
       csv_data = generate_csv_data
 
-      CSV.generate(headers: true) do |csv|
+      ::CSV.generate(headers: true) do |csv|
         csv_data.each { |row| csv << row }
       end
     end
