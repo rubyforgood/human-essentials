@@ -32,9 +32,9 @@ class Reports::NdbnAnnualsController < ApplicationController
     @partner_info_reporter = partner_info_reporter.report
     reporters << partner_info_reporter
 
-    # Children Served report values
-    @children_served_by_partner = children_served_by_partner.to_s
-    @monthly_children_served = (children_served_by_partner / 12).to_s
+    children_served_reporter = Reports::ChildrenServedReportService.new(reporter_params)
+    @children_served_report = children_served_reporter.report
+    reporters << children_served_reporter
 
     # Summary Information report values
     @donations = current_organization.donations
@@ -56,12 +56,6 @@ class Reports::NdbnAnnualsController < ApplicationController
 
     year_range = foundation_year...@actual_year
     year_range.to_a
-  end
-
-  def children_served_by_partner
-    current_organization.partners.map do |partner|
-      partner.profile.children.count
-    end.sum
   end
 
   def validate_show_params
