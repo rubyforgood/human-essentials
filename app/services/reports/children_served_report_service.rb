@@ -15,7 +15,7 @@ module Reports
     end
 
     def columns_for_csv
-      %i[partners_count partner_agency_type partner_zipcodes_serviced]
+      %i[children_served_by_partner monthly_children_served]
     end
 
     def children_served_by_partner

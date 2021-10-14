@@ -36,9 +36,9 @@ class Reports::NdbnAnnualsController < ApplicationController
     @children_served_report = children_served_reporter.report
     reporters << children_served_reporter
 
-    # Summary Information report values
-    @donations = current_organization.donations
-    @donations_amount = @donations.pluck(:money_raised).compact.sum.to_s
+    summary_info_reporter = Reports::SummaryInfoReportService.new(reporter_params)
+    @summary_info_report = summary_info_reporter.report
+    reporters << summary_info_reporter
 
     respond_to do |format|
       format.html

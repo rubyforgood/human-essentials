@@ -221,8 +221,8 @@
 
         <tbody>
           <tr>
-            <td><%= @donations.count %></td>
-            <td><%= number_to_currency(@donations_amount) %></td>
+            <td><%= @summary_info_report[:donations_count] %></td>
+            <td><%= number_to_currency(@summary_info_report[:donations_amount]) %></td>
             <td>?</td>
           </tr>
         </tbody>
