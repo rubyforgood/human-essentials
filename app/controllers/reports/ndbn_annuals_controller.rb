@@ -28,10 +28,9 @@ class Reports::NdbnAnnualsController < ApplicationController
     @other_products_report = other_products_reporter.report
     reporters << other_products_reporter
 
-    # Partner Information report values
-    @partners = current_organization.partners
-    @partner_agency_type = partner_agency_type
-    @partner_zipcodes_serviced = partner_zipcodes_serviced
+    partner_info_reporter = Reports::PartnerInfoReportService.new(reporter_params)
+    @partner_info_reporter = partner_info_reporter.report
+    reporters << partner_info_reporter
 
     # Children Served report values
     @children_served_by_partner = children_served_by_partner.to_s
@@ -57,42 +56,6 @@ class Reports::NdbnAnnualsController < ApplicationController
 
     year_range = foundation_year...@actual_year
     year_range.to_a
-  end
-
-  def annual_drives
-    @diaper_drives.within_date_range("2021-01-01 - 2021-12-31")
-  end
-
-  def number_of_diapers_from_drives
-    annual_drives.map(&:donation_quantity).sum
-  end
-
-  def money_from_drives
-    annual_drives.map(&:in_kind_value).sum
-  end
-
-  def virtual_diaper_drives
-    annual_drives.where(virtual: true)
-  end
-
-  def money_from_virtual_drives
-    virtual_diaper_drives.map(&:donation_quantity).sum
-  end
-
-  def number_of_diapers_from_virtual_drives
-    virtual_diaper_drives.map(&:in_kind_value).sum
-  end
-
-  def partner_agency_type
-    @partners.map do |partner|
-      partner.profile.agency_type
-    end
-  end
-
-  def partner_zipcodes_serviced
-    @partners.map do |partner|
-      partner.profile.zips_served
-    end
   end
 
   def children_served_by_partner
