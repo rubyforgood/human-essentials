@@ -27,9 +27,11 @@
               <% end %>
             </ul>
           </td>
-          <td>
-            <%= view_button_to item_category_path(item_category) %>
-            <%= edit_button_to edit_item_category_path(item_category.id) %>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              <%= view_button_to item_category_path(item_category), { type: "outline-primary" } %>
+              <%= edit_button_to edit_item_category_path(item_category.id), { type: "outline-primary" } %>
+            </div>
           </td>
         </tr>
       <% end %>

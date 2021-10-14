@@ -5,9 +5,19 @@
   <td><%= storage_location.warehouse_type %></td>
   <td><%= storage_location.size %></td>
   <td><%= number_to_currency(storage_location.inventory_total_value_in_dollars) %></td>
-  <td class="text-right">
-    <%= view_button_to storage_location %>
-    <%= edit_button_to edit_storage_location_path(storage_location) %>
-    <%= delete_button_to storage_location, { confirm: confirm_delete_msg(storage_location.name) } %>
+  <td class="text-center">
+    <div class="btn-group" role="group">
+      <%= view_button_to storage_location, { type: "outline-primary" } %>
+
+      <div class="btn-group" role="group">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-ellipsis-h"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+          <%= link_to "Edit", edit_storage_location_path(storage_location), class: "dropdown-item" %>
+          <%= link_to "Delete", storage_location, { class: "dropdown-item", confirm: confirm_delete_msg(storage_location.name) } %>
+        </div>
+      </div>
+    </div>
   </td>
 </tr>

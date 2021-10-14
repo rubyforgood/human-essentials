@@ -4,8 +4,10 @@
   <td><%= transfer_row.created_at.strftime("%F") %></td>
   <td><%= transfer_row.comment || "none" %></td>
   <td><%= transfer_row.line_items.total %></td>
-  <td>
-    <%= delete_button_to transfer_path(transfer_row.id), { confirm: "Are you sure you want to permanently remove this transfer?" } %>
-    <%= view_button_to transfer_row %>
+  <td class="text-right">
+    <div class="btn-group" role="group">
+      <%= link_to "View", transfer_row, class: "btn btn-outline-primary" %>
+      <%= link_to "Delete", transfer_path(transfer_row.id), { class: "btn btn-outline-primary", confirm: "Are you sure you want to permanently remove this transfer?" } %>
+    </div>
   </td>
 </tr>

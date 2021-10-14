@@ -94,7 +94,7 @@
                   <td><%= adjustment.storage_location.name %></td>
                   <td><%= adjustment.comment %></td>
                   <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
-                  <td class="text-right"><%= view_button_to adjustment %></td>
+                  <td class="text-right"><%= view_button_to adjustment, { type: "outline-primary" } %></td>
                 </tr>
               <% end %>
               </tbody>
