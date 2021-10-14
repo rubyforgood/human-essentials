@@ -62,6 +62,11 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
+  scope :disposable, -> {
+    joins(:base_item)
+      .where("lower(base_items.category) LIKE '%diaper%'").where.not("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
+  }
+
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
   end
