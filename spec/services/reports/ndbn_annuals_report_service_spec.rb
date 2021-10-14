@@ -4,13 +4,35 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
     end
   end
 
-  xdescribe "#purchased_from" do
-    it "returns what stores were purchased from" do
+  describe "#purchased_diapers" do
+    it "returns amount of diapers from purchases for year" do
+      create_purchase
+
+      expect(report.purchased_diapers).to eq 100
     end
   end
 
-  xdescribe "#money_spent_on_diapers" do
+  describe "#yearly_purchases" do
+    it "returns purchases for year" do
+      purchase = create_purchase
+
+      expect(report.yearly_purchases).to include(purchase)
+    end
+  end
+
+  describe "#purchased_from" do
+    it "returns what stores were purchased from for the year" do
+      create_purchase
+
+      expect(report.purchased_from).to eq ["Google"]
+    end
+  end
+
+  describe "#money_spent_on_diapers" do
     it "calculates money spent on diapers" do
+      create_purchase
+
+      expect(report.money_spent_on_diapers).to eq 10.0
     end
   end
 
@@ -31,25 +53,17 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
 
   describe "#donated_diapers" do
     it "calculates total quantity of diapers donated" do
-      create_diaper_donation
+      create_diaper_drive_donation
 
       expect(report.donated_diapers).to eq 100
     end
   end
 
-  describe "#diaper_items" do
-    it "finds all diaper items" do
-      donation = create_diaper_donation
-
-      expect(report.diaper_items).to include(donation.items.first)
-    end
-  end
-
-  describe "#yearly_donations" do
+  describe "#yearly_drive_donations" do
     it "finds donations from the year" do
-      donation = create_diaper_donation
+      donation = create_diaper_drive_donation
 
-      expect(report.yearly_donations).to include(donation)
+      expect(report.yearly_drive_donations).to include(donation)
     end
   end
 
@@ -119,30 +133,56 @@ RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
     end
   end
 
-  xdescribe "#distributed_diapers" do
+  describe "#yearly_distributions" do
+    it "finds distributions for the year" do
+      distribution = create_diaper_distribution
+
+      expect(report.yearly_distributions).to include(distribution)
+    end
+  end
+
+  describe "#distributed_diapers" do
+    it "calculates number of distributed diapers" do
+      create_diaper_distribution
+
+      expect(report.distributed_diapers).to eq 100
+    end
+  end
+
+  describe "#disposable_diaper_items" do
     it "calculates number of disposable diapers" do
+      create_diaper_drive_donation
+
+      expect(report.disposable_diaper_items).to include(Item.last)
     end
   end
 
-  xdescribe "#monthly_disposable_diapers" do
+  describe "#monthly_disposable_diapers" do
     it "calculates number of disposable diapers per month" do
+      create_diaper_distribution
+
+      expect(report.monthly_disposable_diapers).to eq 8
     end
   end
 
-  def create_diaper_donation
-    create(:donation, :with_items, organization: organization)
+  def create_purchase
+    create(:purchase, :with_items)
   end
 
   def create_diaper_drive_donation
-    create(:diaper_drive_donation, :with_items, organization: organization, diaper_drive: create(:diaper_drive, virtual: false))
+    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", diaper_drive: create(:diaper_drive, virtual: false))
   end
 
   def create_virtual_diaper_drive_donation
-    create(:diaper_drive_donation, :with_items, organization: organization, diaper_drive: create(:diaper_drive, virtual: true))
+    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", diaper_drive: create(:diaper_drive, virtual: true))
   end
 
   def create_diaper_drive(year: Time.zone.now.year, virtual: true)
     create(:diaper_drive, organization: organization, start_date: Time.new(year, 1), end_date: Time.new(year, 2), virtual: virtual)
+  end
+
+  def create_diaper_distribution
+    create(:distribution, :with_items, organization: organization)
   end
 
   def organization
