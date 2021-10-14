@@ -117,7 +117,7 @@ class Reports::NdbnAnnualsController < ApplicationController
     file = File.read("db/base_items.json")
     json = JSON.parse(file)
 
-    json[key].map(&:values).map{|keys| keys[0]}
+    json[key].map(&:values).map { |keys| keys[0] }
   end
 
   def other_products_partner_keys
