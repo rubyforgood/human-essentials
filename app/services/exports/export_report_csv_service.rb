@@ -3,9 +3,8 @@
 # It should also have a columns_for_csv method to determine the order of the columns
 module Exports
   class ExportReportCSVService
-    def initialize(reporter:)
-      @columns = reporter.columns_for_csv
-      @report = reporter.report
+    def initialize(reporters:)
+      @reporters = reporters
     end
 
     def generate_csv
@@ -19,8 +18,10 @@ module Exports
     def generate_csv_data
       csv_data = []
 
-      csv_data << headers
-      csv_data << build_row_data(@columns)
+      @reporters.each do |reporter|
+        csv_data << headers(reporter)
+        csv_data << build_row_data(reporter)
+      end
 
       csv_data
     end
@@ -29,8 +30,8 @@ module Exports
 
     attr_reader :report
 
-    def headers
-      @columns.map(&:to_s).map(&:humanize)
+    def headers(reporter)
+      reporter.columns_for_csv.map(&:to_s).map(&:humanize)
     end
 
     # Returns a Hash of keys to indexes so that obtaining the index
@@ -39,8 +40,8 @@ module Exports
       @headers_with_indexes ||= headers.each_with_index.to_h
     end
 
-    def build_row_data(columns)
-      columns.map { |column| @report[column] }
+    def build_row_data(reporter)
+      reporter.columns_for_csv.map { |column| reporter.report[column] }
     end
   end
 end

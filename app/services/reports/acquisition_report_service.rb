@@ -1,16 +1,16 @@
 module Reports
-  class NdbnAnnualsReportService
+  class AcquisitionReportService
     def initialize(year:, organization:)
       @year = year
       @organization = organization
     end
 
     def report
-      {
+      @report ||= {
         total_annual_incoming_disposable_diapers: total_annual_incoming_disposable_diapers,
         distributed_disposabed_diapers: distributed_diapers,
         monthly_disposable_diapers: monthly_disposable_diapers,
-        diaper_drive_count: diaper_drives.count,
+        diaper_drive_count: annual_drives.count,
         disposabled_diapers_from_drives: disposabled_diapers_from_drives,
         money_from_drives: money_from_drives,
         virtual_drive_count: virtual_diaper_drives.count,
