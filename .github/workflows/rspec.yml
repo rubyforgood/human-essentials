@@ -90,3 +90,9 @@ jobs:
           KNAPSACK_PRO_LOG_LEVEL: info
         run: |
           RUBYOPT='-W:no-deprecated -W:no-experimental' bin/knapsack_pro_rspec
+      - name: Upload artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: failed-browser-tests
+          path: tmp/screenshots
