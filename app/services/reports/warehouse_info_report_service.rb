@@ -1,5 +1,8 @@
 module Reports
   class WarehouseInfoReportService
+    attr_reader :year, :organization
+    delegate :storage_locations, to: :organization
+
     def initialize(year:, organization:)
       @year = year
       @organization = organization
@@ -16,9 +19,6 @@ module Reports
     def columns_for_csv
       %i[storage_locations_count square_footage largest_location]
     end
-
-    attr_reader :year, :organization
-    delegate :storage_locations, to: :organization
 
     def square_footage
       storage_locations.pluck(:square_footage).sum.to_s

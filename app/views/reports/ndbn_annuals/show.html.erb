@@ -105,7 +105,7 @@
           <tr>
             <th># of supplies distributed</th>
             <th>Average # of adult incontinence supplies per adult per month</th>
-            <th>Adult incontinence supplies provided</th>
+            <th>Adult incontinence supplies provided per adult</th>
             <th>% of adult incontinence supplies that you received in donation</th>
             <th>% of adult incontinence supplies that you bought</th>
             <th>Amount of money spent on adult incontinence supplies</th>
@@ -114,12 +114,12 @@
 
         <tbody>
           <tr>
-            <td><%= @supplies_distributed %></td>
-            <td><%= @adult_incontinence / 12 %></td>
-            <td><%= @adult_incontinence %></td>
-            <td><%= number_to_percentage(@supplies_recieved, precision: 2) %></td>
-            <td><%= number_to_percentage(@supplies_purchased, precision: 2) %></td>
-            <td>?</td>
+            <td><%= @adult_incontinence_report[:supplies_distributed] %></td>
+            <td><%= @adult_incontinence_report[:monthly_adult_incontinence] %></td>
+            <td><%= @adult_incontinence_report[:provided_per_person] %></td>
+            <td><%= number_to_percentage(@adult_incontinence_report[:supplies_recieved], precision: 2) %></td>
+            <td><%= number_to_percentage(@adult_incontinence_report[:supplies_purchased], precision: 2) %></td>
+            <td><%= @adult_incontinence_report[:money_spent] || "?"%></td>
           </tr>
         </tbody>
       </table>

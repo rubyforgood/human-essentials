@@ -10,21 +10,20 @@ class Reports::NdbnAnnualsController < ApplicationController
     reporters = []
 
     @year = params[:year]
-    acquisition_reporter = Reports::AcquisitionReportService.new(year: @year, organization: current_organization)
+    reporter_params = { year: @year, organization: current_organization }
+
+    acquisition_reporter = Reports::AcquisitionReportService.new(reporter_params)
     @acquisition_report = acquisition_reporter.report
     reporters << acquisition_reporter
 
-    warehouse_reporter = Reports::WarehouseInfoReportService.new(year: @year, organization: current_organization)
+    warehouse_reporter = Reports::WarehouseInfoReportService.new(reporter_params)
     @warehouse_report = warehouse_reporter.report
     reporters << warehouse_reporter
 
-    # Adult Incontinence
-    @adult_incontinence_types = %w[adult_incontinence underpads pads liners]
-    adult_incontinence_items = current_organization.items.where(partner_key: @adult_incontinence_types)
-    @adult_incontinence = LineItem.where(item_id: adult_incontinence_items).map(&:quantity).sum
-    @supplies_distributed = supplies("Distribution")
-    @supplies_recieved = adult_incontinence_supplies("Donation")
-    @supplies_purchased = adult_incontinence_supplies("Purchase")
+    adult_incontinence_reporter = Reports::AdultIncontinenceReportService.new(reporter_params)
+    @adult_incontinence_report = adult_incontinence_reporter.report
+    reporters << adult_incontinence_reporter
+
 
     # Other Products
     @other_products = current_organization.items.where(partner_key: other_products_partner_keys).map(&:name)
@@ -100,22 +99,6 @@ class Reports::NdbnAnnualsController < ApplicationController
     current_organization.partners.map do |partner|
       partner.profile.children.count
     end.sum
-  end
-
-  def supplies(type)
-    current_organization.items
-                        .where(partner_key: @adult_incontinence_types)
-                        .map(&:line_items)
-                        .flatten
-                        .select { |a| a.itemizable_type == type }
-                        .map(&:quantity)
-                        .sum
-  end
-
-  def adult_incontinence_supplies(type)
-    supplies(type)
-
-    (supplies(type) / @adult_incontinence.to_f) * 100
   end
 
   def base_item_json(key)
