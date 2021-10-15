@@ -3,7 +3,7 @@ module Reports
     attr_reader :year, :organization
 
     delegate :donations, to: :organization
-    delegate :count,  to: :donations, prefix: true
+    delegate :count, to: :donations, prefix: true
 
     def initialize(year:, organization:)
       @year = year
@@ -13,7 +13,7 @@ module Reports
     def report
       @report ||= {
         donations_count: donations_count,
-        donations_amount: donations_amount,
+        donations_amount: donations_amount
       }
     end
 

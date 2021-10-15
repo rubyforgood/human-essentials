@@ -15,7 +15,7 @@ module Reports
         provided_per_person: provided_per_person,
         supplies_distributed: supplies_distributed,
         supplies_purchased: supplies_purchased,
-        supplies_recieved: supplies_recieved,
+        supplies_recieved: supplies_recieved
       }
     end
 
