@@ -80,7 +80,7 @@ module UiHelper
   end
 
   def download_button_to(link, options = {})
-    _link_to link, { icon: "download", type: "info", text: "Download", size: "md", type: "outline-primary"}.merge(options)
+    _link_to link, { icon: "download", text: "Download", size: "md", type: "outline-primary" }.merge(options)
   end
 
   def edit_button_to(link, options = {}, properties = {})
@@ -88,7 +88,7 @@ module UiHelper
   end
 
   def filter_button(options = {})
-    _button_to({ icon: "filter", type: "primary", text: "Filter", size: "md", type: "outline-primary" }.merge(options))
+    _button_to({ icon: "filter", text: "Filter", size: "md", type: "outline-primary" }.merge(options))
   end
 
   def modal_button_to(target_id, options = {})
@@ -97,7 +97,7 @@ module UiHelper
   end
 
   def new_button_to(link, options = {})
-    _link_to link, { icon: "plus", type: "success", text: "New", size: "md" , type:"primary"}.merge(options)
+    _link_to link, { icon: "plus", text: "New", size: "md", type: "primary" }.merge(options)
   end
 
   def print_button_to(link, options = {})
