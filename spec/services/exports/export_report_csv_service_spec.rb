@@ -8,7 +8,7 @@ describe Exports::ExportReportCSVService do
         reporter = double("reporter", report: { First: "TEST VALUE", Second: "SECOND TEST VALUE" },
                                       columns_for_csv: [:First, :Second])
 
-        result = described_class.new(reporter: reporter).generate_csv_data
+        result = described_class.new(reporters: [reporter]).generate_csv_data
 
         expect(result.first).to eq(expected_headers)
       end
@@ -19,7 +19,7 @@ describe Exports::ExportReportCSVService do
                                                 second_header: "SECOND TEST VALUE" },
                                       columns_for_csv: [:first_header, :second_header])
 
-        result = described_class.new(reporter: reporter).generate_csv_data
+        result = described_class.new(reporters: [reporter]).generate_csv_data
 
         expect(result.first).to eq(expected_headers)
       end
@@ -31,7 +31,7 @@ describe Exports::ExportReportCSVService do
                                                 third: "SKIP THIS ONE" },
                                       columns_for_csv: [:first, :second])
 
-        result = described_class.new(reporter: reporter).generate_csv_data
+        result = described_class.new(reporters: [reporter]).generate_csv_data
 
         expect(result.first).not_to include("Third")
         expect(result.first).to eq(expected_headers)
@@ -44,7 +44,7 @@ describe Exports::ExportReportCSVService do
         reporter = double("reporter", report: { first: "TEST VALUE", second: "SECOND TEST VALUE" },
                                       columns_for_csv: [:first, :second])
 
-        result = described_class.new(reporter: reporter).generate_csv_data
+        result = described_class.new(reporters: [reporter]).generate_csv_data
 
         expect(result.second).to eq(expected_values)
       end
@@ -55,7 +55,7 @@ describe Exports::ExportReportCSVService do
                                                 first: "But displayed corrected" },
                                       columns_for_csv: [:first, :second])
 
-        result = described_class.new(reporter: reporter).generate_csv_data
+        result = described_class.new(reporters: [reporter]).generate_csv_data
 
         expect(result.second).to eq(expected_values)
       end
@@ -67,10 +67,26 @@ describe Exports::ExportReportCSVService do
                                                 third: "Dont include me" },
                                       columns_for_csv: [:first, :second])
 
-        result = described_class.new(reporter: reporter).generate_csv_data
+        result = described_class.new(reporters: [reporter]).generate_csv_data
 
         expect(result.second).to eq(expected_values)
         expect(result.second).not_to include("Dont include me")
+      end
+    end
+
+    context "multiple reports" do
+      it "adds additional columns to the end" do
+        reporter1 = double("reporter", report: { first: "Never",
+                                                 second: "gonna" },
+                                       columns_for_csv: [:first, :second])
+        reporter2 = double("reporter", report: { third: "give",
+                                                 fourth: "you up." },
+                                       columns_for_csv: [:third, :fourth])
+
+        result = described_class.new(reporters: [reporter1, reporter2]).generate_csv_data
+
+        expect(result.first).to eq(%w[First Second Third Fourth])
+        expect(result.second).to eq(["Never", "gonna", "give", "you up."])
       end
     end
   end

@@ -1,4 +1,4 @@
-RSpec.describe Reports::NdbnAnnualsReportService, type: :service do
+RSpec.describe Reports::AcquisitionReportService, type: :service do
   xdescribe "#vendors_purchased_from" do
     it "returns where vendors purchased from" do
     end
