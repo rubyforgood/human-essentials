@@ -15,13 +15,13 @@ module Reports
         provided_per_person: provided_per_person,
         supplies_distributed: supplies_distributed,
         supplies_purchased: supplies_purchased,
-        supplies_recieved: supplies_recieved
+        supplies_received: supplies_received
       }
     end
 
     def columns_for_csv
       %i[supplies_distributed monthly_adult_incontinence
-         supplies_recieved supplies_purchased]
+         supplies_received supplies_purchased]
     end
 
     def adult_incontinence_items
@@ -39,15 +39,9 @@ module Reports
     end
 
     def yearly_line_item_total
-      @yearly_line_item_total ||= adult_incontinence_line_items.where(itemizable: yearly_distributions).or(
+      @yearly_line_item_total ||= adult_incontinence_line_items.where(itemizable: yearly_purchases).or(
         adult_incontinence_line_items.where(itemizable: yearly_donations)
-      ).or(
-        adult_incontinence_line_items.where(itemizable: yearly_purchases)
       ).sum(:quantity)
-    end
-
-    def adult_incontinence_line_items_total_quantity
-      adult_incontinence_line_items.map(&:quantity).sum
     end
 
     def supplies_distributed
@@ -55,7 +49,7 @@ module Reports
                                    .sum(:quantity)
     end
 
-    def supplies_recieved
+    def supplies_received
       return 0 if yearly_line_item_total <= 0
 
       count = adult_incontinence_line_items.where(itemizable: yearly_donations)
@@ -65,7 +59,7 @@ module Reports
     end
 
     def supplies_purchased
-      return 0 if yearly_line_item_total = 0
+      return 0 if yearly_line_item_total <= 0
 
       count = adult_incontinence_line_items.where(itemizable: yearly_purchases)
                                            .sum(:quantity)

@@ -117,7 +117,7 @@
             <td><%= @adult_incontinence_report[:supplies_distributed] %></td>
             <td><%= @adult_incontinence_report[:monthly_adult_incontinence] %></td>
             <td><%= @adult_incontinence_report[:provided_per_person] %></td>
-            <td><%= number_to_percentage(@adult_incontinence_report[:supplies_recieved], precision: 2) %></td>
+            <td><%= number_to_percentage(@adult_incontinence_report[:supplies_received], precision: 2) %></td>
             <td><%= number_to_percentage(@adult_incontinence_report[:supplies_purchased], precision: 2) %></td>
             <td><%= @adult_incontinence_report[:money_spent] || "?"%></td>
           </tr>
