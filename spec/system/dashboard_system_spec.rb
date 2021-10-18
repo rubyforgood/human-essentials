@@ -762,7 +762,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
             let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
 
-            it "has a widget displaying today's Donation totals, only using donations from today" do
+            xit "has a widget displaying today's Donation totals, only using donations from today" do
               within "#manufacturers" do
                 expect(page).to have_content(total_inventory)
               end
