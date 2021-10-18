@@ -212,12 +212,6 @@ git push --tags
 ```
 2. Publish a release associated to that tag pushed up in the previous step. You can do that [here](https://github.com/rubyforgood/human-essentials/releases/new). Make sure to include details on what the release's updates achieves (we use this to notify our stakeholders on updates via email).
 
-#### Deploying
-Start deploying the latest update by using capistrano and specifying the correct tag
-```sh
-TAG=x.y.z cap production deploy
-```
-
 #### Send Update Email To Diaperbase Users
 We will now want to inform the stakeholders that we've recently made a deployment and include details on what was updated. This is achieved by accessing all the user records and sending out a email via our Mailchimp account.
 
