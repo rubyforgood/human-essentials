@@ -38,7 +38,6 @@ gem "kaminari"
 gem "mini_racer", "~> 0.3.1"
 gem "momentjs-rails"
 gem "nokogiri", ">= 1.10.4"
-gem "paperclip" # needed for legacy migrations
 gem "pg", "~> 1.2.3"
 gem "simple_form"
 gem 'popper_js'
