@@ -19,7 +19,6 @@ Rails/ActiveRecordOverride:
 Rails/Exit:
   Exclude:
     - 'lib/**/*.rake'
-    - 'config/deploy.rb'
 
 # Offense count: 1
 # Configuration parameters: Include.
@@ -27,13 +26,6 @@ Rails/Exit:
 Rails/HasManyOrHasOneDependent:
   Exclude:
     - 'app/models/concerns/itemizable.rb'
-
-# Offense count: 2
-# Configuration parameters: Include.
-# Include: app/**/*.rb, config/**/*.rb, db/**/*.rb, lib/**/*.rb
-Rails/Output:
-  Exclude:
-    - 'config/deploy.rb'
 
 # Offense count: 3
 # Configuration parameters: Blacklist, Whitelist.
