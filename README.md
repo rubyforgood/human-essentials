@@ -212,10 +212,10 @@ git push --tags
 ```
 2. Publish a release associated to that tag pushed up in the previous step. You can do that [here](https://github.com/rubyforgood/human-essentials/releases/new). Make sure to include details on what the release's updates achieves (we use this to notify our stakeholders on updates via email).
 
-#### Send Update Email To Diaperbase Users
+#### Send Update Email To Human Essential Users
 We will now want to inform the stakeholders that we've recently made a deployment and include details on what was updated. This is achieved by accessing all the user records and sending out a email via our Mailchimp account.
 
-1. Fetch all the emails of our users by accessing our diaperbase production database
+1. Fetch all the emails of our users by accessing our human essentials production database
 ```ruby
 cap production rails:console
 emails = User.all.pluck(:email) 
