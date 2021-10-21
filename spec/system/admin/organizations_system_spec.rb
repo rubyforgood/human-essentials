@@ -58,7 +58,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
         click_on "Save"
       end
 
-      expect(page).to have_content("All Diaperbase Organizations")
+      expect(page).to have_content("All Human Essentials Organizations")
 
       within("tr.#{org_params[:short_name]}") do
         first(:link, "View").click
@@ -100,7 +100,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
 
       click_on "Save"
 
-      expect(page).to have_content("All Diaperbase Organizations")
+      expect(page).to have_content("All Human Essentials Organizations")
 
       within("tr.#{org_params[:short_name]}") do
         first(:link, "View").click
