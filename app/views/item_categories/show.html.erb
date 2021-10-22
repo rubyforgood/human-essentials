@@ -76,7 +76,7 @@
                 <% @item_category.items.each do |item| %>
                   <tr>
                     <td><%= item.name %> </td>
-                    <td><%= view_button_to item_path(item) %></td>
+                    <td><%= view_button_to item_path(item) %> <%= delete_button_to(remove_category_item_path(item), method: :patch, text: "Remove from category") %></td>
                   </tr>
                 <% end %>
               </tbody>
