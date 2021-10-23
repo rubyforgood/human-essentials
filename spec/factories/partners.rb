@@ -48,7 +48,7 @@ FactoryBot.define do
       Partners::User.create!(
         email: Faker::Internet.email,
         partner: partners_partner,
-        password: 'password',
+        password: 'password!',
         invitation_sent_at: Time.utc(2021, 9, 16, 12, 43, 4),
         last_sign_in_at: Time.utc(2021, 9, 17, 11, 34, 4)
       )
