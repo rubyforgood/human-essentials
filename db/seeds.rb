@@ -243,8 +243,8 @@ note = [
 
   Partners::User.create!(
     name: Faker::Name.name,
-    password: "password",
-    password_confirmation: "password",
+    password: "password!",
+    password_confirmation: "password!",
     email: Faker::Internet.email,
     partner: partner,
     invitation_sent_at: Time.utc(2021, 9, 16, 12, 43, 4),
