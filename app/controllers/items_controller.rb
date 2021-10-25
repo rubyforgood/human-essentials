@@ -95,9 +95,8 @@ class ItemsController < ApplicationController
   def remove_category
     item = current_organization.items.find(params[:id])
     previous_category = item.item_category
-    ActiveRecord::Base.transaction do
-      item.update!(item_category: nil)
-    end
+
+    item.update!(item_category: nil)
     flash[:notice] = "#{item.name} has been removed from #{previous_category.name}."
     redirect_to item_category_path(previous_category)
   end
