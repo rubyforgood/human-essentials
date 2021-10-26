@@ -100,7 +100,7 @@ group :development do
 end
 
 group :test do
-  gem "capybara", "~> 3.35"
+  gem "capybara", "~> 3.36"
   gem "capybara-screenshot"
   gem "launchy"
   gem 'magic_test'
