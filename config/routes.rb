@@ -142,6 +142,7 @@ Rails.application.routes.draw do
     resources :profiles, only: %i(edit update)
     resources :items do
       patch :restore, on: :member
+      patch :remove_category, on: :member
     end
     resources :item_categories
     resources :partners do

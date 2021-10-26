@@ -145,6 +145,23 @@ RSpec.describe ItemsController, type: :controller do
       let(:object) { create(:item, organization: create(:organization)) }
       include_examples "requiring authorization"
     end
+
+    describe "PATCH #remove_category" do
+      let(:item_category) { create(:item_category) }
+      let!(:item) { create(:item, item_category: item_category) }
+
+      it "should remove an item's category" do
+        patch :remove_category, params: default_params.merge(id: item.id)
+        expect(item.reload.item_category).to be_nil
+      end
+
+      it "should redirect to the previous category page" do
+        patch :remove_category, params: default_params.merge(id: item.id)
+
+        expect(response).to redirect_to item_category_path(item_category)
+        expect(response).to have_notice
+      end
+    end
   end
 
   context "While not signed in" do
