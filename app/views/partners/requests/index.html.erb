@@ -29,35 +29,12 @@
       <div class="col-md-12">
         <!-- Default box -->
         <%= render 'request_options_card' if @partner.verified? %>
-
-        <div class="card">
-          <div class="card-header bg-info">
-            <h1 class="card-title">Request History</h1>
-          </div>
-          <div class="card-body p-0">
-
-            <table class="table">
-              <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Contents</th>
-                <th scope="col">Request Date</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% @partner_requests.each do |partner_request| %>
-                <tr>
-                  <th scope="row"><%= link_to partner_request.id, partners_request_path(id: partner_request.id) %></th>
-                  <td><%= partner_request.item_requests.map { |item| "#{item.quantity} of #{item.name}" }.join(", ") %></td>
-                  <td><%= partner_request.created_at.strftime("%B %-d %Y") %></td>
-                </tr>
-                </tbody>
-              <% end %>
-              </table>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </section>
 
+
+<section class="container mx-auto my-8">
+  <%= render partial: "/partners/requests/history" %>
+</section>

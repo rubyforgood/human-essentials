@@ -1,15 +1,22 @@
-<% content_for :title, "Families - #{current_partner_user.name}" %>
-
 <header class="container mx-auto mb-8">
-  <h1 class="block font-bold mb-1">Dashboard</h1>
-  <p class="block mt-1"><%= current_partner_user.name %></p>
+  <h1 class="block font-bold mb-1">Dashboard - <%= @partner.name %></h1>
+  <h3><button class="bg-yellow-400 mx-auto p-2 font-bold rounded-2xl">
+  <%= @partner.partner_status.titleize %> Partner</button></h3>
 </header>
 
 <main>
   <%= render partial: '/partners/requests/request_options_card' if @partner.verified? %>
 
   <section class="container mx-auto my-8">
-    <%= render partial: "/partners/requests/history" %>
+    <%= render partial: "requests_in_progress" %>
+  </section>
+
+  <section class="container mx-auto my-8">
+    <%= render partial: "upcoming_distributions" %>
+  </section>
+
+  <section class="container mx-auto my-8">
+    <%= render partial: "distributions" %>
   </section>
 
   <section class="container mx-auto my-8">

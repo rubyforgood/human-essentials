@@ -5,9 +5,7 @@
     <thead>
       <tr class="border-b border-gray-200">
         <th scope="col" class="p-4 w-40">Request Date</th>
-        <th scope="col" class="p-4">Order No.</th>
-        <th scope="col" class="p-4">Status</th>
-        <th scope="col" class="p-4">Contents</th>
+        <th scope="col" class="p-4">Items Requested</th>
       </tr>
     </thead>
     <tbody>
@@ -18,7 +16,6 @@
             <%= partner_request.created_at.strftime("%b %-d %Y") %>
           </td>
           <td class="p-4"><%= partner_request.id %></td>
-          <td class="p-4">Status</td>
           <td class="p-4">
             <% partner_request.item_requests[0..1].map do |item| %>
               <span class="inline-block p-1 mr-1 mb-2 lg:mb-0 bg-white border border-gray-600 rounded-sm">
