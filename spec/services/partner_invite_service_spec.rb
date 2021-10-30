@@ -20,7 +20,7 @@ describe PartnerInviteService do
 
   context 'when the partner user has not been invited yet' do
     let(:partner) do
-      partner = create(:partner)
+      partner = create(:partner, :uninvited)
       partner.profile.primary_user.delete
       partner.profile.reload
       partner
