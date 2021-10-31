@@ -20,7 +20,7 @@ If you're new here, here are some things you should know:
 
 Please feel free to join us on Slack! You can sign up at https://rubyforgood.herokuapp.com We're in #human-essentials
 
-The core team leads are: @edwinmak @albert @gia @sean @scott
+The core team leads are: @albert @angela @sean @scott
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
 # README
