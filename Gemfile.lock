@@ -119,7 +119,7 @@ GEM
     capybara-screenshot (1.0.25)
       capybara (>= 1.0, < 4)
       launchy
-    chartkick (4.1.0)
+    chartkick (4.1.2)
     childprocess (4.1.0)
     choice (0.2.0)
     cocoon (1.2.15)
