@@ -240,7 +240,7 @@ GEM
       addressable (~> 2.7)
     letter_opener (1.7.0)
       launchy (~> 2.2)
-    libv8 (8.4.255.0)
+    libv8-node (16.10.0.0)
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -266,8 +266,8 @@ GEM
     mini_magick (4.11.0)
     mini_mime (1.1.2)
     mini_portile2 (2.6.1)
-    mini_racer (0.3.1)
-      libv8 (~> 8.4.255)
+    mini_racer (0.5.0)
+      libv8-node (~> 16.10.0.0)
     minitest (5.14.4)
     momentjs-rails (2.20.1)
       railties (>= 3.1)
@@ -569,7 +569,7 @@ DEPENDENCIES
   listen (~> 3.7.0)
   lograge
   magic_test
-  mini_racer (~> 0.3.1)
+  mini_racer (~> 0.5.0)
   momentjs-rails
   nokogiri (>= 1.10.4)
   orderly (~> 0.1)
