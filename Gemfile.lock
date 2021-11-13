@@ -66,8 +66,8 @@ GEM
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 14.0)
     ast (2.4.1)
-    autoprefixer-rails (10.2.0.0)
-      execjs
+    autoprefixer-rails (10.3.3.0)
+      execjs (~> 2)
     awesome_print (1.9.2)
     azure-core (0.1.15)
       faraday (~> 0.9)
@@ -93,7 +93,7 @@ GEM
     bindex (0.8.1)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
-    bootstrap (4.6.0)
+    bootstrap (4.6.1)
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 1.14.3, < 2)
       sassc-rails (>= 2.0.0)
@@ -152,7 +152,7 @@ GEM
       dotenv (= 2.7.6)
       railties (>= 3.2)
     erubi (1.10.0)
-    execjs (2.7.0)
+    execjs (2.8.1)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -166,7 +166,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.14.0)
       faraday (>= 0.7.4, < 1.0)
-    ffi (1.15.3)
+    ffi (1.15.4)
     filterrific (5.2.2)
     flipper (0.20.4)
     flipper-active_record (0.20.4)
@@ -207,7 +207,7 @@ GEM
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
     hashdiff (1.0.1)
-    i18n (1.8.10)
+    i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     image_processing (1.12.1)
       mini_magick (>= 4.9.5, < 5)
@@ -515,7 +515,7 @@ GEM
       nokogiri (~> 1.8)
     yajl-ruby (1.4.1)
     yard (0.9.26)
-    zeitwerk (2.4.2)
+    zeitwerk (2.5.1)
 
 PLATFORMS
   ruby
@@ -527,7 +527,7 @@ DEPENDENCIES
   azure-storage-blob
   better_errors
   binding_of_caller
-  bootstrap (~> 4.6.0)
+  bootstrap (~> 4.6.1)
   bootstrap-daterangepicker-rails
   bootstrap-select-rails
   brakeman
