@@ -445,4 +445,6 @@ Rails/HasAndBelongsToMany:
   Enabled: false
 Lint/EnsureReturn: # The service objects return self in an ensure block. Not using an explicit return does not do correct behavior
   Enabled: false
+Naming/VariableNumber:
+  Enabled: false
 
