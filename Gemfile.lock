@@ -128,12 +128,7 @@ GEM
     crack (0.4.5)
       rexml
     crass (1.0.6)
-    database_cleaner (2.0.1)
-      database_cleaner-active_record (~> 2.0.0)
-    database_cleaner-active_record (2.0.1)
-      activerecord (>= 5.a)
-      database_cleaner-core (~> 2.0.0)
-    database_cleaner-core (2.0.1)
+    database_cleaner (1.8.5)
     debug_inspector (1.1.0)
     delayed_job (4.1.9)
       activesupport (>= 3.0, < 6.2)
@@ -553,7 +548,7 @@ DEPENDENCIES
   capybara-screenshot
   chartkick
   cocoon
-  database_cleaner
+  database_cleaner (= 1.8.5)
   delayed_job_active_record
   delayed_job_web
   devise (>= 4.7.1)

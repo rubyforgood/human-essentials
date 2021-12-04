@@ -63,7 +63,7 @@ end
 
 group :development, :test, :staging do
   gem 'factory_bot_rails'
-  gem "database_cleaner"
+  gem "database_cleaner", '1.8.5'
   gem 'faker'
 end
 
