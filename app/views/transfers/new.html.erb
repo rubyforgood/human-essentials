@@ -50,13 +50,13 @@
 
                     <%= f.input :comment %>
 
-                    <fieldset style="margin-bottom: 2rem;" class='w-50'>
+                    <fieldset style="margin-bottom: 2rem;" class='w-70'>
                       <legend>Items in this donation</legend>
-                      <%= f.simple_fields_for :line_items do |item| %>
-                        <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
+                      <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
+                        <%= f.simple_fields_for :line_items do |item| %>
                           <%= render 'line_items/line_item_fields', f: item %>
-                        </div>
-                      <% end %>
+                        <% end %>
+                      </div>
                       <div class="row links justify-content-end">
                         <div class="col-xs-12">
                           <%= add_line_item_button f, "#transfer_line_items" %>

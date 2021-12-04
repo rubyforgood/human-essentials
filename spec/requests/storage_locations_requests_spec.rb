@@ -123,6 +123,42 @@ RSpec.describe "StorageLocations", type: :request do
       end
     end
 
+    describe "GET #inventory" do
+      let(:storage_location) { create(:storage_location, :with_items, organization: @organization) }
+      let(:items_at_storage_location) { storage_location.inventory_items.map(&:to_h) }
+      let(:inactive_items) { @organization.inventory_items.inactive.map(&:to_h) }
+
+      context "without any overrides" do
+        it "returns a collection that only includes items at the storage location" do
+          get inventory_storage_location_path(storage_location, default_params.merge(format: :json))
+          expect(response.parsed_body).to eq(items_at_storage_location)
+        end
+      end
+
+      context "when also including inactive items" do
+        it "returns a collection that also includes items that have been deactivated" do
+          @organization.items.first.update(active: false)
+          get inventory_storage_location_path(storage_location, default_params.merge(format: :json, include_deactivated_items: true))
+          @organization.items.first.update(active: true)
+          expect(response.parsed_body).to eq(items_at_storage_location + inactive_items)
+        end
+      end
+
+      context "when also including omitted items" do
+        it "returns a collection that also includes all items, but with zeroed quantities" do
+          get inventory_storage_location_path(storage_location, default_params.merge(format: :json, include_omitted_items: true))
+          expect(response.parsed_body.count).to eq(@organization.items.count)
+        end
+
+        it "contains a collection of ducktyped entries that respond the same" do
+          get inventory_storage_location_path(storage_location, default_params.merge(format: :json, include_omitted_items: true))
+          collection = response.parsed_body
+          expect(collection.first.keys).to match_array(%w[item_id item_name quantity])
+          expect(collection.last.keys).to match_array(%w[item_id item_name quantity])
+        end
+      end
+    end
+
     context "Looking at a different organization" do
       let(:object) { create(:storage_location, organization: create(:organization)) }
       include_examples "requiring authorization"

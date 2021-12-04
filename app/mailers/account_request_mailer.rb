@@ -4,7 +4,7 @@ class AccountRequestMailer < ApplicationMailer
 
     mail(
       to: @account_request.email,
-      subject: '[Action Required] Diaperbase Account Request'
+      subject: '[Action Required] Human Essential Account Request'
     )
   end
 
@@ -12,7 +12,7 @@ class AccountRequestMailer < ApplicationMailer
     @account_request = AccountRequest.find(account_request_id)
 
     mail(
-      to: 'info@diaper.app',
+      to: 'info@humanessentials.app',
       subject: "[Account Request] #{@account_request.organization_name}"
     )
   end

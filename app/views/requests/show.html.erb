@@ -34,8 +34,9 @@
           <div class="card-body p-0">
             <table class="table">
               <thead>
-                <tr >
+                <tr>
                 <th>Request was sent by:</th>
+                <th>Request Sender:</th>
                 <th>Request Status:</th>
                 <th>Comments:</th>
               </tr>
@@ -43,6 +44,7 @@
               <tbody>
               <tr>
                 <td><%= @request.partner.name %></td>
+                <td><%= @request.partner_user.present? ? "#{@request.partner_user.name} <#{@request.partner_user.email}>" : "" %></td>
                 <td><%= render partial: "status", locals: {status: @request.status} %></td>
                 <td><%= @request.comments || 'None' %></td>
               </tr>

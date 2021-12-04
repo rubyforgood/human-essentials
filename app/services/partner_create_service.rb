@@ -12,8 +12,8 @@ class PartnerCreateService
     @partner = organization.partners.build(partner_attrs)
 
     unless @partner.valid?
-      @partner.errors.each do |k, v|
-        errors.add(k, v)
+      @partner.errors.each do |error|
+        errors.add(error.attribute, error.message)
       end
     end
 

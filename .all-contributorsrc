@@ -936,6 +936,51 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "matt-glover",
+      "name": "Matt Glover",
+      "avatar_url": "https://avatars.githubusercontent.com/u/850480?v=4",
+      "profile": "https://github.com/matt-glover",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "js-sapphire",
+      "name": "js-sapphire",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41758940?v=4",
+      "profile": "https://github.com/js-sapphire",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "exbinary",
+      "name": "lasitha",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8330?v=4",
+      "profile": "https://github.com/exbinary",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "patmccler",
+      "name": "Patrick McClernan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28073714?v=4",
+      "profile": "https://github.com/patmccler",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "marc",
+      "name": "Marc Bellingrath",
+      "avatar_url": "https://avatars.githubusercontent.com/u/725?v=4",
+      "profile": "https://github.com/marc",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

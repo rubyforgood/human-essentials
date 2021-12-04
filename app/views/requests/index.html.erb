@@ -88,7 +88,8 @@
               <thead>
               <tr>
                 <th style="width: 10px">Date</th>
-                <th>Requestor</th>
+                <th>Request was sent by:</th>
+                <th>Request Sender</th>
                 <th># of Items (Request Limit)</th>
                 <th>Comments</th>
                 <th>Status</th>
@@ -96,7 +97,7 @@
               </tr>
               </thead>
               <tbody>
-              <%= render partial: "request_row", collection: @paginated_requests %>
+                <%= render partial: "request_row", collection: @paginated_requests %>
               </tbody>
             </table>
           </div>

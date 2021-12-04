@@ -24,56 +24,34 @@
 <section class="content">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12">
-        <div class="card card-primary card-outline">
-          <div class="card-header">
-            <h3 class="card-title">Partner Filters</h3>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <%= render partial: "statuses", object: @unfiltered_partners_for_statuses, as: :partners %>
-            </div>
-            <div class="card-footer">
-              <div class="pull-right">
-                <%= modal_button_to("#csvImportModal", {text: "Import Partners", icon: "upload", size: "md"}) %>
-                <%= download_button_to(partners_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Partner Agencies", size: "md"}) if @partners.any? %>
-                <%= new_button_to new_partner_path(organization_id: current_organization), {text: "New Partner Agency"} %>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- /.card -->
-      </div>
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
-
-  <div class="container-fluid">
-    <div class="row">
       <div class="col-12">
         <!-- Default box -->
-        <div class="card">
-          <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Partner</th>
-                <th>E-mail</th>
-                <th>Quota</th>
-                <th>Status</th>
-                <th>Action</th>
-                <th>&nbsp;</th>
-              </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "partner_row", collection: @partners %>
-              </tbody>
-            </table>
+        <div class="card card-primary card-outline card-outline-tabs">
+          <div class="card-header p-0 border-bottom-0 text-md">
+            <ul class="nav nav-tabs" id="nav-tab" role="tablist">
+              <li class="nav-item" class="active">
+                <a class="nav-link active" id="nav-partners-tab" data-toggle="pill" href="#nav-partners" role="tab" aria-controls="nav-partners" aria-selected="true">
+                  Partners
+                </a>
+              </li>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="nav-partners-groups-tab" data-toggle="pill" href="#nav-partner-groups" role="tab" aria-controls="nav-partner-groups" aria-selected="false">Groups</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card-body">
+            <div class="tab-content">
+              <%= render partial: 'partners_table', locals: { partners: @partners } %>
+              <%= render partial: 'partner_groups_table' %>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
   <%= render(
           layout: "shared/csv_import_modal",
           locals: {

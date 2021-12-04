@@ -82,7 +82,7 @@ end
 # ----------------------------------------------------------------------------
 
 Organization.all.each do |org|
-  ['A', 'B', 'C'].each do |letter|
+  ['Diapers', 'Period Supplies', 'Adult Incontinence'].each do |letter|
     FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
   end
 end
@@ -101,6 +101,19 @@ Organization.all.each do |org|
 end
 
 # ----------------------------------------------------------------------------
+# Partner Group & Item Categories
+# ----------------------------------------------------------------------------
+Organization.all.each do |org|
+  # Setup the Partner Group & their item categories
+  partner_group = FactoryBot.create(:partner_group, organization: org)
+
+  total_item_categories_to_add = Faker::Number.between(from: 0, to: 2)
+  org.item_categories.sample(total_item_categories_to_add).each do |item_category|
+    partner_group.item_categories << item_category
+  end
+end
+
+# ----------------------------------------------------------------------------
 # Users
 # ----------------------------------------------------------------------------
 
@@ -115,8 +128,8 @@ end
 ].each do |user|
   User.create(
     email: user[:email],
-    password: 'password',
-    password_confirmation: 'password',
+    password: 'password!',
+    password_confirmation: 'password!',
     organization_admin: user[:organization_admin],
     super_admin: user[:super_admin],
     organization: user[:organization]
@@ -182,12 +195,15 @@ note = [
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
+    partner.partner_group = pdx_org.partner_groups.first
   end
+
+
 
   # ----------------------------------------------------------------------------
   # Creating associated records within the Partnerbase database
   #
-  # **We have two seperate database. One for diaperbase and the other for partnerbase**
+  # **We have two separate database. One for diaperbase and the other for partnerbase**
   # ----------------------------------------------------------------------------
 
   partner = Partners::Partner.create!({
@@ -217,10 +233,22 @@ note = [
 
   Partners::User.create!(
     name: Faker::Name.name,
-    password: "password",
-    password_confirmation: "password",
+    password: "password!",
+    password_confirmation: "password!",
     email: p.email,
-    partner: partner
+    partner: partner,
+    invitation_sent_at: Time.utc(2021, 9, 8, 12, 43, 4),
+    last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
+  )
+
+  Partners::User.create!(
+    name: Faker::Name.name,
+    password: "password!",
+    password_confirmation: "password!",
+    email: Faker::Internet.email,
+    partner: partner,
+    invitation_sent_at: Time.utc(2021, 9, 16, 12, 43, 4),
+    last_sign_in_at: Time.utc(2021, 9, 17, 11, 34, 4)
   )
 
   #
@@ -302,7 +330,8 @@ note = [
     pr = Partners::Request.new(
       comments: Faker::Lorem.paragraph,
       partner: partner,
-      for_families: Faker::Boolean.boolean
+      for_families: Faker::Boolean.boolean,
+      partner_user: partner.primary_user
     )
 
     # Ensure that the item requests are valid with

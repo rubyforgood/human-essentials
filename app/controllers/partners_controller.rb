@@ -1,12 +1,13 @@
 # Provides full CRUD for Partners. These are minimal representations of corresponding Partner records in PartnerBase.
-# Though the functionality of Partners is actually fleshed out in PartnerBase, in DiaperBase, we maintain a collection
+# Though the functionality of Partners is actually fleshed out in PartnerBase, in HumanEssentails, we maintain a collection
 # of which Partners are associated with which Diaperbanks.
 class PartnersController < ApplicationController
   include Importable
 
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
-    @partners = Partner.where(organization: current_organization).class_filter(filter_params).alphabetized
+    @partners = Partner.includes(:partner_group).where(organization: current_organization).class_filter(filter_params).alphabetized
+    @partner_groups = PartnerGroup.includes(:partners, :item_categories).where(organization: current_organization)
 
     respond_to do |format|
       format.html
@@ -45,6 +46,8 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.find(params[:id])
     @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
+    @partner_profile_fields = current_organization.partner_form_fields
+    @partner_users = @partner.profile.users.order(name: :asc)
 
     respond_to do |format|
       format.html
@@ -56,17 +59,12 @@ class PartnersController < ApplicationController
 
   def new
     @partner = current_organization.partners.new
-  end
-
-  def approve_partner
-    @partner = current_organization.partners.find(params[:id])
-
-    @partner_profile = @partner.profile
-    @agency = @partner_profile.export_hash
+    @partner_groups = current_organization.partner_groups
   end
 
   def edit
     @partner = current_organization.partners.find(params[:id])
+    @partner_groups = PartnerGroup.where(organization: current_organization)
   end
 
   def update
@@ -158,12 +156,8 @@ class PartnersController < ApplicationController
 
   private
 
-  def autovivifying_hash
-    Hash.new { |ht, k| ht[k] = autovivifying_hash }
-  end
-
   def partner_params
-    params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, documents: [])
+    params.require(:partner).permit(:name, :email, :send_reminders, :quota, :notes, :partner_group_id, documents: [])
   end
 
   helper_method \

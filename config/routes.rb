@@ -25,8 +25,9 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { sessions: "users/sessions" }
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
+  resources :logins, only: [:new, :create], controller: "consolidated_logins"
 
   set_up_delayed_job
   set_up_flipper
@@ -35,6 +36,7 @@ Rails.application.routes.draw do
   get 'partners/dashboard' => 'partners/dashboards#show', as: :partner_user_root
   namespace :partners do
     resource :dashboard, only: [:show]
+    resource :help, only: [:show]
     resources :requests, only: [:show, :new, :index, :create]
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
@@ -140,8 +142,10 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :profiles, only: %i(edit update)
     resources :items do
       patch :restore, on: :member
+      patch :remove_category, on: :member
     end
     resources :item_categories
     resources :partners do
@@ -149,8 +153,9 @@ Rails.application.routes.draw do
         post :import_csv
       end
       member do
+        get :profile
+        patch :profile
         get :approve_application
-        get :approve_partner
         post :invite
         post :invite_partner_user
         post :recertify_partner
@@ -158,6 +163,8 @@ Rails.application.routes.draw do
         put :reactivate
       end
     end
+
+    resources :partner_groups, only: [:new, :create, :edit, :update]
 
     resources :diaper_drives
     resources :donations do
@@ -194,7 +201,7 @@ Rails.application.routes.draw do
   resources :attachments, only: %i(destroy)
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-
+  get "help", to: "help#show"
   get "pages/:name", to: "static#page"
   get "/register", to: "static#register"
   resources :account_requests, only: [:new, :create] do

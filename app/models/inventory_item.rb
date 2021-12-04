@@ -25,8 +25,13 @@ class InventoryItem < ApplicationRecord
 
   scope :by_partner_key, ->(partner_key) { joins(:item).merge(Item.by_partner_key(partner_key)) }
   scope :active, -> { joins(:item).where(items: { active: true }) }
+  scope :inactive, -> { joins(:item).where(items: { active: false }) }
 
   delegate :name, to: :item, prefix: true
+
+  def to_h
+    { item_id: item_id, quantity: quantity, item_name: item.name }.stringify_keys
+  end
 
   def lower_than_on_hand_minimum_quantity?
     quantity < item.on_hand_minimum_quantity

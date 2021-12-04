@@ -9,7 +9,7 @@ ruby "2.7.2"
 
 gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'azure-storage-blob'
-gem 'bootstrap', '~> 4.6.0'
+gem 'bootstrap', '~> 4.6.1'
 gem 'bootstrap-daterangepicker-rails'
 gem 'bootstrap-select-rails'
 gem "bugsnag"
@@ -19,6 +19,7 @@ gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'delayed_job_web'
 gem "devise", '>= 4.7.1'
+gem 'devise-secure_password', '~> 2.0'
 gem 'discard', '~> 1.2'
 gem "devise_invitable"
 gem "dotenv-rails"
@@ -40,7 +41,6 @@ gem "kaminari"
 gem "mini_racer", "~> 0.3.1"
 gem "momentjs-rails"
 gem "nokogiri", ">= 1.10.4"
-gem "paperclip" # needed for legacy migrations
 gem "pg", "~> 1.2.3"
 gem "simple_form"
 gem 'popper_js'
@@ -74,6 +74,7 @@ group :development, :test do
   gem "fakeredis", require: "fakeredis/rspec"
   gem "guard-rspec"
   gem "knapsack_pro"
+  gem "pry-doc"
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
@@ -90,29 +91,26 @@ group :development do
   gem "binding_of_caller"
   gem "better_errors"
   gem "bullet"
-  gem "capistrano-rails"
-  gem "capistrano-rvm"
-  gem "capistrano-bundler"
-  gem "capistrano3-puma"
-  gem "capistrano-rails-console", require: false
   gem 'foreman'
   gem "letter_opener"
   gem "listen", "~> 3.7.0"
   gem "rails-erd"
   gem "spring"
   gem "spring-watcher-listen"
+  gem "spring-commands-rspec"
   gem "web-console"
 end
 
 group :test do
-  gem "capybara", "~> 3.35"
+  gem "capybara", "~> 3.36"
   gem "capybara-screenshot"
   gem "launchy"
   gem 'magic_test'
+  gem "orderly", "~> 0.1" # used for feature testing where this appears before that
   gem "rails-controller-testing"
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 5.0'
-  gem 'webdrivers', '~> 4.6'
+  gem 'webdrivers', '~> 5.0'
   gem "webmock", "~> 3.14"
 end
 

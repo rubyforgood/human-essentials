@@ -92,6 +92,15 @@ class ItemsController < ApplicationController
     redirect_to items_path
   end
 
+  def remove_category
+    item = current_organization.items.find(params[:id])
+    previous_category = item.item_category
+
+    item.update!(item_category: nil)
+    flash[:notice] = "#{item.name} has been removed from #{previous_category.name}."
+    redirect_to item_category_path(previous_category)
+  end
+
   private
 
   def clean_item_value_in_cents

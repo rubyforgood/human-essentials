@@ -20,11 +20,11 @@
 
   <fieldset style="margin-bottom: 2rem">
     <legend>Items in this distribution</legend>
-    <%= f.simple_fields_for :line_items do |item| %>
-      <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
+    <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
+      <%= f.simple_fields_for :line_items do |item| %>
         <%= render 'line_items/line_item_fields', f: item %>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
     <div class="row links justify-content-end">
       <%= add_line_item_button f, "#distribution_line_items" %>
     </div>

@@ -15,9 +15,9 @@ RSpec.describe "Managing requests", type: :system, js: true do
         end
 
         it 'should show an error message with the instructions ' do
-          expect(page).to have_content('Opps! Something went wrong with your Request')
+          expect(page).to have_content('Oops! Something went wrong with your Request')
           expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
-          expect(page).to have_content('Still need help? Submit a support ticket here and we do our best to follow up with you via email.')
+          expect(page).to have_content('Still need help? Submit a support ticket here and we will do our best to follow up with you via email.')
         end
       end
 
@@ -81,15 +81,29 @@ RSpec.describe "Managing requests", type: :system, js: true do
         visit new_partners_request_path
       end
 
-      context 'WHEN they create a request inproperly' do
+      context 'WHEN they create a request inproperly by not inputting anything' do
         before do
           click_button 'Submit Essentials Request'
         end
 
         it 'should show an error message with the instructions ' do
-          expect(page).to have_content('Opps! Something went wrong with your Request')
+          expect(page).to have_content('Oops! Something went wrong with your Request')
           expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
-          expect(page).to have_content('Still need help? Submit a support ticket here and we do our best to follow up with you via email.')
+          expect(page).to have_content('Still need help? Submit a support ticket here and we will do our best to follow up with you via email.')
+        end
+      end
+
+      context 'WHEN they create a request with only a comment' do
+        before do
+          fill_in 'Comments', with: Faker::Lorem.paragraph
+        end
+
+        it 'should be created without any issue' do
+          expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
+
+          expect(current_path).to eq(partners_request_path(Request.last.id))
+          expect(page).to have_content('Request has been successfully created!')
+          expect(page).to have_content("#{partner.organization.name} should have received the request.")
         end
       end
 
@@ -117,6 +131,9 @@ RSpec.describe "Managing requests", type: :system, js: true do
             last_row.find('option', text: item[:name], exact_text: true).select_option
             last_row.find_all('.form-control').last.fill_in(with: item[:quantity])
           end
+
+          # Trigger another row but keep it empty. It should still be valid!
+          click_link 'Add Another Item'
         end
 
         context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
@@ -140,5 +157,3 @@ RSpec.describe "Managing requests", type: :system, js: true do
     end
   end
 end
-
-

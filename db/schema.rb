@@ -174,8 +174,8 @@ ActiveRecord::Schema.define(version: 20_210_730_153_347) do
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
-    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 5, null: false
+    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
@@ -239,12 +239,21 @@ ActiveRecord::Schema.define(version: 20_210_730_153_347) do
   end
 
   create_table "item_categories", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.text "description"
     t.integer "organization_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index %w(name organization_id), name: "index_item_categories_on_name_and_organization_id", unique: true
+  end
+
+  create_table "item_categories_partner_groups", force: :cascade do |t|
+    t.bigint "partner_group_id", null: false
+    t.bigint "item_category_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["item_category_id"], name: "index_item_categories_partner_groups_on_item_category_id"
+    t.index ["partner_group_id"], name: "index_item_categories_partner_groups_on_partner_group_id"
   end
 
   create_table "items", id: :serial, force: :cascade do |t|
@@ -324,6 +333,15 @@ ActiveRecord::Schema.define(version: 20_210_730_153_347) do
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
+  create_table "partner_groups", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
+    t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
+  end
+
   create_table "partners", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -334,7 +352,9 @@ ActiveRecord::Schema.define(version: 20_210_730_153_347) do
     t.boolean "send_reminders", default: false, null: false
     t.text "notes"
     t.integer "quota"
+    t.bigint "partner_group_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
+    t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
   end
 
   create_table "purchases", force: :cascade do |t|
@@ -362,6 +382,7 @@ ActiveRecord::Schema.define(version: 20_210_730_153_347) do
     t.integer "status", default: 0
     t.datetime "discarded_at"
     t.text "discard_reason"
+    t.integer "partner_user_id"
     t.index ["discarded_at"], name: "index_requests_on_discarded_at"
     t.index ["distribution_id"], name: "index_requests_on_distribution_id", unique: true
     t.index ["organization_id"], name: "index_requests_on_organization_id"
@@ -452,7 +473,7 @@ ActiveRecord::Schema.define(version: 20_210_730_153_347) do
     t.jsonb "object"
     t.datetime "created_at"
     t.jsonb "object_changes"
-    t.index %w(item_type item_id), name: "index_versions_on_item_type_and_item_id"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
@@ -466,11 +487,14 @@ ActiveRecord::Schema.define(version: 20_210_730_153_347) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "item_categories", "organizations"
+  add_foreign_key "item_categories_partner_groups", "item_categories"
+  add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
+  add_foreign_key "partner_groups", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"

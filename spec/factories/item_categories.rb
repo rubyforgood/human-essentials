@@ -4,7 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  description     :text
-#  name            :string
+#  name            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer          not null

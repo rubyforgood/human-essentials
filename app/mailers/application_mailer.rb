@@ -1,5 +1,5 @@
 # Default Mailer Info
 class ApplicationMailer < ActionMailer::Base
-  default from: "info@diaper.app"
+  default from: "info@humanessentials.app"
   layout "mailer"
 end

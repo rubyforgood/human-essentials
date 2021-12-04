@@ -11,6 +11,8 @@ class PartnerApprovalService
     Partners::Base.transaction do
       partner.profile.update!(partner_status: approved_partner_status)
       partner.approved!
+
+      PartnerMailer.application_approved(partner: partner).deliver_later
     rescue StandardError => e
       errors.add(:base, e.message)
       raise ActiveRecord::Rollback

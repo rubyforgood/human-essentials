@@ -13,7 +13,7 @@ module Partners
     end
 
     def call
-      @partner_request = Partners::Request.new(partner_id: partner.id, organization_id: organization_id, comments: comments, for_families: @for_families, sent: true)
+      @partner_request = Partners::Request.new(partner_id: partner.id, organization_id: organization_id, comments: comments, for_families: @for_families, sent: true, partner_user_id: partner_user_id)
       @partner_request = populate_item_request(@partner_request)
       @partner_request.assign_attributes(additional_attrs)
 
@@ -21,6 +21,10 @@ module Partners
         @partner_request.errors.each do |k, v|
           errors.add(k, v)
         end
+      end
+
+      if @partner_request.comments.blank? && @partner_request.item_requests.blank?
+        errors.add(:base, 'completely empty request')
       end
 
       return self if errors.present?
@@ -45,7 +49,12 @@ module Partners
     attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs
 
     def populate_item_request(partner_request)
-      item_requests = item_requests_attributes.map do |ira|
+      # Exclude any line item that is completely empty
+      formatted_line_items = item_requests_attributes.reject do |attrs|
+        attrs['item_id'].blank? && attrs['quantity'].blank?
+      end
+
+      item_requests = formatted_line_items.map do |ira|
         Partners::ItemRequest.new(
           item_id: ira['item_id'],
           quantity: ira['quantity'],
@@ -90,6 +99,7 @@ module Partners
       ::Request.new(
         organization_id: partner_request.organization_id,
         partner_id: partner_request.partner.diaper_partner_id,
+        partner_user_id: partner_user_id,
         comments: partner_request.comments,
         request_items: partner_request.item_requests.map do |ir|
           {

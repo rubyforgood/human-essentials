@@ -79,9 +79,6 @@
   opacity: 0.5;
 }
 
-table .numeric {
-  text-align: right;
-}
 
 table .date {
   text-align: center;
@@ -146,4 +143,10 @@ tr.negative {
     -webkit-transform: scale(1);
     transform: scale(1);
   }
+}
+
+.failed-login-banner {
+  background-color: cornsilk;
+  text-align: center;
+  padding: 0.5rem 0 0.5rem;
 }

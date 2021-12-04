@@ -13,6 +13,7 @@
 #  distribution_id :integer
 #  organization_id :bigint
 #  partner_id      :bigint
+#  partner_user_id :integer
 #
 
 class Request < ApplicationRecord
@@ -20,6 +21,7 @@ class Request < ApplicationRecord
   include Exportable
 
   belongs_to :partner
+  belongs_to :partner_user, class_name: "Partners::User", optional: true
   belongs_to :organization
   belongs_to :distribution, optional: true
 
