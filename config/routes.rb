@@ -1,15 +1,18 @@
-def set_up_sidekiq
-  require 'sidekiq/web'
-
+def set_up_delayed_job
   if Rails.env.production?
-    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-      compare = ->(s1, s2) { ActiveSupport::SecurityUtils.secure_compare(s1, s2) }
-      compare.call(username, ENV["SIDEKIQ_USERNAME"]) && compare.call(password, ENV["SIDEKIQ_PASSWORD"])
+    DelayedJobWeb.use Rack::Auth::Basic do |username, password|
+      ActiveSupport::SecurityUtils.variable_size_secure_compare(
+        ENV["DELAYED_JOB_USERNAME"],
+        username
+      ) &&
+        ActiveSupport::SecurityUtils.variable_size_secure_compare(
+          ENV["DELAYED_JOB_PASSWORD"],
+          password
+        )
     end
   end
 
-  mount Sidekiq::Web => '/sidekiq'
-  Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
+  match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
 end
 
 def set_up_flipper
@@ -26,7 +29,7 @@ Rails.application.routes.draw do
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
   resources :logins, only: [:new, :create], controller: "consolidated_logins"
 
-  set_up_sidekiq
+  set_up_delayed_job
   set_up_flipper
 
   # Add route partners/dashboard so that we can define it as partner_user_root
