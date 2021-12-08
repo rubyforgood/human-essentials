@@ -10,13 +10,10 @@ require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
-require 'sidekiq/testing'
 require 'webdrivers'
 require 'knapsack_pro'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-
-Sidekiq::Testing.fake! # fake is the default mode
 
 SimpleCov.start
 

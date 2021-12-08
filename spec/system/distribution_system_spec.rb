@@ -141,12 +141,16 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "sends an email if reminders are enabled" do
+      job = double('fake_job')
+      allow(DistributionMailer).to receive(:reminder_email).and_return(job)
+      allow(job).to receive(:deliver_later)
+
       visit @url_prefix + "/distributions"
       click_on "Edit", match: :first
       fill_in "Agency representative", with: "SOMETHING DIFFERENT"
       click_on "Save", match: :first
       distribution.reload
-      expect(DistributionMailer.method(:reminder_email)).to be_delayed(distribution.id)
+      expect(job).to have_received(:deliver_later)
     end
 
     it "allows the user can change the issued_at date" do

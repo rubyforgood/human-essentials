@@ -15,6 +15,8 @@ gem 'bootstrap-select-rails'
 gem "bugsnag"
 gem "chartkick"
 gem "cocoon"
+gem 'delayed_job_active_record'
+gem 'delayed_job_web'
 gem "devise", '>= 4.7.1'
 gem 'devise-secure_password', '~> 2.0'
 gem 'discard', '~> 1.2'
@@ -45,7 +47,6 @@ gem "prawn-rails"
 gem "puma"
 gem "rails", "~> 6.1.4"
 gem "sass-rails"
-gem "sidekiq"
 gem "strong_migrations", "~> 0.7.8"
 gem "sprockets", "~> 4.0.2"
 gem "toastr-rails"
@@ -62,7 +63,7 @@ end
 
 group :development, :test, :staging do
   gem 'factory_bot_rails'
-  gem "database_cleaner"
+  gem "database_cleaner", '1.8.5'
   gem 'faker'
 end
 
@@ -106,7 +107,6 @@ group :test do
   gem 'magic_test'
   gem "orderly", "~> 0.1" # used for feature testing where this appears before that
   gem "rails-controller-testing"
-  gem "rspec-sidekiq"
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 5.0'
   gem 'webdrivers', '~> 5.0'
