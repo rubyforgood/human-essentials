@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "2.7.2"
+ruby "3.0.2"
 
 gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'azure-storage-blob'
