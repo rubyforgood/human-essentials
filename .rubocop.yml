@@ -7,7 +7,7 @@ inherit_from: .rubocop_todo.yml
 require: rubocop-rails
 
 AllCops:
-  TargetRubyVersion: 2.6.4
+  TargetRubyVersion: 3.0.2
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
