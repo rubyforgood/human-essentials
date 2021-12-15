@@ -32,9 +32,6 @@ updates:
     - 4.0.0
     - 4.0.2
     - 4.0.3
-  - dependency-name: mini_racer
-    versions:
-    - 0.4.0
   - dependency-name: nokogiri
     versions:
     - 1.11.3
