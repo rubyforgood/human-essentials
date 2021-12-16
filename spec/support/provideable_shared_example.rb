@@ -26,7 +26,6 @@ shared_examples_for "provideable" do
   describe "import_csv" do
     it "imports from a csv file" do
       before_import = described_class.count
-      p described_class.to_s
       organization = create(:organization)
       import_file_path = Rails.root.join("spec", "fixtures", "files", "#{described_class.to_s.split(/(?=[A-Z])/).join("_").downcase}s.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
