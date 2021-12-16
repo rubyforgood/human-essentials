@@ -199,7 +199,7 @@ GEM
     geocoder (1.7.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
-    groupdate (5.2.3)
+    groupdate (5.2.4)
       activesupport (>= 5)
     guard (2.18.0)
       formatador (>= 0.2.4)
