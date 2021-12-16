@@ -44,7 +44,7 @@ This project took what we built for the [Portland Diaper Bank in 2016](https://g
 The `installation.md` file ([https://github.com/rubyforgood/human-essentials/blob/main/installation.md](https://github.com/rubyforgood/human-essentials/blob/main/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
 
 ### Ruby Version
-This app uses Ruby version 2.7.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
+This app uses Ruby version 3.0.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
 
 ### Yarn Installation
 If you don't have Yarn installed, you can install with Homebrew on macOS `brew install yarn` or visit [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install). Be sure to run `yarn install` after installing Yarn. NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.
