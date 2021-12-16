@@ -73,10 +73,8 @@ class KitCreateService
       errors.add(:organization_id, 'does not match any Organization')
     elsif kit_validation_errors.present?
       # Inject errors into self instance
-      kit_validation_errors.each do |attr, kit_errors|
-        [*kit_errors].each do |e|
-          errors.add(attr.to_sym, e)
-        end
+      kit_validation_errors.each do |kit_validation_error|
+        errors.add(kit_validation_error.attribute.to_sym, kit_validation_error.message)
       end
     end
 
