@@ -262,11 +262,11 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.2.8)
-    magic_test (0.0.6)
-      capybara (~> 3.0)
+    magic_test (0.0.7)
+      capybara (>= 3.0)
       pry
       pry-stack_explorer
-      rails (~> 6.0)
+      rails (>= 6.0)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
     marcel (1.0.2)
