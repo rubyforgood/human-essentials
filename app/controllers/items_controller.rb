@@ -67,7 +67,7 @@ class ItemsController < ApplicationController
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
-      flash[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |attr, msg| "#{attr}: #{msg}" }}"
+      flash[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
       render action: :edit
     end
   end
