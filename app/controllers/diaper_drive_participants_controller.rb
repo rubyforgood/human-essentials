@@ -23,7 +23,7 @@ class DiaperDriveParticipantsController < ApplicationController
       else
         flash[:error] = "Something didn't work quite right -- try again?"
         format.html { render action: :new }
-        format.js { render template: "diaper_drive_participants/new_modal.js.erb" }
+        format.js { render template: "diaper_drive_participants/new_modal" }
       end
     end
   end
@@ -32,7 +32,7 @@ class DiaperDriveParticipantsController < ApplicationController
     @diaper_drive_participant = current_organization.diaper_drive_participants.new
     if request.xhr?
       respond_to do |format|
-        format.js { render template: "diaper_drive_participants/new_modal.js.erb" }
+        format.js { render template: "diaper_drive_participants/new_modal" }
       end
     end
   end

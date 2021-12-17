@@ -365,7 +365,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         it { expect(page).not_to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
 
         it 'shows no tooltip' do
-          expect(page).to have_selector('#pending-approval-request-tooltip'), wait: page_content_wait
+          expect(page).to have_selector('#pending-approval-request-tooltip', wait: page_content_wait)
           page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
           expect(page).not_to have_content tooltip_message
         end
