@@ -6,10 +6,10 @@ class DashboardController < ApplicationController
     setup_date_range_picker
 
     @donations = current_organization.donations.during(helpers.selected_range)
-    @recent_donations = @donations.recent.active
+    @recent_donations = @donations.recent
     @purchases = current_organization.purchases.during(helpers.selected_range)
-    @recent_purchases = @purchases.recent.includes(:vendor).active
-    @recent_distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range).recent.active
+    @recent_purchases = @purchases.recent.includes(:vendor)
+    @recent_distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range).recent
 
     if Flipper.enabled?(:itemized_distributions, current_user)
       @itemized_distributions = current_organization.distributions.includes(:line_items).during(helpers.selected_range)
