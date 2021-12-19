@@ -344,13 +344,13 @@
                     <%= @default_email_text_interpolated.html_safe %>
                   </td>
                 </tr>
-                <tr>
-                  <td>
-                    <% if @distribution_changes.present? %>
+                <% if @distribution_changes.present? %>
+                  <tr>
+                    <td>
                       <%= render partial: "distribution_changes", object: @distribution_changes %>
-                    <% end %>
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
+                <% end %>
               </table>
             </td>
           </tr>
