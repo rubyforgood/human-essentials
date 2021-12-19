@@ -4,7 +4,7 @@ class AccountRequestMailer < ApplicationMailer
 
     mail(
       to: @account_request.email,
-      subject: '[Action Required] Diaperbase Account Request'
+      subject: '[Action Required] Human Essential Account Request'
     )
   end
 

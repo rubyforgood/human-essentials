@@ -30,7 +30,9 @@ module Partners
   class User < Base
     self.table_name = "users"
 
-    devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable, :invitable, :trackable
+    # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
+    devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable,
+           :invitable, :trackable, :password_has_required_content
 
     has_many :requests, class_name: 'Partners::Request', foreign_key: :partner_id, dependent: :destroy, inverse_of: :user
     has_many :submitted_partner_requests, class_name: 'Partners::Request', foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user

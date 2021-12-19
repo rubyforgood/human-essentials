@@ -31,8 +31,8 @@ PARTNER_FORM_URL="https://partner.test/api/v1/partner_forms"
 PARTNER_BASE_URL="partner.test"
 FLIPPER_USERNAME="admin"
 FLIPPER_PASSWORD="password"
-SIDEKIQ_USERNAME="admin"
-SIDEKIQ_PASSWORD="password"
+DELAYED_JOB_USERNAME='admin'
+DELAYED_JOB_PASSWORD='password'
 DIAPERBANK_KEY="secretpassword"
 DIAPERBANK_ENDPOINT="https://diaper.test/api/v1"
 RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
@@ -99,10 +99,12 @@ tail -F /log/development.log
 
 ### Running background jobs
 
-Communication between the partner and diaper app mostly occur in jobs that run in the background via sidekiq. To enable this you need to start sidekiq in the diaper repo and have it handle the default queue.
+Communication between the partner and diaper app mostly occur in jobs that run in the background via delayed_job. To enable this you need to start delayed_job in the diaper repo and have it handle the default queue.
+
 ```bash
-bundle exec sidekiq -q default
+bundle exec rails jobs:work
 ```
+
 # Troubleshooting
 
 #####  My ENV variables are incorrect even though I changed them in the `.env` file

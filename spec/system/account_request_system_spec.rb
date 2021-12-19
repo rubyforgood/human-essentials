@@ -6,7 +6,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
     it 'should prompt prospective users to request an account on the live app' do
       visit new_account_request_path
-      expect(page).to have_link('click here', href: 'https://diaper.app/account_requests/new')
+      expect(page).to have_link('click here', href: 'https://humanessentials.app/account_requests/new')
     end
   end
 
@@ -59,7 +59,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
 
       # Expect to see the a new organization with the name provided
       # originally in the AccountRequest
-      expect(page).to have_content('All Diaperbase Organizations')
+      expect(page).to have_content('All Human Essentials Organizations')
       expect(page).to have_content(created_account_request.organization_name)
       expect(page).to have_content(created_account_request.email)
 

@@ -39,6 +39,8 @@ class Purchase < ApplicationRecord
       .order(created_at: :desc)
   }
 
+  scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
+
   before_create :combine_duplicates
 
   validates :amount_spent_in_cents, numericality: { greater_than: 0 }

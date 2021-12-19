@@ -10,13 +10,10 @@ require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
-require 'sidekiq/testing'
 require 'webdrivers'
 require 'knapsack_pro'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-
-Sidekiq::Testing.fake! # fake is the default mode
 
 SimpleCov.start
 
@@ -54,11 +51,11 @@ Capybara.ignore_hidden_elements = true
 Capybara.register_driver :chrome do |app|
   args = %w[no-sandbox disable-gpu disable-site-isolation-trials window-size=1680,1050]
   args << "headless" unless ENV["NOT_HEADLESS"] == "true"
-  options = Selenium::WebDriver::Chrome::Options.new(args: args)
-  options.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
-  options.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
+  capabilities = Selenium::WebDriver::Chrome::Options.new(args: args)
+  capabilities.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
+  capabilities.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
 
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  Capybara::Selenium::Driver.new(app, browser: :chrome, capabilities: capabilities)
 end
 
 # Enable JS for Capybara tests

@@ -6,7 +6,7 @@ module Partners
       requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.partner.id).call
       @formatted_requestable_items = requestable_items.map do |rt|
         [rt.name, rt.id]
-      end
+      end.sort
     end
 
     def create
