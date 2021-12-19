@@ -1,6 +1,6 @@
 RSpec.describe DistributionMailer, type: :mailer do
   before do
-    @organization.default_email_text = "Default email text example"
+    @organization.default_email_text = "Default email text example\n\n%{delivery_method} %{distribution_date}\n\n%{partner_name}\n\n%{comment}"
     @partner = create(:partner, name: 'PARTNER')
     @distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner)
   end
