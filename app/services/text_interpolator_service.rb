@@ -1,7 +1,6 @@
+# Service inspired and modded from
+# https://github.com/ruby-i18n/i18n/blob/76c677a783f2d6b77e24e8c0bf842f72859cad53/lib/i18n/interpolate/ruby.rb
 class TextInterpolatorService
-  # service inspired and modded from
-  # https://github.com/ruby-i18n/i18n/blob/76c677a783f2d6b77e24e8c0bf842f72859cad53/lib/i18n/interpolate/ruby.rb
-
   include ServiceObjectErrorsMixin
 
   INTERPOLATION_PATTERN = Regexp.union([
