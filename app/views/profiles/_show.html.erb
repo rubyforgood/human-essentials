@@ -7,7 +7,7 @@
     <p>Agency Type: <%= partner_profile.agency_type %></p>
     <p>Proof of Agency Status
     <% if partner_profile.proof_of_partner_status.attached? %>
-      <!-- NOTE: The actual download link may not work in local storage mode due to file locations being seperate locally. -->
+      <!-- NOTE: The actual download link may not work in local storage mode due to file locations being separate locally. -->
       (Link): <%= link_to partner_profile.proof_of_partner_status.filename, rails_blob_path(partner_profile.proof_of_partner_status, disposition: 'attachment') %>
   <% end %>
     </p>
@@ -31,7 +31,7 @@
       <p>Form 990: <%= partner_profile.proof_of_form_990.attached? ? 'Yes' : 'No' %></p>
       <p>Form 990
       <% if partner_profile.proof_of_form_990.attached? %>
-        <!-- NOTE: The actual download link may not work in local storage mode due to file locations being seperate locally. -->
+        <!-- NOTE: The actual download link may not work in local storage mode due to file locations being separate locally. -->
         (Link): <%= link_to partner_profile.proof_of_form_990.filename, rails_blob_path(partner_profile.proof_of_form_990, disposition: 'attachment') %>
     <% end %>
       </p>
