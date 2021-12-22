@@ -21,17 +21,17 @@ RSpec.describe AccountRequestMailer, type: :mailer do
     end
 
     it 'should have the correct subject' do
-      expect(mail.subject).to eq('[Action Required] Diaperbase Account Request')
+      expect(mail.subject).to eq('[Action Required] Human Essential Account Request')
     end
 
     it 'should include the staging/demo account information' do
-      expect(mail.body.encoded).to match(%r{<a href='https://staging.humanessentials.app/users/sign_in'>DiaperBase</a>})
+      expect(mail.body.encoded).to match(%r{<a href='https://staging.humanessentials.app/users/sign_in'>Human Essentials</a>})
       expect(mail.body.encoded).to match('Username: org_admin1@example.com')
-      expect(mail.body.encoded).to match('Password: password')
+      expect(mail.body.encoded).to match('Password: password!')
 
       expect(mail.body.encoded).to match(%r{<a href='https://staging.humanessentials.app/partner_users/sign_in'>PartnerBase</a>})
       expect(mail.body.encoded).to match('Username: verified@example.com')
-      expect(mail.body.encoded).to match('Password: password')
+      expect(mail.body.encoded).to match('Password: password!')
     end
 
     it 'should include the instruction video link' do

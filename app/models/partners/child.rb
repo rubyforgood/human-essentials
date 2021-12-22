@@ -52,8 +52,8 @@ module Partners
       id first_name last_name date_of_birth gender child_lives_with race agency_child_id
       health_insurance comments created_at updated_at family_id item_needed_diaperid active archived
     ].freeze
-    CAN_LIVE_WITH = %w[Mother Father Grandparent Foster\ Parent Other\ Parent/Relative].freeze
-    RACES = %w[African\ American Caucasian Hispanic Asian American\ Indian Pacific\ Islander Multi-racial Other].freeze
+    CAN_LIVE_WITH = ['Mother', 'Father', 'Grandparent', 'Foster Parent', 'Other Parent/Relative'].freeze
+    RACES = ['African American', 'Caucasian', 'Hispanic', 'Asian', 'American Indian', 'Pacific Islander', 'Multi-racial', 'Other'].freeze
     CHILD_ITEMS = ["Bed Pads (Cloth)",
                    "Bed Pads (Disposable)",
                    "Bibs (Adult & Child)",

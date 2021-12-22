@@ -1,5 +1,5 @@
 # Provides full CRUD for Partners. These are minimal representations of corresponding Partner records in PartnerBase.
-# Though the functionality of Partners is actually fleshed out in PartnerBase, in DiaperBase, we maintain a collection
+# Though the functionality of Partners is actually fleshed out in PartnerBase, in HumanEssentails, we maintain a collection
 # of which Partners are associated with which Diaperbanks.
 class PartnersController < ApplicationController
   include Importable
@@ -47,6 +47,7 @@ class PartnersController < ApplicationController
     @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
     @partner_distributions = @partner.distributions.order(created_at: :desc)
     @partner_profile_fields = current_organization.partner_form_fields
+    @partner_users = @partner.profile.users.order(name: :asc)
 
     respond_to do |format|
       format.html

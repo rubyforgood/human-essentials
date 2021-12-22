@@ -58,7 +58,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
         first('.storage-location-source').all("option").last.select_option
 
-        find('option', text: item.name.to_s, exact: true)
+        find('option', text: item.name.to_s)
       end
     end
 

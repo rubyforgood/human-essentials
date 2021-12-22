@@ -7,7 +7,7 @@ inherit_from: .rubocop_todo.yml
 require: rubocop-rails
 
 AllCops:
-  TargetRubyVersion: 2.6.4
+  TargetRubyVersion: 3.0.2
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
@@ -444,5 +444,7 @@ Rails/WhereNot:
 Rails/HasAndBelongsToMany:
   Enabled: false
 Lint/EnsureReturn: # The service objects return self in an ensure block. Not using an explicit return does not do correct behavior
+  Enabled: false
+Naming/VariableNumber:
   Enabled: false
 
