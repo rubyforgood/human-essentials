@@ -1,5 +1,4 @@
 RSpec.xdescribe Reports::AcquisitionReportService, type: :service do
-
   describe "#vendors_purchased_from" do
     it "returns where vendors purchased from" do
     end

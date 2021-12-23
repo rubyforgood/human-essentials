@@ -1,7 +1,6 @@
 module Reports
   module AnnualReport
     class << self
-
       # @param year [Integer]
       # @param organization [Organization]
       # @return [Array<Reports::Report>]

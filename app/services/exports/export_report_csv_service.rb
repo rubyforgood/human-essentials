@@ -37,7 +37,7 @@ module Exports
     attr_reader :report
 
     def headers(report)
-      report.entries.map { |entry| entry.keys.first}
+      report.entries.map { |entry| entry.keys.first }
     end
 
     # Returns a Hash of keys to indexes so that obtaining the index

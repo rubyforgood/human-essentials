@@ -10,8 +10,7 @@ module Reports
     end
 
     def each_entry
-      self.entries.each { |hash| yield hash.keys.first, hash.values.first }
+      entries.each { |hash| yield hash.keys.first, hash.values.first }
     end
-
   end
 end

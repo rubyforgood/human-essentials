@@ -14,7 +14,7 @@ describe Exports::ExportReportCSVService do
       end
 
       it "humanizes the headers" do
-        expected_headers = %w[First\ header Second\ header]
+        expected_headers = ['First header', 'Second header']
         reporter = double("reporter", report: { first_header: "TEST VALUE",
                                                 second_header: "SECOND TEST VALUE" },
                                       columns_for_csv: [:first_header, :second_header])
@@ -40,7 +40,7 @@ describe Exports::ExportReportCSVService do
 
     context "values" do
       it "maps the values from the reporter's report in order of the columns given" do
-        expected_values = %w[TEST\ VALUE SECOND\ TEST\ VALUE]
+        expected_values = ['TEST VALUE', 'SECOND TEST VALUE']
         reporter = double("reporter", report: { first: "TEST VALUE", second: "SECOND TEST VALUE" },
                                       columns_for_csv: [:first, :second])
 
