@@ -1,5 +1,6 @@
 module Reports
   class AcquisitionReportService
+    include ActionView::Helpers::NumberHelper
     attr_reader :year, :organization
 
     def initialize(year:, organization:)
@@ -8,95 +9,46 @@ module Reports
     end
 
     def report
-      @report ||= {
-        total_annual_incoming_disposable_diapers: total_annual_incoming_disposable_diapers,
-        distributed_disposabed_diapers: distributed_diapers,
-        monthly_disposable_diapers: monthly_disposable_diapers,
-        diaper_drive_count: annual_drives.count,
-        disposabled_diapers_from_drives: disposabled_diapers_from_drives,
-        money_from_drives: money_from_drives,
-        virtual_drive_count: virtual_diaper_drives.count,
-        money_from_virtual_drives: money_from_virtual_drives,
-        number_of_diapers_from_virtual_drives: number_of_diapers_from_virtual_drives,
-        percent_donated: percent_donated,
-        percent_bought: percent_bought,
-        money_spent_on_diapers: money_spent_on_diapers,
-        purchased_from: purchased_from,
-        vendors_purchased_from: vendors_purchased_from
-      }
+      @report ||= Reports::Report.new('Diaper Acquisition', [
+        { 'Disposable diapers distributed' => number_with_delimiter(distributed_diapers)},
+        { 'Average monthly disposable diapers distributed' => number_with_delimiter(monthly_disposable_diapers)},
+        { 'Total diaper drives' => annual_drives.count },
+        { 'Disposable diapers collected from drives' => number_with_delimiter(disposable_diapers_from_drives)},
+        { 'Money raised from diaper drives' => number_to_currency(money_from_drives)},
+        { 'Total diaper drives (virtual)' => virtual_diaper_drives.count},
+        { 'Money raised from diaper drives (virtual)' => number_to_currency(money_from_virtual_drives) },
+        { 'Disposable diapers collected from drives (virtual)' => number_with_delimiter(disposable_diapers_from_virtual_drives)},
+        { '% diapers donated' => percent_donated.round },
+        { '% diapers bought' => percent_bought.round },
+        { 'Money spent purchasing diapers' => number_to_currency(money_spent_on_diapers) },
+        { 'Purchased from' => purchased_from },
+        { 'Vendors diapers purchased through' => vendors_purchased_from }
+      ])
     end
 
-    def columns_for_csv
-      %i[distributed_disposabed_diapers monthly_disposable_diapers diaper_drive_count disposabled_diapers_from_drives
-         money_from_drives virtual_drive_count money_from_virtual_drives number_of_diapers_from_virtual_drives
-         percent_donated percent_bought percent_bought money_spent_on_diapers purchased_from vendors_purchased_from]
+    def distributed_diapers
+      @distributed_diapers ||= organization.
+        distributions.
+        for_year(year).
+        joins(line_items: :item).
+        merge(Item.disposable).
+        sum('line_items.quantity')
     end
 
-    def vendors_purchased_from
-      # placeholder
-      "Unknown"
-    end
-
-    def purchased_diapers
-      LineItem.where(item: disposable_diaper_items)
-              .where(itemizable: yearly_purchases)
-              .sum(:quantity)
-    end
-
-    def yearly_purchases
-      ::Purchase.where(organization: organization)
-                .where("extract(year  from issued_at) = ?", year)
-    end
-
-    def purchased_from
-      yearly_purchases.select(:purchased_from).distinct.pluck(:purchased_from).compact
-    end
-
-    def money_spent_on_diapers
-      yearly_purchases.sum(:amount_spent_in_cents) / 100.0
-    end
-
-    def percent_bought
-      (purchased_diapers.to_f / total_annual_incoming_disposable_diapers) * 100
-    end
-
-    def percent_donated
-      (disposabled_diapers_from_drives.to_f / total_annual_incoming_disposable_diapers) * 100
-    end
-
-    def total_annual_incoming_disposable_diapers
-      LineItem.where(item: disposable_diaper_items)
-              .where(itemizable: Purchase.where(organization: organization)).or(
-                LineItem.where(itemizable: Donation.where(organization: organization))
-              ).sum(:quantity)
-    end
-
-    def disposabled_diapers_from_drives
-      LineItem.where(item: disposable_diaper_items)
-              .where(itemizable: yearly_drive_donations)
-              .sum(:quantity)
-    end
-
-    def yearly_drive_donations
-      ::Donation.where(organization: organization)
-                .where(source: "Diaper Drive")
-                .where("extract(year  from issued_at) = ?", year)
-    end
-
-    def diaper_drives
-      ::DiaperDrive.where(organization: organization)
+    def monthly_disposable_diapers
+      (distributed_diapers / 12.0).round
     end
 
     def annual_drives
-      diaper_drives.within_date_range("#{year}-01-01 - #{year}-12-31")
+      organization.diaper_drives.within_date_range("#{year}-01-01 - #{year}-12-31")
     end
 
-    def number_of_diapers_from_drives
-      annual_drives.map(&:donation_quantity).sum
+    def disposable_diapers_from_drives
+      annual_drives.joins(donations: { line_items: :item}).merge(Item.disposable).sum(:quantity)
     end
 
     def money_from_drives
-      annual_drives.map(&:total_money_raised).sum / 100
+      annual_drives.joins(:donations).sum(:money_raised) / 100
     end
 
     def virtual_diaper_drives
@@ -104,30 +56,67 @@ module Reports
     end
 
     def money_from_virtual_drives
-      virtual_diaper_drives.map(&:total_money_raised).sum / 100
+      virtual_diaper_drives.joins(:donations).sum(:money_raised) / 100
     end
 
-    def number_of_diapers_from_virtual_drives
-      virtual_diaper_drives.map(&:donation_quantity).sum
+    def disposable_diapers_from_virtual_drives
+      virtual_diaper_drives.
+        joins(donations: { line_items: :item}).
+        merge(Item.disposable).
+        sum(:quantity)
     end
 
-    def yearly_distributions
-      ::Distribution.where(organization: organization)
-                    .where("extract(year  from issued_at) = ?", year)
+    def percent_donated
+      (disposable_diapers_from_drives.to_f / incoming_disposable_diapers) * 100
     end
 
-    def distributed_diapers
-      LineItem.where(item: disposable_diaper_items)
-              .where(itemizable: yearly_distributions)
-              .sum(:quantity)
+    def percent_bought
+      purchased = organization.
+        purchases.
+        for_year(year).
+        joins(line_items: :item).
+        merge(Item.disposable).
+        sum(:quantity)
+
+      (purchased.to_f / incoming_disposable_diapers) * 100
     end
 
-    def disposable_diaper_items
-      Item.disposable
+    def money_spent_on_diapers
+      organization.purchases.for_year(year).sum(:amount_spent_in_cents) / 100.0
     end
 
-    def monthly_disposable_diapers
-      (distributed_diapers / 12.0).round
+    def purchased_from
+      organization.
+        purchases.
+        for_year(year).
+        select(:purchased_from).
+        distinct.
+        pluck(:purchased_from).
+        compact.
+        join(', ')
     end
+
+    def vendors_purchased_from
+      organization.
+        vendors.
+        joins(:purchases).
+        merge(Purchase.for_year(year)).
+        select(:business_name).
+        distinct.
+        pluck(:business_name).
+        compact.
+        join(', ')
+    end
+
+    ###### HELPER METHODS ######
+
+    def incoming_disposable_diapers
+      @incoming_diapers ||= LineItem.joins(:item).
+        merge(Item.disposable).
+        where(itemizable: organization.purchases.for_year(year)).
+        or(LineItem.where(itemizable: organization.donations.for_year(year))
+      ).sum(:quantity)
+    end
+
   end
 end

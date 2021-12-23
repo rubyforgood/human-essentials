@@ -1,22 +1,7 @@
-RSpec.describe Reports::AcquisitionReportService, type: :service do
-  xdescribe "#vendors_purchased_from" do
+RSpec.xdescribe Reports::AcquisitionReportService, type: :service do
+
+  describe "#vendors_purchased_from" do
     it "returns where vendors purchased from" do
-    end
-  end
-
-  describe "#purchased_diapers" do
-    it "returns amount of diapers from purchases for year" do
-      create_purchase
-
-      expect(report.purchased_diapers).to eq 100
-    end
-  end
-
-  describe "#yearly_purchases" do
-    it "returns purchases for year" do
-      purchase = create_purchase
-
-      expect(report.yearly_purchases).to include(purchase)
     end
   end
 
@@ -67,7 +52,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service do
     it "calculates number of disposable diapers from drivers" do
       create_diaper_drive_donation
 
-      expect(report.disposabled_diapers_from_drives).to eq 100
+      expect(report.disposable_diapers_from_drives).to eq 100
     end
   end
 

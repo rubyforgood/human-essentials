@@ -71,6 +71,8 @@ class Distribution < ApplicationRecord
           start_date: Time.zone.today.beginning_of_week.beginning_of_day, end_date: Time.zone.today.end_of_week.end_of_day)
   end
 
+  scope :for_year, ->(year) { where("extract(year from issued_at) = ?", year) }
+
   delegate :name, to: :partner, prefix: true
 
   def distributed_at

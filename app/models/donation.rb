@@ -54,6 +54,8 @@ class Donation < ApplicationRecord
       .order(created_at: :desc)
   }
 
+  scope :for_year, ->(year) { where("extract(year from issued_at) = ?", year) }
+
   before_create :combine_duplicates
 
   validates :donation_site, presence:

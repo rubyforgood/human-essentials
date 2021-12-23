@@ -1,4 +1,4 @@
-RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
+RSpec.xdescribe Reports::AdultIncontinenceReportService, type: :service do
   describe "#adult_incontinence_items" do
     it "returns items relating to adult incontinence" do
       items = report.adult_incontinence_items

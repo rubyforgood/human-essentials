@@ -38,6 +38,7 @@ class Purchase < ApplicationRecord
       .includes(:line_items, :storage_location)
       .order(created_at: :desc)
   }
+  scope :for_year, ->(year) { where("extract(year from issued_at) = ?", year) }
 
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
 
