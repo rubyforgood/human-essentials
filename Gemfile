@@ -108,7 +108,7 @@ group :test do
   gem "orderly", "~> 0.1" # used for feature testing where this appears before that
   gem "rails-controller-testing"
   gem 'simplecov'
-  gem 'shoulda-matchers', '~> 5.0'
+  gem 'shoulda-matchers', '~> 5.1'
   gem 'webdrivers', '~> 5.0'
   gem "webmock", "~> 3.14"
 end
