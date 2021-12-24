@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "All Reports", reports_ndbn_annuals_path %></li>
+          <li class="breadcrumb-item"><%= link_to "All Reports", reports_annual_reports_path %></li>
           <li class="breadcrumb-item"><a href="#">Reports - <%= params[:year] %></a></li>
         </ol>
       </div>
@@ -28,7 +28,7 @@
       <span class="float-right">
         <%=
             download_button_to(
-              reports_ndbn_annual_path(@year, format: :csv),
+              reports_annual_report_path(@year, format: :csv),
               text: "Export NDBN Annual Report"
             )
         %>
@@ -36,14 +36,14 @@
     </div>
   </div>
 </section>
-<% @reports.each do |report| %>
+<% @report.each_report do |name, entries| %>
   <section class="content">
-    <h1 class='text-3xl text-center'><%= report.name %></h1><br />
+    <h1 class='text-3xl text-center'><%= name %></h1><br />
     <div class="card">
       <div class="card-body p-0">
         <table class="table">
           <tbody>
-          <% report.each_entry do |name, value| %>
+          <% entries.each do |name, value| %>
             <tr>
               <th><%= name %></th>
               <td><%= value %></td>

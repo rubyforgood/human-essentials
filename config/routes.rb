@@ -88,7 +88,9 @@ Rails.application.routes.draw do
     end
 
     namespace :reports do
-      resources :ndbn_annuals, only: [:index, :show], param: :year
+      resources :annual_reports, only: [:index, :show], param: :year do
+        post :recalculate
+      end
     end
 
     resources :transfers, only: %i(index create new show destroy)

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "NDBN Reports", type: :request do
+RSpec.describe "Annual Reports", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param, year: 2018 }
   end
@@ -12,21 +12,33 @@ RSpec.describe "NDBN Reports", type: :request do
 
     describe "GET /index" do
       it "returns http success" do
-        get reports_ndbn_annuals_path(default_params)
+        get reports_annual_reports_path(default_params)
         expect(response).to have_http_status(:success)
       end
     end
 
     describe "GET /show" do
       it "returns http success" do
-        get reports_ndbn_annual_path(default_params)
+        expect(AnnualReport.count).to eq(0)
+        get reports_annual_report_path(default_params)
         expect(response).to have_http_status(:success)
+        expect(AnnualReport.count).to eq(1)
+        expect(AnnualReport.last.year).to eq(2018)
+        expect(AnnualReport.last.organization_id).to eq(@organization.id)
       end
 
-      it "return not found if the year params is not number" do
-        expect do
-          get reports_ndbn_annual_path({ organization_id: @organization.to_param, year: 'invalid' })
-        end.to raise_error(ActionController::RoutingError)
+      it "retrieves the existing report if it exists" do
+        report = AnnualReport.create!(year: 2018, organization_id: @organization.id)
+        expect(report.all_reports).to be_nil
+        get reports_annual_report_path(default_params)
+        expect(response).to have_http_status(:success)
+        expect(AnnualReport.count).to eq(1)
+        expect(report.reload.all_reports).not_to be_nil
+      end
+
+      it "returns not found if the year params is not number" do
+        get reports_annual_report_path({ organization_id: @organization.to_param, year: 'invalid' })
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

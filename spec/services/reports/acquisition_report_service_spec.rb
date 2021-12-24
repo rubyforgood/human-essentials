@@ -1,4 +1,17 @@
 RSpec.xdescribe Reports::AcquisitionReportService, type: :service do
+
+  let(:organization) { create(:organization) }
+
+  subject(:report) do
+    described_class.new(organization: organization, year: Time.zone.now.year)
+  end
+
+  specify "#distributed_diapers" do
+    create_diaper_distribution
+
+    expect(report.distributed_diapers).to eq(20)
+  end
+
   describe "#vendors_purchased_from" do
     it "returns where vendors purchased from" do
     end
@@ -137,14 +150,6 @@ RSpec.xdescribe Reports::AcquisitionReportService, type: :service do
     end
   end
 
-  describe "#distributed_diapers" do
-    it "calculates number of distributed diapers" do
-      create_diaper_distribution
-
-      expect(report.distributed_diapers).to eq 100
-    end
-  end
-
   describe "#disposable_diaper_items" do
     it "calculates number of disposable diapers" do
       create_diaper_drive_donation
@@ -178,14 +183,11 @@ RSpec.xdescribe Reports::AcquisitionReportService, type: :service do
   end
 
   def create_diaper_distribution
-    create(:distribution, :with_items, organization: organization)
+    create(:distribution,
+           :with_items,
+           organization: organization,
+           issued_at: 1.week.ago,
+           item_quantity: 20)
   end
 
-  def organization
-    @organization ||= create(:organization)
-  end
-
-  def report
-    described_class.new(organization: organization, year: Time.zone.now.year)
-  end
 end

@@ -58,10 +58,6 @@ class DiaperDrive < ApplicationRecord
     "#{name} (diaper drive)"
   end
 
-  def total_money_raised
-    donations.sum(&:money_raised)
-  end
-
   def self.search_date_range(dates)
     dates = dates.split(" - ")
     @search_date_range = { start_date: dates[0], end_date: dates[1] }

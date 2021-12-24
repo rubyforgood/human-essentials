@@ -35,6 +35,8 @@ class Donation < ApplicationRecord
   include Itemizable
   include Exportable
   include Filterable
+  include IssuedAt
+
   scope :at_storage_location, ->(storage_location_id) {
     where(storage_location_id: storage_location_id)
   }
@@ -53,8 +55,6 @@ class Donation < ApplicationRecord
       .includes(:line_items, :storage_location, :donation_site)
       .order(created_at: :desc)
   }
-
-  scope :for_year, ->(year) { where("extract(year from issued_at) = ?", year) }
 
   before_create :combine_duplicates
 
