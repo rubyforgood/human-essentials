@@ -22,32 +22,14 @@ module Exports
       csv_data = []
 
       @reports.each do |report|
-        headers.concat(headers(report))
-        data.concat(build_row_data(report))
+        headers.concat(report['entries'].keys)
+        data.concat(report['entries'].values)
       end
 
       csv_data << headers
       csv_data << data
 
       csv_data
-    end
-
-    private
-
-    attr_reader :report
-
-    def headers(report)
-      report.entries.map { |entry| entry.keys.first }
-    end
-
-    # Returns a Hash of keys to indexes so that obtaining the index
-    # doesn't require a linear scan.
-    def headers_with_indexes
-      @headers_with_indexes ||= headers.each_with_index.to_h
-    end
-
-    def build_row_data(report)
-      report.entries.map { |entry| entry.values.first }
     end
   end
 end

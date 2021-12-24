@@ -18,7 +18,7 @@ class Reports::AnnualReportsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportReportCSVService.new(reports: @reports).generate_csv,
+        send_data Exports::ExportReportCSVService.new(reports: @report.all_reports).generate_csv,
                   filename: "NdbnAnnuals-#{@year}-#{Time.zone.today}.csv"
       end
     end
