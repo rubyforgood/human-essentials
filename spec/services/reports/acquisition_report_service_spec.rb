@@ -1,5 +1,4 @@
 RSpec.xdescribe Reports::AcquisitionReportService, type: :service do
-
   let(:organization) { create(:organization) }
 
   subject(:report) do
@@ -189,5 +188,4 @@ RSpec.xdescribe Reports::AcquisitionReportService, type: :service do
            issued_at: 1.week.ago,
            item_quantity: 20)
   end
-
 end

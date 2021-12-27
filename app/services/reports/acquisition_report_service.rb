@@ -24,8 +24,7 @@ module Reports
                       'Money spent purchasing diapers' => number_to_currency(money_spent_on_diapers),
                       'Purchased from' => purchased_from,
                       'Vendors diapers purchased through' => vendors_purchased_from
-                    }
-      }
+                    } }
     end
 
     def distributed_diapers
@@ -72,11 +71,11 @@ module Reports
       return 0 if incoming_disposable_diapers.zero?
 
       donated = organization
-                  .donations
-                  .for_year(year)
-                  .joins(line_items: :item)
-                  .merge(Item.disposable)
-                  .sum(:quantity)
+                .donations
+                .for_year(year)
+                .joins(line_items: :item)
+                .merge(Item.disposable)
+                .sum(:quantity)
 
       (donated.to_f / incoming_disposable_diapers) * 100
     end

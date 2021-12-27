@@ -15,7 +15,6 @@ class AnnualReport < ApplicationRecord
 
   # @yield [String, Array<Hash>]
   def each_report
-    self.all_reports.each { |hash| yield hash['name'], hash['entries']}
+    all_reports.each { |hash| yield hash['name'], hash['entries'] }
   end
-
 end
