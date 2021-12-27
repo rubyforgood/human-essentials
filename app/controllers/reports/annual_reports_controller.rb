@@ -1,5 +1,4 @@
 class Reports::AnnualReportsController < ApplicationController
-
   before_action :validate_show_params, only: [:show, :recalculate]
 
   def index
@@ -26,8 +25,8 @@ class Reports::AnnualReportsController < ApplicationController
 
   def recalculate
     year = year_param
-    Reports.retrieve_report(organization: current_organization, year: @year, recalculate: true)
-    redirect_to :show, year: year
+    Reports.retrieve_report(organization: current_organization, year: year, recalculate: true)
+    redirect_to reports_annual_report_path(year), notice: "Recalculated annual report!"
   end
 
   private

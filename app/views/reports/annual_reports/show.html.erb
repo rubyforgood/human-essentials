@@ -27,9 +27,16 @@
     <div class="card-body">
       <span class="float-right">
         <%=
+          refresh_button_to(
+            recalculate_reports_annual_report_path(@year),
+              { text: "Recalculate Report" },
+              method: :post
+            )
+        %>
+        <%=
             download_button_to(
               reports_annual_report_path(@year, format: :csv),
-              text: "Export NDBN Annual Report"
+              text: "Export Report"
             )
         %>
       </span>

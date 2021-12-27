@@ -22,12 +22,11 @@ module Reports
     def retrieve_report(year:, organization:, recalculate: false)
       report_attributes = { organization: organization, year: year }
       report = AnnualReport.find_or_create_by(report_attributes)
-      if report.all_reports.blank?
-        calculated_reports = self.all_reports(**report_attributes)
+      if report.all_reports.blank? || recalculate
+        calculated_reports = all_reports(**report_attributes)
         report.update!(all_reports: calculated_reports)
       end
       report
     end
-
   end
 end

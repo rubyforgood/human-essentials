@@ -89,7 +89,7 @@ Rails.application.routes.draw do
 
     namespace :reports do
       resources :annual_reports, only: [:index, :show], param: :year do
-        post :recalculate
+        post :recalculate, on: :member
       end
     end
 
