@@ -36,7 +36,7 @@ RSpec.describe "Annual Reports", type: :request do
         get reports_annual_report_path(default_params)
         expect(response).to have_http_status(:success)
         expect(AnnualReport.count).to eq(1)
-        expect(report.updated_at).to eq(old_time)
+        expect(report.reload.updated_at).to be_within(1.second).of(old_time)
       end
 
       it "retrieves and updated the existing report if it exists" do
@@ -73,7 +73,7 @@ RSpec.describe "Annual Reports", type: :request do
         post recalculate_reports_annual_report_path(default_params)
         expect(response).to have_http_status(:found)
         expect(AnnualReport.count).to eq(1)
-        expect(report.reload.updated_at).not_to eq(old_time)
+        expect(report.reload.updated_at).not_to be_within(1.second).of(old_time)
       end
     end
   end
