@@ -1,191 +1,145 @@
-RSpec.xdescribe Reports::AcquisitionReportService, type: :service do
-  let(:organization) { create(:organization) }
+RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data: true do
+  # can't use `let` since we are creating a bunch of data in before(:all)
+  def year
+    2020
+  end
+
+  def within_time
+    Time.zone.parse("2020-05-31 14:00:00")
+  end
+
+  def outside_time
+    Time.zone.parse("2019-05-31 14:00:00")
+  end
+
+  before(:all) do
+    DatabaseCleaner.start
+    seed_base_items_for_tests
+    seed_with_default_records
+
+    Organization.seed_items(@organization)
+    disposable_item = @organization.items.disposable.first
+    non_disposable_item = @organization.items.where.not(id: @organization.items.disposable).first
+
+    # We will create data both within and outside our date range, and both disposable and non disposable.
+    # Spec will ensure that only the required data is included.
+
+    # Distributions
+    distributions = create_list(:distribution, 2, issued_at: within_time, organization: @organization)
+    outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: @organization)
+    (distributions + outside_distributions).each do |dist|
+      create_list(:line_item, 5, :distribution, quantity: 20, item: disposable_item, itemizable: dist)
+      create_list(:line_item, 5, :distribution, quantity: 30, item: non_disposable_item, itemizable: dist)
+    end
+
+    # Diaper drives
+    drives = create_list(:diaper_drive, 2,
+                         start_date: within_time,
+                         end_date: nil,
+                         virtual: false,
+                         organization: @organization)
+    outside_drives = create_list(:diaper_drive, 2,
+                                 start_date: outside_time - 1.month,
+                                 end_date: outside_time,
+                                 organization: @organization,
+                                 virtual: false)
+
+    donations = (drives + outside_drives).map do |drive|
+      create_list(:diaper_drive_donation, 3,
+                  diaper_drive: drive,
+                  issued_at: drive.start_date + 1.day,
+                  money_raised: 1000,
+                  organization: @organization)
+    end
+    donations.flatten!
+    donations.each do |donation|
+      create_list(:line_item, 5, :donation, quantity: 20, item: disposable_item, itemizable: donation)
+      create_list(:line_item, 5, :donation, quantity: 30, item: non_disposable_item, itemizable: donation)
+    end
+
+    # Virtual diaper drives
+    vdrives = create_list(:diaper_drive, 2,
+                          start_date: within_time,
+                          end_date: nil,
+                          virtual: true,
+                          organization: @organization)
+    outside_vdrives = create_list(:diaper_drive, 2,
+                                  start_date: outside_time - 1.month,
+                                  end_date: outside_time,
+                                  organization: @organization,
+                                  virtual: true)
+
+    vdonations = (vdrives + outside_vdrives).map do |drive|
+      create(:diaper_drive_donation,
+             diaper_drive: drive,
+             money_raised: 1000,
+             issued_at: drive.start_date + 1.day,
+             organization: @organization)
+    end
+    vdonations.flatten!
+    vdonations.each do |donation|
+      create_list(:line_item, 3, :donation, quantity: 20, item: disposable_item, itemizable: donation)
+      create_list(:line_item, 3, :donation, quantity: 10, item: non_disposable_item, itemizable: donation)
+    end
+
+    # Vendors
+    vendors = [
+      create(:vendor, business_name: "Vendor 1", organization: @organization),
+      create(:vendor, business_name: "Vendor 2", organization: @organization),
+    ]
+
+    # Purchases
+    vendors.each do |vendor|
+      purchases = [
+        create(:purchase,
+               issued_at: within_time,
+               vendor: vendor,
+               organization: @organization,
+               purchased_from: 'Google',
+               amount_spent_in_cents: 1000),
+        create(:purchase,
+               issued_at: within_time,
+               vendor: vendor,
+               organization: @organization,
+               purchased_from: 'Walmart',
+               amount_spent_in_cents: 2000),
+      ]
+      purchases += create_list(:purchase, 2,
+                               issued_at: outside_time,
+                               amount_spent_in_cents: 20_000,
+                               vendor: vendor,
+                               organization: @organization)
+      purchases.each do |purchase|
+        create_list(:line_item, 3, :purchase, quantity: 20, item: disposable_item, itemizable: purchase)
+        create_list(:line_item, 3, :purchase, quantity: 10, item: non_disposable_item, itemizable: purchase)
+      end
+    end
+  end
+
+  after(:all) do
+    DatabaseCleaner.clean
+  end
 
   subject(:report) do
-    described_class.new(organization: organization, year: Time.zone.now.year)
+    described_class.new(organization: @organization, year: year)
   end
 
-  specify "#distributed_diapers" do
-    create_diaper_distribution
-
-    expect(report.distributed_diapers).to eq(20)
-  end
-
-  describe "#vendors_purchased_from" do
-    it "returns where vendors purchased from" do
-    end
-  end
-
-  describe "#purchased_from" do
-    it "returns what stores were purchased from for the year" do
-      create_purchase
-
-      expect(report.purchased_from).to eq ["Google"]
-    end
-  end
-
-  describe "#money_spent_on_diapers" do
-    it "calculates money spent on diapers" do
-      create_purchase
-
-      expect(report.money_spent_on_diapers).to eq 10.0
-    end
-  end
-
-  describe "#percent_bought" do
-    it "calculates percent of diapers bought" do
-      create_purchase
-      create_diaper_drive_donation
-
-      expect(report.percent_bought).to eq 50
-    end
-  end
-
-  describe "#percent_donated" do
-    it "calculates percent of diapers donated" do
-      create_purchase
-      create_diaper_drive_donation
-
-      expect(report.percent_donated).to eq 50
-    end
-  end
-
-  describe "#total_annual_incoming_disposable_diapers" do
-    it "calculates total diaper count income" do
-      create_purchase
-      create_diaper_drive_donation
-
-      expect(report.total_annual_incoming_disposable_diapers).to eq 200
-    end
-  end
-
-  describe "#disposabled_diapers_from_drives" do
-    it "calculates number of disposable diapers from drivers" do
-      create_diaper_drive_donation
-
-      expect(report.disposable_diapers_from_drives).to eq 100
-    end
-  end
-
-  describe "#yearly_drive_donations" do
-    it "finds donations from the year" do
-      donation = create_diaper_drive_donation
-
-      expect(report.yearly_drive_donations).to include(donation)
-    end
-  end
-
-  describe "#diaper_drives" do
-    it "finds diaper drives from the organization" do
-      this_year_drive = create_diaper_drive
-      last_year_drive = create_diaper_drive(year: Time.zone.now.year - 1)
-
-      expect(report.diaper_drives).to include(this_year_drive)
-      expect(report.diaper_drives).to include(last_year_drive)
-    end
-  end
-
-  describe "#annual_drives" do
-    it "finds diaper drives from the year" do
-      this_year_drive = create_diaper_drive
-      last_year_drive = create_diaper_drive(year: Time.zone.now.year - 1)
-
-      expect(report.annual_drives).to include(this_year_drive)
-      expect(report.annual_drives).to_not include(last_year_drive)
-    end
-  end
-
-  describe "#number_of_diapers_from_drives" do
-    it "finds number of diapers from year" do
-      create_virtual_diaper_drive_donation
-      create_diaper_drive_donation
-
-      expect(report.number_of_diapers_from_drives).to eq 200
-    end
-  end
-
-  describe "#money_from_drives" do
-    it "finds money from diaper drives from year" do
-      create_virtual_diaper_drive_donation
-      create_diaper_drive_donation
-
-      expect(report.money_from_drives).to eq 1_100
-    end
-  end
-
-  describe "#virtual_diaper_drives" do
-    it "finds number of virtual diaper drives from year" do
-      virtual_drive = create_diaper_drive
-      non_virtual_drive = create_diaper_drive(virtual: false)
-
-      expect(report.virtual_diaper_drives).to include(virtual_drive)
-      expect(report.virtual_diaper_drives).to_not include(non_virtual_drive)
-    end
-  end
-
-  describe "#money_from_virtual_drives" do
-    it "finds amount of money from virtual diaper drives from year" do
-      create_virtual_diaper_drive_donation
-      create_diaper_drive_donation
-
-      expect(report.money_from_virtual_drives).to eq 500
-    end
-  end
-
-  describe "#number_of_diapers_from_virtual_drives" do
-    it "finds amount of diapers from virtual diaper drives from year" do
-      create_virtual_diaper_drive_donation
-      create_diaper_drive_donation
-
-      expect(report.number_of_diapers_from_virtual_drives).to eq 100
-    end
-  end
-
-  describe "#yearly_distributions" do
-    it "finds distributions for the year" do
-      distribution = create_diaper_distribution
-
-      expect(report.yearly_distributions).to include(distribution)
-    end
-  end
-
-  describe "#disposable_diaper_items" do
-    it "calculates number of disposable diapers" do
-      create_diaper_drive_donation
-
-      expect(report.disposable_diaper_items).to include(Item.last)
-    end
-  end
-
-  describe "#monthly_disposable_diapers" do
-    it "calculates number of disposable diapers per month" do
-      create_diaper_distribution
-
-      expect(report.monthly_disposable_diapers).to eq 8
-    end
-  end
-
-  def create_purchase
-    create(:purchase, :with_items, organization: organization)
-  end
-
-  def create_diaper_drive_donation
-    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", money_raised: 60_000, diaper_drive: create(:diaper_drive, virtual: false))
-  end
-
-  def create_virtual_diaper_drive_donation
-    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", money_raised: 50_000, diaper_drive: create(:diaper_drive, virtual: true))
-  end
-
-  def create_diaper_drive(year: Time.zone.now.year, virtual: true)
-    create(:diaper_drive, organization: organization, start_date: Time.new(year, 1).getlocal, end_date: Time.new(year, 2).getlocal, virtual: virtual)
-  end
-
-  def create_diaper_distribution
-    create(:distribution,
-           :with_items,
-           organization: organization,
-           issued_at: 1.week.ago,
-           item_quantity: 20)
+  specify '#report' do
+    expect(report.report).to eq({
+                                  entries: { "% diapers bought" => "25%",
+                                             "% diapers donated" => "75%",
+                                             "Average monthly disposable diapers distributed" => "17",
+                                             "Disposable diapers collected from drives" => "600",
+                                             "Disposable diapers collected from drives (virtual)" => "120",
+                                             "Disposable diapers distributed" => "200",
+                                             "Money raised from diaper drives" => "$60.00",
+                                             "Money raised from diaper drives (virtual)" => "$20.00",
+                                             "Money spent purchasing diapers" => "$60.00",
+                                             "Purchased from" => "Google, Walmart",
+                                             "Total diaper drives" => 2,
+                                             "Total diaper drives (virtual)" => 2,
+                                             "Vendors diapers purchased through" => "Vendor 1, Vendor 2" },
+                                  name: "Diaper Acquisition"
+                                })
   end
 end
