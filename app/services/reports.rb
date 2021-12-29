@@ -6,7 +6,7 @@ module Reports
     def all_reports(year:, organization:)
       [
         Reports::AcquisitionReportService.new(year: year, organization: organization).report,
-        # Reports::WarehouseInfoReportService.new(year: year, organization: organization),
+        Reports::WarehouseReportService.new(year: year, organization: organization).report,
         # Reports::AdultIncontinenceReportService.new(year: year, organization: organization),
         # Reports::OtherProductsReportService.new(year: year, organization: organization),
         # Reports::PartnerInfoReportService.new(year: year, organization: organization),
