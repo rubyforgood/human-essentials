@@ -7,52 +7,60 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
     end
     attr_reader :new_organization, :user, :url_prefix
 
-    subject { url_prefix + "/dashboard" }
-
     before do
       sign_in(user)
     end
 
     it "displays the getting started guide until the steps are completed" do
+      dashboard_page = DashboardPage.new url_prefix: url_prefix
+      dashboard_page.visit
+
+      # rubocop:disable Layout/ExtraSpacing
+
       # When dashboard loads, ensure that we are on step 1 (Partner Agencies)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-partners", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+      expect(dashboard_page).to     have_getting_started_guide
+      expect(dashboard_page).to     have_add_partner_call_to_action
+      expect(dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a partner, ensure that we are on step 2 (Storage Locations)
       @partner = create(:partner, organization: new_organization)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+      dashboard_page.visit
+
+      expect(dashboard_page).to     have_getting_started_guide
+      expect(dashboard_page).not_to have_add_partner_call_to_action
+      expect(dashboard_page).to     have_add_storage_location_call_to_action
+      expect(dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a storage location, ensure that we are on step 3 (Donation Site)
       create(:storage_location, organization: new_organization)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+      dashboard_page.visit
+
+      expect(dashboard_page).to     have_getting_started_guide
+      expect(dashboard_page).not_to have_add_partner_call_to_action
+      expect(dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(dashboard_page).to     have_add_donation_site_call_to_action
+      expect(dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a donation site, ensure that we are on step 4 (Inventory)
       create(:donation_site, organization: new_organization)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 1)
+      dashboard_page.visit
+
+      expect(dashboard_page).to     have_getting_started_guide
+      expect(dashboard_page).not_to have_add_partner_call_to_action
+      expect(dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(dashboard_page).to     have_add_inventory_call_to_action
+
+      # rubocop:enable Layout/ExtraSpacing
 
       # After we add inventory to a storage location, ensure that the getting starting guide is gone
       create(:storage_location, :with_items, item_quantity: 125, organization: new_organization)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 0)
+      dashboard_page.visit
+
+      expect(dashboard_page).not_to have_getting_started_guide
     end
   end
 
