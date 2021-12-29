@@ -83,7 +83,7 @@ module Reports
     def percent_donated
       return 0.0 if total_diapers.zero?
 
-      ((disposable_diapers_from_drives + disposable_diapers_from_virtual_drives) / total_diapers.to_f) * 100
+      (donated_diapers / total_diapers.to_f) * 100
     end
 
     # @return [Float]
@@ -135,8 +135,15 @@ module Reports
 
     # @return [Integer]
     def total_diapers
-      @total_diapers ||=
-        purchased_diapers + disposable_diapers_from_drives + disposable_diapers_from_virtual_drives
+      @total_diapers ||= purchased_diapers + donated_diapers
+    end
+
+    # @return [Integer]
+    def donated_diapers
+      @donated_diapers ||= LineItem.joins(:item)
+                                   .merge(Item.disposable)
+                                   .where(itemizable: organization.donations.for_year(year))
+                                   .sum(:quantity)
     end
   end
 end

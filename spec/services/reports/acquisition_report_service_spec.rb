@@ -32,6 +32,24 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       create_list(:line_item, 5, :distribution, quantity: 30, item: non_disposable_item, itemizable: dist)
     end
 
+    # Donations outside drives
+    non_drive_donations = create_list(:donation, 2,
+                                      diaper_drive: nil,
+                                      issued_at: within_time,
+                                      money_raised: 1000,
+                                      organization: @organization)
+
+    non_drive_donations += create_list(:donation, 2,
+                                       diaper_drive: nil,
+                                       issued_at: outside_time,
+                                       money_raised: 1000,
+                                       organization: @organization)
+
+    non_drive_donations.each do |donation|
+      create_list(:line_item, 3, :donation, quantity: 20, item: disposable_item, itemizable: donation)
+      create_list(:line_item, 3, :donation, quantity: 10, item: non_disposable_item, itemizable: donation)
+    end
+
     # Diaper drives
     drives = create_list(:diaper_drive, 2,
                          start_date: within_time,
@@ -126,8 +144,8 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
   specify '#report' do
     expect(report.report).to eq({
-                                  entries: { "% diapers bought" => "25%",
-                                             "% diapers donated" => "75%",
+                                  entries: { "% diapers bought" => "22%",
+                                             "% diapers donated" => "78%",
                                              "Average monthly disposable diapers distributed" => "17",
                                              "Disposable diapers collected from drives" => "600",
                                              "Disposable diapers collected from drives (virtual)" => "120",
