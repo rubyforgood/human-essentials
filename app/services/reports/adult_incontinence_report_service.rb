@@ -1,98 +1,99 @@
 module Reports
   class AdultIncontinenceReportService
-    ADULT_INCONTINENCE_TYPES = %w[adult_incontinence underpads pads liners].freeze
+    include ActionView::Helpers::NumberHelper
     attr_reader :year, :organization
 
+    # @param year [Integer]
+    # @param organization [Organization]
     def initialize(year:, organization:)
       @year = year
       @organization = organization
     end
 
+    # @return [Hash]
     def report
-      @report ||= {
-        money_spent: money_spent,
-        monthly_adult_incontinence: monthly_adult_incontinence,
-        provided_per_person: provided_per_person,
-        supplies_distributed: supplies_distributed,
-        supplies_purchased: supplies_purchased,
-        supplies_received: supplies_received
-      }
+      @report ||= { name: 'Adult Incontinence',
+                    entries: {
+                      'Adult incontinence supplies distributed' => number_with_delimiter(distributed_supplies),
+                      'Adult incontinence supplies per adult per month' => monthly_supplies.round,
+                      'Adult incontinence supplies' => types_of_supplies,
+                      '% adult incontinence supplies donated' => "#{percent_donated.round}%",
+                      '% adult incontinence bought' => "#{percent_bought.round}%",
+                      'Money spent purchasing adult incontinence supplies' => money_spent_on_supplies
+                    } }
     end
 
-    def columns_for_csv
-      %i[supplies_distributed monthly_adult_incontinence
-         supplies_received supplies_purchased]
+    # @return [Integer]
+    def distributed_supplies
+      @distributed_supplies ||= organization
+                                .distributions
+                                .for_year(year)
+                                .joins(line_items: :item)
+                                .merge(Item.adult_incontinence)
+                                .sum('line_items.quantity')
     end
 
-    def adult_incontinence_items
-      organization.items.where(partner_key: ADULT_INCONTINENCE_TYPES)
+    # @return [Integer]
+    def monthly_supplies
+      # TODO: this is asking "per adult per month" but I'm not sure how that's different
+      # from just getting the average quantity of all line items, which doesn't seem like a useful
+      # metric - and the "per month" seems redundant since it would be the same per adult
+      # per year - we don't keep track of returning adults so every line item is considered
+      # a "new adult"
+      organization
+        .distributions
+        .for_year(year)
+        .joins(line_items: :item)
+        .merge(Item.adult_incontinence)
+        .average('line_items.quantity')
     end
 
-    def monthly_adult_incontinence
-      # TODO: need to know how many adults this is distributed too
-      # This is just a monthly average now, but needs to be per person
-      yearly_line_item_total / 12.0
+    def types_of_supplies
+      organization.items.adult_incontinence.map(&:name).uniq.join(', ')
     end
 
-    def adult_incontinence_line_items
-      LineItem.where(item: adult_incontinence_items)
+    # @return [Float]
+    def percent_donated
+      return 0.0 if total_supplies.zero?
+
+      (donated_supplies / total_supplies.to_f) * 100
     end
 
-    def yearly_line_item_total
-      @yearly_line_item_total ||= adult_incontinence_line_items.where(itemizable: yearly_purchases).or(
-        adult_incontinence_line_items.where(itemizable: yearly_donations)
-      ).sum(:quantity)
+    # @return [Float]
+    def percent_bought
+      return 0.0 if total_supplies.zero?
+
+      (purchased_supplies / total_supplies.to_f) * 100
     end
 
-    def supplies_distributed
-      adult_incontinence_line_items.where(itemizable: yearly_distributions)
-                                   .sum(:quantity)
+    # @return [String]
+    def money_spent_on_supplies
+      # TODO: This includes ALL supplies - right now we cannot differentiate specifically for
+      # adult incontinence
+      organization.purchases.for_year(year).sum(:amount_spent_in_cents) / 100.0
     end
 
-    def supplies_received
-      return 0 if yearly_line_item_total <= 0
+    ###### HELPER METHODS ######
 
-      count = adult_incontinence_line_items.where(itemizable: yearly_donations)
-                                           .sum(:quantity)
-
-      (count.to_f / yearly_line_item_total) * 100
+    # @return [Integer]
+    def purchased_supplies
+      @purchased_supplies ||= LineItem.joins(:item)
+                                      .merge(Item.adult_incontinence)
+                                      .where(itemizable: organization.purchases.for_year(year))
+                                      .sum(:quantity)
     end
 
-    def supplies_purchased
-      return 0 if yearly_line_item_total <= 0
-
-      count = adult_incontinence_line_items.where(itemizable: yearly_purchases)
-                                           .sum(:quantity)
-
-      (count.to_f / yearly_line_item_total) * 100
+    # @return [Integer]
+    def total_supplies
+      @total_supplies ||= purchased_supplies + donated_supplies
     end
 
-    def total_adults_distributed_to
-      # TODO: find this value
-      100
-    end
-
-    def provided_per_person
-      supplies_distributed / total_adults_distributed_to
-    end
-
-    def money_spent
-      # TODO: Implement me.
-    end
-
-    def yearly_distributions
-      ::Distribution.where(organization: organization)
-                    .where("extract(year  from issued_at) = ?", year)
-    end
-
-    def yearly_donations
-      ::Donation.where(organization: organization)
-                .where("extract(year  from issued_at) = ?", year)
-    end
-
-    def yearly_purchases
-      ::Purchase.where(organization: organization)
-                .where("extract(year  from issued_at) = ?", year)
+    # @return [Integer]
+    def donated_supplies
+      @donated_supplies ||= LineItem.joins(:item)
+                                    .merge(Item.adult_incontinence)
+                                    .where(itemizable: organization.donations.for_year(year))
+                                    .sum(:quantity)
     end
   end
 end
