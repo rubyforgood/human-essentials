@@ -221,7 +221,7 @@ RSpec.configure do |config|
       # If you are using :truncation, it will erase everything once `.clean`
       # is called.
       seed_base_items_for_tests
-      seed_with_default_records
+      seed_with_default_records unless example.metadata[:skip_seed]
     end
   end
 
