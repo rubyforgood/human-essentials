@@ -15,7 +15,7 @@ module Reports
       @report ||= { name: 'Adult Incontinence',
                     entries: {
                       'Adult incontinence supplies distributed' => number_with_delimiter(distributed_supplies),
-                      'Adult incontinence supplies per adult per month' => monthly_supplies.round,
+                      'Adult incontinence supplies per adult per month' => monthly_supplies&.round || 0,
                       'Adult incontinence supplies' => types_of_supplies,
                       '% adult incontinence supplies donated' => "#{percent_donated.round}%",
                       '% adult incontinence bought' => "#{percent_bought.round}%",
