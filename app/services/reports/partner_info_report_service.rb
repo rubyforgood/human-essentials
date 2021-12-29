@@ -16,7 +16,7 @@ module Reports
 
       entries = { 'Number of Partner Agencies' => partner_agencies }
       partner_agency_counts.each do |agency, count|
-        entries["Agency Type: #{agency}"] = count
+        entries["Agency Type: #{agency || 'Unknown'}"] = count
       end
       entries['Zip Codes Served'] = partner_zipcodes_serviced
       @report = { name: 'Partner Agencies and Service Area', entries: entries }
@@ -24,7 +24,7 @@ module Reports
 
     # @return [Array<Partners::Partner>]
     def partner_agency_profiles
-      @partner_agency_profiles ||= organization.partners.map(&:profile)
+      @partner_agency_profiles ||= organization.partners.map(&:profile).compact
     end
 
     # @return [Integer]
