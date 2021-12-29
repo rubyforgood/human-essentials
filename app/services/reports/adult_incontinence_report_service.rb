@@ -19,7 +19,7 @@ module Reports
                       'Adult incontinence supplies' => types_of_supplies,
                       '% adult incontinence supplies donated' => "#{percent_donated.round}%",
                       '% adult incontinence bought' => "#{percent_bought.round}%",
-                      'Money spent purchasing adult incontinence supplies' => money_spent_on_supplies
+                      'Money spent purchasing adult incontinence supplies' => number_to_currency(money_spent_on_supplies)
                     } }
     end
 

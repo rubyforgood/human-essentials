@@ -92,7 +92,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, persiste
                                     "Adult incontinence supplies" => "Adult Briefs (Large/X-Large), Adult Briefs (Medium/Large), Adult Briefs (Small/Medium), Adult Briefs (XXL), Adult Briefs (XXXL), Adult Briefs (XS/Small), Adult Briefs (XXS), Adult Incontinence Pads, Underpads (Pack), Adult Liners, Wipes (Adult)",
                                     "Adult incontinence supplies distributed" => "200",
                                     "Adult incontinence supplies per adult per month" => 20,
-                                    "Money spent purchasing adult incontinence supplies" => 30.0
+                                    "Money spent purchasing adult incontinence supplies" => "$30.00"
                                   },
                                   name: "Adult Incontinence"
                                 })
