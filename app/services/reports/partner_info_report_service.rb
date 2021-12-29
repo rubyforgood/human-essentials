@@ -37,7 +37,7 @@ module Reports
     end
 
     def partner_zipcodes_serviced
-      partner_agency_profiles.map(&:zips_served).join(', ')
+      partner_agency_profiles.map(&:zips_served).uniq.join(', ')
     end
   end
 end
