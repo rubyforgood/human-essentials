@@ -125,6 +125,10 @@ module UiHelper
     _link_to link, { icon: "envelope", type: "warning", text: "Invite", size: "xs" }.merge(options), properties
   end
 
+  def refresh_button_to(link, options = {}, properties = {})
+    _link_to link, { icon: "sync", type: "info", text: "Refresh", size: "md" }.merge(options), properties
+  end
+
   def _link_to(link, options = {}, properties = {})
     icon = options[:icon]
     text = options[:text]
