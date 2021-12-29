@@ -38,6 +38,7 @@ class Organization < ApplicationRecord
 
   with_options dependent: :destroy do
     has_many :adjustments
+    has_many :annual_reports
     has_many :audits
     has_many :diaper_drive_participants
     has_many :diaper_drives

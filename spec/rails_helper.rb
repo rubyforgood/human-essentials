@@ -205,28 +205,30 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.before(:each) do
-    # The database cleaner will now begin at this point
-    # up anything after this point when `.clean` is called.
-    DatabaseCleaner.start
+  config.before(:each) do |example|
+    unless example.metadata[:persisted_data]
+      # The database cleaner will now begin at this point
+      # up anything after this point when `.clean` is called.
+      DatabaseCleaner.start
 
-    # "Dirty" the database by adding the essential records
-    # necessary to run tests.
-    #
-    # If you are using :transaction, it will just rollback any additions
-    # when `.clean` is called. Any previous changes will be kept prior to
-    # the call `DatabaseCleaner.start`
-    #
-    # If you are using :truncation, it will erase everything once `.clean`
-    # is called.
-    seed_base_items_for_tests
-    seed_with_default_records
+      # "Dirty" the database by adding the essential records
+      # necessary to run tests.
+      #
+      # If you are using :transaction, it will just rollback any additions
+      # when `.clean` is called. Any previous changes will be kept prior to
+      # the call `DatabaseCleaner.start`
+      #
+      # If you are using :truncation, it will erase everything once `.clean`
+      # is called.
+      seed_base_items_for_tests
+      seed_with_default_records
+    end
   end
 
-  config.after(:each) do
+  config.after(:each) do |example|
     # Ensure to clean-up the database by whichever means
     # were specified before the test ran
-    DatabaseCleaner.clean
+    DatabaseCleaner.clean unless example.metadata[:persisted_data]
 
     # Remove any /tmp/storage files that might have been
     # added as a consequence of the test.

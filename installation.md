@@ -102,10 +102,6 @@ Then, from your project directory, install the gems required for the project:
 
 ### Configuring Postgres
 
-Copy the database.yml file:
-
-    $ cp config/database.yml.example config/database.yml
-
 By default, Postgres has no password for the admin user. You'll need to set one. Run `psql` as the Unix user `postgres` that was added by the Postgres installation (Ubuntu only):
 
 #### Ubuntu
@@ -130,26 +126,30 @@ You can now exit `psql`, by pressing `<Ctrl-D>` or typing `\q<Enter>`.
 
 ### Making the Postgres Credentials Available in Your Environment
 
-You will see in `config/database.yml` that the Postgres username and password are fetched from the environment variables `PG_USERNAME` and `PG_PASSWORD`, respectively. (The production environment password is an exception, coming from `DIAPER_DATABASE_PASSWORD`.) You'll need to make this happen, for example by putting them in a startup script, or (quick and dirty) typing `export` commands in the terminal:
+You will see in `config/database.yml` that the Postgres username and password are fetched from the environment variables `PG_USERNAME` and `PG_PASSWORD`, respectively. (The production environment password is an exception, coming from `DIAPER_DATABASE_PASSWORD`.) The easiest way to set these variables is by copying the `.env.example` file to `.env` and then editing it:
 
-For OS X users, remember to replace `postgres`, below, with the user name you used in psql.
+`cp .env.example .env`
+
+Now edit the top two lines of this file. For OS X users, remember to replace `postgres`, below, with the user name you used in psql.
 
 ```
-export PG_USERNAME=postgres
-export PG_PASSWORD=password
+PG_USERNAME=postgres
+PG_PASSWORD=password
 ```
 
 ### Initializing the Data Base
 
 From your project directory, initialize the data base:
 
-`rails db:setup`
-
+`rails db:setup db:migrate db:test:prepare db:seed`
 
 ### Testing the Application
 
 You should now be able to successfully run the application:
 
-`rails server`
+```
+bin/webpack-dev-server
+rails server
+```
 
 Point a browser to `localhost:3000`. You should see the Diaper home page. For login credentials, consult the README.md file (at the time of this writing at [https://github.com/rubyforgood/diaper/blob/master/README.md#login](https://github.com/rubyforgood/diaper/blob/master/README.md#login).
