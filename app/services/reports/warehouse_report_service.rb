@@ -10,7 +10,7 @@ module Reports
     end
 
     def report
-      @report ||= { name: 'Warehouse Information',
+      @report ||= { name: 'Warehouse and Storage',
                     entries: {
                       'Total storage locations' => storage_location_count,
                       'Total square footage' => total_square_footage,

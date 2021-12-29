@@ -30,7 +30,7 @@ RSpec.describe Reports::WarehouseReportService, type: :service, skip_seed: true 
                                     entries: { "Largest storage site type" => "Consumer, self-storage or container space",
                                                "Total square footage" => '3000',
                                                "Total storage locations" => 3 },
-                                    name: "Warehouse Information"
+                                    name: "Warehouse and Storage"
                                   })
     end
 
@@ -44,7 +44,7 @@ RSpec.describe Reports::WarehouseReportService, type: :service, skip_seed: true 
                                     entries: { "Largest storage site type" => "Warehouse 2 - warehouse type not given",
                                                "Total square footage" => '3000',
                                                "Total storage locations" => 3 },
-                                    name: "Warehouse Information"
+                                    name: "Warehouse and Storage"
                                   })
     end
 
@@ -53,7 +53,7 @@ RSpec.describe Reports::WarehouseReportService, type: :service, skip_seed: true 
                                     entries: { "Largest storage site type" => "No warehouses with square footage entered",
                                                "Total square footage" => "0",
                                                "Total storage locations" => 0 },
-                                    name: "Warehouse Information"
+                                    name: "Warehouse and Storage"
                                   })
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Reports::WarehouseReportService, type: :service, skip_seed: true 
                                     entries: { "Largest storage site type" => "Residential space used",
                                                "Total square footage" => "500 (2 locations do not have square footage entered)",
                                                "Total storage locations" => 3 },
-                                    name: "Warehouse Information"
+                                    name: "Warehouse and Storage"
                                   })
     end
   end
