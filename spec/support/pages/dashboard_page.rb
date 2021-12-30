@@ -41,6 +41,10 @@ class DashboardPage
     page.find(org_logo_selector).native[:src]
   end
 
+  def summary_section
+    page.find "#summary"
+  end
+
   private
 
   def org_logo_selector

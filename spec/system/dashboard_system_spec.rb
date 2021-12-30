@@ -71,11 +71,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
     let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 0, organization: @organization) }
     let!(:url_prefix) { "/#{@organization.short_name}" }
+    let(:dashboard_page) { DashboardPage.new url_prefix: url_prefix }
     subject { url_prefix + "/dashboard" }
 
     describe "Signage" do
       it "shows their organization name unless they have a logo set" do
-        dashboard_page = DashboardPage.new url_prefix: url_prefix
         dashboard_page.visit
 
         expect(dashboard_page).to have_organization_logo
@@ -99,13 +99,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
       describe "Summary" do
         before do
           create_list(:storage_location, 3, :with_items, item_quantity: 111, organization: @organization)
-          visit subject
+          dashboard_page.visit
         end
 
         it "displays the on-hand totals" do
-          within "#summary" do
-            expect(page).to have_content("on-hand")
-          end
+          expect(dashboard_page.summary_section.text).to include "on-hand"
         end
 
         context "when constrained to date range" do
