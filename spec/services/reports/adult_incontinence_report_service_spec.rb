@@ -1,123 +1,118 @@
-RSpec.xdescribe Reports::AdultIncontinenceReportService, type: :service do
-  describe "#adult_incontinence_items" do
-    it "returns items relating to adult incontinence" do
-      items = report.adult_incontinence_items
+RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_seed: true do
+  let(:year) { 2020 }
+  let(:organization) { create(:organization) }
 
-      expect(items.length).to eq(4)
-    end
+  subject(:report) do
+    described_class.new(organization: organization, year: year)
   end
 
-  describe "#yearly_line_item_total" do
-    it "returns the total items incoming this year" do
-      create_purchase
-      create_donation
-
-      expect(report.yearly_line_item_total).to eq(20)
-    end
-
-    it "doesn't include items from other years" do
-      create_purchase(Time.current - 2.years)
-      create_purchase(Time.current + 2.years)
-
-      create_donation(Time.current - 2.years)
-      create_donation(Time.current + 2.years)
-
-      expect(report.yearly_line_item_total).to eq(0)
-    end
-  end
-
-  describe "#supplies_distributed" do
-    it "adds up all the years distribution" do
-      create_distribution
-
-      expect(report.supplies_distributed).to eq(10)
+  describe '#report' do
+    it 'should report zero values' do
+      expect(report.report).to eq({
+                                    entries: {
+                                      "% adult incontinence bought" => "0%",
+                                      "% adult incontinence supplies donated" => "0%",
+                                      "Adult incontinence supplies" => "Adult Briefs (Large/X-Large), Adult Briefs (Medium/Large), Adult Briefs (Small/Medium), Adult Briefs (XXL), Adult Briefs (XXXL), Adult Briefs (XS/Small), Adult Briefs (XXS), Adult Incontinence Pads, Underpads (Pack), Adult Liners, Wipes (Adult)",
+                                      "Adult incontinence supplies distributed" => "0",
+                                      "Adult incontinence supplies per adult per month" => 0,
+                                      "Money spent purchasing adult incontinence supplies" => "$0.00"
+                                    },
+                                    name: "Adult Incontinence"
+                                  })
     end
 
-    it "doesn't count other years" do
-      create_distribution(Time.current - 2.years)
-      create_distribution(Time.current + 2.years)
+    describe 'with values' do
+      before(:each) do
+        seed_base_items_for_tests
+        Organization.seed_items(organization)
 
-      expect(report.supplies_distributed).to eq(0)
+        within_time = Time.zone.parse("2020-05-31 14:00:00")
+        outside_time = Time.zone.parse("2019-05-31 14:00:00")
+
+        adult_incontinence_item = organization.items.adult_incontinence.first
+        non_adult_incontinence_item = organization.items.where.not(id: organization.items.adult_incontinence).first
+
+        # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
+        # Spec will ensure that only the required data is included.
+
+        # Distributions
+        distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
+        outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
+        (distributions + outside_distributions).each do |dist|
+          create_list(:line_item, 5, :distribution, quantity: 200, item: adult_incontinence_item, itemizable: dist)
+          create_list(:line_item, 5, :distribution, quantity: 30, item: non_adult_incontinence_item, itemizable: dist)
+        end
+
+        # Donations
+        donations = create_list(:donation, 2,
+                                diaper_drive: nil,
+                                issued_at: within_time,
+                                money_raised: 1000,
+                                organization: organization)
+
+        donations += create_list(:donation, 2,
+                                 diaper_drive: nil,
+                                 issued_at: outside_time,
+                                 money_raised: 1000,
+                                 organization: organization)
+
+        donations.each do |donation|
+          create_list(:line_item, 3, :donation, quantity: 20, item: adult_incontinence_item, itemizable: donation)
+          create_list(:line_item, 3, :donation, quantity: 10, item: non_adult_incontinence_item, itemizable: donation)
+        end
+
+        # Purchases
+        purchases = [
+          create(:purchase,
+                 issued_at: within_time,
+                 organization: organization,
+                 purchased_from: 'Google',
+                 amount_spent_in_cents: 1000),
+          create(:purchase,
+                 issued_at: within_time,
+                 organization: organization,
+                 purchased_from: 'Walmart',
+                 amount_spent_in_cents: 2000),
+        ]
+        purchases += create_list(:purchase, 2,
+                                 issued_at: outside_time,
+                                 amount_spent_in_cents: 20_000,
+                                 organization: organization)
+        purchases.each do |purchase|
+          create_list(:line_item, 3, :purchase, quantity: 30, item: adult_incontinence_item, itemizable: purchase)
+          create_list(:line_item, 3, :purchase, quantity: 40, item: non_adult_incontinence_item, itemizable: purchase)
+        end
+      end
+
+      it 'should report normal values' do
+        organization.items.adult_incontinence.first.update!(distribution_quantity: 20)
+
+        expect(report.report).to eq({
+                                      entries: {
+                                        "% adult incontinence bought" => "60%",
+                                        "% adult incontinence supplies donated" => "40%",
+                                        "Adult incontinence supplies" => "Adult Briefs (Large/X-Large), Adult Briefs (Medium/Large), Adult Briefs (Small/Medium), Adult Briefs (XXL), Adult Briefs (XXXL), Adult Briefs (XS/Small), Adult Briefs (XXS), Adult Incontinence Pads, Underpads (Pack), Adult Liners, Wipes (Adult)",
+                                        "Adult incontinence supplies distributed" => "2,000",
+                                        "Adult incontinence supplies per adult per month" => 20,
+                                        "Money spent purchasing adult incontinence supplies" => "$30.00"
+                                      },
+                                      name: "Adult Incontinence"
+                                    })
+      end
+
+      it 'should handle null distribution quantity' do
+        expect(report.report).to eq({
+                                      entries: {
+                                        "% adult incontinence bought" => "60%",
+                                        "% adult incontinence supplies donated" => "40%",
+                                        "Adult incontinence supplies" => "Adult Briefs (Large/X-Large), Adult Briefs (Medium/Large), Adult Briefs (Small/Medium), Adult Briefs (XXL), Adult Briefs (XXXL), Adult Briefs (XS/Small), Adult Briefs (XXS), Adult Incontinence Pads, Underpads (Pack), Adult Liners, Wipes (Adult)",
+                                        "Adult incontinence supplies distributed" => "2,000",
+                                        "Adult incontinence supplies per adult per month" => 50,
+                                        "Money spent purchasing adult incontinence supplies" => "$30.00"
+                                      },
+                                      name: "Adult Incontinence"
+                                    })
+      end
     end
-  end
-
-  describe "#supplies_received" do
-    it "returns the percent of supplies donated" do
-      create_purchase
-      create_purchase
-      create_purchase
-      create_donation
-
-      expect(report.supplies_received).to eq(25)
-    end
-  end
-
-  describe "#supplies_purchased" do
-    it "returns the percent of supplies donated" do
-      create_purchase
-      create_donation
-      create_donation
-      create_donation
-
-      expect(report.supplies_purchased).to eq(25)
-    end
-  end
-
-  xdescribe "#total_adults_distributed_to" do
-    it "needs specs" do
-      pending("Implement after method is implemented")
-    end
-  end
-
-  xdescribe "#provided_per_person" do
-    it "needs specs" do
-      pending("Implement after method is implemented")
-    end
-  end
-
-  xdescribe "#money_spent" do
-    it "needs specs" do
-      pending("Implement after method is implemented")
-    end
-  end
-
-  def adult_incontinence_item
-    Item.find_by(partner_key: described_class::ADULT_INCONTINENCE_TYPES.first, organization: organization)
-  end
-
-  def create_purchase(date = Time.current)
-    create(:line_item,
-           itemizable_type: "Purchase",
-           itemizable_id: create(:purchase, issued_at: date).id,
-           item: adult_incontinence_item,
-           quantity: 10)
-  end
-
-  def create_donation(date = Time.current)
-    create(:line_item,
-           itemizable_type: "Donation",
-           itemizable_id: create(:donation, issued_at: date).id,
-           item: adult_incontinence_item,
-           quantity: 10)
-  end
-
-  def create_virtual_diaper_drive_donation
-    create(:diaper_drive_donation, :with_items, organization: organization, source: "Diaper Drive", money_raised: 50_000, diaper_drive: create(:diaper_drive, virtual: true))
-  end
-
-  def create_distribution(date = Time.current)
-    create(:line_item,
-           itemizable_type: "Distribution",
-           itemizable_id: create(:distribution, issued_at: date).id,
-           item: adult_incontinence_item,
-           quantity: 10)
-  end
-
-  def organization
-    @organization ||= create(:organization)
-  end
-
-  def report
-    described_class.new(organization: organization, year: Time.zone.now.year)
   end
 end
