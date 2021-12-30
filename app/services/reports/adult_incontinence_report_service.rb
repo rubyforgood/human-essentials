@@ -43,7 +43,7 @@ module Reports
         .for_year(year)
         .joins(line_items: :item)
         .merge(Item.adult_incontinence)
-        .average('items.distribution_quantity')
+        .average('COALESCE(items.distribution_quantity, 50)')
     end
 
     def types_of_supplies
