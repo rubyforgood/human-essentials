@@ -221,7 +221,15 @@ RSpec.configure do |config|
       # If you are using :truncation, it will erase everything once `.clean`
       # is called.
       seed_base_items_for_tests
-      seed_with_default_records unless example.metadata[:skip_seed]
+
+      # Always create organization, almost no tests can be run without one
+      Rails.logger.info "\n\n-~=> Creating DEFAULT organization & partner"
+      @organization = create(:organization, name: "DEFAULT", skip_items: true)
+
+      unless example.metadata[:skip_seed]
+        Organization.seed_items(@organization)
+        seed_with_default_records
+      end
     end
   end
 
@@ -312,8 +320,6 @@ def __sweep_up_db_with_log
 end
 
 def seed_with_default_records
-  Rails.logger.info "\n\n-~=> Creating DEFAULT organization & partner"
-  @organization = create(:organization, name: "DEFAULT")
   @partner = create(:partner, organization: @organization)
   Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
   @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)

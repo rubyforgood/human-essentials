@@ -14,7 +14,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DiaperDrive, type: :model do
+RSpec.describe DiaperDrive, type: :model, skip_seed: true do
   let!(:diaper_drive) { create(:diaper_drive) }
   let!(:donation) { create(:donation, :with_items, item_quantity: 7, diaper_drive: diaper_drive) }
   let!(:donation2) { create(:donation, :with_items, item_quantity: 9, diaper_drive: diaper_drive) }

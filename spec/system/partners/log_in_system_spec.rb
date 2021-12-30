@@ -1,4 +1,4 @@
-RSpec.describe "Authentication", type: :system, js: true do
+RSpec.describe "Authentication", type: :system, js: true, skip_seed: true do
   describe 'logging in as a partner user' do
     let(:partner_user) do
       user = create(:partner).primary_partner_user

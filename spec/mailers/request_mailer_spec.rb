@@ -1,4 +1,4 @@
-RSpec.describe RequestMailer, type: :mailer do
+RSpec.describe RequestMailer, type: :mailer, skip_seed: true do
   describe "#request_cancel_partner_notification" do
     subject { described_class.request_cancel_partner_notification(request_id: request.id) }
     let(:request) { create(:request) }

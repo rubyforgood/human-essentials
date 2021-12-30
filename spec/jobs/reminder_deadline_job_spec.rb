@@ -1,4 +1,4 @@
-RSpec.describe ReminderDeadlineJob, type: :job do
+RSpec.describe ReminderDeadlineJob, type: :job, skip_seed: true do
   let(:todays_day) { 10 }
   let(:not_today) { 11 }
   let(:deadline_day) { 20 }

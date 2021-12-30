@@ -18,7 +18,7 @@
 
 require "rails_helper"
 
-RSpec.describe DiaperDriveParticipant, type: :model do
+RSpec.describe DiaperDriveParticipant, type: :model, skip_seed: true do
   it_behaves_like "provideable"
 
   context "Validations" do

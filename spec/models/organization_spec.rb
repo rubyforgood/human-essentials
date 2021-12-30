@@ -159,6 +159,7 @@ RSpec.describe Organization, type: :model do
 
     context "when no organization is provided" do
       it "updates all organizations" do
+        Organization.seed_items(@organization)
         second_organization = create(:organization)
         organization_item_count = @organization.items.size
         second_organization_item_count = second_organization.items.size
