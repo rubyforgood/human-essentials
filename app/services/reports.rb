@@ -9,7 +9,7 @@ module Reports
         Reports::WarehouseReportService.new(year: year, organization: organization).report,
         # Reports::AdultIncontinenceReportService.new(year: year, organization: organization),
         # Reports::OtherProductsReportService.new(year: year, organization: organization),
-        # Reports::PartnerInfoReportService.new(year: year, organization: organization),
+        Reports::PartnerInfoReportService.new(year: year, organization: organization).report,
         # Reports::ChildrenServedReportService.new(year: year, organization: organization),
         # Reports::SummaryInfoReportService.new(year: year, organization: organization),
       ]
