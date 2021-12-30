@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_24_151329) do
+ActiveRecord::Schema.define(version: 2021_12_30_033135) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -183,8 +184,8 @@ ActiveRecord::Schema.define(version: 2021_12_24_151329) do
     t.integer "organization_id"
     t.datetime "issued_at"
     t.string "agency_rep"
-    t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
+    t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
@@ -338,6 +339,8 @@ ActiveRecord::Schema.define(version: 2021_12_24_151329) do
     t.integer "default_storage_location"
     t.text "partner_form_fields", default: [], array: true
     t.integer "account_request_id"
+    t.boolean "repackage_essentials", default: false, null: false
+    t.boolean "distribute_monthly", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -455,7 +458,7 @@ ActiveRecord::Schema.define(version: 2021_12_24_151329) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -475,7 +478,8 @@ ActiveRecord::Schema.define(version: 2021_12_24_151329) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type", null: false
+    t.string "item_type"
+    t.string "{:null=>false}"
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"

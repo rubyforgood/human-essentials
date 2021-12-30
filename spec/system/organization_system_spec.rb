@@ -48,6 +48,20 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert.alert-danger.alert-dismissible")).to have_content "Failed to update"
       end
 
+      it 'can select if the org repackages essentials' do
+        choose('organization[repackage_essentials]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
+      end
+
+      it 'can select if the org distributes essentials monthly' do
+        choose('organization[distribute_monthly]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
+      end
+
       it 'can set a default storage location on the organization' do
         select(store.name, from: 'Default Storage Location')
 
