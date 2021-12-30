@@ -74,6 +74,12 @@ class Item < ApplicationRecord
       .or(where("items.partner_key LIKE '%adult%' AND items.partner_key NOT LIKE '%cloth%'"))
   }
 
+  scope :other_categories, -> {
+    joins(:base_item)
+      .where(items: { partner_key: %w(pads tampons cloth_training_pants wipes adult_wipes) })
+      .or(where("base_items.category = 'Miscellaneous'"))
+  }
+
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
   end
