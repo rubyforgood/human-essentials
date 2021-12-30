@@ -29,7 +29,7 @@ module Reports
                                  .for_year(year)
                                  .joins(line_items: :item)
                                  .merge(Item.disposable)
-                                 .sum('line_items.quantity / items.distribution_quantity') || 0
+                                 .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') || 0
     end
 
     # @return [Float]
@@ -44,7 +44,7 @@ module Reports
         .for_year(year)
         .joins(line_items: :item)
         .merge(Item.disposable)
-        .average('items.distribution_quantity') || 0.0
+        .average('COALESCE(items.distribution_quantity, 50)') || 0.0
     end
   end
 end
