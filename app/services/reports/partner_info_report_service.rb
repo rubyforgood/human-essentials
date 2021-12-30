@@ -1,36 +1,43 @@
 module Reports
   class PartnerInfoReportService
+    include ActionView::Helpers::NumberHelper
     attr_reader :year, :organization
-    delegate :partners, to: :organization
-    delegate :count, to: :partners, prefix: true
 
+    # @param year [Integer]
+    # @param organization [Organization]
     def initialize(year:, organization:)
       @year = year
       @organization = organization
     end
 
+    # @return [Hash]
     def report
-      @report ||= {
-        partners_count: partners_count,
-        partner_agency_type: partner_agency_type,
-        partner_zipcodes_serviced: partner_zipcodes_serviced
-      }
-    end
+      return @report if @report
 
-    def columns_for_csv
-      %i[partners_count partner_agency_type partner_zipcodes_serviced]
-    end
-
-    def partner_agency_type
-      partners.map do |partner|
-        partner.profile.agency_type
+      entries = { 'Number of Partner Agencies' => partner_agencies }
+      partner_agency_counts.each do |agency, count|
+        entries["Agency Type: #{agency || 'Unknown'}"] = count
       end
+      entries['Zip Codes Served'] = partner_zipcodes_serviced
+      @report = { name: 'Partner Agencies and Service Area', entries: entries }
+    end
+
+    # @return [Array<Partners::Partner>]
+    def partner_agency_profiles
+      @partner_agency_profiles ||= organization.partners.map(&:profile).compact
+    end
+
+    # @return [Integer]
+    def partner_agencies
+      partner_agency_profiles.size
+    end
+
+    def partner_agency_counts
+      partner_agency_profiles.map(&:agency_type).tally
     end
 
     def partner_zipcodes_serviced
-      partners.map do |partner|
-        partner.profile.zips_served
-      end
+      partner_agency_profiles.map(&:zips_served).uniq.join(', ')
     end
   end
 end
