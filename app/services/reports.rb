@@ -7,11 +7,11 @@ module Reports
       [
         Reports::AcquisitionReportService.new(year: year, organization: organization).report,
         Reports::WarehouseReportService.new(year: year, organization: organization).report,
-        # Reports::AdultIncontinenceReportService.new(year: year, organization: organization),
-        # Reports::OtherProductsReportService.new(year: year, organization: organization),
+        # Reports::AdultIncontinenceReportService.new(year: year, organization: organization).report,
+        # Reports::OtherProductsReportService.new(year: year, organization: organization).report,
         Reports::PartnerInfoReportService.new(year: year, organization: organization).report,
-        # Reports::ChildrenServedReportService.new(year: year, organization: organization),
-        # Reports::SummaryInfoReportService.new(year: year, organization: organization),
+        # Reports::ChildrenServedReportService.new(year: year, organization: organization).report,
+        Reports::SummaryReportService.new(year: year, organization: organization).report,
       ]
     end
 
