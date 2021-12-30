@@ -10,8 +10,8 @@ module Reports
         # Reports::AdultIncontinenceReportService.new(year: year, organization: organization),
         Reports::OtherProductsReportService.new(year: year, organization: organization).report,
         Reports::PartnerInfoReportService.new(year: year, organization: organization).report,
-        # Reports::ChildrenServedReportService.new(year: year, organization: organization),
-        # Reports::SummaryInfoReportService.new(year: year, organization: organization),
+        # Reports::ChildrenServedReportService.new(year: year, organization: organization).report,
+        Reports::SummaryReportService.new(year: year, organization: organization).report,
       ]
     end
 
