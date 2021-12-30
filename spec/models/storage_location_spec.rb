@@ -191,7 +191,7 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "import_inventory" do
+    describe "import_inventory", needs_users: true do
       it "imports storage locations from a csv file" do
         donations_count = Donation.count
         storage_location = create(:storage_location, organization_id: @organization.id)

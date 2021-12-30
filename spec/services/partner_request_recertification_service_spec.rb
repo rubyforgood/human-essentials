@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PartnerRequestRecertificationService do
+describe PartnerRequestRecertificationService, skip_seed: true do
   describe '#call' do
     subject { described_class.new(partner: partner).call }
     let(:partner) { create(:partner) }

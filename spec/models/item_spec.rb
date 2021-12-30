@@ -21,7 +21,7 @@
 #  organization_id              :integer
 #
 
-RSpec.describe Item, type: :model do
+RSpec.describe Item, type: :model, skip_seed: true do
   describe 'Assocations >' do
     it { should belong_to(:item_category).optional }
   end

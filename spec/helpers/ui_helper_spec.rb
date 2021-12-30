@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe UiHelper, type: :helper do
+RSpec.describe UiHelper, type: :helper, skip_seed: true do
   describe 'optional_data_text' do
     subject { helper.optional_data_text(field) }
 

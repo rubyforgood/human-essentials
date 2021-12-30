@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe DiaperDriveHelper, type: :helper do
+RSpec.describe DiaperDriveHelper, type: :helper, skip_seed: true do
   describe '#is_virtual' do
     context 'when the diaper drive was held virtually' do
       let(:diaper_drive) { build(:diaper_drive, virtual: true) }

@@ -14,7 +14,7 @@
 #  vendor_id             :integer
 #
 
-RSpec.describe Purchase, type: :model do
+RSpec.describe Purchase, type: :model, skip_seed: true do
   it_behaves_like "itemizable"
 
   context "Validations >" do
