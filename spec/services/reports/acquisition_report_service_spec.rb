@@ -14,6 +14,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
   before(:all) do
     DatabaseCleaner.start
+    create_organization
     seed_base_items_for_tests
     seed_with_default_records
 

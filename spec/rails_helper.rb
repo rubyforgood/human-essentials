@@ -221,16 +221,19 @@ RSpec.configure do |config|
       # If you are using :truncation, it will erase everything once `.clean`
       # is called.
       seed_base_items_for_tests
-
       # Always create organization, almost no tests can be run without one
-      Rails.logger.info "\n\n-~=> Creating DEFAULT organization & partner"
-      @organization = create(:organization, name: "DEFAULT", skip_items: true)
+      create_organization
 
-      unless example.metadata[:skip_seed]
-        Organization.seed_items(@organization)
-        seed_with_default_records
-      end
+      seed_with_default_records unless example.metadata[:skip_seed]
     end
+  end
+
+  config.before(:each, type: proc { |v| %i(request system controller).include?(v) }) do
+    create_default_users
+  end
+
+  config.before(:each, :needs_users) do
+    create_default_users
   end
 
   config.after(:each) do |example|
@@ -261,19 +264,29 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
+def create_default_users
+  Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
+  @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
+  @user = create(:user, organization: @organization, name: "DEFAULT USER")
+  @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
+  @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
+end
+
 def seed_base_items_for_tests
   Rails.logger.info "-~=> Destroying all Base Items ... "
   BaseItem.delete_all
-  base_items = File.read(Rails.root.join("db", "base_items.json"))
-  items_by_category = JSON.parse(base_items)
-  Rails.logger.info "Creating Base Items: "
-  batch_insert = []
-  items_by_category.each do |category, entries|
-    entries.each do |entry|
-      batch_insert << { name: entry["name"], category: category, partner_key: entry["key"] }
+  unless @_base_items
+    base_items = File.read(Rails.root.join("db", "base_items.json"))
+    items_by_category = JSON.parse(base_items)
+    Rails.logger.info "Creating Base Items: "
+    @_base_items = []
+    items_by_category.each do |category, entries|
+      entries.each do |entry|
+        @_base_items << { name: entry["name"], category: category, partner_key: entry["key"] }
+      end
     end
   end
-  BaseItem.create(batch_insert)
+  BaseItem.create(@_base_items)
   Rails.logger.info "~-=> Done creating Base Items!"
 end
 
@@ -319,11 +332,13 @@ def __sweep_up_db_with_log
   ASCIIART
 end
 
+def create_organization
+  Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
+  @organization = create(:organization, name: "DEFAULT", skip_items: true)
+end
+
 def seed_with_default_records
+  Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
   @partner = create(:partner, organization: @organization)
-  Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
-  @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
-  @user = create(:user, organization: @organization, name: "DEFAULT USER")
-  @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
-  @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
+  Organization.seed_items(@organization)
 end
