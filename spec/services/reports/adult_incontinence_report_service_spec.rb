@@ -29,6 +29,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
       outside_time = Time.zone.parse("2019-05-31 14:00:00")
 
       adult_incontinence_item = organization.items.adult_incontinence.first
+      adult_incontinence_item.update!(distribution_quantity: 20)
       non_adult_incontinence_item = organization.items.where.not(id: organization.items.adult_incontinence).first
 
       # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
@@ -38,7 +39,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
       (distributions + outside_distributions).each do |dist|
-        create_list(:line_item, 5, :distribution, quantity: 20, item: adult_incontinence_item, itemizable: dist)
+        create_list(:line_item, 5, :distribution, quantity: 200, item: adult_incontinence_item, itemizable: dist)
         create_list(:line_item, 5, :distribution, quantity: 30, item: non_adult_incontinence_item, itemizable: dist)
       end
 
@@ -87,7 +88,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                                       "% adult incontinence bought" => "60%",
                                       "% adult incontinence supplies donated" => "40%",
                                       "Adult incontinence supplies" => "Adult Briefs (Large/X-Large), Adult Briefs (Medium/Large), Adult Briefs (Small/Medium), Adult Briefs (XXL), Adult Briefs (XXXL), Adult Briefs (XS/Small), Adult Briefs (XXS), Adult Incontinence Pads, Underpads (Pack), Adult Liners, Wipes (Adult)",
-                                      "Adult incontinence supplies distributed" => "200",
+                                      "Adult incontinence supplies distributed" => "2,000",
                                       "Adult incontinence supplies per adult per month" => 20,
                                       "Money spent purchasing adult incontinence supplies" => "$30.00"
                                     },

@@ -35,17 +35,15 @@ module Reports
 
     # @return [Integer]
     def monthly_supplies
-      # TODO: this is asking "per adult per month" but I'm not sure how that's different
-      # from just getting the average quantity of all line items, which doesn't seem like a useful
-      # metric - and the "per month" seems redundant since it would be the same per adult
-      # per year - we don't keep track of returning adults so every line item is considered
-      # a "new adult"
+      # NOTE: This is asking "per adult per month" but there doesn't seem to be much difference
+      # in calculating per month or per any other time frame, since all it's really asking
+      # is the value of the `distribution_quantity` field for the items we're giving out.
       organization
         .distributions
         .for_year(year)
         .joins(line_items: :item)
         .merge(Item.adult_incontinence)
-        .average('line_items.quantity')
+        .average('items.distribution_quantity')
     end
 
     def types_of_supplies
