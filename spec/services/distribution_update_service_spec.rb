@@ -1,4 +1,4 @@
-RSpec.describe DistributionUpdateService, type: :service do
+RSpec.describe DistributionUpdateService, type: :service, skip_seed: true do
   describe "call" do
     # TODO: this function was extracted to the service object - do we need a parallel test?
 

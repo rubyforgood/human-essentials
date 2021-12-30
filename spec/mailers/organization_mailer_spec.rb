@@ -1,4 +1,4 @@
-RSpec.describe OrganizationMailer, type: :mailer do
+RSpec.describe OrganizationMailer, type: :mailer, skip_seed: true do
   describe "#partner_approval_request" do
     subject { described_class.partner_approval_request(organization: organization, partner: partner) }
     let(:partner) { create(:partner) }

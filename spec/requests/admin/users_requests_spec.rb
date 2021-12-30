@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Admin::UsersController", type: :request do
+RSpec.describe "Admin::UsersController", type: :request, skip_seed: true do
   let(:default_params) do
     { organization_id: @organization.id }
   end

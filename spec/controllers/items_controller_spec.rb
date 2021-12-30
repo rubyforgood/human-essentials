@@ -1,4 +1,4 @@
-RSpec.describe ItemsController, type: :controller do
+RSpec.describe ItemsController, type: :controller, skip_seed: true do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end

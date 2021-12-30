@@ -1,4 +1,4 @@
-RSpec.describe PartnerMailer, type: :mailer do
+RSpec.describe PartnerMailer, type: :mailer, skip_seed: true do
   describe "#recertification_request" do
     subject { PartnerMailer.recertification_request(partner: partner) }
     let(:partner) { create(:partner) }

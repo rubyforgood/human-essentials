@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe ConsolidatedLoginDirector do
+RSpec.describe ConsolidatedLoginDirector, skip_seed: true do
   let(:director) { ConsolidatedLoginDirector.new }
 
   let(:user) do

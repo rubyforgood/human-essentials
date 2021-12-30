@@ -10,7 +10,7 @@ require "rails_helper"
 #     end
 #   end
 # end
-RSpec.describe PartnersHelper, type: :helper do
+RSpec.describe PartnersHelper, type: :helper, skip_seed: true do
   # pending "add some examples to (or delete) #{__FILE__}"
   it "returns a generated path" do
     path_string = "/#{@organization.short_name}/organization"

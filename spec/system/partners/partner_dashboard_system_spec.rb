@@ -1,4 +1,4 @@
-RSpec.describe "Partner Dashboard", type: :system, js: true do
+RSpec.describe "Partner Dashboard", type: :system, js: true, skip_seed: true do
   describe 'Requests In Progress' do
     let(:partner_user) { partner.primary_partner_user }
     let!(:partner) { FactoryBot.create(:partner) }

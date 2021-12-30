@@ -15,7 +15,7 @@
 #  partner_group_id :bigint
 #
 
-RSpec.describe Partner, type: :model do
+RSpec.describe Partner, type: :model, skip_seed: true do
   describe 'associations' do
     it { should belong_to(:organization) }
     it { should belong_to(:partner_group).optional }

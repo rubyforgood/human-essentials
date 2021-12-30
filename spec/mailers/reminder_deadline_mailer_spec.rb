@@ -1,4 +1,4 @@
-describe ReminderDeadlineMailer do
+describe ReminderDeadlineMailer, skip_seed: true do
   describe 'notify deadline' do
     let(:organization) { create :organization }
     let!(:user) { create(:organization_admin, organization: organization) }
