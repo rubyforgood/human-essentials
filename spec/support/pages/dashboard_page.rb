@@ -32,4 +32,18 @@ class DashboardPage
   def has_getting_started_guide?
     page.has_selector? "#getting-started-guide"
   end
+
+  def has_organization_logo?
+    page.has_selector? org_logo_selector
+  end
+
+  def organization_logo_filepath
+    page.find(org_logo_selector).native[:src]
+  end
+
+  private
+
+  def org_logo_selector
+    ".organization-logo"
+  end
 end

@@ -75,16 +75,19 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
     describe "Signage" do
       it "shows their organization name unless they have a logo set" do
-        visit subject
-        # extract just the filename
-        org_logo = extract_image(:css, ".organization-logo")
-        expect(org_logo).to be_include("logo.jpg")
+        dashboard_page = DashboardPage.new url_prefix: url_prefix
+        dashboard_page.visit
+
+        expect(dashboard_page).to have_organization_logo
+
+        logo_filename = File.basename(dashboard_page.organization_logo_filepath).split("?").first
+        expect(logo_filename).to include("logo.jpg")
 
         @organization.logo.purge
         @organization.save
-        visit subject
+        dashboard_page.visit
 
-        expect(page).not_to have_css(".organization-logo")
+        expect(dashboard_page).not_to have_organization_logo
       end
     end
 
