@@ -10,6 +10,10 @@ module ApplicationHelper
     end
   end
 
+  def humanize_boolean(boolean)
+    I18n.t((!!boolean).to_s)
+  end
+
   def default_title_content
     if current_organization
       current_organization.name
@@ -45,6 +49,7 @@ module ApplicationHelper
     when "alert" then "alert alert-warning"
     end
   end
+
   ## Devise overrides
 
   def after_sign_in_path_for(resource)
