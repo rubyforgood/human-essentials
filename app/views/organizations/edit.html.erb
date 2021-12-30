@@ -38,8 +38,6 @@
             </div>
             <!-- form start -->
             <div class="card-body">
-
-
               <div class="form-inputs">
                 <%= f.input :name, required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-user"></i></span>
@@ -87,7 +85,11 @@
                   <%= f.text_area :invitation_text, class: "form-control" %>
                 <% end %>
 
-                <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comment in the email." %>
+
+                <%= f.input :repackage_essentials, label: 'Does your bank repackage essentials?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                <%= f.input :distribute_monthly, label: 'Does your bank distribute monthly?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+
+                <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
                 <%= f.input :default_email_text, label: "Distribution Email Content", hint: default_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :default_email_text %>
                 <% end %>
