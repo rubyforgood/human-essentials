@@ -1,0 +1,10 @@
+<h1>Organizations Help For Admins</h1>
+
+<h3><%= link_to "Write a new question and answer", new_admin_article_path %></h3>
+
+<% @articles.each do |article| %>
+  <h3>
+    <%= article.question %>
+  </h3>
+  <br/>
+<% end %>

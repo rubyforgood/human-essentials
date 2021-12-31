@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_24_151329) do
+ActiveRecord::Schema.define(version: 2021_12_30_214819) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -84,6 +85,14 @@ ActiveRecord::Schema.define(version: 2021_12_24_151329) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["organization_id"], name: "index_annual_reports_on_organization_id"
+  end
+
+  create_table "articles", force: :cascade do |t|
+    t.string "question"
+    t.boolean "for_partners"
+    t.boolean "for_organizations"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "audits", force: :cascade do |t|

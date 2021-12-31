@@ -1,0 +1,11 @@
+<h1>Write new entries for FAQ pages</h1>
+
+<%= simple_form_for @article, url: admin_articles_path do |f| %>
+  <h4><%= f.input :question %></h4>
+  <br/>
+  <%= f.input :for_partners, as: :boolean %>
+  <br/>
+  <%= f.input :for_organizations, as: :boolean %>
+  <br/>
+  <%= f.submit 'Submit', class: 'btn btn-primary' %>
+<% end %>
