@@ -108,15 +108,9 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
         context "when constrained to date range" do
           it "does not change" do
-            within "#summary" do
-              expect(page).to have_content("333")
-            end
-
-            date_range_picker_select_range "Last Month"
-
-            within "#summary" do
-              expect(page).to have_content("333")
-            end
+            expect { dashboard_page.select_date_filter_range "Last Month" }
+              .not_to change { dashboard_page.total_inventory }
+              .from 333
           end
         end
       end

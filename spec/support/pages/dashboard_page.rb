@@ -41,8 +41,21 @@ class DashboardPage
     page.find(org_logo_selector).native[:src]
   end
 
+  def select_date_filter_range(range_name)
+    page.find("#filters_date_range").click
+    within ".ranges" do
+      page.find("li[data-range-key='#{range_name}']").click
+    end
+  end
+
   def summary_section
     page.find "#summary"
+  end
+
+  def total_inventory
+    within summary_section do
+      page.find(".total_inventory").text.delete(",").to_i
+    end
   end
 
   private
