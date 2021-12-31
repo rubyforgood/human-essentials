@@ -5,6 +5,9 @@ inherit_mode:
 inherit_gem:
   standard: config/base.yml
 
+inherit_from:
+  .rubocop_todo.yml
+
 require:
   - rubocop-rails
   - standard
