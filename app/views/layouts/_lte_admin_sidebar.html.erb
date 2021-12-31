@@ -63,11 +63,6 @@
           <i class="nav-icon fa fa-plus-circle"></i> New Organization
         <% end %>
       </li>
-      <li class="nav-item <%= 'active' if current_page?(admin_organizations_help_path) %>">
-        <%= link_to(admin_organizations_help_path, class: "nav-link #{"active" if current_page?(admin_organizations_help_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Organizations FAQ
-        <% end %>
-      </li>
     </ul>
   </li>
 
@@ -81,11 +76,6 @@
       <li class="nav-item <%= 'active' if current_page?(admin_partners_path) %>">
         <%= link_to(admin_partners_path, class: "nav-link #{"active" if current_page?(admin_partners_path)}") do %>
           <i class="nav-icon fa fa-circle-o"></i> All Partners
-        <% end %>
-      </li>
-      <li class="nav-item <%= 'active' if current_page?(admin_partners_help_path) %>">
-        <%= link_to(admin_partners_help_path, class: "nav-link #{"active" if current_page?(admin_partners_help_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Partners FAQ
         <% end %>
       </li>
     </ul>
@@ -114,6 +104,12 @@
   <li class="nav-item <%= active_class(['account_requests']) %>">
     <%= link_to(admin_account_requests_path, class: "nav-link #{"active" if current_page?(admin_account_requests_path)}") do %>
       <i class="nav-icon fa fa-sticky-note"></i> Account Requests
+    <% end %>
+  </li>
+
+  <li class="nav-item <%= 'active' if current_page?(admin_help_path) %>">
+    <%= link_to(admin_help_path, class: "nav-link #{"active" if current_page?(admin_help_path)}") do %>
+      <i class="nav-icon fa fa-circle-o"></i> FAQ
     <% end %>
   </li>
 

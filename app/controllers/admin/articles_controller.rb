@@ -6,7 +6,7 @@ class Admin::ArticlesController < ApplicationController
 
   def create
     @article = Article.create(article_params)
-    redirect_to admin_dashboard_path
+    redirect_to admin_help_path
   end
 
   private
