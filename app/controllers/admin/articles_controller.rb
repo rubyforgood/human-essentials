@@ -12,7 +12,7 @@ class Admin::ArticlesController < ApplicationController
   private
 
   def article_params
-    params.require(:article).permit(:question, :for_partners, :for_organizations)
+    params.require(:article).permit(:question, :for_partners, :for_organizations, :content)
   end
 
 end
