@@ -1,22 +1,32 @@
-<h1>Partners Help For Admins</h1>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-info mt-2">
+          <div class="card-header">
+            <h2 class="card-title">Frequently Asked Questions</h2>
+          </div>
+          <div class="card-body p-4">
+            <ul class="list-inside my-2 list-decimal space-y-5">
+              <%= new_button_to new_admin_article_path, { text: "Write A New Question And Answer" } %>
 
-<h3><%= link_to "Write a new question and answer", new_admin_article_path %></h3>
-<br/>
+              <div class='text-2xl font-bold'>Questions For Organizations</div>
+              <% @organization_articles.each do |organization_article| %>
+                <div class="text-2xl font-bold"><%= organization_article.question %></div>
+                <%= organization_article.content %>
+              <% end %>
 
-<h1>Questions for organizations</h1>
-<br/>
-<% @organization_articles.each do |organization_article| %>
-  <h3><%= organization_article.question %></h3>
-  <br/>
-  <%= organization_article.content %>
-  <br/>
-<% end %>
+              <div class='text-2xl font-bold'>Questions For Partners</div>
+              <% @partner_articles.each do |partner_article| %>
+                <div class='text-2xl font-bold'><%= partner_article.question %></div>
+                <%= partner_article.content %>
+              <% end %>
 
-<h1>Questions for partners</h1>
-<br/>
-<% @partner_articles.each do |partner_article| %>
-  <h3><%= partner_article.question %></h3>
-  <br/>
-  <%= partner_article.content %>
-  <br/>
-<% end %>
+            </ul>
+          </div>
+        </div>
+      </div>   
+    </div>
+  </div>
+</section>
