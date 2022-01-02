@@ -18,7 +18,7 @@ module Partners
         format.js
         format.html
         format.csv do
-          render(csv: @families.map(&:to_csv))
+          send_data Partners::Family.generate_csv(@families), filename: "Families-#{Time.zone.today}.csv"
         end
       end
     end
