@@ -13,20 +13,48 @@
 
               <div class='text-2xl font-bold'>Questions For Organizations</div>
               <% @organization_articles.each do |organization_article| %>
-                <div class="text-2xl font-bold"><%= organization_article.question %></div>
-                <%= organization_article.content %>
+                <div class="accordion" id="accordion">
+                  <div class="card">
+                    <div class="card-header" id="heading">
+                      <h2 class="mb-0">
+                        <button class="btn btn-block text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= organization_article.id %>" aria-expanded="false" aria-controls="collapse<%= organization_article.id %>">
+                          <%= organization_article.question %>
+                        </button>
+                      </h2>
+                    </div>
+                    <div id="collapse<%= organization_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                      <div class="card-body">
+                        <%= organization_article.content %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               <% end %>
 
               <div class='text-2xl font-bold'>Questions For Partners</div>
               <% @partner_articles.each do |partner_article| %>
-                <div class='text-2xl font-bold'><%= partner_article.question %></div>
-                <%= partner_article.content %>
+                <div class="accordion" id="accordion">
+                  <div class="card">
+                    <div class="card-header" id="heading">
+                      <h2 class="mb-0">
+                        <button class="btn btn-block text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= partner_article.id %>" aria-expanded="false" aria-controls="collapse<%= partner_article.id %>">
+                          <%= partner_article.question %>
+                        </button>
+                      </h2>
+                    </div>
+                    <div id="collapse<%= partner_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                      <div class="card-body">
+                        <%= partner_article.content %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               <% end %>
 
             </ul>
           </div>
         </div>
-      </div>   
+      </div>
     </div>
   </div>
 </section>
