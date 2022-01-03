@@ -1,4 +1,4 @@
-RSpec.describe "Dashboard", type: :system, js: true do
+RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
   context "With a new Diaper bank" do
     before :each do
       @new_organization = create(:organization)

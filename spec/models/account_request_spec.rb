@@ -14,7 +14,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe AccountRequest, type: :model do
+RSpec.describe AccountRequest, type: :model, skip_seed: true do
   describe 'associations' do
     it { should have_one(:organization).class_name('Organization') }
   end

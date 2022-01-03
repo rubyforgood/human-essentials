@@ -1,4 +1,4 @@
-RSpec.describe "User sign-in handling", type: :system, js: true do
+RSpec.describe "User sign-in handling", type: :system, js: true, skip_seed: true do
   subject { new_user_session_path }
 
   before do

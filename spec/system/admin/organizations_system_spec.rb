@@ -1,4 +1,4 @@
-RSpec.describe "Admin Organization Management", type: :system, js: true do
+RSpec.describe "Admin Organization Management", type: :system, js: true, skip_seed: true do
   context "While signed in as an Administrative User (super admin)" do
     before :each do
       sign_in(@super_admin)

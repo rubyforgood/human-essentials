@@ -1,8 +1,0 @@
-<%= Partners::Child.csv_headers.join(',') %>
-<%=
-  CSV.generate do |csv|
-    @children.each do |child|
-      csv << child.to_csv
-    end
-  end
--%>

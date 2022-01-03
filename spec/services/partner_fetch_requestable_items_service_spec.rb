@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PartnerFetchRequestableItemsService do
+describe PartnerFetchRequestableItemsService, skip_seed: true do
   describe '#call' do
     subject { described_class.new(partner_id: partner_id).call }
     let(:partner_id) { partner.id }

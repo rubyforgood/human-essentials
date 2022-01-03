@@ -1,4 +1,4 @@
-RSpec.describe "Organization Administration", type: :system, js: true do
+RSpec.describe "Organization Administration", type: :system, js: true, skip_seed: true do
   subject { "/#{@organization.to_param}/organization" }
 
   context "while signed in as a normal user" do
