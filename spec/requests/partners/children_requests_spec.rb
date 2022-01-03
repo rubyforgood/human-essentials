@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "/partners/children", type: :request do
   let(:partner_user) { Partners::Partner.find_by(diaper_partner_id: partner.id).primary_user }
@@ -6,35 +6,35 @@ RSpec.describe "/partners/children", type: :request do
   let(:family) { create(:partners_family, partner: partner) }
   let!(:child1) do
     create(:partners_child,
-           first_name: 'John',
-           last_name: 'Smith',
-           date_of_birth: '2019-01-01',
-           gender: 'Male',
-           child_lives_with: %w(mother grandfather),
-           race: 'Other',
-           agency_child_id: 'Agency McAgence',
-           health_insurance: 'Private insurance',
-           comments: 'Some comment',
-           item_needed_diaperid: nil,
-           active: true,
-           archived: false,
-           family: family)
+      first_name: "John",
+      last_name: "Smith",
+      date_of_birth: "2019-01-01",
+      gender: "Male",
+      child_lives_with: %w[mother grandfather],
+      race: "Other",
+      agency_child_id: "Agency McAgence",
+      health_insurance: "Private insurance",
+      comments: "Some comment",
+      item_needed_diaperid: nil,
+      active: true,
+      archived: false,
+      family: family)
   end
   let!(:child2) do
     create(:partners_child,
-           first_name: 'Jane',
-           last_name: 'Smith',
-           date_of_birth: '2018-01-01',
-           gender: 'Female',
-           child_lives_with: %w(father),
-           race: 'Hispanic',
-           agency_child_id: 'Agency McAgence',
-           health_insurance: 'Private insurance',
-           comments: 'Some comment',
-           item_needed_diaperid: nil,
-           active: true,
-           archived: false,
-           family: family)
+      first_name: "Jane",
+      last_name: "Smith",
+      date_of_birth: "2018-01-01",
+      gender: "Female",
+      child_lives_with: %w[father],
+      race: "Hispanic",
+      agency_child_id: "Agency McAgence",
+      health_insurance: "Private insurance",
+      comments: "Some comment",
+      item_needed_diaperid: nil,
+      active: true,
+      archived: false,
+      family: family)
   end
 
   describe "GET #index" do
@@ -42,13 +42,13 @@ RSpec.describe "/partners/children", type: :request do
       sign_in(partner_user, scope: :partner_user)
     end
 
-    it 'should render without any issues' do
+    it "should render without any issues" do
       get partners_children_path
       expect(response).to render_template(:index)
     end
 
-    it 'should export CSV' do
-      headers = { 'Accept' => 'text/csv', 'Content-Type' => 'text/csv' }
+    it "should export CSV" do
+      headers = {"Accept" => "text/csv", "Content-Type" => "text/csv"}
       get partners_children_path, headers: headers
       csv = <<~CSV
         id,first_name,last_name,date_of_birth,gender,child_lives_with,race,agency_child_id,health_insurance,comments,created_at,updated_at,family_id,item_needed_diaperid,active,archived

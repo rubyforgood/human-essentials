@@ -1,48 +1,48 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "/partners/family", type: :request do
   let(:partner_user) { Partners::Partner.find_by(diaper_partner_id: partner.id).primary_user }
   let(:partner) { create(:partner) }
   let!(:family1) do
     create(:partners_family,
-           guardian_first_name: 'John',
-           guardian_last_name: 'Smith',
-           guardian_zip_code: '90210',
-           guardian_country: 'United States',
-           guardian_phone: '416-555-2345',
-           agency_guardian_id: 'Jane Smith',
-           home_adult_count: 2,
-           home_child_count: 3,
-           home_young_child_count: 1,
-           sources_of_income: %w[SSI TANF],
-           guardian_employed: true,
-           guardian_employment_type: 'Part-time',
-           guardian_monthly_pay: 4,
-           guardian_health_insurance: 'Medicaid',
-           comments: 'Some comment',
-           military: false,
-           partner: partner)
+      guardian_first_name: "John",
+      guardian_last_name: "Smith",
+      guardian_zip_code: "90210",
+      guardian_country: "United States",
+      guardian_phone: "416-555-2345",
+      agency_guardian_id: "Jane Smith",
+      home_adult_count: 2,
+      home_child_count: 3,
+      home_young_child_count: 1,
+      sources_of_income: %w[SSI TANF],
+      guardian_employed: true,
+      guardian_employment_type: "Part-time",
+      guardian_monthly_pay: 4,
+      guardian_health_insurance: "Medicaid",
+      comments: "Some comment",
+      military: false,
+      partner: partner)
   end
 
   let!(:family2) do
     create(:partners_family,
-           guardian_first_name: 'Mark',
-           guardian_last_name: 'Smith',
-           guardian_zip_code: '90210',
-           guardian_country: 'United States',
-           guardian_phone: '416-555-0987',
-           agency_guardian_id: 'Jane Smith',
-           home_adult_count: 1,
-           home_child_count: 2,
-           home_young_child_count: 2,
-           sources_of_income: %w[TANF],
-           guardian_employed: false,
-           guardian_employment_type: 'Part-time',
-           guardian_monthly_pay: 4,
-           guardian_health_insurance: 'Medicaid',
-           comments: 'Some comment 2',
-           military: true,
-           partner: partner)
+      guardian_first_name: "Mark",
+      guardian_last_name: "Smith",
+      guardian_zip_code: "90210",
+      guardian_country: "United States",
+      guardian_phone: "416-555-0987",
+      agency_guardian_id: "Jane Smith",
+      home_adult_count: 1,
+      home_child_count: 2,
+      home_young_child_count: 2,
+      sources_of_income: %w[TANF],
+      guardian_employed: false,
+      guardian_employment_type: "Part-time",
+      guardian_monthly_pay: 4,
+      guardian_health_insurance: "Medicaid",
+      comments: "Some comment 2",
+      military: true,
+      partner: partner)
   end
 
   describe "GET #index" do
@@ -50,13 +50,13 @@ RSpec.describe "/partners/family", type: :request do
       sign_in(partner_user, scope: :partner_user)
     end
 
-    it 'should render without any issues' do
+    it "should render without any issues" do
       get partners_families_path
       expect(response).to render_template(:index)
     end
 
-    it 'should export CSV' do
-      headers = { 'Accept' => 'text/csv', 'Content-Type' => 'text/csv' }
+    it "should export CSV" do
+      headers = {"Accept" => "text/csv", "Content-Type" => "text/csv"}
       get partners_families_path, headers: headers
       csv = <<~CSV
         id,guardian_first_name,guardian_last_name,guardian_zip_code,guardian_country,guardian_phone,agency_guardian_id,home_adult_count,home_child_count,home_young_child_count,sources_of_income,guardian_employed,guardian_employment_type,guardian_monthly_pay,guardian_health_insurance,comments,created_at,updated_at,partner_id,military
