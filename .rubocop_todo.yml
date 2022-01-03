@@ -538,7 +538,6 @@ Style/PercentLiteralDelimiters:
     - 'app/pdfs/distribution_pdf.rb'
     - 'config/environments/production.rb'
     - 'config/routes.rb'
-    - 'config/spring.rb'
     - 'spec/controllers/transfers_controller_spec.rb'
     - 'spec/models/organization_stats_spec.rb'
     - 'spec/models/partners/partner_spec.rb'
