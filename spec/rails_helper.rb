@@ -228,7 +228,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:each, type: proc { |v| %i(request system controller).include?(v) }) do
+  config.before(:each, type: proc { |v| %i[request system controller].include?(v) }) do
     create_default_users
   end
 
