@@ -32,6 +32,7 @@ module Partners
     validates :guardian_first_name, :guardian_last_name, :guardian_zip_code, presence: true
 
     include Filterable
+    include Exportable
 
     filterrific(
       available_filters: [
@@ -49,17 +50,6 @@ module Partners
 
     after_create :create_authorized
 
-    CSV_HEADERS = %w[
-      id guardian_first_name guardian_last_name guardian_zip_code guardian_country
-      guardian_phone agency_guardian_id home_adult_count home_child_count home_young_child_count
-      sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
-      guardian_health_insurance comments created_at updated_at partner_id military
-    ].freeze
-
-    def self.csv_headers
-      CSV_HEADERS
-    end
-
     def create_authorized
       authorized_family_members.create!(
         first_name: guardian_first_name,
@@ -75,7 +65,16 @@ module Partners
       home_child_count + home_young_child_count
     end
 
-    def to_csv
+    def self.csv_export_headers
+      %w[
+        id guardian_first_name guardian_last_name guardian_zip_code guardian_country
+        guardian_phone agency_guardian_id home_adult_count home_child_count home_young_child_count
+        sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
+        guardian_health_insurance comments created_at updated_at partner_id military
+      ].freeze
+    end
+
+    def csv_export_attributes
       [
         id,
         guardian_first_name,
