@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_30_033135) do
+ActiveRecord::Schema.define(version: 2022_01_03_232639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -319,6 +319,15 @@ ActiveRecord::Schema.define(version: 2021_12_30_033135) do
     t.index ["organization_id"], name: "index_manufacturers_on_organization_id"
   end
 
+  create_table "organization_faqs", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.string "question"
+    t.string "answer"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["organization_id"], name: "index_organization_faqs_on_organization_id"
+  end
+
   create_table "organizations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "short_name"
@@ -350,8 +359,13 @@ ActiveRecord::Schema.define(version: 2021_12_30_033135) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "reminder_day_of_month"
+    t.integer "deadline_day_of_month"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
+    t.check_constraint "deadline_day_of_month <= 28", name: "deadline_day_of_month_check"
+    t.check_constraint "deadline_day_of_month > reminder_day_of_month", name: "reminder_day_of_month_and_deadline_day_of_month_check"
+    t.check_constraint "reminder_day_of_month <= 14", name: "reminder_day_of_month_check"
   end
 
   create_table "partners", id: :serial, force: :cascade do |t|
@@ -478,8 +492,7 @@ ActiveRecord::Schema.define(version: 2021_12_30_033135) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type"
-    t.string "{:null=>false}"
+    t.string "item_type", null: false
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
@@ -507,6 +520,7 @@ ActiveRecord::Schema.define(version: 2021_12_30_033135) do
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
+  add_foreign_key "organization_faqs", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "requests", "distributions"
