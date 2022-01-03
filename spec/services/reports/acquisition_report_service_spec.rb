@@ -118,17 +118,20 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                vendor: vendor,
                organization: organization,
                purchased_from: 'Google',
-               amount_spent_in_cents: 1000),
+               amount_spent_in_cents: 1000,
+               diapers_money_in_cents: 1000),
         create(:purchase,
                issued_at: within_time,
                vendor: vendor,
                organization: organization,
                purchased_from: 'Walmart',
-               amount_spent_in_cents: 2000),
+               amount_spent_in_cents: 2000,
+               diapers_money_in_cents: 2000),
       ]
       purchases += create_list(:purchase, 2,
                                issued_at: outside_time,
                                amount_spent_in_cents: 20_000,
+                               diapers_money_in_cents: 20_000,
                                vendor: vendor,
                                organization: organization)
       purchases.each do |purchase|

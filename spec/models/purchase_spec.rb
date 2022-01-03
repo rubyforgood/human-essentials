@@ -2,16 +2,19 @@
 #
 # Table name: purchases
 #
-#  id                    :bigint           not null, primary key
-#  amount_spent_in_cents :integer
-#  comment               :text
-#  issued_at             :datetime
-#  purchased_from        :string
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  organization_id       :integer
-#  storage_location_id   :integer
-#  vendor_id             :integer
+#  id                                :bigint           not null, primary key
+#  adult_incontinence_money_in_cents :integer          default(0)
+#  amount_spent_in_cents             :integer
+#  comment                           :text
+#  diapers_money_in_cents            :integer          default(0)
+#  issued_at                         :datetime
+#  other_money_in_cents              :integer          default(0)
+#  purchased_from                    :string
+#  created_at                        :datetime         not null
+#  updated_at                        :datetime         not null
+#  organization_id                   :integer
+#  storage_location_id               :integer
+#  vendor_id                         :integer
 #
 
 RSpec.describe Purchase, type: :model, skip_seed: true do
@@ -29,6 +32,23 @@ RSpec.describe Purchase, type: :model, skip_seed: true do
       d.line_items << build(:line_item, quantity: nil)
       expect(d).not_to be_valid
     end
+    it 'is valid if categories have no values' do
+      d = build(:purchase, amount_spent_in_cents: 450)
+      expect(d).to be_valid
+    end
+
+    it 'is valid if all categories add up to total' do
+      d = build(:purchase, amount_spent_in_cents: 450, diapers_money_in_cents: 200, other_money_in_cents: 250)
+      expect(d).to be_valid
+    end
+
+    it 'is not valid if categories do not add up' do
+      d = build(:purchase, amount_spent_in_cents: 450, diapers_money_in_cents: 200)
+      expect(d).not_to be_valid
+      expect(d.errors.full_messages).
+        to eq(["Amount spent in dollars does not equal all categories - categories add to $2.00 but given total is $4.50"])
+    end
+
   end
 
   context "Callbacks >" do

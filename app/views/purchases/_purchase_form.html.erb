@@ -27,6 +27,32 @@
       <div class="col-xs-8 col-md-6">
         <%= f.input :amount_spent_in_dollars,
                     label: "Purchase Total",
+                    input_html: { value: number_to_currency(f.object.amount_spent_in_dollars, unit: '') },
+                    wrapper: :input_group %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8 col-md-6">
+        <%= f.input :diapers_money_in_dollars,
+                    label: "Purchase Total for Diapers",
+                    input_html: { value: number_to_currency(f.object.diapers_money_in_dollars, unit: '') },
+                    wrapper: :input_group %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-8 col-md-6">
+        <%= f.input :adult_incontinence_money_in_dollars,
+                    label: "Purchase Total for Adult Incontinence Products",
+                    input_html: { value: number_to_currency(f.object.adult_incontinence_money_in_dollars, unit: '') },
+                    wrapper: :input_group %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-8 col-md-6">
+        <%= f.input :other_money_in_dollars,
+                    label: "Purchase Total for Other Products",
+                    input_html: { value: number_to_currency(f.object.other_money_in_dollars, unit: '') },
                     wrapper: :input_group %>
       </div>
     </div>

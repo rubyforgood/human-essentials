@@ -2,19 +2,24 @@
 #
 # Table name: purchases
 #
-#  id                    :bigint           not null, primary key
-#  amount_spent_in_cents :integer
-#  comment               :text
-#  issued_at             :datetime
-#  purchased_from        :string
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  organization_id       :integer
-#  storage_location_id   :integer
-#  vendor_id             :integer
+#  id                                :bigint           not null, primary key
+#  adult_incontinence_money_in_cents :integer          default(0)
+#  amount_spent_in_cents             :integer
+#  comment                           :text
+#  diapers_money_in_cents            :integer          default(0)
+#  issued_at                         :datetime
+#  other_money_in_cents              :integer          default(0)
+#  purchased_from                    :string
+#  created_at                        :datetime         not null
+#  updated_at                        :datetime         not null
+#  organization_id                   :integer
+#  storage_location_id               :integer
+#  vendor_id                         :integer
 #
 
 class Purchase < ApplicationRecord
+  include ActionView::Helpers::NumberHelper
+
   belongs_to :organization
   belongs_to :storage_location
   belongs_to :vendor
@@ -44,6 +49,7 @@ class Purchase < ApplicationRecord
   before_create :combine_duplicates
 
   validates :amount_spent_in_cents, numericality: { greater_than: 0 }
+  validate :total_equal_to_all_categories
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
@@ -53,8 +59,24 @@ class Purchase < ApplicationRecord
     vendor.nil? ? purchased_from : vendor.business_name
   end
 
+  # @return [Integer]
   def amount_spent_in_dollars
     amount_spent_in_cents.to_d / 100
+  end
+
+  # @return [Integer]
+  def diapers_money_in_dollars
+    diapers_money_in_cents.to_d / 100
+  end
+
+  # @return [Integer]
+  def adult_incontinence_money_in_dollars
+    adult_incontinence_money_in_cents.to_d / 100
+  end
+
+  # @return [Integer]
+  def other_money_in_dollars
+    other_money_in_cents.to_d / 100
   end
 
   def remove(item)
@@ -109,4 +131,18 @@ class Purchase < ApplicationRecord
     Rails.logger.info "[!] Purchase.combine_duplicates: Combining!"
     line_items.combine!
   end
+
+  def total_equal_to_all_categories
+    return if amount_spent_in_dollars.zero?
+    return if diapers_money_in_dollars.zero? && adult_incontinence_money_in_dollars.zero? && other_money_in_dollars.zero?
+
+    category_total = diapers_money_in_dollars + adult_incontinence_money_in_dollars + other_money_in_dollars
+    if category_total != amount_spent_in_dollars
+      cat_total = number_to_currency(category_total)
+      total = number_to_currency(amount_spent_in_dollars)
+      errors.add(:amount_spent_in_dollars,
+                 "does not equal all categories - categories add to #{cat_total} but given total is #{total}")
+    end
+  end
+
 end
