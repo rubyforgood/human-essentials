@@ -95,9 +95,6 @@ group :development do
   gem "letter_opener"
   gem "listen", "~> 3.7.0"
   gem "rails-erd"
-  gem "spring"
-  gem "spring-watcher-listen"
-  gem "spring-commands-rspec"
   gem "web-console"
 end
 
