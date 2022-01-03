@@ -141,8 +141,7 @@ class Purchase < ApplicationRecord
       cat_total = number_to_currency(category_total)
       total = number_to_currency(amount_spent_in_dollars)
       errors.add(:amount_spent_in_dollars,
-                 "does not equal all categories - categories add to #{cat_total} but given total is #{total}")
+        "does not equal all categories - categories add to #{cat_total} but given total is #{total}")
     end
   end
-
 end

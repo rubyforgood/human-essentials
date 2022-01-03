@@ -112,10 +112,10 @@ class PurchasesController < ApplicationController
     clean_purchase_amount_in_dollars
     params = compact_line_items
     params.require(:purchase).permit(:comment, :amount_spent_in_cents, :purchased_from,
-                                     :diapers_money_in_cents, :adult_incontinence_money_in_cents, :other_money_in_cents,
-                                     :storage_location_id, :issued_at, :vendor_id,
-                                     line_items_attributes: %i(id item_id quantity _destroy)).
-      merge(organization: current_organization)
+      :diapers_money_in_cents, :adult_incontinence_money_in_cents, :other_money_in_cents,
+      :storage_location_id, :issued_at, :vendor_id,
+      line_items_attributes: %i(id item_id quantity _destroy))
+      .merge(organization: current_organization)
   end
 
   helper_method \

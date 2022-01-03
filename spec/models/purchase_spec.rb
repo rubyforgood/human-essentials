@@ -32,23 +32,22 @@ RSpec.describe Purchase, type: :model, skip_seed: true do
       d.line_items << build(:line_item, quantity: nil)
       expect(d).not_to be_valid
     end
-    it 'is valid if categories have no values' do
+    it "is valid if categories have no values" do
       d = build(:purchase, amount_spent_in_cents: 450)
       expect(d).to be_valid
     end
 
-    it 'is valid if all categories add up to total' do
+    it "is valid if all categories add up to total" do
       d = build(:purchase, amount_spent_in_cents: 450, diapers_money_in_cents: 200, other_money_in_cents: 250)
       expect(d).to be_valid
     end
 
-    it 'is not valid if categories do not add up' do
+    it "is not valid if categories do not add up" do
       d = build(:purchase, amount_spent_in_cents: 450, diapers_money_in_cents: 200)
       expect(d).not_to be_valid
-      expect(d.errors.full_messages).
-        to eq(["Amount spent in dollars does not equal all categories - categories add to $2.00 but given total is $4.50"])
+      expect(d.errors.full_messages)
+        .to eq(["Amount spent in dollars does not equal all categories - categories add to $2.00 but given total is $4.50"])
     end
-
   end
 
   context "Callbacks >" do
