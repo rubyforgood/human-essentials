@@ -3,7 +3,7 @@ module Partners
     layout 'partners/application'
 
     def show
-      @articles = Article.all.select{ |article| article.for_partners == true }
+      @partner_articles = Article.all.select{ |article| article.for_partners == true }
     end
   end
 end
