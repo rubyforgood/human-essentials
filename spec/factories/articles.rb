@@ -11,6 +11,8 @@
 #
 FactoryBot.define do
   factory :article do
-    
+    sequence(:question) { |num| "question number: #{num}" }
+    for_organizations { true }
+    for_partners { false }
   end
 end
