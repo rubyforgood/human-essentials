@@ -2,23 +2,23 @@
 #
 # Table name: purchases
 #
-#  id                                :bigint           not null, primary key
-#  adult_incontinence_money_in_cents :integer          default(0)
-#  amount_spent_in_cents             :integer
-#  comment                           :text
-#  diapers_money_in_cents            :integer          default(0)
-#  issued_at                         :datetime
-#  other_money_in_cents              :integer          default(0)
-#  purchased_from                    :string
-#  created_at                        :datetime         not null
-#  updated_at                        :datetime         not null
-#  organization_id                   :integer
-#  storage_location_id               :integer
-#  vendor_id                         :integer
+#  id                             :bigint           not null, primary key
+#  adult_incontinence_money_cents :integer          default(0), not null
+#  amount_spent_in_cents          :integer
+#  comment                        :text
+#  diapers_money_cents            :integer          default(0), not null
+#  issued_at                      :datetime
+#  other_money_cents              :integer          default(0), not null
+#  purchased_from                 :string
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  organization_id                :integer
+#  storage_location_id            :integer
+#  vendor_id                      :integer
 #
 
 class Purchase < ApplicationRecord
-  include ActionView::Helpers::NumberHelper
+  include MoneyRails::ActionViewExtension
 
   belongs_to :organization
   belongs_to :storage_location
@@ -28,6 +28,11 @@ class Purchase < ApplicationRecord
   include Filterable
   include IssuedAt
   include Exportable
+
+  monetize :amount_spent_in_cents, as: :amount_spent
+  monetize :diapers_money_cents
+  monetize :adult_incontinence_money_cents
+  monetize :other_money_cents
 
   scope :at_storage_location, ->(storage_location_id) {
                                 where(storage_location_id: storage_location_id)
@@ -61,22 +66,7 @@ class Purchase < ApplicationRecord
 
   # @return [Integer]
   def amount_spent_in_dollars
-    amount_spent_in_cents.to_d / 100
-  end
-
-  # @return [Integer]
-  def diapers_money_in_dollars
-    diapers_money_in_cents.to_d / 100
-  end
-
-  # @return [Integer]
-  def adult_incontinence_money_in_dollars
-    adult_incontinence_money_in_cents.to_d / 100
-  end
-
-  # @return [Integer]
-  def other_money_in_dollars
-    other_money_in_cents.to_d / 100
+    amount_spent.dollars.to_i
   end
 
   def remove(item)
@@ -133,14 +123,14 @@ class Purchase < ApplicationRecord
   end
 
   def total_equal_to_all_categories
-    return if amount_spent_in_dollars.zero?
-    return if diapers_money_in_dollars.zero? && adult_incontinence_money_in_dollars.zero? && other_money_in_dollars.zero?
+    return if amount_spent.zero?
+    return if diapers_money.zero? && adult_incontinence_money.zero? && other_money.zero?
 
-    category_total = diapers_money_in_dollars + adult_incontinence_money_in_dollars + other_money_in_dollars
-    if category_total != amount_spent_in_dollars
-      cat_total = number_to_currency(category_total)
-      total = number_to_currency(amount_spent_in_dollars)
-      errors.add(:amount_spent_in_dollars,
+    category_total = diapers_money + adult_incontinence_money + other_money
+    if category_total != amount_spent
+      cat_total = humanized_money_with_symbol(category_total)
+      total = humanized_money_with_symbol(amount_spent)
+      errors.add(:amount_spent,
         "does not equal all categories - categories add to #{cat_total} but given total is #{total}")
     end
   end

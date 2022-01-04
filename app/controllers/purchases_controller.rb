@@ -82,25 +82,6 @@ class PurchasesController < ApplicationController
 
   private
 
-  def clean_purchase_amount_in_cents
-    return nil unless params[:purchase][:amount_spent_in_cents]
-
-    params[:purchase][:amount_spent_in_cents] = params[:purchase][:amount_spent_in_cents].gsub(/[$,.]/, "")
-  end
-
-  def clean_purchase_amount_in_dollars
-    return nil unless params[:purchase][:amount_spent_in_dollars]
-
-    params[:purchase][:amount_spent_in_cents] =
-      params[:purchase][:amount_spent_in_dollars].gsub(/[$,]/, "").to_d * 100
-    params[:purchase][:diapers_money_in_cents] =
-      params[:purchase][:diapers_money_in_dollars].gsub(/[$,]/, "").to_d * 100
-    params[:purchase][:adult_incontinence_money_in_cents] =
-      params[:purchase][:adult_incontinence_money_in_dollars].gsub(/[$,]/, "").to_d * 100
-    params[:purchase][:other_money_in_cents] =
-      params[:purchase][:other_money_in_dollars].gsub(/[$,]/, "").to_d * 100
-  end
-
   def load_form_collections
     @storage_locations = current_organization.storage_locations.alphabetized
     @items = current_organization.items.active.alphabetized
@@ -108,11 +89,9 @@ class PurchasesController < ApplicationController
   end
 
   def purchase_params
-    clean_purchase_amount_in_cents
-    clean_purchase_amount_in_dollars
     params = compact_line_items
-    params.require(:purchase).permit(:comment, :amount_spent_in_cents, :purchased_from,
-      :diapers_money_in_cents, :adult_incontinence_money_in_cents, :other_money_in_cents,
+    params.require(:purchase).permit(:comment, :amount_spent, :purchased_from,
+      :diapers_money, :adult_incontinence_money, :other_money,
       :storage_location_id, :issued_at, :vendor_id,
       line_items_attributes: %i(id item_id quantity _destroy))
       .merge(organization: current_organization)

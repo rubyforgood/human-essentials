@@ -2,19 +2,19 @@
 #
 # Table name: purchases
 #
-#  id                                :bigint           not null, primary key
-#  adult_incontinence_money_in_cents :integer          default(0)
-#  amount_spent_in_cents             :integer
-#  comment                           :text
-#  diapers_money_in_cents            :integer          default(0)
-#  issued_at                         :datetime
-#  other_money_in_cents              :integer          default(0)
-#  purchased_from                    :string
-#  created_at                        :datetime         not null
-#  updated_at                        :datetime         not null
-#  organization_id                   :integer
-#  storage_location_id               :integer
-#  vendor_id                         :integer
+#  id                             :bigint           not null, primary key
+#  adult_incontinence_money_cents :integer          default(0), not null
+#  amount_spent_in_cents          :integer
+#  comment                        :text
+#  diapers_money_cents            :integer          default(0), not null
+#  issued_at                      :datetime
+#  other_money_cents              :integer          default(0), not null
+#  purchased_from                 :string
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  organization_id                :integer
+#  storage_location_id            :integer
+#  vendor_id                      :integer
 #
 
 FactoryBot.define do

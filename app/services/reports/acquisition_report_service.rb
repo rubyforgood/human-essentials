@@ -95,7 +95,7 @@ module Reports
 
     # @return [Float]
     def money_spent_on_diapers
-      organization.purchases.for_year(year).sum(:diapers_money_in_cents) / 100.0
+      organization.purchases.for_year(year).sum(:diapers_money_cents) / 100.0
     end
 
     # @return [String]

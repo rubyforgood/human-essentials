@@ -66,7 +66,7 @@ module Reports
 
     # @return [String]
     def money_spent_on_supplies
-      organization.purchases.for_year(year).sum(:adult_incontinence_money_in_cents) / 100.0
+      organization.purchases.for_year(year).sum(:adult_incontinence_money_cents) / 100.0
     end
 
     ###### HELPER METHODS ######
