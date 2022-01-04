@@ -16,8 +16,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                                       "Adult incontinence supplies per adult per month" => 0,
                                       "Money spent purchasing adult incontinence supplies" => "$0.00"
                                   }))
-      expect(report.report[:entries]['Adult incontinence supplies'].split(', ')).
-        to contain_exactly("Adult Briefs (Large/X-Large)",
+      expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
+        .to contain_exactly("Adult Briefs (Large/X-Large)",
                            "Adult Briefs (Medium/Large)",
                            "Adult Briefs (Small/Medium)",
                            "Adult Briefs (XXL)",
@@ -99,16 +99,16 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
       it 'should report normal values' do
         organization.items.adult_incontinence.first.update!(distribution_quantity: 20)
 
-      expect(report.report[:name]).to eq("Adult Incontinence")
-      expect(report.report[:entries]).to match(hash_including({
-                                        "% adult incontinence bought" => "60%",
-                                        "% adult incontinence supplies donated" => "40%",
-                                        "Adult incontinence supplies distributed" => "2,000",
-                                        "Adult incontinence supplies per adult per month" => 20,
-                                        "Money spent purchasing adult incontinence supplies" => "$30.00"
-                                      }))
-        expect(report.report[:entries]['Adult incontinence supplies'].split(', ')).
-          to contain_exactly("Adult Briefs (Large/X-Large)",
+        expect(report.report[:name]).to eq("Adult Incontinence")
+        expect(report.report[:entries]).to match(hash_including({
+                                          "% adult incontinence bought" => "60%",
+                                          "% adult incontinence supplies donated" => "40%",
+                                          "Adult incontinence supplies distributed" => "2,000",
+                                          "Adult incontinence supplies per adult per month" => 20,
+                                          "Money spent purchasing adult incontinence supplies" => "$30.00"
+                                        }))
+        expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
+          .to contain_exactly("Adult Briefs (Large/X-Large)",
                              "Adult Briefs (Medium/Large)",
                              "Adult Briefs (Small/Medium)",
                              "Adult Briefs (XXL)",
@@ -122,16 +122,16 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
       end
 
       it 'should handle null distribution quantity' do
-      expect(report.report[:name]).to eq("Adult Incontinence")
-      expect(report.report[:entries]).to match(hash_including({
-                                        "% adult incontinence bought" => "60%",
-                                        "% adult incontinence supplies donated" => "40%",
-                                        "Adult incontinence supplies distributed" => "2,000",
-                                        "Adult incontinence supplies per adult per month" => 50,
-                                        "Money spent purchasing adult incontinence supplies" => "$30.00"
-                                    }))
-        expect(report.report[:entries]['Adult incontinence supplies'].split(', ')).
-          to contain_exactly("Adult Briefs (Large/X-Large)",
+        expect(report.report[:name]).to eq("Adult Incontinence")
+        expect(report.report[:entries]).to match(hash_including({
+                                          "% adult incontinence bought" => "60%",
+                                          "% adult incontinence supplies donated" => "40%",
+                                          "Adult incontinence supplies distributed" => "2,000",
+                                          "Adult incontinence supplies per adult per month" => 50,
+                                          "Money spent purchasing adult incontinence supplies" => "$30.00"
+                                      }))
+        expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
+          .to contain_exactly("Adult Briefs (Large/X-Large)",
                              "Adult Briefs (Medium/Large)",
                              "Adult Briefs (Small/Medium)",
                              "Adult Briefs (XXL)",
