@@ -11,7 +11,7 @@
             <ul class="list-inside my-2 list-decimal space-y-5">
               <%= form_tag(help_path, method: "get") do %>
                 <%= text_field_tag(:keyword, nil, placeholder: 'Search By Question', class: "form-control organization-help-search") %>
-                <div><%= submit_tag("Search", class: "btn btn-info") %></div>
+                <%= submit_tag("Search", class: "btn btn-info") %>
               <% end %>
               <% @organization_articles.each do |organization_article| %>
                 <div class="accordion" id="accordion">
