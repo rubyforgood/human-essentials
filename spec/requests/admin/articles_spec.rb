@@ -26,6 +26,15 @@ RSpec.describe "Admin::Articles", type: :request do
         expect(flash[:error]).to be_present
         expect(Article.all.count).to eq 0
       end
+
+      it "article for_organizations and for_partners attributes can't both be false" do
+        post admin_articles_path(article: attributes_for(:article).merge(
+          for_organizations: false,
+          for_partners: false
+        ))
+        expect(subject).to render_template("new")
+        expect(flash[:error]).to be_present
+      end
     end
   end
 end

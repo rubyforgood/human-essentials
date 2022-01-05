@@ -12,4 +12,6 @@
 class Article < ApplicationRecord
   has_rich_text :content
   validates :question, presence: true
+  validates :for_organizations, acceptance: true, unless: :for_partners
+  validates :for_partners, acceptance: true, unless: :for_organizations
 end
