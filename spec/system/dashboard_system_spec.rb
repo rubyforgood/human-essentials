@@ -1,4 +1,14 @@
 RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
+  include ActiveSupport::Testing::TimeHelpers
+
+  before do
+    travel_to Time.zone.local(2022, 2, 15, 12, 30, 0)
+  end
+
+  after do
+    travel_back
+  end
+
   context "With a new Diaper bank" do
     before :each do
       @new_organization = create(:organization)
