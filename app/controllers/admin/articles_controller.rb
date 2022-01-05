@@ -6,7 +6,12 @@ class Admin::ArticlesController < ApplicationController
 
   def create
     @article = Article.create(article_params)
-    redirect_to admin_help_path
+    if @article.valid?
+      redirect_to admin_help_path
+    else
+      flash[:error] = "Failed to create article."
+      render :new
+    end
   end
 
   private

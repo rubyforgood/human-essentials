@@ -19,6 +19,13 @@ RSpec.describe "Admin::Articles", type: :request do
         expect(response).to be_redirect
         expect(Article.all.count).to eq 1
       end
+
+      it "article questions can't be blank" do
+        post admin_articles_path(article: attributes_for(:article).merge(question: nil))
+        expect(subject).to render_template("new")
+        expect(flash[:error]).to be_present
+        expect(Article.all.count).to eq 0
+      end
     end
   end
 end

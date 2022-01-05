@@ -11,4 +11,5 @@
 #
 class Article < ApplicationRecord
   has_rich_text :content
+  validates :question, presence: true
 end
