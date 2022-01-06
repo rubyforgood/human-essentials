@@ -14,7 +14,7 @@ RSpec.describe Reports::OtherProductsReportService, type: :service, skip_seed: t
                                       '% non-diaper products donated' => "0%",
                                       '% non-diaper products bought' => "0%",
                                       'Money spent on non-diaper products' => '$0.00',
-                                      'List of non-diaper products' => "Pads, Tampons, Bed Pads (Cloth), Bed Pads (Disposable), Bibs (Adult & Child), Diaper Rash Cream/Powder, Other, Cloth Potty Training Pants/Underwear, Wipes (Adult), Wipes (Baby)"
+                                      'List of non-diaper products' => organization.items.other_categories.map(&:name).sort.uniq.join(', ')
                                     },
                                     name: "Other Items"
                                   })
@@ -83,7 +83,7 @@ RSpec.describe Reports::OtherProductsReportService, type: :service, skip_seed: t
                                       '% non-diaper products donated' => "40%",
                                       '% non-diaper products bought' => "60%",
                                       'Money spent on non-diaper products' => '$30.00',
-                                      'List of non-diaper products' => "Pads, Tampons, Bed Pads (Cloth), Bed Pads (Disposable), Bibs (Adult & Child), Diaper Rash Cream/Powder, Other, Cloth Potty Training Pants/Underwear, Wipes (Adult), Wipes (Baby)"
+                                      'List of non-diaper products' => organization.items.other_categories.map(&:name).sort.uniq.join(', ')
                                     },
                                     name: "Other Items"
                                   })
