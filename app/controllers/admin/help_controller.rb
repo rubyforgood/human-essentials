@@ -1,8 +1,8 @@
 class Admin::HelpController < ApplicationController
 
   def help
-    @organization_articles = Article.all.select{ |article| article.for_organizations == true }
-    @partner_articles = Article.all.select{ |article| article.for_partners == true }
+    @organization_articles = Article.articles_for_organizations(Article.all)
+    @partner_articles = Article.articles_for_partners
   end
 
 end

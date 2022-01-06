@@ -6,9 +6,10 @@ class HelpController < ApplicationController
 
   def search(keyword)
     if keyword.present?
-      Article.where("question ILIKE ?", "%#{keyword}%")
+      search_results = Article.where("question ILIKE ?", "%#{keyword}%")
+      Article.articles_for_organizations(search_results)
     else
-      Article.all.select{ |article| article.for_organizations == true }
+      Article.articles_for_organizations(Article.all)
     end
   end
 
