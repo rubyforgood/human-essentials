@@ -55,7 +55,7 @@ module Reports
 
     # @return [String]
     def product_list
-      organization.items.other_categories.map(&:name).uniq.join(', ')
+      organization.items.other_categories.map(&:name).sort.uniq.join(', ')
     end
 
     # @return [Integer]
