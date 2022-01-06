@@ -1,8 +1,8 @@
-module Page
+class SystemSpecPage
   include Capybara::DSL
 
   def visit
-    page.visit path
+    Capybara.current_session.visit path
 
     self
   end

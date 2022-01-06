@@ -3,64 +3,65 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
     before :each do
       @new_organization = create(:organization)
       @user = create(:user, organization: @new_organization)
-      @url_prefix = "/#{@new_organization.short_name}"
+      @org_short_name = new_organization.short_name
+      @url_prefix = "/#{@org_short_name}"
     end
-    attr_reader :new_organization, :user, :url_prefix
+    attr_reader :new_organization, :org_short_name, :user, :url_prefix
 
     before do
       sign_in(user)
     end
 
     it "displays the getting started guide until the steps are completed" do
-      dashboard_page = DashboardPage.new url_prefix: url_prefix
-      dashboard_page.visit
+      org_dashboard_page = OrganizationDashboardPage.new org_short_name: org_short_name
+      org_dashboard_page.visit
 
       # rubocop:disable Layout/ExtraSpacing
 
       # When dashboard loads, ensure that we are on step 1 (Partner Agencies)
-      expect(dashboard_page).to     have_getting_started_guide
-      expect(dashboard_page).to     have_add_partner_call_to_action
-      expect(dashboard_page).not_to have_add_storage_location_call_to_action
-      expect(dashboard_page).not_to have_add_donation_site_call_to_action
-      expect(dashboard_page).not_to have_add_inventory_call_to_action
+      expect(org_dashboard_page).to     have_getting_started_guide
+      expect(org_dashboard_page).to     have_add_partner_call_to_action
+      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a partner, ensure that we are on step 2 (Storage Locations)
       @partner = create(:partner, organization: new_organization)
-      dashboard_page.visit
+      org_dashboard_page.visit
 
-      expect(dashboard_page).to     have_getting_started_guide
-      expect(dashboard_page).not_to have_add_partner_call_to_action
-      expect(dashboard_page).to     have_add_storage_location_call_to_action
-      expect(dashboard_page).not_to have_add_donation_site_call_to_action
-      expect(dashboard_page).not_to have_add_inventory_call_to_action
+      expect(org_dashboard_page).to     have_getting_started_guide
+      expect(org_dashboard_page).not_to have_add_partner_call_to_action
+      expect(org_dashboard_page).to     have_add_storage_location_call_to_action
+      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a storage location, ensure that we are on step 3 (Donation Site)
       create(:storage_location, organization: new_organization)
-      dashboard_page.visit
+      org_dashboard_page.visit
 
-      expect(dashboard_page).to     have_getting_started_guide
-      expect(dashboard_page).not_to have_add_partner_call_to_action
-      expect(dashboard_page).not_to have_add_storage_location_call_to_action
-      expect(dashboard_page).to     have_add_donation_site_call_to_action
-      expect(dashboard_page).not_to have_add_inventory_call_to_action
+      expect(org_dashboard_page).to     have_getting_started_guide
+      expect(org_dashboard_page).not_to have_add_partner_call_to_action
+      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(org_dashboard_page).to     have_add_donation_site_call_to_action
+      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a donation site, ensure that we are on step 4 (Inventory)
       create(:donation_site, organization: new_organization)
-      dashboard_page.visit
+      org_dashboard_page.visit
 
-      expect(dashboard_page).to     have_getting_started_guide
-      expect(dashboard_page).not_to have_add_partner_call_to_action
-      expect(dashboard_page).not_to have_add_storage_location_call_to_action
-      expect(dashboard_page).not_to have_add_donation_site_call_to_action
-      expect(dashboard_page).to     have_add_inventory_call_to_action
+      expect(org_dashboard_page).to     have_getting_started_guide
+      expect(org_dashboard_page).not_to have_add_partner_call_to_action
+      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(org_dashboard_page).to     have_add_inventory_call_to_action
 
       # rubocop:enable Layout/ExtraSpacing
 
       # After we add inventory to a storage location, ensure that the getting starting guide is gone
       create(:storage_location, :with_items, item_quantity: 125, organization: new_organization)
-      dashboard_page.visit
+      org_dashboard_page.visit
 
-      expect(dashboard_page).not_to have_getting_started_guide
+      expect(org_dashboard_page).not_to have_getting_started_guide
     end
   end
 
@@ -70,24 +71,25 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
     end
 
     let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 0, organization: @organization) }
-    let!(:url_prefix) { "/#{@organization.short_name}" }
-    let(:dashboard_page) { DashboardPage.new url_prefix: url_prefix }
+    let(:org_short_name) { @organization.short_name }
+    let!(:url_prefix) { "/#{org_short_name}" }
+    let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
     subject { url_prefix + "/dashboard" }
 
     describe "Signage" do
       it "shows their organization name unless they have a logo set" do
-        dashboard_page.visit
+        org_dashboard_page.visit
 
-        expect(dashboard_page).to have_organization_logo
+        expect(org_dashboard_page).to have_organization_logo
 
-        logo_filename = File.basename(dashboard_page.organization_logo_filepath).split("?").first
+        logo_filename = File.basename(org_dashboard_page.organization_logo_filepath).split("?").first
         expect(logo_filename).to include("logo.jpg")
 
         @organization.logo.purge
         @organization.save
-        dashboard_page.visit
+        org_dashboard_page.visit
 
-        expect(dashboard_page).not_to have_organization_logo
+        expect(org_dashboard_page).not_to have_organization_logo
       end
     end
 
@@ -99,17 +101,17 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
       describe "Summary" do
         before do
           create_list(:storage_location, 3, :with_items, item_quantity: 111, organization: @organization)
-          dashboard_page.visit
+          org_dashboard_page.visit
         end
 
         it "displays the on-hand totals" do
-          expect(dashboard_page.summary_section.text).to include "on-hand"
+          expect(org_dashboard_page.summary_section.text).to include "on-hand"
         end
 
         context "when constrained to date range" do
           it "does not change" do
-            expect { dashboard_page.select_date_filter_range "Last Month" }
-              .not_to change { dashboard_page.total_inventory }
+            expect { org_dashboard_page.select_date_filter_range "Last Month" }
+              .not_to change { org_dashboard_page.total_inventory }
               .from 333
           end
         end
