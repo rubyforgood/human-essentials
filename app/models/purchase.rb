@@ -30,9 +30,9 @@ class Purchase < ApplicationRecord
   include Exportable
 
   monetize :amount_spent_in_cents, as: :amount_spent
-  monetize :diapers_money_cents
-  monetize :adult_incontinence_money_cents
-  monetize :other_money_cents
+  monetize :amount_spent_on_diapers_cents
+  monetize :amount_spent_on_adult_incontinence_cents
+  monetize :amount_spent_on_other_cents
 
   scope :at_storage_location, ->(storage_location_id) {
                                 where(storage_location_id: storage_location_id)
@@ -124,9 +124,9 @@ class Purchase < ApplicationRecord
 
   def total_equal_to_all_categories
     return if amount_spent.zero?
-    return if diapers_money.zero? && adult_incontinence_money.zero? && other_money.zero?
+    return if amount_spent_on_diapers.zero? && amount_spent_on_adult_incontinence.zero? && amount_spent_on_other.zero?
 
-    category_total = diapers_money + adult_incontinence_money + other_money
+    category_total = amount_spent_on_diapers + amount_spent_on_adult_incontinence + amount_spent_on_other
     if category_total != amount_spent
       cat_total = humanized_money_with_symbol(category_total)
       total = humanized_money_with_symbol(amount_spent)

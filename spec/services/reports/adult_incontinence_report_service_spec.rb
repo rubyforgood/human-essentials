@@ -77,18 +77,18 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                  organization: organization,
                  purchased_from: 'Google',
                  amount_spent_in_cents: 1000,
-                 adult_incontinence_money_cents: 1000),
+                 amount_spent_on_adult_incontinence_cents: 1000),
           create(:purchase,
                  issued_at: within_time,
                  organization: organization,
                  purchased_from: 'Walmart',
                  amount_spent_in_cents: 2000,
-                 adult_incontinence_money_cents: 2000),
+                 amount_spent_on_adult_incontinence_cents: 2000),
         ]
         purchases += create_list(:purchase, 2,
                                  issued_at: outside_time,
                                  amount_spent_in_cents: 20_000,
-                                 adult_incontinence_money_cents: 20_000,
+                                 amount_spent_on_adult_incontinence_cents: 20_000,
                                  organization: organization)
         purchases.each do |purchase|
           create_list(:line_item, 3, :purchase, quantity: 30, item: adult_incontinence_item, itemizable: purchase)

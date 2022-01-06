@@ -3,12 +3,12 @@
 # Table name: purchases
 #
 #  id                             :bigint           not null, primary key
-#  adult_incontinence_money_cents :integer          default(0), not null
+#  amount_spent_on_adult_incontinence_cents :integer          default(0), not null
 #  amount_spent_in_cents          :integer
 #  comment                        :text
-#  diapers_money_cents            :integer          default(0), not null
+#  amount_spent_on_diapers_cents            :integer          default(0), not null
 #  issued_at                      :datetime
-#  other_money_cents              :integer          default(0), not null
+#  amount_spent_on_other_cents              :integer          default(0), not null
 #  purchased_from                 :string
 #  created_at                     :datetime         not null
 #  updated_at                     :datetime         not null

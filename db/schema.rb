@@ -379,9 +379,9 @@ ActiveRecord::Schema.define(version: 2022_01_03_182104) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "vendor_id"
-    t.integer "diapers_money_cents", default: 0, null: false
-    t.integer "adult_incontinence_money_cents", default: 0, null: false
-    t.integer "other_money_cents", default: 0, null: false
+    t.integer "amount_spent_on_diapers_cents", default: 0, null: false
+    t.integer "amount_spent_on_adult_incontinence_cents", default: 0, null: false
+    t.integer "amount_spent_on_other_cents", default: 0, null: false
     t.index ["organization_id"], name: "index_purchases_on_organization_id"
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end

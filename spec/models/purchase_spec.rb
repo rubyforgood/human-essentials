@@ -3,12 +3,12 @@
 # Table name: purchases
 #
 #  id                             :bigint           not null, primary key
-#  adult_incontinence_money_cents :integer          default(0), not null
+#  amount_spent_on_adult_incontinence_cents :integer          default(0), not null
 #  amount_spent_in_cents          :integer
 #  comment                        :text
-#  diapers_money_cents            :integer          default(0), not null
+#  amount_spent_on_diapers_cents            :integer          default(0), not null
 #  issued_at                      :datetime
-#  other_money_cents              :integer          default(0), not null
+#  amount_spent_on_other_cents              :integer          default(0), not null
 #  purchased_from                 :string
 #  created_at                     :datetime         not null
 #  updated_at                     :datetime         not null
@@ -38,12 +38,12 @@ RSpec.describe Purchase, type: :model, skip_seed: true do
     end
 
     it "is valid if all categories add up to total" do
-      d = build(:purchase, amount_spent_in_cents: 450, diapers_money_cents: 200, other_money_cents: 250)
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 200, amount_spent_on_other_cents: 250)
       expect(d).to be_valid
     end
 
     it "is not valid if categories do not add up" do
-      d = build(:purchase, amount_spent_in_cents: 450, diapers_money_cents: 200)
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 200)
       expect(d).not_to be_valid
       expect(d.errors.full_messages)
         .to eq(["Amount spent does not equal all categories - categories add to $2.00 but given total is $4.50"])
