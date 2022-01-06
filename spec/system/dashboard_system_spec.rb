@@ -125,11 +125,13 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         end
 
         it "has a link to create a new donation" do
-          visit subject
-          expect(page).to have_css("#donations")
-          within "#donations" do
-            expect(page).to have_xpath("//a[@href='#{new_donation_path(organization_id: @organization.to_param)}']", visible: false)
-          end
+          org_new_donation_page = OrganizationNewDonationPage.new org_short_name: org_short_name
+
+          org_dashboard_page.visit
+
+          expect { org_dashboard_page.create_new_donation }
+            .to change { page.current_path }
+            .to org_new_donation_page.path
         end
 
         # it "doesn't count inactive items" do

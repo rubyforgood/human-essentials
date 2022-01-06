@@ -6,6 +6,12 @@ class OrganizationDashboardPage < OrganizationPage
     "dashboard"
   end
 
+  def create_new_donation
+    within "#donations" do
+      click_link "New Donation"
+    end
+  end
+
   def has_add_donation_site_call_to_action?
     has_selector? "#org-stats-call-to-action-donation-sites"
   end
