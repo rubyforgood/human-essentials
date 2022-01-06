@@ -37,12 +37,12 @@
                   <div class="card">
                     <div class="card-header" id="heading">
                       <h2 class="mb-0">
-                        <button class="btn btn-block text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= partner_article.id %>" aria-expanded="false" aria-controls="collapse<%= partner_article.id %>">
+                        <button class="btn btn-block text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= -partner_article.id %>" aria-expanded="false" aria-controls="collapse<%= -partner_article.id %>">
                           <%= partner_article.question %>
                         </button>
                       </h2>
                     </div>
-                    <div id="collapse<%= partner_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                    <div id="collapse<%= -partner_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
                       <div class="card-body">
                         <%= partner_article.content %>
                       </div>
