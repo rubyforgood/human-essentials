@@ -1,13 +1,9 @@
 class ReminderDeadlineJob < ApplicationJob
   def perform
-    organizations = Organization.needs_reminding
+    remind_these_partners = Partners::FetchPartnersToRemindNowService.new.fetch
 
-    organizations.includes(:partners).each do |organization|
-      organization.partners.where(send_reminders: true).each do |partner|
-        unless partner.deactivated?
-          ReminderDeadlineMailer.notify_deadline(partner, organization).deliver_now
-        end
-      end
+    remind_these_partners.each do |partner|
+      ReminderDeadlineMailer.notify_deadline(partner).deliver_later
     end
   end
 end

@@ -21,6 +21,26 @@ describe Partners::FetchPartnersToRemindNowService do
           it 'should include that partner' do
             expect(subject).to include(partner)
           end
+
+          context 'but the partner is deactivated' do
+            before do
+              partner.deactivated!
+            end
+
+            it 'should NOT include that partner' do
+              expect(subject).not_to include(partner)
+            end
+          end
+
+          context 'and has send_reminder=false' do
+            before do
+              partner.update_column(:send_reminders, false)
+            end
+
+            it 'should NOT include that partner' do
+              expect(subject).not_to include(partner)
+            end
+          end
         end
 
         context "that is not for today" do
@@ -46,6 +66,16 @@ describe Partners::FetchPartnersToRemindNowService do
           it "should remind based on the partner group instead of the organization level reminder" do
             expect(subject).to include(partner)
           end
+
+          context 'but the partner is deactivated' do
+            before do
+              partner.deactivated!
+            end
+
+            it 'should NOT include that partner' do
+              expect(subject).not_to include(partner)
+            end
+          end
         end
       end
 
@@ -64,6 +94,16 @@ describe Partners::FetchPartnersToRemindNowService do
             it 'should include that partner' do
               expect(subject).to include(partner)
             end
+
+            context 'but the partner is deactivated' do
+              before do
+                partner.deactivated!
+              end
+
+              it 'should NOT include that partner' do
+                expect(subject).not_to include(partner)
+              end
+            end
           end
 
           context "that is not for today" do
@@ -80,8 +120,6 @@ describe Partners::FetchPartnersToRemindNowService do
       end
     end
 
-
   end
-
 end
 
