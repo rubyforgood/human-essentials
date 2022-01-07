@@ -1,5 +1,4 @@
 class Admin::ArticlesController < ApplicationController
-
   def new
     @article = Article.new
   end
@@ -19,5 +18,4 @@ class Admin::ArticlesController < ApplicationController
   def article_params
     params.require(:article).permit(:question, :for_partners, :for_organizations, :content)
   end
-
 end

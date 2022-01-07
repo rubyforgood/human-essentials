@@ -11,5 +11,4 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe Admin::HelpHelper, type: :helper do
-
 end

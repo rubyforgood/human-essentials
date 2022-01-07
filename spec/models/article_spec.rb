@@ -15,18 +15,17 @@ RSpec.describe Article, type: :model do
   describe "#articles_for_partners" do
     it "should filter out articles that aren't meant for partners" do
       article_1 = build(:article)
-      article_1.update_attribute(:for_partners, false)
-      article_1.update_attribute(:for_organizations, true)
+      article_1.update(for_partners: false)
+      article_1.update(for_organizations: true)
 
       article_2 = build(:article)
-      article_2.update_attribute(:for_partners, true)
-      article_2.update_attribute(:for_organizations, false)
+      article_2.update(for_partners: true)
+      article_2.update(for_organizations: false)
 
       article_3 = build(:article)
-      article_3.update_attribute(:for_partners, true)
-      article_3.update_attribute(:for_organizations, true)
-      
-      articles = [article_1, article_2, article_3]
+      article_3.update(for_partners: true)
+      article_3.update(for_organizations: true)
+
       partner_articles = Article.articles_for_partners
 
       expect(partner_articles.count).to eq 2
@@ -38,19 +37,18 @@ RSpec.describe Article, type: :model do
   describe "#articles_for_organizations" do
     it "should filter out articles that aren't meant for organizations" do
       article_1 = build(:article)
-      article_1.update_attribute(:for_partners, false)
-      article_1.update_attribute(:for_organizations, true)
+      article_1.update(for_partners: false)
+      article_1.update(for_organizations: true)
 
       article_2 = build(:article)
-      article_2.update_attribute(:for_partners, true)
-      article_2.update_attribute(:for_organizations, false)
+      article_2.update(for_partners: true)
+      article_2.update(for_organizations: false)
 
       article_3 = build(:article)
-      article_3.update_attribute(:for_partners, true)
-      article_3.update_attribute(:for_organizations, true)
+      article_3.update(for_partners: true)
+      article_3.update(for_organizations: true)
 
-      articles = [article_1, article_2, article_3]
-      organization_articles = Article.articles_for_organizations(articles)
+      organization_articles = Article.articles_for_organizations(Article.all)
 
       expect(organization_articles.count).to eq 2
       expect(organization_articles.first.for_organizations).to eq true

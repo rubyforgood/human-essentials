@@ -1,5 +1,4 @@
 class HelpController < ApplicationController
-
   def show
     @organization_articles = search(params[:keyword])
   end
@@ -12,5 +11,4 @@ class HelpController < ApplicationController
       Article.articles_for_organizations(Article.all)
     end
   end
-
 end
