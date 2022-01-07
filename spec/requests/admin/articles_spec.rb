@@ -27,6 +27,13 @@ RSpec.describe "Admin::Articles", type: :request do
         expect(Article.all.count).to eq 0
       end
 
+      it "article answers can't be blank" do
+        post admin_articles_path(article: attributes_for(:article).merge(content: nil))
+        expect(subject).to render_template("new")
+        expect(flash[:error]).to be_present
+        expect(Article.all.count).to eq 0
+      end
+
       it "article for_organizations and for_partners attributes can't both be false" do
         post admin_articles_path(article: attributes_for(:article).merge(
           for_organizations: false,

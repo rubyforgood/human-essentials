@@ -11,6 +11,7 @@
 #
 class Article < ApplicationRecord
   has_rich_text :content
+  validates :content, presence: true
   validates :question, presence: true
   validates :for_organizations, acceptance: { message: "and for partners can't both be unchecked" }, unless: :for_partners
   validates :for_partners, acceptance: { message: "and for organizations can't both be unchecked" }, unless: :for_organizations
