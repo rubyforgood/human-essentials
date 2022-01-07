@@ -47,6 +47,8 @@ class Partner < ApplicationRecord
 
   validate :correct_document_mime_type
 
+  before_update :invite_new_partner, if: :email_changed?
+
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .order(:name)
@@ -149,11 +151,15 @@ class Partner < ApplicationRecord
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 
-  protected
+  private
 
   def correct_document_mime_type
     if documents.attached? && documents.any? { |doc| !doc.content_type.in?(ALLOWED_MIME_TYPES) }
       errors.add(:documents, "Must be a PDF or DOC file")
     end
+  end
+
+  def invite_new_partner
+    PartnerUser.invite!(email: email, partner: profile)
   end
 end
