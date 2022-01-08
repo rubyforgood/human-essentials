@@ -32,6 +32,5 @@ describe ReminderDeadlineMailer, skip_seed: true do
         expect(subject.body).to include("This is a friendly reminder that #{organization.name} requires your human essentials requests to be submitted by #{deadline_date}")
       end
     end
-
   end
 end

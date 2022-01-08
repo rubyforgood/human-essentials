@@ -15,6 +15,5 @@ describe ReminderDeadlineJob do
       subject.call
       expect(fake_mailer_job).to have_received(:deliver_later)
     end
-
   end
 end

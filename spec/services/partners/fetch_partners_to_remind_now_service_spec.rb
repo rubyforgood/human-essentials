@@ -1,8 +1,7 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Partners::FetchPartnersToRemindNowService do
-
-  describe '.fetch' do
+  describe ".fetch" do
     subject { described_class.new.fetch }
     let(:current_day) { 14 }
     before { travel_to(Time.zone.local(2022, 6, current_day, 1, 1, 1)) }
@@ -18,26 +17,26 @@ describe Partners::FetchPartnersToRemindNowService do
             partner.organization.update(deadline_day: current_day + 2)
           end
 
-          it 'should include that partner' do
+          it "should include that partner" do
             expect(subject).to include(partner)
           end
 
-          context 'but the partner is deactivated' do
+          context "but the partner is deactivated" do
             before do
               partner.deactivated!
             end
 
-            it 'should NOT include that partner' do
+            it "should NOT include that partner" do
               expect(subject).not_to include(partner)
             end
           end
 
-          context 'and has send_reminder=false' do
+          context "and has send_reminder=false" do
             before do
-              partner.update_column(:send_reminders, false)
+              partner.update(send_reminders: false)
             end
 
-            it 'should NOT include that partner' do
+            it "should NOT include that partner" do
               expect(subject).not_to include(partner)
             end
           end
@@ -49,7 +48,7 @@ describe Partners::FetchPartnersToRemindNowService do
             partner.organization.update(deadline_day: current_day + 2)
           end
 
-          it 'should NOT include that partner' do
+          it "should NOT include that partner" do
             expect(subject).not_to include(partner)
           end
         end
@@ -67,12 +66,12 @@ describe Partners::FetchPartnersToRemindNowService do
             expect(subject).to include(partner)
           end
 
-          context 'but the partner is deactivated' do
+          context "but the partner is deactivated" do
             before do
               partner.deactivated!
             end
 
-            it 'should NOT include that partner' do
+            it "should NOT include that partner" do
               expect(subject).not_to include(partner)
             end
           end
@@ -91,16 +90,16 @@ describe Partners::FetchPartnersToRemindNowService do
               partner_group.partners << partner
             end
 
-            it 'should include that partner' do
+            it "should include that partner" do
               expect(subject).to include(partner)
             end
 
-            context 'but the partner is deactivated' do
+            context "but the partner is deactivated" do
               before do
                 partner.deactivated!
               end
 
-              it 'should NOT include that partner' do
+              it "should NOT include that partner" do
                 expect(subject).not_to include(partner)
               end
             end
@@ -112,14 +111,12 @@ describe Partners::FetchPartnersToRemindNowService do
               partner_group.partners << partner
             end
 
-            it 'should NOT include that partner' do
+            it "should NOT include that partner" do
               expect(subject).not_to include(partner)
             end
           end
         end
       end
     end
-
   end
 end
-

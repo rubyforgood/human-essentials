@@ -21,6 +21,7 @@ RSpec.describe PartnerGroup, type: :model, skip_seed: true do
   describe 'DB constraints' do
     let(:partner_group) { create(:partner_group) }
 
+    # rubocop:disable Rails/SkipsModelValidations
     describe 'send_reminders IS NOT NULL' do
       it 'raises error if unmet' do
         expect { partner_group.update_column(:send_reminders, nil) }.to raise_error(ActiveRecord::StatementInvalid)
@@ -45,6 +46,7 @@ RSpec.describe PartnerGroup, type: :model, skip_seed: true do
       end
     end
   end
+  # rubocop:enable Rails/SkipsModelValidations
 
   context "Validations >" do
     it { should validate_numericality_of(:deadline_day_of_month).is_less_than_or_equal_to(28).allow_nil.only_integer }
@@ -73,5 +75,4 @@ RSpec.describe PartnerGroup, type: :model, skip_seed: true do
       end
     end
   end
-
 end
