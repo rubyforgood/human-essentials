@@ -6,6 +6,7 @@
 #  deadline_day_of_month :integer
 #  name                  :string
 #  reminder_day_of_month :integer
+#  send_reminders        :boolean          default(FALSE), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  organization_id       :bigint

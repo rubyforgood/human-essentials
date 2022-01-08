@@ -6,6 +6,7 @@
 #  deadline_day_of_month :integer
 #  name                  :string
 #  reminder_day_of_month :integer
+#  send_reminders        :boolean          default(FALSE), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  organization_id       :bigint
@@ -19,4 +20,6 @@ class PartnerGroup < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :organization }
   validates :deadline_day_of_month, numericality: { only_integer: true, less_than_or_equal_to: 28, greater_than_or_equal_to: 1, allow_nil: true }
   validates :reminder_day_of_month, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
+  validates :deadline_day_of_month, presence: true, if: -> { send_reminders }
+  validates :reminder_day_of_month, presence: true, if: -> { send_reminders }
 end

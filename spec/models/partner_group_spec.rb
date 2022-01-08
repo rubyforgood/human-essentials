@@ -6,6 +6,7 @@
 #  deadline_day_of_month :integer
 #  name                  :string
 #  reminder_day_of_month :integer
+#  send_reminders        :boolean          default(FALSE), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  organization_id       :bigint
@@ -19,6 +20,12 @@ RSpec.describe PartnerGroup, type: :model, skip_seed: true do
 
   describe 'DB constraints' do
     let(:partner_group) { create(:partner_group) }
+
+    describe 'send_reminders IS NOT NULL' do
+      it 'raises error if unmet' do
+        expect { partner_group.update_column(:send_reminders, nil) }.to raise_error(ActiveRecord::StatementInvalid)
+      end
+    end
 
     describe 'deadline_day_of_month <= 28' do
       it 'raises error if unmet' do
@@ -56,6 +63,14 @@ RSpec.describe PartnerGroup, type: :model, skip_seed: true do
     it "does not require a unique name between organizations" do
       create(:partner, name: "Foo")
       expect(build(:partner, name: "Foo", organization: build(:organization))).to be_valid
+    end
+
+    describe "deadline_day_of_month && reminder_day_of_month must be defined if send_reminders=true" do
+      let(:partner_group) { build(:partner_group, send_reminders: true, deadline_day_of_month: nil, reminder_day_of_month: nil) }
+
+      it "should not be valid" do
+        expect(partner_group).not_to be_valid
+      end
     end
   end
 
