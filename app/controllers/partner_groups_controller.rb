@@ -1,12 +1,4 @@
 class PartnerGroupsController < ApplicationController
-  def index
-    @partner_groups = current_organization.partner_groups
-
-    respond_to do |format|
-      format.html
-    end
-  end
-
   def new
     @partner_group = current_organization.partner_groups.new
     @item_categories = current_organization.item_categories
@@ -41,6 +33,6 @@ class PartnerGroupsController < ApplicationController
   private
 
   def partner_group_params
-    params.require(:partner_group).permit(:name, item_category_ids: [])
+    params.require(:partner_group).permit(:name, :send_reminders, :deadline_day_of_month, :reminder_day_of_month, item_category_ids: [])
   end
 end
