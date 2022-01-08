@@ -17,9 +17,12 @@
                   <div class="card">
                     <div class="card-header" id="heading">
                       <h2 class="mb-0">
-                        <button class="btn btn-block text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= organization_article.id %>" aria-expanded="false" aria-controls="collapse<%= organization_article.id %>">
+                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= organization_article.id %>" aria-expanded="false" aria-controls="collapse<%= organization_article.id %>">
                           <%= organization_article.question %>
                         </button>
+                        <div class="admin-article-buttons">
+                          <%= edit_button_to edit_admin_article_path(organization_article.id) %>
+                        </div>
                       </h2>
                     </div>
                     <div id="collapse<%= organization_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
@@ -37,9 +40,12 @@
                   <div class="card">
                     <div class="card-header" id="heading">
                       <h2 class="mb-0">
-                        <button class="btn btn-block text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= -partner_article.id %>" aria-expanded="false" aria-controls="collapse<%= -partner_article.id %>">
+                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= -partner_article.id %>" aria-expanded="false" aria-controls="collapse<%= -partner_article.id %>">
                           <%= partner_article.question %>
                         </button>
+                        <div class="admin-article-buttons">
+                          <%= edit_button_to edit_admin_article_path(partner_article.id) %>
+                        </div>
                       </h2>
                     </div>
                     <div id="collapse<%= -partner_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
