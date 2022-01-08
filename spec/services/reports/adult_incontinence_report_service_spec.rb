@@ -12,7 +12,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                                     entries: {
                                       "% adult incontinence bought" => "0%",
                                       "% adult incontinence supplies donated" => "0%",
-                                      "Adult incontinence supplies" => "Adult Briefs (Large/X-Large), Adult Briefs (Medium/Large), Adult Briefs (Small/Medium), Adult Briefs (XXL), Adult Briefs (XXXL), Adult Briefs (XS/Small), Adult Briefs (XXS), Adult Incontinence Pads, Underpads (Pack), Adult Liners, Wipes (Adult)",
+                                      "Adult incontinence supplies" => organization.items.adult_incontinence.map(&:name).uniq.sort.join(', '),
                                       "Adult incontinence supplies distributed" => "0",
                                       "Adult incontinence supplies per adult per month" => 0,
                                       "Money spent purchasing adult incontinence supplies" => "$0.00"
@@ -91,7 +91,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                                       entries: {
                                         "% adult incontinence bought" => "60%",
                                         "% adult incontinence supplies donated" => "40%",
-                                        "Adult incontinence supplies" => "Adult Briefs (Large/X-Large), Adult Briefs (Medium/Large), Adult Briefs (Small/Medium), Adult Briefs (XXL), Adult Briefs (XXXL), Adult Briefs (XS/Small), Adult Briefs (XXS), Adult Incontinence Pads, Underpads (Pack), Adult Liners, Wipes (Adult)",
+                                        "Adult incontinence supplies" => organization.items.adult_incontinence.map(&:name).uniq.sort.join(', '),
                                         "Adult incontinence supplies distributed" => "2,000",
                                         "Adult incontinence supplies per adult per month" => 20,
                                         "Money spent purchasing adult incontinence supplies" => "$30.00"
@@ -105,7 +105,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                                       entries: {
                                         "% adult incontinence bought" => "60%",
                                         "% adult incontinence supplies donated" => "40%",
-                                        "Adult incontinence supplies" => "Adult Briefs (Large/X-Large), Adult Briefs (Medium/Large), Adult Briefs (Small/Medium), Adult Briefs (XXL), Adult Briefs (XXXL), Adult Briefs (XS/Small), Adult Briefs (XXS), Adult Incontinence Pads, Underpads (Pack), Adult Liners, Wipes (Adult)",
+                                        "Adult incontinence supplies" => organization.items.adult_incontinence.map(&:name).uniq.sort.join(', '),
                                         "Adult incontinence supplies distributed" => "2,000",
                                         "Adult incontinence supplies per adult per month" => 50,
                                         "Money spent purchasing adult incontinence supplies" => "$30.00"
