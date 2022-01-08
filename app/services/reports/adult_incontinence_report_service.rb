@@ -47,7 +47,7 @@ module Reports
     end
 
     def types_of_supplies
-      organization.items.adult_incontinence.map(&:name).uniq.join(', ')
+      organization.items.adult_incontinence.map(&:name).uniq.sort.join(', ')
     end
 
     # @return [Float]
