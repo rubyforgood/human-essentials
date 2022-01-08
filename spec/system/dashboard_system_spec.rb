@@ -491,7 +491,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             @this_years_donations = {
               today: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-              earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
+              earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization)
               # See https://github.com/rubyforgood/human-essentials/issues/2676#issuecomment-1008166066
               # beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
@@ -721,12 +721,12 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             manufacturer1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
             manufacturer2 = create(:manufacturer, name: "BCD Corp", organization: @organization)
             manufacturer3 = create(:manufacturer, name: "CDE Corp", organization: @organization)
-            manufacturer4 = create(:manufacturer, name: "DEF Corp", organization: @organization)
+            # manufacturer4 = create(:manufacturer, name: "DEF Corp", organization: @organization)
 
             @this_years_donations = {
               today: create(:manufacturer_donation, :with_items, manufacturer: manufacturer1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
               yesterday: create(:manufacturer_donation, :with_items, manufacturer: manufacturer2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-              earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer3, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
+              earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer3, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization)
               # See https://github.com/rubyforgood/human-essentials/issues/2676#issuecomment-1008166066
               # beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
