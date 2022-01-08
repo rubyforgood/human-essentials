@@ -16,4 +16,3 @@ require("highcharts/modules/map")(Highcharts)
 window.Highcharts = Highcharts;
 
 import "stylesheets/application.scss"
-
