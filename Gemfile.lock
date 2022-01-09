@@ -283,6 +283,15 @@ GEM
     minitest (5.15.0)
     momentjs-rails (2.20.1)
       railties (>= 3.1)
+    monetize (1.11.0)
+      money (~> 6.12)
+    money (6.16.0)
+      i18n (>= 0.6.4, <= 2)
+    money-rails (1.15.0)
+      activesupport (>= 3.0)
+      monetize (~> 1.9)
+      money (~> 6.13)
+      railties (>= 3.0)
     multipart-post (2.1.1)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
@@ -595,6 +604,7 @@ DEPENDENCIES
   magic_test
   mini_racer (~> 0.5.0)
   momentjs-rails
+  money-rails
   nokogiri (>= 1.10.4)
   orderly (~> 0.1)
   paper_trail

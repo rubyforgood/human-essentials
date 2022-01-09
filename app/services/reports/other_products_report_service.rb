@@ -48,9 +48,7 @@ module Reports
 
     # @return [Float]
     def money_spent
-      # TODO: This includes ALL supplies - right now we cannot differentiate specifically for
-      # other items
-      organization.purchases.for_year(year).sum(:amount_spent_in_cents) / 100.0
+      organization.purchases.for_year(year).sum(:amount_spent_on_other_cents) / 100.0
     end
 
     # @return [String]
