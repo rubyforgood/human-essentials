@@ -62,15 +62,18 @@ RSpec.describe Reports::OtherProductsReportService, type: :service, skip_seed: t
         create(:purchase,
                issued_at: within_time,
                organization: organization,
-               amount_spent_in_cents: 1000),
+               amount_spent_in_cents: 1000,
+               amount_spent_on_other_cents: 1000),
         create(:purchase,
                issued_at: within_time,
                organization: organization,
-               amount_spent_in_cents: 2000),
+               amount_spent_in_cents: 2000,
+               amount_spent_on_other_cents: 2000),
       ]
       purchases += create_list(:purchase, 2,
                                issued_at: outside_time,
                                amount_spent_in_cents: 20_000,
+                               amount_spent_on_other_cents: 20_000,
                                organization: organization)
       purchases.each do |purchase|
         create_list(:line_item, 3, :purchase, quantity: 30, item: other_item, itemizable: purchase)
