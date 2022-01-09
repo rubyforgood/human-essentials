@@ -7,7 +7,7 @@ class OrganizationDashboardPage < OrganizationPage
   end
 
   def create_new_donation
-    within "#donations" do
+    within donations_section do
       click_link "New Donation"
     end
   end
@@ -58,6 +58,10 @@ class OrganizationDashboardPage < OrganizationPage
   end
 
   private
+
+  def donations_section
+    find "#donations"
+  end
 
   def org_logo_selector
     ".organization-logo"
