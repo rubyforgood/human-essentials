@@ -130,9 +130,9 @@ RSpec.describe "Purchases", type: :system, js: true do
           fill_in "purchase_issued_at", with: "2001-01-01"
           fill_in "purchase_amount_spent", with: "10"
 
-          # expect do
-          #   click_button "Save"
-          # end.to change { Purchase.count }.by(1)
+          expect do
+            click_button "Save"
+          end.to change { Purchase.count }.by(1)
 
           expect(Purchase.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
         end
