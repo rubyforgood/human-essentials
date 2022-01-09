@@ -100,6 +100,19 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     end
   end
 
+  describe '#invite_new_partner' do
+    let(:partner) { create(:partner) }
+
+    it "should call the PartnerUser.invite! when the partner is changed" do
+      allow(PartnerUser).to receive(:invite!)
+      partner.email = "randomtest@email.com"
+      partner.save!
+      expect(PartnerUser).to have_received(:invite!).with(
+        {email: "randomtest@email.com", partner: partner.profile}
+      )
+    end
+  end
+
   describe '#profile' do
     subject { partner.profile }
     let(:partner) { create(:partner) }
