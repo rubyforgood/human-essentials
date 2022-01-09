@@ -147,17 +147,17 @@ $(document).ready(function () {
  */
 $(document).ready(function() {
   $('[data-partner-reminder-form]').each(function(idx, formEle) {
-    var nestedForm = $(formEle).find('[data-partner-reminder-form-nested-form]')
-    var checkBox = $(formEle).find('[data-partner-reminder-form-checkbox]')
-    var checked = checkBox.get(0).checked;
+    let nestedForm = $(formEle).find('[data-partner-reminder-form-nested-form]');
+    let checkBox = $(formEle).find('[data-partner-reminder-form-checkbox]');
 
+    let checked = checkBox.get(0).checked;
     function toggleNestedFormVisiblity() {
-      var checked = checkBox.get(0).checked;
+      let checked = checkBox.get(0).checked;
 
       if (checked) {
-        nestedForm.removeClass('hidden')
+        nestedForm.removeClass('hidden');
       } else {
-        nestedForm.addClass('hidden')
+        nestedForm.addClass('hidden');
       }
     }
 

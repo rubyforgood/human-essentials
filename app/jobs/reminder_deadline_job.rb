@@ -1,5 +1,4 @@
 class ReminderDeadlineJob < ApplicationJob
-
   #
   # This job is triggered on production daily via running the
   # command `rails initiate_reminder_deadline_job` using the

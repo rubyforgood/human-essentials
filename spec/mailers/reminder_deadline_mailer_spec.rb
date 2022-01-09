@@ -1,4 +1,4 @@
-describe ReminderDeadlineMailer, skip_seed: true do
+describe ReminderDeadlineMailer, type: :job, skip_seed: true do
   describe 'notify deadline' do
     subject { described_class.notify_deadline(partner) }
     let(:partner) { create(:partner) }
