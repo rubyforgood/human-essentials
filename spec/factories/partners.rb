@@ -112,25 +112,11 @@ FactoryBot.define do
     after(:create) do |partner, evaluator|
       # Create associated records on partnerbase DB
       partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
-      Partners::User.create!(
-        email: partner.email,
-        name: partner.name,
-        partner: partners_partner,
-        password: 'password!',
-        invitation_sent_at: Time.utc(2021, 9, 8, 12, 43, 4),
-        last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
-      )
+      create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
 
       next if evaluator.try(:without_partner_users)
 
-      Partners::User.create!(
-        email: Faker::Internet.email,
-        name: Faker::Name.name,
-        partner: partners_partner,
-        password: 'password!',
-        invitation_sent_at: Time.utc(2021, 9, 16, 12, 43, 4),
-        last_sign_in_at: Time.utc(2021, 9, 17, 11, 34, 4)
-      )
+      create(:partners_user, partner: partners_partner)
     end
   end
 end
