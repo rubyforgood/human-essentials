@@ -981,6 +981,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "dorner",
+      "name": "Daniel Orner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1986893?v=4",
+      "profile": "https://github.com/dorner",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
