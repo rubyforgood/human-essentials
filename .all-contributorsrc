@@ -990,6 +990,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bobmazanec",
+      "name": "Bob Mazanec",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2031462?v=4",
+      "profile": "https://github.com/bobmazanec",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
