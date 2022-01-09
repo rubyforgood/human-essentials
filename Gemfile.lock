@@ -281,7 +281,7 @@ GEM
     mini_racer (0.5.0)
       libv8-node (~> 16.10.0.0)
     minitest (5.15.0)
-    momentjs-rails (2.20.1)
+    momentjs-rails (2.29.1.1)
       railties (>= 3.1)
     monetize (1.11.0)
       money (~> 6.12)
@@ -504,7 +504,7 @@ GEM
       activerecord (>= 5)
     terminal-notifier (2.0.0)
     terminal-notifier-guard (1.7.0)
-    thor (1.1.0)
+    thor (1.2.1)
     tilt (2.0.10)
     toastr-rails (1.0.3)
       railties (>= 3.1.0)
@@ -544,7 +544,7 @@ GEM
     yajl-ruby (1.4.1)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.5.1)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   arm64-darwin-21
