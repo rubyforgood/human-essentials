@@ -53,7 +53,7 @@ class OrganizationDashboardPage < OrganizationPage
 
   def total_inventory
     within summary_section do
-      find(".total_inventory").text.delete(",").to_i
+      parse_formatted_integer find(".total_inventory").text
     end
   end
 
