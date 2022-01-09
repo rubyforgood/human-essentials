@@ -34,6 +34,8 @@ class Purchase < ApplicationRecord
   monetize :amount_spent_on_adult_incontinence_cents
   monetize :amount_spent_on_other_cents
 
+  before_save :strip_symbols_from_money
+
   scope :at_storage_location, ->(storage_location_id) {
                                 where(storage_location_id: storage_location_id)
                               }
@@ -66,7 +68,7 @@ class Purchase < ApplicationRecord
 
   # @return [Integer]
   def amount_spent_in_dollars
-    amount_spent.dollars.to_i
+    amount_spent.dollars.to_f
   end
 
   def remove(item)
@@ -122,9 +124,19 @@ class Purchase < ApplicationRecord
     line_items.combine!
   end
 
+  def strip_symbols_from_money
+    %w[amount_spent amount_spent_on_diapers amount_spent_on_adult_incontinence amount_spent_on_other].each do |field|
+      if self[field].is_a?(String)
+        self[field] = self[field].tr("$", "").tr(",", "").to_i
+      end
+    end
+  end
+
   def total_equal_to_all_categories
-    return if amount_spent.zero?
-    return if amount_spent_on_diapers.zero? && amount_spent_on_adult_incontinence.zero? && amount_spent_on_other.zero?
+    return unless amount_spent&.nonzero?
+    return if !amount_spent_on_diapers&.nonzero? &&
+      !amount_spent_on_adult_incontinence&.nonzero? &&
+      !amount_spent_on_other.nonzero?
 
     category_total = amount_spent_on_diapers + amount_spent_on_adult_incontinence + amount_spent_on_other
     if category_total != amount_spent
