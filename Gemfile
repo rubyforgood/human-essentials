@@ -81,7 +81,7 @@ group :development, :test do
   gem "rb-readline", "~> 0.5.3"
   gem "rspec-rails", "~> 5.0.2"
   gem "rubocop"
-  gem "rubocop-rails", "~> 2.9.1"
+  gem "rubocop-rails", "~> 2.13.1"
   gem "standard", "~> 1.0"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
