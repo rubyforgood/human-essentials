@@ -159,132 +159,114 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               beginning_of_year: create(:manufacturer_donation, :with_items, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_donations = create_list(:donation, 2, :with_items, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
-            visit subject
+            org_dashboard_page.visit
           end
 
           describe "This Year" do
             before do
-              date_range_picker_select_range "This Year"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "This Year"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
 
             it "has a widget displaying the year-to-date Donation totals, only using donations from this year" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.total_donations).to eq total_inventory
             end
 
             it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
+              expect(org_dashboard_page.recent_donation_links)
+                .to include(match /10\d items/i) # e.g., "101 items", "103 items", etc.
+                .exactly(3).times
             end
           end
 
           describe "Today" do
             before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Today"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
 
             it "has a widget displaying today's Donation totals, only using donations from today" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.total_donations).to eq total_inventory
             end
 
             it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_donation_links)
+                .to include(match /#{total_inventory} items/i) # e.g., "100 items"
+                .exactly(:once)
             end
           end
 
           describe "Yesterday" do
             before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Yesterday"
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
 
             it "has a widget displaying the Donation totals from yesterday, only using donations from yesterday" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.total_donations).to eq total_inventory
             end
 
             it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_donation_links)
+                .to include(match /#{total_inventory} items/i) # e.g., "101 items"
+                .exactly(:once)
             end
           end
 
           describe "This Week" do
             before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Last 7 Days"
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
 
             it "has a widget displaying the Donation totals from this week, only using donations from this week" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.total_donations).to eq total_inventory
             end
 
             it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
+              expect(org_dashboard_page.recent_donation_links)
+                .to include(match /10\d items/i) # e.g., "101 items", "103 items", etc.
+                .exactly(3).times
             end
           end
 
           describe "This Month" do
             before do
-              date_range_picker_select_range "This Month"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "This Month"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
 
             it "has a widget displaying the Donation totals from this month, only using donations from this month" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.total_donations).to eq total_inventory
             end
 
             it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_donation_links)
+                .to include(match /#{total_inventory} items/i) # e.g., "101 items"
+                .exactly(:once)
             end
           end
 
           describe "All Time" do
             before do
-              date_range_picker_select_range "All Time"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "All Time"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
 
             it "has a widget displaying the Donation totals from last year, only using donations from last year" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.total_donations).to eq total_inventory
             end
 
             it "displays some recent donations from that time" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
+              expect(org_dashboard_page.recent_donation_links)
+                .to include(match /10\d items/i) # e.g., "101 items", "103 items", etc.
+                .exactly(3).times
             end
           end
         end

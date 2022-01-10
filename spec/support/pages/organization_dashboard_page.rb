@@ -12,6 +12,11 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  def filter_to_date_range(range_name)
+    select_date_filter_range range_name
+    click_on "Filter"
+  end
+
   def has_add_donation_site_call_to_action?
     has_selector? "#org-stats-call-to-action-donation-sites"
   end
@@ -40,6 +45,12 @@ class OrganizationDashboardPage < OrganizationPage
     find(org_logo_selector).native[:src]
   end
 
+  def recent_donation_links
+    within donations_section do
+      all(".donation a").map(&:text)
+    end
+  end
+
   def select_date_filter_range(range_name)
     find("#filters_date_range").click
     within ".ranges" do
@@ -49,6 +60,12 @@ class OrganizationDashboardPage < OrganizationPage
 
   def summary_section
     find "#summary"
+  end
+
+  def total_donations
+    within donations_section do
+      parse_formatted_integer find(".total_received_donations").text
+    end
   end
 
   def total_inventory
