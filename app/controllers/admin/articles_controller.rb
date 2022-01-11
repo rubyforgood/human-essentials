@@ -28,6 +28,12 @@ class Admin::ArticlesController < ApplicationController
     end
   end
 
+  def destroy
+    @article = current_article
+    @article.destroy
+    redirect_to admin_help_path
+  end
+
   private
 
   def current_article

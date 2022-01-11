@@ -125,5 +125,14 @@ RSpec.describe "Admin::Articles", type: :request do
         expect(article.for_partners).to eq true
       end
     end
+
+    describe "DELETE #destroy" do
+      it "lets the user delete articles" do
+        article = create(:article)
+        delete admin_article_path(article)
+        expect(response).to be_redirect
+        expect(Article.all.count).to eq 0
+      end
+    end
   end
 end

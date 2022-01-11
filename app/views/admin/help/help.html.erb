@@ -21,7 +21,8 @@
                           <%= bank_article.question %>
                         </button>
                         <div class="admin-article-buttons">
-                          <%= edit_button_to edit_admin_article_path(bank_article.id) %>
+                          <%= edit_button_to edit_admin_article_path(bank_article) %>
+                          <%= delete_button_to admin_article_path(bank_article) %>
                         </div>
                       </h2>
                     </div>
@@ -44,7 +45,8 @@
                           <%= partner_article.question %>
                         </button>
                         <div class="admin-article-buttons">
-                          <%= edit_button_to edit_admin_article_path(partner_article.id) %>
+                          <%= edit_button_to edit_admin_article_path(partner_article) %>
+                          <%= delete_button_to admin_article_path(partner_article) %>
                         </div>
                       </h2>
                     </div>
