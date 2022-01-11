@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ReminderDeadlineJob do
+describe ReminderDeadlineJob, type: :job, skip_seed: true do
   describe '#perform' do
     subject { -> { described_class.perform_now } }
     let(:partner) { create(:partner) }
