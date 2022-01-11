@@ -14,11 +14,11 @@ class Admin::ArticlesController < ApplicationController
   end
 
   def edit
-    @article = Article.find(params[:id])
+    @article = current_article
   end
 
   def update
-    @article = Article.find(params[:id])
+    @article = current_article
     @article.update(article_params)
     if @article.valid?
       redirect_to admin_help_path
@@ -29,6 +29,10 @@ class Admin::ArticlesController < ApplicationController
   end
 
   private
+
+  def current_article
+    @current_article ||= Article.find(params[:id])
+  end
 
   def article_params
     params.require(:article).permit(:question, :for_partners, :for_banks, :content)
