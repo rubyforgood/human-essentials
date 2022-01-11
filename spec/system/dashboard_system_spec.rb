@@ -239,7 +239,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               org_dashboard_page.filter_to_date_range "This Month"
             end
 
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
+            let(:total_inventory) { %i[today yesterday earlier_this_week].map { |date| @this_years_donations[date].total_quantity }.sum }
 
             it "has a widget displaying the Donation totals from this month, only using donations from this month" do
               expect(org_dashboard_page.total_donations).to eq total_inventory
@@ -247,8 +247,8 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
             it "displays some recent donations" do
               expect(org_dashboard_page.recent_donation_links)
-                .to include(match /#{total_inventory} items/i) # e.g., "101 items"
-                .exactly(:once)
+                .to include(match /10\d items/i) # e.g., "101 items", "103 items", etc.
+                .exactly(3).times
             end
           end
 
