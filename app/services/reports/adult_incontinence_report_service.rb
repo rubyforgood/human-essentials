@@ -66,9 +66,7 @@ module Reports
 
     # @return [String]
     def money_spent_on_supplies
-      # TODO: This includes ALL supplies - right now we cannot differentiate specifically for
-      # adult incontinence
-      organization.purchases.for_year(year).sum(:amount_spent_in_cents) / 100.0
+      organization.purchases.for_year(year).sum(:amount_spent_on_adult_incontinence_cents) / 100.0
     end
 
     ###### HELPER METHODS ######
