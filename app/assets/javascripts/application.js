@@ -150,22 +150,16 @@ $(document).ready(function() {
     let nestedForm = $(formEle).find('[data-partner-reminder-form-nested-form]');
     let checkBox = $(formEle).find('[data-partner-reminder-form-checkbox]');
 
-    let checked = checkBox.get(0).checked;
-    function toggleNestedFormVisiblity() {
-      let checked = checkBox.get(0).checked;
-
-      if (checked) {
-        nestedForm.removeClass('hidden');
-      } else {
-        nestedForm.addClass('hidden');
-      }
+    function toggleNestedFormVisibility(nestedForm, checkBox) {
+      let shouldBeVisible = !checkBox.get(0).checked;
+      nestedForm.toggleClass('hidden', shouldBeVisible);
     }
 
     $(checkBox).change(function(ele) {
-      toggleNestedFormVisiblity();
+      toggleNestedFormVisibility(nestedForm, checkBox);
     })
 
-    toggleNestedFormVisiblity();
+    toggleNestedFormVisibility(nestedForm, checkBox);
   })
 })
 
