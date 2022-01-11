@@ -10,22 +10,22 @@
           <div class="card-body p-4">
             <ul class="list-inside my-2 list-decimal space-y-5">
               <%= form_tag(help_path, method: "get") do %>
-                <%= text_field_tag(:keyword, nil, placeholder: 'Search By Question', class: "form-control organization-help-search") %>
+                <%= text_field_tag(:keyword, nil, placeholder: 'Search By Question', class: "form-control bank-help-search") %>
                 <%= submit_tag("Search", class: "btn btn-info") %>
               <% end %>
-              <% @organization_articles.each do |organization_article| %>
+              <% @bank_articles.each do |bank_article| %>
                 <div class="accordion" id="accordion">
                   <div class="card">
                     <div class="card-header" id="heading">
                       <h2 class="mb-0">
-                        <button class="btn btn-block text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= organization_article.id %>" aria-expanded="false" aria-controls="collapse<%= organization_article.id %>">
-                          <%= organization_article.question %>
+                        <button class="btn btn-block text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= bank_article.id %>" aria-expanded="false" aria-controls="collapse<%= bank_article.id %>">
+                          <%= bank_article.question %>
                         </button>
                       </h2>
                     </div>
-                    <div id="collapse<%= organization_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                    <div id="collapse<%= bank_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
                       <div class="card-body">
-                        <%= organization_article.content %>
+                        <%= bank_article.content %>
                       </div>
                     </div>
                   </div>

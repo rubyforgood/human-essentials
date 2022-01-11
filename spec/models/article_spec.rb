@@ -2,12 +2,12 @@
 #
 # Table name: articles
 #
-#  id                :bigint           not null, primary key
-#  for_organizations :boolean
-#  for_partners      :boolean
-#  question          :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
+#  id           :bigint           not null, primary key
+#  for_banks    :boolean
+#  for_partners :boolean
+#  question     :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 require 'rails_helper'
 
@@ -16,15 +16,15 @@ RSpec.describe Article, type: :model do
     it "should filter out articles that aren't meant for partners" do
       article_1 = build(:article)
       article_1.update(for_partners: false)
-      article_1.update(for_organizations: true)
+      article_1.update(for_banks: true)
 
       article_2 = build(:article)
       article_2.update(for_partners: true)
-      article_2.update(for_organizations: false)
+      article_2.update(for_banks: false)
 
       article_3 = build(:article)
       article_3.update(for_partners: true)
-      article_3.update(for_organizations: true)
+      article_3.update(for_banks: true)
 
       partner_articles = Article.articles_for_partners
 
@@ -34,25 +34,25 @@ RSpec.describe Article, type: :model do
     end
   end
 
-  describe "#articles_for_organizations" do
-    it "should filter out articles that aren't meant for organizations" do
+  describe "#articles_for_banks" do
+    it "should filter out articles that aren't meant for banks" do
       article_1 = build(:article)
       article_1.update(for_partners: false)
-      article_1.update(for_organizations: true)
+      article_1.update(for_banks: true)
 
       article_2 = build(:article)
       article_2.update(for_partners: true)
-      article_2.update(for_organizations: false)
+      article_2.update(for_banks: false)
 
       article_3 = build(:article)
       article_3.update(for_partners: true)
-      article_3.update(for_organizations: true)
+      article_3.update(for_banks: true)
 
-      organization_articles = Article.articles_for_organizations(Article.all)
+      bank_articles = Article.articles_for_banks(Article.all)
 
-      expect(organization_articles.count).to eq 2
-      expect(organization_articles.first.for_organizations).to eq true
-      expect(organization_articles.last.for_organizations).to eq true
+      expect(bank_articles.count).to eq 2
+      expect(bank_articles.first.for_banks).to eq true
+      expect(bank_articles.last.for_banks).to eq true
     end
   end
 end

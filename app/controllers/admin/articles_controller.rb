@@ -31,6 +31,6 @@ class Admin::ArticlesController < ApplicationController
   private
 
   def article_params
-    params.require(:article).permit(:question, :for_partners, :for_organizations, :content)
+    params.require(:article).permit(:question, :for_partners, :for_banks, :content)
   end
 end

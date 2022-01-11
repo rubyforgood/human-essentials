@@ -11,23 +11,23 @@
             <ul class="list-inside my-2 list-decimal space-y-5">
               <%= new_button_to new_admin_article_path, { text: "Write A New Question And Answer" } %>
 
-              <div class='text-2xl font-bold'>Questions For Organizations</div>
-              <% @organization_articles.each do |organization_article| %>
+              <div class='text-2xl font-bold'>Questions For Banks</div>
+              <% @bank_articles.each do |bank_article| %>
                 <div class="accordion" id="accordion">
                   <div class="card">
                     <div class="card-header" id="heading">
                       <h2 class="mb-0">
-                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= organization_article.id %>" aria-expanded="false" aria-controls="collapse<%= organization_article.id %>">
-                          <%= organization_article.question %>
+                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= bank_article.id %>" aria-expanded="false" aria-controls="collapse<%= bank_article.id %>">
+                          <%= bank_article.question %>
                         </button>
                         <div class="admin-article-buttons">
-                          <%= edit_button_to edit_admin_article_path(organization_article.id) %>
+                          <%= edit_button_to edit_admin_article_path(bank_article.id) %>
                         </div>
                       </h2>
                     </div>
-                    <div id="collapse<%= organization_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                    <div id="collapse<%= bank_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
                       <div class="card-body">
-                        <%= organization_article.content %>
+                        <%= bank_article.content %>
                       </div>
                     </div>
                   </div>

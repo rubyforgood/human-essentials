@@ -90,7 +90,7 @@ ActiveRecord::Schema.define(version: 2021_12_30_214819) do
   create_table "articles", force: :cascade do |t|
     t.string "question"
     t.boolean "for_partners"
-    t.boolean "for_organizations"
+    t.boolean "for_banks"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

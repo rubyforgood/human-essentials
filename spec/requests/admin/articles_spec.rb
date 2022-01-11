@@ -34,9 +34,9 @@ RSpec.describe "Admin::Articles", type: :request do
         expect(Article.all.count).to eq 0
       end
 
-      it "article for_organizations and for_partners attributes can't both be false" do
+      it "article for_banks and for_partners attributes can't both be false" do
         post admin_articles_path(article: attributes_for(:article).merge(
-          for_organizations: false,
+          for_banks: false,
           for_partners: false
         ))
         expect(subject).to render_template("new")
@@ -60,7 +60,7 @@ RSpec.describe "Admin::Articles", type: :request do
             id: article.id,
             article: {
               question: "updated question",
-              for_organizations: false,
+              for_banks: false,
               for_partners: true
             }
           }
@@ -68,7 +68,7 @@ RSpec.describe "Admin::Articles", type: :request do
         expect(response).to be_redirect
         article.reload
         expect(article.question).to eq "updated question"
-        expect(article.for_organizations).to eq false
+        expect(article.for_banks).to eq false
         expect(article.for_partners).to eq true
       end
 
@@ -105,15 +105,15 @@ RSpec.describe "Admin::Articles", type: :request do
         expect(article.content).to eq origional_answer
       end
 
-      it "article for_organizations and for_partners attributes can't both be false" do
+      it "article for_banks and for_partners attributes can't both be false" do
         article = create(:article)
-        article.update(for_organizations: true)
+        article.update(for_banks: true)
         article.update(for_partners: true)
         patch admin_article_path(
           {
             id: article.id,
             article: {
-              for_organizations: false,
+              for_banks: false,
               for_partners: false
             }
           }
@@ -121,7 +121,7 @@ RSpec.describe "Admin::Articles", type: :request do
         expect(subject).to render_template("edit")
         expect(flash[:error]).to be_present
         article.reload
-        expect(article.for_organizations).to eq true
+        expect(article.for_banks).to eq true
         expect(article.for_partners).to eq true
       end
     end
