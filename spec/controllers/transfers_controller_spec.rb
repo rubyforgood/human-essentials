@@ -1,4 +1,4 @@
-RSpec.describe TransfersController, type: :controller do
+RSpec.describe TransfersController, type: :controller, skip_seed: true do
   context "While signed in" do
     before do
       sign_in(@user)

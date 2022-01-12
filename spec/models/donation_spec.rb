@@ -17,7 +17,7 @@
 #  storage_location_id         :integer
 #
 
-RSpec.describe Donation, type: :model do
+RSpec.describe Donation, type: :model, needs_users: true do
   it_behaves_like "itemizable"
   it_behaves_like "pagination"
 

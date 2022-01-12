@@ -39,6 +39,7 @@ gem "jwt"
 gem "kaminari"
 gem "mini_racer", "~> 0.5.0"
 gem "momentjs-rails"
+gem "money-rails"
 gem "nokogiri", ">= 1.10.4"
 gem "pg", "~> 1.2.3"
 gem "simple_form"
@@ -81,6 +82,7 @@ group :development, :test do
   gem "rspec-rails", "~> 5.0.2"
   gem "rubocop"
   gem "rubocop-rails", "~> 2.9.1"
+  gem "standard", "~> 1.0"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
 end
@@ -94,9 +96,6 @@ group :development do
   gem "letter_opener"
   gem "listen", "~> 3.7.0"
   gem "rails-erd"
-  gem "spring"
-  gem "spring-watcher-listen"
-  gem "spring-commands-rspec"
   gem "web-console"
 end
 

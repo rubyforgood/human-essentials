@@ -2,19 +2,22 @@
 #
 # Table name: purchases
 #
-#  id                    :bigint           not null, primary key
-#  amount_spent_in_cents :integer
-#  comment               :text
-#  issued_at             :datetime
-#  purchased_from        :string
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  organization_id       :integer
-#  storage_location_id   :integer
-#  vendor_id             :integer
+#  id                                       :bigint           not null, primary key
+#  amount_spent_in_cents                    :integer
+#  amount_spent_on_adult_incontinence_cents :integer          default(0), not null
+#  amount_spent_on_diapers_cents            :integer          default(0), not null
+#  amount_spent_on_other_cents              :integer          default(0), not null
+#  comment                                  :text
+#  issued_at                                :datetime
+#  purchased_from                           :string
+#  created_at                               :datetime         not null
+#  updated_at                               :datetime         not null
+#  organization_id                          :integer
+#  storage_location_id                      :integer
+#  vendor_id                                :integer
 #
 
-RSpec.describe Purchase, type: :model do
+RSpec.describe Purchase, type: :model, skip_seed: true do
   it_behaves_like "itemizable"
 
   context "Validations >" do
@@ -28,6 +31,22 @@ RSpec.describe Purchase, type: :model do
       d = build(:purchase)
       d.line_items << build(:line_item, quantity: nil)
       expect(d).not_to be_valid
+    end
+    it "is valid if categories have no values" do
+      d = build(:purchase, amount_spent_in_cents: 450)
+      expect(d).to be_valid
+    end
+
+    it "is valid if all categories add up to total" do
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 200, amount_spent_on_other_cents: 250)
+      expect(d).to be_valid
+    end
+
+    it "is not valid if categories do not add up" do
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 200)
+      expect(d).not_to be_valid
+      expect(d.errors.full_messages)
+        .to eq(["Amount spent does not equal all categories - categories add to $2.00 but given total is $4.50"])
     end
   end
 

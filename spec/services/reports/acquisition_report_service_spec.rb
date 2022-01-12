@@ -12,21 +12,25 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
     Time.zone.parse("2019-05-31 14:00:00")
   end
 
+  def organization
+    @organization ||= create(:organization)
+  end
+
   before(:all) do
     DatabaseCleaner.start
+    create_organization
     seed_base_items_for_tests
-    seed_with_default_records
 
-    Organization.seed_items(@organization)
-    disposable_item = @organization.items.disposable.first
-    non_disposable_item = @organization.items.where.not(id: @organization.items.disposable).first
+    Organization.seed_items(organization)
+    disposable_item = organization.items.disposable.first
+    non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
 
     # We will create data both within and outside our date range, and both disposable and non disposable.
     # Spec will ensure that only the required data is included.
 
     # Distributions
-    distributions = create_list(:distribution, 2, issued_at: within_time, organization: @organization)
-    outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: @organization)
+    distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
+    outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
     (distributions + outside_distributions).each do |dist|
       create_list(:line_item, 5, :distribution, quantity: 20, item: disposable_item, itemizable: dist)
       create_list(:line_item, 5, :distribution, quantity: 30, item: non_disposable_item, itemizable: dist)
@@ -37,13 +41,13 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                                       diaper_drive: nil,
                                       issued_at: within_time,
                                       money_raised: 1000,
-                                      organization: @organization)
+                                      organization: organization)
 
     non_drive_donations += create_list(:donation, 2,
                                        diaper_drive: nil,
                                        issued_at: outside_time,
                                        money_raised: 1000,
-                                       organization: @organization)
+                                       organization: organization)
 
     non_drive_donations.each do |donation|
       create_list(:line_item, 3, :donation, quantity: 20, item: disposable_item, itemizable: donation)
@@ -55,11 +59,11 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                          start_date: within_time,
                          end_date: nil,
                          virtual: false,
-                         organization: @organization)
+                         organization: organization)
     outside_drives = create_list(:diaper_drive, 2,
                                  start_date: outside_time - 1.month,
                                  end_date: outside_time,
-                                 organization: @organization,
+                                 organization: organization,
                                  virtual: false)
 
     donations = (drives + outside_drives).map do |drive|
@@ -67,7 +71,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                   diaper_drive: drive,
                   issued_at: drive.start_date + 1.day,
                   money_raised: 1000,
-                  organization: @organization)
+                  organization: organization)
     end
     donations.flatten!
     donations.each do |donation|
@@ -80,11 +84,11 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                           start_date: within_time,
                           end_date: nil,
                           virtual: true,
-                          organization: @organization)
+                          organization: organization)
     outside_vdrives = create_list(:diaper_drive, 2,
                                   start_date: outside_time - 1.month,
                                   end_date: outside_time,
-                                  organization: @organization,
+                                  organization: organization,
                                   virtual: true)
 
     vdonations = (vdrives + outside_vdrives).map do |drive|
@@ -92,7 +96,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
              diaper_drive: drive,
              money_raised: 1000,
              issued_at: drive.start_date + 1.day,
-             organization: @organization)
+             organization: organization)
     end
     vdonations.flatten!
     vdonations.each do |donation|
@@ -102,8 +106,8 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
     # Vendors
     vendors = [
-      create(:vendor, business_name: "Vendor 1", organization: @organization),
-      create(:vendor, business_name: "Vendor 2", organization: @organization),
+      create(:vendor, business_name: "Vendor 1", organization: organization),
+      create(:vendor, business_name: "Vendor 2", organization: organization),
     ]
 
     # Purchases
@@ -112,21 +116,24 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
         create(:purchase,
                issued_at: within_time,
                vendor: vendor,
-               organization: @organization,
+               organization: organization,
                purchased_from: 'Google',
-               amount_spent_in_cents: 1000),
+               amount_spent_in_cents: 1000,
+               amount_spent_on_diapers_cents: 1000),
         create(:purchase,
                issued_at: within_time,
                vendor: vendor,
-               organization: @organization,
+               organization: organization,
                purchased_from: 'Walmart',
-               amount_spent_in_cents: 2000),
+               amount_spent_in_cents: 2000,
+               amount_spent_on_diapers_cents: 2000),
       ]
       purchases += create_list(:purchase, 2,
                                issued_at: outside_time,
                                amount_spent_in_cents: 20_000,
+                               amount_spent_on_diapers_cents: 20_000,
                                vendor: vendor,
-                               organization: @organization)
+                               organization: organization)
       purchases.each do |purchase|
         create_list(:line_item, 3, :purchase, quantity: 20, item: disposable_item, itemizable: purchase)
         create_list(:line_item, 3, :purchase, quantity: 10, item: non_disposable_item, itemizable: purchase)
@@ -139,7 +146,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
   end
 
   subject(:report) do
-    described_class.new(organization: @organization, year: year)
+    described_class.new(organization: organization, year: year)
   end
 
   specify '#report' do

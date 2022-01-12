@@ -1,4 +1,4 @@
-RSpec.describe "Diaper Drives", type: :system, js: true do
+RSpec.describe "Diaper Drives", type: :system, js: true, skip_seed: true do
   include DateRangeHelper
 
   before do

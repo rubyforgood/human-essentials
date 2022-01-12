@@ -1,4 +1,4 @@
-RSpec.describe DistributionReminder do
+RSpec.describe DistributionReminder, skip_seed: true do
   describe "conditionally sending the emails" do
     let(:organization) { create :organization }
 

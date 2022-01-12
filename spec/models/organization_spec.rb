@@ -6,6 +6,7 @@
 #  city                     :string
 #  deadline_day             :integer
 #  default_storage_location :integer
+#  distribute_monthly       :boolean          default(FALSE), not null
 #  email                    :string
 #  intake_location          :integer
 #  invitation_text          :text
@@ -14,6 +15,7 @@
 #  name                     :string
 #  partner_form_fields      :text             default([]), is an Array
 #  reminder_day             :integer
+#  repackage_essentials     :boolean          default(FALSE), not null
 #  short_name               :string
 #  state                    :string
 #  street                   :string
@@ -159,6 +161,7 @@ RSpec.describe Organization, type: :model do
 
     context "when no organization is provided" do
       it "updates all organizations" do
+        Organization.seed_items(@organization)
         second_organization = create(:organization)
         organization_item_count = @organization.items.size
         second_organization_item_count = second_organization.items.size

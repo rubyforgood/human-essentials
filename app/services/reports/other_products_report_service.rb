@@ -1,41 +1,80 @@
 module Reports
   class OtherProductsReportService
+    include ActionView::Helpers::NumberHelper
     attr_reader :year, :organization
 
+    # @param year [Integer]
+    # @param organization [Organization]
     def initialize(year:, organization:)
       @year = year
       @organization = organization
     end
 
+    # @return [Hash]
     def report
-      @report ||= {
-        other_products: other_products
-      }
+      @report ||= { name: 'Other Items',
+                    entries: {
+                      'Non-diaper products distributed' => number_with_delimiter(distributed_products),
+                      '% non-diaper products donated' => "#{percent_donated.round}%",
+                      '% non-diaper products bought' => "#{percent_bought.round}%",
+                      'Money spent on non-diaper products' => number_to_currency(money_spent),
+                      'List of non-diaper products' => product_list
+                    } }
     end
 
-    def columns_for_csv
-      %i[other_products]
+    # @return [Integer]
+    def distributed_products
+      organization
+        .distributions
+        .for_year(year)
+        .joins(line_items: :item)
+        .merge(Item.other_categories)
+        .sum('line_items.quantity')
     end
 
-    def other_products
-      organization.items.where(partner_key: other_products_partner_keys).map(&:name)
+    # @return [Float]
+    def percent_donated
+      return 0.0 if total_products.zero?
+
+      (donated_products / total_products.to_f) * 100
     end
 
-    def base_item_json(key)
-      file = File.read("db/base_items.json")
-      json = JSON.parse(file)
+    # @return [Float]
+    def percent_bought
+      return 0.0 if total_products.zero?
 
-      json[key].map(&:values).map { |keys| keys[0] }
+      (purchased_products / total_products.to_f) * 100
     end
 
-    def other_products_partner_keys
-      menstrual_supplies = base_item_json("Menstrual Supplies/Items")
-      miscellaneous = base_item_json("Miscellaneous")
-      training_pants = base_item_json("Training Pants")
-      wipes_adult = base_item_json("Wipes - Adults")
-      wipes_children = base_item_json("Wipes - Childrens")
+    # @return [Float]
+    def money_spent
+      organization.purchases.for_year(year).sum(:amount_spent_on_other_cents) / 100.0
+    end
 
-      menstrual_supplies + miscellaneous + training_pants + wipes_adult + wipes_children
+    # @return [String]
+    def product_list
+      organization.items.other_categories.map(&:name).sort.uniq.join(', ')
+    end
+
+    # @return [Integer]
+    def purchased_products
+      @purchased_products ||= LineItem.joins(:item)
+                                      .merge(Item.other_categories)
+                                      .where(itemizable: organization.purchases.for_year(year))
+                                      .sum(:quantity)
+    end
+
+    # @return [Integer]
+    def total_products
+      @total_products ||= purchased_products + donated_products
+    end
+
+    # @return [Integer]
+    def donated_products
+      @donated_products ||= LineItem.joins(:item)
+                                    .merge(Item.other_categories)
+                                    .where(itemizable: organization.donations.for_year(year))
+                                    .sum(:quantity)
     end
   end
 end

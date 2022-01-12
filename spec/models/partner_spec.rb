@@ -15,7 +15,7 @@
 #  partner_group_id :bigint
 #
 
-RSpec.describe Partner, type: :model do
+RSpec.describe Partner, type: :model, skip_seed: true do
   describe 'associations' do
     it { should belong_to(:organization) }
     it { should belong_to(:partner_group).optional }
@@ -97,6 +97,19 @@ RSpec.describe Partner, type: :model do
       it 'should return false' do
         expect(subject).to eq(false)
       end
+    end
+  end
+
+  describe '#invite_new_partner' do
+    let(:partner) { create(:partner) }
+
+    it "should call the PartnerUser.invite! when the partner is changed" do
+      allow(PartnerUser).to receive(:invite!)
+      partner.email = "randomtest@email.com"
+      partner.save!
+      expect(PartnerUser).to have_received(:invite!).with(
+        {email: "randomtest@email.com", partner: partner.profile}
+      )
     end
   end
 

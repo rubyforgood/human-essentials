@@ -74,6 +74,7 @@ class OrganizationsController < ApplicationController
       :zipcode, :email, :url, :logo, :intake_location,
       :default_storage_location, :default_email_text,
       :invitation_text, :reminder_day, :deadline_day,
+      :repackage_essentials, :distribute_monthly,
       partner_form_fields: []
     )
   end

@@ -1,0 +1,17 @@
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 * * * *'
+
+jobs:
+  remove_help_wanted_labels:
+    runs-on: ubuntu-latest
+    name: Remove help wanted labels
+    steps:
+      - name: Remove help wanted labels
+        uses: rubyforgood/remove-label-from-cards@v1
+        id: remove-help-wanted-labels
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          label_to_remove: 'Help Wanted'
+          column_id: '16446979'

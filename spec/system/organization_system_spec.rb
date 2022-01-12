@@ -1,4 +1,4 @@
-RSpec.describe "Organization management", type: :system, js: true do
+RSpec.describe "Organization management", type: :system, js: true, skip_seed: true do
   include ActionView::RecordIdentifier
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
@@ -46,6 +46,20 @@ RSpec.describe "Organization management", type: :system, js: true do
         fill_in "organization_deadline_day", with: 1
         click_on "Save"
         expect(page.find(".alert.alert-danger.alert-dismissible")).to have_content "Failed to update"
+      end
+
+      it 'can select if the org repackages essentials' do
+        choose('organization[repackage_essentials]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
+      end
+
+      it 'can select if the org distributes essentials monthly' do
+        choose('organization[distribute_monthly]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
       end
 
       it 'can set a default storage location on the organization' do

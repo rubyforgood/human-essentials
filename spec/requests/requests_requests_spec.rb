@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Requests', type: :request do
+RSpec.describe 'Requests', type: :request, skip_seed: true do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end

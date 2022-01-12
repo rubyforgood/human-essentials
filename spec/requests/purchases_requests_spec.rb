@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Purchases", type: :request do
+RSpec.describe "Purchases", type: :request, skip_seed: true do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
@@ -50,7 +50,7 @@ RSpec.describe "Purchases", type: :request do
           { storage_location_id: storage_location.id,
             purchased_from: "Google",
             vendor_id: vendor.id,
-            amount_spent_in_cents: 10,
+            amount_spent: 10,
             line_items: line_items }
         end
 
@@ -60,7 +60,7 @@ RSpec.describe "Purchases", type: :request do
         end
 
         it "accepts :amount_spent_in_cents with dollar signs, commas, and periods" do
-          formatted_purchase = purchase.merge(amount_spent_in_cents: "$1,000.54")
+          formatted_purchase = purchase.merge(amount_spent: "$1,000.54")
           post purchases_path(default_params.merge(purchase: formatted_purchase))
 
           expect(Purchase.last.amount_spent_in_cents).to eq 100_054
@@ -69,9 +69,9 @@ RSpec.describe "Purchases", type: :request do
 
       context "on failure" do
         it "renders GET#new with error" do
-          post purchases_path(default_params.merge(purchase: { storage_location_id: nil, amount_spent_in_cents: nil }))
+          post purchases_path(default_params.merge(purchase: { storage_location_id: nil, amount_spent: nil }))
           expect(response).to be_successful # Will render :new
-          expect(response.body).to include('Failed to create purchase due to: ["Storage location must exist", "Vendor must exist", "Amount spent in cents is not a number"]')
+          expect(response.body).to include('Failed to create purchase due to: ["Storage location must exist", "Vendor must exist", "Amount spent is not a number", "Amount spent in cents must be greater than 0"]')
         end
       end
     end
