@@ -124,6 +124,18 @@ function load_quagga() {
 };
 $(document).on('turbolinks:load', load_quagga);
 
+function reloadWithQueryParam(key, value) {
+  const baseURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
+  const urlParams = new URLSearchParams(window.location.search);
+  if (value) {
+    urlParams.set(key, value);
+  }
+  else {
+    urlParams.delete(key);
+  }
+  window.location = `${baseURL}?${urlParams.toString()}${window.location.hash}`
+}
+
 /**
  * Handle loading on specified tab in the URL parameter. In case we would like
  * to direct a user to a specific tab on a page rather than the default.

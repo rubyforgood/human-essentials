@@ -81,6 +81,8 @@
             <div class="tab-content" id="custom-tabs-three-tabContent">
 
               <div class="tab-pane fade show active" id="custom-tabs-inventory" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+                Show Inventory at Date: <%= date_field_tag 'version_date_select', params[:version_date] %>
+                <br/><br/>
                 <table class="table">
                   <thead>
                   <tr>
@@ -89,7 +91,9 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <%= render partial: "inventory_item_row", collection: @storage_location.inventory_items %>
+                  <%= render partial: "inventory_item_row",
+                             collection: @storage_location.inventory_items,
+                             locals: { version_date: params[:version_date] }%>
                   </tbody>
                   <tfoot>
                   <tr>
@@ -161,3 +165,11 @@
   <li>Save the file as a csv file.</li>
   <li>DO NOT CHANGE ANY ITEM NAME.</li>
 <% end %>
+
+<script>
+  $(document).ready(() => {
+    $('#version_date_select').change((event) => {
+      reloadWithQueryParam('version_date', event.target.value);
+    })
+  });
+</script>
