@@ -280,11 +280,13 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         end
 
         it "has a link to create a new purchase" do
-          visit subject
-          expect(page).to have_css("#purchases")
-          within "#purchases" do
-            expect(page).to have_xpath("//a[@href='#{new_purchase_path(organization_id: @organization.to_param)}']", visible: false)
-          end
+          org_new_purchase_page = OrganizationNewPurchasePage.new org_short_name: org_short_name
+
+          org_dashboard_page.visit
+
+          expect { org_dashboard_page.create_new_purchase }
+            .to change { page.current_path }
+            .to org_new_purchase_page.path
         end
 
         # it 'does not count inactive items' do
@@ -313,143 +315,147 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               beginning_of_year: create(:purchase, :with_items, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_purchases = create_list(:purchase, 2, :with_items, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
-            visit subject
+            org_dashboard_page.visit
           end
 
           describe "This Year" do
             before do
-              date_range_picker_select_range "This Year"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "This Year"
             end
 
             it "has a widget displaying the year-to-date Purchase totals, only using purchases from this year" do
-              within "#purchases" do
-                expect(page).to have_content(100)
-                expect(page).to have_content(101)
-                expect(page).to have_content(102)
-              end
+              recent_purchase_links = org_dashboard_page.recent_purchase_links
+              expect(recent_purchase_links).to include(match /100/i)
+              expect(recent_purchase_links).to include(match /101/i)
+              expect(recent_purchase_links).to include(match /102/i)
             end
 
             it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
+              expect(org_dashboard_page.recent_purchase_links)
+                .to include(match /10\d items/i) # e.g., "101 items", "103 items", etc.
+                .exactly(3).times
             end
           end
 
           describe "Today" do
             before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Today"
             end
 
             let(:total_inventory) { @this_years_purchases[:today].total_quantity }
 
             it "has a widget displaying today's Purchase totals, only using purchases from today" do
-              within "#purchases" do
-                expect(page).to have_content(total_inventory)
-                expect(page).to_not have_content(101)
-              end
+              recent_purchase_links = org_dashboard_page.recent_purchase_links
+
+              # rubocop:disable Layout/ExtraSpacing
+              expect(recent_purchase_links).to     include(match /#{total_inventory}/i)
+              expect(recent_purchase_links).not_to include(match /101/i)
+              # rubocop:enable Layout/ExtraSpacing
             end
 
             it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_purchase_links)
+                .to include(match /#{total_inventory}/i)
+                .exactly(:once)
             end
           end
 
           describe "Yesterday" do
             before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Yesterday"
             end
 
             let(:total_inventory) { @this_years_purchases[:yesterday].total_quantity }
 
             it "has a widget displaying the Purchase totals from yesterday, only using purchases from yesterday" do
-              within "#purchases" do
-                # expect(page).to_not have_content(100)
-                # expect(page).to have_content(total_inventory)
-                # expect(page).to_not have_content(102)
-              end
+              # recent_purchase_links = org_dashboard_page.recent_purchase_links
+
+              # expect(recent_purchase_links).not_to include(match /100/i)
+              # expect(recent_purchase_links).to     include(match /#{total_inventory}/i)
+              # expect(recent_purchase_links).not_to include(match /102/i)
             end
 
             it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_purchase_links)
+                .to include(match /#{total_inventory} items/i)
+                .exactly(:once)
             end
           end
 
           describe "This Week" do
             before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Last 7 Days"
             end
 
             it "has a widget displaying the Purchase totals from this week, only using purchases from this week" do
-              within "#purchases" do
-                expect(page).to have_content(100)
-                expect(page).to have_content(101)
-                expect(page).to have_content(102)
-                expect(page).to_not have_content(103)
-                expect(page).to_not have_content(104)
-              end
+              recent_purchase_links = org_dashboard_page.recent_purchase_links
+
+              # rubocop:disable Layout/ExtraSpacing
+              expect(recent_purchase_links).to     include(match /100/i)
+              expect(recent_purchase_links).to     include(match /101/i)
+              expect(recent_purchase_links).to     include(match /102/i)
+
+              expect(recent_purchase_links).not_to include(match /103/i)
+              expect(recent_purchase_links).not_to include(match /104/i)
+              # rubocop:enable Layout/ExtraSpacing
             end
 
             it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
+              expect(org_dashboard_page.recent_purchase_links)
+                .to include(match /10\d items/i) # e.g., "100", "101", etc.
+                .exactly(3).times
             end
           end
 
           describe "This Month" do
             before do
-              date_range_picker_select_range "This Month"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "This Month"
             end
 
             let(:total_inventory) { @this_years_purchases[:today].total_quantity }
 
             it "has a widget displaying the Purchase totals from this month, only using purchases from this month" do
-              within "#purchases" do
-                expect(page).to have_content(100)
-                expect(page).to have_content(101)
-                expect(page).to have_content(102)
-                expect(page).to_not have_content(103)
-                expect(page).to_not have_content(104)
-              end
+              recent_purchase_links = org_dashboard_page.recent_purchase_links
+
+              # rubocop:disable Layout/ExtraSpacing
+              expect(recent_purchase_links).to     include(match /100/i)
+              expect(recent_purchase_links).to     include(match /101/i)
+              expect(recent_purchase_links).to     include(match /102/i)
+
+              expect(recent_purchase_links).not_to include(match /103/i)
+              expect(recent_purchase_links).not_to include(match /104/i)
+              # rubocop:enable Layout/ExtraSpacing
             end
 
             it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_purchase_links)
+                .to include(match /#{total_inventory} items/i)
+                .exactly(:once)
             end
           end
 
           describe "All Time" do
             before do
-              date_range_picker_select_range "All Time"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "All Time"
             end
 
             it "has a widget displaying the most 3 recent purchases" do
-              within "#purchases" do
-                expect(page).to have_content(100)
-                expect(page).to have_content(101)
-                expect(page).to have_content(102)
-                expect(page).to_not have_content(103)
-                expect(page).to_not have_content(104)
-              end
+              recent_purchase_links = org_dashboard_page.recent_purchase_links
+
+              # rubocop:disable Layout/ExtraSpacing
+              expect(recent_purchase_links).to     include(match /100/i)
+              expect(recent_purchase_links).to     include(match /101/i)
+              expect(recent_purchase_links).to     include(match /102/i)
+
+              expect(recent_purchase_links).not_to include(match /103/i)
+              expect(recent_purchase_links).not_to include(match /104/i)
+              # rubocop:enable Layout/ExtraSpacing
             end
 
             it "displays some recent purchases from that time" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
+              expect(org_dashboard_page.recent_purchase_links)
+                .to include(match /10\d items/i) # e.g., "100", "101", etc.
+                .exactly(3).times
             end
           end
         end
