@@ -1,4 +1,9 @@
 class Admin::QuestionsController < ApplicationController
+  def index
+    @bank_questions = Question.questions_for_banks(Question.all)
+    @partner_questions = Question.questions_for_partners
+  end
+
   def new
     @question = Question.new
   end
@@ -6,7 +11,7 @@ class Admin::QuestionsController < ApplicationController
   def create
     @question = Question.create(question_params)
     if @question.valid?
-      redirect_to admin_help_path
+      redirect_to admin_questions_path
     else
       flash[:error] = "Failed to create question."
       render :new
@@ -21,7 +26,7 @@ class Admin::QuestionsController < ApplicationController
     @question = current_question
     @question.update(question_params)
     if @question.valid?
-      redirect_to admin_help_path
+      redirect_to admin_questions_path
     else
       flash[:error] = "Failed to create question."
       render :edit
@@ -31,7 +36,7 @@ class Admin::QuestionsController < ApplicationController
   def destroy
     @question = current_question
     @question.destroy
-    redirect_to admin_help_path
+    redirect_to admin_questions_path
   end
 
   private
