@@ -62,7 +62,7 @@ Rails.application.routes.draw do
     resources :barcode_items
     resources :account_requests, only: [:index]
     get "help", to: "help#help"
-    resources :articles
+    resources :questions
   end
 
   match "/404", to: "errors#not_found", via: :all

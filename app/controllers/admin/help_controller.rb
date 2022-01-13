@@ -1,6 +1,6 @@
 class Admin::HelpController < ApplicationController
   def help
-    @bank_articles = Article.articles_for_banks(Article.all)
-    @partner_articles = Article.articles_for_partners
+    @bank_questions = Question.questions_for_banks(Question.all)
+    @partner_questions = Question.questions_for_partners
   end
 end

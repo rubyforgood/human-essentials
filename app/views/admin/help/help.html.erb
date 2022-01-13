@@ -9,26 +9,26 @@
           </div>
           <div class="card-body p-4">
             <ul class="list-inside my-2 list-decimal space-y-5">
-              <%= new_button_to new_admin_article_path, { text: "Write A New Question And Answer" } %>
+              <%= new_button_to new_admin_question_path, { text: "Write A New Question And Answer" } %>
 
               <div class='text-2xl font-bold'>Questions For Banks</div>
-              <% @bank_articles.each do |bank_article| %>
+              <% @bank_questions.each do |bank_question| %>
                 <div class="accordion" id="accordion">
                   <div class="card">
                     <div class="card-header" id="heading">
                       <h2 class="mb-0">
-                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= bank_article.id %>" aria-expanded="false" aria-controls="collapse<%= bank_article.id %>">
-                          <%= bank_article.question %>
+                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= bank_question.id %>" aria-expanded="false" aria-controls="collapse<%= bank_question.id %>">
+                          <%= bank_question.title %>
                         </button>
-                        <div class="admin-article-buttons">
-                          <%= edit_button_to edit_admin_article_path(bank_article) %>
-                          <%= delete_button_to admin_article_path(bank_article) %>
+                        <div class="admin-question-buttons">
+                          <%= edit_button_to edit_admin_question_path(bank_question) %>
+                          <%= delete_button_to admin_question_path(bank_question) %>
                         </div>
                       </h2>
                     </div>
-                    <div id="collapse<%= bank_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                    <div id="collapse<%= bank_question.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
                       <div class="card-body">
-                        <%= bank_article.content %>
+                        <%= bank_question.content %>
                       </div>
                     </div>
                   </div>
@@ -36,23 +36,23 @@
               <% end %>
 
               <div class='text-2xl font-bold'>Questions For Partners</div>
-              <% @partner_articles.each do |partner_article| %>
+              <% @partner_questions.each do |partner_question| %>
                 <div class="accordion" id="accordion">
                   <div class="card">
                     <div class="card-header" id="heading">
                       <h2 class="mb-0">
-                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= -partner_article.id %>" aria-expanded="false" aria-controls="collapse<%= -partner_article.id %>">
-                          <%= partner_article.question %>
+                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= -partner_question.id %>" aria-expanded="false" aria-controls="collapse<%= -partner_question.id %>">
+                          <%= partner_question.title %>
                         </button>
-                        <div class="admin-article-buttons">
-                          <%= edit_button_to edit_admin_article_path(partner_article) %>
-                          <%= delete_button_to admin_article_path(partner_article) %>
+                        <div class="admin-question-buttons">
+                          <%= edit_button_to edit_admin_question_path(partner_question) %>
+                          <%= delete_button_to admin_question_path(partner_question) %>
                         </div>
                       </h2>
                     </div>
-                    <div id="collapse<%= -partner_article.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                    <div id="collapse<%= -partner_question.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
                       <div class="card-body">
-                        <%= partner_article.content %>
+                        <%= partner_question.content %>
                       </div>
                     </div>
                   </div>

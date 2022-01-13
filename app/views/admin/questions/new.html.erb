@@ -16,6 +16,6 @@
   </div><!-- /.container-fluid -->
 </section>
 
-<%= simple_form_for @article, url: admin_articles_path do |f| %>
-  <%= render partial: "article_form", locals: { f: f } %>
+<%= simple_form_for @question, url: admin_questions_path do |f| %>
+  <%= render partial: "question_form", locals: { f: f } %>
 <% end %>
