@@ -18,6 +18,12 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  def diaper_drive_total_donations
+    within diaper_drives_section do
+      parse_formatted_integer find(".total_received_donations").text
+    end
+  end
+
   def filter_to_date_range(range_name)
     select_date_filter_range range_name
     click_on "Filter"
@@ -39,6 +45,10 @@ class OrganizationDashboardPage < OrganizationPage
     has_selector? "#org-stats-call-to-action-storage-locations"
   end
 
+  def has_diaper_drives_section?
+    has_selector? diaper_drives_selector
+  end
+
   def has_getting_started_guide?
     has_selector? "#getting-started-guide"
   end
@@ -49,6 +59,12 @@ class OrganizationDashboardPage < OrganizationPage
 
   def organization_logo_filepath
     find(org_logo_selector).native[:src]
+  end
+
+  def recent_diaper_drive_donation_links
+    within diaper_drives_section do
+      all(".donation a").map(&:text)
+    end
   end
 
   def recent_donation_links
@@ -87,6 +103,14 @@ class OrganizationDashboardPage < OrganizationPage
   end
 
   private
+
+  def diaper_drives_section
+    find diaper_drives_selector
+  end
+
+  def diaper_drives_selector
+    "#diaper_drives"
+  end
 
   def donations_section
     find "#donations"
