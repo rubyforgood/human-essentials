@@ -55,4 +55,16 @@ RSpec.describe Question, type: :model do
       expect(bank_questions.last.for_banks).to eq true
     end
   end
+
+  describe 'validations' do
+    it { should validate_presence_of(:title) }
+    it { should validate_presence_of(:content) }
+
+    it "question for_banks and for_partners attributes can't both be false" do
+      question = build(:question)
+      question.update(for_partners: false)
+      question.update(for_banks: false)
+      expect(question).to_not be_valid
+    end
+  end
 end
