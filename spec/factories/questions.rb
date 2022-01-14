@@ -14,6 +14,6 @@ FactoryBot.define do
     title { "question" }
     for_banks { true }
     for_partners { false }
-    content { "content" }
+    answer { "content" }
   end
 end

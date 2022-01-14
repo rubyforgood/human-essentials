@@ -10,8 +10,8 @@
 #  updated_at   :datetime         not null
 #
 class Question < ApplicationRecord
-  has_rich_text :content
-  validates :content, presence: true
+  has_rich_text :answer
+  validates :answer, presence: true
   validates :title, presence: true
   validates :for_banks, acceptance: {message: "and for partners can't both be unchecked"}, unless: :for_partners
   validates :for_partners, acceptance: {message: "and for banks can't both be unchecked"}, unless: :for_banks

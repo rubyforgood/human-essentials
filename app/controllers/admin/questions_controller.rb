@@ -46,6 +46,6 @@ class Admin::QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:title, :for_partners, :for_banks, :content)
+    params.require(:question).permit(:title, :for_partners, :for_banks, :answer)
   end
 end
