@@ -94,7 +94,7 @@ group :development do
   gem "bullet"
   gem 'foreman'
   gem "letter_opener"
-  gem "listen", "~> 3.7.0"
+  gem "listen", "~> 3.7.1"
   gem "rails-erd"
   gem "web-console"
 end
