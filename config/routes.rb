@@ -61,7 +61,6 @@ Rails.application.routes.draw do
     resources :users
     resources :barcode_items
     resources :account_requests, only: [:index]
-    get "help", to: "help#help"
     resources :questions
   end
 

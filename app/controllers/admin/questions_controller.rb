@@ -1,13 +1,13 @@
 class Admin::QuestionsController < ApplicationController
   def index
-    @bank_questions = Question.questions_for_banks(Question.all)
-    @partner_questions = Question.questions_for_partners
+    @bank_questions = Question.for_banks
+    @partner_questions = Question.for_partners
   end
 
   def new
     @question = Question.new
   end
- 
+
   def create
     @question = Question.create(question_params)
     if @question.valid?

@@ -3,7 +3,7 @@ module Partners
     layout 'partners/application'
 
     def show
-      @partner_questions = Question.questions_for_partners
+      @partner_questions = Question.for_partners
     end
   end
 end

@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Admin::Articles", type: :request do
   context "while signed in as a super admin" do

@@ -5,10 +5,9 @@ class HelpController < ApplicationController
 
   def search(keyword)
     if keyword.present?
-      search_results = Question.where("title ILIKE ?", "%#{keyword}%")
-      Question.questions_for_banks(search_results)
+      Question.for_banks.where("title ILIKE ?", "%#{keyword}%")
     else
-      Question.questions_for_banks(Question.all)
+      Question.for_banks
     end
   end
 end
