@@ -73,20 +73,6 @@ Capybara.asset_host = "http://localhost:3000"
 # Only keep the most recent run
 Capybara::Screenshot.prune_strategy = :keep_last_run
 
-def with_features(**features)
-  adapter = Flipper::Adapters::Memory.new
-  flipper = Flipper.new(adapter)
-  features.each do |feature, enabled|
-    if enabled
-      flipper.enable(feature)
-    else
-      flipper.disable(feature)
-    end
-  end
-  stub_const('Flipper', flipper)
-  yield
-end
-
 def stub_addresses
   Geocoder.configure(lookup: :test)
 
