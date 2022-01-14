@@ -81,7 +81,11 @@
             <div class="tab-content" id="custom-tabs-three-tabContent">
 
               <div class="tab-pane fade show active" id="custom-tabs-inventory" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
-                Show Inventory at Date: <%= date_field_tag 'version_date_select', params[:version_date] %>
+                <%= form_for @storage_location, method: :get do %>
+                  Show Inventory at Date: <%= date_field_tag 'version_date', params[:version_date], min: InventoryItem::EARLIEST_VERSION %>
+                  <%= filter_button(text: 'View') %>
+                  <br/><small>(historical data collected since <%= Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y") %>)</small>
+                <% end %>
                 <br/><br/>
                 <table class="table">
                   <thead>
@@ -165,11 +169,3 @@
   <li>Save the file as a csv file.</li>
   <li>DO NOT CHANGE ANY ITEM NAME.</li>
 <% end %>
-
-<script>
-  $(document).ready(() => {
-    $('#version_date_select').change((event) => {
-      reloadWithQueryParam('version_date', event.target.value);
-    })
-  });
-</script>
