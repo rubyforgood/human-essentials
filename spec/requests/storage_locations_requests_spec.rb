@@ -96,23 +96,61 @@ RSpec.describe "StorageLocations", type: :request do
     end
 
     describe "GET #show" do
-      subject do
-        get storage_location_path(storage_location, default_params.merge(format: response_format))
-        response
-      end
-
+      let(:item) { create(:item, name: "Test Item") }
       let(:storage_location) { create(:storage_location, organization: @organization) }
+      let!(:inventory_item) { create(:inventory_item, storage_location: storage_location, item: item, quantity: 200) }
 
       context "html" do
         let(:response_format) { 'html' }
 
-        it { is_expected.to be_successful }
+        it "should return a correct response" do
+          get storage_location_path(storage_location, default_params.merge(format: response_format))
+          expect(response).to be_successful
+          expect(response.body).to include("Smithsonian")
+          expect(response.body).to include("Test Item")
+          expect(response.body).to include("200")
+        end
+
+        context "with version date set" do
+          context "with a version found" do
+            it "should show the version specified" do
+              travel 1.day do
+                inventory_item.update!(quantity: 100)
+              end
+              travel 1.week do
+                inventory_item.update!(quantity: 300)
+              end
+              travel 2.weeks do
+                get storage_location_path(storage_location, default_params.merge(format: response_format,
+                  version_date: 9.days.ago.to_date.to_s(:db)))
+                expect(response).to be_successful
+                expect(response.body).to include("Smithsonian")
+                expect(response.body).to include("Test Item")
+                expect(response.body).to include("100")
+              end
+            end
+          end
+
+          context "with no version found" do
+            it "should show N/A" do
+              get storage_location_path(storage_location, default_params.merge(format: response_format,
+                version_date: 1.week.ago.to_date.to_s(:db)))
+              expect(response).to be_successful
+              expect(response.body).to include("Smithsonian")
+              expect(response.body).to include("Test Item")
+              expect(response.body).to include("N/A")
+            end
+          end
+        end
       end
 
       context "csv" do
         let(:response_format) { 'csv' }
 
-        it { is_expected.to be_successful }
+        it "should be successful" do
+          get storage_location_path(storage_location, default_params.merge(format: response_format))
+          expect(response).to be_successful
+        end
       end
     end
 
