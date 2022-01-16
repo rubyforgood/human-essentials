@@ -23,6 +23,10 @@ class AccountRequest < ApplicationRecord
 
   has_one :organization, dependent: :nullify
 
+  enum status: %w[requested pending approved rejected].map { |v| [v, v] }.to_h
+
+  scope :closed, -> { where(status: %w[pending approved rejected]) }
+
   def self.get_by_identity_token(identity_token)
     decrypted_token = JWT.decode(identity_token, Rails.application.secrets[:secret_key_base], true, { algorithm: 'HS256' })
     account_request_id = decrypted_token[0]["account_request_id"]
@@ -40,28 +44,20 @@ class AccountRequest < ApplicationRecord
     JWT.encode({ account_request_id: id }, Rails.application.secrets[:secret_key_base], 'HS256')
   end
 
-  def confirmed?
-    confirmed_at.present?
-  end
-
+  # @return [Boolean]
   def processed?
     organization.present?
   end
 
-  def approved?
-    "Approved" if confirmed? && Organization.present?
+  def approve!
+    update!(confirmed_at: Time.current, status: 'pending')
+    AccountRequestMailer.approval_request(account_request_id: id).deliver_later
   end
 
-  def pending_approval?
-    "Pending Approval" if confirmed? && Organization.blank?
-  end
-
-  def requested?
-    "Requested" unless confirmed?
-  end
-
-  def status
-    approved? || pending_approval? || requested?
+  # @param reason [String]
+  def reject!(reason)
+    update!(status: 'rejected', rejection_reason: reason)
+    AccountRequestMailer.rejection(account_request: self).deliver_later
   end
 
   private

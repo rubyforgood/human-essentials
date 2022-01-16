@@ -38,6 +38,8 @@ class Organization < ApplicationRecord
   validates :reminder_day, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
   validate :deadline_after_reminder
 
+  has_one :account_request, dependent: :nullify
+
   with_options dependent: :destroy do
     has_many :adjustments
     has_many :annual_reports

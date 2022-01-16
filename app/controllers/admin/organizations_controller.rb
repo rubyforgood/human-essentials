@@ -47,6 +47,7 @@ class Admin::OrganizationsController < AdminController
     @organization.users.last.assign_attributes(password: SecureRandom.uuid)
 
     if @organization.save
+      @organization.account_request.update!(status: "approved")
       Organization.seed_items(@organization)
       @organization.users.last.invite!
       redirect_to admin_organizations_path, notice: "Organization added!"

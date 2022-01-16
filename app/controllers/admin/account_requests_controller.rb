@@ -1,6 +1,18 @@
 class Admin::AccountRequestsController < AdminController
   def index
-    @open_account_requests = AccountRequest.where(confirmed_at: nil).order('created_at DESC')
-    @closed_account_requests = AccountRequest.where.not(confirmed_at: nil).order('confirmed_at DESC')
+    @open_account_requests = AccountRequest.requested.order('created_at DESC')
+      .page(params[:open_page]).per(15)
+    @closed_account_requests = AccountRequest.closed.order('updated_at DESC')
+      .page(params[:close_page]).per(15)
+  end
+
+  def reject
+    account_request = AccountRequest.find(account_request_params[:id])
+    account_request.reject!(account_request_params[:rejection_reason])
+    redirect_back(fallback_location: account_requests_path, notice: "Account request rejected!")
+  end
+
+  def account_request_params
+    params.require(:account_request).permit(:id, :rejection_reason)
   end
 end
