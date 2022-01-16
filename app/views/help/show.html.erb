@@ -10,7 +10,7 @@
           <div class="card-body p-4">
             <ul class="list-inside my-2 list-decimal space-y-5">
               <%= form_tag(help_path, method: "get") do %>
-                <%= text_field_tag(:keyword, nil, placeholder: 'Search By Question', class: "form-control bank-question-search") %>
+                <%= text_field_tag(:keyword, nil, placeholder: 'Search By Question', class: "form-control mb-2 col-lg-3 col-md-4 col-sm-6 col-xs-12") %>
                 <%= submit_tag("Search", class: "btn btn-info") %>
               <% end %>
               <% @bank_questions.each do |bank_question| %>

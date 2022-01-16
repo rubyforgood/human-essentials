@@ -20,7 +20,7 @@
                         <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= bank_question.id %>" aria-expanded="false" aria-controls="collapse<%= bank_question.id %>">
                           <%= bank_question.title %>
                         </button>
-                        <div class="admin-question-buttons">
+                        <div class="mt-2">
                           <%= edit_button_to edit_admin_question_path(bank_question) %>
                           <%= delete_button_to admin_question_path(bank_question) %>
                         </div>
@@ -44,7 +44,7 @@
                         <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= -partner_question.id %>" aria-expanded="false" aria-controls="collapse<%= -partner_question.id %>">
                           <%= partner_question.title %>
                         </button>
-                        <div class="admin-question-buttons">
+                        <div class="mt-2">
                           <%= edit_button_to edit_admin_question_path(partner_question) %>
                           <%= delete_button_to admin_question_path(partner_question) %>
                         </div>
