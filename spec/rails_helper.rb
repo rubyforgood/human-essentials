@@ -172,23 +172,17 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
-    Faker::Config.random = Random.new(42)
-
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
     DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
   end
 
   config.before(:each, type: :request) do
-    Faker::Config.random = Random.new(42)
-
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
     DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
   end
 
   config.before(:each) do |example|
@@ -268,11 +262,15 @@ def seed_base_items_for_tests
     @_base_items = []
     items_by_category.each do |category, entries|
       entries.each do |entry|
-        @_base_items << { name: entry["name"], category: category, partner_key: entry["key"] }
+        @_base_items << { name: entry["name"],
+                          category: category,
+                          partner_key: entry["key"],
+                          updated_at: Time.zone.now,
+                          created_at: Time.zone.now }
       end
     end
   end
-  BaseItem.create(@_base_items)
+  BaseItem.insert_all(@_base_items) # rubocop:disable Rails/SkipsModelValidations
   Rails.logger.info "~-=> Done creating Base Items!"
 end
 
