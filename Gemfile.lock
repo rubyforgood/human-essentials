@@ -200,8 +200,8 @@ GEM
     geocoder (1.7.2)
     globalid (1.0.0)
       activesupport (>= 5.0)
-    groupdate (5.2.4)
-      activesupport (>= 5)
+    groupdate (6.0.1)
+      activesupport (>= 5.2)
     guard (2.18.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -544,7 +544,7 @@ GEM
     yajl-ruby (1.4.1)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.5.1)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   arm64-darwin-21
@@ -588,7 +588,7 @@ DEPENDENCIES
   foreman
   fullcalendar-rails
   geocoder
-  groupdate (~> 5.2)
+  groupdate (~> 6.0)
   guard-rspec
   image_processing
   jbuilder
