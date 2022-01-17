@@ -104,7 +104,7 @@ GEM
     bugsnag (6.24.1)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
-    bullet (7.0.0)
+    bullet (7.0.1)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     capybara (3.36.0)
@@ -544,7 +544,7 @@ GEM
     yajl-ruby (1.4.1)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.5.1)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   arm64-darwin-21
