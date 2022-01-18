@@ -4,9 +4,8 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
       @new_organization = create(:organization)
       @user = create(:user, organization: @new_organization)
       @org_short_name = new_organization.short_name
-      @url_prefix = "/#{@org_short_name}"
     end
-    attr_reader :new_organization, :org_short_name, :user, :url_prefix
+    attr_reader :new_organization, :org_short_name, :user
 
     before do
       sign_in(user)
@@ -72,9 +71,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
     let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 0, organization: @organization) }
     let(:org_short_name) { @organization.short_name }
-    let!(:url_prefix) { "/#{org_short_name}" }
     let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
-    subject { url_prefix + "/dashboard" }
 
     describe "Signage" do
       it "shows their organization name unless they have a logo set" do
