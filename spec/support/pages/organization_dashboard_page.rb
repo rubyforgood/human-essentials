@@ -6,6 +6,12 @@ class OrganizationDashboardPage < OrganizationPage
     "dashboard"
   end
 
+  def create_new_distribution
+    within distributions_section do
+      click_link "New Distribution"
+    end
+  end
+
   def create_new_donation
     within donations_section do
       click_link "New Donation"
@@ -49,12 +55,12 @@ class OrganizationDashboardPage < OrganizationPage
     has_selector? diaper_drives_selector
   end
 
-  def has_getting_started_guide?
-    has_selector? "#getting-started-guide"
+  def has_distributions_section?
+    has_selector? distributions_section_selector
   end
 
-  def has_diaper_drives_section?
-    has_selector? diaper_drives_selector
+  def has_getting_started_guide?
+    has_selector? "#getting-started-guide"
   end
 
   def has_manufacturers_section?
@@ -89,6 +95,12 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  def recent_distribution_links
+    within distributions_section do
+      all(".distribution a").map(&:text)
+    end
+  end
+
   def recent_donation_links
     within donations_section do
       all(".donation a").map(&:text)
@@ -118,6 +130,12 @@ class OrganizationDashboardPage < OrganizationPage
     find "#summary"
   end
 
+  def total_distributed
+    within distributions_section do
+      parse_formatted_integer find(".total_distributed").text
+    end
+  end
+
   def total_donations
     within donations_section do
       parse_formatted_integer find(".total_received_donations").text
@@ -138,6 +156,14 @@ class OrganizationDashboardPage < OrganizationPage
 
   def diaper_drives_selector
     "#diaper_drives"
+  end
+
+  def distributions_section_selector
+    "#distributions"
+  end
+
+  def distributions_section
+    find distributions_section_selector
   end
 
   def donations_section
