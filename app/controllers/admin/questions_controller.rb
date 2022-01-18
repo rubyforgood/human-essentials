@@ -28,7 +28,7 @@ class Admin::QuestionsController < AdminController
     if @question.valid?
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to create question. #{error_message_for_answer(@question.errors)}"
+      flash[:error] = "Failed to update question. #{error_message_for_answer(@question.errors)}"
       render :edit
     end
   end
