@@ -1,4 +1,4 @@
-class Admin::QuestionsController < ApplicationController
+class Admin::QuestionsController < AdminController
   def index
     @bank_questions = Question.for_banks
     @partner_questions = Question.for_partners
