@@ -387,9 +387,9 @@ ActiveRecord::Schema.define(version: 2022_01_13_195620) do
   end
 
   create_table "questions", force: :cascade do |t|
-    t.string "title"
-    t.boolean "for_partners"
-    t.boolean "for_banks"
+    t.string "title", null: false
+    t.boolean "for_partners", default: true, null: false
+    t.boolean "for_banks", default: true, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
