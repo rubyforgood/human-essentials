@@ -13,7 +13,7 @@ class Admin::QuestionsController < AdminController
     if @question.valid?
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to create question."
+      flash[:error] = "Failed to create question. #{error_message_for_answer(@question.errors)}"
       render :new
     end
   end
@@ -28,7 +28,7 @@ class Admin::QuestionsController < AdminController
     if @question.valid?
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to create question."
+      flash[:error] = "Failed to create question. #{error_message_for_answer(@question.errors)}"
       render :edit
     end
   end
@@ -40,6 +40,10 @@ class Admin::QuestionsController < AdminController
   end
 
   private
+
+  def error_message_for_answer(errors)
+    "Answer can't be blank." if !errors[:answer].empty?
+  end
 
   def current_question
     @current_question ||= Question.find(params[:id])

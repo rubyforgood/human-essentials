@@ -56,7 +56,7 @@ RSpec.describe Question, type: :model do
     end
   end
 
-  describe 'validations' do
+  describe "validations" do
     it { should validate_presence_of(:title) }
     it { should validate_presence_of(:answer) }
 
