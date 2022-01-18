@@ -53,8 +53,30 @@ class OrganizationDashboardPage < OrganizationPage
     has_selector? "#getting-started-guide"
   end
 
+  def has_diaper_drives_section?
+    has_selector? diaper_drives_selector
+  end
+
+  def has_manufacturers_section?
+    has_selector? manufacturers_section_selector
+  end
+
   def has_organization_logo?
     has_selector? org_logo_selector
+  end
+
+  def manufacturers_total_donations
+    within manufacturers_section do
+      parse_formatted_integer find(".total_received_donations").text
+    end
+  end
+
+  def num_manufacturers_donated
+    within manufacturers_section do
+      # the span contains something like "1 Manufacturer" or "28 Manufacturers"
+      # Strip out the number
+      find(".num_manufacturers_donated").text.match(/^\d+/).to_s.to_i
+    end
   end
 
   def organization_logo_filepath
@@ -70,6 +92,12 @@ class OrganizationDashboardPage < OrganizationPage
   def recent_donation_links
     within donations_section do
       all(".donation a").map(&:text)
+    end
+  end
+
+  def recent_manufacturer_donation_links
+    within manufacturers_section do
+      all(".manufacturer a").map(&:text)
     end
   end
 
@@ -114,6 +142,14 @@ class OrganizationDashboardPage < OrganizationPage
 
   def donations_section
     find "#donations"
+  end
+
+  def manufacturers_section
+    find manufacturers_section_selector
+  end
+
+  def manufacturers_section_selector
+    "#manufacturers"
   end
 
   def org_logo_selector

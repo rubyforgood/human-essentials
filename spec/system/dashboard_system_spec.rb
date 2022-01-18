@@ -664,12 +664,10 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         end
 
         it "should list top 10 manufacturers" do
-          visit subject
+          org_dashboard_page.visit
 
-          within "#manufacturers" do
-            expect(page).to have_content("0 items")
-              .and have_content("0 Manufacturers")
-          end
+          expect(org_dashboard_page.manufacturers_total_donations).to eq 0
+          expect(org_dashboard_page.num_manufacturers_donated).to eq 0
 
           item_qty = 200
           12.times do
@@ -678,18 +676,17 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             item_qty -= 1
           end
 
-          visit subject
+          org_dashboard_page.visit
 
-          within "#manufacturers" do
-            expect(page).to have_content("2,334")
-            expect(page).to have_content("12 Manufacturers")
-            expect(page).to have_css(".manufacturer", count: 10)
-          end
+          expect(org_dashboard_page.manufacturers_total_donations).to eq 2_334
+          expect(org_dashboard_page.num_manufacturers_donated).to eq 12
+          expect(org_dashboard_page.recent_manufacturer_donation_links.count).to eq 10
         end
 
         it "has a link to create a new donation" do
-          visit subject
-          expect(page).to have_css("#manufacturers")
+          org_dashboard_page.visit
+
+          expect(org_dashboard_page).to have_manufacturers_section
         end
 
         # it "doesn't count inactive items" do
@@ -724,144 +721,132 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               # beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
             }
             @last_years_donations = create_list(:manufacturer_donation, 2, :with_items, manufacturer: manufacturer1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
-            visit subject
+            org_dashboard_page.visit
           end
 
           describe "This Year" do
             before do
-              date_range_picker_select_range "This Year"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "This Year"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
             let(:manufacturers) { @this_years_donations.values.map(&:manufacturer).map(&:name) }
 
             it "has a widget displaying the year-to-date Donation totals, only using donations from this year" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-                expect(page).to have_content(/#{manufacturers.size} manufacturer/i)
-              end
+              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
+              expect(org_dashboard_page.num_manufacturers_donated).to eq manufacturers.size
             end
 
             it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                manufacturers.each do |manufacturer|
-                  expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-                end
+              recent_manufacturer_donation_links = org_dashboard_page.recent_manufacturer_donation_links
+
+              manufacturers.each do |manufacturer|
+                expect(recent_manufacturer_donation_links)
+                  .to include(match /#{manufacturer} \(\d{3}\)/i)
+                  .exactly(:once)
               end
             end
           end
 
           describe "Today" do
             before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Today"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
             let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
 
             it "has a widget displaying today's Donation totals, only using donations from today" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
             end
 
             it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_manufacturer_donation_links)
+                .to include(match /#{manufacturer} \(\d{3}\)/i)
+                .exactly(:once)
             end
           end
 
           describe "Yesterday" do
             before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Yesterday"
             end
 
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
             let(:manufacturer) { @this_years_donations[:yesterday].manufacturer.name }
 
             it "has a widget displaying the Donation totals from yesterday, only using donations from yesterday" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
             end
 
             it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_manufacturer_donation_links)
+                .to include(match /#{manufacturer} \(\d{3}\)/i)
+                .exactly(:once)
             end
           end
 
           describe "This Week" do
             before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "Last 7 Days"
             end
 
             let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
             let(:manufacturers) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:manufacturer).map(&:name) }
 
             it "has a widget displaying the Donation totals from this week, only using donations from this week" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
             end
 
             it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                manufacturers.each do |manufacturer|
-                  expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-                end
+              recent_manufacturer_donation_links = org_dashboard_page.recent_manufacturer_donation_links
+
+              manufacturers.each do |manufacturer|
+                expect(recent_manufacturer_donation_links)
+                  .to include(match /#{manufacturer} \(\d{3}\)/i)
+                  .exactly(:once)
               end
             end
           end
 
           describe "This Month" do
             before do
-              date_range_picker_select_range "This Month"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "This Month"
             end
 
             let(:total_inventory) { @this_years_donations[:today].total_quantity + @this_years_donations[:yesterday].total_quantity + @this_years_donations[:earlier_this_week].total_quantity }
             let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
 
             it "has a widget displaying the Donation totals from this month, only using donations from this month" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
             end
 
             it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-              end
+              expect(org_dashboard_page.recent_manufacturer_donation_links)
+                .to include(match /#{manufacturer} \(\d{3}\)/i)
+                .exactly(:once)
             end
           end
 
           describe "All Time" do
             before do
-              date_range_picker_select_range "All Time"
-              click_on "Filter"
+              org_dashboard_page.filter_to_date_range "All Time"
             end
 
             let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
             let(:manufacturers) { [@this_years_donations.values + @last_years_donations].flatten.map(&:manufacturer).map(&:name) }
 
             it "has a widget displaying the Donation totals from last year, only using donations from last year" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
+              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
             end
 
             it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                manufacturers.each do |manufacturer|
-                  expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-                end
+              recent_manufacturer_donation_links = org_dashboard_page.recent_manufacturer_donation_links
+
+              manufacturers.each do |manufacturer|
+                expect(recent_manufacturer_donation_links)
+                  .to include(match /#{manufacturer} \(\d{3}\)/i)
+                  .exactly(:once)
               end
             end
           end
