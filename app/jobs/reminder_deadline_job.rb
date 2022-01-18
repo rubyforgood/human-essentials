@@ -1,13 +1,15 @@
 class ReminderDeadlineJob < ApplicationJob
-  def perform
-    organizations = Organization.needs_reminding
+  #
+  # This job is triggered on production daily via running the
+  # command `rails initiate_reminder_deadline_job` using the
+  # [Heroku Scheduler](https://devcenter.heroku.com/articles/scheduler)
+  #
 
-    organizations.includes(:partners).each do |organization|
-      organization.partners.where(send_reminders: true).each do |partner|
-        unless partner.deactivated?
-          ReminderDeadlineMailer.notify_deadline(partner, organization).deliver_now
-        end
-      end
+  def perform
+    remind_these_partners = Partners::FetchPartnersToRemindNowService.new.fetch
+
+    remind_these_partners.each do |partner|
+      ReminderDeadlineMailer.notify_deadline(partner).deliver_later
     end
   end
 end
