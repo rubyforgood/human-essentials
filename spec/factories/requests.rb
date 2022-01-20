@@ -7,7 +7,7 @@
 #  discard_reason  :text
 #  discarded_at    :datetime
 #  request_items   :jsonb
-#  status          :integer          default(0)
+#  status          :integer          default("pending")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  distribution_id :integer

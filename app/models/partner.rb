@@ -8,7 +8,7 @@
 #  notes            :text
 #  quota            :integer
 #  send_reminders   :boolean          default(FALSE), not null
-#  status           :integer          default(0)
+#  status           :integer          default("uninvited")
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  organization_id  :integer
