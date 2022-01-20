@@ -10,7 +10,7 @@ class Admin::QuestionsController < AdminController
 
   def create
     @question = Question.create(question_params)
-    if @question.valid?
+    if @question.save
       redirect_to admin_questions_path
     else
       flash[:error] = "Failed to create question. #{error_message_for_answer(@question.errors)}"
@@ -24,8 +24,7 @@ class Admin::QuestionsController < AdminController
 
   def update
     @question = current_question
-    @question.update(question_params)
-    if @question.valid?
+    if @question.update(question_params)
       redirect_to admin_questions_path
     else
       flash[:error] = "Failed to update question. #{error_message_for_answer(@question.errors)}"
@@ -35,7 +34,7 @@ class Admin::QuestionsController < AdminController
 
   def destroy
     @question = current_question
-    @question.destroy
+    flash[:error] = "Failed to delete question." if !@question.destroy
     redirect_to admin_questions_path
   end
 
