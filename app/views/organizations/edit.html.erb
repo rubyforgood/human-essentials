@@ -64,12 +64,12 @@
                   <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
                 <% end %>
 
-                <%= f.input :reminder_day, wrapper: :input_group do %>
+                <%= f.input :reminder_day, wrapper: :input_group, label: 'Reminder day (Day an e-mail reminder is sent to partners to submit requests)' do %>
                   <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                   <%= f.input_field :reminder_day, class: "form-control", placeholder: "Reminder day" %>
                 <% end %>
 
-                <%= f.input :deadline_day, wrapper: :input_group do %>
+                <%= f.input :deadline_day, wrapper: :input_group, label: 'Deadline day (Final day to submit requests)' do %>
                   <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                   <%= f.input_field :deadline_day, class: "form-control", placeholder: "Deadline day" %>
                 <% end %>
