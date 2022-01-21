@@ -10,7 +10,7 @@ describe Partners::FetchPartnersToRemindNowService do
     context "when there is a partner" do
       let!(:partner) { create(:partner) }
 
-      context "that has a organization with a global reminder & deadline" do
+      context "that has an organization with a global reminder & deadline" do
         context "that is for today" do
           before do
             partner.organization.update(reminder_day: current_day)
