@@ -144,7 +144,7 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
     expect(account_request.reload.rejection_reason).to eq('because I said so')
     expect(account_request).to be_rejected
     expect(AccountRequestMailer).to have_received(:rejection)
-      .with(account_request: account_request)
+      .with(account_request_id: account_request.id)
     expect(mail_double).to have_received(:deliver_later)
   end
 end
