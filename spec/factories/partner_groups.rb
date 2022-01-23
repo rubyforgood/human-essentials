@@ -18,5 +18,10 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     reminder_day_of_month { 14 }
     deadline_day_of_month { 28 }
+
+    trait :without_deadlines do
+      reminder_day_of_month { nil }
+      deadline_day_of_month { nil }
+    end
   end
 end

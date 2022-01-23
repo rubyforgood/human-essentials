@@ -1,5 +1,7 @@
 class UpdateInvalidReminderDaysOnOrganizations < ActiveRecord::Migration[6.1]
   def up
+    # Finds any organizations where deadline_day = reminder_day and sets reminder day to the day before
+    # deadline day. If deadline day is 1, wraps reminder day around to 28.
     safety_assured do
       execute <<~SQL
         UPDATE organizations
