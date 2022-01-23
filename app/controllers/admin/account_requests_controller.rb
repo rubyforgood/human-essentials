@@ -9,7 +9,7 @@ class Admin::AccountRequestsController < AdminController
   def reject
     account_request = AccountRequest.find(account_request_params[:id])
     account_request.reject!(account_request_params[:rejection_reason])
-    redirect_back(fallback_location: account_requests_path, notice: "Account request rejected!")
+    redirect_back(fallback_location: admin_account_requests_path, notice: "Account request rejected!")
   end
 
   def account_request_params

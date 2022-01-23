@@ -32,7 +32,7 @@
               <tbody>
               <% @open_account_requests.each do |account_request| %>
                 <tr>
-                  <td><%= account_request.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= account_request.created_at&.strftime("%m/%d/%Y") %></td>
                   <td>
                     <%= account_request.organization_name %>
                     <br/><%= account_request.organization_website %>
@@ -99,7 +99,7 @@
               <tbody>
               <% @closed_account_requests.each do |account_request| %>
                 <tr>
-                  <td><%= account_request.confirmed_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= account_request.confirmed_at&.strftime("%m/%d/%Y") || "N/A" %></td>
                   <td><%= account_request.organization_name %></td>
                   <td><%= account_request.organization_website %></td>
                   <td><%= account_request.request_details %></td>

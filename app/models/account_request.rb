@@ -45,6 +45,11 @@ class AccountRequest < ApplicationRecord
   end
 
   # @return [Boolean]
+  def confirmed?
+    pending? || approved?
+  end
+
+  # @return [Boolean]
   def processed?
     organization.present?
   end

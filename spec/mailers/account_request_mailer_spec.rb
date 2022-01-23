@@ -79,4 +79,24 @@ RSpec.describe AccountRequestMailer, type: :mailer, skip_seed: true do
       )
     end
   end
+
+  describe '#rejection' do
+    let(:account_request) {
+      FactoryBot.create(:account_request, email: 'me@me.com',
+                                              rejection_reason: 'because I said so')
+    }
+    let(:mail) { AccountRequestMailer.rejection(account_request: account_request) }
+
+    it 'should be sent to the correct email address' do
+      expect(mail.to).to eq(['me@me.com'])
+    end
+
+    it 'should have the correct subject' do
+      expect(mail.subject).to eq("Human Essential Account Request Rejected")
+    end
+
+    it 'should include the rejection reason' do
+      expect(mail.body.encoded).to include('because I said so')
+    end
+  end
 end
