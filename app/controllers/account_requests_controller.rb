@@ -11,7 +11,7 @@ class AccountRequestsController < ApplicationController
   def confirmation; end
 
   def confirm
-    @account_request.approve!
+    @account_request.confirm!
   end
 
   def invalid_token; end

@@ -78,14 +78,28 @@ RSpec.describe AccountRequestMailer, type: :mailer, skip_seed: true do
         new_admin_organization_url(token: account_request.identity_token)
       )
     end
+
+    it 'should include the admin link to reject the organization' do
+      expect(mail.body.encoded)
+        .to include(for_rejection_admin_account_requests_url(token: account_request.identity_token))
+    end
   end
 
   describe '#rejection' do
+    let(:account_request_id) { account_request.id }
     let(:account_request) {
       FactoryBot.create(:account_request, email: 'me@me.com',
                                               rejection_reason: 'because I said so')
     }
-    let(:mail) { AccountRequestMailer.rejection(account_request: account_request) }
+    let(:mail) { AccountRequestMailer.rejection(account_request_id: account_request_id) }
+
+    context 'when the account_request_id provided does not match any AccountRequest' do
+      let(:account_request_id) { 0 }
+
+      it 'should trigger raise a ActiveRecord::RecordNotFound error' do
+        expect { mail.body }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
 
     it 'should be sent to the correct email address' do
       expect(mail.to).to eq(['me@me.com'])

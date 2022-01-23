@@ -17,9 +17,9 @@ class AccountRequestMailer < ApplicationMailer
     )
   end
 
-  # @param account_request [AccountRequest]
-  def rejection(account_request:)
-    @account_request = account_request
+  # @param account_request_id [Integer]
+  def rejection(account_request_id:)
+    @account_request = AccountRequest.find(account_request_id)
 
     mail(
       to: @account_request.email,

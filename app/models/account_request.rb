@@ -23,9 +23,10 @@ class AccountRequest < ApplicationRecord
 
   has_one :organization, dependent: :nullify
 
-  enum status: %w[requested pending approved rejected].map { |v| [v, v] }.to_h
+  enum status: %w[started user_confirmed admin_approved rejected].map { |v| [v, v] }.to_h
 
-  scope :closed, -> { where(status: %w[pending approved rejected]) }
+  scope :requested, -> { where(status: %w[started user_confirmed]) }
+  scope :closed, -> { where(status: %w[admin_approved rejected]) }
 
   def self.get_by_identity_token(identity_token)
     decrypted_token = JWT.decode(identity_token, Rails.application.secrets[:secret_key_base], true, { algorithm: 'HS256' })
@@ -46,7 +47,7 @@ class AccountRequest < ApplicationRecord
 
   # @return [Boolean]
   def confirmed?
-    pending? || approved?
+    user_confirmed? || admin_approved?
   end
 
   # @return [Boolean]
@@ -54,15 +55,15 @@ class AccountRequest < ApplicationRecord
     organization.present?
   end
 
-  def approve!
-    update!(confirmed_at: Time.current, status: 'pending')
+  def confirm!
+    update!(confirmed_at: Time.current, status: 'user_confirmed')
     AccountRequestMailer.approval_request(account_request_id: id).deliver_later
   end
 
   # @param reason [String]
   def reject!(reason)
     update!(status: 'rejected', rejection_reason: reason)
-    AccountRequestMailer.rejection(account_request: self).deliver_later
+    AccountRequestMailer.rejection(account_request_id: id).deliver_later
   end
 
   private

@@ -123,14 +123,14 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
     end
   end
 
-  specify '#approve!' do
+  specify '#confirm!' do
     mail_double = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
     allow(AccountRequestMailer).to receive(:approval_request).and_return(mail_double)
     freeze_time do
       expect(account_request.confirmed_at).to be_nil
-      account_request.approve!
+      account_request.confirm!
       expect(account_request.reload.confirmed_at).to eq(Time.zone.now)
-      expect(account_request).to be_pending
+      expect(account_request).to be_user_confirmed
       expect(AccountRequestMailer).to have_received(:approval_request)
         .with(account_request_id: account_request.id)
       expect(mail_double).to have_received(:deliver_later)

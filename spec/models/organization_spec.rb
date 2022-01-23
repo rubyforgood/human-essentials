@@ -154,9 +154,9 @@ RSpec.describe Organization, type: :model do
     let(:account_request) { FactoryBot.create(:account_request) }
     it 'should update the state of the account request' do
       org = build(:organization, account_request: account_request)
-      expect(account_request).not_to be_approved
+      expect(account_request).not_to be_admin_approved
       org.save!
-      expect(account_request.reload).to be_approved
+      expect(account_request.reload).to be_admin_approved
     end
   end
 

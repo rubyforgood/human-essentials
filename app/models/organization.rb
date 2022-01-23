@@ -98,7 +98,7 @@ class Organization < ApplicationRecord
   before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
 
   after_create do
-    account_request&.update!(status: "approved")
+    account_request&.update!(status: "admin_approved")
   end
 
   ALL_PARTIALS = [
