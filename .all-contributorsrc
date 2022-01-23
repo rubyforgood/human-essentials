@@ -1008,6 +1008,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ChaelCodes",
+      "name": "Rachael Wright-Munn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8124558?v=4",
+      "profile": "https://twitch.tv/ChaelCodes",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
