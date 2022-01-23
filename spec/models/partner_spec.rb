@@ -45,6 +45,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     it "still requires a unique email between organizations" do
       create(:partner, name: "Foo", email: "foo@example.com")
       expect(build(:partner, name: "Foo", email: "foo@example.com", organization: build(:organization))).to_not be_valid
+      expect(build(:partner, name: "Foo", email: "FOO@example.com", organization: build(:organization))).to_not be_valid
     end
 
     it "requires a unique email that is formatted correctly" do

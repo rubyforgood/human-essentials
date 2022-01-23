@@ -40,8 +40,8 @@ class Partner < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :organization }
 
   validates :email, presence: true,
-                    uniqueness: true,
-                    format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, on: :create }
+                    uniqueness: { case_sensitive: false },
+                    format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
 
   validates :quota, numericality: true, allow_blank: true
 
