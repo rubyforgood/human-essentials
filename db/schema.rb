@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_21_034713) do
+ActiveRecord::Schema.define(version: 2022_01_23_100450) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -354,13 +354,13 @@ ActiveRecord::Schema.define(version: 2022_01_21_034713) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "send_reminders", default: false, null: false
-    t.integer "reminder_day_of_month"
-    t.integer "deadline_day_of_month"
+    t.integer "reminder_day"
+    t.integer "deadline_day"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
-    t.check_constraint "deadline_day_of_month <= 28", name: "deadline_day_of_month_check"
-    t.check_constraint "deadline_day_of_month > reminder_day_of_month", name: "reminder_day_of_month_and_deadline_day_of_month_check"
-    t.check_constraint "reminder_day_of_month <= 14", name: "reminder_day_of_month_check"
+    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check"
+    t.check_constraint "deadline_day > reminder_day", name: "reminder_day_of_month_and_deadline_day_of_month_check"
+    t.check_constraint "reminder_day <= 14", name: "reminder_day_of_month_check"
   end
 
   create_table "partners", id: :serial, force: :cascade do |t|

@@ -55,7 +55,7 @@ describe Partners::FetchPartnersToRemindNowService do
 
         context "AND a partner group that does have them defined" do
           before do
-            partner_group = create(:partner_group, reminder_day_of_month: current_day, deadline_day_of_month: current_day + 2)
+            partner_group = create(:partner_group, reminder_day: current_day, deadline_day: current_day + 2)
             partner_group.partners << partner
 
             partner.organization.update(reminder_day: current_day - 1)
@@ -86,7 +86,7 @@ describe Partners::FetchPartnersToRemindNowService do
         context "and is a part of a partner group that does have them defined" do
           context "that is for today" do
             before do
-              partner_group = create(:partner_group, reminder_day_of_month: current_day, deadline_day_of_month: current_day + 2)
+              partner_group = create(:partner_group, reminder_day: current_day, deadline_day: current_day + 2)
               partner_group.partners << partner
             end
 
@@ -107,7 +107,7 @@ describe Partners::FetchPartnersToRemindNowService do
 
           context "that is not for today" do
             before do
-              partner_group = create(:partner_group, reminder_day_of_month: current_day - 1, deadline_day_of_month: current_day + 2)
+              partner_group = create(:partner_group, reminder_day: current_day - 1, deadline_day: current_day + 2)
               partner_group.partners << partner
             end
 
