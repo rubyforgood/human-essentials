@@ -5,7 +5,7 @@ class DeadlineService
 
   def initialize(partner:)
     @partner = partner
-    @today = Date.today
+    @today = Time.zone.today
   end
 
   def next_deadline

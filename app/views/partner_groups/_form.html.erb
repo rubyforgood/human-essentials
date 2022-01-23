@@ -29,13 +29,8 @@
                     <p class="font-bold text-red-800">That's great! You must fill out the details below to send reminders. </p>
                   </div>
 
-                  <div>
-                    <%= f.input :reminder_day, as: :integer, label: "Which day of the month do you want them sent out?" %>
-                  </div>
 
-                  <div>
-                    <%= f.input :deadline_day, as: :integer, label: "What is the last day to submit requests?" %>
-                  </div>
+                  <%= render 'shared/deadline_day_fields', f: f %>
                 </div>
               </div>
             </div>

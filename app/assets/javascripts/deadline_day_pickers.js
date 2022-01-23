@@ -2,11 +2,13 @@ $(document).ready(function () {
   const container_selector = '.deadline-day-pickers';
   const reminder_selector = '.deadline-day-pickers__reminder-day';
   const deadline_selector = '.deadline-day-pickers__deadline-day';
+  const reminder_container_selector = '.deadline-day-pickers__reminder-container';
+  const deadline_container_selector = '.deadline-day-pickers__deadline-container';
 
-  const reminder_text_selector = '.deadline-day-pickers__reminder-day-text'
-  const deadline_text_selector = '.deadline-day-pickers__deadline-day-text'
+  const reminder_text_selector = '.deadline-day-pickers__reminder-day-text';
+  const deadline_text_selector = '.deadline-day-pickers__deadline-day-text';
 
-  const server_validation_selector = '.invalid-feedback'
+  const server_validation_selector = '.invalid-feedback';
 
   function refresh_text(container) {
     const $container = $(container);
@@ -22,43 +24,49 @@ $(document).ready(function () {
     const current_month = $container.data('current-month');
     const next_month = $container.data('next-month');
 
-    if (reminder_day === deadline_day) {
-      $reminder_text.removeClass('text-muted').addClass('text-danger');
+    if (reminder_day) {
+      $(container).find(reminder_container_selector).find(server_validation_selector).remove();
 
-      $reminder_text.text('Reminder day cannot be the same as deadline day.');
-    } else {
-      $reminder_text.removeClass('text-danger').addClass('text-muted');
+      if (reminder_day === deadline_day) {
+        $reminder_text.removeClass('text-muted').addClass('text-danger');
 
-      const next_reminder_month = (current_day >= reminder_day) ? next_month : current_month;
-      $reminder_text.text(`Your next reminder will be sent on ${reminder_day} ${next_reminder_month}.`);
+        $reminder_text.text('Reminder day cannot be the same as deadline day.');
+      } else {
+        $reminder_text.removeClass('text-danger').addClass('text-muted');
+
+        const next_reminder_month = (current_day >= reminder_day) ? next_month : current_month;
+        $reminder_text.text(`Your next reminder will be sent on ${reminder_day} ${next_reminder_month}.`);
+      }
     }
 
-    const next_deadline_month = (deadline_day >= current_day) ? next_month : current_month;
-    $deadline_text.text(`Your next deadline will be on ${deadline_day} ${next_deadline_month}`);
+    if (deadline_day) {
+      $(container).find(deadline_container_selector).find(server_validation_selector).remove();
+
+      const next_deadline_month = (deadline_day >= current_day) ? next_month : current_month;
+      $deadline_text.text(`Your next deadline will be on ${deadline_day} ${next_deadline_month}`);
+    }
   }
 
   $(container_selector).each(function(_, container) {
-    // clear server-side validation text since we don't need it any more.
-    $(container).find(server_validation_selector).remove();
-
-    refresh_text(container)
+    refresh_text(container);
   })
 
   $(document).on('input', [reminder_selector, deadline_selector], function(evt) {
-    const target = evt.target
-    const $target = $(target)
-    const $container = $target.closest(container_selector)
+    const target = evt.target;
+    const $target = $(target);
+    const $container = $target.closest(container_selector);
 
-    const value = parseInt($target.val())
-    const min = parseInt($container.data('min'))
-    const max = parseInt($container.data('max'))
+    const value = parseInt($target.val());
+
+    const min = parseInt($container.data('min'));
+    const max = parseInt($container.data('max'));
 
     if (value < min) {
-      $target.val(max)
+      $target.val(max);
     } else if (value > max) {
-      $target.val(min)
+      $target.val(min);
     }
 
-    refresh_text($container)
+    refresh_text($container);
   })
 })

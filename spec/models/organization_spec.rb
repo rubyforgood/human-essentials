@@ -30,29 +30,6 @@ RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
 
   describe "validations" do
-    it do
-      is_expected.to validate_numericality_of(:deadline_day)
-        .only_integer
-        .is_greater_than_or_equal_to(1)
-        .is_less_than_or_equal_to(28)
-        .allow_nil
-    end
-
-    it do
-      is_expected.to validate_numericality_of(:reminder_day)
-        .only_integer
-        .is_greater_than_or_equal_to(1)
-        .is_less_than_or_equal_to(28)
-        .allow_nil
-    end
-
-    it "validates that reminder day is not the same as deadline day" do
-      organization = build(:organization, deadline_day: 7, reminder_day: 7)
-
-      expect(organization).not_to be_valid
-      expect(organization.errors.added?(:reminder_day, 'must be other than 7')).to be_truthy
-    end
-
     it "validates that attachments are png or jpgs" do
       expect(build(:organization,
                    logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"),

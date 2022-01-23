@@ -29,20 +29,13 @@
 class Organization < ApplicationRecord
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "diaperbase-logo-full.png")
 
-  MIN_DAY_OF_MONTH = 1
-  MAX_DAY_OF_MONTH = 28
+  include Deadlinable
 
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
-  validates :deadline_day, numericality: { only_integer: true, less_than_or_equal_to: MAX_DAY_OF_MONTH,
-                                           greater_than_or_equal_to: MIN_DAY_OF_MONTH, allow_nil: true }
-  validates :reminder_day, numericality: { only_integer: true, less_than_or_equal_to: MAX_DAY_OF_MONTH,
-                                           greater_than_or_equal_to: MIN_DAY_OF_MONTH, allow_nil: true }
-
-  validates :reminder_day, numericality: { other_than: :deadline_day }, if: :deadline_day?
 
   belongs_to :account_request, optional: true
 

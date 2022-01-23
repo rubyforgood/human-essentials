@@ -64,31 +64,7 @@
                   <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
                 <% end %>
 
-                <%= tag.div(class: 'deadline-day-pickers',
-                            data: {
-                              min: Organization::MIN_DAY_OF_MONTH,
-                              max: Organization::MAX_DAY_OF_MONTH,
-                              current_day: Date.current.mday,
-                              current_month: Date::MONTHNAMES[Date.current.month],
-                              next_month: Date::MONTHNAMES[Date.current.next_month.month]
-                            }) do %>
-                  <%= f.input :reminder_day, wrapper: :input_group, label: 'Reminder day (Day an e-mail reminder is sent to partners to submit requests)' do %>
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    <%= f.number_field :reminder_day,
-                                       class: "deadline-day-pickers__reminder-day form-control",
-                                       placeholder: "Reminder day" %>
-                  <% end %>
-                  <small class="mb-3 -mt-3 d-block form-text text-muted deadline-day-pickers__reminder-day-text">
-                  </small>
-
-                  <%= f.input :deadline_day, wrapper: :input_group, label: 'Deadline day (Final day to submit requests)' do %>
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    <%= f.number_field :deadline_day,
-                                       class: "deadline-day-pickers__deadline-day form-control",
-                                       placeholder: "Deadline day" %>
-                  <% end %>
-                  <small class="mb-3 -mt-3 d-block form-text text-muted deadline-day-pickers__deadline-day-text"></small>
-                <% end %>
+                <%= render 'shared/deadline_day_fields', f: f %>
 
                 <%= f.input :intake_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
