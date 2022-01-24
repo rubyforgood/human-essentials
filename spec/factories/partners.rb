@@ -105,6 +105,10 @@ FactoryBot.define do
       end
     end
 
+    transient do
+      without_partner_users { false }
+    end
+
     trait :awaiting_review do
       status { :awaiting_review }
     end
