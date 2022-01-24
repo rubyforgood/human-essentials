@@ -17,4 +17,11 @@ class Question < ApplicationRecord
   validates :for_partners, acceptance: {message: "and for banks can't both be unchecked"}, unless: :for_banks
   scope :for_banks, -> { where(for_banks: true) }
   scope :for_partners, -> { where(for_partners: true) }
+  scope :search_title, ->(query) { where("title ilike ?", "%#{query}%").includes([:rich_text_answer]) }
+
+  filterrific(
+    available_filters: [
+      :search_title
+    ]
+  )
 end

@@ -1,15 +1,15 @@
 class HelpController < ApplicationController
   def show
-    @bank_questions = search(params[:keyword])
-  end
+    @filterrific = initialize_filterrific(
+      Question.for_banks,
+      params[:filterrific]
+    ) || return
 
-  private
+    @bank_questions = @filterrific.find.page(params[:page])
 
-  def search(keyword)
-    if keyword.present?
-      Question.for_banks.where("title ILIKE ?", "%#{keyword}%")
-    else
-      Question.for_banks
+    respond_to do |format|
+      format.html
+      format.js
     end
   end
 end
