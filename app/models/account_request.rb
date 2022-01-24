@@ -69,13 +69,15 @@ class AccountRequest < ApplicationRecord
   private
 
   def email_not_already_used_by_organization
-    if Organization.find_by(email: email)
+    org = Organization.find_by(email: email)
+    if org && org != organization
       errors.add(:email, 'already used by an existing Organization')
     end
   end
 
   def email_not_already_used_by_user
-    if User.find_by(email: email)
+    user = User.find_by(email: email)
+    if user && user.organization_id != organization.id
       errors.add(:email, 'already used by an existing User')
     end
   end
