@@ -77,7 +77,7 @@ class AccountRequest < ApplicationRecord
 
   def email_not_already_used_by_user
     user = User.find_by(email: email)
-    if user && user.organization_id != organization.id
+    if user && (!organization || user.organization_id != organization.id)
       errors.add(:email, 'already used by an existing User')
     end
   end
