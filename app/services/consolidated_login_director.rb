@@ -36,8 +36,8 @@ class ConsolidatedLoginDirector
     if @user && @partner_user
       @organization = "Bank"
       @organizations = [
-        [@user.organization.name, "Bank"],
-        [@partner_user.partner.name, "Partner"]
+        ["BANK ACCOUNT", "Bank"],
+        ["PARTNER ACCOUNT", "Partner"]
       ]
 
       @email = @user.email
