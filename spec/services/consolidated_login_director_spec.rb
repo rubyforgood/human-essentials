@@ -65,8 +65,8 @@ RSpec.describe ConsolidatedLoginDirector, skip_seed: true do
 
       expect(director.organization).to eq "Bank" # default to bank option
       expect(director.organizations).to eq [
-        ["A Bank", "Bank"],
-        ["A Partner", "Partner"]
+        ["BANK ACCOUNT", "Bank"],
+        ["PARTNER ACCOUNT", "Partner"]
       ]
 
       expect(director.email).to eq "both@example.com"
