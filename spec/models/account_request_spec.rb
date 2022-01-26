@@ -15,13 +15,14 @@
 require 'rails_helper'
 
 RSpec.describe AccountRequest, type: :model, skip_seed: true do
+  let(:account_request) { FactoryBot.create(:account_request) }
+
   describe 'associations' do
     it { should have_one(:organization).class_name('Organization') }
   end
 
   describe 'validations' do
     subject { account_request }
-    let(:account_request) { FactoryBot.build(:account_request) }
 
     it { should validate_presence_of(:name) }
 
@@ -80,7 +81,6 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
 
   describe '#identity_token' do
     subject { account_request.identity_token }
-    let(:account_request) { FactoryBot.create(:account_request) }
 
     context 'when the account_request is not persisted' do
       before do
@@ -99,34 +99,8 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
     end
   end
 
-  describe '#confirmed?' do
-    subject { account_request.confirmed? }
-    let(:account_request) { FactoryBot.create(:account_request) }
-
-    context 'when confirmed_at is blank' do
-      before do
-        expect(account_request.confirmed_at).to eq(nil)
-      end
-
-      it 'should return false' do
-        expect(subject).to eq(false)
-      end
-    end
-
-    context 'when confirmed_at is not blank' do
-      before do
-        account_request.update!(confirmed_at: Time.current)
-      end
-
-      it 'should return true' do
-        expect(subject).to eq(true)
-      end
-    end
-  end
-
   describe '#processed?' do
     subject { account_request.processed? }
-    let(:account_request) { FactoryBot.create(:account_request) }
 
     context 'when the account request has no associated organization' do
       before do
@@ -147,5 +121,30 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
         expect(subject).to eq(true)
       end
     end
+  end
+
+  specify '#confirm!' do
+    mail_double = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
+    allow(AccountRequestMailer).to receive(:approval_request).and_return(mail_double)
+    freeze_time do
+      expect(account_request.confirmed_at).to be_nil
+      account_request.confirm!
+      expect(account_request.reload.confirmed_at).to eq(Time.zone.now)
+      expect(account_request).to be_user_confirmed
+      expect(AccountRequestMailer).to have_received(:approval_request)
+        .with(account_request_id: account_request.id)
+      expect(mail_double).to have_received(:deliver_later)
+    end
+  end
+
+  specify '#reject!' do
+    mail_double = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
+    allow(AccountRequestMailer).to receive(:rejection).and_return(mail_double)
+    account_request.reject!('because I said so')
+    expect(account_request.reload.rejection_reason).to eq('because I said so')
+    expect(account_request).to be_rejected
+    expect(AccountRequestMailer).to have_received(:rejection)
+      .with(account_request_id: account_request.id)
+    expect(mail_double).to have_received(:deliver_later)
   end
 end

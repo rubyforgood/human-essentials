@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Open Account Requests" %>
+        <% content_for :title, "Account Requests" %>
         <h1>
           Open Account Requests
         </h1>
@@ -22,28 +22,19 @@
               <thead>
               <tr>
                 <th>Date Submitted</th>
-                <th>Organization name</th>
-                <th>Organization website</th>
+                <th>Organization Details</th>
                 <th>Request details</th>
                 <th>Request status</th>
-                <th>Contact name</th>
-                <th>Contact email</th>
+                <th>Contact Details</th>
+                <th>Actions</th>
               </tr>
               </thead>
               <tbody>
-              <% @open_account_requests.each do |account_request| %>
-                <tr>
-                  <td><%= account_request.created_at.strftime("%m/%d/%Y") %></td>
-                  <td><%= account_request.organization_name %></td>
-                  <td><%= account_request.organization_website %></td>
-                  <td><%= account_request.request_details %></td>
-                  <td><%= account_request.status %></td>
-                  <td><%= account_request.name %></td>
-                  <td><%= account_request.email %></td>
-              <% end %>
-              </tr>
-              </tbody>
+              <%= render partial: 'open_account_request', collection: @open_account_requests %>
             </table>
+          </div>
+          <div class="card-footer clearfix">
+            <%= paginate @open_account_requests, param_name: 'open_page' %>
           </div>
         </div>
         <!-- /.card -->
@@ -52,11 +43,12 @@
   </div>
 </section>
 
+<%= render partial: 'rejection_modal' %>
+
 <section class="content-header">
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Confirmed Account Requests" %>
         <h1>
           Closed Account Requests
         </h1>
@@ -75,29 +67,35 @@
             <table class="table" id="closed-account-requests">
               <thead>
               <tr>
-                <th>Date Confirmed</th>
-                <th>Organization name</th>
-                <th>Organization website</th>
+                <th>Organization Details</th>
                 <th>Request details</th>
+                <th>Contact Details</th>
                 <th>Request status</th>
-                <th>Contact name</th>
-                <th>Contact email</th>
+                <th>Date Confirmed</th>
+                <th>Rejection Reason</th>
               </tr>
               </thead>
               <tbody>
               <% @closed_account_requests.each do |account_request| %>
                 <tr>
-                  <td><%= account_request.confirmed_at.strftime("%m/%d/%Y") %></td>
-                  <td><%= account_request.organization_name %></td>
-                  <td><%= account_request.organization_website %></td>
+                  <td>
+                    <%= account_request.organization_name %>
+                    <br/><%= account_request.organization_website %>
+                  </td>
                   <td><%= account_request.request_details %></td>
-                  <td><%= account_request.status %></td>
-                  <td><%= account_request.name %></td>
-                  <td><%= account_request.email %></td>
+                  <td><%= account_request.name %>
+                    <br/><%= account_request.email %>
+                  </td>
+                  <td><%= account_request.status.titleize %></td>
+                  <td><%= account_request.confirmed_at&.strftime("%m/%d/%Y") || "N/A" %></td>
+                  <td><%= account_request.rejection_reason %></td>
               <% end %>
               </tr>
               </tbody>
             </table>
+          </div>
+          <div class="card-footer clearfix">
+            <%= paginate @closed_account_requests, param_name: 'close_page' %>
           </div>
         </div>
         <!-- /.card -->
@@ -105,3 +103,14 @@
     </div>
   </div>
 </section>
+
+<script>
+  $(() => {
+    $('.reject-button').click((event) => {
+      event.preventDefault();
+      $('#account_request_rejection_reason').val('');
+      $('#reject_account_request_id').val($(event.target).data('requestId'));
+      $('#rejection-modal').modal('show');
+    })
+  })
+</script>

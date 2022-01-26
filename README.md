@@ -182,6 +182,17 @@ MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
 
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
+### Running delayed jobs
+
+You can run delayed jobs locally by running the `rake jobs:work` command. You'll need to do this to see any e-mails (they should
+pop up in your browser). Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
+
+```ruby
+Delayed::Job.last.invoke_job
+```
+
+You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
+
 ### In-flight Pull Requests
 
 Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.

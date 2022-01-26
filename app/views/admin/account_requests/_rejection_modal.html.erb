@@ -1,0 +1,36 @@
+<div class="modal" id="rejection-modal">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Reject Account Request
+        </h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <%= simple_form_for AccountRequest.new, url: reject_admin_account_requests_path, method: :post do |f| %>
+          <%= f.hidden_field :id, id: :reject_account_request_id %>
+          <div class="form-inputs">
+            <%= f.input :rejection_reason, required: true, autofocus: true, wrapper: :input_group %>
+          </div>
+          <%= submit_button %>
+        <% end %>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  $(() => {
+    $('.reject-button').click((event) => {
+      event.preventDefault();
+      $('#account_request_rejection_reason').val('');
+      $('#reject_account_request_id').val($(event.target).data('requestId'));
+      $('#rejection-modal').modal('show');
+    })
+  })
+</script>
