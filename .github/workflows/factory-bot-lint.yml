@@ -30,6 +30,8 @@ jobs:
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
 
       - name: Install PostgreSQL client
         run: |
@@ -44,7 +46,6 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
         run: |
-          bundle install
           bundle exec skylight disable_dev_warning
           bundle exec rake db:create
           bundle exec rake db:schema:load
