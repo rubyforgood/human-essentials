@@ -81,8 +81,6 @@ group :development, :test do
   gem "rubocop"
   gem "rubocop-rails", "~> 2.9.0"
   gem "standard", "~> 1.0"
-  gem "terminal-notifier-guard"
-  gem "terminal-notifier"
 end
 
 group :development do
