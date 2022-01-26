@@ -1,0 +1,30 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary card-outline">
+          <!-- /.card-header -->
+          <div class="card-header">
+            <h3>FAQ Entry</h3>
+          </div>
+          <!-- form start -->
+          <div class="card-body">
+            <div class="form-inputs">
+              <%= f.input :title %>
+              <%= f.input :for_partners, as: :boolean %>
+              <%= f.input :for_banks, as: :boolean %>
+              <div class="font-bold mb-2">Answer</div>
+              <%= f.rich_text_area :answer %>
+            </div>
+          </div>
+          <div class="card-footer">
+            <%= submit_button %>
+          </div>
+        </div>
+      </div>
+      <!-- /.card -->
+    </div>
+  </div>
+</section>

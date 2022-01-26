@@ -1,0 +1,68 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card card-info mt-2">
+          <div class="card-header">
+            <h2 class="card-title">Frequently Asked Questions</h2>
+          </div>
+          <div class="card-body p-4">
+            <ul class="list-inside my-2 list-decimal space-y-5">
+              <%= new_button_to new_admin_question_path, { text: "Write A New Question And Answer" } %>
+
+              <div class='text-2xl font-bold'>Questions For Banks</div>
+              <% @bank_questions.each do |bank_question| %>
+                <div class="accordion" id="accordion">
+                  <div class="card">
+                    <div class="card-header" id="heading">
+                      <h2 class="mb-0">
+                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= bank_question.id %>" aria-expanded="false" aria-controls="collapse<%= bank_question.id %>">
+                          <%= bank_question.title %>
+                        </button>
+                        <div class="mt-2">
+                          <%= edit_button_to edit_admin_question_path(bank_question) %>
+                          <%= delete_button_to admin_question_path(bank_question) %>
+                        </div>
+                      </h2>
+                    </div>
+                    <div id="collapse<%= bank_question.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                      <div class="card-body">
+                        <%= bank_question.answer %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+
+              <div class='text-2xl font-bold'>Questions For Partners</div>
+              <% @partner_questions.each do |partner_question| %>
+                <div class="accordion" id="accordion">
+                  <div class="card">
+                    <div class="card-header" id="heading">
+                      <h2 class="mb-0">
+                        <button class="text-left text-2xl" type="button" data-toggle="collapse" data-target="#collapse<%= -partner_question.id %>" aria-expanded="false" aria-controls="collapse<%= -partner_question.id %>">
+                          <%= partner_question.title %>
+                        </button>
+                        <div class="mt-2">
+                          <%= edit_button_to edit_admin_question_path(partner_question) %>
+                          <%= delete_button_to admin_question_path(partner_question) %>
+                        </div>
+                      </h2>
+                    </div>
+                    <div id="collapse<%= -partner_question.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
+                      <div class="card-body">
+                        <%= partner_question.answer %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

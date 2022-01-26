@@ -61,6 +61,7 @@ Rails.application.routes.draw do
     resources :users
     resources :barcode_items
     resources :account_requests, only: [:index]
+    resources :questions
   end
 
   match "/404", to: "errors#not_found", via: :all
