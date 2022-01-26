@@ -28,4 +28,4 @@ jobs:
         uses: ruby/setup-ruby@v1
 
       - name: lint
-        run: bundle exec rubocop
+        run: bundle install && bundle exec rubocop

@@ -20,4 +20,4 @@ jobs:
         uses: ruby/setup-ruby@v1
 
       - name: run brakeman
-        run: bundle exec brakeman
+        run: bundle install && bundle exec brakeman

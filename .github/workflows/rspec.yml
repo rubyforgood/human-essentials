@@ -64,6 +64,7 @@ jobs:
           POSTGRES_PORT: 5432
           RAILS_ENV: test
         run: |
+          bundle install
           bundle exec skylight disable_dev_warning
           yarn
           bundle exec rake db:create
