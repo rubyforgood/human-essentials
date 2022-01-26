@@ -11,8 +11,7 @@ class AccountRequestsController < ApplicationController
   def confirmation; end
 
   def confirm
-    @account_request.update!(confirmed_at: Time.current)
-    AccountRequestMailer.approval_request(account_request_id: @account_request.id).deliver_later
+    @account_request.confirm!
   end
 
   def invalid_token; end

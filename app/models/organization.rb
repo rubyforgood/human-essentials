@@ -38,6 +38,8 @@ class Organization < ApplicationRecord
   validates :reminder_day, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
   validate :deadline_after_reminder
 
+  belongs_to :account_request, optional: true
+
   with_options dependent: :destroy do
     has_many :adjustments
     has_many :annual_reports
@@ -94,6 +96,10 @@ class Organization < ApplicationRecord
   end
 
   before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
+
+  after_create do
+    account_request&.update!(status: "admin_approved")
+  end
 
   ALL_PARTIALS = [
     ['Media Information', 'media_information'],

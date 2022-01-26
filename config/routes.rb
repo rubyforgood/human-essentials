@@ -60,7 +60,10 @@ Rails.application.routes.draw do
     resources :partners, except: %i[new create destroy]
     resources :users
     resources :barcode_items
-    resources :account_requests, only: [:index]
+    resources :account_requests, only: [:index] do
+      post :reject, on: :collection
+      get :for_rejection, on: :collection
+    end
     resources :questions
   end
 
