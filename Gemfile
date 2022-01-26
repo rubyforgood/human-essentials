@@ -205,6 +205,6 @@ end
 # This 'if' may seem redundant but for some reason it is necessary to suppress
 # a warning on non (Windows or JRuby) platforms.
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
-  gem "tzinfo-data", "~> 1.0", platforms: %i(mingw mswin x64_mingw jruby)
+  gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
 
