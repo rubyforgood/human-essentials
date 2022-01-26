@@ -19,7 +19,7 @@ gem 'delayed_job_active_record'
 gem 'delayed_job_web'
 gem "devise", '>= 4.7.1'
 gem 'devise-secure_password', '~> 2.0'
-gem 'discard', '~> 1.2'
+gem 'discard', '~> 1.0'
 gem "devise_invitable"
 gem "dotenv-rails"
 gem "filterrific"
@@ -37,23 +37,21 @@ gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "jwt"
 gem "kaminari"
-gem "mini_racer", "~> 0.6.1"
+gem "mini_racer", "~> 0.6.0"
 gem "momentjs-rails"
 gem "money-rails"
 gem "nokogiri", ">= 1.10.4"
 gem "pg", "~> 1.3.0"
 gem "simple_form"
-gem 'popper_js'
 gem "prawn-rails"
 gem "puma"
-gem "rails", "~> 6.1.4"
+gem "rails", "~> 6.1.0"
 gem "sass-rails"
-gem "strong_migrations", "~> 0.7.8"
-gem "sprockets", "~> 4.0.2"
+gem "strong_migrations", "~> 0.7.0"
+gem "sprockets", "~> 4.0.0"
 gem "toastr-rails"
 gem "uglifier", ">= 1.3.0"
-gem 'webpacker', '~> 5.4'
-gem "yajl-ruby"
+gem 'webpacker', '~> 5.0'
 gem "recaptcha"
 gem "paper_trail" # for tracking history of InventoryItem
 
@@ -78,10 +76,10 @@ group :development, :test do
   gem "pry-rails"
   gem "pry-remote"
   gem "pry-nav"
-  gem "rb-readline", "~> 0.5.3"
-  gem "rspec-rails", "~> 5.0.2"
+  gem "rb-readline", "~> 0.5.0"
+  gem "rspec-rails", "~> 5.0.0"
   gem "rubocop"
-  gem "rubocop-rails", "~> 2.9.1"
+  gem "rubocop-rails", "~> 2.9.0"
   gem "standard", "~> 1.0"
   gem "terminal-notifier-guard"
   gem "terminal-notifier"
@@ -94,13 +92,13 @@ group :development do
   gem "bullet"
   gem 'foreman'
   gem "letter_opener"
-  gem "listen", "~> 3.7.1"
+  gem "listen", "~> 3.7.0"
   gem "rails-erd"
   gem "web-console"
 end
 
 group :test do
-  gem "capybara", "~> 3.36"
+  gem "capybara", "~> 3.0"
   gem "capybara-screenshot"
   gem "launchy"
   gem 'magic_test'
@@ -108,9 +106,9 @@ group :test do
   gem "rails-controller-testing"
   gem "rspec-retry"
   gem 'simplecov'
-  gem 'shoulda-matchers', '~> 5.1'
+  gem 'shoulda-matchers', '~> 5.0'
   gem 'webdrivers', '~> 5.0'
-  gem "webmock", "~> 3.14"
+  gem "webmock", "~> 3.0"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -118,5 +116,5 @@ end
 # This 'if' may seem redundant but for some reason it is necessary to suppress
 # a warning on non (Windows or JRuby) platforms.
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
-  gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
+  gem "tzinfo-data", "~> 1.0", platforms: %i(mingw mswin x64_mingw jruby)
 end
