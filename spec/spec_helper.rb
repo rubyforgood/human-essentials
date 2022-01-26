@@ -90,6 +90,13 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = :random
 
+  config.verbose_retry = true
+  config.display_try_failure_messages = true
+
+  config.around :each do |ex|
+    ex.run_with_retry retry: 3
+  end
+
 =begin
   # Print the 10 slowest examples and example groups at the
   # end of the spec run, to help surface which specs are running
