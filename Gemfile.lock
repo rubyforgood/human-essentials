@@ -553,7 +553,7 @@ DEPENDENCIES
   azure-storage-blob
   better_errors
   binding_of_caller
-  bootstrap (~> 4.6.1)
+  bootstrap (~> 4.6.0)
   bootstrap-daterangepicker-rails
   bootstrap-select-rails
   brakeman
