@@ -41,7 +41,7 @@ gem "mini_racer", "~> 0.6.1"
 gem "momentjs-rails"
 gem "money-rails"
 gem "nokogiri", ">= 1.10.4"
-gem "pg", "~> 1.2.3"
+gem "pg", "~> 1.3.0"
 gem "simple_form"
 gem 'popper_js'
 gem "prawn-rails"
