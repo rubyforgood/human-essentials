@@ -106,6 +106,7 @@ group :test do
   gem 'magic_test'
   gem "orderly", "~> 0.1" # used for feature testing where this appears before that
   gem "rails-controller-testing"
+  gem "rspec-retry"
   gem 'simplecov'
   gem 'shoulda-matchers', '~> 5.1'
   gem 'webdrivers', '~> 5.0'
