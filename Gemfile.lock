@@ -169,8 +169,6 @@ GEM
       railties (>= 5.0.0)
     faker (2.19.0)
       i18n (>= 1.6, < 2)
-    fakeredis (0.8.0)
-      redis (~> 4.1)
     faraday (0.17.4)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.14.0)
@@ -391,10 +389,8 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rb-readline (0.5.5)
     recaptcha (5.8.1)
       json
-    redis (4.5.1)
     regexp_parser (2.2.0)
     request_store (1.5.1)
       rack (>= 1.4)
@@ -573,7 +569,6 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   faker
-  fakeredis
   filterrific
   flipper
   flipper-active_record
@@ -592,7 +587,6 @@ DEPENDENCIES
   jwt
   kaminari
   knapsack_pro
-  launchy
   letter_opener
   listen (~> 3.7.0)
   lograge
@@ -613,7 +607,6 @@ DEPENDENCIES
   rails (~> 6.1.0)
   rails-controller-testing
   rails-erd
-  rb-readline (~> 0.5.0)
   recaptcha
   rspec-rails (~> 5.0.0)
   rspec-retry
@@ -638,4 +631,4 @@ RUBY VERSION
    ruby 3.0.2p107
 
 BUNDLED WITH
-   2.2.29
+   2.3.6

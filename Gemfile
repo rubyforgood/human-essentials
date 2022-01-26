@@ -134,8 +134,6 @@ group :development, :test do
   gem "awesome_print"
   # Scan for vulnerabilities and other static analysis.
   gem "brakeman"
-  # Use a fake in-memory Redis instance in tests.
-  gem "fakeredis", require: "fakeredis/rspec" # NEED?
   # Re-run specs when files change.
   gem "guard-rspec"
   # Split tests in a suite across multiple runners.
@@ -148,7 +146,6 @@ group :development, :test do
   gem "pry-remote"
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
-  gem "rb-readline", "~> 0.5.0" # NEED?
   # RSpec behavioral testing framework for Rails.
   gem "rspec-rails", "~> 5.0.0"
   # Allow retrying flaky RSpec tests.
@@ -187,7 +184,6 @@ group :test do
   gem "capybara", "~> 3.0"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
-  gem "launchy" # NEED?
   # Generate Capybara tests in the browser and debug them.
   gem 'magic_test'
   # Can ensure that text appears before other text.
