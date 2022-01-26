@@ -1,6 +1,6 @@
-# Installing on Ubuntu
+# Installing on Ubuntu or macOS
 
-Following are instructions for installing DiaperBase on a freshly installed Ubuntu Desktop host. This will probably work identically on Ubuntu Server but that has not been tested yet.
+Following are instructions for installing Human Essentials on a freshly installed Ubuntu Desktop host or macOS. This will probably work identically on Ubuntu Server but that has not been tested yet.
 
 Many of these instructions can probably work as is, or easily be translated to work on a Mac.
 
@@ -9,20 +9,20 @@ There are two kinds of installations; one for a developer and another for a depl
 Obviously, if any of these steps are already done you will probably not need to do them, so just ignore those steps.
 
 
-### Project Page
+## Project Page
 
-The Github project page is at [https://github.com/rubyforgood/diaper](https://github.com/rubyforgood/diaper).
+The Github project page is at [https://github.com/rubyforgood/human-essentials](https://github.com/rubyforgood/human-essentials).
 
 
-### Installing OS Packages
+## Installing OS Packages
 
 You'll need to add some packages to those that are included in the installation by default:
 
-#### Ubuntu
+### Ubuntu
 
 `sudo apt install curl  git  nodejs  npm  postgresql  libpq-dev`
 
-#### OS X
+### macOS
 
 Install [Homebrew](https://brew.sh/) if you don't already have it
 
@@ -38,33 +38,38 @@ brew install postgresql
 ```
 
 
-### Installing the Diaper Software
+## Installing the Human Essentials Software
 
-If you will be using this machine for development, you will need to `git clone` the repo:
+If you will be using this machine for development, you will need 
+a copy of the Human Essentials repo.
 
-`git clone https://github.com/rubyforgood/diaper.git`
+Fork the repo on GitHub, and create a copy on your own user.
+
+To clone the repo, you'll need to use the `git clone` command.
+
+`git clone https://github.com/<your username>/human-essentials.git`
 
 If you only need to have the files but don't need to use git, you can download the zip file and unzip it:
 
 ```
-curl -o diaper.zip https://codeload.github.com/rubyforgood/diaper/zip/master \
-    && unzip diaper.zip \
-    && rm diaper.zip
+curl -o human-essentials.zip https://codeload.github.com/rubyforgood/human-essentials/zip/main \
+    && unzip human-essentials.zip \
+    && rm human-essentials.zip
 ```
 
 
-### Installing Yarn
+## Installing Yarn
 
-Go to your diaper project directory and do this:
+Go to your human-essentials project directory and do this:
 
-#### Ubuntu
+### Ubuntu
 
 ```
 sudo npm -g install yarn
 yarn install
 ```
 
-### OS X
+### macOS
 
 ```
 brew install yarn
@@ -73,7 +78,7 @@ brew install imagemagick
 ```
 
 
-### Installing rvm
+## Installing rvm
 
 Go to https://rvm.io/rvm/install and find and run the commands that install the gpg key and install rvm. At the time of this writing (2019-07-26), they are:
 
@@ -89,7 +94,7 @@ _Open a new terminal tab or window (this will not work in your current shell!)._
 If you see something like ‘rvm not found’, you may need to change your terminal settings so that something like “Run command as a login shell” is selected. In the default Ubuntu terminal, you would go to the Edit menu, then select the profile to edit, then select the “Command” tab, and select “Run command as a login shell”. Then open a new shell to proceed.
 
 
-### Installing Ruby and Ruby Gems
+## Installing Ruby and Ruby Gems
 
 Install the required version of Ruby (you may be prompted for your system password so that rvm can install some required packages):
 
@@ -100,22 +105,22 @@ Then, from your project directory, install the gems required for the project:
 `bundle`
 
 
-### Configuring Postgres
+## Configuring Postgres
 
 By default, Postgres has no password for the admin user. You'll need to set one. Run `psql` as the Unix user `postgres` that was added by the Postgres installation (Ubuntu only):
 
-#### Ubuntu
+### Ubuntu
 
 `sudo -u postgres psql`
 
-#### OS X
+### macOS
 
 ```
 brew services start postgresql
 psql postgres
 ```
 
-In `psql`, the following command would add a password whose value is `password`. For the default OS X / HomeBrew setup, the postgres user is not created but you view the user list using `\du` in psql. Replace `postgres`, below, with the user name.
+In `psql`, the following command would add a password whose value is `password`. For the default macOS / HomeBrew setup, the postgres user is not created but you view the user list using `\du` in psql. Replace `postgres`, below, with the user name.
 
 `alter user postgres password 'password';`
 
@@ -130,20 +135,20 @@ You will see in `config/database.yml` that the Postgres username and password ar
 
 `cp .env.example .env`
 
-Now edit the top two lines of this file. For OS X users, remember to replace `postgres`, below, with the user name you used in psql.
+Now edit the top two lines of this file. For macOS users, remember to replace `postgres`, below, with the user name you used in psql.
 
 ```
 PG_USERNAME=postgres
 PG_PASSWORD=password
 ```
 
-### Initializing the Data Base
+## Initializing the Database
 
-From your project directory, initialize the data base:
+From your project directory, initialize the database:
 
 `rails db:setup db:migrate db:test:prepare db:seed`
 
-### Testing the Application
+## Testing the Application
 
 You should now be able to successfully run the application:
 
@@ -152,4 +157,4 @@ bin/webpack-dev-server
 rails server
 ```
 
-Point a browser to `localhost:3000`. You should see the Diaper home page. For login credentials, consult the README.md file (at the time of this writing at [https://github.com/rubyforgood/diaper/blob/master/README.md#login](https://github.com/rubyforgood/diaper/blob/master/README.md#login).
+Point a browser to `localhost:3000`. You should see the Human Essentials home page. For login credentials, consult the README.md file (at the time of this writing at [https://github.com/rubyforgood/human-essentials/blob/master/README.md#login](https://github.com/rubyforgood/human-essentials/blob/master/README.md#login).

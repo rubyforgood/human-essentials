@@ -8,7 +8,7 @@
 #  notes            :text
 #  quota            :integer
 #  send_reminders   :boolean          default(FALSE), not null
-#  status           :integer          default(0)
+#  status           :integer          default("uninvited")
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  organization_id  :integer
@@ -45,6 +45,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     it "still requires a unique email between organizations" do
       create(:partner, name: "Foo", email: "foo@example.com")
       expect(build(:partner, name: "Foo", email: "foo@example.com", organization: build(:organization))).to_not be_valid
+      expect(build(:partner, name: "Foo", email: "FOO@example.com", organization: build(:organization))).to_not be_valid
     end
 
     it "requires a unique email that is formatted correctly" do
@@ -127,8 +128,8 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     let(:partner) { create(:partner) }
 
     it 'should return the asssociated primary Partners::User' do
-      primary_partner_user = Partners::User.find_by(partner_id: partner.profile.id)
-      expect(subject).to eq(primary_partner_user)
+      partner_users = Partners::User.where(partner_id: partner.profile.id)
+      expect(partner_users).to include(subject)
     end
   end
 

@@ -101,10 +101,10 @@ GEM
       railties (>= 4.0)
     bootstrap-select-rails (1.13.8)
     brakeman (5.2.0)
-    bugsnag (6.24.1)
+    bugsnag (6.24.2)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
-    bullet (7.0.0)
+    bullet (7.0.1)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     capybara (3.36.0)
@@ -119,7 +119,7 @@ GEM
     capybara-screenshot (1.0.26)
       capybara (>= 1.0, < 4)
       launchy
-    chartkick (4.1.2)
+    chartkick (4.1.3)
     childprocess (4.1.0)
     choice (0.2.0)
     cocoon (1.2.15)
@@ -130,10 +130,10 @@ GEM
     crass (1.0.6)
     database_cleaner (1.8.5)
     debug_inspector (1.1.0)
-    delayed_job (4.1.9)
-      activesupport (>= 3.0, < 6.2)
-    delayed_job_active_record (4.1.6)
-      activerecord (>= 3.0, < 6.2)
+    delayed_job (4.1.10)
+      activesupport (>= 3.0, < 8.0)
+    delayed_job_active_record (4.1.7)
+      activerecord (>= 3.0, < 8.0)
       delayed_job (>= 3.0, < 5)
     delayed_job_web (1.4.4)
       activerecord (> 3.0.0)
@@ -177,10 +177,10 @@ GEM
       faraday (>= 0.7.4, < 1.0)
     ffi (1.15.5)
     filterrific (5.2.2)
-    flipper (0.23.0)
-    flipper-active_record (0.23.0)
+    flipper (0.23.1)
+    flipper-active_record (0.23.1)
       activerecord (>= 4.2, < 8)
-      flipper (~> 0.23.0)
+      flipper (~> 0.23.1)
     flipper-ui (0.23.0)
       erubi (>= 1.0.0, < 2.0.0)
       flipper (~> 0.23.0)
@@ -197,11 +197,11 @@ GEM
       jquery-rails (>= 4.0.5, < 5.0.0)
       jquery-ui-rails (>= 5.0.2)
       momentjs-rails (>= 2.9.0)
-    geocoder (1.7.2)
+    geocoder (1.7.3)
     globalid (1.0.0)
       activesupport (>= 5.0)
-    groupdate (5.2.4)
-      activesupport (>= 5)
+    groupdate (6.0.1)
+      activesupport (>= 5.2)
     guard (2.18.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -310,7 +310,7 @@ GEM
       capybara (>= 1.1)
       rspec (>= 2.14)
     orm_adapter (0.5.0)
-    paper_trail (12.1.0)
+    paper_trail (12.2.0)
       activerecord (>= 5.2)
       request_store (~> 1.1)
     parallel (1.21.0)
@@ -400,7 +400,7 @@ GEM
       json
     redis (4.5.1)
     regexp_parser (2.2.0)
-    request_store (1.5.0)
+    request_store (1.5.1)
       rack (>= 1.4)
     responders (3.0.1)
       actionpack (>= 5.0)
@@ -544,7 +544,7 @@ GEM
     yajl-ruby (1.4.1)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.5.1)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   arm64-darwin-21
@@ -588,7 +588,7 @@ DEPENDENCIES
   foreman
   fullcalendar-rails
   geocoder
-  groupdate (~> 5.2)
+  groupdate (~> 6.0)
   guard-rspec
   image_processing
   jbuilder

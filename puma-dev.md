@@ -28,7 +28,7 @@ Start `puma-dev`
 puma-dev
 ```
 
-You should now be able to access diaper.test and [partner.test](http://partner.test/)!
+You should now be able to access [essentials.test](http://essentials.test)!
 
 ### Linux Installation & Setup
 

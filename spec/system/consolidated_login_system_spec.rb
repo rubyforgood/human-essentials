@@ -24,11 +24,12 @@ RSpec.describe "Consolidated login with email lookup", type: :system, js: true d
 
     it "prefils email and presents a dropdown allowing the user to pick which org they'd like to log in for" do
       expect(page.find_field("Email").value).to eql(user.email)
-      expect(page).to have_select("user[organization]", options: ["A Bank", "A Partner"])
+      expect(page).to have_text("BANK ACCOUNT")
+      expect(page).to have_text("PARTNER ACCOUNT")
     end
 
     it "allows successful login based on the organization selected" do
-      select "A Partner", from: "user[organization]"
+      choose "PARTNER ACCOUNT"
       click_button "Continue"
 
       fill_in "Password", with: user.password

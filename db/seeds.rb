@@ -656,3 +656,44 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
     confirmed_at: account_request[:confirmed_at]
   )
 end
+
+# ----------------------------------------------------------------------------
+# Questions
+# ----------------------------------------------------------------------------
+
+titles = [
+  "Phasellus volutpat, sem at eleifend?",
+  "ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit?",
+  "nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum?",
+  "molestie tortor. Duis pretium urna eget congue?",
+  "eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam?"
+]
+
+answers = [
+  "urna eget congue porta. Fusce aliquet dolor quis viverra volutpat. nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.",
+  "ger a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viv. nas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec",
+  "que. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra.",
+  "olutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc. aliquet dolor quis viverra volutpat. nisl, a commodo ligula consequat.",
+  "Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
+]
+
+5.times do
+  Question.create(
+    title: "Question for banks. #{titles.sample}",
+    for_banks: true,
+    for_partners: false,
+    answer: "Answer for banks. #{answers.sample}"
+  )
+  Question.create(
+    title: "Question for both. #{titles.sample}",
+    for_banks: true,
+    for_partners: true,
+    answer: "Answer for both. #{answers.sample}"
+  )
+  Question.create(
+    title: "Question for partners. #{titles.sample}",
+    for_banks: false,
+    for_partners: true,
+    answer: "Answer for partners. #{answers.sample}"
+  )
+end

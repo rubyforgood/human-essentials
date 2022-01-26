@@ -395,6 +395,14 @@ ActiveRecord::Schema.define(version: 2022_01_16_010945) do
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.string "title", null: false
+    t.boolean "for_partners", default: true, null: false
+    t.boolean "for_banks", default: true, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "requests", force: :cascade do |t|
     t.bigint "partner_id"
     t.bigint "organization_id"
@@ -501,19 +509,26 @@ ActiveRecord::Schema.define(version: 2022_01_16_010945) do
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
   add_foreign_key "annual_reports", "organizations"
+  add_foreign_key "diaper_drives", "organizations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
+  add_foreign_key "kits", "organizations"
+  add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
+  add_foreign_key "partner_groups", "organizations"
   add_foreign_key "requests", "distributions"
+  add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

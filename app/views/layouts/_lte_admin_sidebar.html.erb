@@ -107,6 +107,12 @@
     <% end %>
   </li>
 
+  <li class="nav-item <%= 'active' if current_page?(admin_questions_path) %>">
+    <%= link_to(admin_questions_path, class: "nav-link #{"active" if current_page?(admin_questions_path)}") do %>
+      <i class="nav-icon fa fa-circle-o"></i> FAQ
+    <% end %>
+  </li>
+
   <% if (current_user.organization.present?) %>
     <li class="nav-item">
       <%= link_to(dashboard_path(organization_id: current_user.organization), class: "nav-link") do %>
