@@ -34,24 +34,15 @@ RSpec.describe PartnerGroup, type: :model, skip_seed: true do
       end
     end
 
-    describe 'reminder_day <= 14' do
+    describe 'reminder_day <= 28' do
       it 'raises error if unmet' do
-        expect { partner_group.update_column(:reminder_day, 15) }.to raise_error(ActiveRecord::StatementInvalid)
-      end
-    end
-
-    describe 'reminder_day < deadline_day' do
-      it 'raises error if unmet' do
-        expect { partner_group.update_column(:deadline_day, partner_group.reminder_day - 1) }.to raise_error(ActiveRecord::StatementInvalid)
+        expect { partner_group.update_column(:reminder_day, 29) }.to raise_error(ActiveRecord::StatementInvalid)
       end
     end
   end
   # rubocop:enable Rails/SkipsModelValidations
 
   context "Validations >" do
-    it { should validate_numericality_of(:deadline_day).is_less_than_or_equal_to(28).allow_nil.only_integer }
-    it { should validate_numericality_of(:reminder_day).is_less_than_or_equal_to(14).allow_nil.only_integer }
-
     it "must belong to an organization" do
       expect(build(:partner_group, organization_id: nil)).not_to be_valid
     end
