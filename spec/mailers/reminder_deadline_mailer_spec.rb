@@ -1,15 +1,11 @@
 describe ReminderDeadlineMailer, type: :job, skip_seed: true do
   describe 'notify deadline' do
     let(:today) { Date.new(2022, 1, 10) }
-    let(:organization) { create(:organization, skip_items: true, reminder_day: today.day) }
+    let(:organization) { create(:organization, skip_items: true, reminder_day: today.day, deadline_day: 1) }
     let(:partner) { create(:partner, organization: organization) }
-    let(:date) { Date.new(2022, 1, 1) }
+    let(:expected_deadline_date) { Date.new(2022, 2, 1) }
 
     subject { described_class.notify_deadline(partner) }
-
-    before do
-      allow(DeadlineService).to receive(:new).with(partner: partner).and_return(OpenStruct.new(next_deadline: date))
-    end
 
     it 'renders the subject' do
       expect(subject.subject).to eq("#{organization.name} Deadline Reminder")
@@ -26,7 +22,7 @@ describe ReminderDeadlineMailer, type: :job, skip_seed: true do
     it 'renders the body' do
       expect(subject.body)
         .to include("This is a friendly reminder that #{organization.name} requires your human essentials requests to "\
-                     "be submitted by #{date.strftime("%a, %d %b %Y")}")
+                     "be submitted by #{expected_deadline_date.strftime("%a, %d %b %Y")}")
     end
   end
 end

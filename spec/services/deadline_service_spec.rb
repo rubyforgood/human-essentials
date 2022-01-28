@@ -12,7 +12,7 @@ RSpec.describe DeadlineService, type: :service do
     subject(:deadline) { described_class.new(partner: partner).next_deadline }
 
     context "when the deadline is after today" do
-      before { expected_receiver.assign_attributes(deadline_day: 11) }
+      before { expected_receiver[:deadline_day] = 11 }
 
       it "returns a date within the current month" do
         expect(deadline).to eq today.change(day: 11)
@@ -20,7 +20,7 @@ RSpec.describe DeadlineService, type: :service do
     end
 
     context "when the deadline is today" do
-      before { expected_receiver.assign_attributes(deadline_day: 10) }
+      before { expected_receiver[:deadline_day] = 10 }
 
       it "returns a date in the next month" do
         expect(deadline).to eq today.next_month.change(day: 10)
@@ -28,7 +28,7 @@ RSpec.describe DeadlineService, type: :service do
     end
 
     context "when the deadline is before today" do
-      before { expected_receiver.assign_attributes(deadline_day: 9) }
+      before { expected_receiver[:deadline_day] = 9 }
 
       it "returns a date in the next month" do
         expect(deadline).to eq today.next_month.change(day: 9)
