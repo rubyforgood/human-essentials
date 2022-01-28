@@ -14,7 +14,7 @@ gem "devise", '>= 4.7.1'
 # Postgres database adapter.
 gem "pg", "~> 1.3.0"
 # Web server.
-gem "puma"
+gem "puma", "~> 5.5.0"
 # Rails web framework.
 gem "rails", "~> 6.1.0"
 
