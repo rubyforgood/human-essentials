@@ -169,8 +169,6 @@ GEM
       railties (>= 5.0.0)
     faker (2.19.0)
       i18n (>= 1.6, < 2)
-    fakeredis (0.8.0)
-      redis (~> 4.1)
     faraday (0.17.4)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.14.0)
@@ -345,7 +343,7 @@ GEM
       binding_of_caller (~> 1.0)
       pry (~> 0.13)
     public_suffix (4.0.6)
-    puma (5.5.2)
+    puma (5.6.0)
       nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.3)
@@ -395,10 +393,8 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rb-readline (0.5.5)
     recaptcha (5.8.1)
       json
-    redis (4.5.1)
     regexp_parser (2.2.0)
     request_store (1.5.1)
       rack (>= 1.4)
@@ -504,8 +500,6 @@ GEM
       rubocop-performance (= 1.12.0)
     strong_migrations (0.7.9)
       activerecord (>= 5)
-    terminal-notifier (2.0.0)
-    terminal-notifier-guard (1.7.0)
     thor (1.1.0)
     tilt (2.0.10)
     toastr-rails (1.0.3)
@@ -543,7 +537,6 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    yajl-ruby (1.4.1)
     yard (0.9.27)
       webrick (~> 1.7.0)
     zeitwerk (2.5.3)
@@ -560,13 +553,13 @@ DEPENDENCIES
   azure-storage-blob
   better_errors
   binding_of_caller
-  bootstrap (~> 4.6.1)
+  bootstrap (~> 4.6.0)
   bootstrap-daterangepicker-rails
   bootstrap-select-rails
   brakeman
   bugsnag
   bullet
-  capybara (~> 3.36)
+  capybara (~> 3.0)
   capybara-screenshot
   chartkick
   cocoon
@@ -576,11 +569,10 @@ DEPENDENCIES
   devise (>= 4.7.1)
   devise-secure_password (~> 2.0)
   devise_invitable
-  discard (~> 1.2)
+  discard (~> 1.0)
   dotenv-rails
   factory_bot_rails
   faker
-  fakeredis
   filterrific
   flipper
   flipper-active_record
@@ -599,54 +591,48 @@ DEPENDENCIES
   jwt
   kaminari
   knapsack_pro
-  launchy
   letter_opener
-  listen (~> 3.7.1)
+  listen (~> 3.7.0)
   lograge
   magic_test
-  mini_racer (~> 0.6.1)
+  mini_racer (~> 0.6.0)
   momentjs-rails
   money-rails
   nokogiri (>= 1.10.4)
   orderly (~> 0.1)
   paper_trail
   pg (~> 1.3.0)
-  popper_js
   prawn-rails
   pry-doc
   pry-nav
   pry-rails
   pry-remote
   puma
-  rails (~> 6.1.4)
+  rails (~> 6.1.0)
   rails-controller-testing
   rails-erd
-  rb-readline (~> 0.5.3)
   recaptcha
-  rspec-rails (~> 5.0.2)
+  rspec-rails (~> 5.0.0)
   rspec-retry
   rubocop
-  rubocop-rails (~> 2.9.1)
+  rubocop-rails (~> 2.9.0)
   sass-rails
-  shoulda-matchers (~> 5.1)
+  shoulda-matchers (~> 5.0)
   simple_form
   simplecov
   skylight
-  sprockets (~> 4.0.2)
+  sprockets (~> 4.0.0)
   standard (~> 1.0)
-  strong_migrations (~> 0.7.8)
-  terminal-notifier
-  terminal-notifier-guard
+  strong_migrations (~> 0.7.0)
   toastr-rails
   uglifier (>= 1.3.0)
   web-console
   webdrivers (~> 5.0)
-  webmock (~> 3.14)
-  webpacker (~> 5.4)
-  yajl-ruby
+  webmock (~> 3.0)
+  webpacker (~> 5.0)
 
 RUBY VERSION
    ruby 3.0.2p107
 
 BUNDLED WITH
-   2.2.29
+   2.3.6
