@@ -100,7 +100,7 @@ GEM
     bootstrap-daterangepicker-rails (3.0.4)
       railties (>= 4.0)
     bootstrap-select-rails (1.13.8)
-    brakeman (5.2.0)
+    brakeman (5.2.1)
     bugsnag (6.24.2)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
