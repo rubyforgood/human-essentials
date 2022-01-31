@@ -37,7 +37,7 @@ gem "strong_migrations", "~> 0.7.0"
 ##### JAVSCRIPT/CSS/ASSETS #######
 
 # Bootstrap is a library for HTML, CSS and JS.
-gem 'bootstrap', '~> 4.6.0'
+gem 'bootstrap', '~> 5.1.3'
 # Displays a date range picker, i.e. a way for a user to select a start and end date in
 # a single widget.
 gem 'bootstrap-daterangepicker-rails'
