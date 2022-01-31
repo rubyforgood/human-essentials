@@ -27,7 +27,7 @@
 #
 
 class Organization < ApplicationRecord
-  DIAPER_APP_LOGO = Rails.root.join("public", "img", "diaperbase-logo-full.png")
+  DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
 
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
