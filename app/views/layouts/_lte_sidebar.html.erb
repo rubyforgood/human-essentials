@@ -210,7 +210,8 @@
   <% if current_user.organization_admin %>
     <li class="nav-item">
       <%= link_to(organization_path, class: "nav-link") do %>
-        <i class="nav-icon fas fa-home"></i> <span>My Organization</span>
+        <i class="nav-icon fas fa-home"></i>
+        <p>My Organization</p>
       <% end %>
     </li>
   <% end %>
