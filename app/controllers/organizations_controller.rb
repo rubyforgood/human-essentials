@@ -5,6 +5,7 @@ class OrganizationsController < ApplicationController
 
   def show
     @organization = current_organization
+    @header_link = dashboard_path
   end
 
   def edit

@@ -1,14 +1,14 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true, skip_seed: true do
+  let!(:foo_org) { create(:organization, name: 'foo') }
+  let!(:bar_org) { create(:organization, name: 'bar') }
+  let!(:baz_org) { create(:organization, name: 'baz') }
+
   context "While signed in as an Administrative User (super admin)" do
     before :each do
       sign_in(@super_admin)
     end
 
     it "filters by organizations by name in organizations index page" do
-      foo_org = FactoryBot.create(:organization, name: 'foo')
-      bar_org = FactoryBot.create(:organization, name: 'bar')
-      baz_org = FactoryBot.create(:organization, name: 'baz')
-
       visit admin_organizations_path
 
       # All organizations listed on load
@@ -73,6 +73,22 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, skip_se
       expect(page).to have_content(admin_user_params[:name])
       expect(page).to have_content(admin_user_params[:email])
       expect(page).to have_content("invited")
+    end
+
+    it "can view organization details", :aggregate_failures do
+      visit admin_organizations_path
+
+      within("tr.#{foo_org.short_name}") do
+        first(:link, "View").click
+      end
+
+      expect(page.find("h1")).to have_text(foo_org.name)
+      expect(page).to have_link("Home", href: "#{admin_dashboard_path}?organization_id=#{@organization.short_name}")
+
+      expect(page).to have_content("Organization Info")
+      expect(page).to have_content("Contact Info")
+      expect(page).to have_content("Default email text")
+      expect(page).to have_content("Users")
     end
   end
   context "While signed in as an Administrative User with no organization (super admin no org)" do
