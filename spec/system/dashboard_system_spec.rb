@@ -115,6 +115,12 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         end
       end
 
+      # 1, 20, 300, ..., 900000000
+      # assuming each value is used once, summing these values makes easily recognizable totals
+      # .fetch() from it so too-high indices raise IndexError
+      # legal indices are in -8..8 (i.e., inclusive)
+      item_quantities = (1..9).map { |i| i * 10**(i - 1) }
+
       describe "Donations" do
         it "has a link to create a new donation" do
           org_new_donation_page = OrganizationNewDonationPage.new org_short_name: org_short_name
@@ -140,12 +146,6 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         #     expect(page).to have_no_content("100")
         #   end
         # end
-
-        # 1, 20, 300, ..., 900000000
-        # assuming each value is used once, summing these values makes easily recognizable totals
-        # .fetch() from it so too-high indices raise IndexError
-        # legal indices are in -8..8 (i.e., inclusive)
-        item_quantities = (1..9).map { |i| i * 10**(i - 1) }
 
         # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
         max_recent_donation_links_count = 3
