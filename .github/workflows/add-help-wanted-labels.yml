@@ -10,10 +10,15 @@ jobs:
     name: Add help wanted labels
     steps:
       - name: Add help wanted labels
-        uses: rubyforgood/add-label-to-cards@v2.1
+        uses: rubyforgood/add-label-to-cards@v3.3
         id: add-help-wanted-labels
         with:
+          columns_labels: >
+            [
+              {
+                "column_name": "To do",
+                "labels": ["Help Wanted"],
+                "project_name": "Essentials Project Board"
+              }
+            ]
           token: ${{secrets.GITHUB_TOKEN}}
-          column_name: 'To do'
-          label_to_add: 'Help Wanted'
-          project_name: 'Essentials Project Board'
