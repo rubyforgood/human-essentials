@@ -121,4 +121,15 @@ RSpec.describe User, type: :model do
       expect(build(:user, :deactivated).discarded?).to be true
     end
   end
+
+  describe 'omniauth' do
+    it 'retrieves the user from an omniauth context' do
+      # can't use instance_double since AuthHash uses Hashie for dynamically created methods
+      token = double(OmniAuth::AuthHash, info: {'email' => 'me@me.com'})
+      expect(described_class.from_omniauth(token)).to eq(nil)
+      user = FactoryBot.create(:user, email: 'me@me.com')
+      expect(described_class.from_omniauth(token)).to eq(user)
+    end
+  end
+
 end

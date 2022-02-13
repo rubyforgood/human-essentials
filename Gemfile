@@ -76,10 +76,17 @@ gem "filterrific"
 gem "jbuilder"
 # Pagination of models for use in views.
 gem "kaminari"
-# Reduces boilerplate HTML code when writing forms.
-gem "simple_form"
+# Web-based authorization framework.
+gem "omniauth"
+# Required to avoid authentication issues with Rails.
+gem "omniauth-rails_csrf_protection"
+# Allow login via Google.
+gem "omniauth-google-oauth2"
+
 # Generate PDFs as views.
 gem "prawn-rails"
+# Reduces boilerplate HTML code when writing forms.
+gem "simple_form"
 
 ##### ADDITIONAL FUNCTIONS #####
 
