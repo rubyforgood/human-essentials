@@ -508,29 +508,9 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
       describe "Manufacturer Donations" do
         around do |example|
-          travel_to(date_to_view)
+          travel_to(test_time)
           example.run
           travel_back
-        end
-
-        it "should list top 10 manufacturers" do
-          org_dashboard_page.visit
-
-          expect(org_dashboard_page.manufacturers_total_donations).to eq 0
-          expect(org_dashboard_page.num_manufacturers_donated).to eq 0
-
-          item_qty = 200
-          12.times do
-            manufacturer = create(:manufacturer)
-            create(:donation, :with_items, item: Item.first, item_quantity: item_qty, source: Donation::SOURCES[:manufacturer], manufacturer: manufacturer, issued_at: Time.zone.today)
-            item_qty -= 1
-          end
-
-          org_dashboard_page.visit
-
-          expect(org_dashboard_page.manufacturers_total_donations).to eq 2_334
-          expect(org_dashboard_page.num_manufacturers_donated).to eq 12
-          expect(org_dashboard_page.recent_manufacturer_donation_links.count).to eq 10
         end
 
         it "has a link to create a new donation" do
@@ -554,149 +534,127 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         #   end
         # end
 
-        context "when constrained to date range" do
-          before do
-            @organization.donations.destroy_all
-            storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
-            manufacturer1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
-            manufacturer2 = create(:manufacturer, name: "BCD Corp", organization: @organization)
-            manufacturer3 = create(:manufacturer, name: "CDE Corp", organization: @organization)
-            # manufacturer4 = create(:manufacturer, name: "DEF Corp", organization: @organization)
+        # as of 15 Feb 2022, the "Top Manufacturer Donations" list shows up to this many manufacturers
+        # which donated during the filtered date range
+        max_top_manufacturer_donations_links_count = 10
 
-            @this_years_donations = {
-              today: create(:manufacturer_donation, :with_items, manufacturer: manufacturer1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
-              yesterday: create(:manufacturer_donation, :with_items, manufacturer: manufacturer2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-              earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer3, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization)
-              # See https://github.com/rubyforgood/human-essentials/issues/2676#issuecomment-1008166066
-              # beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: beginning_of_year, item_quantity: 103, storage_location: storage_location, organization: @organization)
-            }
-            @last_years_donations = create_list(:manufacturer_donation, 2, :with_items, manufacturer: manufacturer1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
-            org_dashboard_page.visit
-          end
+        # Make donations for up to this many (inclusive) manufacturers for each filtered period
+        # Different from other sections because the final list also includes the before- and
+        # after-date-range donations
+        max_manufacturers_donated_in_filtered_period = max_top_manufacturer_donations_links_count - 1
 
-          describe "This Year" do
+        [
+          # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+          ["Today",        test_time,                               test_time],
+          ["Yesterday",    test_time.yesterday,                     test_time.yesterday],
+          ["Last 7 Days",  test_time -  6.days,                     test_time],
+          ["Last 30 Days", test_time - 29.days,                     test_time],
+          ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
+          ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
+          ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
+          ["All Time",     test_time - 100.years,                   test_time],
+          ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+          # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+        ].each do |date_range_info|
+          filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
+
+          filtered_date_range = start_date.to_date..end_date.to_date
+          before_filtered_date_range = start_date.yesterday.to_date
+          after_filtered_date_range = end_date.tomorrow.to_date
+
+          start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+
+          # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
+          # w/out making a fixed pattern
+          num_manufacturers_donated_in_filtered_period = rand(0..max_manufacturers_donated_in_filtered_period)
+
+          context "given 1 Manufacturer donating on #{before_filtered_date_range}, " \
+                  "#{num_manufacturers_donated_in_filtered_period} during #{filtered_date_range}, and " \
+                  "1 on #{after_filtered_date_range}" do
+            custom_dates = if set_custom_dates
+              "#{start_date_formatted} - #{end_date_formatted}"
+            end
+
             before do
-              org_dashboard_page.filter_to_date_range "This Year"
-            end
+              filtered_dates = filtered_date_range.to_a
 
-            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
-            let(:manufacturers) { @this_years_donations.values.map(&:manufacturer).map(&:name) }
+              @item_quantity = item_quantities.to_enum
 
-            it "has a widget displaying the year-to-date Donation totals, only using donations from this year" do
-              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
-              expect(org_dashboard_page.num_manufacturers_donated).to eq manufacturers.size
-            end
+              def create_next_manufacturer_donation(manufacturer:, donation_date:)
+                quantity_in_donation = @item_quantity.next
 
-            it "displays the list of top manufacturers" do
-              recent_manufacturer_donation_links = org_dashboard_page.recent_manufacturer_donation_links
+                create :manufacturer_donation, :with_items, manufacturer: manufacturer, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
 
-              manufacturers.each do |manufacturer|
-                expect(recent_manufacturer_donation_links)
-                  .to include(match /#{manufacturer} \(\d{3}\)/i)
-                  .exactly(:once)
+                quantity_in_donation
+              end
+
+              # Generate new Manufacturers and their in-filtered-date-range donations
+              @manufacturer_donations_in_filtered_date_range = num_manufacturers_donated_in_filtered_period.times.map do |index|
+                @item_quantity.rewind
+                manufacturer_name = "In-date-range Manufacturer #{index}"
+
+                manufacturer = create :manufacturer, name: manufacturer_name, organization: @organization
+
+                # Ensure at least 1 donation in the filtered period
+                donation_quantities = rand(1..3).times.map do
+                  create_next_manufacturer_donation manufacturer: manufacturer, donation_date: filtered_dates.sample
+                end
+
+                OpenStruct.new manufacturer_name: manufacturer_name, total_quantity_donated: donation_quantities.sum
+              end
+
+              # create Donations before & after the filtered date range
+              @item_quantity.rewind
+              @manufacturer_donations_outside_filtered_date_range = [
+                # rubocop:disable Layout/ExtraSpacing
+                ["Before", before_filtered_date_range],
+                ["After",   after_filtered_date_range]
+                # rubocop:enable Layout/ExtraSpacing
+              ].map do
+                prefix, date = _1
+
+                manufacturer_name = "#{prefix}-date-range Manufacturer"
+                manufacturer = create :manufacturer, name: manufacturer_name, organization: @organization
+                quantity_donated = create_next_manufacturer_donation manufacturer: manufacturer, donation_date: date
+
+                OpenStruct.new manufacturer_name: manufacturer_name, total_quantity_donated: quantity_donated
               end
             end
-          end
 
-          describe "Today" do
-            before do
-              org_dashboard_page.filter_to_date_range "Today"
-            end
-
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
-            let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
-
-            it "has a widget displaying today's Donation totals, only using donations from today" do
-              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
-            end
-
-            it "displays the list of top manufacturers" do
-              expect(org_dashboard_page.recent_manufacturer_donation_links)
-                .to include(match /#{manufacturer} \(\d{3}\)/i)
-                .exactly(:once)
-            end
-          end
-
-          describe "Yesterday" do
-            before do
-              org_dashboard_page.filter_to_date_range "Yesterday"
-            end
-
-            let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
-            let(:manufacturer) { @this_years_donations[:yesterday].manufacturer.name }
-
-            it "has a widget displaying the Donation totals from yesterday, only using donations from yesterday" do
-              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
-            end
-
-            it "displays the list of top manufacturers" do
-              expect(org_dashboard_page.recent_manufacturer_donation_links)
-                .to include(match /#{manufacturer} \(\d{3}\)/i)
-                .exactly(:once)
-            end
-          end
-
-          describe "This Week" do
-            before do
-              org_dashboard_page.filter_to_date_range "Last 7 Days"
-            end
-
-            let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
-            let(:manufacturers) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:manufacturer).map(&:name) }
-
-            it "has a widget displaying the Donation totals from this week, only using donations from this week" do
-              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
-            end
-
-            it "displays the list of top manufacturers" do
-              recent_manufacturer_donation_links = org_dashboard_page.recent_manufacturer_donation_links
-
-              manufacturers.each do |manufacturer|
-                expect(recent_manufacturer_donation_links)
-                  .to include(match /#{manufacturer} \(\d{3}\)/i)
-                  .exactly(:once)
+            describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
+              before do
+                org_dashboard_page
+                  .visit
+                  .filter_to_date_range(filtered_date_range_label, custom_dates)
               end
-            end
-          end
 
-          describe "This Month" do
-            before do
-              org_dashboard_page.filter_to_date_range "This Month"
-            end
+              # max_manufacturers_donated_in_filtered_period + 2 because the list includes the before- & after-date-range donations, too
+              expected_top_manufacturer_donation_links_count = [max_top_manufacturer_donations_links_count, num_manufacturers_donated_in_filtered_period + 2].min
 
-            let(:total_inventory) { @this_years_donations[:today].total_quantity + @this_years_donations[:yesterday].total_quantity + @this_years_donations[:earlier_this_week].total_quantity }
-            let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
+              it "shows the correct total and #{expected_top_manufacturer_donation_links_count} Top Manufacturer Donation link(s)" do
+                # "Total" is filtered by the time period
+                expected_total_manufacturer_donations = @manufacturer_donations_in_filtered_date_range.map(&:total_quantity_donated).sum
+                expect(org_dashboard_page.manufacturers_total_donations).to eq expected_total_manufacturer_donations
 
-            it "has a widget displaying the Donation totals from this month, only using donations from this month" do
-              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
-            end
+                top_manufacturer_donation_links = org_dashboard_page.top_manufacturer_donation_links
 
-            it "displays the list of top manufacturers" do
-              expect(org_dashboard_page.recent_manufacturer_donation_links)
-                .to include(match /#{manufacturer} \(\d{3}\)/i)
-                .exactly(:once)
-            end
-          end
+                expect(org_dashboard_page.top_manufacturer_donation_links.count).to eq expected_top_manufacturer_donation_links_count
 
-          describe "All Time" do
-            before do
-              org_dashboard_page.filter_to_date_range "All Time"
-            end
+                # Expect the links to be something like "In-date-range Manufacturer 1 (21)", "In-date-range Manufacturer 2 (4,321)", etc.
+                # Strip out the item counts & manufacturer names
+                top_manufacturer_donations = top_manufacturer_donation_links.map do
+                  manufacturer_name, total_donated = _1.match(/(.+) \((\d+)\)/).captures
 
-            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
-            let(:manufacturers) { [@this_years_donations.values + @last_years_donations].flatten.map(&:manufacturer).map(&:name) }
+                  OpenStruct.new manufacturer_name: manufacturer_name, total_quantity_donated: total_donated.delete(",").to_i
+                end
 
-            it "has a widget displaying the Donation totals from last year, only using donations from last year" do
-              expect(org_dashboard_page.manufacturers_total_donations).to eq total_inventory
-            end
+                # The Top Donations list is *not* filtered by the time period
+                # It can contain both the before- and after-filtered-date-range donations
+                all_manufacturer_donations = @manufacturer_donations_in_filtered_date_range + @manufacturer_donations_outside_filtered_date_range
 
-            it "displays the list of top manufacturers" do
-              recent_manufacturer_donation_links = org_dashboard_page.recent_manufacturer_donation_links
-
-              manufacturers.each do |manufacturer|
-                expect(recent_manufacturer_donation_links)
-                  .to include(match /#{manufacturer} \(\d{3}\)/i)
-                  .exactly(:once)
+                # By design, the setup may have created more Donations during the period than are visible in the Top Donation links
+                # Make sure each Top Donation link uniquely matches a single Donation
+                expect(all_manufacturer_donations.intersection(top_manufacturer_donations)).to match_array top_manufacturer_donations
               end
             end
           end

@@ -112,7 +112,7 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def recent_manufacturer_donation_links
+  def top_manufacturer_donation_links
     within manufacturers_section do
       all(".manufacturer a").map(&:text)
     end
