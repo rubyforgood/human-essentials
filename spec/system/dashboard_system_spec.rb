@@ -94,9 +94,6 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
     describe "Inventory Totals" do
       test_time = Time.zone.now
-      let(:date_to_view) { Time.zone.now }
-      let(:last_year_date) { Time.zone.now - 1.year }
-      let(:beginning_of_year) { Time.zone.now.beginning_of_year }
 
       describe "Summary" do
         before do
