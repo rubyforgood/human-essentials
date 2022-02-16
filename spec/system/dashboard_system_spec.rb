@@ -663,34 +663,15 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
       describe "Distributions" do
         around do |example|
-          travel_to(date_to_view)
+          travel_to(test_time)
           example.run
           travel_back
-        end
-
-        before do
-          @organization.distributions.destroy_all
-          storage_location = create(:storage_location, :with_items, item_quantity: 500, organization: @organization)
-
-          partner1 = create(:partner, name: "Partner ABC", organization: @organization)
-          partner2 = create(:partner, name: "Partner BCD", organization: @organization)
-          partner3 = create(:partner, name: "Partner CDE", organization: @organization)
-          partner4 = create(:partner, name: "Partner DEF", organization: @organization)
-
-          @this_years_distributions = {
-            today: create(:distribution, :with_items, partner: partner1, issued_at: date_to_view, item_quantity: 10, storage_location: storage_location, organization: @organization),
-            yesterday: create(:distribution, :with_items, partner: partner2, issued_at: date_to_view.yesterday, item_quantity: 11, storage_location: storage_location, organization: @organization),
-            earlier_this_week: create(:distribution, :with_items, partner: partner3, issued_at: date_to_view.beginning_of_week, item_quantity: 12, storage_location: storage_location, organization: @organization),
-            beginning_of_year: create(:distribution, :with_items, partner: partner4, issued_at: beginning_of_year, item_quantity: 13, storage_location: storage_location, organization: @organization)
-          }
-          @last_years_distributions = create_list(:distribution, 2, :with_items, partner: partner1, issued_at: last_year_date, item_quantity: 14, storage_location: storage_location, organization: @organization)
-          org_dashboard_page.visit
         end
 
         it "has a link to create a new distribution" do
           org_new_distribution_page = OrganizationNewDistributionPage.new org_short_name: org_short_name
 
-          expect(org_dashboard_page).to have_distributions_section
+          expect(org_dashboard_page.visit).to have_distributions_section
 
           expect { org_dashboard_page.create_new_distribution }
             .to change { page.current_path }
@@ -713,129 +694,109 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         #   end
         # end
 
-        context "When Date Filtering >" do
-          before do
-          end
+        # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
+        max_recent_distribution_links_count = 3
 
-          context "with year-to-date selected" do
+        # Make up to this many (inclusive) donations for each filtered period
+        # Keep it below (item_quantities.size - 1) so there's at least 2 values left for
+        # Donations outside of the filtered period
+        max_distributions_in_filtered_period = max_recent_distribution_links_count + 1
+
+        [
+          # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+          ["Today",        test_time,                               test_time],
+          ["Yesterday",    test_time.yesterday,                     test_time.yesterday],
+          ["Last 7 Days",  test_time -  6.days,                     test_time],
+          ["Last 30 Days", test_time - 29.days,                     test_time],
+          ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
+          ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
+          ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
+          ["All Time",     test_time - 100.years,                   test_time],
+          ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+          # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+        ].each do |date_range_info|
+          filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
+
+          filtered_date_range = start_date.to_date..end_date.to_date
+          before_filtered_date_range = start_date.yesterday.to_date
+          after_filtered_date_range = end_date.tomorrow.to_date
+
+          start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+
+          # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
+          # w/out making a fixed pattern
+          num_distributions_in_filtered_period = rand(0..max_distributions_in_filtered_period)
+
+          context "given 1 Distribution on #{before_filtered_date_range}, " \
+                  "#{num_distributions_in_filtered_period} during #{filtered_date_range}, and " \
+                  "1 on #{after_filtered_date_range}" do
+            custom_dates = if set_custom_dates
+              "#{start_date_formatted} - #{end_date_formatted}"
+            end
+
             before do
-              org_dashboard_page.filter_to_date_range "This Year"
-            end
+              filtered_dates = filtered_date_range.to_a
 
-            let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum }
-            let(:partners) { @this_years_distributions.values.map(&:partner).map(&:name) }
+              @item_quantity = item_quantities.to_enum
 
-            it "has a widget displaying the year-to-date distribution totals, only using distributions from this year" do
-              expect(org_dashboard_page.total_distributed).to eq total_inventory
-            end
-
-            it "displays some recent distributions" do
-              expected_partner_names_pattern = partners.join('|')
-
-              expect(org_dashboard_page.recent_distribution_links)
-                .to include(match /1\d items.*(#{expected_partner_names_pattern})/i)
-                .exactly(3).times
-            end
-          end
-
-          context "with today selected" do
-            before do
-              org_dashboard_page.filter_to_date_range "Today"
-            end
-
-            let(:total_inventory) { @this_years_distributions[:today].line_items.total }
-            let(:partner) { @this_years_distributions[:today].partner.name }
-
-            it "has a widget displaying today's distributions totals, only using distributions from today" do
-              expect(org_dashboard_page.total_distributed).to eq total_inventory
-            end
-
-            it "displays some recent distributions" do
-              expect(org_dashboard_page.recent_distribution_links)
-                .to include(match /1\d items.*(#{partner})/i)
-                .exactly(:once)
-            end
-          end
-
-          context "with yesterday selected" do
-            before do
-              org_dashboard_page.filter_to_date_range "Yesterday"
-            end
-
-            let(:total_inventory) { @this_years_distributions[:yesterday].line_items.total }
-            let(:partner) { @this_years_distributions[:yesterday].partner.name }
-
-            it "has a widget displaying the distributions totals from yesterday, only using distributions from yesterday" do
-              expect(org_dashboard_page.total_distributed).to eq total_inventory
-            end
-
-            it "displays some recent distributions" do
-              expect(org_dashboard_page.recent_distribution_links)
-                .to include(match /1\d items.*(#{partner})/i)
-                .exactly(:once)
-            end
-          end
-
-          context "with this week selected" do
-            before do
-              org_dashboard_page.filter_to_date_range "Last 7 Days"
-            end
-
-            let(:total_inventory) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:line_items).flatten.map(&:quantity).sum }
-            let(:partners) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:partner).map(&:name) }
-
-            it "has a widget displaying the distributions totals from this week, only using distributions from this week" do
-              expect(org_dashboard_page.total_distributed).to eq total_inventory
-            end
-
-            it "displays some recent distributions" do
-              recent_distribution_links = org_dashboard_page.recent_distribution_links
-
-              partners.each do |partner|
-                expect(recent_distribution_links)
-                  .to include(match /1\d items.*(#{partner})/i)
-                  .exactly(:once)
+              # Create some number of Partners
+              # Keep local copy of names so examples can create expected values
+              # without relying on fetching info from production code
+              @partners = (1..rand(2..5)).map do
+                name = "Partner #{_1}"
+                OpenStruct.new name: name, partner: create(:partner, name: name, organization: @organization)
               end
-            end
-          end
 
-          context "with this month selected" do
-            before do
-              org_dashboard_page.filter_to_date_range "This Month"
-            end
+              def create_next_diaper_drive_distribution(distribution_date:)
+                quantity_in_distribution = @item_quantity.next
+                partner = @partners.sample
 
-            let(:total_inventory) { %i[today yesterday earlier_this_week].map { |date| @this_years_distributions[date].line_items }.flatten.map(&:quantity).sum }
-            let(:partner) { @this_years_distributions[:today].partner.name }
+                create :distribution, :with_items, partner: partner.partner, issued_at: distribution_date, item_quantity: quantity_in_distribution, storage_location: storage_location, organization: @organization
 
-            it "has a widget displaying the distributions totals from this month, only using distributions from this month" do
-              expect(org_dashboard_page.total_distributed).to eq total_inventory
-            end
+                OpenStruct.new partner_name: partner.name, quantity: quantity_in_distribution
+              end
 
-            it "displays some recent distributions" do
-              expect(org_dashboard_page.recent_distribution_links)
-                .to include(match /1\d items.*(#{partner})/i)
-                .exactly(:once)
-            end
-          end
+              # days_this_year.sample in num_distributions_in_filtered_period.times loop
+              # rather than
+              # days_this_year.sample(num_distributions_in_filtered_period).each
+              # because Array#sample(n) on an Array with m<n elements returns only m elements
+              @distributions_in_filtered_date_range = num_distributions_in_filtered_period.times.map do
+                create_next_diaper_drive_distribution distribution_date: filtered_dates.sample
+              end
 
-          context "with All Time selected" do
-            before do
-              org_dashboard_page.filter_to_date_range "All Time"
+              # create Distributions before & after the filtered date range
+              [before_filtered_date_range, after_filtered_date_range].each { create_next_diaper_drive_distribution distribution_date: _1 }
             end
 
-            let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum + @last_years_distributions.map(&:line_items).flatten.map(&:quantity).sum }
-            let(:partners) { [@this_years_distributions.values + @last_years_distributions].flatten.map(&:partner).map(&:name) }
+            describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
+              before do
+                org_dashboard_page
+                  .visit
+                  .filter_to_date_range(filtered_date_range_label, custom_dates)
+              end
 
-            it "has a widget displaying the distributions totals from last year, only using distributions from last year" do
-              expect(org_dashboard_page.total_distributed).to eq total_inventory
-            end
+              expected_recent_distribution_links_count = [max_recent_distribution_links_count, num_distributions_in_filtered_period].min
 
-            it "displays some recent distributions from that time" do
-              expected_partner_names_pattern = partners.join('|')
+              it "shows the correct total and #{expected_recent_distribution_links_count} Recent Distribution link(s)" do
+                expect(org_dashboard_page.total_distributed).to eq @distributions_in_filtered_date_range.map(&:quantity).sum
 
-              expect(org_dashboard_page.recent_distribution_links)
-                .to include(match /1\d items.*(#{expected_partner_names_pattern})/i)
-                .exactly(3).times
+                recent_distribution_links = org_dashboard_page.recent_distribution_links
+
+                expect(recent_distribution_links.count).to eq expected_recent_distribution_links_count
+
+                # Expect the links to be something like "1 from Some Drive", "20 items from Another Drive"
+                # Strip out the item counts & drive names
+                recent_distributions = recent_distribution_links.map do
+                  items_distributed, partner_name = _1.match(/(\d+) items distributed to (.+)/).captures
+
+                  # e.g., [1, "Some Drive"], [20, "Another Drive"]
+                  OpenStruct.new quantity: items_distributed.to_i, partner_name: partner_name
+                end
+
+                # By design, the setup may have created more Distributions during the period than are visible in the Recent Distribution links
+                # Make sure each Recent Distribution link uniquely matches a single Distribution
+                expect(@distributions_in_filtered_date_range.intersection(recent_distributions)).to match_array recent_distributions
+              end
             end
           end
         end
