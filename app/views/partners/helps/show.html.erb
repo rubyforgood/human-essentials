@@ -1,41 +1,53 @@
-<section class="content">
+<section class="content-header">
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-12">
-        <!-- Default box -->
-        <div class="card card-info mt-2">
-          <div class="card-header">
-            <h2 class="card-title">Frequently Asked Questions</h2>
-          </div>
-          <div class="card-body p-4">
-            <ul class="list-inside my-2 list-decimal space-y-5">
-              <% @partner_questions.each do |partner_question| %>
-                <div class="accordion" id="accordion">
-                  <div class="card">
-                    <div class="card-header" id="heading">
-                      <h2 class="mb-0">
-                        <button class="text-2xl font-bold list-none" type="button" data-toggle="collapse" data-target="#collapse<%= partner_question.id %>" aria-expanded="false" aria-controls="collapse<%= partner_question.id %>">
-                          <%= partner_question.title %>
-                        </button>
-                      </h2>
-                    </div>
-                    <div id="collapse<%= partner_question.id %>" class="collapse" aria-labelledby="heading" data-parent="#accordion">
-                      <div class="card-body">
-                        <%= partner_question.answer %>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-              <li class="text-2xl font-bold list-none">Have suggestions to help improve the app or other questions about the app? Please <a href="https://human-essential.slack.com/archives/CG1NL2MRC"><u class='text-blue-400'>reach out on Slack.</u></a></li>
-              <li class="text-2xl font-bold list-none">Not a member of the Human Essentials Slack group? <a href="https://join.slack.com/t/human-essential/shared_invite/zt-bfa8tymd-d8Ks3Mq000COcRe~nfs~zg"><u class='text-blue-400'>Request a login.</u></a></li>
-              <li class="text-2xl font-bold list-none">Still need help? Submit a support ticket <u><%= link_to 'here', support_ticket_form_url, target: '_blank', class: 'text-blue-400' %></u> and we will do our best to follow up with you via email.</li>
-            </ul>
-          </div>
-          <!-- /.card-footer-->
-        </div>
-        <!-- /.card -->
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Frequently Asked Questions</h1>
       </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item">
+            <%= link_to 'Home', partner_user_root_path %>
+          </li>
+          <li class="breadcrumb-item active">FAQ</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="row mx-1">
+    <div class="col-12 accordion" id="faqAccordion">
+      <% @partner_questions.each do |partner_question| %>
+      <div class="card card-info card-outline">
+        <a class="d-block w-100" href="#collapse-<%= partner_question.id %>" role="button" data-toggle="collapse" data-target="#collapse-<%= partner_question.id %>" aria-controls="collapse-<%= partner_question.id %>">
+          <div class="card-header" id="header-<%= partner_question.id %>">
+            <h4 class="card-title w-100">
+              <%= partner_question.title %>
+            </h4>
+          </div>
+        </a>
+        <div id="collapse-<%= partner_question.id %>" class="collapse" aria-labelledby="header-<%= partner_question.id %>" data-parent="#faqAccordion">
+          <div class="card-body">
+            <%= partner_question.answer %>
+          </div>
+        </div>
+      </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="row py-3 mx-1">
+    <div class="col-12 text-center">
+      <p class="lead font-weight-bold">
+        Have suggestions to help improve the app or other questions about the app? Please <%= link_to 'reach out on Slack', 'https://human-essential.slack.com/archives/CG1NL2MRC', target: '_blank' %>.
+      </p>
+      <p class="lead font-weight-bold">
+        Not a member of the Human Essentials Slack group? <%= link_to 'Request a login.', 'https://join.slack.com/t/human-essential/shared_invite/zt-bfa8tymd-d8Ks3Mq000COcRe~nfs~zg', target: '_blank' %>
+      </p>
+      <p class="lead font-weight-bold">
+        Still need help? Submit a support ticket <%= link_to 'here', support_ticket_form_url, target: '_blank' %> and we will do our best to follow up with you via email.
+      </p>
     </div>
   </div>
 </section>
