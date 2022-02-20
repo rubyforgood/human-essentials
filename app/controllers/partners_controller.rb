@@ -6,7 +6,13 @@ class PartnersController < ApplicationController
 
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
-    @partners = Partner.includes(:partner_group).where(organization: current_organization).class_filter(filter_params).alphabetized
+    @partners = Partner.includes(:partner_group).where(organization: current_organization)
+    @partners = if filter_params.empty?
+                  @partners.active
+                else
+                  @partners.class_filter(filter_params)
+                end
+    @partners = @partners.alphabetized
     @partner_groups = PartnerGroup.includes(:partners, :item_categories).where(organization: current_organization)
 
     respond_to do |format|
@@ -78,8 +84,13 @@ class PartnersController < ApplicationController
   end
 
   def destroy
-    current_organization.partners.find(params[:id]).destroy
-    redirect_to partners_path
+    partner = current_organization.partners.find(params[:id])
+    if partner
+      partner.destroy
+      redirect_to partners_path, notice: "Deleted #{partner.name}"
+    else
+      redirect_to partners_path, alert: "Could not find partner to delete!"
+    end
   end
 
   def invite
