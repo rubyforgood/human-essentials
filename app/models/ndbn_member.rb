@@ -10,7 +10,7 @@
 class NDBNMember < ApplicationRecord
   self.primary_key = "ndbn_member_id"
 
-  validates_presence_of :ndbn_member_id
-  validates_presence_of :account_name
-  validates_uniqueness_of :ndbn_member_id
+  validates :ndbn_member_id, presence: true
+  validates :account_name, presence: true
+  validates :ndbn_member_id, uniqueness: true
 end

@@ -1,6 +1,5 @@
 describe SyncNDBNMembers do
-
-  describe '.sync' do
+  describe ".sync" do
     subject { -> { described_class.sync } }
     let(:ndbn_member_id) { 200040 }
     let(:account_name) { "New Super Baby" }
@@ -22,34 +21,33 @@ describe SyncNDBNMembers do
     end
 
     before do
-      fake_http_response = double('fake_http_response', body: fake_html_body)
+      fake_http_response = double("fake_http_response", body: fake_html_body)
       allow(described_class).to receive(:get).with(SyncNDBNMembers::NDBN_MEMBERS_PAGE).and_return(fake_http_response)
     end
 
-    context 'when there are no exisiting NDBN Member records' do
-      it 'should create the NDBN Member records' do
+    context "when there are no exisiting NDBN Member records" do
+      it "should create the NDBN Member records" do
         expect { subject.call }.to change { NDBNMember.count }.from(0).to(2)
       end
     end
 
-    context 'when the account name of a NDBN Member has changed' do
+    context "when the account name of a NDBN Member has changed" do
       let(:old_account_name) { "Super Baby" }
 
       before do
         create(:ndbn_member, ndbn_member_id: ndbn_member_id, account_name: old_account_name)
       end
 
-      it 'should update the account name of the corresponding NDBN Member' do
+      it "should update the account name of the corresponding NDBN Member" do
         expect { subject.call }.to change { NDBNMember.find_by(ndbn_member_id: ndbn_member_id).account_name }.from(old_account_name).to(account_name)
       end
     end
 
-    context 'when no new NDBN Member has been added' do
-      it 'should not add any new NDBN Members' do
+    context "when no new NDBN Member has been added" do
+      it "should not add any new NDBN Members" do
         expect { subject.call }.to change { NDBNMember.count }.from(0).to(2)
         expect { subject.call }.not_to change { NDBNMember.count }
       end
     end
-
   end
 end
