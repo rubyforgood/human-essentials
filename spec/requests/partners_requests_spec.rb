@@ -136,9 +136,7 @@ RSpec.describe "Partners", type: :request do
             expect(subject.body).to include('Delete')
           end
         end
-
       end
-
     end
 
     context "csv" do

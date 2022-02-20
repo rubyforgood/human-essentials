@@ -102,7 +102,6 @@ RSpec.describe Partner, type: :model, skip_seed: true do
   end
 
   describe '#deletable?' do
-
     context 'when status is not uninvited' do
       it 'should return false' do
         expect(build(:partner, status: :invited)).not_to be_deletable

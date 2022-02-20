@@ -8,10 +8,10 @@ class PartnersController < ApplicationController
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
     @partners = Partner.includes(:partner_group).where(organization: current_organization)
     @partners = if filter_params.empty?
-                  @partners.active
-                else
-                  @partners.class_filter(filter_params)
-                end
+      @partners.active
+    else
+      @partners.class_filter(filter_params)
+    end
     @partners = @partners.alphabetized
     @partner_groups = PartnerGroup.includes(:partners, :item_categories).where(organization: current_organization)
 
