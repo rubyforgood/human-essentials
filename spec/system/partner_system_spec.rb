@@ -177,7 +177,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         it "allows the user to click on one of the statuses at the top to filter the results" do
           approved_count = Partner.approved.count
           within "table tbody" do
-            expect(page).to have_css("tr", count: Partner.count)
+            expect(page).to have_css("tr", count: Partner.active.count)
           end
           within "#partner-status" do
             click_on "Approved"
