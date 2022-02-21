@@ -39,12 +39,18 @@ class SyncNDBNMembers
     private
 
     def fetch_members_page
-      get(NDBN_MEMBERS_PAGE).body
+      res = get(NDBN_MEMBERS_PAGE)
+
+      if res.code != 200
+        raise "SyncNDBNMembers.sync failed due to getting a status code of #{res.code}"
+      end
+
+      res.body
     end
 
     def extract_member_entries(html_body)
       doc = Nokogiri::HTML(html_body)
-      entries = doc.css('.contentpaneopen p').map { |t| t.text }
+      entries = doc.css(".contentpaneopen p").map { |t| t.text }
 
       # Removes the column header that only has the labels
       entries[1..].map do |entry|
