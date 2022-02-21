@@ -101,6 +101,8 @@ gem "flipper-active_record"
 gem "flipper-ui"
 # Calculates latitude and longitude from an address.
 gem "geocoder"
+# Enable making HTTP requests
+gem 'httparty'
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
 
