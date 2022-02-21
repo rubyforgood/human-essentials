@@ -57,7 +57,7 @@ Rails.application.routes.draw do
     get :dashboard
     resources :base_items
     resources :organizations
-    resources :partners, except: %i[new create destroy]
+    resources :partners, except: %i[new create]
     resources :users
     resources :barcode_items
     resources :account_requests, only: [:index] do
