@@ -55,6 +55,7 @@ class Partner < ApplicationRecord
   }
 
   scope :alphabetized, -> { order(:name) }
+  scope :active, -> { where.not(status: :deactivated) }
 
   include Filterable
   include Exportable
@@ -64,6 +65,14 @@ class Partner < ApplicationRecord
 
   def deactivated?
     status == 'deactivated'
+  end
+
+  # @return [Boolean]
+  def deletable?
+    uninvited? &&
+      distributions.none? &&
+      requests.none? &&
+      (profile.nil? || profile&.users&.none?)
   end
 
   #
