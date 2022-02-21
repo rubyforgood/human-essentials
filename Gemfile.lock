@@ -470,8 +470,6 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    scraping (0.2.0)
-      nokogiri
     selenium-webdriver (4.1.0)
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
@@ -628,7 +626,6 @@ DEPENDENCIES
   rubocop
   rubocop-rails (~> 2.9.0)
   sass-rails
-  scraping
   shoulda-matchers (~> 5.0)
   simple_form
   simplecov

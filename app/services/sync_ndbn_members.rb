@@ -1,9 +1,7 @@
 class SyncNDBNMembers
   include HTTParty
-  include Scraping
 
   NDBN_MEMBERS_PAGE = "https://ndbn.memberclicks.net/member-ids".freeze
-  elements :ndbn_member_entries, ".contentpaneopen p"
 
   class << self
     def sync
@@ -45,7 +43,8 @@ class SyncNDBNMembers
     end
 
     def extract_member_entries(html_body)
-      entries = scrape(html_body).ndbn_member_entries
+      doc = Nokogiri::HTML(html_body)
+      entries = doc.css('.contentpaneopen p').map { |t| t.text }
 
       # Removes the column header that only has the labels
       entries[1..].map do |entry|

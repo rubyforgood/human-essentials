@@ -9,7 +9,7 @@
 #
 FactoryBot.define do
   factory :ndbn_member, class: NDBNMember do
-    ndbn_member_id { 1 }
+    sequence(:ndbn_member_id) { |n| n }
     account_name { "MyString" }
   end
 end

@@ -105,9 +105,6 @@ gem "geocoder"
 gem 'httparty'
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
-# A HTML scraping DSL to help with extraction NDBN member ids
-# from their website
-gem 'scraping'
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
