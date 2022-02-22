@@ -186,7 +186,9 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |example|
-    unless example.metadata[:persisted_data]
+    if example.metadata[:persisted_data]
+      DatabaseCleaner.strategy = :truncation
+    else
       # The database cleaner will now begin at this point
       # up anything after this point when `.clean` is called.
       DatabaseCleaner.start
