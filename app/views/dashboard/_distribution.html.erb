@@ -1,7 +1,7 @@
 <br>
 <div class="pull-left distribution">
   <%= link_to distribution do %>
-    <%= distribution.line_items.total %> items distributed to
+    <%= number_with_delimiter distribution.line_items.total %> items distributed to
     <%= distribution.partner_name %>
   <% end %>
 </div>
