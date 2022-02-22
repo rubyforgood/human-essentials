@@ -53,7 +53,7 @@ class ConsolidatedLoginsController < ApplicationController
     end
 
     def omniauthable?
-      false
+      true
     end
   end
 end
