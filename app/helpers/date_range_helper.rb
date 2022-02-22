@@ -13,11 +13,11 @@ module DateRangeHelper
     when "last 7 days"
       "over the last week"
     when "last 30 days"
-      "over the 30 days"
+      "over the last 30 days"
     when "this month"
-      "this month, so far"
+      "this month"
     when "last month"
-      "during the last month"
+      "last month"
     else
       selected_range_described
     end
