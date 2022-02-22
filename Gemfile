@@ -12,11 +12,11 @@ ruby "3.0.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.3.1"
+gem "pg", "~> 1.3.2"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "~> 6.1.0"
+gem "rails", "~> 6.1.4"
 
 ###### MODELS / DATABASE #######
 
@@ -108,6 +108,8 @@ gem "flipper-active_record"
 gem "flipper-ui"
 # Calculates latitude and longitude from an address.
 gem "geocoder"
+# Enable making HTTP requests
+gem 'httparty'
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
 

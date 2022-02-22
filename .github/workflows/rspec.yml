@@ -51,10 +51,6 @@ jobs:
       - name: Install PostgreSQL client
         run: |
           sudo apt-get -yqq install libpq-dev
-      - name: Fix the datetime
-        run: |
-          sudo timedatectl set-ntp 0
-          sudo timedatectl set-time 2022-02-17
       - name: Build App
         env:
           POSTGRES_HOST: localhost

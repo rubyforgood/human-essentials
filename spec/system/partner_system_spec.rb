@@ -139,6 +139,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         @uninvited = create(:partner, name: "Bcd", status: :uninvited)
         @invited = create(:partner, name: "Abc", status: :invited)
         @approved = create(:partner, :approved, name: "Cde", status: :approved)
+        @deactivated = create(:partner, name: "Def", status: :deactivated)
         visit url_prefix + "/partners"
       end
 
@@ -146,6 +147,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         expect(page).to have_css("table tr", count: 5, wait: page_content_wait)
         expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@invited.name)
         expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@approved.name)
+        expect(page.find(:xpath, %(//*[@id="partner-status"]))).to have_content("4 Active")
+        expect(page.find(:xpath, %(//*[@id="partner-status"]))).to have_content("1 Deactivated")
       end
 
       it "allows a user to invite a partner", js: true do
@@ -174,7 +177,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         it "allows the user to click on one of the statuses at the top to filter the results" do
           approved_count = Partner.approved.count
           within "table tbody" do
-            expect(page).to have_css("tr", count: Partner.count)
+            expect(page).to have_css("tr", count: Partner.active.count)
           end
           within "#partner-status" do
             click_on "Approved"

@@ -30,8 +30,13 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def filter_to_date_range(range_name)
+  def filter_to_date_range(range_name, custom_dates = nil)
     select_date_filter_range range_name
+
+    if custom_dates.present?
+      fill_in :filters_date_range, with: "#{custom_dates}\n"
+    end
+
     click_on "Filter"
   end
 
@@ -107,7 +112,7 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def recent_manufacturer_donation_links
+  def top_manufacturer_donation_links
     within manufacturers_section do
       all(".manufacturer a").map(&:text)
     end

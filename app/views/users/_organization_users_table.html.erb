@@ -1,0 +1,43 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+
+          <div class="card-header">
+            <h2 class="card-title">Users</h2>
+          </div>
+
+          <div class="card-body">
+            <table class="table border">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Last Sign in</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Reinvite</th>
+                  <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <%= render partial: "/users/organization_user", 
+                           collection: @organization.users.with_discarded.alphabetized,
+                           as: :user %>
+              </tbody>
+            </table>
+          </div>
+
+          <% if can_administrate? %>
+            <div class="card-footer">
+              <%= modal_button_to("#addUserModal", {text: "Invite User to this Organization", class: "float-right"}) %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= render "/users/add_user_modal", current_organization: current_organization || @organization %>
+</section>
