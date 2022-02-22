@@ -240,9 +240,9 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
               expect(recent_donation_links.count).to eq expected_recent_donation_links_count
 
-              # Expect the links to be something like "1 item...", "20 items from Manufacturer"
+              # Expect the links to be something like "1 item...", "4,000 items from Manufacturer"
               # Strip out the item counts
-              recent_quantities = recent_donation_links.map { _1.match(/\d+/).to_s.to_i }
+              recent_quantities = recent_donation_links.map { _1.match(/[0-9,]+/).to_s.delete(",").to_i }
 
               # By design, the setup may have created more Donations during the period than are visible in the Recent Donation links
               # Make sure each Recent Donation link uniquely matches a single Donation
@@ -370,9 +370,9 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
               expect(recent_purchase_links.count).to eq expected_recent_purchase_links_count
 
-              # Expect the links to be something like "1 item...", "20 items from Manufacturer"
+              # Expect the links to be something like "1 item...", "4,000 items from Manufacturer"
               # Strip out the item counts
-              recent_quantities = recent_purchase_links.map { _1.match(/\d+/).to_s.to_i }
+              recent_quantities = recent_purchase_links.map { _1.match(/[0-9,]+/).to_s.delete(",").to_i }
 
               # By design, the setup may have created more Purchases during the period than are visible in the Recent Purchase links
               # Make sure each Recent Purchase link uniquely matches a single Purchase
@@ -486,13 +486,13 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
               expect(recent_donation_links.count).to eq expected_recent_donation_links_count
 
-              # Expect the links to be something like "1 from Some Drive", "20 items from Another Drive"
+              # Expect the links to be something like "1 from Some Drive", "4,000 items from Another Drive"
               # Strip out the item counts & drive names
               recent_donations = recent_donation_links.map do
-                items_donated, drive_name = _1.match(/(\d+) from (.+)/).captures
+                items_donated, drive_name = _1.match(/([0-9,]+) from (.+)/).captures
 
                 # e.g., [1, "Some Drive"], [20, "Another Drive"]
-                OpenStruct.new quantity: items_donated.to_i, drive_name: drive_name
+                OpenStruct.new quantity: items_donated.delete(",").to_i, drive_name: drive_name
               end
 
               # By design, the setup may have created more Donations during the period than are visible in the Recent Donation links
@@ -641,7 +641,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               # Expect the links to be something like "In-date-range Manufacturer 1 (21)", "In-date-range Manufacturer 2 (4,321)", etc.
               # Strip out the item counts & manufacturer names
               top_manufacturer_donations = top_manufacturer_donation_links.map do
-                manufacturer_name, total_donated = _1.match(/(.+) \((\d+)\)/).captures
+                manufacturer_name, total_donated = _1.match(/(.+) \(([0-9,]+)\)/).captures
 
                 OpenStruct.new manufacturer_name: manufacturer_name, total_quantity_donated: total_donated.delete(",").to_i
               end
@@ -782,13 +782,13 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
               expect(recent_distribution_links.count).to eq expected_recent_distribution_links_count
 
-              # Expect the links to be something like "1 from Some Drive", "20 items from Another Drive"
+              # Expect the links to be something like "1 items distributed to Some Shelter", "4,000 items distributed to Some Shelter"
               # Strip out the item counts & drive names
               recent_distributions = recent_distribution_links.map do
-                items_distributed, partner_name = _1.match(/(\d+) items distributed to (.+)/).captures
+                items_distributed, partner_name = _1.match(/([0-9,]+) items distributed to (.+)/).captures
 
                 # e.g., [1, "Some Drive"], [20, "Another Drive"]
-                OpenStruct.new quantity: items_distributed.to_i, partner_name: partner_name
+                OpenStruct.new quantity: items_distributed.delete(",").to_i, partner_name: partner_name
               end
 
               # By design, the setup may have created more Distributions during the period than are visible in the Recent Distribution links
