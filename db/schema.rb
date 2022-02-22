@@ -479,6 +479,8 @@ ActiveRecord::Schema.define(version: 2022_02_20_125108) do
     t.boolean "super_admin", default: false
     t.datetime "last_request_at"
     t.datetime "discarded_at"
+    t.string "provider"
+    t.string "uid"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
@@ -515,26 +517,19 @@ ActiveRecord::Schema.define(version: 2022_02_20_125108) do
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
   add_foreign_key "annual_reports", "organizations"
-  add_foreign_key "diaper_drives", "organizations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
-  add_foreign_key "kits", "organizations"
-  add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
-  add_foreign_key "partner_groups", "organizations"
   add_foreign_key "requests", "distributions"
-  add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end
