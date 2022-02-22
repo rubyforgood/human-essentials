@@ -18,6 +18,7 @@ RSpec.describe 'Account request flow', type: :system, js: true, skip_seed: true 
       visit root_path
 
       click_button('Request A Demo', match: :first)
+      choose('account_bank')
 
       account_request_attrs = FactoryBot.attributes_for(:account_request)
 
