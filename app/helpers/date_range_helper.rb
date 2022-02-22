@@ -6,6 +6,8 @@ module DateRangeHelper
 
   def date_range_label
     case (params.dig(:filters, :date_range_label).presence || "this year").downcase
+    when "today"
+      "today"
     when "yesterday"
       "yesterday"
     when "last 7 days"
