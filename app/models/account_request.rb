@@ -8,7 +8,9 @@
 #  name                 :string           not null
 #  organization_name    :string           not null
 #  organization_website :string
+#  rejection_reason     :string
 #  request_details      :text             not null
+#  status               :string           default("started"), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #
