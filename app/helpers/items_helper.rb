@@ -8,11 +8,11 @@ module ItemsHelper
     ActionController::Base.helpers.number_to_currency dollars, precision: precision
   end
 
-  def dollar_value(value, addition = '')
+  def dollar_value(value)
     if value.zero?
       ''
     else
-      addition + dollar_presentation(value)
+      dollar_presentation value
     end
   end
 
