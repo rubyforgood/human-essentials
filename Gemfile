@@ -12,7 +12,7 @@ ruby "3.0.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.3.2"
+gem "pg", "~> 1.3.3"
 # Web server.
 gem "puma"
 # Rails web framework.
