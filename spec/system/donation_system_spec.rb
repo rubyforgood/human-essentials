@@ -222,7 +222,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
         it "Allows User to create a Diaper Drive from donation" do
           select Donation::SOURCES[:diaper_drive], from: "donation_source"
-          select "---Create new Diaper Drive---", from: "donation_diaper_drive_id"
+          select "---Create new Product Drive---", from: "donation_diaper_drive_id"
           expect(page).to have_content("New Diaper Drive")
           fill_in "diaper_drive_name", with: "drivenametest"
           fill_in "diaper_drive_start_date", with: Time.current

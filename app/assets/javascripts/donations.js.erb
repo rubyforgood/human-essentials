@@ -18,7 +18,7 @@ $(function() {
   const manufacturer_text = "<%= Donation::SOURCES[:manufacturer] %>";
   const donation_site_text = "<%= Donation::SOURCES[:donation_site] %>";
 
-  const create_new_diaper_drive_text = "---Create new Diaper Drive---";
+  const create_new_diaper_drive_text = "---Create new Product Drive---";
   const create_new_diaper_drive_participant_text = "---Create new Participant---";
 
   const create_new_manufacturer_text = "---Create new Manufacturer---";
@@ -104,8 +104,7 @@ $(document).on("change", diaper_drive_id, function(evt) {
   $(document).on(
     "cocoon:after-insert",
     "form#new_donation",
-    (e, insertedItem) =>
-      insertedItem
+    (e, insertedItem) => insertedItem
         .find("#_barcode-lookup-new_line_items")
         .attr("id", `_barcode-lookup-${$(".nested-fields").size() - 1}`)
   );
