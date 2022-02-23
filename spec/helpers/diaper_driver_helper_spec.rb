@@ -23,7 +23,7 @@ RSpec.describe DiaperDriveHelper, type: :helper, skip_seed: true do
 
       it 'with blank argument' do
         argument = [nil, '', {}].sample
-        expect { helper.is_virtual(diaper_drive: argument) }.to raise_error(StandardError, 'No diaper drive was provided')
+        expect { helper.is_virtual(diaper_drive: argument) }.to raise_error(StandardError, 'No product drive was provided')
       end
     end
   end
