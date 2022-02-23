@@ -7,7 +7,7 @@ RSpec.describe "Navigation", type: :system, js: true, skip_seed: true do
 
     context "with organization user" do
       let(:user) { create(:organization_admin) }
-      let(:links) { ["Dashboard", "Donations", "Purchases", "Requests", "Diaper Drives", "Distributions", "Pick Ups & Deliveries", "Partner Agencies", "Inventory", "Community", "Reporting & Auditing", "My Organization"] }
+      let(:links) { ["Dashboard", "Donations", "Purchases", "Requests", "Product Drives", "Distributions", "Pick Ups & Deliveries", "Partner Agencies", "Inventory", "Community", "Reporting & Auditing", "My Organization"] }
 
       it "shows navigation options" do
         sidebar = page.find(".sidebar")
