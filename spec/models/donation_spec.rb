@@ -228,7 +228,7 @@ RSpec.describe Donation, type: :model, needs_users: true do
             let(:contact_name) { nil }
 
             it "returns drive display name" do
-              expect(donation.source_view).to eq("Test Drive (diaper drive)")
+              expect(donation.source_view).to eq("Test Drive (product drive)")
             end
           end
         end
@@ -237,7 +237,7 @@ RSpec.describe Donation, type: :model, needs_users: true do
           let(:diaper_drive_participant) { nil }
 
           it "returns drive display name" do
-            expect(donation.source_view).to eq("Test Drive (diaper drive)")
+            expect(donation.source_view).to eq("Test Drive (product drive)")
           end
         end
       end
