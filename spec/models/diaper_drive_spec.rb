@@ -67,11 +67,11 @@ RSpec.describe DiaperDrive, type: :model, skip_seed: true do
       let!(:diaper_drive1) { create(:diaper_drive, start_date: start_date, end_date: end_date) }
       let!(:diaper_drive2) { create(:diaper_drive, start_date: other_start_date, end_date: other_end_date) }
 
-      it 'retuns the diaper drive 1' do
+      it 'retuns the product drive 1' do
         expect(described_class.within_date_range("#{start_date} - #{end_date}")).to include(diaper_drive1)
       end
 
-      it 'does not include diaper drive 2' do
+      it 'does not include product drive 2' do
         expect(described_class.within_date_range("#{start_date} - #{end_date}")).not_to include(diaper_drive2)
       end
     end

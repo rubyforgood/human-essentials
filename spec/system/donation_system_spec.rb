@@ -51,7 +51,7 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
-      it "Filters by diaper drives" do
+      it "Filters by product drives" do
         a = create(:diaper_drive, name: 'A')
         b = create(:diaper_drive, name: "B")
         x = create(:diaper_drive_participant, business_name: "X")
@@ -64,7 +64,7 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
-      it "Filters by diaper drive participant" do
+      it "Filters by product drive participant" do
         x = create(:diaper_drive, name: 'x')
         a = create(:diaper_drive_participant, business_name: "A")
         b = create(:diaper_drive_participant, business_name: "B")
@@ -204,7 +204,7 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).to have_no_content(item.name)
         end
 
-        it "Allows User to create a donation for a Diaper Drive Participant source" do
+        it "Allows User to create a donation for a Product Drive Participant source" do
           select Donation::SOURCES[:diaper_drive], from: "donation_source"
           expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
@@ -230,7 +230,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select "drivenametest", from: "donation_diaper_drive_id"
         end
 
-        it "Allows User to create a Diaper Drive Participant from donation" do
+        it "Allows User to create a Product Drive Participant from donation" do
           select Donation::SOURCES[:diaper_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_diaper_drive_participant_id"
           expect(page).to have_content("New Diaper Drive Participant")
@@ -310,7 +310,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
         # Since the form only shows/hides the irrelevant field, if the user already selected something it would still
         # submit. The app should sanitize this so we aren't saving extraneous data
-        it "Strips extraneous data if the user adds both Donation Site and Diaper Drive Participant" do
+        it "Strips extraneous data if the user adds both Donation Site and Product Drive Participant" do
           select Donation::SOURCES[:donation_site], from: "donation_source"
           select DonationSite.first.name, from: "donation_donation_site_id"
           select Donation::SOURCES[:manufacturer], from: "donation_source"
