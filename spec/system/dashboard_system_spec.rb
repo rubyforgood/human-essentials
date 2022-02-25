@@ -458,14 +458,14 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         end
       end
 
-      describe "Diaper Drives" do
+      describe "Product Drives" do
         around do |example|
           travel_to(date_to_view)
           example.run
           travel_back
         end
 
-        it "has a widget for diaper drive summary data" do
+        it "has a widget for product drive summary data" do
           org_dashboard_page.visit
 
           expect(org_dashboard_page).to have_diaper_drives_section
@@ -505,7 +505,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             # See https://github.com/rubyforgood/human-essentials/issues/2676#issuecomment-1008166066
             # let(:year_name) { @this_years_donations[:beginning_of_year].diaper_drive.name }
 
-            it "has a widget displaying the year-to-date Diaper drive totals, only using donations from this year" do
+            it "has a widget displaying the year-to-date Product drive totals, only using donations from this year" do
               recent_diaper_drive_links = org_dashboard_page.recent_diaper_drive_donation_links
 
               expect(recent_diaper_drive_links).to include(match today_name)
@@ -532,7 +532,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             let(:total_inventory) { @this_years_donations[:today].total_quantity }
             let(:name) { @this_years_donations[:today].diaper_drive.name }
 
-            it "has a widget displaying today's Diaper drive totals, only using donations from today" do
+            it "has a widget displaying today's Product drive totals, only using donations from today" do
               expect(org_dashboard_page.recent_diaper_drive_donation_links).to include(match name)
               expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
             end
@@ -552,7 +552,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
             let(:name) { @this_years_donations[:yesterday].diaper_drive.name }
 
-            it "has a widget displaying the Diaper drive totals from yesterday, only using donations from yesterday" do
+            it "has a widget displaying the Product drive totals from yesterday, only using donations from yesterday" do
               expect(org_dashboard_page.recent_diaper_drive_donation_links).to include(match name)
               expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
             end
@@ -574,7 +574,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
             let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
 
-            it "has a widget displaying the Diaper drive totals from this week, only using donations from this week" do
+            it "has a widget displaying the Product drive totals from this week, only using donations from this week" do
               recent_diaper_drive_links = org_dashboard_page.recent_diaper_drive_donation_links
 
               expect(recent_diaper_drive_links).to include(match today_name)
@@ -601,7 +601,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
             let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
 
-            it "has a widget displaying the Diaper drive totals from this month, only using donations from this month" do
+            it "has a widget displaying the Product drive totals from this month, only using donations from this month" do
               recent_diaper_drive_links = org_dashboard_page.recent_diaper_drive_donation_links
 
               expect(recent_diaper_drive_links).to include(match today_name)
@@ -631,7 +631,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             # let(:year_name) { @this_years_donations[:beginning_of_year].diaper_drive.name }
             let(:last_year_name) { @last_years_donations[0].diaper_drive.name }
 
-            it "has a widget displaying the Diaper drive totals from last year, only using donations from last year" do
+            it "has a widget displaying the Product drive totals from last year, only using donations from last year" do
               expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
 
               recent_diaper_drive_links = org_dashboard_page.recent_diaper_drive_donation_links

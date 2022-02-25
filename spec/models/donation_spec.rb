@@ -30,7 +30,7 @@ RSpec.describe Donation, type: :model, needs_users: true do
       expect(build(:donation, source: "Misc. Donation", donation_site: nil)).to be_valid
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", donation_site: nil)).to be_valid
     end
-    it "requires a diaper drive participant if the source is 'Diaper Drive'" do
+    it "requires a product drive participant if the source is 'Product Drive'" do
       expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive Participant", diaper_drive_participant_id: nil)).not_to be_valid
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", diaper_drive_participant_id: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", diaper_drive_participant_id: nil)).to be_valid
