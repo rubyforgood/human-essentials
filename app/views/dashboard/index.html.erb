@@ -189,7 +189,7 @@
                   </span>
                   items
                   received <%= @selected_date_range_label %></h3>
-                <h4 class="text-center"><%= dollar_value(total_received_money_donations) %>
+                <h4 class="text-center"><%= dollar_presentation(total_received_money_donations) %>
                   raised  <%= @selected_date_range_label %></h4>
                 <div class="box-body">
                   <h4>Recent Donations</h4>
@@ -220,7 +220,7 @@
                     <%= total_received_from_diaper_drives %>
                   </span> items
                   received <%= @selected_date_range_label %></h3>
-                <h4 class="text-center"><%= dollar_value(total_received_money_donations) %>
+                <h4 class="text-center"><%= dollar_presentation(total_received_money_donations) %>
                   raised  <%= @selected_date_range_label %></h4>
                 <div class="box-body">
                   <h4>Recent Donations from Diaper Drives</h4>
@@ -287,7 +287,7 @@
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
                 <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
-                <h3 class="text-center"><%= dollar_value(@purchases.sum(&:amount_spent_in_cents)) %>
+                <h3 class="text-center"><%= dollar_presentation(@purchases.sum(&:amount_spent_in_cents)) %>
                   spent
                   <%= @selected_date_range_label %></h3>
                 <div class="box-body">
