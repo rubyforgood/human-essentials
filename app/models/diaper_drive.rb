@@ -55,7 +55,7 @@ class DiaperDrive < ApplicationRecord
   end
 
   def donation_source_view
-    "#{name} (diaper drive)"
+    "#{name} (product drive)"
   end
 
   def self.search_date_range(dates)

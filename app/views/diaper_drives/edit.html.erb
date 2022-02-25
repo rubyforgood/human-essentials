@@ -2,9 +2,9 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Editing - Diaper Drive - #{current_organization.name}" %>
+        <% content_for :title, "Editing - Product Drive - #{current_organization.name}" %>
         <h1>
-          Editing Diaper Drive
+          Editing Product Drive
         </h1>
       </div>
       <div class="col-sm-6">
@@ -13,7 +13,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Diaper Drives", (diaper_drives_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drives", (diaper_drives_path) %></li>
           <li class="breadcrumb-item"><a href="#">Editing <%= @diaper_drive.name %> on <%= @diaper_drive.created_at.to_s(:distribution_date) %></a></li>
         </ol>
       </div>

@@ -61,7 +61,7 @@ class DiaperDrivesController < ApplicationController
   def destroy
     current_organization.diaper_drives.find(params[:id]).destroy
     respond_to do |format|
-      format.html { redirect_to diaper_drives_url, notice: 'Diaper drive was successfully destroyed.' }
+      format.html { redirect_to diaper_drives_url, notice: 'Product drive was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

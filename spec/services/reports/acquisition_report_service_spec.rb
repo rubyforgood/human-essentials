@@ -157,12 +157,12 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                                              "Disposable diapers collected from drives" => "600",
                                              "Disposable diapers collected from drives (virtual)" => "120",
                                              "Disposable diapers distributed" => "200",
-                                             "Money raised from diaper drives" => "$60.00",
-                                             "Money raised from diaper drives (virtual)" => "$20.00",
+                                             "Money raised from product drives" => "$60.00",
+                                             "Money raised from product drives (virtual)" => "$20.00",
                                              "Money spent purchasing diapers" => "$60.00",
                                              "Purchased from" => "Google, Walmart",
-                                             "Total diaper drives" => 2,
-                                             "Total diaper drives (virtual)" => 2,
+                                             "Total product drives" => 2,
+                                             "Total product drives (virtual)" => 2,
                                              "Vendors diapers purchased through" => "Vendor 1, Vendor 2" },
                                   name: "Diaper Acquisition"
                                 })
