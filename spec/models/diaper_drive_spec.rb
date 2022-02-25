@@ -87,7 +87,7 @@ RSpec.describe DiaperDrive, type: :model, skip_seed: true do
 
   describe "donation_source_view" do
     it "returns formatted text" do
-      expect(diaper_drive.donation_source_view).to eq("Test Drive (diaper drive)")
+      expect(diaper_drive.donation_source_view).to eq("Test Drive (product drive)")
     end
   end
 end

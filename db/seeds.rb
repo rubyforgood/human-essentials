@@ -383,7 +383,7 @@ StorageLocation.all.each do |sl|
 end
 
 # ----------------------------------------------------------------------------
-# Diaper Drives
+# Product Drives
 # ----------------------------------------------------------------------------
 
 [
@@ -395,7 +395,7 @@ end
 ].each { |drive| DiaperDrive.create! drive }
 
 # ----------------------------------------------------------------------------
-# Diaper Drive Participants
+# Product Drive Participants
 # ----------------------------------------------------------------------------
 
 [
@@ -410,19 +410,19 @@ end
 ].each { |participant| DiaperDriveParticipant.create! participant }
 
 # ----------------------------------------------------------------------------
-# Diaper Drives
+# Product Drives
 # ----------------------------------------------------------------------------
 
 [
-  { name: "First Diaper Drive",
+  { name: "First Product Drive",
     start_date: 3.years.ago,
     end_date: 3.years.ago,
     organization: sf_org },
-  { name: "Best Diaper Drive",
+  { name: "Best Product Drive",
     start_date: 3.weeks.ago,
     end_date: 2.weeks.ago,
     organization: sf_org },
-  { name: "Second Best Diaper Drive",
+  { name: "Second Best Product Drive",
     start_date: 2.weeks.ago,
     end_date: 1.week.ago,
     organization: pdx_org }

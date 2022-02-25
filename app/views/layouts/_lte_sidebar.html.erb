@@ -15,13 +15,13 @@
       <li class="nav-item <%= 'active' if current_page?(diaper_drives_path) %>">
         <%= link_to(diaper_drives_path, class: "nav-link #{"active" if current_page?(diaper_drives_path(organization_id: current_user.organization))}") do %>
           <i class="nav-icon far fa-circle"></i>
-          <p>All Diaper Drives</p>
+          <p>All Product Drives</p>
         <% end %>
       </li>
       <li class="nav-item <%= 'active' if current_page?(new_diaper_drive_path) %>">
         <%= link_to(new_diaper_drive_path, class: "nav-link #{"active" if current_page?(new_diaper_drive_path)}") do %>
           <i class="nav-icon far fa-circle"></i>
-          <p>New Diaper Drive</p>
+          <p>New Product Drive</p>
         <% end %>
       </li>
     </ul>
@@ -142,7 +142,7 @@
       </li>
       <li class="nav-item <%= active_class(['diaper_drive_participants']) %>">
         <%= link_to(diaper_drive_participants_path(organization_id: current_user.organization), class: "nav-link #{active_class(['diaper_drive_participants'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Diaper Drive Participants
+          <i class="nav-icon fa fa-circle-o"></i> Product Drive Participants
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['manufacturers']) %>">

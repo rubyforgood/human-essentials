@@ -475,8 +475,8 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
           before do
             @organization.donations.destroy_all
             storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
-            diaper_drive1 = create(:diaper_drive, name: 'First Diaper Drive')
-            diaper_drive2 = create(:diaper_drive, name: 'Second Diaper Drive')
+            diaper_drive1 = create(:diaper_drive, name: 'First Product Drive')
+            diaper_drive2 = create(:diaper_drive, name: 'Second Product Drive')
 
             diaper_drive_participant1 = create(:diaper_drive_participant, business_name: "First Diaper Participant Drive", organization: @organization)
             diaper_drive_participant2 = create(:diaper_drive_participant, business_name: "Second Diaper Participant Drive", organization: @organization)
@@ -519,7 +519,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
             it "displays some recent donations" do
               expect(org_dashboard_page.recent_diaper_drive_donation_links)
-                .to include(match /10\d from (first|second) diaper drive/i) # e.g., "101 from ...", "103 from ...", etc.
+                .to include(match /10\d from (first|second) product drive/i) # e.g., "101 from ...", "103 from ...", etc.
                 .exactly(3).times
             end
           end
@@ -539,7 +539,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
             it "displays some recent donations" do
               expect(org_dashboard_page.recent_diaper_drive_donation_links)
-                .to include(match /#{total_inventory} from first diaper drive/i)
+                .to include(match /#{total_inventory} from first Product Drive/i)
                 .exactly(:once)
             end
           end
@@ -559,7 +559,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
             it "displays some recent donations" do
               expect(org_dashboard_page.recent_diaper_drive_donation_links)
-                .to include(match /#{total_inventory} from second diaper drive/i)
+                .to include(match /#{total_inventory} from second Product Drive/i)
                 .exactly(:once)
             end
           end
@@ -586,7 +586,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
             it "displays some recent donations" do
               expect(org_dashboard_page.recent_diaper_drive_donation_links)
-                .to include(match /10\d from (first|second) diaper drive/i) # e.g., "101 from ...", "103 from ...", etc.
+                .to include(match /10\d from (first|second) Product Drive/i) # e.g., "101 from ...", "103 from ...", etc.
                 .exactly(3).times
             end
           end
@@ -613,7 +613,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
             it "displays some recent donations" do
               expect(org_dashboard_page.recent_diaper_drive_donation_links)
-                .to include(match /10\d from (first|second) diaper drive/i) # e.g., "101 from ...", "103 from ...", etc.
+                .to include(match /10\d from (first|second) Product Drive/i) # e.g., "101 from ...", "103 from ...", etc.
                 .exactly(3).times
             end
           end
@@ -646,7 +646,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
             it "displays some recent donations from that time" do
               expect(org_dashboard_page.recent_diaper_drive_donation_links)
-                .to include(match /10\d from (first|second) diaper drive/i) # e.g., "101 from ...", "103 from ...", etc.
+                .to include(match /10\d from (first|second) Product Drive/i) # e.g., "101 from ...", "103 from ...", etc.
                 .exactly(3).times
             end
           end

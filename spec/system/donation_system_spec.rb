@@ -233,7 +233,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a Product Drive Participant from donation" do
           select Donation::SOURCES[:diaper_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_diaper_drive_participant_id"
-          expect(page).to have_content("New Diaper Drive Participant")
+          expect(page).to have_content("New Product Drive Participant")
           fill_in "diaper_drive_participant_business_name", with: "businesstest"
           fill_in "diaper_drive_participant_contact_name", with: "test"
           fill_in "diaper_drive_participant_email", with: "123@mail.ru"
