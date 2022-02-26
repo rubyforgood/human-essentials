@@ -19,6 +19,7 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
   context "while signed in as an organization admin" do
     let!(:store) { create(:storage_location) }
     before do
+      create(:ndbn_member)
       sign_in(@organization_admin)
     end
 
@@ -81,6 +82,14 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
 
         click_on "Save"
         expect(page).to have_content(store.name)
+      end
+
+      it 'can set the NDBN Member ID' do
+        ndbn_member = NDBNMember.first
+        select(ndbn_member.full_name)
+
+        click_on "Save"
+        expect(page).to have_content(ndbn_member.full_name)
       end
     end
 
