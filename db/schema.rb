@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_20_125108) do
+ActiveRecord::Schema.define(version: 2022_02_26_173715) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -350,6 +350,7 @@ ActiveRecord::Schema.define(version: 2022_02_20_125108) do
     t.integer "account_request_id"
     t.boolean "repackage_essentials", default: false, null: false
     t.boolean "distribute_monthly", default: false, null: false
+    t.integer "ndbn_member_id"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -535,6 +536,7 @@ ActiveRecord::Schema.define(version: 2022_02_20_125108) do
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
+  add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
