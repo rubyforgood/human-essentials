@@ -78,8 +78,13 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
 
     describe "GET #new" do
       it "returns http success" do
+        # for items drop-down
+        create(:item, :active, name: 'Active Item')
+        create(:item, :inactive, name: 'Inactive Item')
         get new_distribution_path(default_params)
         expect(response).to be_successful
+        expect(response.body).to include('Active Item')
+        expect(response.body).not_to include('Inactive Item')
       end
     end
 
