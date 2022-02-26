@@ -11,7 +11,7 @@
           <div class="card-body md:flex sm:block">
             <div class="col-lg-4">
               <div class="mb-4">
-                <h3>Contact Info</h3>
+                <h3 class='font-bold'>Contact Info</h3>
                 <p>
                   <%= fa_icon "envelope" %>
                   <%= link_to @organization.email, "mailto:#{@organization.email}", aria: { label: "Email organization - opens in new tab" } %>
@@ -20,42 +20,48 @@
                 </p>
               </div>
               <div class="mb-4">
-                <h3>Repackage Essentials?</h3>
+                <h3 class='font-bold'>NDBN Membership ID</h3>
+                <p>
+                  <%= @organization.ndbn_member&.full_name || "Not Defined"%>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Repackage Essentials?</h3>
                 <p>
                   <%= fa_icon "inbox" %>
                   <%= humanize_boolean(@organization.repackage_essentials) %>
                 </p>
               </div>
               <div class="mb-4">
-                <h3>Distribute Monthly?</h3>
+                <h3 class='font-bold'>Distribute Monthly?</h3>
                 <p>
                   <%= fa_icon "paper-plane" %>
                   <%= humanize_boolean(@organization.distribute_monthly) %>
                 </p>
               </div>
               <div class="mb-4">
-                <h3>Reminder day</h3>
+                <h3 class='font-bold'>Reminder day</h3>
                 <p>
                   <%= fa_icon "calendar" %>
                   <%= @organization.reminder_day.blank? ? 'Not defined' : "The #{@organization.reminder_day.ordinalize} of each month" %>
                 </p>
               </div>
               <div class="mb-4">
-                <h3>Deadline day</h3>
+                <h3 class='font-bold'>Deadline day</h3>
                 <p>
                   <%= fa_icon "calendar" %>
                   <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} of each month" %>
                 </p>
               </div>
               <div class="mb-4">
-                <h3>Default Intake Location</h3>
+                <h3 class='font-bold'>Default Intake Location</h3>
                 <p>
                   <%= fa_icon "building" %>
                   <%= StorageLocation.find_by(id: @organization.intake_location)&.name || "Not Defined" %>
                 </p>
               </div>
               <div class="mb-4">
-                <h3>Default Storage Location</h3>
+                <h3 class='font-bold'>Default Storage Location</h3>
                 <p>
                   <%= fa_icon "building-o" %>
                   <%= StorageLocation.find_by(id: @organization.default_storage_location)&.name || "Not Defined" %>
@@ -64,7 +70,7 @@
             </div>
 
             <div class="col-lg-8">
-              <h3>Default email text:</h3>
+              <h3 class='font-bold'>Default email text:</h3>
               <%= @organization.default_email_text %>
             </div>
           </div>

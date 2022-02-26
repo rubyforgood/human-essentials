@@ -47,6 +47,13 @@ BaseItem.find_or_create_by!(
 )
 
 # ----------------------------------------------------------------------------
+# NDBN Members
+# ----------------------------------------------------------------------------
+NDBNMember.create!(ndbn_member_id: 100, account_name: "Pawnee")
+NDBNMember.create!(ndbn_member_id: 200, account_name: "Other Spot")
+NDBNMember.create!(ndbn_member_id: 300, account_name: "Amazing Place")
+
+# ----------------------------------------------------------------------------
 # Organizations
 # ----------------------------------------------------------------------------
 
