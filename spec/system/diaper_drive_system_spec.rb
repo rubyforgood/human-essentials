@@ -54,7 +54,7 @@ RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
         fill_in 'Name', with: 'Normal 1'
         fill_in 'Start Date', with: Time.zone.today
         fill_in 'End Date', with: Time.zone.today + 4.hours
-        click_button 'Create Diaper drive'
+        click_button 'Create Product Drive'
       end.to change(DiaperDrive, :count).by(1)
     end
 
@@ -62,7 +62,7 @@ RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
       fill_in 'Name', with: 'Normal 1'
       fill_in 'Start Date', with: Time.zone.today
       fill_in 'End Date', with: Time.zone.today + 1.day
-      click_button 'Create Diaper drive'
+      click_button 'Create Product Drive'
 
       expect(DiaperDrive.last).to have_attributes({ name: 'Normal 1', start_date: Time.zone.today, end_date: Time.zone.today + 1.day, virtual: false })
     end
@@ -71,7 +71,7 @@ RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
       fill_in 'Name', with: 'Virtual 1'
       fill_in 'Start Date', with: Time.zone.today
       fill_in 'End Date', with: Time.zone.today + 4.hours
-      click_button 'Create Diaper drive'
+      click_button 'Create Product Drive'
 
       expect(page.find('.alert')).to have_content('added')
     end
@@ -88,7 +88,7 @@ RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
         fill_in 'Start Date', with: Time.zone.today
         fill_in 'End Date', with: Time.zone.today + 4.hours
         check 'virtual'
-        click_button 'Create Diaper drive'
+        click_button 'Create Product Drive'
       end.to change(DiaperDrive, :count).by(1)
     end
 
@@ -97,7 +97,7 @@ RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
       fill_in 'Start Date', with: Time.zone.today
       fill_in 'End Date', with: Time.zone.today + 1.day
       check 'virtual'
-      click_button 'Create Diaper drive'
+      click_button 'Create Product Drive'
 
       expect(DiaperDrive.last).to have_attributes({ name: 'Virtual 1', start_date: Time.zone.today, end_date: Time.zone.today + 1.day, virtual: true })
     end
@@ -107,7 +107,7 @@ RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
       fill_in 'Start Date', with: Time.zone.today
       fill_in 'End Date', with: Time.zone.today + 4.hours
       check 'virtual'
-      click_button 'Create Diaper drive'
+      click_button 'Create Product Drive'
 
       expect(page.find('.alert')).to have_content('added')
     end
