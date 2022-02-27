@@ -30,8 +30,8 @@
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
   context "Associations >" do
-    it { should have_many(:item_categories) } 
-    it { should belong_to(:ndbn_member).with_foreign_key(:ndbn_member_id).optional } 
+    it { should have_many(:item_categories) }
+    it { should belong_to(:ndbn_member).with_foreign_key(:ndbn_member_id).optional }
     describe "barcode_items" do
       before do
         BarcodeItem.delete_all

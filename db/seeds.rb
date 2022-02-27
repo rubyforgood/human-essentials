@@ -704,3 +704,4 @@ answers = [
     answer: "Answer for partners. #{answers.sample}"
   )
 end
+

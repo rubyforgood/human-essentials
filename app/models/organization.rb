@@ -40,7 +40,7 @@ class Organization < ApplicationRecord
   validate :deadline_after_reminder
 
   belongs_to :account_request, optional: true
-  belongs_to :ndbn_member, foreign_key: :ndbn_member_id, class_name: 'NDBNMember', optional: true
+  belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
 
   with_options dependent: :destroy do
     has_many :adjustments
