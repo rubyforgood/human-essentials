@@ -385,7 +385,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
       describe "Product Drives" do
         around do |example|
-          travel_to(date_to_view)
+          travel_to(test_time)
           example.run
           travel_back
         end
@@ -441,11 +441,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
             @item_quantity = item_quantities.to_enum
 
-            # Create some number of Diaper Drives
+            # Create some number of Product Drives
             # Keep local copy of names so examples can create expected values
             # without relying on fetching info from production code
             @diaper_drives = (1..rand(2..5)).map do
-              name = "Diaper Drive #{_1}"
+              name = "Product Drive #{_1}"
               OpenStruct.new name: name, drive: create(:diaper_drive, name: name)
             end
 

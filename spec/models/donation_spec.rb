@@ -37,7 +37,7 @@ RSpec.describe Donation, type: :model, needs_users: true do
     end
     it "requires a manufacturer if the source is 'Manufacturer'" do
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", manufacturer: nil)).not_to be_valid
-      expect(build_stubbed(:diaper_drive_donation, source: "Diaper Drive", manufacturer: nil)).to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Product Drive", manufacturer: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", manufacturer: nil)).to be_valid
     end
     it "requires a source from the list of available sources" do
