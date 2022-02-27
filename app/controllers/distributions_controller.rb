@@ -96,7 +96,7 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
-    @items = current_organization.items.active.alphabetized
+    @items = []
     @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
   end
 
