@@ -383,15 +383,15 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
       end
     end
 
-    describe "Product Drives" do
-      around do |example|
-        travel_to(test_time)
-        example.run
-        travel_back
-      end
+      describe "Product Drives" do
+        around do |example|
+          travel_to(test_time)
+          example.run
+          travel_back
+        end
 
-      it "has a widget for product drive summary data" do
-        org_dashboard_page.visit
+        it "has a widget for product drive summary data" do
+          org_dashboard_page.visit
 
         expect(org_dashboard_page).to have_diaper_drives_section
       end
@@ -472,37 +472,163 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
             before do
-              org_dashboard_page
-                .visit
-                .filter_to_date_range(filtered_date_range_label, custom_dates)
+              org_dashboard_page.filter_to_date_range "This Year"
             end
 
-            expected_recent_donation_links_count = [max_recent_donation_links_count, num_donations_in_filtered_period].min
+            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
+            let(:today_name) { @this_years_donations[:today].diaper_drive.name }
+            let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
+            let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
+            # See https://github.com/rubyforgood/human-essentials/issues/2676#issuecomment-1008166066
+            # let(:year_name) { @this_years_donations[:beginning_of_year].diaper_drive.name }
 
-            it "shows the correct total and #{expected_recent_donation_links_count} Recent Donation link(s)" do
-              expect(org_dashboard_page.diaper_drive_total_donations).to eq @donations_in_filtered_date_range.map(&:quantity).sum
+            it "has a widget displaying the year-to-date Diaper drive totals, only using donations from this year" do
+              recent_diaper_drive_links = org_dashboard_page.recent_diaper_drive_donation_links
 
-              recent_donation_links = org_dashboard_page.recent_diaper_drive_donation_links
+              expect(recent_diaper_drive_links).to include(match today_name)
+              expect(recent_diaper_drive_links).to include(match yesterday_name)
+              expect(recent_diaper_drive_links).to include(match week_name)
+              # See https://github.com/rubyforgood/human-essentials/issues/2676#issuecomment-1008166066
+              # expect(recent_diaper_drive_links).to include(match year_name)
 
-              expect(recent_donation_links.count).to eq expected_recent_donation_links_count
+              expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
+            end
 
-              # Expect the links to be something like "1 from Some Drive", "4,000 items from Another Drive"
-              # Strip out the item counts & drive names
-              recent_donations = recent_donation_links.map do
-                items_donated, drive_name = _1.match(/([0-9,]+) from (.+)/).captures
+            it "displays some recent donations" do
+              expect(org_dashboard_page.recent_diaper_drive_donation_links)
+                .to include(match /10\d from (first|second) diaper drive/i) # e.g., "101 from ...", "103 from ...", etc.
+                .exactly(3).times
+            end
+          end
 
-                # e.g., [1, "Some Drive"], [20, "Another Drive"]
-                OpenStruct.new quantity: items_donated.delete(",").to_i, drive_name: drive_name
-              end
+          describe "Today" do
+            before do
+              org_dashboard_page.filter_to_date_range "Today"
+            end
 
-              # By design, the setup may have created more Donations during the period than are visible in the Recent Donation links
-              # Make sure each Recent Donation link uniquely matches a single Donation
-              expect(@donations_in_filtered_date_range.intersection(recent_donations)).to match_array recent_donations
+            let(:total_inventory) { @this_years_donations[:today].total_quantity }
+            let(:name) { @this_years_donations[:today].diaper_drive.name }
+
+            it "has a widget displaying today's Diaper drive totals, only using donations from today" do
+              expect(org_dashboard_page.recent_diaper_drive_donation_links).to include(match name)
+              expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
+            end
+
+            it "displays some recent donations" do
+              expect(org_dashboard_page.recent_diaper_drive_donation_links)
+                .to include(match /#{total_inventory} from first diaper drive/i)
+                .exactly(:once)
+            end
+          end
+
+          describe "Yesterday" do
+            before do
+              org_dashboard_page.filter_to_date_range "Yesterday"
+            end
+
+            let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
+            let(:name) { @this_years_donations[:yesterday].diaper_drive.name }
+
+            it "has a widget displaying the Diaper drive totals from yesterday, only using donations from yesterday" do
+              expect(org_dashboard_page.recent_diaper_drive_donation_links).to include(match name)
+              expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
+            end
+
+            it "displays some recent donations" do
+              expect(org_dashboard_page.recent_diaper_drive_donation_links)
+                .to include(match /#{total_inventory} from second diaper drive/i)
+                .exactly(:once)
+            end
+          end
+
+          describe "This Week" do
+            before do
+              org_dashboard_page.filter_to_date_range "Last 7 Days"
+            end
+
+            let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
+            let(:today_name) { @this_years_donations[:today].diaper_drive.name }
+            let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
+            let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
+
+            it "has a widget displaying the Diaper drive totals from this week, only using donations from this week" do
+              recent_diaper_drive_links = org_dashboard_page.recent_diaper_drive_donation_links
+
+              expect(recent_diaper_drive_links).to include(match today_name)
+              expect(recent_diaper_drive_links).to include(match yesterday_name)
+              expect(recent_diaper_drive_links).to include(match week_name)
+
+              expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
+            end
+
+            it "displays some recent donations" do
+              expect(org_dashboard_page.recent_diaper_drive_donation_links)
+                .to include(match /10\d from (first|second) diaper drive/i) # e.g., "101 from ...", "103 from ...", etc.
+                .exactly(3).times
+            end
+          end
+
+          describe "This Month" do
+            before do
+              org_dashboard_page.filter_to_date_range "This Month"
+            end
+
+            let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
+            let(:today_name) { @this_years_donations[:today].diaper_drive.name }
+            let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
+            let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
+
+            it "has a widget displaying the Diaper drive totals from this month, only using donations from this month" do
+              recent_diaper_drive_links = org_dashboard_page.recent_diaper_drive_donation_links
+
+              expect(recent_diaper_drive_links).to include(match today_name)
+              expect(recent_diaper_drive_links).to include(match yesterday_name)
+              expect(recent_diaper_drive_links).to include(match week_name)
+
+              expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
+            end
+
+            it "displays some recent donations" do
+              expect(org_dashboard_page.recent_diaper_drive_donation_links)
+                .to include(match /10\d from (first|second) diaper drive/i) # e.g., "101 from ...", "103 from ...", etc.
+                .exactly(3).times
+            end
+          end
+
+          describe "All Time" do
+            before do
+              org_dashboard_page.filter_to_date_range "All Time"
+            end
+
+            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
+            let(:today_name) { @this_years_donations[:today].diaper_drive.name }
+            let(:yesterday_name) { @this_years_donations[:yesterday].diaper_drive.name }
+            let(:week_name) { @this_years_donations[:earlier_this_week].diaper_drive.name }
+            # See https://github.com/rubyforgood/human-essentials/issues/2676#issuecomment-1008166066
+            # let(:year_name) { @this_years_donations[:beginning_of_year].diaper_drive.name }
+            let(:last_year_name) { @last_years_donations[0].diaper_drive.name }
+
+            it "has a widget displaying the Diaper drive totals from last year, only using donations from last year" do
+              expect(org_dashboard_page.diaper_drive_total_donations).to eq total_inventory
+
+              recent_diaper_drive_links = org_dashboard_page.recent_diaper_drive_donation_links
+
+              expect(recent_diaper_drive_links).to include(match today_name)
+              expect(recent_diaper_drive_links).to include(match yesterday_name)
+              expect(recent_diaper_drive_links).to include(match week_name)
+              # See https://github.com/rubyforgood/human-essentials/issues/2676#issuecomment-1008166066
+              # expect(recent_diaper_drive_links).to include(match year_name)
+              expect(recent_diaper_drive_links).to include(match last_year_name)
+            end
+
+            it "displays some recent donations from that time" do
+              expect(org_dashboard_page.recent_diaper_drive_donation_links)
+                .to include(match /10\d from (first|second) diaper drive/i) # e.g., "101 from ...", "103 from ...", etc.
+                .exactly(3).times
             end
           end
         end
       end
-    end
 
     describe "Manufacturer Donations" do
       around do |example|
