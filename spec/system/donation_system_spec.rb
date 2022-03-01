@@ -3,37 +3,37 @@ RSpec.describe "Donations", type: :system, js: true do
     @url_prefix = "/#{@organization.short_name}"
   end
 
+  let(:org_donations_page) { OrganizationDonationsPage.new org_short_name: @organization.short_name }
+
   context "When signed in as a normal user" do
     before do
       sign_in @user
     end
 
-    context "When visiting the index page" do
-      subject { @url_prefix + "/donations" }
-
-      before do
-        create(:donation)
-        create(:donation)
-        visit subject
-      end
-
+    describe "The list/index page" do
       it "Allows User to click to the new donation form" do
-        find(".fa-plus").click
+        org_new_donation_page = OrganizationNewDonationPage.new org_short_name: @organization.short_name
 
-        expect(current_path).to eq(new_donation_path(@organization))
-        expect(page).to have_content "Start a new donation"
+        expect do
+          org_donations_page
+            .visit
+            .create_new_donation
+        end
+          .to change { page.current_path }
+          .to org_new_donation_page.path
       end
 
-      it "Displays Total quantity on the index page" do
-        expect(page.find(:css, "table", visible: true)).to have_content("20")
-      end
+      context "With an inactive item in a donation" do
+        before do
+          item = create(:item, :active, name: "INACTIVE ITEM")
+          create(:donation, :with_items, item: item)
+          item.update(active: false)
+          item.reload
+        end
 
-      it "doesn't die when an inactive item is in a donation" do
-        item = create(:item, :active, name: "INACTIVE ITEM")
-        create(:donation, :with_items, item: item)
-        item.update(active: false)
-        item.reload
-        expect { visit(@url_prefix + "/donations") }.to_not raise_error
+        it "Does not error" do
+          expect { org_donations_page.visit }.to_not raise_error
+        end
       end
     end
 
