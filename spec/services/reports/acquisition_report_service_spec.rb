@@ -54,7 +54,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       create_list(:line_item, 3, :donation, quantity: 10, item: non_disposable_item, itemizable: donation)
     end
 
-    # Diaper drives
+    # Product drives
     drives = create_list(:diaper_drive, 2,
                          start_date: within_time,
                          end_date: nil,
@@ -79,7 +79,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       create_list(:line_item, 5, :donation, quantity: 30, item: non_disposable_item, itemizable: donation)
     end
 
-    # Virtual diaper drives
+    # Virtual product drives
     vdrives = create_list(:diaper_drive, 2,
                           start_date: within_time,
                           end_date: nil,
@@ -157,12 +157,12 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                                              "Disposable diapers collected from drives" => "600",
                                              "Disposable diapers collected from drives (virtual)" => "120",
                                              "Disposable diapers distributed" => "200",
-                                             "Money raised from diaper drives" => "$60.00",
-                                             "Money raised from diaper drives (virtual)" => "$20.00",
+                                             "Money raised from product drives" => "$60.00",
+                                             "Money raised from product drives (virtual)" => "$20.00",
                                              "Money spent purchasing diapers" => "$60.00",
                                              "Purchased from" => "Google, Walmart",
-                                             "Total diaper drives" => 2,
-                                             "Total diaper drives (virtual)" => 2,
+                                             "Total product drives" => 2,
+                                             "Total product drives (virtual)" => 2,
                                              "Vendors diapers purchased through" => "Vendor 1, Vendor 2" },
                                   name: "Diaper Acquisition"
                                 })
