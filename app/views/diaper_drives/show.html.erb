@@ -2,9 +2,9 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Diaper Drive - #{@diaper_drive.name} - #{current_organization.name}" %>
+        <% content_for :title, "Product Drive - #{@diaper_drive.name} - #{current_organization.name}" %>
         <h1>
-          Diaper Drive
+          Product Drive
           <small>for <%= current_organization.name %></small>
         </h1>
       </div>
@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Diaper Drives", (diaper_drives_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drives", (diaper_drives_path) %></li>
         </ol>
       </div>
     </div>
@@ -66,7 +66,7 @@
               <thead>
               <tr>
               <th>Donation Id</th>
-              <th>Diaper Drive Participant</th>
+              <th>Product Drive Participant</th>
               <th>Storage Location</th>
               <th>Quantity</th>
               <th>In Kind Value</th>
@@ -87,11 +87,11 @@
           </div>
           <hr>
           <p style="text-align: center">
-            To add additional donations to this diaper drive, please edit that donation and select this diaper drive from the appropriate dropdown.
+            To add additional donations to this product drive, please edit that donation and select this product drive from the appropriate dropdown.
           </p>
           <div class="card-footer clearfix">
             <%= edit_button_to edit_diaper_drive_path(@diaper_drive), { text: "Make a correction", size: "md" } %>
-            <%= delete_button_to diaper_drive_path(@diaper_drive), { confirm: "Are you sure you want to permanently remove this diaper drive?", size: "md" } if current_user.organization_admin? %>
+            <%= delete_button_to diaper_drive_path(@diaper_drive), { confirm: "Are you sure you want to permanently remove this product drive?", size: "md" } if current_user.organization_admin? %>
           </div>
           <!-- /.card-footer-->
         </div>
