@@ -2,9 +2,9 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Diaper Drive Participants - #{@diaper_drive_participant.contact_name} - Agencies - #{current_organization.name}" %>
+        <% content_for :title, "Product Drive Participants - #{@diaper_drive_participant.contact_name} - Agencies - #{current_organization.name}" %>
         <h1>
-          Diaper Drive Participant Information
+          Product Drive Participant Information
           <small>for <%= @diaper_drive_participant.contact_name %></small>
         </h1>
       </div>
@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Diaper Drive Participants", (diaper_drive_participants_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", (diaper_drive_participants_path) %></li>
           <li class="breadcrumb-item"><%= @diaper_drive_participant.contact_name %></li>
         </ol>
       </div>
