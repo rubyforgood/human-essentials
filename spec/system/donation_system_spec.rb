@@ -35,96 +35,163 @@ RSpec.describe "Donations", type: :system, js: true do
           expect { org_donations_page.visit }.to_not raise_error
         end
       end
-    end
 
-    context "When filtering on the index page" do
-      subject { @url_prefix + "/donations" }
-      let!(:item) { create(:item) }
+      describe "Filtering by a Donation Source" do
+        before(:each) do
+          create(:donation)
+          create(:donation_site_donation)
 
-      it "Filters by the source" do
-        create(:donation)
-        create(:donation_site_donation)
-        visit subject
-        expect(page).to have_css("table tbody tr", count: 2)
-        select Donation::SOURCES[:misc], from: "filters_by_source"
-        click_button "Filter"
-        expect(page).to have_css("table tbody tr", count: 1)
+          org_donations_page.visit
+        end
+
+        it "shows the right number of Donations" do
+          expect { org_donations_page.filter_by_source :misc }
+            .to change { org_donations_page.donations_count }
+            .from(2)
+            .to(1)
+        end
       end
 
-      it "Filters by product drives" do
-        a = create(:diaper_drive, name: 'A')
-        b = create(:diaper_drive, name: "B")
-        x = create(:diaper_drive_participant, business_name: "X")
-        create(:diaper_drive_donation, diaper_drive: a, diaper_drive_participant: x)
-        create(:diaper_drive_donation, diaper_drive: b, diaper_drive_participant: x)
-        visit subject
-        expect(page).to have_css("table tbody tr", count: 2)
-        select a.name, from: "filters_by_diaper_drive"
-        click_button "Filter"
-        expect(page).to have_css("table tbody tr", count: 1)
+      describe "Filtering by a Product Drive" do
+        let(:some_drive_name) { "A" }
+        let(:another_drive_name) { "B" }
+
+        before(:each) do
+          a = create(:diaper_drive, name: some_drive_name)
+          b = create(:diaper_drive, name: another_drive_name)
+
+          x = create(:diaper_drive_participant)
+
+          create(:diaper_drive_donation, diaper_drive: a, diaper_drive_participant: x)
+          create(:diaper_drive_donation, diaper_drive: b, diaper_drive_participant: x)
+
+          org_donations_page.visit
+        end
+
+        it "shows the right number of Donations" do
+          expect { org_donations_page.filter_by_product_drive some_drive_name }
+            .to change { org_donations_page.donations_count }
+            .from(2)
+            .to(1)
+        end
       end
 
-      it "Filters by product drive participant" do
-        x = create(:diaper_drive, name: 'x')
-        a = create(:diaper_drive_participant, business_name: "A")
-        b = create(:diaper_drive_participant, business_name: "B")
-        create(:diaper_drive_donation, diaper_drive: x, diaper_drive_participant: a)
-        create(:diaper_drive_donation, diaper_drive: x, diaper_drive_participant: b)
-        visit subject
-        expect(page).to have_css("table tbody tr", count: 2)
-        select a.business_name, from: "filters_by_diaper_drive_participant"
-        click_button "Filter"
-        expect(page).to have_css("table tbody tr", count: 1)
-      end
-      it "Filters by manufacturer" do
-        a = create(:manufacturer, name: "A")
-        b = create(:manufacturer, name: "B")
-        create(:manufacturer_donation, manufacturer: a)
-        create(:manufacturer_donation, manufacturer: b)
-        visit subject
-        expect(page).to have_css("table tbody tr", count: 2)
-        select a.name, from: "filters_from_manufacturer"
-        click_button "Filter"
-        expect(page).to have_css("table tbody tr", count: 1)
-      end
-      it "Filters by donation site" do
-        location1 = create(:donation_site, name: "location 1")
-        location2 = create(:donation_site, name: "location 2")
-        create(:donation, donation_site: location1)
-        create(:donation, donation_site: location2)
-        visit subject
-        select location1.name, from: "filters_from_donation_site"
-        click_button "Filter"
-        expect(page).to have_css("table tbody tr", count: 1)
-      end
-      it "Filters by storage location" do
-        storage1 = create(:storage_location, name: "storage1")
-        storage2 = create(:storage_location, name: "storage2")
-        create(:donation, storage_location: storage1)
-        create(:donation, storage_location: storage2)
-        visit subject
-        expect(page).to have_css("table tbody tr", count: 2)
-        select storage1.name, from: "filters_at_storage_location"
-        click_button "Filter"
-        expect(page).to have_css("table tbody tr", count: 1)
+      describe "Filtering by a Product Drive Participant" do
+        let(:some_participant_name) { "A" }
+        let(:another_participant_name) { "B" }
+
+        before(:each) do
+          x = create(:diaper_drive)
+
+          a = create(:diaper_drive_participant, business_name: some_participant_name)
+          b = create(:diaper_drive_participant, business_name: another_participant_name)
+
+          create(:diaper_drive_donation, diaper_drive: x, diaper_drive_participant: a)
+          create(:diaper_drive_donation, diaper_drive: x, diaper_drive_participant: b)
+
+          org_donations_page.visit
+        end
+
+        it "shows the right number of Donations" do
+          expect { org_donations_page.filter_by_product_drive_participant some_participant_name }
+            .to change { org_donations_page.donations_count }
+            .from(2)
+            .to(1)
+        end
       end
 
-      it_behaves_like "Date Range Picker", Donation, "issued_at"
+      describe "Filtering by a Manufacturer" do
+        let(:some_manufacturer_name) { "A" }
+        let(:another_manufacturer_name) { "B" }
 
-      it "Filters by multiple attributes" do
-        storage1 = create(:storage_location, name: "storage1")
-        storage2 = create(:storage_location, name: "storage2")
-        create(:donation, storage_location: storage1)
-        create(:donation, storage_location: storage2)
-        create(:donation_site_donation, storage_location: storage1)
-        visit subject
-        expect(page).to have_css("table tbody tr", count: 3)
-        select Donation::SOURCES[:misc], from: "filters_by_source"
-        click_button "Filter"
-        expect(page).to have_css("table tbody tr", count: 2)
-        select storage1.name, from: "filters_at_storage_location"
-        click_button "Filter"
-        expect(page).to have_css("table tbody tr", count: 1)
+        before(:each) do
+          a = create(:manufacturer, name: some_manufacturer_name)
+          b = create(:manufacturer, name: another_manufacturer_name)
+
+          create(:manufacturer_donation, manufacturer: a)
+          create(:manufacturer_donation, manufacturer: b)
+
+          org_donations_page.visit
+        end
+
+        it "shows the right number of Donations" do
+          expect { org_donations_page.filter_by_manufacturer some_manufacturer_name }
+            .to change { org_donations_page.donations_count }
+            .from(2)
+            .to(1)
+        end
+      end
+
+      describe "Filtering by a Donation Site" do
+        let(:some_location_name) { "location 1" }
+        let(:another_location_name) { "location 2" }
+
+        before(:each) do
+          location1 = create(:donation_site, name: some_location_name)
+          location2 = create(:donation_site, name: another_location_name)
+
+          create(:donation, donation_site: location1)
+          create(:donation, donation_site: location2)
+
+          org_donations_page.visit
+        end
+
+        it "shows the right number of Donations" do
+          expect { org_donations_page.filter_by_donation_site some_location_name }
+            .to change { org_donations_page.donations_count }
+            .from(2)
+            .to(1)
+        end
+      end
+
+      describe "Filtering by a Donation Site" do
+        let(:some_storage_location_name) { "storage1" }
+        let(:another_storage_location_name) { "storage2" }
+
+        before(:each) do
+          storage1 = create(:storage_location, name: some_storage_location_name)
+          storage2 = create(:storage_location, name: another_storage_location_name)
+
+          create(:donation, storage_location: storage1)
+          create(:donation, storage_location: storage2)
+
+          org_donations_page.visit
+        end
+
+        it "shows the right number of Donations" do
+          expect { org_donations_page.filter_by_storage_location some_storage_location_name }
+            .to change { org_donations_page.donations_count }
+            .from(2)
+            .to(1)
+        end
+      end
+
+      describe "Filtering by multiple attributes in succession" do
+        let(:some_storage_location_name) { "storage1" }
+        let(:another_storage_location_name) { "storage2" }
+
+        before(:each) do
+          storage1 = create(:storage_location, name: some_storage_location_name)
+          storage2 = create(:storage_location, name: another_storage_location_name)
+
+          create(:donation, storage_location: storage1)
+          create(:donation, storage_location: storage2)
+
+          create(:donation_site_donation, storage_location: storage1)
+
+          org_donations_page.visit
+        end
+
+        it "Shows the right number of Donations each time" do
+          expect { org_donations_page.filter_by_source :misc }
+            .to change { org_donations_page.donations_count }
+            .from(3)
+            .to(2)
+
+          expect { org_donations_page.filter_by_storage_location some_storage_location_name }
+            .to change { org_donations_page.donations_count }
+            .to(1)
+        end
       end
     end
 
@@ -475,6 +542,11 @@ RSpec.describe "Donations", type: :system, js: true do
         end
       end
     end
+
+    subject { @url_prefix + "/donations" }
+    let!(:item) { create(:item) }
+
+    it_behaves_like "Date Range Picker", Donation, "issued_at"
 
     context "When donation items have value" do
       before do
