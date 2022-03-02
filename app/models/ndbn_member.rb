@@ -13,4 +13,8 @@ class NDBNMember < ApplicationRecord
   validates :ndbn_member_id, presence: true
   validates :account_name, presence: true
   validates :ndbn_member_id, uniqueness: true
+
+  def full_name
+    "#{ndbn_member_id} - #{account_name}"
+  end
 end
