@@ -24,7 +24,7 @@
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  account_request_id       :integer
-#  ndbn_member_id           :integer
+#  ndbn_member_id           :bigint
 #
 
 class Organization < ApplicationRecord
