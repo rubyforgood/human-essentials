@@ -103,7 +103,7 @@ module Exports
       distribution.line_items.each do |line_item|
         item_name = line_item.item.name
         item_column_idx = headers_with_indexes[item_name]
-        row[item_column_idx] = line_item.quantity
+        row[item_column_idx] += line_item.quantity
       end
 
       row
