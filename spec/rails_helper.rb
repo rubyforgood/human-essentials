@@ -140,9 +140,6 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
-    # Compile assets neccessary for browser tests to pass
-    `NODE_ENV=test bin/webpack`
-
     Rails.logger.info <<~ASCIIART
       -~~==]}>        ######## ###########  ####      ########    ###########
       -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
@@ -163,6 +160,8 @@ RSpec.configure do |config|
 
     raise if Partners::Partner.count > 0
     raise if Organization.count > 0
+
+    ENV["RSPEC_HAS_RUN_WEBPACKER"] = "false"
   end
 
   config.before(:each) do
@@ -172,6 +171,15 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
+    unless ENV["RSPEC_HAS_RUN_WEBPACKER"] == "true"
+      Rails.logger.info "** Running webpack"
+
+      # Compile assets neccessary for browser tests to pass
+      `NODE_ENV=test bin/webpack`
+
+      ENV["RSPEC_HAS_RUN_WEBPACKER"] = "true"
+    end
+
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
