@@ -95,6 +95,11 @@ def stub_addresses
   end
 end
 
+# Create global var for use in
+# config.before(:each, type: :system)
+# below
+have_run_webpacker_for_specs = false
+
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
@@ -160,8 +165,6 @@ RSpec.configure do |config|
 
     raise if Partners::Partner.count > 0
     raise if Organization.count > 0
-
-    ENV["RSPEC_HAS_RUN_WEBPACKER"] = "false"
   end
 
   config.before(:each) do
@@ -171,13 +174,13 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
-    unless ENV["RSPEC_HAS_RUN_WEBPACKER"] == "true"
+    unless have_run_webpacker_for_specs
       Rails.logger.info "** Running webpack"
 
       # Compile assets neccessary for browser tests to pass
       `NODE_ENV=test bin/webpack`
 
-      ENV["RSPEC_HAS_RUN_WEBPACKER"] = "true"
+      have_run_webpacker_for_specs = true
     end
 
     # Use truncation in the case of doing `browser` tests because it
