@@ -350,7 +350,7 @@ ActiveRecord::Schema.define(version: 2022_02_26_173715) do
     t.integer "account_request_id"
     t.boolean "repackage_essentials", default: false, null: false
     t.boolean "distribute_monthly", default: false, null: false
-    t.integer "ndbn_member_id"
+    t.bigint "ndbn_member_id"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
