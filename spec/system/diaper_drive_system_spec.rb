@@ -112,4 +112,14 @@ RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
       expect(page.find('.alert')).to have_content('added')
     end
   end
+
+  context 'when showing a Product Drive with no end date' do
+    let(:new_diaper_drive) { create(:diaper_drive, name: 'Endless drive', start_date: 3.weeks.ago, end_date: '') }
+    let(:subject) { @url_prefix + "/diaper_drives/#{new_diaper_drive.id}" }
+
+    it 'must be able to show the product drive' do
+      visit subject
+      expect(page).to have_content 'Endless drive'
+    end
+  end
 end
