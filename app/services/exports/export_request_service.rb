@@ -79,10 +79,8 @@ module Exports
           # Add to the deleted column for every item that
           # does not match any existing Item.
           row[item_column_idx] ||= 0
-          row[item_column_idx] += request_item['quantity']
-        else
-          row[item_column_idx] = request_item['quantity']
         end
+        row[item_column_idx] += request_item['quantity']
       end
 
       row

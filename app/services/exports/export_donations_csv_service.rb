@@ -78,7 +78,7 @@ module Exports
           donation.line_items.total
         },
         "Variety of Items" => ->(donation) {
-          donation.line_items.size
+          donation.line_items.map(&:name).uniq.size
         },
         "Comments" => ->(donation) {
           donation.comment
@@ -108,7 +108,7 @@ module Exports
       donation.line_items.each do |line_item|
         item_name = line_item.item.name
         item_column_idx = headers_with_indexes[item_name]
-        row[item_column_idx] = line_item.quantity
+        row[item_column_idx] += line_item.quantity
       end
 
       row
