@@ -268,7 +268,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.2.8)
-    magic_test (0.0.7)
+    magic_test (0.0.9)
       capybara (>= 3.0)
       pry
       pry-stack_explorer
@@ -425,7 +425,7 @@ GEM
       ffi (~> 1.0)
     recaptcha (5.8.1)
       json
-    regexp_parser (2.2.0)
+    regexp_parser (2.2.1)
     request_store (1.5.1)
       rack (>= 1.4)
     responders (3.0.1)
