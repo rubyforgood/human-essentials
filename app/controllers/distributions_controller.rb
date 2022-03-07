@@ -144,7 +144,9 @@ class DistributionsController < ApplicationController
     end
   end
 
-  # TODO: This needs a little more context. Is it JSON only? HTML?
+  # The HTML view is what you get when you click the link. The JSON view is requested by the
+  # jQuery FullCalendar plugin (via the `schedule.json` setting for the "events" option, in
+  # application.js)
   def schedule
     @pick_ups = current_organization.distributions
   end

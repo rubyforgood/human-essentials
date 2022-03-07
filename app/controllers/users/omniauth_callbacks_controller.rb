@@ -14,4 +14,24 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       redirect_to new_user_registration_url, alert: "Authentication failed: User not found!"
     end
   end
+
+  def google_oauth2_calendar
+    token = request.env.dig("omniauth.auth", "credentials", "token")
+    if token
+      session["google.token"] = token
+      session["google.refresh_token"] = request.env.dig("omniauth.auth", "credentials", "refresh_token")
+      sign_in_and_redirect :calendar
+    else
+      redirect_to schedule_distributions_path, alert: "Authentication failed!"
+    end
+  end
+
+  def after_sign_in_path_for(resource)
+    if resource == :calendar
+      google_calendar_list_path
+    else
+      super
+    end
+  end
+
 end

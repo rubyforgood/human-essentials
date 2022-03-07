@@ -301,7 +301,17 @@ Devise.setup do |config|
   config.omniauth :google_oauth2,
                   ENV['GOOGLE_OAUTH_CLIENT_ID'],
                   ENV['GOOGLE_OAUTH_CLIENT_SECRET'],
-                  scope: "userinfo.email"
+                  scope: "userinfo.email",
+                  name: 'google_oauth2'
+
+  config.omniauth :google_oauth2_calendar,
+                  ENV['GOOGLE_OAUTH_CLIENT_ID'],
+                  ENV['GOOGLE_OAUTH_CLIENT_SECRET'],
+                  strategy_class: OmniAuth::Strategies::GoogleOauth2,
+                  scope: "calendar.calendarlist.readonly,calendar.events",
+                  prompt: 'consent',
+                  include_granted_scopes: 'true',
+                  name: 'google_oauth2_calendar'
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

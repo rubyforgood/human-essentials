@@ -28,6 +28,10 @@
   <section class="content" id="pick-ups-calendar">
     <div class="container-fluid h-100">
       <div class="row h-100">
+        <%= refresh_button_to google_calendar_list_path,
+                             { text: 'Sync with Google Calendar' },
+                             id: 'sync-google-calendar-button'
+        %>
         <!-- left column -->
           <!-- Main content -->
           <div id="calendar" class="fc fc-ltr fc-unthemed" style="">

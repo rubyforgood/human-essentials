@@ -108,6 +108,8 @@ gem "flipper-active_record"
 gem "flipper-ui"
 # Calculates latitude and longitude from an address.
 gem "geocoder"
+# Syncs distribution events to a user's Google calendar.
+gem "google-api-client"
 # Enable making HTTP requests
 gem 'httparty'
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)

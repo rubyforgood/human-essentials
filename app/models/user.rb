@@ -41,7 +41,7 @@ class User < ApplicationRecord
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
          :timeoutable, :password_has_required_content
-  devise :omniauthable, omniauth_providers: [:google_oauth2]
+  devise :omniauthable, omniauth_providers: [:google_oauth2, :google_oauth2_calendar]
 
   validates :name, :email, presence: true
 

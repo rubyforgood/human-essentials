@@ -207,6 +207,9 @@ Rails.application.routes.draw do
     get "forecasting/donations", to: "forecasting/donations#index"
   end
 
+  get '/google_calendar/list', to: 'google_calendar#list'
+  post '/google_calendar/sync', to: 'google_calendar#sync'
+
   resources :attachments, only: %i(destroy)
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
