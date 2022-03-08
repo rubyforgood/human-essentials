@@ -3,9 +3,9 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Diaper Drives - #{current_organization.name}" %>
+        <% content_for :title, "Product Drives - #{current_organization.name}" %>
         <h1>
-          Diaper Drives
+          Product Drives
           <small>for <%= current_organization.name %></small>
         </h1>
       </div>
@@ -15,7 +15,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><a href="#">Diaper Drives</a></li>
+          <li class="breadcrumb-item"><a href="#">Product Drives</a></li>
         </ol>
       </div>
     </div>
@@ -30,7 +30,7 @@
         <!-- jquery validation -->
         <div class="card card-primary">
           <div class="card-header">
-            <h3 class="card-title">Diaper Drive Filters</h3>
+            <h3 class="card-title">Product Drive Filters</h3>
           </div>
           <!-- /.card-header -->
           <!-- form start -->
@@ -50,7 +50,7 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
-                  <%= new_button_to new_diaper_drive_path(organization_id: current_organization), {text: "New Diaper Drive"} %>
+                  <%= new_button_to new_diaper_drive_path(organization_id: current_organization), {text: "New Product Drive"} %>
                   </span>
               </div>
             <% end # form %>
@@ -76,7 +76,7 @@
             <table class="table">
               <thead>
               <tr>
-                <th>Diaper Drive Name</th>
+                <th>Product Drive Name</th>
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Held Virtually?</th>

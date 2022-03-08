@@ -47,6 +47,14 @@ BaseItem.find_or_create_by!(
 )
 
 # ----------------------------------------------------------------------------
+# NDBN Members
+# ----------------------------------------------------------------------------
+#
+NDBNMember.create!(ndbn_member_id: 10000, account_name: "Pawnee")
+NDBNMember.create!(ndbn_member_id: 20000, account_name: "Other Spot")
+NDBNMember.create!(ndbn_member_id: 30000, account_name: "Amazing Place")
+
+# ----------------------------------------------------------------------------
 # Organizations
 # ----------------------------------------------------------------------------
 
@@ -383,7 +391,7 @@ StorageLocation.all.each do |sl|
 end
 
 # ----------------------------------------------------------------------------
-# Diaper Drives
+# Product Drives
 # ----------------------------------------------------------------------------
 
 [
@@ -395,7 +403,7 @@ end
 ].each { |drive| DiaperDrive.create! drive }
 
 # ----------------------------------------------------------------------------
-# Diaper Drive Participants
+# Product Drive Participants
 # ----------------------------------------------------------------------------
 
 [
@@ -410,19 +418,19 @@ end
 ].each { |participant| DiaperDriveParticipant.create! participant }
 
 # ----------------------------------------------------------------------------
-# Diaper Drives
+# Product Drives
 # ----------------------------------------------------------------------------
 
 [
-  { name: "First Diaper Drive",
+  { name: "First Product Drive",
     start_date: 3.years.ago,
     end_date: 3.years.ago,
     organization: sf_org },
-  { name: "Best Diaper Drive",
+  { name: "Best Product Drive",
     start_date: 3.weeks.ago,
     end_date: 2.weeks.ago,
     organization: sf_org },
-  { name: "Second Best Diaper Drive",
+  { name: "Second Best Product Drive",
     start_date: 2.weeks.ago,
     end_date: 1.week.ago,
     organization: pdx_org }
@@ -697,3 +705,4 @@ answers = [
     answer: "Answer for partners. #{answers.sample}"
   )
 end
+

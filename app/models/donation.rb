@@ -18,7 +18,7 @@
 #
 
 class Donation < ApplicationRecord
-  SOURCES = { diaper_drive: "Diaper Drive",
+  SOURCES = { diaper_drive: "Product Drive",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
               misc: "Misc. Donation" }.freeze
