@@ -1,6 +1,8 @@
 require_relative "organization_page"
 
 class OrganizationDonationsPage < OrganizationPage
+  include DonationSourceFilterLables
+
   def org_page_path
     # relative path within organization's subtree
     "donations"
@@ -51,17 +53,4 @@ class OrganizationDonationsPage < OrganizationPage
     select location_name, from: "filters_at_storage_location"
     apply_filter
   end
-
-  private
-
-  # This is essentially Donation.SOURCES from the product code
-  # Duplicating it here so that changing this knowledge in the
-  # spec realm is a conscious act rather than blindly following
-  # a change in the production code
-  DONATION_SOURCE_FILTER_LABELS = {
-    diaper_drive: "Product Drive",
-    manufacturer: "Manufacturer",
-    donation_site: "Donation Site",
-    misc: "Misc. Donation"
-  }
 end

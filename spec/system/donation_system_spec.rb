@@ -195,7 +195,7 @@ RSpec.describe "Donations", type: :system, js: true do
       end
     end
 
-    context "When creating a new donation" do
+    describe "Creation" do
       before do
         create(:item, organization: @organization)
         create(:storage_location, organization: @organization)
@@ -206,95 +206,144 @@ RSpec.describe "Donations", type: :system, js: true do
         @organization.reload
       end
 
+      let(:org_new_donation_page) { OrganizationNewDonationPage.new org_short_name: @organization.short_name }
+
       context "Via manual entry" do
-        before do
-          visit @url_prefix + "/donations/new"
-        end
+        before { org_new_donation_page.visit }
 
         it "Allows donations to be created IN THE PAST" do
-          select Donation::SOURCES[:misc], from: "donation_source"
-          select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-          fill_in "donation_line_items_attributes_0_quantity", with: "5"
-          fill_in "donation_issued_at", with: "01/01/2001"
+          donation_date = Date.new(2001, 2, 13)
 
-          expect do
-            click_button "Save"
-          end.to change { Donation.count }.by(1)
+          org_new_donation_page
+            .set_source(:misc)
+            .set_storage_location(StorageLocation.first.name)
+            .set_donation_date(donation_date)
 
-          expect(Donation.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
+          expect { org_new_donation_page.save_donation }
+            .to change { Donation.count }
+            .by(1)
+
+          expect(page.current_path).to eq org_donations_page.path
+
+          expect(Donation.last.issued_at.to_date).to eq donation_date
         end
 
-        it "User can create a donation using dollars decimal amount for its money raised" do
-          select Donation::SOURCES[:misc], from: "donation_source"
-          select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-          fill_in "donation_money_raised_in_dollars", with: "1,234.56"
+        it "Handles money raised using dollars decimal amount" do
+          amount_raised = "1,234.56"
+          expected_dollars_raised = amount_raised.delete(",").to_f
+          expected_money_raised = Integer(expected_dollars_raised * 100)
 
-          expect do
-            click_button "Save"
-          end.to change { Donation.count }.by(1)
+          org_new_donation_page
+            .set_source(:misc)
+            .set_storage_location(StorageLocation.first.name)
+            .set_money_raised(amount_raised)
 
-          expect(Donation.last.money_raised_in_dollars).to eq(1234.56)
-          expect(Donation.last.money_raised).to eq(123_456)
+          expect { org_new_donation_page.save_donation }
+            .to change { Donation.count }
+            .by(1)
+
+          expect(page).to have_current_path(org_donations_page.path)
+
+          last_donation = Donation.last
+          expect(last_donation.money_raised_in_dollars).to eq(expected_dollars_raised)
+          expect(last_donation.money_raised).to eq(expected_money_raised)
         end
 
         it "Accepts and combines multiple line items for the same item type" do
-          select Donation::SOURCES[:misc], from: "donation_source"
-          select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-          fill_in "donation_line_items_attributes_0_quantity", with: "5"
-          page.find(:css, "#__add_line_item").click
-          select_id = page.find(:xpath, '//*[@id="donation_line_items"]/section[2]//select')[:id]
-          select Item.alphabetized.first.name, from: select_id
-          text_id = page.find_all('.donation_line_items_quantity > input').last[:id]
-          fill_in text_id, with: "10"
+          item_name = Item.alphabetized.first.name
 
-          expect do
-            click_button "Save"
-          end.to change { Donation.count }.by(1)
+          # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+          quantity1 =  10
+          quantity2 = 200
+          # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
 
-          expect(Donation.last.line_items.first.quantity).to eq(15)
+          expected_quantity = quantity1 + quantity2
+
+          org_new_donation_page
+            .set_source(:misc)
+            .set_storage_location(StorageLocation.first.name)
+            .set_last_line_item_name(item_name)
+            .set_last_line_item_quantity(quantity1)
+            .add_line_item
+            .set_last_line_item_name(item_name)
+            .set_last_line_item_quantity(quantity2)
+
+          expect { org_new_donation_page.save_donation }
+            .to change { Donation.count }
+            .by(1)
+
+          expect(page.current_path).to eq org_donations_page.path
+
+          expect(Donation.last.line_items.first.quantity).to eq(expected_quantity)
         end
 
         it "Does not include inactive items in the line item fields" do
           item = Item.alphabetized.first
 
-          select StorageLocation.first.name, from: "donation_storage_location_id"
-          expect(page).to have_content(item.name)
-          select item.name, from: "donation_line_items_attributes_0_item_id"
-
-          item.update(active: false)
-
-          page.refresh
-          select StorageLocation.first.name, from: "donation_storage_location_id"
-          expect(page).to have_no_content(item.name)
-        end
-
-        it "Allows User to create a donation for a ProductDrive Participant source" do
-          select Donation::SOURCES[:diaper_drive], from: "donation_source"
-          expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
-          expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
-          expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
-          select DiaperDrive.first.name, from: "donation_diaper_drive_id"
-          select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
-          select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-          fill_in "donation_line_items_attributes_0_quantity", with: "5"
+          org_new_donation_page.set_storage_location(StorageLocation.first.name)
 
           expect do
-            click_button "Save"
-          end.to change { Donation.count }.by(1)
+            item.update(active: false)
+            org_new_donation_page
+              .visit
+              .set_storage_location(StorageLocation.first.name)
+          end
+            .to change { org_new_donation_page.item_name_options.include?(item.name) }
+            .from(true)
+            .to(false)
         end
 
-        it "Allows User to create a Product Drive from donation" do
-          select Donation::SOURCES[:diaper_drive], from: "donation_source"
-          select "---Create new Product Drive---", from: "donation_diaper_drive_id"
-          expect(page).to have_content("New Product Drive")
-          fill_in "diaper_drive_name", with: "drivenametest"
-          fill_in "diaper_drive_start_date", with: Time.current
-          click_on "diaper_drive_submit"
-          select "drivenametest", from: "donation_diaper_drive_id"
+        fit "Can create ProductDrive Participant Donation" do
+          # This passes on CI, but fails routinely on my dev box
+          # even when wrapped in
+          # using_wait_time(20) do
+          # ...
+          # end
+          # 🤷🏻
+          expect { org_new_donation_page.set_source(:diaper_drive) }
+            .to change { org_new_donation_page.has_product_drive_participant_select? }
+            .from(false)
+            .to(true)
+
+          expect(org_new_donation_page).not_to have_donation_site_select
+          expect(org_new_donation_page).not_to have_manufacturer_select
+
+          org_new_donation_page
+            .set_product_drive(DiaperDrive.first.name)
+            .set_product_drive_participant(DiaperDriveParticipant.first.business_name)
+            .set_storage_location(StorageLocation.first.name)
+            .set_last_line_item_name(Item.alphabetized.first.name)
+            .set_last_line_item_quantity(5)
+
+          expect { org_new_donation_page.save_donation }
+            .to change { Donation.count }
+            .by(1)
+        end
+
+        fit "Allows User to create a Product Drive from donation" do
+          org_new_donation_page.set_source(:diaper_drive)
+
+          new_product_drive_name = "drivenametest"
+
+          expect(org_new_donation_page.product_drive_name_options)
+            .not_to include(new_product_drive_name)
+
+          expect { org_new_donation_page.set_product_drive(:create_new_product_drive) }
+            .to change { org_new_donation_page.has_new_product_drive_entry? }
+            .from(false)
+            .to(true)
+
+          expect do
+            org_new_donation_page
+              .set_new_product_drive_name(new_product_drive_name)
+              .set_new_product_start_date(Time.current)
+              .create_new_product_drive
+          end
+            .to change { org_new_donation_page.has_no_new_product_drive_entry? }
+            .to(true)
+
+          expect(org_new_donation_page.product_drive_name_options)
+            .to include(new_product_drive_name)
         end
 
         it "Allows User to create a Product Drive Participant from donation" do
