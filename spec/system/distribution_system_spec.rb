@@ -48,7 +48,7 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
       expect(page).to have_selector "#distribution_line_items"
     end
 
-    context "when the quantity is lower than the on hand minminum quantity" do
+    context "when the quantity is lower than the on hand minimum quantity" do
       it "should display an error" do
         visit @url_prefix + "/distributions/new"
         item = @storage_location.inventory_items.first.item
@@ -56,6 +56,7 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
         @storage_location.inventory_items.first.update!(quantity: 20)
 
         select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
@@ -74,6 +75,7 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
         @storage_location.inventory_items.first.update!(quantity: 20)
 
         select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
