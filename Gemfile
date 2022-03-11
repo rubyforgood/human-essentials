@@ -110,6 +110,8 @@ gem "flipper-ui"
 gem "geocoder"
 # Enable making HTTP requests
 gem 'httparty'
+# Generate .ics calendars for use with Google Calendar
+gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
 

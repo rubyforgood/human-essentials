@@ -115,6 +115,7 @@ Rails.application.routes.draw do
       get :print, on: :member
       collection do
         get :schedule
+        get :calendar
         get :pickup_day
       end
       patch :picked_up, on: :member

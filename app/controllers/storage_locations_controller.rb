@@ -101,7 +101,7 @@ class StorageLocationsController < ApplicationController
   private
 
   def storage_location_params
-    params.require(:storage_location).permit(:name, :address, :square_footage, :warehouse_type)
+    params.require(:storage_location).permit(:name, :address, :square_footage, :warehouse_type, :time_zone)
   end
 
   def include_omitted_items(existing_item_ids = [])

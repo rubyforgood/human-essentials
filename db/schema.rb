@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_26_173715) do
+ActiveRecord::Schema.define(version: 2022_03_11_191446) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -439,6 +439,7 @@ ActiveRecord::Schema.define(version: 2022_02_26_173715) do
     t.float "longitude"
     t.integer "square_footage"
     t.string "warehouse_type"
+    t.string "time_zone", default: "America/Los_Angeles", null: false
     t.index ["latitude", "longitude"], name: "index_storage_locations_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end

@@ -7,6 +7,9 @@ class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
 
+  skip_before_action :authenticate_user!, only: %i(calendar)
+  skip_before_action :authorize_user, only: %i(calendar)
+
   def print
     @distribution = Distribution.find(params[:id])
     respond_to do |format|
@@ -147,6 +150,13 @@ class DistributionsController < ApplicationController
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def schedule
     @pick_ups = current_organization.distributions
+  end
+
+  def calendar
+    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31])
+    organization_id = crypt.decrypt_and_verify(CGI.unescape(params[:hash]))
+
+    render body: CalendarService.calendar(organization_id), mime_type: Mime::Type.lookup("text/calendar")
   end
 
   def picked_up

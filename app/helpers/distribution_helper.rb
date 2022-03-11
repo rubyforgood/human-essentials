@@ -12,4 +12,9 @@ module DistributionHelper
 
     now..end_date
   end
+
+  def hashed_calendar_path
+    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31])
+    calendar_distributions_url(hash: crypt.encrypt_and_sign(current_organization.id))
+  end
 end
