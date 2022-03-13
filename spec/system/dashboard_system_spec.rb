@@ -132,21 +132,6 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
           .to org_new_donation_page.path
       end
 
-      # it "doesn't count inactive items" do
-      #   item = create(:donation, :with_items, item_quantity: 100, storage_location: storage_location).items.first
-      #
-      #   visit subject
-      #   within "#donations" do
-      #     expect(page).to have_content("100")
-      #   end
-      #
-      #   item.update!(active: false)
-      #   visit subject
-      #   within "#donations" do
-      #     expect(page).to have_no_content("100")
-      #   end
-      # end
-
       # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
       max_recent_donation_links_count = 3
 
@@ -263,21 +248,6 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
           .to change { page.current_path }
           .to org_new_purchase_page.path
       end
-
-      # it 'does not count inactive items' do
-      #   item = create(:purchase, :with_items, item_quantity: 100, storage_location: storage_location).items.first
-      #
-      #   visit subject
-      #   within "#purchases" do
-      #     expect(page).to have_content("100")
-      #   end
-      #
-      #   item.update!(active: false)
-      #   visit subject
-      #   within "#purchases" do
-      #     expect(page).to have_no_content("100")
-      #   end
-      # end
 
       # as of 28 Jan 2022, the "Recent Purchases" list shows up to this many items matching the date filter
       max_recent_purchase_links_count = 3
@@ -517,21 +487,6 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         expect(org_dashboard_page).to have_manufacturers_section
       end
 
-      # it "doesn't count inactive items" do
-      #   item = create(:manufacturer_donation, :with_items, item_quantity: 100, storage_location: storage_location).items.first
-      #
-      #   visit subject
-      #   within "#manufacturers" do
-      #     expect(page).to have_content("100")
-      #   end
-      #
-      #   item.update!(active: false)
-      #   visit subject
-      #   within "#donations" do
-      #     expect(page).to have_no_content("100")
-      #   end
-      # end
-
       # as of 15 Feb 2022, the "Top Manufacturer Donations" list shows up to this many manufacturers
       # which donated during the filtered date range
       max_top_manufacturer_donations_links_count = 10
@@ -675,22 +630,6 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
           .to change { page.current_path }
           .to org_new_distribution_page.path
       end
-
-      # it "doesn't count inactive items" do
-      #   item = create(:inventory_item, quantity: 100, storage_location: storage_location).item
-      #   create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: storage_location)
-      #
-      #   visit subject
-      #   within "#distributions" do
-      #     expect(page).to have_content("100")
-      #   end
-      #
-      #   item.update!(active: false)
-      #   visit subject
-      #   within "#distributions" do
-      #     expect(page).to have_no_content("100")
-      #   end
-      # end
 
       # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
       max_recent_distribution_links_count = 3
