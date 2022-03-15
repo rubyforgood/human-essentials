@@ -13,10 +13,10 @@ RSpec.describe "Static", type: :request, skip_seed: true do
       end
     end
 
-    describe "GET #page/register" do
+    describe "GET #page/privacypolicy" do
       it "renders the contact page" do
-        get register_path
-        expect(response).to render_template :register
+        get privacypolicy_path
+        expect(response).to render_template :privacypolicy
       end
     end
   end
