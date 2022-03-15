@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_26_173715) do
+ActiveRecord::Schema.define(version: 2022_03_15_172640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,21 +152,6 @@ ActiveRecord::Schema.define(version: 2022_02_26_173715) do
     t.index ["user_id"], name: "index_deprecated_feedback_messages_on_user_id"
   end
 
-  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
-    t.string "contact_name"
-    t.string "email"
-    t.string "phone"
-    t.string "comment"
-    t.integer "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "address"
-    t.string "business_name"
-    t.float "latitude"
-    t.float "longitude"
-    t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
-  end
-
   create_table "diaper_drives", force: :cascade do |t|
     t.string "name"
     t.date "start_date"
@@ -215,7 +200,7 @@ ActiveRecord::Schema.define(version: 2022_02_26_173715) do
     t.integer "storage_location_id"
     t.text "comment"
     t.integer "organization_id"
-    t.integer "diaper_drive_participant_id"
+    t.integer "product_drive_participant_id"
     t.datetime "issued_at"
     t.integer "money_raised"
     t.bigint "manufacturer_id"
@@ -383,6 +368,21 @@ ActiveRecord::Schema.define(version: 2022_02_26_173715) do
     t.bigint "partner_group_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
+  end
+
+  create_table "product_drive_participants", id: :serial, force: :cascade do |t|
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.string "comment"
+    t.integer "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "address"
+    t.string "business_name"
+    t.float "latitude"
+    t.float "longitude"
+    t.index ["latitude", "longitude"], name: "index_product_drive_participants_on_latitude_and_longitude"
   end
 
   create_table "purchases", force: :cascade do |t|

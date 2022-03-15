@@ -8,7 +8,7 @@ module Exports
         :storage_location,
         :donation_site,
         :diaper_drive,
-        :diaper_drive_participant,
+        :product_drive_participant,
         line_items: [:item]
       ).where(
         id: donation_ids,

@@ -46,7 +46,7 @@ class Organization < ApplicationRecord
     has_many :adjustments
     has_many :annual_reports
     has_many :audits
-    has_many :diaper_drive_participants
+    has_many :product_drive_participants
     has_many :diaper_drives
     has_many :donation_sites
     has_many :donations

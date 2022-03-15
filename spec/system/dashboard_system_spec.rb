@@ -423,7 +423,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               quantity_in_donation = @item_quantity.next
               drive = @diaper_drives.sample
 
-              create :diaper_drive_donation, :with_items, diaper_drive: drive.drive, diaper_drive_participant: @diaper_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
+              create :diaper_drive_donation, :with_items, diaper_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
 
               OpenStruct.new drive_name: drive.name, quantity: quantity_in_donation
             end

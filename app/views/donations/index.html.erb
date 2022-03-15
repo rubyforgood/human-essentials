@@ -53,9 +53,9 @@
                     
                   </div>
                 <% end %>
-                <% if @diaper_drive_participants.present? %>
+                <% if @product_drive_participants.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_diaper_drive_participant, collection: @diaper_drive_participants, value: :business_name, selected: @selected_diaper_drive) %>
+                    <%= filter_select(scope: :by_product_drive_participant, collection: @product_drive_participants, value: :business_name, selected: @selected_diaper_drive) %>
                   </div>
                 <% end %>
                 <% if @manufacturers.present? %>

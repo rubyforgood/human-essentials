@@ -31,9 +31,9 @@ RSpec.describe Donation, type: :model, needs_users: true do
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", donation_site: nil)).to be_valid
     end
     it "requires a product drive participant if the source is 'Product Drive'" do
-      expect(build_stubbed(:diaper_drive_donation, source: "Product Drive Participant", diaper_drive_participant_id: nil)).not_to be_valid
-      expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", diaper_drive_participant_id: nil)).to be_valid
-      expect(build(:donation, source: "Misc. Donation", diaper_drive_participant_id: nil)).to be_valid
+      expect(build_stubbed(:diaper_drive_donation, source: "Product Drive Participant", product_drive_participant_id: nil)).not_to be_valid
+      expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", product_drive_participant_id: nil)).to be_valid
+      expect(build(:donation, source: "Misc. Donation", product_drive_participant_id: nil)).to be_valid
     end
     it "requires a manufacturer if the source is 'Manufacturer'" do
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", manufacturer: nil)).not_to be_valid
@@ -209,12 +209,12 @@ RSpec.describe Donation, type: :model, needs_users: true do
 
     describe "source_view" do
       context "from a drive" do
-        let!(:donation) { create(:diaper_drive_donation, diaper_drive_participant: diaper_drive_participant, diaper_drive: diaper_drive) }
+        let!(:donation) { create(:diaper_drive_donation, product_drive_participant: product_drive_participant, diaper_drive: diaper_drive) }
 
         let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
 
         context "participant known" do
-          let(:diaper_drive_participant) { create(:diaper_drive_participant, contact_name: contact_name) }
+          let(:product_drive_participant) { create(:product_drive_participant, contact_name: contact_name) }
 
           context "contact name present" do
             let(:contact_name) { "Contact Name" }
@@ -234,7 +234,7 @@ RSpec.describe Donation, type: :model, needs_users: true do
         end
 
         context "unknown participant" do
-          let(:diaper_drive_participant) { nil }
+          let(:product_drive_participant) { nil }
 
           it "returns drive display name" do
             expect(donation.source_view).to eq("Test Drive (product drive)")

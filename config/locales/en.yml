@@ -35,4 +35,4 @@ en:
   activerecord:
     models:
       diaper_drive: "Product drive"
-      diaper_drive_participant: "Product drive participant"
+      product_drive_participant: "Product drive participant"

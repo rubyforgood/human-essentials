@@ -129,7 +129,7 @@ Rails.application.routes.draw do
         post :import_csv
       end
     end
-    resources :diaper_drive_participants, except: [:destroy] do
+    resources :product_drive_participants, except: [:destroy] do
       collection do
         post :import_csv
       end

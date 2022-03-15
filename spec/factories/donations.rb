@@ -32,7 +32,7 @@ FactoryBot.define do
 
     factory :diaper_drive_donation do
       diaper_drive
-      diaper_drive_participant
+      product_drive_participant
       source { Donation::SOURCES[:diaper_drive] }
     end
 

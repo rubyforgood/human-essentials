@@ -27,7 +27,7 @@ class Donation < ApplicationRecord
   belongs_to :organization
 
   belongs_to :donation_site, optional: true # Validation is conditionally handled below.
-  belongs_to :diaper_drive_participant, optional: proc { |d| d.from_diaper_drive? } # Validation is conditionally handled below.
+  belongs_to :product_drive_participant, optional: proc { |d| d.from_diaper_drive? } # Validation is conditionally handled below.
   belongs_to :diaper_drive, optional: true
   belongs_to :manufacturer, optional: proc { |d| d.from_manufacturer? } # Validation is conditionally handled below.
   belongs_to :storage_location
@@ -44,8 +44,8 @@ class Donation < ApplicationRecord
   scope :by_diaper_drive, ->(diaper_drive_id) {
     where(diaper_drive_id: diaper_drive_id)
   }
-  scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
-    where(diaper_drive_participant_id: diaper_drive_participant_id)
+  scope :by_product_drive_participant, ->(product_drive_participant_id) {
+    where(product_drive_participant_id: product_drive_participant_id)
   }
   scope :from_manufacturer, ->(manufacturer_id) {
     where(manufacturer_id: manufacturer_id)
@@ -98,7 +98,7 @@ class Donation < ApplicationRecord
   def source_view
     return source unless from_diaper_drive?
 
-    diaper_drive_participant&.donation_source_view || diaper_drive.donation_source_view
+    product_drive_participant&.donation_source_view || diaper_drive.donation_source_view
   end
 
   def self.daily_quantities_by_source(start, stop)

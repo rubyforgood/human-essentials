@@ -415,7 +415,7 @@ end
     contact_name: "wilma",
     email: "ok@place.is",
     organization: pdx_org }
-].each { |participant| DiaperDriveParticipant.create! participant }
+].each { |participant| ProductDriveParticipant.create! participant }
 
 # ----------------------------------------------------------------------------
 # Product Drives
@@ -513,7 +513,7 @@ end
              when Donation::SOURCES[:diaper_drive]
                Donation.create! source: source,
                                 diaper_drive: DiaperDrive.first,
-                                diaper_drive_participant: random_record_for_org(pdx_org, DiaperDriveParticipant),
+                                product_drive_participant: random_record_for_org(pdx_org, ProductDriveParticipant),
                                 storage_location: random_record_for_org(pdx_org, StorageLocation),
                                 organization: pdx_org,
                                 issued_at: Time.zone.now

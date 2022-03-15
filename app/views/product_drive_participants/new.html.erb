@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", (diaper_drive_participants_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", (product_drive_participants_path) %></li>
           <li class="breadcrumb-item"><a href="#">New Product Drive Participant</a></li>
         </ol>
       </div>
@@ -22,4 +22,4 @@
   </div><!-- /.container-fluid -->
 </section>
 
-<%= render partial: "form", object: @diaper_drive_participant %>
+<%= render partial: "form", object: @product_drive_participant %>

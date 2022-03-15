@@ -2,10 +2,10 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Product Drive Participants - #{@diaper_drive_participant.contact_name} - Agencies - #{current_organization.name}" %>
+        <% content_for :title, "Product Drive Participants - #{@product_drive_participant.contact_name} - Agencies - #{current_organization.name}" %>
         <h1>
           Product Drive Participant Information
-          <small>for <%= @diaper_drive_participant.contact_name %></small>
+          <small>for <%= @product_drive_participant.contact_name %></small>
         </h1>
       </div>
       <div class="col-sm-6">
@@ -14,8 +14,8 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", (diaper_drive_participants_path) %></li>
-          <li class="breadcrumb-item"><%= @diaper_drive_participant.contact_name %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", (product_drive_participants_path) %></li>
+          <li class="breadcrumb-item"><%= @product_drive_participant.contact_name %></li>
         </ol>
       </div>
     </div>
@@ -41,11 +41,11 @@
               </thead>
               <tbody>
               <tr>
-                <td><%= @diaper_drive_participant.business_name %></td>
-                <td><%= @diaper_drive_participant.contact_name %></td>
-                <td><%= @diaper_drive_participant.phone %></td>
-                <td><%= @diaper_drive_participant.email %></td>
-                <td><%= @diaper_drive_participant.address %></td>
+                <td><%= @product_drive_participant.business_name %></td>
+                <td><%= @product_drive_participant.contact_name %></td>
+                <td><%= @product_drive_participant.phone %></td>
+                <td><%= @product_drive_participant.email %></td>
+                <td><%= @product_drive_participant.address %></td>
               </tr>
               </tbody>
             </table>
@@ -74,7 +74,7 @@
               </tr>
               </thead>
               <tbody>
-              <% @diaper_drive_participant.donations.each do |donation| %>
+              <% @product_drive_participant.donations.each do |donation| %>
                 <tr>
                   <td><%= donation.created_at.strftime("%m/%d/%Y") %></td>
                   <td><%= donation.line_items.total %></td>

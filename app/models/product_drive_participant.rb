@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: diaper_drive_participants
+# Table name: product_drive_participants
 #
 #  id              :integer          not null, primary key
 #  address         :string
@@ -16,11 +16,11 @@
 #  organization_id :integer
 #
 
-class DiaperDriveParticipant < ApplicationRecord
+class ProductDriveParticipant < ApplicationRecord
   include Provideable
   include Geocodable
 
-  has_many :donations, inverse_of: :diaper_drive_participant, dependent: :destroy
+  has_many :donations, inverse_of: :product_drive_participant, dependent: :destroy
 
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
