@@ -195,7 +195,7 @@ GEM
       jquery-rails (>= 4.0.5, < 5.0.0)
       jquery-ui-rails (>= 5.0.2)
       momentjs-rails (>= 2.9.0)
-    geocoder (1.7.3)
+    geocoder (1.7.5)
     globalid (1.0.0)
       activesupport (>= 5.0)
     groupdate (6.0.1)
