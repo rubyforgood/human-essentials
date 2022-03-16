@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: diaper_drives
+# Table name: product_drives
 #
 #  id              :bigint           not null, primary key
 #  end_date        :date
@@ -12,7 +12,7 @@
 #  organization_id :bigint
 #
 
-class DiaperDrive < ApplicationRecord
+class ProductDrive < ApplicationRecord
   belongs_to :organization, optional: true
   include Filterable
 

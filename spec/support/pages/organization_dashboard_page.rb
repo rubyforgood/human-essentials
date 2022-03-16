@@ -24,8 +24,8 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def diaper_drive_total_donations
-    within diaper_drives_section do
+  def product_drive_total_donations
+    within product_drives_section do
       parse_formatted_integer find(".total_received_donations").text
     end
   end
@@ -56,8 +56,8 @@ class OrganizationDashboardPage < OrganizationPage
     has_selector? "#org-stats-call-to-action-storage-locations"
   end
 
-  def has_diaper_drives_section?
-    has_selector? diaper_drives_selector
+  def has_product_drives_section?
+    has_selector? product_drives_selector
   end
 
   def has_distributions_section?
@@ -94,8 +94,8 @@ class OrganizationDashboardPage < OrganizationPage
     find(org_logo_selector).native[:src]
   end
 
-  def recent_diaper_drive_donation_links
-    within diaper_drives_section do
+  def recent_product_drive_donation_links
+    within product_drives_section do
       all(".donation a").map(&:text)
     end
   end
@@ -155,12 +155,12 @@ class OrganizationDashboardPage < OrganizationPage
 
   private
 
-  def diaper_drives_section
-    find diaper_drives_selector
+  def product_drives_section
+    find product_drives_selector
   end
 
-  def diaper_drives_selector
-    "#diaper_drives"
+  def product_drives_selector
+    "#product_drives"
   end
 
   def distributions_section_selector

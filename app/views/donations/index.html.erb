@@ -47,15 +47,15 @@
                     <%= select_tag "filters[by_source]", options_for_select(@sources, @selected_source), {include_blank: true, class: "form-control"} %>
                   </div>
                 <% end %>
-                <% if @diaper_drives.present? %>
+                <% if @product_drives.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_diaper_drive, collection: @diaper_drives, selected: @selected_diaper_drive) %>
+                    <%= filter_select(scope: :by_product_drive, collection: @product_drives, selected: @selected_product_drive) %>
                     
                   </div>
                 <% end %>
                 <% if @product_drive_participants.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_product_drive_participant, collection: @product_drive_participants, value: :business_name, selected: @selected_diaper_drive) %>
+                    <%= filter_select(scope: :by_product_drive_participant, collection: @product_drive_participants, value: :business_name, selected: @selected_product_drive) %>
                   </div>
                 <% end %>
                 <% if @manufacturers.present? %>

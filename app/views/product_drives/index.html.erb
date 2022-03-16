@@ -35,10 +35,10 @@
           <!-- /.card-header -->
           <!-- form start -->
           <div class="card-body">
-            <%= form_tag(diaper_drives_path, method: :get, organization_id: current_organization) do |f| %>
+            <%= form_tag(product_drives_path, method: :get, organization_id: current_organization) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_name, collection: @diaper_drives, key: :name, value: :name, selected: @selected_name_filter) %>
+                  <%= filter_select(scope: :by_name, collection: @product_drives, key: :name, value: :name, selected: @selected_name_filter) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
@@ -50,7 +50,7 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
-                  <%= new_button_to new_diaper_drive_path(organization_id: current_organization), {text: "New Product Drive"} %>
+                  <%= new_button_to new_product_drive_path(organization_id: current_organization), {text: "New Product Drive"} %>
                   </span>
               </div>
             <% end # form %>
@@ -87,16 +87,16 @@
               </tr>
               </thead>
               <tbody>
-              <% @diaper_drives.each do |diaper_drive| %>
+              <% @product_drives.each do |product_drive| %>
                 <tr>
-                  <td><%= diaper_drive.name %></td>
-                  <td><%= diaper_drive.start_date.strftime("%m-%d-%Y") %></td>
-                  <td><%= diaper_drive.end_date&.strftime("%m-%d-%Y") %></td>
-                  <td><%= is_virtual(diaper_drive: diaper_drive) %></td>
-                  <td class="text-right"><%= diaper_drive.donation_quantity %></td>
-                  <td class="text-right"><%= diaper_drive.distinct_items %></td>
-                  <td class="text-right"><strong><%= dollar_value(diaper_drive.in_kind_value) %></strong></td>
-                  <td class="text-right"><%= view_button_to diaper_drive_path(diaper_drive.id) %></td>
+                  <td><%= product_drive.name %></td>
+                  <td><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
+                  <td><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>
+                  <td><%= is_virtual(product_drive: product_drive) %></td>
+                  <td class="text-right"><%= product_drive.donation_quantity %></td>
+                  <td class="text-right"><%= product_drive.distinct_items %></td>
+                  <td class="text-right"><strong><%= dollar_value(product_drive.in_kind_value) %></strong></td>
+                  <td class="text-right"><%= view_button_to product_drive_path(product_drive.id) %></td>
                 </tr>
               <% end %>
               </tbody>

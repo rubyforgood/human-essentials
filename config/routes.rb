@@ -175,7 +175,7 @@ Rails.application.routes.draw do
 
     resources :partner_groups, only: [:new, :create, :edit, :update]
 
-    resources :diaper_drives
+    resources :product_drives
     resources :donations do
       # collection do
       #   get :scale

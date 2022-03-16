@@ -5,27 +5,27 @@ $(function() {
   const control_id = "#donation_source";
 
   const product_drive_participant_id = "#donation_product_drive_participant_id";
-  const diaper_drive_id = "#donation_diaper_drive_id"
+  const product_drive_id = "#donation_product_drive_id"
   const manufacturer_id = "#donation_manufacturer_id";
 
   const donation_site_container_id = "div.donation_donation_site";
-  const diaper_drive_container_id = "div.donation_diaper_drive";
+  const product_drive_container_id = "div.donation_product_drive";
   const product_drive_participant_container_id = "div.donation_product_drive_participant";
   const manufacturer_container_id = "div.donation_manufacturer";
 
-  const diaper_drive_text = "<%= Donation::SOURCES[:diaper_drive] %>";
+  const product_drive_text = "<%= Donation::SOURCES[:product_drive] %>";
   const product_drive_participant_text = "<%= Donation::SOURCES[:product_drive_participant] %>";
   const manufacturer_text = "<%= Donation::SOURCES[:manufacturer] %>";
   const donation_site_text = "<%= Donation::SOURCES[:donation_site] %>";
 
 
-  const create_new_diaper_drive_text = "---Create new Product Drive---";
+  const create_new_product_drive_text = "---Create new Product Drive---";
   const create_new_product_drive_participant_text = "---Create new Participant---";
 
   const create_new_manufacturer_text = "---Create new Manufacturer---";
 
   const fields_to_hide = [
-    diaper_drive_container_id,
+    product_drive_container_id,
     product_drive_participant_container_id,
     manufacturer_container_id,
     donation_site_container_id
@@ -33,9 +33,9 @@ $(function() {
 
   hide_fields_with_no_value(fields_to_hide);
 
-  $(diaper_drive_id).append(
+  $(product_drive_id).append(
 
-    `<option value="">${create_new_diaper_drive_text}</option>`
+    `<option value="">${create_new_product_drive_text}</option>`
   );
   $(product_drive_participant_id).append(
     `<option value="">${create_new_product_drive_participant_text}</option>`
@@ -45,12 +45,12 @@ $(function() {
     `<option value="">${create_new_manufacturer_text}</option>`
   );
 
-$(document).on("change", diaper_drive_id, function(evt) {
-    const selection = $(diaper_drive_id + " option")
+$(document).on("change", product_drive_id, function(evt) {
+    const selection = $(product_drive_id + " option")
       .filter(":selected")
       .text();
-    if (selection === create_new_diaper_drive_text) {
-      document.getElementById("new_diaper_drive").click()
+    if (selection === create_new_product_drive_text) {
+      document.getElementById("new_product_drive").click()
     }
   });
 
@@ -79,23 +79,23 @@ $(document).on("change", diaper_drive_id, function(evt) {
       .filter(":selected")
       .text();
 
-    if (selection === diaper_drive_text) {
-      $(diaper_drive_container_id).show();
+    if (selection === product_drive_text) {
+      $(product_drive_container_id).show();
       $(product_drive_participant_container_id).show();
       $(donation_site_container_id).hide();
       $(manufacturer_container_id).hide();
     } else if (selection === manufacturer_text) {
       $(manufacturer_container_id).show();
-      $(diaper_drive_container_id).hide();
+      $(product_drive_container_id).hide();
       $(product_drive_participant_container_id).hide();
       $(donation_site_container_id).hide();
     } else if (selection === donation_site_text) {
-      $(diaper_drive_container_id).hide();
+      $(product_drive_container_id).hide();
       $(product_drive_participant_container_id).hide();
       $(donation_site_container_id).show();
       $(manufacturer_container_id).hide();
     } else {
-      $(diaper_drive_container_id).hide();
+      $(product_drive_container_id).hide();
       $(product_drive_participant_container_id).hide();
       $(donation_site_container_id).hide();
       $(manufacturer_container_id).hide();

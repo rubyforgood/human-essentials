@@ -203,7 +203,7 @@
           </div>
         </div>
 
-        <div class="card" id="diaper_drives">
+        <div class="card" id="product_drives">
           <div class="card-header border-0 bg-gradient-info">
             <h3 class="card-title">Product Drives <small><%= @selected_date_range %></small></h3>
             <div class="card-tools">
@@ -217,14 +217,14 @@
               <div class="box-body text-center float-center">
                 <h3 class="text-center">
                   <span class="total_received_donations">
-                    <%= total_received_from_diaper_drives %>
+                    <%= total_received_from_product_drives %>
                   </span> items
                   received <%= @selected_date_range_label %></h3>
                 <h4 class="text-center"><%= dollar_presentation(total_received_money_donations) %>
                   raised  <%= @selected_date_range_label %></h4>
                 <div class="box-body">
                   <h4>Recent Donations from Product Drives</h4>
-                  <%= render partial: "diaper_drive", collection: @recent_donations.by_source(:diaper_drive), as: :donation %>
+                  <%= render partial: "product_drive", collection: @recent_donations.by_source(:product_drive), as: :donation %>
                 </div>
               </div>
             </div>

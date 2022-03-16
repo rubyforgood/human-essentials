@@ -4,7 +4,7 @@ RSpec.describe " Participant", type: :system, js: true, skip_seed: true do
   end
 
   let(:url_prefix) { "/#{@organization.to_param}" }
-  let(:diaper_drive) { create(:diaper_drive) }
+  let(:product_drive) { create(:product_drive) }
   let(:product_drive_participant) { create(:product_drive_participant) }
 
   context "When a user views the index page" do
@@ -25,8 +25,8 @@ RSpec.describe " Participant", type: :system, js: true, skip_seed: true do
 
     context "When the s have donations associated with them already" do
       before(:each) do
-        create(:donation, :with_items, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:diaper_drive], diaper_drive: diaper_drive, product_drive_participant: product_drive_participant)
-        create(:donation, :with_items, created_at: 1.week.ago, item_quantity: 15, source: Donation::SOURCES[:diaper_drive], diaper_drive: diaper_drive, product_drive_participant: product_drive_participant)
+        create(:donation, :with_items, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: product_drive_participant)
+        create(:donation, :with_items, created_at: 1.week.ago, item_quantity: 15, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: product_drive_participant)
       end
 
       it "shows existing  Participants in the #index with some summary stats" do

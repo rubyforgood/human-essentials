@@ -54,13 +54,13 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
 
         # Donations
         donations = create_list(:donation, 2,
-                                diaper_drive: nil,
+                                product_drive: nil,
                                 issued_at: within_time,
                                 money_raised: 1000,
                                 organization: organization)
 
         donations += create_list(:donation, 2,
-                                 diaper_drive: nil,
+                                 product_drive: nil,
                                  issued_at: outside_time,
                                  money_raised: 1000,
                                  organization: organization)

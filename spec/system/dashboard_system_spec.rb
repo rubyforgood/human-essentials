@@ -363,7 +363,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
       it "has a widget for product drive summary data" do
         org_dashboard_page.visit
 
-        expect(org_dashboard_page).to have_diaper_drives_section
+        expect(org_dashboard_page).to have_product_drives_section
       end
 
       # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
@@ -414,16 +414,16 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             # Create some number of Product Drives
             # Keep local copy of names so examples can create expected values
             # without relying on fetching info from production code
-            @diaper_drives = (1..rand(2..5)).map do
+            @product_drives = (1..rand(2..5)).map do
               name = "Product Drive #{_1}"
-              OpenStruct.new name: name, drive: create(:diaper_drive, name: name)
+              OpenStruct.new name: name, drive: create(:product_drive, name: name)
             end
 
-            def create_next_diaper_drive_donation(donation_date:)
+            def create_next_product_drive_donation(donation_date:)
               quantity_in_donation = @item_quantity.next
-              drive = @diaper_drives.sample
+              drive = @product_drives.sample
 
-              create :diaper_drive_donation, :with_items, diaper_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
+              create :product_drive_donation, :with_items, product_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
 
               OpenStruct.new drive_name: drive.name, quantity: quantity_in_donation
             end
@@ -433,11 +433,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             # days_this_year.sample(num_donations_in_filtered_period).each
             # because Array#sample(n) on an Array with m<n elements returns only m elements
             @donations_in_filtered_date_range = num_donations_in_filtered_period.times.map do
-              create_next_diaper_drive_donation donation_date: filtered_dates.sample
+              create_next_product_drive_donation donation_date: filtered_dates.sample
             end
 
             # create Donations before & after the filtered date range
-            [before_filtered_date_range, after_filtered_date_range].each { create_next_diaper_drive_donation donation_date: _1 }
+            [before_filtered_date_range, after_filtered_date_range].each { create_next_product_drive_donation donation_date: _1 }
           end
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
@@ -450,9 +450,9 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             expected_recent_donation_links_count = [max_recent_donation_links_count, num_donations_in_filtered_period].min
 
             it "shows the correct total and #{expected_recent_donation_links_count} Recent Donation link(s)" do
-              expect(org_dashboard_page.diaper_drive_total_donations).to eq @donations_in_filtered_date_range.map(&:quantity).sum
+              expect(org_dashboard_page.product_drive_total_donations).to eq @donations_in_filtered_date_range.map(&:quantity).sum
 
-              recent_donation_links = org_dashboard_page.recent_diaper_drive_donation_links
+              recent_donation_links = org_dashboard_page.recent_product_drive_donation_links
 
               expect(recent_donation_links.count).to eq expected_recent_donation_links_count
 
@@ -684,7 +684,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               OpenStruct.new name: name, partner: create(:partner, name: name, organization: @organization)
             end
 
-            def create_next_diaper_drive_distribution(distribution_date:)
+            def create_next_product_drive_distribution(distribution_date:)
               quantity_in_distribution = @item_quantity.next
               partner = @partners.sample
 
@@ -698,11 +698,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             # days_this_year.sample(num_distributions_in_filtered_period).each
             # because Array#sample(n) on an Array with m<n elements returns only m elements
             @distributions_in_filtered_date_range = num_distributions_in_filtered_period.times.map do
-              create_next_diaper_drive_distribution distribution_date: filtered_dates.sample
+              create_next_product_drive_distribution distribution_date: filtered_dates.sample
             end
 
             # create Distributions before & after the filtered date range
-            [before_filtered_date_range, after_filtered_date_range].each { create_next_diaper_drive_distribution distribution_date: _1 }
+            [before_filtered_date_range, after_filtered_date_range].each { create_next_product_drive_distribution distribution_date: _1 }
           end
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do

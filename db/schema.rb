@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_15_172640) do
+ActiveRecord::Schema.define(version: 2022_03_16_134415) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,17 +152,6 @@ ActiveRecord::Schema.define(version: 2022_03_15_172640) do
     t.index ["user_id"], name: "index_deprecated_feedback_messages_on_user_id"
   end
 
-  create_table "diaper_drives", force: :cascade do |t|
-    t.string "name"
-    t.date "start_date"
-    t.date "end_date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "organization_id"
-    t.boolean "virtual", default: false, null: false
-    t.index ["organization_id"], name: "index_diaper_drives_on_organization_id"
-  end
-
   create_table "distributions", id: :serial, force: :cascade do |t|
     t.text "comment"
     t.datetime "created_at", null: false
@@ -204,11 +193,11 @@ ActiveRecord::Schema.define(version: 2022_03_15_172640) do
     t.datetime "issued_at"
     t.integer "money_raised"
     t.bigint "manufacturer_id"
-    t.bigint "diaper_drive_id"
-    t.index ["diaper_drive_id"], name: "index_donations_on_diaper_drive_id"
+    t.bigint "product_drive_id"
     t.index ["donation_site_id"], name: "index_donations_on_donation_site_id"
     t.index ["manufacturer_id"], name: "index_donations_on_manufacturer_id"
     t.index ["organization_id"], name: "index_donations_on_organization_id"
+    t.index ["product_drive_id"], name: "index_donations_on_product_drive_id"
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
 
@@ -385,6 +374,17 @@ ActiveRecord::Schema.define(version: 2022_03_15_172640) do
     t.index ["latitude", "longitude"], name: "index_product_drive_participants_on_latitude_and_longitude"
   end
 
+  create_table "product_drives", force: :cascade do |t|
+    t.string "name"
+    t.date "start_date"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.boolean "virtual", default: false, null: false
+    t.index ["organization_id"], name: "index_product_drives_on_organization_id"
+  end
+
   create_table "purchases", force: :cascade do |t|
     t.string "purchased_from"
     t.text "comment"
@@ -522,11 +522,10 @@ ActiveRecord::Schema.define(version: 2022_03_15_172640) do
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
   add_foreign_key "annual_reports", "organizations"
-  add_foreign_key "diaper_drives", "organizations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
-  add_foreign_key "donations", "diaper_drives"
   add_foreign_key "donations", "manufacturers"
+  add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
@@ -538,6 +537,7 @@ ActiveRecord::Schema.define(version: 2022_03_15_172640) do
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
+  add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"

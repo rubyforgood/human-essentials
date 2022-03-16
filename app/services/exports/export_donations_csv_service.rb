@@ -7,7 +7,7 @@ module Exports
       @donations = Donation.includes(
         :storage_location,
         :donation_site,
-        :diaper_drive,
+        :product_drive,
         :product_drive_participant,
         line_items: [:item]
       ).where(

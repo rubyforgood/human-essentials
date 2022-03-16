@@ -2,19 +2,19 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
-#  comment                     :text
-#  issued_at                   :datetime
-#  money_raised                :integer
-#  source                      :string
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
-#  diaper_drive_id             :bigint
-#  diaper_drive_participant_id :integer
-#  donation_site_id            :integer
-#  manufacturer_id             :bigint
-#  organization_id             :integer
-#  storage_location_id         :integer
+#  id                           :integer          not null, primary key
+#  comment                      :text
+#  issued_at                    :datetime
+#  money_raised                 :integer
+#  source                       :string
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  donation_site_id             :integer
+#  manufacturer_id              :bigint
+#  organization_id              :integer
+#  product_drive_id             :bigint
+#  product_drive_participant_id :integer
+#  storage_location_id          :integer
 #
 
 RSpec.describe Donation, type: :model, needs_users: true do
@@ -31,13 +31,13 @@ RSpec.describe Donation, type: :model, needs_users: true do
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", donation_site: nil)).to be_valid
     end
     it "requires a product drive participant if the source is 'Product Drive'" do
-      expect(build_stubbed(:diaper_drive_donation, source: "Product Drive Participant", product_drive_participant_id: nil)).not_to be_valid
+      expect(build_stubbed(:product_drive_donation, source: "Product Drive Participant", product_drive_participant_id: nil)).not_to be_valid
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", product_drive_participant_id: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", product_drive_participant_id: nil)).to be_valid
     end
     it "requires a manufacturer if the source is 'Manufacturer'" do
       expect(build_stubbed(:manufacturer_donation, source: "Manufacturer", manufacturer: nil)).not_to be_valid
-      expect(build_stubbed(:diaper_drive_donation, source: "Product Drive", manufacturer: nil)).to be_valid
+      expect(build_stubbed(:product_drive_donation, source: "Product Drive", manufacturer: nil)).to be_valid
       expect(build(:donation, source: "Misc. Donation", manufacturer: nil)).to be_valid
     end
     it "requires a source from the list of available sources" do
@@ -96,12 +96,12 @@ RSpec.describe Donation, type: :model, needs_users: true do
 
       before(:each) do
         create(:donation, source: Donation::SOURCES[:misc])
-        create(:diaper_drive_donation)
+        create(:product_drive_donation)
       end
 
       context "when source is not a symbol" do
         context "when source comes from the SOURCES hash" do
-          let(:source) { Donation::SOURCES[:diaper_drive] }
+          let(:source) { Donation::SOURCES[:product_drive] }
 
           it "returns all donations with the provided source" do
             is_expected.to eq(1)
@@ -119,7 +119,7 @@ RSpec.describe Donation, type: :model, needs_users: true do
 
       context "when source is a symbol" do
         context "when source is valid" do
-          let(:source) { :diaper_drive }
+          let(:source) { :product_drive }
 
           it "allows a symbol as an argument, referencing the SOURCES hash" do
             is_expected.to eq(1)
@@ -209,9 +209,9 @@ RSpec.describe Donation, type: :model, needs_users: true do
 
     describe "source_view" do
       context "from a drive" do
-        let!(:donation) { create(:diaper_drive_donation, product_drive_participant: product_drive_participant, diaper_drive: diaper_drive) }
+        let!(:donation) { create(:product_drive_donation, product_drive_participant: product_drive_participant, product_drive: product_drive) }
 
-        let(:diaper_drive) { create(:diaper_drive, name: "Test Drive") }
+        let(:product_drive) { create(:product_drive, name: "Test Drive") }
 
         context "participant known" do
           let(:product_drive_participant) { create(:product_drive_participant, contact_name: contact_name) }
@@ -254,7 +254,7 @@ RSpec.describe Donation, type: :model, needs_users: true do
 
   describe "SOURCES" do
     it "is a hash that is referenceable by key to avoid 'magic strings'" do
-      expect(Donation::SOURCES).to have_key(:diaper_drive)
+      expect(Donation::SOURCES).to have_key(:product_drive)
       expect(Donation::SOURCES).to have_key(:donation_site)
       expect(Donation::SOURCES).to have_key(:misc)
     end

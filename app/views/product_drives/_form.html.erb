@@ -1,4 +1,4 @@
-<%= simple_form_for @diaper_drive, remote: request.xhr?, html: {class: 'form-horizontal'} do |f| %>
+<%= simple_form_for @product_drive, remote: request.xhr?, html: {class: 'form-horizontal'} do |f| %>
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -33,7 +33,7 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-              <%= f.button :submit, :class => 'diaper-drive-submit btn btn-primary', :id => 'diaper_drive_submit' %>
+              <%= f.button :submit, :class => 'diaper-drive-submit btn btn-primary', :id => 'product_drive_submit' %>
             </div>
           </div>
           <!-- /.card -->
