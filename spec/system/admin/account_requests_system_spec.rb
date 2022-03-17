@@ -3,7 +3,7 @@ RSpec.describe "Account Requests Admin", type: :system, skip_seed: true do
     let!(:request1) { create(:account_request, confirmed_at: Time.zone.today, status: 'admin_approved') }
     let!(:request2) {
       create(:account_request, confirmed_at: Time.zone.today - 1.day,
-                             status: 'rejected', rejection_reason: 'Because I said so')
+        status: 'rejected', rejection_reason: 'Because I said so')
     }
     let!(:request3) { create(:account_request, confirmed_at: Time.zone.today - 2.days, status: 'admin_approved') }
     let!(:request4) { create(:account_request, created_at: Time.zone.today, status: 'user_confirmed') }

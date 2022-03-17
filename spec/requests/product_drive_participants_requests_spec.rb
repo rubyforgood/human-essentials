@@ -119,8 +119,8 @@ RSpec.describe "ProductDriveParticipants", type: :request, skip_seed: true do
 
     describe "POST #create" do
       it "successful create" do
-        post product_drive_participants_path(default_params.merge(product_drive_participant: { business_name: "businesstest",
-                                                                                             contact_name: "test", email: "123@mail.ru" }))
+        post product_drive_participants_path(default_params.merge(product_drive_participant:
+          { business_name: "businesstest", contact_name: "test", email: "123@mail.ru" }))
         expect(response).to redirect_to(product_drive_participants_path)
         expect(response).to have_notice(/added!/i)
       end

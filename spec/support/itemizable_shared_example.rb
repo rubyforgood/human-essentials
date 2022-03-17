@@ -46,10 +46,8 @@ shared_examples_for "itemizable" do
 
       subject do
         s = create(model_f)
-        s.line_items << create(:line_item, model_f.to_sym, item: item1,
-                                                           quantity: 10)
-        s.line_items << create(:line_item, model_f.to_sym, item: item2,
-                                                           quantity: 20)
+        s.line_items << create(:line_item, model_f.to_sym, item: item1, quantity: 10)
+        s.line_items << create(:line_item, model_f.to_sym, item: item2, quantity: 20)
         s
       end
 

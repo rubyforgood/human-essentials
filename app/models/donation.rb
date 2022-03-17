@@ -59,16 +59,12 @@ class Donation < ApplicationRecord
   before_create :combine_duplicates
 
   validates :donation_site, presence:
-    { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
-                            if: :from_donation_site?
+    { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" }, if: :from_donation_site?
   validates :product_drive, presence:
-    { message: "must be specified since you chose '#{SOURCES[:product_drive]}'" },
-                           if: :from_product_drive?
+    { message: "must be specified since you chose '#{SOURCES[:product_drive]}'" }, if: :from_product_drive?
   validates :manufacturer, presence:
-    { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" },
-                           if: :from_manufacturer?
-  validates :source, presence: true, inclusion: { in: SOURCES.values,
-                                                  message: "Must be a valid source." }
+    { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" }, if: :from_manufacturer?
+  validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
 
   include IssuedAt
 
