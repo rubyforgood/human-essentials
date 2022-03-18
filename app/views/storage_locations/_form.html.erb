@@ -28,7 +28,7 @@
                 <%= f.input :warehouse_type, label: "Warehouse Type", wrapper: :input_group, collection: StorageLocation::WAREHOUSE_TYPES %>
 
                 <%= f.input :time_zone, label: "Time Zone", wrapper: :input_group,
-                            collection: ActiveSupport::TimeZone.all.sort_by(&:name).to_h { |z| [z.name, z.tzinfo.name]} %>
+                            collection: CalendarService.time_zones %>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">

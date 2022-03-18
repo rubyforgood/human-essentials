@@ -115,7 +115,6 @@ Rails.application.routes.draw do
       get :print, on: :member
       collection do
         get :schedule
-        get :calendar
         get :pickup_day
       end
       patch :picked_up, on: :member
@@ -209,6 +208,7 @@ Rails.application.routes.draw do
   end
 
   resources :attachments, only: %i(destroy)
+  get "distributions/calendar", to: "distributions#calendar"
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get "help", to: "help#show"
