@@ -21,7 +21,6 @@
     "all-contributors-cli": "^6.20.0",
     "autoprefixer": "^10.2.5",
     "postcss": "^8.2.15",
-    "postcss-cssnext": "^3.1.0",
     "webpack-dev-server": "^3.11.2"
   }
 }
