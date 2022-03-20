@@ -23,7 +23,7 @@ RSpec.describe DistributionMailer, type: :mailer do
       it "renders the body with 'picked up' specified" do
         distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :pick_up)
         mail = DistributionMailer.partner_mailer(@organization, distribution, 'test subject', distribution_changes)
-        expect(mail.body.encoded).to match(/picked u.*\np/)
+        expect(mail.body.encoded).to match("picked up")
       end
     end
 
