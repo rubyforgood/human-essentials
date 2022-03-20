@@ -22,11 +22,11 @@
 
     <style type="text/css">
       .col, div.col { width:100% !important; max-width:100% !important; }
-      .hidden-outlook, .hidden-outlook table { 
+      .hidden-outlook, .hidden-outlook table {
         display:none !important;
         mso-hide:all !important;
       }
-    
+
       * {
         font-family: sans-serif !important;
         -ms-text-size-adjust: 100%;
@@ -81,12 +81,43 @@
     <% if content_for?(:head) %>
       <%= yield(:body) %>
     <% else %>
+    <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background: #ffffff;border-collapse: collapse;background-color: #ffffff;">
+        <tbody>
+            <tr><!--[if mso]>
+ <td></td> <![endif]--><td class="body-content" style="font-size: 16px;color: #212529;font-weight: normal;line-height: 1.45;text-align: left;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;font-family: 'Source Sans Pro', sans-serif;padding-right: -3px;">
+                    <table class="ms-t1 container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse;width: 100%;max-width: 680px;margin: 0 auto;">
+                        <tbody>
+                            <tr>
+                                <td class="container-content" style="padding: 0px;vertical-align: top;max-width: 680px;">
+                                    <h1 style="font-weight: bold;margin: 0 0 10px 0;mso-line-height-rule: exactly;font-family: 'Work Sans', sans-serif;font-size: 13px;"></h1>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="ms-t1 box" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;width: 100%;">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;width: 100%;" class="ms-t1">
+                                        <tbody>
+                                            <tr>
+                                                <td class="box-content" align="left" height="237" style="height: 237px;padding: 8px;padding-left: 76PX;">
       <%= yield %>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                  <h1 class="text-left" style="font-weight: bold;margin: 0 0 10px 0;mso-line-height-rule: exactly;font-size: 11px;margin-top: 24px;text-align: left;">Made with ❤️ by&nbsp; <a href="https://rubyforgood.org/" style="text-decoration: none;color: #0a6fe4;">Ruby for Good</a></h1>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </td>
+            </tr>
+        </tbody>
+    </table>
     <% end %>
 
     <hr />
-    <footer>
-      <p class="text-left" style="font-weight: bold;margin: 0 0 10px 0;mso-line-height-rule: exactly;font-size: 11px;margin-top: 24px;text-align: left;">Made with ❤️ by <a href="https://rubyforgood.org/" style="text-decoration: none;color: #0a6fe4;">Ruby&nbsp;for&nbsp;Good</a></p>
-    </footer>
   </body>
 </html>
