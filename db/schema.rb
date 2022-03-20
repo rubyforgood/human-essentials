@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_26_131330) do
+ActiveRecord::Schema.define(version: 2022_02_26_173715) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,9 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
     t.text "request_details", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "rejection_reason"
+    t.string "status", default: "started", null: false
+    t.index ["status"], name: "index_account_requests_on_status"
   end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
@@ -78,6 +81,15 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
     t.index ["user_id"], name: "index_adjustments_on_user_id"
   end
 
+  create_table "annual_reports", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.integer "year"
+    t.json "all_reports"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["organization_id"], name: "index_annual_reports_on_organization_id"
+  end
+
   create_table "audits", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "organization_id"
@@ -113,6 +125,21 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
     t.string "size"
     t.integer "item_count"
     t.string "partner_key"
+  end
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at", precision: 6
+    t.datetime "updated_at", precision: 6
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
   create_table "deprecated_feedback_messages", force: :cascade do |t|
@@ -295,6 +322,12 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
     t.index ["organization_id"], name: "index_manufacturers_on_organization_id"
   end
 
+  create_table "ndbn_members", primary_key: "ndbn_member_id", force: :cascade do |t|
+    t.string "account_name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "organizations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "short_name"
@@ -315,6 +348,9 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
     t.integer "default_storage_location"
     t.text "partner_form_fields", default: [], array: true
     t.integer "account_request_id"
+    t.boolean "repackage_essentials", default: false, null: false
+    t.boolean "distribute_monthly", default: false, null: false
+    t.bigint "ndbn_member_id"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -324,8 +360,14 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "send_reminders", default: false, null: false
+    t.integer "reminder_day_of_month"
+    t.integer "deadline_day_of_month"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
+    t.check_constraint "deadline_day_of_month <= 28", name: "deadline_day_of_month_check"
+    t.check_constraint "deadline_day_of_month > reminder_day_of_month", name: "reminder_day_of_month_and_deadline_day_of_month_check"
+    t.check_constraint "reminder_day_of_month <= 14", name: "reminder_day_of_month_check"
   end
 
   create_table "partners", id: :serial, force: :cascade do |t|
@@ -353,8 +395,19 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "vendor_id"
+    t.integer "amount_spent_on_diapers_cents", default: 0, null: false
+    t.integer "amount_spent_on_adult_incontinence_cents", default: 0, null: false
+    t.integer "amount_spent_on_other_cents", default: 0, null: false
     t.index ["organization_id"], name: "index_purchases_on_organization_id"
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.string "title", null: false
+    t.boolean "for_partners", default: true, null: false
+    t.boolean "for_banks", default: true, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "requests", force: :cascade do |t|
@@ -427,6 +480,8 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
     t.boolean "super_admin", default: false
     t.datetime "last_request_at"
     t.datetime "discarded_at"
+    t.string "provider"
+    t.string "uid"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
@@ -466,6 +521,7 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
+  add_foreign_key "annual_reports", "organizations"
   add_foreign_key "diaper_drives", "organizations"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
@@ -480,6 +536,7 @@ ActiveRecord::Schema.define(version: 2021_09_26_131330) do
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
+  add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"

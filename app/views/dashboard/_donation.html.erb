@@ -1,7 +1,7 @@
 <br>
-<div class="pull-left">
+<div class="pull-left donation">
   <%= link_to donation do %>
-    <%= donation.line_items.total %> items from <%= donation.source %>
+    <%= number_with_delimiter donation.line_items.total %> items from <%= donation.source %>
   <% end %>
 </div>
 <div class="pull-right">

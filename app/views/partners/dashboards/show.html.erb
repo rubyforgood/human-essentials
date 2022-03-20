@@ -1,44 +1,25 @@
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <% content_for :title, "Families - #{current_partner_user.name}" %>
-        <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
-          Family Details
-          <small>for <%= current_partner_user.name %></small>
-        </h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="<%= '' %>"><i class="fa fa-home fa-lg"></i></a></li>
-          <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
+<header class="container mx-auto mb-8">
+  <h1 class="block font-bold mb-1">Dashboard - <%= @partner.name %></h1>
+  <h3><button class="bg-yellow-400 mx-auto p-2 font-bold rounded-2xl">
+  <%= @partner.partner_status.titleize %> Partner</button></h3>
+</header>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="row">
-          <div class="col">
-            <%= render partial: "partner_details" %>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <%= render partial: '/partners/requests/request_options_card' if @partner.verified? %>
-            <%= render partial: "/partners/requests/history" %>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <%= render partial: "family_details" %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<main>
+  <%= render partial: '/partners/requests/request_options_card' if @partner.verified? %>
+
+  <section class="container mx-auto my-8">
+    <%= render partial: "requests_in_progress" %>
+  </section>
+
+  <section class="container mx-auto my-8">
+    <%= render partial: "upcoming_distributions" %>
+  </section>
+
+  <section class="container mx-auto my-8">
+    <%= render partial: "distributions" %>
+  </section>
+
+  <section class="container mx-auto my-8">
+    <%= render partial: "family_details" %>
+  </section>
+</main>

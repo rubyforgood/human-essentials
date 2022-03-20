@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Partners::FamilyRequestCreateService do
   describe '#call' do
-    subject { described_class.new(args).call }
+    subject { described_class.new(**args).call }
     let(:args) do
       {
         partner_user_id: partner_user.id,

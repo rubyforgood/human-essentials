@@ -79,9 +79,6 @@
   opacity: 0.5;
 }
 
-table .numeric {
-  text-align: right;
-}
 
 table .date {
   text-align: center;
@@ -152,4 +149,10 @@ tr.negative {
   background-color: cornsilk;
   text-align: center;
   padding: 0.5rem 0 0.5rem;
+}
+
+body a {
+  color:#007bff;
+  text-decoration:none;
+  background-color:transparent
 }

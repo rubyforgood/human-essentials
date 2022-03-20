@@ -3,14 +3,46 @@
     <div class="p-3">
       <div class="mb-10">
         <h1 class='text-3xl text-center'>Essentials Bank Account Request Form</h1>
+      </div>
+
+      <div class="form-check">
+        <%= radio_button_tag(:account, :bank, false, class: 'form-check-input account_type') %>
+        <%= label_tag(:account, "I am an Essentials Bank. I do NOT distribution diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: 'form-check-label') %>
+      </div>
+      <div class="form-check">
+        <%= radio_button_tag(:account, :partner, false, class: 'form-check-input account_type') %>
+        <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
+      </div>
+
+      <script>
+          $('.account_type').change(function() {
+              if (this.value === 'bank') {
+                  $('#create_bank').show()
+                  $('#partner_info').hide()
+              } else {
+                  $('#create_bank').hide()
+                  $('#partner_info').show()
+              }
+          })
+
+          $(document).ready(function() {
+              $('#create_bank').hide()
+              $('#partner_info').hide()
+          })
+      </script>
+
+      <div class='card-text' id='partner_info'>
+        <p class='p-2'>Are you a current partner to a diaper and/or period supply banks? If so please go to the <a href='https://www.humanessentials.app/partner_users/sign_in'>partner app</a> to login.</p>
+        <p class='p-2'>If you are wishing to receive diapers/period supplies and partner to a local diaper/period supply bank please contact your local bank. They are the only ones able create your account.</p>
+      </div>
+
+      <div class='card-text' id='create_bank'>
         <p class='p-2 bg-yellow-200'>
           Fill out the details below about your bank to request a free account to use Human Essentials for your organization's essentials bank.
           <br><br>
-          <span class='text-bold'>Do you <span class='text-italic'>partner</span> with diaper and/or period supply banks? If so please go to the <%= link_to 'partner app', new_partner_user_session_path %> to login.</span
+          <span class='text-bold'>Do you <span class='text-italic'>partner</span> with diaper and/or period supply banks? If so please go to the <%= link_to 'partner app', new_partner_user_session_path %> to login.</span>
         </p>
-      </div>
 
-      <div class='card-text'>
         <%= simple_form_for(@account_request) do |f| %>
           <%= f.error_notification %>
           <%= render partial: "shared/flash" %>
@@ -49,7 +81,7 @@
     </div>
   </div>
 <% else %>
-<div class="card" style='width: 30rem'>
+  <div class="card" style='width: 30rem'>
     <div class="card-body">
       <div class="card-title mb-10">
         <h3>Request an account</h3>
@@ -57,7 +89,7 @@
 
       <div class='card-text'>
         <p> Hey there, it looks like you're trying to request an account, but you're not currently on the live version of Diaper Base </p>
-        <p> To request an account, <%= link_to 'click here', 'https://diaper.app/account_requests/new' %> to head on over to the Diaper Base website</p>
+        <p> To request an account, <%= link_to 'click here', 'https://humanessentials.app/account_requests/new' %> to head on over to the Human Essentials website</p>
       </div>
     </div>
   </div>

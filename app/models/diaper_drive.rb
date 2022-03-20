@@ -20,7 +20,9 @@ class DiaperDrive < ApplicationRecord
 
   scope :within_date_range, ->(search_range) {
     search_dates = search_date_range(search_range)
-    where('end_date >= ? AND start_date <= ?', search_dates[:start_date], search_dates[:end_date])
+    where('(end_date >= ? OR end_date IS NULL) AND start_date <= ?',
+          search_dates[:start_date],
+          search_dates[:end_date])
   }
 
   has_many :donations, dependent: :nullify
@@ -53,7 +55,7 @@ class DiaperDrive < ApplicationRecord
   end
 
   def donation_source_view
-    "#{name} (diaper drive)"
+    "#{name} (product drive)"
   end
 
   def self.search_date_range(dates)

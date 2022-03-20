@@ -1,4 +1,4 @@
-RSpec.describe "Adjustment management", type: :system, js: true do
+RSpec.describe "Adjustment management", type: :system, js: true, skip_seed: true do
   let!(:url_prefix) { "/#{@organization.to_param}" }
   let!(:storage_location) { create(:storage_location, :with_items, organization: @organization) }
   let(:add_quantity) { 10 }
@@ -11,64 +11,86 @@ RSpec.describe "Adjustment management", type: :system, js: true do
   end
 
   context "With a new adjustment" do
-    before do
-      visit subject
-      click_on "New Adjustment"
-      select storage_location.name, from: "From storage location"
-      fill_in "Comment", with: "something"
-      select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
-    end
+    context "with a storage location that is bare", js: true do
+      let!(:bare_storage_location) { create(:storage_location, name: "We Got Nothin", organization: @organization) }
 
-    it "can add an inventory adjustment at a storage location", js: true do
-      fill_in "adjustment_line_items_attributes_0_quantity", with: add_quantity.to_s
+      before do
+        visit subject
+        click_on "New Adjustment"
+        select bare_storage_location.name, from: "From storage location"
+      end
 
-      expect do
-        click_on "Save"
-      end.to change { storage_location.size }.by(add_quantity)
-      expect(page).to have_content(/Adjustment was successful/i)
-    end
+      it "allows you to choose items that do not yet exist" do
+        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+        fill_in "adjustment_line_items_attributes_0_quantity", with: add_quantity.to_s
 
-    it "can subtract an inventory adjustment at a storage location", js: true do
-      fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
-
-      expect do
-        click_on "Save"
-      end.to change { storage_location.size }.by(sub_quantity)
-      expect(page).to have_content(/Adjustment was successful/i)
-    end
-
-    it "Does not include inactive items in the line item fields" do
-      visit url_prefix + "/adjustments/new"
-
-      item = Item.alphabetized.first
-
-      select storage_location.name, from: "From storage location"
-      expect(page).to have_content(item.name)
-      select item.name, from: "adjustment_line_items_attributes_0_item_id"
-
-      item.update(active: false)
-
-      page.refresh
-      within "#new_adjustment" do
-        select storage_location.name, from: "From storage location"
-        expect(page).to have_no_content(item.name)
+        expect do
+          click_on "Save"
+        end.to change { bare_storage_location.size }.by(add_quantity)
+        expect(page).to have_content(/Adjustment was successful/i)
       end
     end
 
-    it "politely informs the user that they're adjusting way too hard", js: true do
-      sub_quantity = -9001
-      storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: @organization)
-      visit url_prefix + "/adjustments"
-      click_on "New Adjustment"
-      select storage_location.name, from: "From storage location"
-      fill_in "Comment", with: "something"
-      select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
-      fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
+    context "with a storage location that has inventory" do
+      before do
+        visit subject
+        click_on "New Adjustment"
+        select storage_location.name, from: "From storage location"
+        fill_in "Comment", with: "something"
+        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+      end
 
-      expect do
-        click_button "Save"
-      end.not_to change { storage_location.size }
-      expect(page).to have_content("items exceed the available inventory")
+      it "can add an inventory adjustment at a storage location", js: true do
+        fill_in "adjustment_line_items_attributes_0_quantity", with: add_quantity.to_s
+
+        expect do
+          click_on "Save"
+        end.to change { storage_location.size }.by(add_quantity)
+        expect(page).to have_content(/Adjustment was successful/i)
+      end
+
+      it "can subtract an inventory adjustment at a storage location", js: true do
+        fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
+
+        expect do
+          click_on "Save"
+        end.to change { storage_location.size }.by(sub_quantity)
+        expect(page).to have_content(/Adjustment was successful/i)
+      end
+
+      it "Does not include inactive items in the line item fields" do
+        visit url_prefix + "/adjustments/new"
+
+        item = Item.alphabetized.first
+
+        select storage_location.name, from: "From storage location"
+        expect(page).to have_content(item.name)
+        select item.name, from: "adjustment_line_items_attributes_0_item_id"
+
+        item.update(active: false)
+
+        page.refresh
+        within "#new_adjustment" do
+          select storage_location.name, from: "From storage location"
+          expect(page).to have_no_content(item.name)
+        end
+      end
+
+      it "politely informs the user that they're adjusting way too hard", js: true do
+        sub_quantity = -9001
+        storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: @organization)
+        visit url_prefix + "/adjustments"
+        click_on "New Adjustment"
+        select storage_location.name, from: "From storage location"
+        fill_in "Comment", with: "something"
+        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+        fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
+
+        expect do
+          click_button "Save"
+        end.not_to change { storage_location.size }
+        expect(page).to have_content("items exceed the available inventory")
+      end
     end
   end
 

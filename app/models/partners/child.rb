@@ -26,6 +26,8 @@ module Partners
     has_many :child_item_requests, dependent: :destroy
 
     include Filterable
+    include Exportable
+
     scope :from_family, ->(family_id) {
       where(family_id: family_id)
     }
@@ -48,12 +50,8 @@ module Partners
       where("concat_ws(' ', families.guardian_first_name, families.guardian_last_name) ILIKE ?", "%#{query}%")
     }
 
-    CSV_HEADERS = %w[
-      id first_name last_name date_of_birth gender child_lives_with race agency_child_id
-      health_insurance comments created_at updated_at family_id item_needed_diaperid active archived
-    ].freeze
-    CAN_LIVE_WITH = %w[Mother Father Grandparent Foster\ Parent Other\ Parent/Relative].freeze
-    RACES = %w[African\ American Caucasian Hispanic Asian American\ Indian Pacific\ Islander Multi-racial Other].freeze
+    CAN_LIVE_WITH = ['Mother', 'Father', 'Grandparent', 'Foster Parent', 'Other Parent/Relative'].freeze
+    RACES = ['African American', 'Caucasian', 'Hispanic', 'Asian', 'American Indian', 'Pacific Islander', 'Multi-racial', 'Other'].freeze
     CHILD_ITEMS = ["Bed Pads (Cloth)",
                    "Bed Pads (Disposable)",
                    "Bibs (Adult & Child)",
@@ -86,11 +84,14 @@ module Partners
       "#{first_name} #{last_name}"
     end
 
-    def self.csv_headers
-      CSV_HEADERS
+    def self.csv_export_headers
+      %w[
+        id first_name last_name date_of_birth gender child_lives_with race agency_child_id
+        health_insurance comments created_at updated_at family_id item_needed_diaperid active archived
+      ].freeze
     end
 
-    def to_csv
+    def csv_export_attributes
       [
         id,
         first_name,

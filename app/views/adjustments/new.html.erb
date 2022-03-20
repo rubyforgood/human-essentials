@@ -45,11 +45,11 @@
                   </p>
                   <%= simple_form_for @adjustment, html: { class: "storage-location-required", id: 'new_adjustment'} do |f| %>
 
-                    <%= render partial: "storage_locations/source", object: f %>
+                    <%= render partial: "storage_locations/source", object: f, locals: { include_omitted_items: true } %>
 
                     <%= f.input :comment %>
 
-                    <fieldset style="margin-bottom: 2rem;" class='w-50'>
+                    <fieldset style="margin-bottom: 2rem;" class='w-70'>
                       <legend>Items in this adjustment</legend>
                       <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
                         <%= f.simple_fields_for :line_items do |item| %>

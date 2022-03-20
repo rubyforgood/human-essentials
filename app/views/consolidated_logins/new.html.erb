@@ -1,0 +1,25 @@
+<%= simple_form_for(resource, as: resource_name, url: logins_path) do |f| %>
+  <div class="login-box">
+    <div class="card">
+      <div class="card-body login-card-body">
+        <h3 class="text-center">Please Enter Your Login Email</h3>
+        <div class="form-inputs">
+          <%= f.input :email, label: 'Login Email:', autofocus: true %>
+        </div>
+        <% if resource.organization %>
+          <div class="form-inputs">
+            <%= f.input :organization, label: 'Account to Login With:', as: :radio_buttons, collection: resource.organizations, include_blank: false, label_html: { class:  "btn btn-primary btn-block" } %>
+          </div>
+        <% end %>
+        <div class="col-12 text-center">
+          <%= f.button :submit, "Continue", class: "btn btn-primary btn-block" %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-12 text-center">
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

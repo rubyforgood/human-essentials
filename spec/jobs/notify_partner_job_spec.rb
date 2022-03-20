@@ -1,4 +1,4 @@
-RSpec.describe NotifyPartnerJob, job: true do
+RSpec.describe NotifyPartnerJob, job: true, skip_seed: true do
   describe "#perform" do
     let(:request) { create(:request) }
     let(:mailer) { double(:mailer) }
@@ -11,7 +11,7 @@ RSpec.describe NotifyPartnerJob, job: true do
     it "avoids exception when request doesn't exist" do
       expect do
         NotifyPartnerJob.perform_now(123)
-      end.not_to raise_error(StandardError)
+      end.not_to raise_error
     end
 
     it "is expected to call RequestsConfirmationMailer" do

@@ -20,11 +20,13 @@
 #  last_sign_in_ip        :inet
 #  name                   :string           default("CHANGEME"), not null
 #  organization_admin     :boolean
+#  provider               :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  sign_in_count          :integer          default(0), not null
 #  super_admin            :boolean          default(FALSE)
+#  uid                    :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
@@ -34,12 +36,12 @@
 class User < ApplicationRecord
   include Discard::Model
   belongs_to :organization, optional: proc { |u| u.super_admin? }
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
   # :invitable is from the devise_invitable gem
+  # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :timeoutable
+         :timeoutable, :password_has_required_content
+  devise :omniauthable, omniauth_providers: [:google_oauth2]
 
   validates :name, :email, presence: true
 
@@ -67,5 +69,10 @@ class User < ApplicationRecord
     return true if invitation_status == "invited" && invitation_sent_at <= 7.days.ago
 
     false
+  end
+
+  def self.from_omniauth(access_token)
+    data = access_token.info
+    User.find_by(email: data["email"])
   end
 end

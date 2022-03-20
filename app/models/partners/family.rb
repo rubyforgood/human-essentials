@@ -32,6 +32,7 @@ module Partners
     validates :guardian_first_name, :guardian_last_name, :guardian_zip_code, presence: true
 
     include Filterable
+    include Exportable
 
     filterrific(
       available_filters: [
@@ -43,22 +44,11 @@ module Partners
     scope :search_guardian_names, ->(query) { where('guardian_first_name ilike ? OR guardian_last_name ilike ?', "%#{query}%", "%#{query}%") }
     scope :search_agency_guardians, ->(query) { where('agency_guardian_id ilike ?', "%#{query}%") }
 
-    INCOME_TYPES = %w[SSI SNAP/FOOD\ Stamps TANF WIC Housing/subsidized Housing/unsubsidized N/A].freeze
-    INSURANCE_TYPES = %w[Private\ insurance Medicaid Uninsured].freeze
+    INCOME_TYPES = ['SSI', 'SNAP/FOOD Stamps', 'TANF', 'WIC', 'Housing/subsidized', 'Housing/unsubsidized', 'N/A'].freeze
+    INSURANCE_TYPES = ['Private insurance', 'Medicaid', 'Uninsured'].freeze
     EMPLOYMENT_TYPES = %w[Full-time Part-time N/A].freeze
 
     after_create :create_authorized
-
-    CSV_HEADERS = %w[
-      id guardian_first_name guardian_last_name guardian_zip_code guardian_country
-      guardian_phone agency_guardian_id home_adult_count home_child_count home_young_child_count
-      sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
-      guardian_health_insurance comments created_at updated_at partner_id military
-    ].freeze
-
-    def self.csv_headers
-      CSV_HEADERS
-    end
 
     def create_authorized
       authorized_family_members.create!(
@@ -75,7 +65,16 @@ module Partners
       home_child_count + home_young_child_count
     end
 
-    def to_csv
+    def self.csv_export_headers
+      %w[
+        id guardian_first_name guardian_last_name guardian_zip_code guardian_country
+        guardian_phone agency_guardian_id home_adult_count home_child_count home_young_child_count
+        sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
+        guardian_health_insurance comments created_at updated_at partner_id military
+      ].freeze
+    end
+
+    def csv_export_attributes
       [
         id,
         guardian_first_name,

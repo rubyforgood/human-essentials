@@ -8,7 +8,9 @@
 #  name                 :string           not null
 #  organization_name    :string           not null
 #  organization_website :string
+#  rejection_reason     :string
 #  request_details      :text             not null
+#  status               :string           default("started"), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #
@@ -22,6 +24,11 @@ class AccountRequest < ApplicationRecord
   validate :email_not_already_used_by_user
 
   has_one :organization, dependent: :nullify
+
+  enum status: %w[started user_confirmed admin_approved rejected].map { |v| [v, v] }.to_h
+
+  scope :requested, -> { where(status: %w[started user_confirmed]) }
+  scope :closed, -> { where(status: %w[admin_approved rejected]) }
 
   def self.get_by_identity_token(identity_token)
     decrypted_token = JWT.decode(identity_token, Rails.application.secrets[:secret_key_base], true, { algorithm: 'HS256' })
@@ -40,24 +47,39 @@ class AccountRequest < ApplicationRecord
     JWT.encode({ account_request_id: id }, Rails.application.secrets[:secret_key_base], 'HS256')
   end
 
+  # @return [Boolean]
   def confirmed?
-    confirmed_at.present?
+    user_confirmed? || admin_approved?
   end
 
+  # @return [Boolean]
   def processed?
     organization.present?
+  end
+
+  def confirm!
+    update!(confirmed_at: Time.current, status: 'user_confirmed')
+    AccountRequestMailer.approval_request(account_request_id: id).deliver_later
+  end
+
+  # @param reason [String]
+  def reject!(reason)
+    update!(status: 'rejected', rejection_reason: reason)
+    AccountRequestMailer.rejection(account_request_id: id).deliver_later
   end
 
   private
 
   def email_not_already_used_by_organization
-    if Organization.find_by(email: email)
+    org = Organization.find_by(email: email)
+    if org && org != organization
       errors.add(:email, 'already used by an existing Organization')
     end
   end
 
   def email_not_already_used_by_user
-    if User.find_by(email: email)
+    user = User.find_by(email: email)
+    if user && (!organization || user.organization_id != organization.id)
       errors.add(:email, 'already used by an existing User')
     end
   end

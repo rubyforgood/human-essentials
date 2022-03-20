@@ -6,6 +6,7 @@ Ruby for Good [code of conduct](https://github.com/rubyforgood/code-of-conduct).
 **First:** if you're unsure or afraid of *anything*, just ask or submit the issue or pull request anyways. You won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely asked to change something. We appreciate any sort of contributions, and don't want a wall of rules to get in the way of that.
 
 ## Onboarding the App
+You can find detailed instructions on how to seup the app locally in [installation.md](/installation.md).
  1. Fork the repo.
  2. Clone your fork
  3. Run `cp config/database.yml.example config/database.yml` - This will copy the contents of `database.yml.example ` and put it in a new file called `database.yml`.
@@ -14,7 +15,7 @@ Ruby for Good [code of conduct](https://github.com/rubyforgood/code-of-conduct).
  6. Run the specs (tests). We only take pull requests with passing tests, and it's great to know that you have a clean  slate: `bundle exec rake`.
  
 ## Working on an Issue
- 1. Choose an issue from our [Issues List](https://github.com/rubyforgood/diaper/issues). Make sure that you're working on is an [open issue]–if the relevant issue doesn't exist, open it! Check the comment thread and see if anyone else has claimed it already, and if not, go ahead and let us know in the comments!
+ 1. Choose an issue from our [Issues List](https://github.com/rubyforgood/human-essentials/issues). Make sure that you're working on is an [open issue]–if the relevant issue doesn't exist, open it! Check the comment thread and see if anyone else has claimed it already, and if not, go ahead and let us know in the comments!
  2. The issues (the Hacktoberfest issues, at least) should be written in a way that it's pretty clear what needs to be done and what's expected. If there's anything confusing, please comment and we'll get back to you ASAP.
  3. Check out a branch
  4. Do the thing!
@@ -26,11 +27,11 @@ Ruby for Good [code of conduct](https://github.com/rubyforgood/code-of-conduct).
  
  |      Username          | Password | Role               |
  | ---------------------- | -------- | ------------------ |
- | user_1@example.com     | password | Regular user       |
- | user_2@example.com     | password | Regular user       |
- | org_admin1@example.com | password | Organization Admin |
- | org_admin2@example.com | password | Organization Admin |
- | superadmin@example.com | password | Super Admin        |
+ | user_1@example.com     | password! | Regular user       |
+ | user_2@example.com     | password! | Regular user       |
+ | org_admin1@example.com | password! | Organization Admin |
+ | org_admin2@example.com | password! | Organization Admin |
+ | superadmin@example.com | password! | Super Admin        |
  
  When you start up `rails s`, you'll be able to sign in with these at whatever role-level you need to. The "1" and "2" represent different organizations. 
  
@@ -40,7 +41,7 @@ Ruby for Good [code of conduct](https://github.com/rubyforgood/code-of-conduct).
  - Include tests that fail without your code, and pass with it (most issues require this, but not all)
  - Attention to detail with any changes to documentation that would be obviously necessary
 
-We try to stick with "Rails Way" philosophies as much as possible, and also keep dependencies to a minimum. When in doubt, ask questions in the Issue (or better yet, in the #diaper Slack channel on the RubyForGood Slack!), and we'll answer them as soon as possible.
+We try to stick with "Rails Way" philosophies as much as possible, and also keep dependencies to a minimum. When in doubt, ask questions in the Issue (or better yet, in the #human-essentials Slack channel on the RubyForGood Slack!), and we'll answer them as soon as possible.
 
 ## Submitting a Pull Request
  1. Push to your fork and open a Pull Request
@@ -55,7 +56,7 @@ This project uses the `simplecov` gem to generate a test coverage report. This r
 
 The most recent test coverage statistics are available online at the Code Climate web site:
 
-* [file-by-file](https://codeclimate.com/github/rubyforgood/diaper/code?sort=test_coverage)
-* [aggregate, including other kinds of information](https://codeclimate.com/github/rubyforgood/diaper)
+* [file-by-file](https://codeclimate.com/github/rubyforgood/human-essentials/code?sort=test_coverage)
+* [aggregate, including other kinds of information](https://codeclimate.com/github/rubyforgood/human-essentials)
 
 Of the two (local and cloud), the local page is better organized and has more test coverage information. Sample screenshots can be seen in the simplecov [readme](https://github.com/colszowka/simplecov#example-output).

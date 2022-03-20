@@ -6,6 +6,7 @@
 #  city                     :string
 #  deadline_day             :integer
 #  default_storage_location :integer
+#  distribute_monthly       :boolean          default(FALSE), not null
 #  email                    :string
 #  intake_location          :integer
 #  invitation_text          :text
@@ -14,6 +15,7 @@
 #  name                     :string
 #  partner_form_fields      :text             default([]), is an Array
 #  reminder_day             :integer
+#  repackage_essentials     :boolean          default(FALSE), not null
 #  short_name               :string
 #  state                    :string
 #  street                   :string
@@ -22,12 +24,14 @@
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  account_request_id       :integer
+#  ndbn_member_id           :bigint
 #
 
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
   context "Associations >" do
     it { should have_many(:item_categories) }
+    it { should belong_to(:ndbn_member).class_name("NDBNMember").optional }
     describe "barcode_items" do
       before do
         BarcodeItem.delete_all
@@ -148,6 +152,16 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe 'after_create' do
+    let(:account_request) { FactoryBot.create(:account_request) }
+    it 'should update the state of the account request' do
+      org = build(:organization, account_request: account_request)
+      expect(account_request).not_to be_admin_approved
+      org.save!
+      expect(account_request.reload).to be_admin_approved
+    end
+  end
+
   describe ".seed_items" do
     context "when provided with an organization to seed" do
       it "loads the base items into Item records" do
@@ -159,6 +173,7 @@ RSpec.describe Organization, type: :model do
 
     context "when no organization is provided" do
       it "updates all organizations" do
+        Organization.seed_items(@organization)
         second_organization = create(:organization)
         organization_item_count = @organization.items.size
         second_organization_item_count = second_organization.items.size

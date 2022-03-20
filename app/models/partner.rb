@@ -40,12 +40,14 @@ class Partner < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :organization }
 
   validates :email, presence: true,
-                    uniqueness: true,
-                    format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, on: :create }
+                    uniqueness: { case_sensitive: false },
+                    format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
 
   validates :quota, numericality: true, allow_blank: true
 
   validate :correct_document_mime_type
+
+  before_update :invite_new_partner, if: :email_changed?
 
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
@@ -53,6 +55,7 @@ class Partner < ApplicationRecord
   }
 
   scope :alphabetized, -> { order(:name) }
+  scope :active, -> { where.not(status: :deactivated) }
 
   include Filterable
   include Exportable
@@ -62,6 +65,14 @@ class Partner < ApplicationRecord
 
   def deactivated?
     status == 'deactivated'
+  end
+
+  # @return [Boolean]
+  def deletable?
+    uninvited? &&
+      distributions.none? &&
+      requests.none? &&
+      (profile.nil? || profile&.users&.none?)
   end
 
   #
@@ -149,11 +160,15 @@ class Partner < ApplicationRecord
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 
-  protected
+  private
 
   def correct_document_mime_type
     if documents.attached? && documents.any? { |doc| !doc.content_type.in?(ALLOWED_MIME_TYPES) }
       errors.add(:documents, "Must be a PDF or DOC file")
     end
+  end
+
+  def invite_new_partner
+    PartnerUser.invite!(email: email, partner: profile)
   end
 end

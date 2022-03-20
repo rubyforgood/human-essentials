@@ -34,7 +34,7 @@
               <thead>
                 <tr>
                   <th>Category Name</th>
-                  <th>Category Descriptiown</th>
+                  <th>Category Description</th>
                 </tr>
               </thead>
               <tbody>
@@ -76,7 +76,11 @@
                 <% @item_category.items.each do |item| %>
                   <tr>
                     <td><%= item.name %> </td>
-                    <td><%= view_button_to item_path(item) %></td>
+                    <td><%= view_button_to item_path(item) %>
+                      <% if current_user.organization_admin? %>
+                        <%= delete_button_to(remove_category_item_path(item), method: :patch, text: "Remove from category") %>
+                      <% end %>
+                    </td>
                   </tr>
                 <% end %>
               </tbody>

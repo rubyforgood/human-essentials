@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ApplicationHelper, type: :helper do
+RSpec.describe ApplicationHelper, type: :helper, skip_seed: true do
   describe "dashboard_path_from_user" do
     before(:each) do
       allow(helper).to receive(:current_user).and_return(user)
@@ -60,6 +60,14 @@ RSpec.describe ApplicationHelper, type: :helper do
     let(:org_1) { @organization }
     let(:org_2) { create :organization }
 
+    helper do
+      def current_organization; end
+    end
+
+    before(:each) do
+      allow(helper).to receive(:current_organization).and_return(org_1)
+    end
+
     before(:each) do
       allow(helper).to receive(:current_user).and_return(user)
     end
@@ -67,7 +75,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     context "User is org admin and part of org" do
       let(:user) { create :user, organization_admin: true, organization: org_1 }
 
-      xit "can administrate" do
+      it "can administrate" do
         expect(helper.can_administrate?).to be_truthy
       end
     end
@@ -75,7 +83,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     context "User is org admin and not part of org" do
       let(:user) { create :user, organization_admin: true, organization: org_2 }
 
-      xit "cannot administrate" do
+      it "cannot administrate" do
         expect(helper.can_administrate?).to be_falsy
       end
     end

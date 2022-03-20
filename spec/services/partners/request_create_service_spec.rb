@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe Partners::RequestCreateService do
+describe Partners::RequestCreateService, skip_seed: true do
   describe '#call' do
-    subject { described_class.new(args).call }
+    subject { described_class.new(**args).call }
     let(:args) do
       {
         partner_user_id: partner_user.id,

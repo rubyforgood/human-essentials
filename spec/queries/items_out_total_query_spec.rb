@@ -1,6 +1,6 @@
 # Spec for /app/queries/items_out_total_query.rb
 
-RSpec.describe ItemsOutTotalQuery do
+RSpec.describe ItemsOutTotalQuery, skip_seed: true do
   let!(:storage_location) { create(:storage_location, organization: @organization) }
   subject { ItemsOutTotalQuery.new(storage_location: storage_location, organization: @organization).call }
 

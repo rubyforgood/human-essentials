@@ -1,35 +1,69 @@
+<section class="container mx-auto my-8">
+  <h2 class="font-bold">Request History</h2>
 
-<div class="card mb-4">
-  <h5 class="card-header bg-info">Essentials Request History</h5>
-  <div class="card-body">
-    <div class=container-fluid>
-      <div class="row justify-content-around">
-        <div class="col-6-lg">
-          <h2>Your recent essentials requests</h2>
-        </div>
-        <div class="col-6-lg">
-        </div>
-      </div>
-      <table class="table table-striped dashboard">
-        <thead>
-          <tr class="row">
-            <th scope="col" class="col-1">No.</th>
-            <th scope="col" class="col-9">Contents</th>
-            <th scope="col" class="col-2">Request Date</th>
-          </tr>
-        </thead>
+  <table class="bg-white rounded-md w-full shadow">
+    <thead>
+      <tr class="border-b border-gray-200">
+        <th scope="col" class="p-4 w-40">Request Date</th>
+        <th scope="col" class="p-4">Items Requested</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @partner_requests.each do |partner_request| %>
+        <tr class="hover:bg-gray-100 border-b border-gray-200 last:border-b-0">
+          <td class="p-4 w-40">
+            <i class="text-blue-900 far fa-file-alt mr-1"></i>
+            <%= partner_request.created_at.strftime("%b %-d %Y") %>
+          </td>
+          <td class="p-4"><%= partner_request.id %></td>
+          <td class="p-4">
+            <% partner_request.item_requests[0..1].map do |item| %>
+              <span class="inline-block p-1 mr-1 mb-2 lg:mb-0 bg-white border border-gray-600 rounded-sm">
+                <%= item.quantity %> <%= item.name%>
+              </span>
+            <% end %>
+            <button type="button" class="float-right w-28 text-blue-900 border-2 border-blue-900 rounded-sm py-1 px-2" id="more-button-<%= partner_request.id %>">
+              <i class="fas fa-caret-down mr-1 pointer-events-none"></i>
+              <%= partner_request.item_requests.count - 2 %> MORE
+            </button>
+            <ul class="absolute bg-white right-0 z-10 mt-10 lg:mt-2 py-2 px-4 shadow" id="requested-items-list-<%= partner_request.id %>">
+              <% partner_request.item_requests.drop(2).each.map do |item| %>
+                <li class="border-b last:border-b-0 py-2">
+                  <%= item.quantity %> <%= item.name %>
+                </li>
+              <% end %>
+            </ul>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>
 
-        <tbody>
-          <% @partner_requests.each do |partner_request| %>
-            <tr class="row">
-              <td class="col-1"><%= link_to partner_request.id, partners_request_path(id: partner_request.id) %></th>
-              <td class="col-9"><%= partner_request.item_requests.map {|item| "#{item.quantity} of #{item.name}"}.join(", ") %></td>
-              <td class="col-2"><%= partner_request.created_at.strftime("%B %-d %Y") %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+<script>
+  const allMoreButtons = document.querySelectorAll('*[id^="more-button-"]');
+  const allItemsLists = document.querySelectorAll('*[id^="requested-items-list-"]');
+  
+  window.onload = () => {
+    allItemsLists.forEach(list => {
+      list.style.display = "none";
+    });
+  };
 
+  const toggleList = item => {
+    if (item.style.display === "none") {
+      item.style.display = "block";
+    } else {
+      item.style.display = "none";
+    };
+  };
+
+  allMoreButtons.forEach(button => {
+    button.addEventListener("click", event => {
+      const elementId = event.target.id.replace("more-button-", "");
+      const itemsList = document.getElementById(`requested-items-list-${elementId}`);
+    
+      toggleList(itemsList);
+    });
+  });
+</script>

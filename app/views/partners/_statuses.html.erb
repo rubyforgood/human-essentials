@@ -1,4 +1,4 @@
-<% icon_mapping = { 
+<% icon_mapping = {
     "uninvited": 'ban',
     "invited": 'envelope',
     "awaiting_review": 'question-circle',
@@ -9,7 +9,7 @@
 %>
 
 <ul id="partner-status">
-  <% partners.statuses.each do |status, _| 
+  <% partners.statuses.each do |status, _|
     selector = (status + "?").to_sym
     partner_count = partners.select(&selector).size %>
   <li>
@@ -19,6 +19,6 @@
   <% end %>
   <li>
     <%= fa_icon 'list-alt' %>
-    <%= link_to "#{partners.size} Total", partners_path, class: ("filtering" if current_filtered_status.nil?) %>
+    <%= link_to "#{partners.active.size} Active", partners_path, class: ("filtering" if current_filtered_status.nil?) %>
   </li>
 </ul>

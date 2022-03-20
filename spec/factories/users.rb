@@ -20,11 +20,13 @@
 #  last_sign_in_ip        :inet
 #  name                   :string           default("CHANGEME"), not null
 #  organization_admin     :boolean
+#  provider               :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  sign_in_count          :integer          default(0), not null
 #  super_admin            :boolean          default(FALSE)
+#  uid                    :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
@@ -35,8 +37,8 @@ FactoryBot.define do
   factory :user do
     name { "Diaper McDiaperface" }
     sequence(:email, 100) { |n| "person#{n}@example.com" }
-    password { "password" }
-    password_confirmation { "password" }
+    password { "password!" }
+    password_confirmation { "password!" }
     organization { Organization.try(:first) || create(:organization) }
 
     factory :organization_admin do

@@ -11,7 +11,7 @@
 #  user_id             :bigint
 #
 
-RSpec.describe Adjustment, type: :model do
+RSpec.describe Adjustment, type: :model, needs_users: true do
   it_behaves_like "itemizable"
   it_behaves_like "pagination"
 

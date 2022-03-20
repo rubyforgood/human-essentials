@@ -1,4 +1,4 @@
-RSpec.describe RequestsConfirmationMailer, type: :mailer do
+RSpec.describe RequestsConfirmationMailer, type: :mailer, skip_seed: true do
   let(:request) { create(:request) }
 
   describe "#confirmation_email" do
@@ -7,11 +7,13 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
     it 'renders the headers' do
       expect(mail.subject).to eq("#{request.organization.name} - Requests Confirmation")
       expect(mail.to).to include(request.partner.email)
-      expect(mail.from).to include(request.organization.email)
+      expect(mail.from).to include("info@humanessentials.app")
     end
 
     it 'renders the body' do
+      @organization.update!(email: "me@org.com")
       expect(mail.body.encoded).to match('This is an email confirmation')
+      expect(mail.body.encoded).to match('For more info, please e-mail me@org.com')
     end
   end
 end

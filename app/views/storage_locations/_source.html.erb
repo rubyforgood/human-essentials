@@ -4,6 +4,7 @@
   error ||= "Which location are you moving inventory from?"
   association_field ||= :storage_location
   include_inactive_items ||= false
+  include_omitted_items ||= false
 %>
 <%= source.association association_field,
   collection: storage_locations,
@@ -16,6 +17,7 @@
       storage_location_inventory_path: inventory_storage_location_path(
         organization_id: current_organization,
         include_inactive_items: include_inactive_items,
+        include_omitted_items: include_omitted_items,
         id: ":id",
         format: :json
       )

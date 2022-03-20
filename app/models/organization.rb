@@ -6,6 +6,7 @@
 #  city                     :string
 #  deadline_day             :integer
 #  default_storage_location :integer
+#  distribute_monthly       :boolean          default(FALSE), not null
 #  email                    :string
 #  intake_location          :integer
 #  invitation_text          :text
@@ -14,6 +15,7 @@
 #  name                     :string
 #  partner_form_fields      :text             default([]), is an Array
 #  reminder_day             :integer
+#  repackage_essentials     :boolean          default(FALSE), not null
 #  short_name               :string
 #  state                    :string
 #  street                   :string
@@ -22,10 +24,11 @@
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  account_request_id       :integer
+#  ndbn_member_id           :bigint
 #
 
 class Organization < ApplicationRecord
-  DIAPER_APP_LOGO = Rails.root.join("public", "img", "diaperbase-logo-full.png")
+  DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
 
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
@@ -36,8 +39,12 @@ class Organization < ApplicationRecord
   validates :reminder_day, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
   validate :deadline_after_reminder
 
+  belongs_to :account_request, optional: true
+  belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
+
   with_options dependent: :destroy do
     has_many :adjustments
+    has_many :annual_reports
     has_many :audits
     has_many :diaper_drive_participants
     has_many :diaper_drives
@@ -92,6 +99,10 @@ class Organization < ApplicationRecord
 
   before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
 
+  after_create do
+    account_request&.update!(status: "admin_approved")
+  end
+
   ALL_PARTIALS = [
     ['Media Information', 'media_information'],
     ['Agency Stability', 'agency_stability'],
@@ -120,7 +131,6 @@ class Organization < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
-  scope :needs_reminding, -> { where('reminder_day = ? and deadline_day is not null', Date.current.day) }
 
   def assign_attributes_from_account_request(account_request)
     assign_attributes(

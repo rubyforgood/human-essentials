@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe KitCreateService do
+describe KitCreateService, skip_seed: true do
   describe '#call' do
-    subject { described_class.new(args).call }
+    subject { described_class.new(**args).call }
     let(:args) do
       {
         organization_id: organization_id,

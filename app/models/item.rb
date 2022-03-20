@@ -62,6 +62,24 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
+  scope :disposable, -> {
+    joins(:base_item)
+      .where("lower(base_items.category) LIKE '%diaper%'")
+      .where.not("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
+  }
+
+  scope :adult_incontinence, -> {
+    joins(:base_item)
+      .where(items: { partner_key: %w(adult_incontinence underpads liners) })
+      .or(where("items.partner_key LIKE '%adult%' AND items.partner_key NOT LIKE '%cloth%'"))
+  }
+
+  scope :other_categories, -> {
+    joins(:base_item)
+      .where(items: { partner_key: %w(pads tampons cloth_training_pants wipes adult_wipes) })
+      .or(where("base_items.category = 'Miscellaneous'"))
+  }
+
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
   end
@@ -112,7 +130,7 @@ class Item < ApplicationRecord
   end
 
   def to_h
-    { name: name, partner_key: partner_key }
+    { name: name, item_id: id }
   end
 
   def self.csv_export_headers

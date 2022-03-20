@@ -34,7 +34,7 @@ updates:
     - 4.0.3
   - dependency-name: mini_racer
     versions:
-    - 0.4.0
+    - 0.5.0
   - dependency-name: nokogiri
     versions:
     - 1.11.3
@@ -58,10 +58,6 @@ updates:
   - dependency-name: flipper-ui
     versions:
     - 0.20.4
-  - dependency-name: capistrano3-puma
-    versions:
-    - 5.0.3
-    - 5.0.4
   - dependency-name: database_cleaner
     versions:
     - 2.0.0

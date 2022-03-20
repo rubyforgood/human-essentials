@@ -67,7 +67,7 @@ class ItemsController < ApplicationController
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
-      flash[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |attr, msg| "#{attr}: #{msg}" }}"
+      flash[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
       render action: :edit
     end
   end
@@ -90,6 +90,15 @@ class ItemsController < ApplicationController
 
     flash[:notice] = "#{item.name} has been restored."
     redirect_to items_path
+  end
+
+  def remove_category
+    item = current_organization.items.find(params[:id])
+    previous_category = item.item_category
+
+    item.update!(item_category: nil)
+    flash[:notice] = "#{item.name} has been removed from #{previous_category.name}."
+    redirect_to item_category_path(previous_category)
   end
 
   private

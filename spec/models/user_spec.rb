@@ -20,11 +20,13 @@
 #  last_sign_in_ip        :inet
 #  name                   :string           default("CHANGEME"), not null
 #  organization_admin     :boolean
+#  provider               :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  sign_in_count          :integer          default(0), not null
 #  super_admin            :boolean          default(FALSE)
+#  uid                    :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
@@ -60,6 +62,7 @@ RSpec.describe User, type: :model do
       let!(:a_name_user) { create(:user, name: 'Amanda') }
 
       it "retrieves users in the correct order" do
+        create_default_users
         alphabetized_list = described_class.alphabetized
 
         expect(alphabetized_list.first).to eq(a_name_user)
@@ -78,6 +81,7 @@ RSpec.describe User, type: :model do
       let!(:deactivated_z_name_user) { create(:user, name: 'Zeke', discarded_at: discarded_at) }
 
       it "retrieves users in the correct order" do
+        create_default_users
         alphabetized_list = described_class.with_discarded.alphabetized
 
         expect(alphabetized_list).to eq(
@@ -117,6 +121,16 @@ RSpec.describe User, type: :model do
 
     it "discarded?" do
       expect(build(:user, :deactivated).discarded?).to be true
+    end
+  end
+
+  describe 'omniauth' do
+    it 'retrieves the user from an omniauth context' do
+      # can't use instance_double since AuthHash uses Hashie for dynamically created methods
+      token = double(OmniAuth::AuthHash, info: {'email' => 'me@me.com'})
+      expect(described_class.from_omniauth(token)).to eq(nil)
+      user = FactoryBot.create(:user, email: 'me@me.com')
+      expect(described_class.from_omniauth(token)).to eq(user)
     end
   end
 end

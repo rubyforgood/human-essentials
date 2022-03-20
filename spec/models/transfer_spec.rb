@@ -11,7 +11,7 @@
 #  to_id           :integer
 #
 
-RSpec.describe Transfer, type: :model do
+RSpec.describe Transfer, type: :model, skip_seed: true do
   it_behaves_like "itemizable"
 
   context "Validations >" do

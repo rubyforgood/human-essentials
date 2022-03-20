@@ -10,13 +10,10 @@ require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
-require 'sidekiq/testing'
 require 'webdrivers'
 require 'knapsack_pro'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-
-Sidekiq::Testing.fake! # fake is the default mode
 
 SimpleCov.start
 
@@ -54,11 +51,11 @@ Capybara.ignore_hidden_elements = true
 Capybara.register_driver :chrome do |app|
   args = %w[no-sandbox disable-gpu disable-site-isolation-trials window-size=1680,1050]
   args << "headless" unless ENV["NOT_HEADLESS"] == "true"
-  options = Selenium::WebDriver::Chrome::Options.new(args: args)
-  options.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
-  options.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
+  capabilities = Selenium::WebDriver::Chrome::Options.new(args: args)
+  capabilities.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
+  capabilities.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
 
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  Capybara::Selenium::Driver.new(app, browser: :chrome, capabilities: capabilities)
 end
 
 # Enable JS for Capybara tests
@@ -75,20 +72,6 @@ Capybara.asset_host = "http://localhost:3000"
 
 # Only keep the most recent run
 Capybara::Screenshot.prune_strategy = :keep_last_run
-
-def with_features(**features)
-  adapter = Flipper::Adapters::Memory.new
-  flipper = Flipper.new(adapter)
-  features.each do |feature, enabled|
-    if enabled
-      flipper.enable(feature)
-    else
-      flipper.disable(feature)
-    end
-  end
-  stub_const('Flipper', flipper)
-  yield
-end
 
 def stub_addresses
   Geocoder.configure(lookup: :test)
@@ -111,6 +94,11 @@ def stub_addresses
     )
   end
 end
+
+# Create global var for use in
+# config.before(:each, type: :system)
+# below
+have_run_webpacker_for_specs = false
 
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
@@ -157,9 +145,6 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
-    # Compile assets neccessary for browser tests to pass
-    `NODE_ENV=test bin/webpack`
-
     Rails.logger.info <<~ASCIIART
       -~~==]}>        ######## ###########  ####      ########    ###########
       -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
@@ -189,47 +174,65 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
-    Faker::Config.random = Random.new(42)
+    unless have_run_webpacker_for_specs
+      Rails.logger.info "** Running webpack"
+
+      # Compile assets neccessary for browser tests to pass
+      `NODE_ENV=test bin/webpack`
+
+      have_run_webpacker_for_specs = true
+    end
 
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
     DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
   end
 
   config.before(:each, type: :request) do
-    Faker::Config.random = Random.new(42)
-
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
     DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
   end
 
-  config.before(:each) do
-    # The database cleaner will now begin at this point
-    # up anything after this point when `.clean` is called.
-    DatabaseCleaner.start
+  config.before(:each) do |example|
+    if example.metadata[:persisted_data]
+      DatabaseCleaner.strategy = :truncation
+    else
+      # The database cleaner will now begin at this point
+      # up anything after this point when `.clean` is called.
+      DatabaseCleaner.start
 
-    # "Dirty" the database by adding the essential records
-    # necessary to run tests.
-    #
-    # If you are using :transaction, it will just rollback any additions
-    # when `.clean` is called. Any previous changes will be kept prior to
-    # the call `DatabaseCleaner.start`
-    #
-    # If you are using :truncation, it will erase everything once `.clean`
-    # is called.
-    seed_base_items_for_tests
-    seed_with_default_records
+      # "Dirty" the database by adding the essential records
+      # necessary to run tests.
+      #
+      # If you are using :transaction, it will just rollback any additions
+      # when `.clean` is called. Any previous changes will be kept prior to
+      # the call `DatabaseCleaner.start`
+      #
+      # If you are using :truncation, it will erase everything once `.clean`
+      # is called.
+      seed_base_items_for_tests
+      # Always create organization, almost no tests can be run without one
+      create_organization
+
+      seed_with_default_records unless example.metadata[:skip_seed]
+    end
   end
 
-  config.after(:each) do
+  config.before(:each, type: proc { |v| %i[request system controller].include?(v) }) do
+    create_default_users
+  end
+
+  config.before(:each, :needs_users) do
+    create_default_users
+  end
+
+  config.after(:each) do |example|
     # Ensure to clean-up the database by whichever means
     # were specified before the test ran
-    DatabaseCleaner.clean
+    DatabaseCleaner.clean unless example.metadata[:persisted_data]
 
     # Remove any /tmp/storage files that might have been
     # added as a consequence of the test.
@@ -254,19 +257,33 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
+def create_default_users
+  Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
+  @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
+  @user = create(:user, organization: @organization, name: "DEFAULT USER")
+  @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
+  @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
+end
+
 def seed_base_items_for_tests
   Rails.logger.info "-~=> Destroying all Base Items ... "
   BaseItem.delete_all
-  base_items = File.read(Rails.root.join("db", "base_items.json"))
-  items_by_category = JSON.parse(base_items)
-  Rails.logger.info "Creating Base Items: "
-  batch_insert = []
-  items_by_category.each do |category, entries|
-    entries.each do |entry|
-      batch_insert << { name: entry["name"], category: category, partner_key: entry["key"] }
+  unless @_base_items
+    base_items = File.read(Rails.root.join("db", "base_items.json"))
+    items_by_category = JSON.parse(base_items)
+    Rails.logger.info "Creating Base Items: "
+    @_base_items = []
+    items_by_category.each do |category, entries|
+      entries.each do |entry|
+        @_base_items << { name: entry["name"],
+                          category: category,
+                          partner_key: entry["key"],
+                          updated_at: Time.zone.now,
+                          created_at: Time.zone.now }
+      end
     end
   end
-  BaseItem.create(batch_insert)
+  BaseItem.insert_all(@_base_items) # rubocop:disable Rails/SkipsModelValidations
   Rails.logger.info "~-=> Done creating Base Items!"
 end
 
@@ -312,13 +329,13 @@ def __sweep_up_db_with_log
   ASCIIART
 end
 
+def create_organization
+  Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
+  @organization = create(:organization, name: "DEFAULT", skip_items: true)
+end
+
 def seed_with_default_records
-  Rails.logger.info "\n\n-~=> Creating DEFAULT organization & partner"
-  @organization = create(:organization, name: "DEFAULT")
+  Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
   @partner = create(:partner, organization: @organization)
-  Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
-  @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
-  @user = create(:user, organization: @organization, name: "DEFAULT USER")
-  @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
-  @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
+  Organization.seed_items(@organization)
 end

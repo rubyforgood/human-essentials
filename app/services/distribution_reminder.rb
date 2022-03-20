@@ -7,7 +7,7 @@ class DistributionReminder
       # NOTE: This is being also checked in the DistributionMailer itself
       return unless send_reminder?(distribution)
 
-      DistributionMailer.delay_until(distribution.issued_at - 1.day).reminder_email(distribution.id)
+      DistributionMailer.reminder_email(distribution.id).deliver_later(wait_until: distribution.issued_at - 1.day)
     end
 
     private
@@ -17,4 +17,3 @@ class DistributionReminder
     end
   end
 end
-

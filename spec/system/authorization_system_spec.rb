@@ -1,4 +1,4 @@
-RSpec.describe "Authorization", type: :system, js: true do
+RSpec.describe "Authorization", type: :system, js: true, skip_seed: true do
   it "redirects to the dashboard when unauthorized user attempts access" do
     sign_in(@user)
     visit "/admin/dashboard"

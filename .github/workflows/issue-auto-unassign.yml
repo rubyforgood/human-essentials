@@ -1,0 +1,31 @@
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 0 * * *'
+
+jobs:
+  unassign_issues:
+    runs-on: ubuntu-latest
+    name: Unassign issues
+    steps:
+      - name: Unassign issues
+        uses: rubyforgood/unassign-issues@v1
+        id: unassign_issues
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          unassign_inactive_in_hours: 360 # 15 days
+          warning_inactive_in_hours: 240 # 10 days
+      - name: Print the unassigned issues
+        run: echo "Unassigned issues = ${{steps.unassign_issues.outputs.unassigned_issues}}"
+      - name: Print the warned issues
+        run: echo "Warned issues = ${{steps.unassign_issues.outputs.warned_issues}}"
+      - name: Move unassigned issues from In Progress to To Do
+        uses: bjthompson805/move-issues@v1
+        id: move_issues
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          issues: ${{steps.unassign_issues.outputs.unassigned_issues}}
+          from_column: '16446973'
+          to_column: '16446972'
+      - name: Print moved issues
+        run: echo "Moved issues = ${{steps.move_issues.outputs.moved_issues}}"

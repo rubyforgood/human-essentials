@@ -91,6 +91,11 @@ module UiHelper
     _button_to({ icon: "filter", type: "primary", text: "Filter", size: "md" }.merge(options))
   end
 
+  # Used for keying off JavaScript.
+  def js_button(options = {})
+    _link_to '', { icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md" }.merge(options)
+  end
+
   def modal_button_to(target_id, options = {})
     properties = { data: { toggle: "modal" } }
     _link_to target_id, { icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md" }.merge(options), properties
@@ -125,17 +130,28 @@ module UiHelper
     _link_to link, { icon: "envelope", type: "warning", text: "Invite", size: "xs" }.merge(options), properties
   end
 
+  def refresh_button_to(link, options = {}, properties = {})
+    _link_to link, { icon: "sync", type: "info", text: "Refresh", size: "md" }.merge(options), properties
+  end
+
   def _link_to(link, options = {}, properties = {})
     icon = options[:icon]
     text = options[:text]
     size = options[:size]
     type = options[:type]
+    if options[:data].present?
+      properties[:data] ||= {}
+      properties[:data].merge!(options[:data])
+    end
+
     # user sparingly.
     center = options[:center].present? ? "center-block" : ""
 
     disabled = options[:enabled] || options[:enabled].nil? ? "" : "disabled"
 
-    link_to link, properties.merge(class: "btn btn-#{type} btn-#{size} #{center} #{disabled}") do
+    klass = "#{options[:class] || ""} btn btn-#{type} btn-#{size} #{center} #{disabled}"
+
+    link_to link, properties.merge(class: klass) do
       fa_icon icon, text: text
     end
   end

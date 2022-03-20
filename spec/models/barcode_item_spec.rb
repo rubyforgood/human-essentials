@@ -40,7 +40,7 @@ RSpec.shared_examples "common barcode tests" do |barcode_item_factory|
   end
 end
 
-RSpec.describe BarcodeItem, type: :model do
+RSpec.describe BarcodeItem, type: :model, skip_seed: true do
   context "Barcodes of BaseItems ('Global')" do
     let(:base_item) { create(:base_item) }
     let(:global_barcode_item) { create(:global_barcode_item, barcodeable: base_item) }

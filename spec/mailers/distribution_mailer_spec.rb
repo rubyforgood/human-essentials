@@ -1,16 +1,19 @@
-RSpec.describe DistributionMailer, type: :mailer do
+RSpec.describe DistributionMailer, type: :mailer, needs_users: true do
   before do
-    @organization.default_email_text = "Default email text example"
+    @organization.default_email_text = "Default email text example\n\n%{delivery_method} %{distribution_date}\n\n%{partner_name}\n\n%{comment}"
     @partner = create(:partner, name: 'PARTNER')
     @distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner)
+    @organization.update!(email: "me@org.com")
   end
 
   describe "#partner_mailer" do
     let(:distribution_changes) { {} }
     let(:mail) { DistributionMailer.partner_mailer(@organization, @distribution, 'test subject', distribution_changes) }
 
-    it "renders the body with organizations email text" do
+    it "renders the body with organization's email text" do
       expect(mail.body.encoded).to match("Default email text example")
+      expect(mail.html_part.body).to match(%(From: <a href="mailto:me@org.com">me@org.com</a>))
+      expect(mail.from).to eq(["info@humanessentials.app"])
       expect(mail.subject).to eq("test subject from DEFAULT")
     end
 
@@ -63,8 +66,10 @@ RSpec.describe DistributionMailer, type: :mailer do
   describe "#reminder_email" do
     let(:mail) { DistributionMailer.reminder_email(@distribution.id) }
 
-    it "renders the body with organizations email text" do
+    it "renders the body with organization's email text" do
       expect(mail.body.encoded).to match("This is a friendly reminder")
+      expect(mail.body).to match(%(For more information: <a href="mailto:me@org.com">me@org.com</a>))
+      expect(mail.from).to eq(["info@humanessentials.app"])
       expect(mail.subject).to eq("PARTNER Distribution Reminder")
     end
 

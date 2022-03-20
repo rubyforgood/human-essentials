@@ -1,4 +1,4 @@
-RSpec.describe "Authentication", type: :system, js: true do
+RSpec.describe "Authentication", type: :system, js: true, skip_seed: true do
   describe 'logging in as a partner user' do
     let(:partner_user) do
       user = create(:partner).primary_partner_user
@@ -8,7 +8,7 @@ RSpec.describe "Authentication", type: :system, js: true do
     end
 
     let(:partner) { create(:partner) }
-    let(:password) { Faker::Alphanumeric.alpha(number: 10) }
+    let(:password) { Faker::Alphanumeric.alpha(number: 10) + "!" }
 
     context 'successfully through the partner user login page' do
       before do
@@ -25,7 +25,7 @@ RSpec.describe "Authentication", type: :system, js: true do
     end
 
     context 'failing to login because' do
-      context 'due to attempting to login to diaperbase as a partner user' do
+      context 'due to attempting to login to essentials as a partner user' do
         before do
           visit new_user_session_path
         end

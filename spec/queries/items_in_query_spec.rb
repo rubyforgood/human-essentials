@@ -1,6 +1,6 @@
 # Spec for /app/queries/items_in_query.rb
 
-RSpec.describe ItemsInQuery do
+RSpec.describe ItemsInQuery, skip_seed: true do
   let!(:storage_location) { create(:storage_location, organization: @organization) }
   let!(:other_storage_location) { create(:storage_location, :with_items, item: create(:item), item_quantity: 10, organization: @organization) }
   subject { ItemsInQuery.new(storage_location: storage_location, organization: @organization).call }

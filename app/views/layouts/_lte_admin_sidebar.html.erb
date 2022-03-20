@@ -2,7 +2,8 @@
 
   <li class="nav-item">
     <%= link_to(admin_dashboard_path, class: "nav-link #{active_class(['dashboard'])}") do %>
-      <i class="nav-icon fas fa-tachometer-alt"></i> <span>Admin Dashboard</span>
+      <i class="nav-icon fas fa-tachometer-alt"></i>
+      <p>Admin Dashboard</p>
     <% end %>
   </li>
 
@@ -82,10 +83,11 @@
   </li>
 
   <li class="nav-item has-treeview <%= menu_open?(['users']) %>">
-    <a href="#" class="nav-link <%= active_class(['purchases']) %>">
+    <a href="#" class="nav-link <%= active_class(['users']) %>">
       <i class="nav-icon fas fa-users"></i>
       <p>Users
-        <i class="fas fa-angle-left right"></i></p>
+        <i class="fas fa-angle-left right"></i>
+      </p>
     </a>
     <ul class="nav nav-treeview">
       <li class="nav-item <%= 'active' if current_page?(admin_users_path) %>">
@@ -103,14 +105,23 @@
 
   <li class="nav-item <%= active_class(['account_requests']) %>">
     <%= link_to(admin_account_requests_path, class: "nav-link #{"active" if current_page?(admin_account_requests_path)}") do %>
-      <i class="nav-icon fa fa-sticky-note"></i> Account Requests
+      <i class="nav-icon fa fa-sticky-note"></i>
+      <p>Account Requests</p>
+    <% end %>
+  </li>
+
+  <li class="nav-item <%= 'active' if current_page?(admin_questions_path) %>">
+    <%= link_to(admin_questions_path, class: "nav-link #{"active" if current_page?(admin_questions_path)}") do %>
+      <i class="nav-icon fa fa-circle-o"></i>
+      <p>FAQ</p>
     <% end %>
   </li>
 
   <% if (current_user.organization.present?) %>
     <li class="nav-item">
       <%= link_to(dashboard_path(organization_id: current_user.organization), class: "nav-link") do %>
-        <i class="nav-icon fas fa-home"></i> <span>My Organization</span>
+        <i class="nav-icon fas fa-home"></i>
+        <p>My Organization</p>
       <% end %>
     </li>
   <% end %>

@@ -58,6 +58,7 @@ class Admin::OrganizationsController < AdminController
 
   def show
     @organization = Organization.find(params[:id])
+    @header_link = admin_dashboard_path
   end
 
   def destroy

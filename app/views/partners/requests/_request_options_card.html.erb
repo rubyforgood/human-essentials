@@ -1,34 +1,41 @@
-<div class="card mb-4">
-  <h5 class="card-header bg-info">Request Essentials</h5>
-  <div class="card-body">
-    <div class="container-fluid">
-      <div class="row text-center">
-        <div class="col-4">
-          <h2><%= link_to new_partners_request_path, class: 'btn btn-primary' do %>
-              <i class="fa fa-shopping-basket"></i> Create New Bulk Essentials Request
-              <% end %>
-              </h2>
-          <h6>Use this type of request when you want to specify the number of diapers, period supplies, and
-            other essentials. Example - 1000 Size 1 Diapers, 500 Tampons, etc.</h6>
-        </div>
-        <div class="col-4">
-          <h2><%= link_to new_partners_family_request_path, class: 'btn btn-primary' do %>
-              <i class="fa fa-users"></i> Create New Family Essentials Request
-            <% end %>
-          </h2>
-          <h6>Use this type of request when you you are using the children and family functionality and are
-            identifying the specific children you are requesting for.</h6>
-        </div>
-        <div class="col-4">
-          <h2><%= link_to new_partners_individuals_request_path, class: 'btn btn-primary' do %>
-              <i class="fa fa-user"></i> Create New Individuals Essentials Request
-            <% end %>
-          </h2>
-          <h6>Use this type of request when you want to just request by the number of individuals in a
-            specific category. Example - 10 individuals for Size 1 diapers, 5 individuals need tampons,
-            etc.</h6>
-        </div>
+<section class="container mx-auto my-8">
+  <h2 class="font-bold">Make a request</h2>
+
+  <div class="flex">
+    <article class="flex flex-col justify-between flex-1 p-4 mr-4 border-2 border-blue-900 rounded-lg shadow">
+      <div>
+        <h3>Quantity</h3>
+        <p>Specify quantity for each product.</p>
       </div>
-    </div>
+
+      <%= link_to "Create Request",
+          new_partners_request_path,
+          class: "bg-blue-900 hover:bg-blue-600 text-white w-full text-center py-2 px-4 rounded",
+          "aria-label": "Create a request by quantity" %>
+    </article>
+
+    <article class="flex flex-col justify-between flex-1 p-4 mr-4 border-2 border-blue-900 rounded-lg shadow">
+      <div>
+        <h3>Child</h3>
+        <p>Specify the family and child you are requesting for.</p>
+      </div>
+
+      <%= link_to "Create Request",
+          new_partners_family_request_path,
+          class: "bg-blue-900 hover:bg-blue-600 text-white w-full text-center py-2 px-4 rounded",
+          "aria-label": "Create a request for a child or family" %>
+    </article>
+
+    <article class="flex flex-col justify-between flex-1 p-4 border-2 border-blue-900 rounded-lg shadow">
+      <div>
+        <h3># of Individuals</h3>
+        <p>Specify the number of individuals for each product.</p>
+      </div>
+
+      <%= link_to "Create Request",
+          new_partners_individuals_request_path,
+          class: "bg-blue-900 hover:bg-blue-600 text-white w-full text-center py-2 px-4 rounded",
+          "aria-label": "Create a request by number of individuals" %>
+    </article>
   </div>
-</div>
+</section>

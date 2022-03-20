@@ -47,6 +47,14 @@ BaseItem.find_or_create_by!(
 )
 
 # ----------------------------------------------------------------------------
+# NDBN Members
+# ----------------------------------------------------------------------------
+#
+NDBNMember.create!(ndbn_member_id: 10000, account_name: "Pawnee")
+NDBNMember.create!(ndbn_member_id: 20000, account_name: "Other Spot")
+NDBNMember.create!(ndbn_member_id: 30000, account_name: "Amazing Place")
+
+# ----------------------------------------------------------------------------
 # Organizations
 # ----------------------------------------------------------------------------
 
@@ -82,7 +90,7 @@ end
 # ----------------------------------------------------------------------------
 
 Organization.all.each do |org|
-  ['A', 'B', 'C'].each do |letter|
+  ['Diapers', 'Period Supplies', 'Adult Incontinence'].each do |letter|
     FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
   end
 end
@@ -128,8 +136,8 @@ end
 ].each do |user|
   User.create(
     email: user[:email],
-    password: 'password',
-    password_confirmation: 'password',
+    password: 'password!',
+    password_confirmation: 'password!',
     organization_admin: user[:organization_admin],
     super_admin: user[:super_admin],
     organization: user[:organization]
@@ -233,10 +241,22 @@ note = [
 
   Partners::User.create!(
     name: Faker::Name.name,
-    password: "password",
-    password_confirmation: "password",
+    password: "password!",
+    password_confirmation: "password!",
     email: p.email,
-    partner: partner
+    partner: partner,
+    invitation_sent_at: Time.utc(2021, 9, 8, 12, 43, 4),
+    last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
+  )
+
+  Partners::User.create!(
+    name: Faker::Name.name,
+    password: "password!",
+    password_confirmation: "password!",
+    email: Faker::Internet.email,
+    partner: partner,
+    invitation_sent_at: Time.utc(2021, 9, 16, 12, 43, 4),
+    last_sign_in_at: Time.utc(2021, 9, 17, 11, 34, 4)
   )
 
   #
@@ -318,7 +338,8 @@ note = [
     pr = Partners::Request.new(
       comments: Faker::Lorem.paragraph,
       partner: partner,
-      for_families: Faker::Boolean.boolean
+      for_families: Faker::Boolean.boolean,
+      partner_user: partner.primary_user
     )
 
     # Ensure that the item requests are valid with
@@ -370,7 +391,7 @@ StorageLocation.all.each do |sl|
 end
 
 # ----------------------------------------------------------------------------
-# Diaper Drives
+# Product Drives
 # ----------------------------------------------------------------------------
 
 [
@@ -382,7 +403,7 @@ end
 ].each { |drive| DiaperDrive.create! drive }
 
 # ----------------------------------------------------------------------------
-# Diaper Drive Participants
+# Product Drive Participants
 # ----------------------------------------------------------------------------
 
 [
@@ -397,19 +418,19 @@ end
 ].each { |participant| DiaperDriveParticipant.create! participant }
 
 # ----------------------------------------------------------------------------
-# Diaper Drives
+# Product Drives
 # ----------------------------------------------------------------------------
 
 [
-  { name: "First Diaper Drive",
+  { name: "First Product Drive",
     start_date: 3.years.ago,
     end_date: 3.years.ago,
     organization: sf_org },
-  { name: "Best Diaper Drive",
+  { name: "Best Product Drive",
     start_date: 3.weeks.ago,
     end_date: 2.weeks.ago,
     organization: sf_org },
-  { name: "Second Best Diaper Drive",
+  { name: "Second Best Product Drive",
     start_date: 2.weeks.ago,
     end_date: 1.week.ago,
     organization: pdx_org }
@@ -643,3 +664,45 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
     confirmed_at: account_request[:confirmed_at]
   )
 end
+
+# ----------------------------------------------------------------------------
+# Questions
+# ----------------------------------------------------------------------------
+
+titles = [
+  "Phasellus volutpat, sem at eleifend?",
+  "ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit?",
+  "nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum?",
+  "molestie tortor. Duis pretium urna eget congue?",
+  "eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam?"
+]
+
+answers = [
+  "urna eget congue porta. Fusce aliquet dolor quis viverra volutpat. nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.",
+  "ger a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viv. nas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec",
+  "que. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra.",
+  "olutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc. aliquet dolor quis viverra volutpat. nisl, a commodo ligula consequat.",
+  "Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
+]
+
+5.times do
+  Question.create(
+    title: "Question for banks. #{titles.sample}",
+    for_banks: true,
+    for_partners: false,
+    answer: "Answer for banks. #{answers.sample}"
+  )
+  Question.create(
+    title: "Question for both. #{titles.sample}",
+    for_banks: true,
+    for_partners: true,
+    answer: "Answer for both. #{answers.sample}"
+  )
+  Question.create(
+    title: "Question for partners. #{titles.sample}",
+    for_banks: false,
+    for_partners: true,
+    answer: "Answer for partners. #{answers.sample}"
+  )
+end
+

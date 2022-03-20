@@ -16,7 +16,7 @@
     </style>
   </head>
   <body>
-
+  <%= render partial: "shared/flash_tailwind" %>
   <div class='pt-2' style="background: linear-gradient(135deg, #3023AE, #C86DD7)">
       <div class="container max-w-7xl mx-auto pt-5 px-5">
         <nav>
@@ -30,30 +30,11 @@
                 <a class="hidden md:block" href="#about">About</a>
                 <a class="hidden md:block" href="#testimonials">Testimonials</a>
                 <a class="hidden md:block" href="#contact">Contact</a>
-
-                <div @click.away="open = false" class="relative" x-data="{ open: false }">
-                  <button @click="open = !open" class="flex flex-row items-center w-full px-4 py-2 bg-green-500 hover:bg-green-600 rounded-2xl text-md">
-                    <span class='text-lg'>Login</span>
-                    <svg fill="currentColor" viewBox="0 0 20 20" :class="{'rotate-180': open, 'rotate-0': !open}" class="inline w-4 h-4 mt-1 ml-1 transition-transform duration-200 transform md:-mt-1"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <a href=<%= new_login_path %>>
+                  <button class="flex flex-row items-center w-full px-4 py-2 bg-green-500 hover:bg-green-600 rounded-2xl text-md">
+                  <span class='text-lg'>Login</span>
                   </button>
-                  <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 w-40 mt-2 origin-top-right rounded-md shadow-lg z-10">
-                    <div class="px-2 py-2 bg-white text-black rounded-md shadow dark-mode:bg-gray-800">
-                      <a class="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href=<%= new_user_session_path(organization_id: nil) %>>
-                        I'm a Bank
-                      </a>
-                      <a class="block px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline" href=<%= new_partner_user_session_path %>>
-                        I'm a Partner
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <button class="hidden btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Login
-                </button>
-                <div class="hidden" aria-labelledby="dropdownMenuButton">
-                  <a href=<%= new_user_session_path(organization_id: nil) %>>Diaperbase</a>
-                  <a href=<%= new_partner_user_session_path %>>Partnerbase</a>
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -83,7 +64,7 @@
       <div class="text-center mt-10">
         <h2 class="text-4xl text-gray-600">The Human Essentials app removes the <br/> complexity from your day</h2>
         <p class="mt-1 text-gray-400">and lets you spend time helping those who need it.</p>
-        <a href="mailto:info@humanessentials.app?Subject=Diaperbase%20Interest"><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 rounded-2xl mt-5">Get In Touch</button></a>
+        <a href="mailto:info@humanessentials.app?Subject=Essentials%20Interest"><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 rounded-2xl mt-5">Get In Touch</button></a>
       </div>
     </div>
 
@@ -166,7 +147,7 @@
           <div class='mt-5'>
             <div class='space-y-12'>
               <div>
-                <p>DiaperBase has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. DiaperBase has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
+                <p>Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
                 <strong class='mt-2'> - Megan, Sweet Cheeks Diaper Bank</strong>
               </div>
               <div>
@@ -185,7 +166,7 @@
         <a href=<%="#{new_account_request_path}"%>><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 mt-5 rounded-2xl">Request A Demo</button></a>
 
         <br/><br/>
-        <p class="text-gray-500">Have questions? Email us at <a class='text-blue-500' href="mailto:info@humanessentials.app?Subject=Diaperbase%20Interest" target="_top" >info@humanessentials.app</a></p>
+        <p class="text-gray-500">Have questions? Email us at <a class='text-blue-500' href="mailto:info@humanessentials.app?Subject=Essentials%20Interest" target="_top" >info@humanessentials.app</a></p>
       </div>
     </div>
 

@@ -1,4 +1,4 @@
-RSpec.describe "Organization management", type: :system, js: true do
+RSpec.describe "Organization management", type: :system, js: true, skip_seed: true do
   include ActionView::RecordIdentifier
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
@@ -18,8 +18,23 @@ RSpec.describe "Organization management", type: :system, js: true do
   end
   context "while signed in as an organization admin" do
     let!(:store) { create(:storage_location) }
+    let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
     before do
       sign_in(@organization_admin)
+    end
+
+    describe "Viewing the organization" do
+      it "can view organization details", :aggregate_failures do
+        visit organization_path(@organization)
+
+        expect(page.find("h1")).to have_text(@organization.name)
+        expect(page).to have_link("Home", href: dashboard_path(@organization))
+
+        expect(page).to have_content("Organization Info")
+        expect(page).to have_content("Contact Info")
+        expect(page).to have_content("Default email text")
+        expect(page).to have_content("Users")
+      end
     end
 
     describe "Editing the organization" do
@@ -48,11 +63,32 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert.alert-danger.alert-dismissible")).to have_content "Failed to update"
       end
 
+      it 'can select if the org repackages essentials' do
+        choose('organization[repackage_essentials]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
+      end
+
+      it 'can select if the org distributes essentials monthly' do
+        choose('organization[distribute_monthly]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
+      end
+
       it 'can set a default storage location on the organization' do
         select(store.name, from: 'Default Storage Location')
 
         click_on "Save"
         expect(page).to have_content(store.name)
+      end
+
+      it 'can set the NDBN Member ID' do
+        select(ndbn_member.full_name)
+
+        click_on "Save"
+        expect(page).to have_content(ndbn_member.full_name)
       end
     end
 

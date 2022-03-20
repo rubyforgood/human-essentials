@@ -20,7 +20,7 @@ class VendorsController < ApplicationController
       else
         flash[:error] = "Something didn't work quite right -- try again?"
         format.html { render action: :new }
-        format.js { render template: "vendors/new_modal.js.erb" }
+        format.js { render template: "vendors/new_modal" }
       end
     end
   end
@@ -29,7 +29,7 @@ class VendorsController < ApplicationController
     @vendor = current_organization.vendors.new
     if request.xhr?
       respond_to do |format|
-        format.js { render template: "vendors/new_modal.js.erb" }
+        format.js { render template: "vendors/new_modal" }
       end
     end
   end

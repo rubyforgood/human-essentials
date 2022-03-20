@@ -2,6 +2,12 @@
 class StorageLocationsController < ApplicationController
   include Importable
 
+  Struct.new('OmittedInventoryItem', :item) do
+    def quantity
+      0
+    end
+  end
+
   def index
     @selected_item_category = filter_params[:containing]
     @items = current_organization.storage_locations.items_inventoried
@@ -87,6 +93,7 @@ class StorageLocationsController < ApplicationController
                                            .inventory_items
 
     @inventory_items = @inventory_items.active unless params[:include_inactive_items] == "true"
+    @inventory_items += include_omitted_items(@inventory_items.collect(&:item_id)) if params[:include_omitted_items] == "true"
 
     respond_to :json
   end
@@ -95,6 +102,12 @@ class StorageLocationsController < ApplicationController
 
   def storage_location_params
     params.require(:storage_location).permit(:name, :address, :square_footage, :warehouse_type)
+  end
+
+  def include_omitted_items(existing_item_ids = [])
+    current_organization.items.where.not(id: existing_item_ids).collect do |item|
+      Struct::OmittedInventoryItem.new(item)
+    end
   end
 
   helper_method \

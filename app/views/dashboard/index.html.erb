@@ -62,7 +62,7 @@
               <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
                   <h3>Items on-hand:</h3>
-                  <h5 style="color:purple"><%= total_on_hand(@total_inventory) %> </h5>
+                  <h5 style="color:purple" class="total_inventory"><%= total_on_hand(@total_inventory) %> </h5>
                 </div>
                 <!-- /.description-block -->
               </div>
@@ -106,8 +106,12 @@
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
                 <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
-                <h3 class="text-center"><%= total_distributed %> items
-                  distributed <%= @selected_date_range_label %></h3>
+                <h3 class="text-center">
+                  <span class="total_distributed">
+                    <%= total_distributed %>
+                  </span>
+                  items distributed <%= @selected_date_range_label %>
+                </h3>
                 <h4 class="text-center">(<%= future_distributed %> items scheduled for future distribution)</h4>
                 <div class="box-body">
                   <h4>Recent distributions</h4>
@@ -140,7 +144,9 @@
 
         <div class="card">
           <div class="card-header border-0 bg-gradient-warning">
-            <h3 class="card-title">Activity <%= @selected_date_range_label %></h3>
+            <h3 class="card-title">Activity
+              <small><%= @selected_date_range %></small>
+            </h3>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fas fa-minus"></i>
@@ -177,9 +183,13 @@
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
                 <%= new_button_to new_donation_path, {text: "New Donation"} %>
-                <h3 class="text-center"><%= total_received_donations %> items
+                <h3 class="text-center">
+                  <span class="total_received_donations">
+                    <%= total_received_donations %>
+                  </span>
+                  items
                   received <%= @selected_date_range_label %></h3>
-                <h4 class="text-center"><%= dollar_value(total_received_money_donations) %>
+                <h4 class="text-center"><%= dollar_presentation(total_received_money_donations) %>
                   raised  <%= @selected_date_range_label %></h4>
                 <div class="box-body">
                   <h4>Recent Donations</h4>
@@ -195,7 +205,7 @@
 
         <div class="card" id="diaper_drives">
           <div class="card-header border-0 bg-gradient-info">
-            <h3 class="card-title">Diaper Drives <small><%= @selected_date_range %></small></h3>
+            <h3 class="card-title">Product Drives <small><%= @selected_date_range %></small></h3>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fas fa-minus"></i>
@@ -205,12 +215,15 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <h3 class="text-center"><%= total_received_from_diaper_drives %> items
+                <h3 class="text-center">
+                  <span class="total_received_donations">
+                    <%= total_received_from_diaper_drives %>
+                  </span> items
                   received <%= @selected_date_range_label %></h3>
-                <h4 class="text-center"><%= dollar_value(total_received_money_donations) %>
+                <h4 class="text-center"><%= dollar_presentation(total_received_money_donations) %>
                   raised  <%= @selected_date_range_label %></h4>
                 <div class="box-body">
-                  <h4>Recent Donations from Diaper Drives</h4>
+                  <h4>Recent Donations from Product Drives</h4>
                   <%= render partial: "diaper_drive", collection: @recent_donations.by_source(:diaper_drive), as: :donation %>
                 </div>
               </div>
@@ -219,7 +232,7 @@
           <div class="card-footer text-center">
             <%= link_to "See more...", donations_path(
                 filters: {
-                    by_source: "Diaper Drive"
+                    by_source: "Product Drive"
                 }) %>
           </div>
         </div>
@@ -236,9 +249,16 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <h3 class="text-center"><%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }) %>
+                <h3 class="text-center">
+                  <span class="total_received_donations">
+                    <%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }) %>
+                  </span>
                   items donated <%= @selected_date_range_label %>
-                  by <%= pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, 'Manufacturer') %></h3>
+                  by
+                  <span class="num_manufacturers_donated">
+                    <%= pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, 'Manufacturer') %>
+                  </span>
+                </h3>
                 <div class="box-body">
                   <h4>Top Manufacturer Donations</h4>
                   <%= render partial: "manufacturer", collection: @top_manufacturers, as: :manufacturer %>
@@ -267,7 +287,7 @@
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
                 <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
-                <h3 class="text-center"><%= dollar_value(@purchases.sum(&:amount_spent_in_cents)) %>
+                <h3 class="text-center"><%= dollar_presentation(@purchases.sum(&:amount_spent_in_cents)) %>
                   spent
                   <%= @selected_date_range_label %></h3>
                 <div class="box-body">

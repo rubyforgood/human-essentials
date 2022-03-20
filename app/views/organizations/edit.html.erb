@@ -1,6 +1,6 @@
 <section class="content-header">
   <div class="container-fluid">
-    <div class="row mb-2">
+    <div class="mb-2 row">
       <div class="col-sm-6">
         <% content_for :title, "Edit - Organizations - #{@organization.name} - " %>
         <h1>
@@ -21,9 +21,6 @@
   </div><!-- /.container-fluid -->
 </section>
 
-
-
-
 <%= simple_form_for current_organization, url: {controller: "organizations", action: "update"} do |f| %>
   <section class="content">
     <div class="container-fluid">
@@ -38,8 +35,6 @@
             </div>
             <!-- form start -->
             <div class="card-body">
-
-
               <div class="form-inputs">
                 <%= f.input :name, required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-user"></i></span>
@@ -48,6 +43,9 @@
                 <%= f.input :short_name, required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-desktop"></i></span>
                   <%= f.input_field :short_name, disabled: true, class: "form-control" %>
+                <% end %>
+                <%= f.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
+                  <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
                 <% end %>
                 <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-link"></i></span>
@@ -87,7 +85,12 @@
                   <%= f.text_area :invitation_text, class: "form-control" %>
                 <% end %>
 
-                <%= f.input :default_email_text, label: "Default Text Included In Distribution Emails" do %>
+
+                <%= f.input :repackage_essentials, label: 'Does your bank repackage essentials?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                <%= f.input :distribute_monthly, label: 'Does your bank distribute monthly?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+
+                <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
+                <%= f.input :default_email_text, label: "Distribution Email Content", hint: default_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :default_email_text %>
                 <% end %>
 

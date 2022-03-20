@@ -1,4 +1,4 @@
-RSpec.describe "Diaper Drives", type: :system, js: true do
+RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
   include DateRangeHelper
 
   before do
@@ -28,33 +28,33 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
       expect(page.has_field?('filters_date_range', with: this_year))
     end
 
-    it "shows the expected diaper drives" do
+    it "shows the expected product drives" do
       @diaper_drives.each do |d|
         expect(page).to have_xpath('//table/tbody/tr/td', text: d.name)
         expect(page).to have_xpath('//table/tbody/tr/td', text: d.name)
       end
     end
 
-    it 'shows only one virtual diaper drive' do
+    it 'shows only one virtual product drive' do
       expect(page).to have_text(/Yes/, maximum: 1)
     end
 
-    it 'shows only one non-virtual diaper drive' do
+    it 'shows only one non-virtual product drive' do
       expect(page).to have_text(/No/, maximum: 1)
     end
   end
 
-  context 'when creating a normal Diaper Drive' do
+  context 'when creating a normal product drive' do
     let(:subject) { @url_prefix + "/diaper_drives/new" }
 
     before { visit subject }
 
-    it 'must create a new Diaper Drive' do
+    it 'must create a new product drive' do
       expect do
         fill_in 'Name', with: 'Normal 1'
         fill_in 'Start Date', with: Time.zone.today
         fill_in 'End Date', with: Time.zone.today + 4.hours
-        click_button 'Create Diaper drive'
+        click_button 'Create Product drive'
       end.to change(DiaperDrive, :count).by(1)
     end
 
@@ -62,7 +62,7 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
       fill_in 'Name', with: 'Normal 1'
       fill_in 'Start Date', with: Time.zone.today
       fill_in 'End Date', with: Time.zone.today + 1.day
-      click_button 'Create Diaper drive'
+      click_button 'Create Product drive'
 
       expect(DiaperDrive.last).to have_attributes({ name: 'Normal 1', start_date: Time.zone.today, end_date: Time.zone.today + 1.day, virtual: false })
     end
@@ -71,24 +71,24 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
       fill_in 'Name', with: 'Virtual 1'
       fill_in 'Start Date', with: Time.zone.today
       fill_in 'End Date', with: Time.zone.today + 4.hours
-      click_button 'Create Diaper drive'
+      click_button 'Create Product drive'
 
       expect(page.find('.alert')).to have_content('added')
     end
   end
 
-  context 'when creating a Virtual Diaper Drive' do
+  context 'when creating a Virtual Product Drive' do
     let(:subject) { @url_prefix + "/diaper_drives/new" }
 
     before { visit subject }
 
-    it 'must create a new virtual Diaper Drive' do
+    it 'must create a new virtual Product Drive' do
       expect do
         fill_in 'Name', with: 'Virtual 1'
         fill_in 'Start Date', with: Time.zone.today
         fill_in 'End Date', with: Time.zone.today + 4.hours
         check 'virtual'
-        click_button 'Create Diaper drive'
+        click_button 'Create Product drive'
       end.to change(DiaperDrive, :count).by(1)
     end
 
@@ -97,7 +97,7 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
       fill_in 'Start Date', with: Time.zone.today
       fill_in 'End Date', with: Time.zone.today + 1.day
       check 'virtual'
-      click_button 'Create Diaper drive'
+      click_button 'Create Product drive'
 
       expect(DiaperDrive.last).to have_attributes({ name: 'Virtual 1', start_date: Time.zone.today, end_date: Time.zone.today + 1.day, virtual: true })
     end
@@ -107,9 +107,19 @@ RSpec.describe "Diaper Drives", type: :system, js: true do
       fill_in 'Start Date', with: Time.zone.today
       fill_in 'End Date', with: Time.zone.today + 4.hours
       check 'virtual'
-      click_button 'Create Diaper drive'
+      click_button 'Create Product drive'
 
       expect(page.find('.alert')).to have_content('added')
+    end
+  end
+
+  context 'when showing a Product Drive with no end date' do
+    let(:new_diaper_drive) { create(:diaper_drive, name: 'Endless drive', start_date: 3.weeks.ago, end_date: '') }
+    let(:subject) { @url_prefix + "/diaper_drives/#{new_diaper_drive.id}" }
+
+    it 'must be able to show the product drive' do
+      visit subject
+      expect(page).to have_content 'Endless drive'
     end
   end
 end

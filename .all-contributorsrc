@@ -981,6 +981,42 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "dorner",
+      "name": "Daniel Orner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1986893?v=4",
+      "profile": "https://github.com/dorner",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "bobmazanec",
+      "name": "Bob Mazanec",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2031462?v=4",
+      "profile": "https://github.com/bobmazanec",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "markcyen",
+      "name": "Mark Yen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/77414433?v=4",
+      "profile": "https://www.linkedin.com/in/markcyen/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ChaelCodes",
+      "name": "Rachael Wright-Munn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8124558?v=4",
+      "profile": "https://twitch.tv/ChaelCodes",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -1,15 +1,18 @@
-def set_up_sidekiq
-  require 'sidekiq/web'
-
+def set_up_delayed_job
   if Rails.env.production?
-    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-      compare = ->(s1, s2) { ActiveSupport::SecurityUtils.secure_compare(s1, s2) }
-      compare.call(username, ENV["SIDEKIQ_USERNAME"]) && compare.call(password, ENV["SIDEKIQ_PASSWORD"])
+    DelayedJobWeb.use Rack::Auth::Basic do |username, password|
+      ActiveSupport::SecurityUtils.variable_size_secure_compare(
+        ENV["DELAYED_JOB_USERNAME"],
+        username
+      ) &&
+        ActiveSupport::SecurityUtils.variable_size_secure_compare(
+          ENV["DELAYED_JOB_PASSWORD"],
+          password
+        )
     end
   end
 
-  mount Sidekiq::Web => '/sidekiq'
-  Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
+  match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
 end
 
 def set_up_flipper
@@ -22,10 +25,14 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
-  devise_for :users, controllers: { sessions: "users/sessions" }
+  devise_for :users, controllers: {
+    sessions: "users/sessions",
+    omniauth_callbacks: 'users/omniauth_callbacks'
+  }
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
+  resources :logins, only: [:new, :create], controller: "consolidated_logins"
 
-  set_up_sidekiq
+  set_up_delayed_job
   set_up_flipper
 
   # Add route partners/dashboard so that we can define it as partner_user_root
@@ -53,10 +60,14 @@ Rails.application.routes.draw do
     get :dashboard
     resources :base_items
     resources :organizations
-    resources :partners, except: %i[new create destroy]
+    resources :partners, except: %i[new create]
     resources :users
     resources :barcode_items
-    resources :account_requests, only: [:index]
+    resources :account_requests, only: [:index] do
+      post :reject, on: :collection
+      get :for_rejection, on: :collection
+    end
+    resources :questions
   end
 
   match "/404", to: "errors#not_found", via: :all
@@ -84,7 +95,9 @@ Rails.application.routes.draw do
     end
 
     namespace :reports do
-      resources :ndbn_annuals, only: [:index, :show], param: :year
+      resources :annual_reports, only: [:index, :show], param: :year do
+        post :recalculate, on: :member
+      end
     end
 
     resources :transfers, only: %i(index create new show destroy)
@@ -141,6 +154,7 @@ Rails.application.routes.draw do
     resources :profiles, only: %i(edit update)
     resources :items do
       patch :restore, on: :member
+      patch :remove_category, on: :member
     end
     resources :item_categories
     resources :partners do
@@ -198,7 +212,7 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get "help", to: "help#show"
   get "pages/:name", to: "static#page"
-  get "/register", to: "static#register"
+  get "/privacypolicy", to: "static#privacypolicy"
   resources :account_requests, only: [:new, :create] do
     collection do
       get 'confirmation'

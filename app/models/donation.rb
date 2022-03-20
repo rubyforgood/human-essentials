@@ -18,7 +18,7 @@
 #
 
 class Donation < ApplicationRecord
-  SOURCES = { diaper_drive: "Diaper Drive",
+  SOURCES = { diaper_drive: "Product Drive",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
               misc: "Misc. Donation" }.freeze
@@ -35,6 +35,8 @@ class Donation < ApplicationRecord
   include Itemizable
   include Exportable
   include Filterable
+  include IssuedAt
+
   scope :at_storage_location, ->(storage_location_id) {
     where(storage_location_id: storage_location_id)
   }
@@ -78,6 +80,8 @@ class Donation < ApplicationRecord
     includes(source).where(source: SOURCES[source])
   }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
+
+  scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
 
   def from_diaper_drive?
     source == SOURCES[:diaper_drive]

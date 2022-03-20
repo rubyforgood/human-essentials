@@ -18,8 +18,8 @@ module Partners
       @partner_request.assign_attributes(additional_attrs)
 
       unless @partner_request.valid?
-        @partner_request.errors.each do |k, v|
-          errors.add(k, v)
+        @partner_request.errors.each do |error|
+          errors.add(error.attribute, error.message)
         end
       end
 

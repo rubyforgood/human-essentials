@@ -328,7 +328,7 @@
         <div class="content">
 
           <!-- START CENTERED WHITE CONTAINER -->
-          <span class="preheader">Your diaper request has been approved.</span>
+        <span class="preheader">Your essentials request has been approved.</span>
           <table role="presentation" class="main">
 
             <!-- START MAIN CONTENT AREA -->
@@ -337,30 +337,21 @@
                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                   <tr>
                     <td>
-                      <% delivery_method = (@distribution.delivery?) ? 'delivered' : 'picked up' %>
-                      <p><%= @partner.name %>,</p>
-                      <p>Your diaper request has been approved and you can find attached to this email a copy of the distribution you will be receiving.</p>
-                      <p>Your distribution has been set to be <b><%= delivery_method %></b> on <b><%= @distribution.issued_at.strftime("%m/%d/%Y") %></b>.</p>
+                    From: <a href="mailto:<%= @from_email %>"><%= @from_email %></a>
                     </td>
+                </tr>
                   <tr>
                     <td>
-                      <% if !@distribution_changes.empty? %>
-                        <%= render partial: "distribution_changes", object: @distribution_changes %>
-                      <% end %>
+                    <%= @default_email_text_interpolated.html_safe %>
                     </td>
                   </tr>
+                <% if @distribution_changes.present? %>
                   <tr>
                     <td>
-                      <p>See you soon!</p>
+                      <%= render partial: "distribution_changes", object: @distribution_changes %>
                     </td>
                   </tr>
-                  <tr>
-                    <td><%= @default_email_text %></td>
-                  </tr>
-                  <tr>
-                    <td><%= @comment %></td>
-                  </tr>
-                  </tr>
+                <% end %>
                 </table>
               </td>
             </tr>
@@ -373,7 +364,7 @@
             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
               <tr>
                 <td class="content-block">
-                  <span class="apple-link">This email was sent with ❤ by <a href="https://diaper.app">Diaperbase</a>.️</span>
+                <span class="apple-link">This email was sent with ❤ by <a href="https://humanessentials.app">Human Essentials</a>.️</span>
                 </td>
               </tr>
               <tr>

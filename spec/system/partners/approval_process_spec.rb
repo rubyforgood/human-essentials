@@ -1,4 +1,4 @@
-RSpec.describe "Approval process for partners", type: :system, js: true do
+RSpec.describe "Approval process for partners", type: :system, js: true, skip_seed: true do
   describe 'filling in organization details and requesting for approval' do
     let(:partner_user) { partner.primary_partner_user }
     let!(:partner) { FactoryBot.create(:partner) }
@@ -11,17 +11,17 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
 
       it 'should not allow them to make requests on the dashboard or the requests page' do
         # Checking that the dashboard doesn't have these options
-        refute page.has_content? 'Request Essentials'
-        refute page.has_content? 'Create New Bulk Essentials Request'
-        refute page.has_content? 'Create New Family Essentials Request'
-        refute page.has_content? 'Create New Individuals Essentials Request'
+        refute page.has_content? 'Make a request'
+        refute page.has_content? 'Quantity'
+        refute page.has_content? 'Specify the family and child you are requesting for'
+        refute page.has_content? '# of Individuals'
 
         # Checking that the request page doesn't have these options
         visit partners_requests_path
-        refute page.has_content? 'Request Essentials'
-        refute page.has_content? 'Create New Bulk Essentials Request'
-        refute page.has_content? 'Create New Family Essentials Request'
-        refute page.has_content? 'Create New Individuals Essentials Request'
+        refute page.has_content? 'Make a request'
+        refute page.has_content? 'Quantity'
+        refute page.has_content? 'Specify the family and child you are requesting for'
+        refute page.has_content? '# of Individuals'
       end
 
       context 'AND they fill out the form and submit it' do
@@ -53,14 +53,14 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
             visit partners_profile_path
           end
 
-          it 'should show that they have been approved and able to make requests' do
+          it 'should show that they have been approved and able to make requests', :aggregate_failures do
             assert page.has_content? 'verified'
 
             visit partners_requests_path
-            assert page.has_content? 'Request Essentials'
-            assert page.has_content? 'Create New Bulk Essentials Request'
-            assert page.has_content? 'Create New Family Essentials Request'
-            assert page.has_content? 'Create New Individuals Essentials Request'
+            assert page.has_content? 'Make a request'
+            assert page.has_content? 'Quantity'
+            assert page.has_content? 'Specify the family and child you are requesting for'
+            assert page.has_content? '# of Individuals'
           end
         end
       end

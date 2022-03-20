@@ -11,7 +11,7 @@
 
 require "rails_helper"
 
-RSpec.describe Manufacturer, type: :model do
+RSpec.describe Manufacturer, type: :model, skip_seed: true do
   context "Validations" do
     it "must belong to an organization" do
       expect(build(:manufacturer, organization: nil)).not_to be_valid
@@ -45,6 +45,17 @@ RSpec.describe Manufacturer, type: :model do
         create(:donation, :with_items, item_quantity: 5, source: Donation::SOURCES[:manufacturer], manufacturer: mfg)
         create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:manufacturer], manufacturer: mfg2)
         expect(mfg.volume).to eq(5)
+      end
+    end
+  end
+
+  context "Private Methods" do
+    describe "#exists_in_org?" do
+      let(:organization) { create(:organization) }
+
+      it "returns true if manufacturer exists in an organization" do
+        manufacturer = FactoryBot.create(:manufacturer, organization_id: organization.id)
+        expect(manufacturer.send(:exists_in_org?)).to eq(true)
       end
     end
   end

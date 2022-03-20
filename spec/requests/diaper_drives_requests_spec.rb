@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "DiaperDrives", type: :request do
+RSpec.describe "DiaperDrives", type: :request, skip_seed: true do
   let(:default_params) do
     { organization_id: @organization.id.to_param }
   end

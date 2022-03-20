@@ -1,0 +1,44 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Reports - #{current_organization.name}" %>
+        <h1>
+          Reports
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Reports</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12 mb-2">
+        <h5 class="mb-1">Reports are available at the end of every year.</h5>
+        <span class="text-muted"> <%= "#{@actual_year} (available in #{pluralize(@month_remaining_to_report, 'month')})" %> </span>
+      </div>
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">NDBN Annual Reports</h3>
+          </div>
+          <ul class="list-group list-unstyled">
+            <% @years.map do |year| %>
+              <li class="list-group-item-action"> <%= link_to "#{year}", reports_annual_report_path(year), class: "list-group-item" %> </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

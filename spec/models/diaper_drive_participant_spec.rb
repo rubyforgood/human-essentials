@@ -18,7 +18,7 @@
 
 require "rails_helper"
 
-RSpec.describe DiaperDriveParticipant, type: :model do
+RSpec.describe DiaperDriveParticipant, type: :model, skip_seed: true do
   it_behaves_like "provideable"
 
   context "Validations" do
@@ -35,7 +35,7 @@ RSpec.describe DiaperDriveParticipant, type: :model do
 
   context "Methods" do
     describe "volume" do
-      it "retrieves the amount of product that has been donated through this diaper drive" do
+      it "retrieves the amount of product that has been donated through this product drive" do
         dd = create(:diaper_drive)
         ddp = create(:diaper_drive_participant)
         create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:diaper_drive], diaper_drive: dd, diaper_drive_participant: ddp)

@@ -19,12 +19,12 @@ class DiaperDrivesController < ApplicationController
     @diaper_drive = current_organization.diaper_drives.new(diaper_drive_params.merge(organization: current_organization))
     respond_to do |format|
       if @diaper_drive.save
-        format.html { redirect_to diaper_drives_path, notice: "New diaper drive added!" }
+        format.html { redirect_to diaper_drives_path, notice: "New product drive added!" }
         format.js
       else
         flash[:error] = "Something didn't work quite right -- try again?"
         format.html { render action: :new }
-        format.js { render template: "diaper_drives/new_modal.js.erb" }
+        format.js { render template: "diaper_drives/new_modal" }
       end
     end
   end
@@ -33,7 +33,7 @@ class DiaperDrivesController < ApplicationController
     @diaper_drive = current_organization.diaper_drives.new
     if request.xhr?
       respond_to do |format|
-        format.js { render template: "diaper_drives/new_modal.js.erb" }
+        format.js { render template: "diaper_drives/new_modal" }
       end
     end
   end
@@ -61,7 +61,7 @@ class DiaperDrivesController < ApplicationController
   def destroy
     current_organization.diaper_drives.find(params[:id]).destroy
     respond_to do |format|
-      format.html { redirect_to diaper_drives_url, notice: 'Diaper drive was successfully destroyed.' }
+      format.html { redirect_to diaper_drives_url, notice: 'Product drive was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

@@ -10,12 +10,21 @@ class DistributionMailer < ApplicationMailer
 
     @partner = distribution.partner
     @distribution = distribution
-    @default_email_text = current_organization.default_email_text
     @comment = distribution.comment
+
+    delivery_method = @distribution.delivery? ? 'delivered' : 'picked up'
+    @default_email_text = current_organization.default_email_text
+    @default_email_text_interpolated = TextInterpolatorService.new(@default_email_text.body.to_s, {
+                                                                     delivery_method: delivery_method,
+                                                                     distribution_date: @distribution.issued_at.strftime("%m/%d/%Y"),
+                                                                     partner_name: @partner.name,
+                                                                     comment: @comment
+                                                                   }).call
+
     @from_email = current_organization.email.presence || current_organization.users.first.email
     @distribution_changes = distribution_changes
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = DistributionPdf.new(current_organization, @distribution).render
-    mail(to: @partner.email, from: @from_email, subject: "#{subject} from #{current_organization.name}")
+    mail(to: @partner.email, subject: "#{subject} from #{current_organization.name}")
   end
 
   def reminder_email(distribution_id)
@@ -24,6 +33,6 @@ class DistributionMailer < ApplicationMailer
     @distribution = distribution
     return if @distribution.past? || !@partner.send_reminders || @partner.deactivated?
 
-    mail(to: @partner.email, from: @distribution.organization.email, subject: "#{@partner.name} Distribution Reminder")
+    mail(to: @partner.email, subject: "#{@partner.name} Distribution Reminder")
   end
 end

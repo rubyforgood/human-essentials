@@ -1,41 +1,33 @@
-<div class="card mb-4">
-  <h5 class="card-header bg-info">Families Served</h5>
-  <div class="card-body">
-    <div class=container-fluid>
-      <div class="row text-center">
-        <div class="col">
-          <h2>Our Impact</h2>
-        </div>
+<section class="container mx-auto py-8">
+  <h2 class="font-bold">Our Impact</h2>
+
+  <div class="flex">
+    <article class="flex-1 p-4 mr-4 bg-white rounded-md shadow-xl">
+      <span class="font-thin text-green-400 text-7xl">
+        <%= @families.count %>
+      </span>
+      <h3>Families served</h3>
+      <p>Year-to-date total</p>
+    </article>
+
+    <article class="flex-1 p-4 mr-4 bg-white rounded-md shadow-xl">
+      <span class="font-thin text-green-400 text-7xl">
+        <%= @children.count %>
+      </span>
+      <h3>Children served</h3>
+      <p>Year-to-date total</p>
+    </article>
+
+    <article class="flex-1 p-4 bg-white rounded-md shadow-xl flex">
+      <div class="border-r-2 border-green-400 flex-2">
+        <span class="font-thin text-green-400 text-7xl">
+          <%= @families.pluck(:guardian_zip_code).uniq.count %>
+        </span>
+        <h3 class="mr-4">Areas served</h3>
       </div>
-      <div class="card-deck row justify-content-center dashboard">
-        <div class="card col-lg-3 dashboard">
-          <div class="card-body">
-            <h2 class="card-text display-2"><%= @families.count %></h2>
-            <p class="card-text text-right">Our total year-to-date</p>
-          </div>
-          <div class="card-footer text-right">
-            <h5>Number of Families Served</h5>
-          </div>
-        </div>
-        <div class="card col-lg-3 dashboard">
-          <div class="card-body">
-            <h2 class="card-text display-2"><%= @children.count %></h2>
-            <p class="card-text text-right">Our total year-to-date</p>
-          </div>
-          <div class="card-footer text-right">
-            <h5>Number of Children Served</h5>
-          </div>
-        </div>
-        <div class="card col-lg-6 dashboard">
-          <div class="card-body">
-            <h2 class="card-text display-4 zip" data-test="zip-codes">
-              <%= @families.pluck(:guardian_zip_code).uniq.join(", ") %>
-            </h2>
-          </div>
-          <div class="card-footer text-right">
-            <h5>Areas Served</h5>
-          </div>
-        </div>
+      <div class="ml-4 flex-1">
+        <%= @families.pluck(:guardian_zip_code).uniq.join(", ") %>
       </div>
-    </div>
+    </article>
   </div>
+</section>

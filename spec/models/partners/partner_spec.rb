@@ -87,7 +87,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Partners::Partner, type: :model do
+RSpec.describe Partners::Partner, type: :model, skip_seed: true do
   describe 'associations' do
     it { should have_many(:users).dependent(:destroy) }
     it { should have_many(:requests).dependent(:destroy) }
@@ -127,6 +127,27 @@ RSpec.describe Partners::Partner, type: :model do
 
     context 'when the partner_status i not verified' do
       let(:partner_status) { 'not-verified' }
+
+      it 'should return false' do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe '#deactivated' do
+    subject { partner.deactivated? }
+    let(:partner) { FactoryBot.build(:partners_partner, status_in_diaper_base: status_in_diaper_base) }
+
+    context 'when the status_in_diaper_base is deactivated' do
+      let(:status_in_diaper_base) { 'deactivated' }
+
+      it 'should return true' do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context 'when the status_in_diaper_base is not deactivated' do
+      let(:status_in_diaper_base) { 'not-deactivated' }
 
       it 'should return false' do
         expect(subject).to eq(false)

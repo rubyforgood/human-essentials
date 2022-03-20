@@ -1,0 +1,31 @@
+<section class="container mx-auto my-8">
+  <h2 class="font-bold">Upcoming Distributions</h2>
+
+  <table class="bg-white rounded-md w-full shadow">
+    <thead>
+      <tr class="border-b border-gray-200">
+        <th scope="col" class="p-4 w-40">Pick Up Date</th>
+        <th scope="col" class="p-4">Total Items</th>
+        <th scope="col" class="p-4">Items To Receive</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @upcoming_distributions.each do |dist| %>
+        <tr class="hover:bg-gray-100 border-b border-gray-200 last:border-b-0">
+          <td class="p-4 w-40">
+            <i class="text-blue-900 far fa-file-alt mr-1"></i>
+            <%= dist.issued_at.strftime("%m/%d/%Y %I:%M%p") %>
+          </td>
+          <td class="p-4"><%= dist.line_items.total %></td>
+          <td class="p-4">
+            <% dist.line_items.map do |item| %>
+              <span class="inline-block p-1 mr-1 mb-2 lg:mb-0 bg-white border border-gray-600 rounded-sm">
+                <%= item.quantity %> <%= item.name%>
+              </span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>

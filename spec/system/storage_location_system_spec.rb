@@ -1,4 +1,4 @@
-RSpec.describe "Storage Locations", type: :system, js: true do
+RSpec.describe "Storage Locations", type: :system, js: true, skip_seed: true do
   before do
     sign_in(@user)
   end

@@ -14,7 +14,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DiaperDrive, type: :model do
+RSpec.describe DiaperDrive, type: :model, skip_seed: true do
   let!(:diaper_drive) { create(:diaper_drive) }
   let!(:donation) { create(:donation, :with_items, item_quantity: 7, diaper_drive: diaper_drive) }
   let!(:donation2) { create(:donation, :with_items, item_quantity: 9, diaper_drive: diaper_drive) }
@@ -67,11 +67,11 @@ RSpec.describe DiaperDrive, type: :model do
       let!(:diaper_drive1) { create(:diaper_drive, start_date: start_date, end_date: end_date) }
       let!(:diaper_drive2) { create(:diaper_drive, start_date: other_start_date, end_date: other_end_date) }
 
-      it 'retuns the diaper drive 1' do
+      it 'retuns the product drive 1' do
         expect(described_class.within_date_range("#{start_date} - #{end_date}")).to include(diaper_drive1)
       end
 
-      it 'does not include diaper drive 2' do
+      it 'does not include product drive 2' do
         expect(described_class.within_date_range("#{start_date} - #{end_date}")).not_to include(diaper_drive2)
       end
     end
@@ -87,7 +87,7 @@ RSpec.describe DiaperDrive, type: :model do
 
   describe "donation_source_view" do
     it "returns formatted text" do
-      expect(diaper_drive.donation_source_view).to eq("Test Drive (diaper drive)")
+      expect(diaper_drive.donation_source_view).to eq("Test Drive (product drive)")
     end
   end
 end

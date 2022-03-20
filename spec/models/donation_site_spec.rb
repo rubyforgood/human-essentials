@@ -12,7 +12,7 @@
 #  organization_id :integer
 #
 
-RSpec.describe DonationSite, type: :model do
+RSpec.describe DonationSite, type: :model, skip_seed: true do
   context "Validations >" do
     it "must belong to an organization" do
       expect(build(:donation_site, organization_id: nil)).not_to be_valid

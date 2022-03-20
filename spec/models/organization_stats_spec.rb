@@ -1,7 +1,7 @@
 # == No Schema Information
 #
 
-RSpec.describe OrganizationStats, type: :model do
+RSpec.describe OrganizationStats, type: :model, skip_seed: true do
   let(:partners) { [] }
   let(:storage_locations) { [] }
   let(:donation_sites) { [] }

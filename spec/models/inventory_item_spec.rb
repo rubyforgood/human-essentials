@@ -10,7 +10,7 @@
 #  storage_location_id :integer
 #
 
-RSpec.describe InventoryItem, type: :model do
+RSpec.describe InventoryItem, type: :model, skip_seed: true do
   context "Validations >" do
     describe "quantity >" do
       it "is required" do

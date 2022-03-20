@@ -1,58 +1,68 @@
-RSpec.describe "Dashboard", type: :system, js: true do
+require 'ostruct'
+
+RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
   context "With a new Diaper bank" do
     before :each do
       @new_organization = create(:organization)
       @user = create(:user, organization: @new_organization)
-      @url_prefix = "/#{@new_organization.short_name}"
+      @org_short_name = new_organization.short_name
     end
-    attr_reader :new_organization, :user, :url_prefix
-
-    subject { url_prefix + "/dashboard" }
+    attr_reader :new_organization, :org_short_name, :user
 
     before do
       sign_in(user)
     end
 
     it "displays the getting started guide until the steps are completed" do
+      org_dashboard_page = OrganizationDashboardPage.new org_short_name: org_short_name
+      org_dashboard_page.visit
+
+      # rubocop:disable Layout/ExtraSpacing
+
       # When dashboard loads, ensure that we are on step 1 (Partner Agencies)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-partners", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+      expect(org_dashboard_page).to     have_getting_started_guide
+      expect(org_dashboard_page).to     have_add_partner_call_to_action
+      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a partner, ensure that we are on step 2 (Storage Locations)
       @partner = create(:partner, organization: new_organization)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+      org_dashboard_page.visit
+
+      expect(org_dashboard_page).to     have_getting_started_guide
+      expect(org_dashboard_page).not_to have_add_partner_call_to_action
+      expect(org_dashboard_page).to     have_add_storage_location_call_to_action
+      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a storage location, ensure that we are on step 3 (Donation Site)
       create(:storage_location, organization: new_organization)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 0)
+      org_dashboard_page.visit
+
+      expect(org_dashboard_page).to     have_getting_started_guide
+      expect(org_dashboard_page).not_to have_add_partner_call_to_action
+      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(org_dashboard_page).to     have_add_donation_site_call_to_action
+      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a donation site, ensure that we are on step 4 (Inventory)
       create(:donation_site, organization: new_organization)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 1)
-      expect(page).to have_selector("#org-stats-call-to-action-partners", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-storage-locations", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-donation-sites", count: 0)
-      expect(page).to have_selector("#org-stats-call-to-action-inventory", count: 1)
+      org_dashboard_page.visit
+
+      expect(org_dashboard_page).to     have_getting_started_guide
+      expect(org_dashboard_page).not_to have_add_partner_call_to_action
+      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
+      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
+      expect(org_dashboard_page).to     have_add_inventory_call_to_action
+
+      # rubocop:enable Layout/ExtraSpacing
 
       # After we add inventory to a storage location, ensure that the getting starting guide is gone
       create(:storage_location, :with_items, item_quantity: 125, organization: new_organization)
-      visit subject
-      expect(page).to have_selector("#getting-started-guide", count: 0)
+      org_dashboard_page.visit
+
+      expect(org_dashboard_page).not_to have_getting_started_guide
     end
   end
 
@@ -62,978 +72,667 @@ RSpec.describe "Dashboard", type: :system, js: true do
     end
 
     let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 0, organization: @organization) }
-    let!(:url_prefix) { "/#{@organization.short_name}" }
-    subject { url_prefix + "/dashboard" }
+    let(:org_short_name) { @organization.short_name }
+    let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
 
     describe "Signage" do
       it "shows their organization name unless they have a logo set" do
-        visit subject
-        # extract just the filename
-        org_logo = extract_image(:css, ".organization-logo")
-        expect(org_logo).to be_include("logo.jpg")
+        org_dashboard_page.visit
+
+        expect(org_dashboard_page).to have_organization_logo
+
+        logo_filename = File.basename(org_dashboard_page.organization_logo_filepath).split("?").first
+        expect(logo_filename).to include("logo.jpg")
 
         @organization.logo.purge
         @organization.save
-        visit subject
+        org_dashboard_page.visit
 
-        expect(page).not_to have_css(".organization-logo")
+        expect(org_dashboard_page).not_to have_organization_logo
       end
     end
 
     describe "Inventory Totals" do
-      let(:date_to_view) { Time.zone.parse("June 1 2018") }
-      let(:last_year_date) { Time.zone.parse("June 1, 2017") }
-      let(:beginning_of_2018) { Time.zone.parse("January 1, 2018 12:01am") }
-
       describe "Summary" do
         before do
           create_list(:storage_location, 3, :with_items, item_quantity: 111, organization: @organization)
-          visit subject
+          org_dashboard_page.visit
         end
 
         it "displays the on-hand totals" do
-          within "#summary" do
-            expect(page).to have_content("on-hand")
-          end
+          expect(org_dashboard_page.summary_section.text).to include "on-hand"
         end
 
         context "when constrained to date range" do
           it "does not change" do
-            within "#summary" do
-              expect(page).to have_content("333")
+            expect { org_dashboard_page.select_date_filter_range "Last Month" }
+              .not_to change { org_dashboard_page.total_inventory }
+              .from 333
+          end
+        end
+      end
+    end
+
+    test_time = Time.zone.now
+
+    # 1, 20, 300, ..., 900000000
+    # assuming each value is used once, summing these values makes easily recognizable totals
+    # .fetch() from it so too-high indices raise IndexError
+    # legal indices are in -8..8 (i.e., inclusive)
+    item_quantities = (1..9).map { |i| i * 10**(i - 1) }
+
+    describe "Donations" do
+      it "has a link to create a new donation" do
+        org_new_donation_page = OrganizationNewDonationPage.new org_short_name: org_short_name
+
+        org_dashboard_page.visit
+
+        expect { org_dashboard_page.create_new_donation }
+          .to change { page.current_path }
+          .to org_new_donation_page.path
+      end
+
+      # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
+      max_recent_donation_links_count = 3
+
+      # Make up to this many (inclusive) donations for each filtered period
+      # Keep it below (item_quantities.size - 1) so there's at least 2 values left for
+      # Donations outside of the filtered period
+      max_donations_in_filtered_period = max_recent_donation_links_count + 1
+
+      around do |example|
+        # Ensure "today" doesn't change for the server side during the example run
+        # Note, however, that this does *not* affect the client side
+        # So "today" for the server still might be "yesterday"
+        # —possibly even "last month" or "last year"-
+        # for the client
+        # Rely on rerun via rspec-retry for those edge cases
+        travel_to(test_time)
+        example.run
+        travel_back
+      end
+
+      [
+        # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+        ["Today",        test_time,                               test_time],
+        ["Yesterday",    test_time.yesterday,                     test_time.yesterday],
+        ["Last 7 Days",  test_time -  6.days,                     test_time],
+        ["Last 30 Days", test_time - 29.days,                     test_time],
+        ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
+        ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
+        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
+        ["All Time",     test_time - 100.years,                   test_time],
+        ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+      ].each do |date_range_info|
+        filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
+
+        filtered_date_range = start_date.to_date..end_date.to_date
+        before_filtered_date_range = start_date.yesterday.to_date
+        after_filtered_date_range = end_date.tomorrow.to_date
+
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+
+        # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
+        # w/out making a fixed pattern
+        num_donations_in_filtered_period = rand(0..max_donations_in_filtered_period)
+
+        context "given 1 Donation on #{before_filtered_date_range}, " \
+                "#{num_donations_in_filtered_period} during #{filtered_date_range}, and " \
+                "1 on #{after_filtered_date_range}" do
+          custom_dates = if set_custom_dates
+            "#{start_date_formatted} - #{end_date_formatted}"
+          end
+
+          before do
+            filtered_dates = filtered_date_range.to_a
+            @quantities_donated_in_filtered_date_range = []
+
+            @item_quantity = item_quantities.to_enum
+
+            def create_next_donation(donation_date:)
+              quantity_in_donation = @item_quantity.next
+              create :donation, :with_items, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
+
+              quantity_in_donation
             end
 
-            date_range_picker_select_range "Last Month"
+            # days_this_year.sample in num_donations_in_filtered_period.times loop
+            # rather than
+            # days_this_year.sample(num_donations_in_filtered_period).each
+            # because Array#sample(n) on an Array with m<n elements returns only m elements
+            num_donations_in_filtered_period.times do
+              @quantities_donated_in_filtered_date_range << create_next_donation(donation_date: filtered_dates.sample)
+            end
 
-            within "#summary" do
-              expect(page).to have_content("333")
+            # create Donations before & after the filtered date range
+            [before_filtered_date_range, after_filtered_date_range].each { create_next_donation donation_date: _1 }
+          end
+
+          describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
+            before do
+              org_dashboard_page
+                .visit
+                .filter_to_date_range(filtered_date_range_label, custom_dates)
+            end
+
+            expected_recent_donation_links_count = [max_recent_donation_links_count, num_donations_in_filtered_period].min
+
+            it "shows the correct total and #{expected_recent_donation_links_count} Recent Donation link(s)" do
+              expect(org_dashboard_page.total_donations).to eq @quantities_donated_in_filtered_date_range.sum
+
+              recent_donation_links = org_dashboard_page.recent_donation_links
+
+              expect(recent_donation_links.count).to eq expected_recent_donation_links_count
+
+              # Expect the links to be something like "1 item...", "4,000 items from Manufacturer"
+              # Strip out the item counts
+              recent_quantities = recent_donation_links.map { _1.match(/[0-9,]+/).to_s.delete(",").to_i }
+
+              # By design, the setup may have created more Donations during the period than are visible in the Recent Donation links
+              # Make sure each Recent Donation link uniquely matches a single Donation
+              expect(@quantities_donated_in_filtered_date_range.intersection(recent_quantities)).to match_array recent_quantities
             end
           end
         end
       end
+    end
 
-      describe "Donations" do
-        around do |example|
-          travel_to(date_to_view)
-          example.run
-          travel_back
-        end
+    describe "Purchases" do
+      it "has a link to create a new purchase" do
+        org_new_purchase_page = OrganizationNewPurchasePage.new org_short_name: org_short_name
 
-        it "has a link to create a new donation" do
-          visit subject
-          expect(page).to have_css("#donations")
-          within "#donations" do
-            expect(page).to have_xpath("//a[@href='#{new_donation_path(organization_id: @organization.to_param)}']", visible: false)
+        org_dashboard_page.visit
+
+        expect { org_dashboard_page.create_new_purchase }
+          .to change { page.current_path }
+          .to org_new_purchase_page.path
+      end
+
+      # as of 28 Jan 2022, the "Recent Purchases" list shows up to this many items matching the date filter
+      max_recent_purchase_links_count = 3
+
+      # Make up to this many (inclusive) purchases for each filtered period
+      # Keep it below (item_quantities.size - 1) so there's at least 2 values left for
+      # Purchases outside of the filtered period
+      max_purchases_in_filtered_period = max_recent_purchase_links_count + 1
+
+      around do |example|
+        # Ensure "today" doesn't change for the server side during the example run
+        # Note, however, that this does *not* affect the client side
+        # So "today" for the server still might be "yesterday"
+        # —possibly even "last month" or "last year"-
+        # for the client
+        # Rely on rerun via rspec-retry for those edge cases
+        travel_to(test_time)
+        example.run
+        travel_back
+      end
+
+      [
+        # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+        ["Today",        test_time,                               test_time],
+        ["Yesterday",    test_time.yesterday,                     test_time.yesterday],
+        ["Last 7 Days",  test_time -  6.days,                     test_time],
+        ["Last 30 Days", test_time - 29.days,                     test_time],
+        ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
+        ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
+        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
+        ["All Time",     test_time - 100.years,                   test_time],
+        ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+      ].each do |date_range_info|
+        filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
+
+        filtered_date_range = start_date.to_date..end_date.to_date
+        before_filtered_date_range = start_date.yesterday.to_date
+        after_filtered_date_range = end_date.tomorrow.to_date
+
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+
+        # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
+        # w/out making a fixed pattern
+        num_purchases_in_filtered_period = rand(0..max_purchases_in_filtered_period)
+
+        context "given 1 Purchase on #{before_filtered_date_range}, " \
+                "#{num_purchases_in_filtered_period} during #{filtered_date_range}, and " \
+                "1 on #{after_filtered_date_range}" do
+          custom_dates = if set_custom_dates
+            "#{start_date_formatted} - #{end_date_formatted}"
           end
-        end
 
-        it "doesn't count inactive items" do
-          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
-          item = create(:donation, :with_items, item_quantity: 100, storage_location: storage_location).items.first
-
-          visit subject
-          within "#donations" do
-            expect(page).to have_content("100")
-          end
-
-          item.update!(active: false)
-          visit subject
-          within "#donations" do
-            expect(page).to have_no_content("100")
-          end
-        end
-
-        context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
-            @organization.donations.destroy_all
-            @this_years_donations = {
-              today: create(:donation, :with_items, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
-              yesterday: create(:diaper_drive_donation, :with_items, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-              earlier_this_week: create(:donation_site_donation, :with_items, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:manufacturer_donation, :with_items, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
-            }
-            @last_years_donations = create_list(:donation, 2, :with_items, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
-            visit subject
+            filtered_dates = filtered_date_range.to_a
+            @quantities_donated_in_filtered_date_range = []
+
+            @item_quantity = item_quantities.to_enum
+
+            def create_next_purchase(purchase_date:)
+              quantity_in_purchase = @item_quantity.next
+              create :purchase, :with_items, issued_at: purchase_date, item_quantity: quantity_in_purchase, storage_location: storage_location, organization: @organization
+
+              quantity_in_purchase
+            end
+
+            # days_this_year.sample in num_purchases_in_filtered_period.times loop
+            # rather than
+            # days_this_year.sample(num_purchases_in_filtered_period).each
+            # because Array#sample(n) on an Array with m<n elements returns only m elements
+            num_purchases_in_filtered_period.times do
+              @quantities_donated_in_filtered_date_range << create_next_purchase(purchase_date: filtered_dates.sample)
+            end
+
+            # create Purchases before & after the filtered date range
+            [before_filtered_date_range, after_filtered_date_range].each { create_next_purchase purchase_date: _1 }
           end
 
-          describe "This Year" do
+          describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
             before do
-              date_range_picker_select_range "This Year"
-              click_on "Filter"
+              org_dashboard_page
+                .visit
+                .filter_to_date_range(filtered_date_range_label, custom_dates)
             end
 
-            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
+            expected_recent_purchase_links_count = [max_recent_purchase_links_count, num_purchases_in_filtered_period].min
 
-            it "has a widget displaying the year-to-date Donation totals, only using donations from this year" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
+            it "shows correct #{expected_recent_purchase_links_count} Recent Purchase link(s)" do
+              recent_purchase_links = org_dashboard_page.recent_purchase_links
 
-            it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
-            end
-          end
+              expect(recent_purchase_links.count).to eq expected_recent_purchase_links_count
 
-          describe "Today" do
-            before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
-            end
+              # Expect the links to be something like "1 item...", "4,000 items from Manufacturer"
+              # Strip out the item counts
+              recent_quantities = recent_purchase_links.map { _1.match(/[0-9,]+/).to_s.delete(",").to_i }
 
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
-
-            it "has a widget displaying today's Donation totals, only using donations from today" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
-            end
-          end
-
-          describe "Yesterday" do
-            before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
-
-            it "has a widget displaying the Donation totals from yesterday, only using donations from yesterday" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
-            end
-          end
-
-          describe "This Week" do
-            before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
-
-            it "has a widget displaying the Donation totals from this week, only using donations from this week" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
-            end
-          end
-
-          describe "This Month" do
-            before do
-              date_range_picker_select_range "This Month"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
-
-            it "has a widget displaying the Donation totals from this month, only using donations from this month" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent donations" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
-            end
-          end
-
-          describe "All Time" do
-            before do
-              date_range_picker_select_range "All Time"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
-
-            it "has a widget displaying the Donation totals from last year, only using donations from last year" do
-              within "#donations" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent donations from that time" do
-              within "#donations" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
+              # By design, the setup may have created more Purchases during the period than are visible in the Recent Purchase links
+              # Make sure each Recent Purchase link uniquely matches a single Purchase
+              expect(@quantities_donated_in_filtered_date_range.intersection(recent_quantities)).to match_array recent_quantities
             end
           end
         end
       end
+    end
 
-      describe "Purchases" do
-        around do |example|
-          travel_to(date_to_view)
-          example.run
-          travel_back
-        end
+    describe "Product Drives" do
+      around do |example|
+        travel_to(test_time)
+        example.run
+        travel_back
+      end
 
-        it "has a link to create a new purchase" do
-          visit subject
-          expect(page).to have_css("#purchases")
-          within "#purchases" do
-            expect(page).to have_xpath("//a[@href='#{new_purchase_path(organization_id: @organization.to_param)}']", visible: false)
+      it "has a widget for product drive summary data" do
+        org_dashboard_page.visit
+
+        expect(org_dashboard_page).to have_diaper_drives_section
+      end
+
+      # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
+      max_recent_donation_links_count = 3
+
+      # Make up to this many (inclusive) donations for each filtered period
+      # Keep it below (item_quantities.size - 1) so there's at least 2 values left for
+      # Donations outside of the filtered period
+      max_donations_in_filtered_period = max_recent_donation_links_count + 1
+
+      [
+        # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+        ["Today",        test_time,                               test_time],
+        ["Yesterday",    test_time.yesterday,                     test_time.yesterday],
+        ["Last 7 Days",  test_time -  6.days,                     test_time],
+        ["Last 30 Days", test_time - 29.days,                     test_time],
+        ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
+        ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
+        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
+        ["All Time",     test_time - 100.years,                   test_time],
+        ["Custom Range", test_time - 2.years,                     test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+      ].each do |date_range_info|
+        filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
+
+        filtered_date_range = start_date.to_date..end_date.to_date
+        before_filtered_date_range = start_date.yesterday.to_date
+        after_filtered_date_range = end_date.tomorrow.to_date
+
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+
+        # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
+        # w/out making a fixed pattern
+        num_donations_in_filtered_period = rand(0..max_donations_in_filtered_period)
+
+        context "given 1 Donation on #{before_filtered_date_range}, " \
+                "#{num_donations_in_filtered_period} during #{filtered_date_range}, and " \
+                "1 on #{after_filtered_date_range}" do
+          custom_dates = if set_custom_dates
+            "#{start_date_formatted} - #{end_date_formatted}"
           end
-        end
 
-        it 'does not count inactive items' do
-          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
-          item = create(:purchase, :with_items, item_quantity: 100, storage_location: storage_location).items.first
-
-          visit subject
-          within "#purchases" do
-            expect(page).to have_content("100")
-          end
-
-          item.update!(active: false)
-          visit subject
-          within "#purchases" do
-            expect(page).to have_no_content("100")
-          end
-        end
-
-        context "when constrained to date range" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
-            @organization.purchases.destroy_all
-            storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
-            @this_years_purchases = {
-              today: create(:purchase, :with_items, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
-              yesterday: create(:purchase, :with_items, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-              earlier_this_week: create(:purchase, :with_items, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:purchase, :with_items, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
-            }
-            @last_years_purchases = create_list(:purchase, 2, :with_items, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
-            visit subject
+            filtered_dates = filtered_date_range.to_a
+
+            @item_quantity = item_quantities.to_enum
+
+            # Create some number of Product Drives
+            # Keep local copy of names so examples can create expected values
+            # without relying on fetching info from production code
+            @diaper_drives = (1..rand(2..5)).map do
+              name = "Product Drive #{_1}"
+              OpenStruct.new name: name, drive: create(:diaper_drive, name: name)
+            end
+
+            def create_next_diaper_drive_donation(donation_date:)
+              quantity_in_donation = @item_quantity.next
+              drive = @diaper_drives.sample
+
+              create :diaper_drive_donation, :with_items, diaper_drive: drive.drive, diaper_drive_participant: @diaper_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
+
+              OpenStruct.new drive_name: drive.name, quantity: quantity_in_donation
+            end
+
+            # days_this_year.sample in num_donations_in_filtered_period.times loop
+            # rather than
+            # days_this_year.sample(num_donations_in_filtered_period).each
+            # because Array#sample(n) on an Array with m<n elements returns only m elements
+            @donations_in_filtered_date_range = num_donations_in_filtered_period.times.map do
+              create_next_diaper_drive_donation donation_date: filtered_dates.sample
+            end
+
+            # create Donations before & after the filtered date range
+            [before_filtered_date_range, after_filtered_date_range].each { create_next_diaper_drive_donation donation_date: _1 }
           end
 
-          describe "This Year" do
+          describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
             before do
-              date_range_picker_select_range "This Year"
-              click_on "Filter"
+              org_dashboard_page
+                .visit
+                .filter_to_date_range(filtered_date_range_label, custom_dates)
             end
 
-            let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum }
+            expected_recent_donation_links_count = [max_recent_donation_links_count, num_donations_in_filtered_period].min
 
-            it "has a widget displaying the year-to-date Purchase totals, only using purchases from this year" do
-              within "#purchases" do
-                expect(page).to have_content(total_inventory)
+            it "shows the correct total and #{expected_recent_donation_links_count} Recent Donation link(s)" do
+              expect(org_dashboard_page.diaper_drive_total_donations).to eq @donations_in_filtered_date_range.map(&:quantity).sum
+
+              recent_donation_links = org_dashboard_page.recent_diaper_drive_donation_links
+
+              expect(recent_donation_links.count).to eq expected_recent_donation_links_count
+
+              # Expect the links to be something like "1 from Some Drive", "4,000 items from Another Drive"
+              # Strip out the item counts & drive names
+              recent_donations = recent_donation_links.map do
+                items_donated, drive_name = _1.match(/([0-9,]+) from (.+)/).captures
+
+                # e.g., [1, "Some Drive"], [20, "Another Drive"]
+                OpenStruct.new quantity: items_donated.delete(",").to_i, drive_name: drive_name
               end
-            end
 
-            it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
-            end
-          end
-
-          describe "Today" do
-            before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_purchases[:today].total_quantity }
-
-            it "has a widget displaying today's Purchase totals, only using purchases from today" do
-              within "#purchases" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
-            end
-          end
-
-          describe "Yesterday" do
-            before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_purchases[:yesterday].total_quantity }
-
-            it "has a widget displaying the Purchase totals from yesterday, only using purchases from yesterday" do
-              within "#purchases" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
-            end
-          end
-
-          describe "This Week" do
-            before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { [@this_years_purchases[:today], @this_years_purchases[:yesterday], @this_years_purchases[:earlier_this_week]].map(&:total_quantity).sum }
-
-            it "has a widget displaying the Purchase totals from this week, only using purchases from this week" do
-              within "#purchases" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
-            end
-          end
-
-          describe "This Month" do
-            before do
-              date_range_picker_select_range "This Month"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_purchases[:today].total_quantity }
-
-            it "has a widget displaying the Purchase totals from this month, only using purchases from this month" do
-              within "#purchases" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent purchases" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /#{total_inventory} items/i, count: 1)
-              end
-            end
-          end
-
-          describe "All Time" do
-            before do
-              date_range_picker_select_range "All Time"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_purchases.values.map(&:total_quantity).sum + @last_years_purchases.map(&:total_quantity).sum }
-
-            it "has a widget displaying the Purchase totals from last year, only using purchases from last year" do
-              within "#purchases" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent purchases from that time" do
-              within "#purchases" do
-                expect(page).to have_css("a", text: /10\d items/i, count: 3)
-              end
+              # By design, the setup may have created more Donations during the period than are visible in the Recent Donation links
+              # Make sure each Recent Donation link uniquely matches a single Donation
+              expect(@donations_in_filtered_date_range.intersection(recent_donations)).to match_array recent_donations
             end
           end
         end
       end
+    end
 
-      describe "Diaper Drives" do
-        around do |example|
-          travel_to(date_to_view)
-          example.run
-          travel_back
-        end
+    describe "Manufacturer Donations" do
+      around do |example|
+        travel_to(test_time)
+        example.run
+        travel_back
+      end
 
-        it "has a widget for diaper drive summary data" do
-          visit subject
-          expect(page).to have_css("#diaper_drives")
-        end
+      it "has a link to create a new donation" do
+        org_dashboard_page.visit
 
-        context "when constrained to date range" do
+        expect(org_dashboard_page).to have_manufacturers_section
+      end
+
+      # as of 15 Feb 2022, the "Top Manufacturer Donations" list shows up to this many manufacturers
+      # which donated during the filtered date range
+      max_top_manufacturer_donations_links_count = 10
+
+      # Make donations for up to this many (inclusive) manufacturers for each filtered period
+      # Different from other sections because the final list also includes the before- and
+      # after-date-range donations
+      max_manufacturers_donated_in_filtered_period = max_top_manufacturer_donations_links_count - 1
+
+      [
+        # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+        ["Today",        test_time,                               test_time],
+        ["Yesterday",    test_time.yesterday,                     test_time.yesterday],
+        ["Last 7 Days",  test_time -  6.days,                     test_time],
+        ["Last 30 Days", test_time - 29.days,                     test_time],
+        ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
+        ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
+        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
+        ["All Time",     test_time - 100.years,                   test_time],
+        ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+      ].each do |date_range_info|
+        filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
+
+        filtered_date_range = start_date.to_date..end_date.to_date
+        before_filtered_date_range = start_date.yesterday.to_date
+        after_filtered_date_range = end_date.tomorrow.to_date
+
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+
+        # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
+        # w/out making a fixed pattern
+        num_manufacturers_donated_in_filtered_period = rand(0..max_manufacturers_donated_in_filtered_period)
+
+        context "given 1 Manufacturer donating on #{before_filtered_date_range}, " \
+                "#{num_manufacturers_donated_in_filtered_period} during #{filtered_date_range}, and " \
+                "1 on #{after_filtered_date_range}" do
+          custom_dates = if set_custom_dates
+            "#{start_date_formatted} - #{end_date_formatted}"
+          end
+
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
-            @organization.donations.destroy_all
-            storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
-            diaper_drive1 = create(:diaper_drive, name: 'First Diaper Drive')
-            diaper_drive2 = create(:diaper_drive, name: 'Second Diaper Drive')
+            filtered_dates = filtered_date_range.to_a
 
-            diaper_drive_participant1 = create(:diaper_drive_participant, business_name: "First Diaper Participant Drive", organization: @organization)
-            diaper_drive_participant2 = create(:diaper_drive_participant, business_name: "Second Diaper Participant Drive", organization: @organization)
+            @item_quantity = item_quantities.to_enum
 
-            @this_years_donations = {
-              today: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
-              yesterday: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-              earlier_this_week: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:diaper_drive_donation, :with_items, diaper_drive: diaper_drive2, diaper_drive_participant: diaper_drive_participant2, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
-            }
+            def create_next_manufacturer_donation(manufacturer:, donation_date:)
+              quantity_in_donation = @item_quantity.next
 
-            @last_years_donations = create_list(:diaper_drive_donation, 2, :with_items, diaper_drive: diaper_drive1, diaper_drive_participant: diaper_drive_participant1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
-            visit subject
-          end
+              create :manufacturer_donation, :with_items, manufacturer: manufacturer, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
 
-          describe "This Year" do
-            before do
-              date_range_picker_select_range "This Year"
-              click_on "Filter"
+              quantity_in_donation
             end
 
-            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
+            # Generate new Manufacturers and their in-filtered-date-range donations
+            @manufacturer_donations_in_filtered_date_range = num_manufacturers_donated_in_filtered_period.times.map do |index|
+              @item_quantity.rewind
+              manufacturer_name = "In-date-range Manufacturer #{index}"
 
-            it "has a widget displaying the year-to-date Diaper drive totals, only using donations from this year" do
-              within "#diaper_drives" do
-                expect(page).to have_content(/2 diaper drive/i)
-                expect(page).to have_content(total_inventory)
+              manufacturer = create :manufacturer, name: manufacturer_name, organization: @organization
+
+              # Ensure at least 1 donation in the filtered period
+              donation_quantities = rand(1..3).times.map do
+                create_next_manufacturer_donation manufacturer: manufacturer, donation_date: filtered_dates.sample
               end
+
+              OpenStruct.new manufacturer_name: manufacturer_name, total_quantity_donated: donation_quantities.sum
             end
 
-            it "displays some recent donations" do
-              within "#diaper_drives" do
-                expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 3)
-              end
-            end
-          end
+            # create Donations before & after the filtered date range
+            @item_quantity.rewind
+            @manufacturer_donations_outside_filtered_date_range = [
+              # rubocop:disable Layout/ExtraSpacing
+              ["Before", before_filtered_date_range],
+              ["After",   after_filtered_date_range]
+              # rubocop:enable Layout/ExtraSpacing
+            ].map do
+              prefix, date = _1
 
-          describe "Today" do
-            before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
-            end
+              manufacturer_name = "#{prefix}-date-range Manufacturer"
+              manufacturer = create :manufacturer, name: manufacturer_name, organization: @organization
+              quantity_donated = create_next_manufacturer_donation manufacturer: manufacturer, donation_date: date
 
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
-
-            it "has a widget displaying today's Diaper drive totals, only using donations from today" do
-              within "#diaper_drives" do
-                expect(page).to have_content(/1 diaper drive/i)
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent donations" do
-              within "#diaper_drives" do
-                expect(page).to have_css("a", text: /#{total_inventory} from first diaper drive/i, count: 1)
-              end
+              OpenStruct.new manufacturer_name: manufacturer_name, total_quantity_donated: quantity_donated
             end
           end
 
-          describe "Yesterday" do
+          describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
             before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
+              org_dashboard_page
+                .visit
+                .filter_to_date_range(filtered_date_range_label, custom_dates)
             end
 
-            let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
+            # max_manufacturers_donated_in_filtered_period + 2 because the list includes the before- & after-date-range donations, too
+            expected_top_manufacturer_donation_links_count = [max_top_manufacturer_donations_links_count, num_manufacturers_donated_in_filtered_period + 2].min
 
-            it "has a widget displaying the Diaper drive totals from yesterday, only using donations from yesterday" do
-              within "#diaper_drives" do
-                expect(page).to have_content(/1 diaper drive participant/i)
-                expect(page).to have_content(total_inventory)
+            it "shows the correct total and #{expected_top_manufacturer_donation_links_count} Top Manufacturer Donation link(s)" do
+              # "Total" is filtered by the time period
+              expected_total_manufacturer_donations = @manufacturer_donations_in_filtered_date_range.map(&:total_quantity_donated).sum
+              expect(org_dashboard_page.manufacturers_total_donations).to eq expected_total_manufacturer_donations
+
+              top_manufacturer_donation_links = org_dashboard_page.top_manufacturer_donation_links
+
+              expect(org_dashboard_page.top_manufacturer_donation_links.count).to eq expected_top_manufacturer_donation_links_count
+
+              # Expect the links to be something like "In-date-range Manufacturer 1 (21)", "In-date-range Manufacturer 2 (4,321)", etc.
+              # Strip out the item counts & manufacturer names
+              top_manufacturer_donations = top_manufacturer_donation_links.map do
+                manufacturer_name, total_donated = _1.match(/(.+) \(([0-9,]+)\)/).captures
+
+                OpenStruct.new manufacturer_name: manufacturer_name, total_quantity_donated: total_donated.delete(",").to_i
               end
-            end
 
-            it "displays some recent donations" do
-              within "#diaper_drives" do
-                expect(page).to have_css("a", text: /#{total_inventory} from second diaper drive/i, count: 1)
-              end
-            end
-          end
+              # The Top Donations list is *not* filtered by the time period
+              # It can contain both the before- and after-filtered-date-range donations
+              all_manufacturer_donations = @manufacturer_donations_in_filtered_date_range + @manufacturer_donations_outside_filtered_date_range
 
-          describe "This Week" do
-            before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
-
-            it "has a widget displaying the Diaper drive totals from this week, only using donations from this week" do
-              within "#diaper_drives" do
-                expect(page).to have_content(/2 diaper drive/i)
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent donations" do
-              within "#diaper_drives" do
-                expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 3)
-              end
-            end
-          end
-
-          describe "This Month" do
-            before do
-              date_range_picker_select_range "This Month"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
-
-            it "has a widget displaying the Diaper drive totals from this month, only using donations from this month" do
-              within "#diaper_drives" do
-                expect(page).to have_content(/1 diaper drive/i)
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent donations" do
-              within "#diaper_drives" do
-                expect(page).to have_css("a", text: /#{total_inventory} from first diaper drive/i, count: 1)
-              end
-            end
-          end
-
-          describe "All Time" do
-            before do
-              date_range_picker_select_range "All Time"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
-
-            it "has a widget displaying the Diaper drive totals from last year, only using donations from last year" do
-              within "#diaper_drives" do
-                expect(page).to have_content(total_inventory)
-                expect(page).to have_content(/2 diaper drive/i)
-              end
-            end
-
-            it "displays some recent donations from that time" do
-              within "#diaper_drives" do
-                expect(page).to have_css("a", text: /10\d from (first|second) diaper drive/i, count: 3)
-              end
+              # By design, the setup may have created more Donations during the period than are visible in the Top Donation links
+              # Make sure each Top Donation link uniquely matches a single Donation
+              expect(all_manufacturer_donations.intersection(top_manufacturer_donations)).to match_array top_manufacturer_donations
             end
           end
         end
       end
+    end
 
-      describe "Manufacturer Donations" do
-        around do |example|
-          travel_to(date_to_view)
-          example.run
-          travel_back
-        end
-
-        it "should list top 10 manufacturers" do
-          visit subject
-
-          within "#manufacturers" do
-            expect(page).to have_content("0 items")
-              .and have_content("0 Manufacturers")
-          end
-
-          item_qty = 200
-          12.times do
-            manufacturer = create(:manufacturer)
-            create(:donation, :with_items, item: Item.first, item_quantity: item_qty, source: Donation::SOURCES[:manufacturer], manufacturer: manufacturer, issued_at: Time.zone.today)
-            item_qty -= 1
-          end
-
-          visit subject
-
-          within "#manufacturers" do
-            expect(page).to have_content("2,334")
-            expect(page).to have_content("12 Manufacturers")
-            expect(page).to have_css(".manufacturer", count: 10)
-          end
-        end
-
-        it "has a link to create a new donation" do
-          visit subject
-          expect(page).to have_css("#manufacturers")
-        end
-
-        it "doesn't count inactive items" do
-          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
-          item = create(:manufacturer_donation, :with_items, item_quantity: 100, storage_location: storage_location).items.first
-
-          visit subject
-          within "#manufacturers" do
-            expect(page).to have_content("100")
-          end
-
-          item.update!(active: false)
-          visit subject
-          within "#donations" do
-            expect(page).to have_no_content("100")
-          end
-        end
-
-        context "when constrained to date range" do
-          before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
-            @organization.donations.destroy_all
-            storage_location = create(:storage_location, :with_items, item_quantity: 0, organization: @organization)
-            manufacturer1 = create(:manufacturer, name: "ABC Corp", organization: @organization)
-            manufacturer2 = create(:manufacturer, name: "BCD Corp", organization: @organization)
-            manufacturer3 = create(:manufacturer, name: "CDE Corp", organization: @organization)
-            manufacturer4 = create(:manufacturer, name: "DEF Corp", organization: @organization)
-
-            @this_years_donations = {
-              today: create(:manufacturer_donation, :with_items, manufacturer: manufacturer1, issued_at: date_to_view, item_quantity: 100, storage_location: storage_location, organization: @organization),
-              yesterday: create(:manufacturer_donation, :with_items, manufacturer: manufacturer2, issued_at: date_to_view.yesterday, item_quantity: 101, storage_location: storage_location, organization: @organization),
-              earlier_this_week: create(:manufacturer_donation, :with_items, manufacturer: manufacturer3, issued_at: date_to_view.beginning_of_week, item_quantity: 102, storage_location: storage_location, organization: @organization),
-              beginning_of_year: create(:manufacturer_donation, :with_items, manufacturer: manufacturer4, issued_at: beginning_of_2018, item_quantity: 103, storage_location: storage_location, organization: @organization)
-            }
-            @last_years_donations = create_list(:manufacturer_donation, 2, :with_items, manufacturer: manufacturer1, issued_at: last_year_date, item_quantity: 104, storage_location: storage_location, organization: @organization)
-            visit subject
-          end
-
-          describe "This Year" do
-            before do
-              date_range_picker_select_range "This Year"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum }
-            let(:manufacturers) { @this_years_donations.values.map(&:manufacturer).map(&:name) }
-
-            it "has a widget displaying the year-to-date Donation totals, only using donations from this year" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-                expect(page).to have_content(/#{manufacturers.size} manufacturer/i)
-              end
-            end
-
-            it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                manufacturers.each do |manufacturer|
-                  expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-                end
-              end
-            end
-          end
-
-          describe "Today" do
-            before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
-            let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
-
-            it "has a widget displaying today's Donation totals, only using donations from today" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-              end
-            end
-          end
-
-          describe "Yesterday" do
-            before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations[:yesterday].total_quantity }
-            let(:manufacturer) { @this_years_donations[:yesterday].manufacturer.name }
-
-            it "has a widget displaying the Donation totals from yesterday, only using donations from yesterday" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-              end
-            end
-          end
-
-          describe "This Week" do
-            before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:total_quantity).sum }
-            let(:manufacturers) { [@this_years_donations[:today], @this_years_donations[:yesterday], @this_years_donations[:earlier_this_week]].map(&:manufacturer).map(&:name) }
-
-            it "has a widget displaying the Donation totals from this week, only using donations from this week" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                manufacturers.each do |manufacturer|
-                  expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-                end
-              end
-            end
-          end
-
-          describe "This Month" do
-            before do
-              date_range_picker_select_range "This Month"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations[:today].total_quantity }
-            let(:manufacturer) { @this_years_donations[:today].manufacturer.name }
-
-            it "has a widget displaying the Donation totals from this month, only using donations from this month" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-              end
-            end
-          end
-
-          describe "All Time" do
-            before do
-              date_range_picker_select_range "All Time"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_donations.values.map(&:total_quantity).sum + @last_years_donations.map(&:total_quantity).sum }
-            let(:manufacturers) { [@this_years_donations.values + @last_years_donations].flatten.map(&:manufacturer).map(&:name) }
-
-            it "has a widget displaying the Donation totals from last year, only using donations from last year" do
-              within "#manufacturers" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays the list of top manufacturers" do
-              within "#manufacturers" do
-                manufacturers.each do |manufacturer|
-                  expect(page).to have_css("a", text: /#{manufacturer} \(\d{3}\)/i, count: 1)
-                end
-              end
-            end
-          end
-        end
+    describe "Distributions" do
+      around do |example|
+        travel_to(test_time)
+        example.run
+        travel_back
       end
 
-      describe "Distributions" do
-        around do |example|
-          travel_to(date_to_view)
-          example.run
-          travel_back
-        end
+      it "has a link to create a new distribution" do
+        org_new_distribution_page = OrganizationNewDistributionPage.new org_short_name: org_short_name
 
-        before do
-          @organization.distributions.destroy_all
-          storage_location = create(:storage_location, :with_items, item_quantity: 500, organization: @organization)
+        expect(org_dashboard_page.visit).to have_distributions_section
 
-          partner1 = create(:partner, name: "Partner ABC", organization: @organization)
-          partner2 = create(:partner, name: "Partner BCD", organization: @organization)
-          partner3 = create(:partner, name: "Partner CDE", organization: @organization)
-          partner4 = create(:partner, name: "Partner DEF", organization: @organization)
+        expect { org_dashboard_page.create_new_distribution }
+          .to change { page.current_path }
+          .to org_new_distribution_page.path
+      end
 
-          @this_years_distributions = {
-            today: create(:distribution, :with_items, partner: partner1, issued_at: date_to_view, item_quantity: 10, storage_location: storage_location, organization: @organization),
-            yesterday: create(:distribution, :with_items, partner: partner2, issued_at: date_to_view.yesterday, item_quantity: 11, storage_location: storage_location, organization: @organization),
-            earlier_this_week: create(:distribution, :with_items, partner: partner3, issued_at: date_to_view.beginning_of_week, item_quantity: 12, storage_location: storage_location, organization: @organization),
-            beginning_of_year: create(:distribution, :with_items, partner: partner4, issued_at: beginning_of_2018, item_quantity: 13, storage_location: storage_location, organization: @organization)
-          }
-          @last_years_distributions = create_list(:distribution, 2, :with_items, partner: partner1, issued_at: last_year_date, item_quantity: 14, storage_location: storage_location, organization: @organization)
-          visit subject
-        end
+      # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
+      max_recent_distribution_links_count = 3
 
-        it "has a link to create a new distribution" do
-          expect(page).to have_css("#distributions")
-          within "#distributions" do
-            expect(page).to have_xpath("//a[@href='#{new_distribution_path(organization_id: @organization.to_param)}']")
+      # Make up to this many (inclusive) donations for each filtered period
+      # Keep it below (item_quantities.size - 1) so there's at least 2 values left for
+      # Donations outside of the filtered period
+      max_distributions_in_filtered_period = max_recent_distribution_links_count + 1
+
+      [
+        # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+        ["Today",        test_time,                               test_time],
+        ["Yesterday",    test_time.yesterday,                     test_time.yesterday],
+        ["Last 7 Days",  test_time -  6.days,                     test_time],
+        ["Last 30 Days", test_time - 29.days,                     test_time],
+        ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
+        ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
+        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
+        ["All Time",     test_time - 100.years,                   test_time],
+        ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+      ].each do |date_range_info|
+        filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
+
+        filtered_date_range = start_date.to_date..end_date.to_date
+        before_filtered_date_range = start_date.yesterday.to_date
+        after_filtered_date_range = end_date.tomorrow.to_date
+
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+
+        # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
+        # w/out making a fixed pattern
+        num_distributions_in_filtered_period = rand(0..max_distributions_in_filtered_period)
+
+        context "given 1 Distribution on #{before_filtered_date_range}, " \
+                "#{num_distributions_in_filtered_period} during #{filtered_date_range}, and " \
+                "1 on #{after_filtered_date_range}" do
+          custom_dates = if set_custom_dates
+            "#{start_date_formatted} - #{end_date_formatted}"
           end
-        end
 
-        it "doesn't count inactive items" do
-          pending("TODO: How *should* we handle this? It's failing because it's finding 100 items in a recent donation")
-          item = create(:inventory_item, quantity: 100, storage_location: storage_location).item
-          create(:distribution, :with_items, item: item, item_quantity: 100, storage_location: storage_location)
-
-          visit subject
-          within "#distributions" do
-            expect(page).to have_content("100")
-          end
-
-          item.update!(active: false)
-          visit subject
-          within "#distributions" do
-            expect(page).to have_no_content("100")
-          end
-
-          item = distribution.storage_location.items.first
-          visit subject
-          expect(page).to have_content("100 items distributed This Year")
-
-          item.update(active: false)
-          visit subject
-          expect(page).to_not have_content("100 items distributed This Year")
-        end
-
-        context "When Date Filtering >" do
           before do
-            skip "FIXME: These are currently failing but they work when done manually. Marking pending so we can get this feature out at NBDN"
+            filtered_dates = filtered_date_range.to_a
+
+            @item_quantity = item_quantities.to_enum
+
+            # Create some number of Partners
+            # Keep local copy of names so examples can create expected values
+            # without relying on fetching info from production code
+            @partners = (1..rand(2..5)).map do
+              name = "Partner #{_1}"
+              OpenStruct.new name: name, partner: create(:partner, name: name, organization: @organization)
+            end
+
+            def create_next_diaper_drive_distribution(distribution_date:)
+              quantity_in_distribution = @item_quantity.next
+              partner = @partners.sample
+
+              create :distribution, :with_items, partner: partner.partner, issued_at: distribution_date, item_quantity: quantity_in_distribution, storage_location: storage_location, organization: @organization
+
+              OpenStruct.new partner_name: partner.name, quantity: quantity_in_distribution
+            end
+
+            # days_this_year.sample in num_distributions_in_filtered_period.times loop
+            # rather than
+            # days_this_year.sample(num_distributions_in_filtered_period).each
+            # because Array#sample(n) on an Array with m<n elements returns only m elements
+            @distributions_in_filtered_date_range = num_distributions_in_filtered_period.times.map do
+              create_next_diaper_drive_distribution distribution_date: filtered_dates.sample
+            end
+
+            # create Distributions before & after the filtered date range
+            [before_filtered_date_range, after_filtered_date_range].each { create_next_diaper_drive_distribution distribution_date: _1 }
           end
 
-          context "with year-to-date selected" do
+          describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
             before do
-              date_range_picker_select_range "This Year"
-              click_on "Filter"
+              org_dashboard_page
+                .visit
+                .filter_to_date_range(filtered_date_range_label, custom_dates)
             end
 
-            let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum }
-            let(:partners) { @this_years_distributions.values.map(&:partner).map(&:name) }
+            expected_recent_distribution_links_count = [max_recent_distribution_links_count, num_distributions_in_filtered_period].min
 
-            it "has a widget displaying the year-to-date distribution totals, only using distributions from this year" do
-              within "#distributions" do
-                expect(page).to have_content(total_inventory)
+            it "shows the correct total and #{expected_recent_distribution_links_count} Recent Distribution link(s)" do
+              expect(org_dashboard_page.total_distributed).to eq @distributions_in_filtered_date_range.map(&:quantity).sum
+
+              recent_distribution_links = org_dashboard_page.recent_distribution_links
+
+              expect(recent_distribution_links.count).to eq expected_recent_distribution_links_count
+
+              # Expect the links to be something like "1 items distributed to Some Shelter", "4,000 items distributed to Some Shelter"
+              # Strip out the item counts & drive names
+              recent_distributions = recent_distribution_links.map do
+                items_distributed, partner_name = _1.match(/([0-9,]+) items distributed to (.+)/).captures
+
+                # e.g., [1, "Some Drive"], [20, "Another Drive"]
+                OpenStruct.new quantity: items_distributed.delete(",").to_i, partner_name: partner_name
               end
-            end
 
-            it "displays some recent distributions" do
-              within "#distributions" do
-                expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 3)
-              end
-            end
-          end
-
-          context "with today selected" do
-            before do
-              date_range_picker_select_range "Today"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_distributions[:today].line_items.total }
-            let(:partner) { @this_years_distributions[:today].partner.name }
-
-            it "has a widget displaying today's distributions totals, only using distributions from today" do
-              within "#distributions" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent distributions" do
-              within "#distributions" do
-                expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
-              end
-            end
-          end
-
-          context "with yesterday selected" do
-            before do
-              date_range_picker_select_range "Yesterday"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_distributions[:yesterday].line_items.total }
-            let(:partner) { @this_years_distributions[:yesterday].partner.name }
-
-            it "has a widget displaying the distributions totals from yesterday, only using distributions from yesterday" do
-              within "#distributions" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent distributions" do
-              within "#distributions" do
-                expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
-              end
-            end
-          end
-
-          context "with this week selected" do
-            before do
-              date_range_picker_select_range "Last 7 Days"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:line_items).flatten.map(&:quantity).sum }
-            let(:partners) { [@this_years_distributions[:today], @this_years_distributions[:yesterday], @this_years_distributions[:earlier_this_week]].map(&:partner).map(&:name) }
-
-            it "has a widget displaying the distributions totals from this week, only using distributions from this week" do
-              within "#distributions" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent distributions" do
-              within "#distributions" do
-                partners.each do |partner|
-                  expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
-                end
-              end
-            end
-          end
-
-          context "with this month selected" do
-            before do
-              date_range_picker_select_range "This Month"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_distributions[:today].line_items.total }
-            let(:partner) { @this_years_distributions[:today].partner.name }
-
-            it "has a widget displaying the distributions totals from this month, only using distributions from this month" do
-              within "#distributions" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent distributions" do
-              within "#distributions" do
-                expect(page).to have_css("a", text: /1\d items.*#{partner}/i, count: 1)
-              end
-            end
-          end
-
-          context "with All Time selected" do
-            before do
-              date_range_picker_select_range "All Time"
-              click_on "Filter"
-            end
-
-            let(:total_inventory) { @this_years_distributions.values.map(&:line_items).flatten.map(&:quantity).sum + @last_years_distributions.map(&:line_items).flatten.map(&:quantity).sum }
-            let(:partners) { [@this_years_distributions.values + @last_years_distributions].flatten.map(&:partner).map(&:name) }
-
-            it "has a widget displaying the distributions totals from last year, only using distributions from last year" do
-              within "#distributions" do
-                expect(page).to have_content(total_inventory)
-              end
-            end
-
-            it "displays some recent distributions from that time" do
-              within "#distributions" do
-                expect(page).to have_css("a", text: /1\d items.*(#{partners.join('|')})/i, count: 3)
-              end
+              # By design, the setup may have created more Distributions during the period than are visible in the Recent Distribution links
+              # Make sure each Recent Distribution link uniquely matches a single Distribution
+              expect(@distributions_in_filtered_date_range.intersection(recent_distributions)).to match_array recent_distributions
             end
           end
         end

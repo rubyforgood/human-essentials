@@ -28,7 +28,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Partners::User, type: :model do
+RSpec.describe Partners::User, type: :model, skip_seed: true do
   describe 'associations' do
     it { should belong_to(:partner) }
     # TODO: make this spec work.

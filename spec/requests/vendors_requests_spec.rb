@@ -1,4 +1,4 @@
-RSpec.describe "Vendors", type: :request do
+RSpec.describe "Vendors", type: :request, skip_seed: true do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end

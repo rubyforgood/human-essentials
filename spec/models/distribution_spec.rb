@@ -16,7 +16,7 @@
 #  storage_location_id    :integer
 #
 
-RSpec.describe Distribution, type: :model do
+RSpec.describe Distribution, type: :model, skip_seed: true do
   it_behaves_like "itemizable"
 
   context "Validations >" do

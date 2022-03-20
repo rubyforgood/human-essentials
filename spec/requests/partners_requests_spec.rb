@@ -124,6 +124,18 @@ RSpec.describe "Partners", type: :request do
           subject
           expect(assigns[:impact_metrics]).not_to be_present
         end
+
+        it 'does not show the delete button' do
+          expect(subject).not_to include('Delete')
+        end
+
+        context 'when the partner has no users' do
+          # see the deletable? method which is tested separately in the partner model spec
+          it 'shows the delete button' do
+            partner.profile.users.delete_all
+            expect(subject.body).to include('Delete')
+          end
+        end
       end
     end
 

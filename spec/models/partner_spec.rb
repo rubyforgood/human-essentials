@@ -15,7 +15,7 @@
 #  partner_group_id :bigint
 #
 
-RSpec.describe Partner, type: :model do
+RSpec.describe Partner, type: :model, skip_seed: true do
   describe 'associations' do
     it { should belong_to(:organization) }
     it { should belong_to(:partner_group).optional }
@@ -45,6 +45,7 @@ RSpec.describe Partner, type: :model do
     it "still requires a unique email between organizations" do
       create(:partner, name: "Foo", email: "foo@example.com")
       expect(build(:partner, name: "Foo", email: "foo@example.com", organization: build(:organization))).to_not be_valid
+      expect(build(:partner, name: "Foo", email: "FOO@example.com", organization: build(:organization))).to_not be_valid
     end
 
     it "requires a unique email that is formatted correctly" do
@@ -100,6 +101,68 @@ RSpec.describe Partner, type: :model do
     end
   end
 
+  describe '#deletable?' do
+    context 'when status is not uninvited' do
+      it 'should return false' do
+        expect(build(:partner, status: :invited)).not_to be_deletable
+        expect(build(:partner, status: :awaiting_review)).not_to be_deletable
+        expect(build(:partner, status: :approved)).not_to be_deletable
+        expect(build(:partner, status: :error)).not_to be_deletable
+        expect(build(:partner, status: :recertification_required)).not_to be_deletable
+        expect(build(:partner, status: :deactivated)).not_to be_deletable
+      end
+    end
+
+    context 'when status is uninvited' do
+      let(:partner) { create(:partner, :uninvited, without_profile: true) }
+
+      context 'when it has no other associations' do
+        it 'should return true' do
+          expect(partner).to be_deletable
+        end
+      end
+
+      context 'when it has a request' do
+        it 'should return false' do
+          create(:request, partner: partner)
+          expect(partner.reload).not_to be_deletable
+        end
+      end
+      context 'when it has a distribution' do
+        it 'should return false' do
+          create(:distribution, partner: partner)
+          expect(partner.reload).not_to be_deletable
+        end
+      end
+      context 'when it has a profile but no users' do
+        it 'should return true' do
+          create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          expect(partner.reload).to be_deletable
+        end
+      end
+      context 'when it has a profile and users' do
+        it 'should return false' do
+          partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
+          expect(partner.reload).not_to be_deletable
+        end
+      end
+    end
+  end
+
+  describe '#invite_new_partner' do
+    let(:partner) { create(:partner) }
+
+    it "should call the PartnerUser.invite! when the partner is changed" do
+      allow(PartnerUser).to receive(:invite!)
+      partner.email = "randomtest@email.com"
+      partner.save!
+      expect(PartnerUser).to have_received(:invite!).with(
+        {email: "randomtest@email.com", partner: partner.profile}
+      )
+    end
+  end
+
   describe '#profile' do
     subject { partner.profile }
     let(:partner) { create(:partner) }
@@ -114,8 +177,8 @@ RSpec.describe Partner, type: :model do
     let(:partner) { create(:partner) }
 
     it 'should return the asssociated primary Partners::User' do
-      primary_partner_user = Partners::User.find_by(partner_id: partner.profile.id)
-      expect(subject).to eq(primary_partner_user)
+      partner_users = Partners::User.where(partner_id: partner.profile.id)
+      expect(partner_users).to include(subject)
     end
   end
 

@@ -22,7 +22,7 @@ RSpec.describe "Family requests", type: :system, js: true do
 
     scenario "it creates family requests" do
       visit partners_requests_path
-      click_link "Create New Family Essentials Request"
+      find('a[aria-label="Create a request for a child or family"]').click
       find('input[type="submit"]').click
       expect(page).to have_text("Request Details")
       click_link "Your Previous Requests"
@@ -39,7 +39,7 @@ RSpec.describe "Family requests", type: :system, js: true do
       create(:partners_child, first_name: "Arthur", family: family)
 
       visit partners_requests_path
-      click_link "Create New Family Essentials Request"
+      find('a[aria-label="Create a request for a child or family"]').click
       fill_in "Search By Child Name", with: "Arthur"
       expect(page).to have_text("Arthur")
       expect(page).to_not have_text("Zeno")
@@ -51,7 +51,7 @@ RSpec.describe "Family requests", type: :system, js: true do
       create(:partners_child, first_name: "Louis", family: other_family)
 
       visit partners_requests_path
-      click_link "Create New Family Essentials Request"
+      find('a[aria-label="Create a request for a child or family"]').click
       expect(page).to have_css("table tbody tr", count: 3)
       fill_in "Search By Guardian Name", with: "Morales"
       expect(page).to have_text("Zeno")

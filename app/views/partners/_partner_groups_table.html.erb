@@ -16,6 +16,7 @@
                   <th>Group Name</th>
                   <th>Members</th>
                   <th>Requestable Item Categories</th>
+                  <th>Send Reminders?</th>
                   <th class='pull-right'>Actions</th>
                 </tr>
               </thead>
@@ -40,6 +41,15 @@
                         </ul>
                       <% else %>
                         <span class='text-red-600 text-bold font-italic'>No Items Requestable</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if pg.send_reminders %>
+                        <span>Reminder emails are sent on the <strong class='text-bold text-red-600'><%= pg.reminder_day_of_month.ordinalize %></strong> of every month. </span>
+                        <br>
+                        <span>Deadlines are the <strong class='text-bold text-red-600'><%= pg.deadline_day_of_month.ordinalize %></strong> of every month. </span>
+                      <% else %>
+                        <span class='text-gray-600 text-bold font-italic'>No</span>
                       <% end %>
                     </td>
                     <td class="text-right">
