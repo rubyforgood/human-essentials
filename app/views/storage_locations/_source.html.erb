@@ -10,7 +10,7 @@
   collection: storage_locations,
   label: label,
   error: error,
-  selected: source.object.storage_location&.id || current_organization.default_storage_location,
+  selected: storage_location_for_source(source.object),
   include_blank: true,
   input_html: {
     data: {
