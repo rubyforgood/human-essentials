@@ -208,6 +208,7 @@ Rails.application.routes.draw do
   end
 
   resources :attachments, only: %i(destroy)
+  get "distributions/calendar", to: "distributions#calendar"
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get "help", to: "help#show"

@@ -28,6 +28,12 @@
   <section class="content" id="pick-ups-calendar">
     <div class="container-fluid h-100">
       <div class="row h-100">
+          <%= js_button({
+                          icon: 'copy',
+                          text: 'Copy Calendar URL to clipboard',
+                          data: { url: hashed_calendar_path }
+                        },
+                        {id: 'copy-calendar-button'}) %>
         <!-- left column -->
           <!-- Main content -->
           <div id="calendar" class="fc fc-ltr fc-unthemed" style="">
@@ -36,3 +42,13 @@
     </div>
   </section>
 </div>
+
+<script>
+  $(() => {
+    $('#copy-calendar-button').click((event) => {
+      navigator.clipboard.writeText(event.target.dataset.url);
+      toastr.info("Copied to clipboard!");
+      event.preventDefault();
+    })
+  })
+</script>
