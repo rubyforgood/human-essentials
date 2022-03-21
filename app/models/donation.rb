@@ -2,23 +2,23 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
-#  comment                     :text
-#  issued_at                   :datetime
-#  money_raised                :integer
-#  source                      :string
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
-#  diaper_drive_id             :bigint
-#  diaper_drive_participant_id :integer
-#  donation_site_id            :integer
-#  manufacturer_id             :bigint
-#  organization_id             :integer
-#  storage_location_id         :integer
+#  id                           :integer          not null, primary key
+#  comment                      :text
+#  issued_at                    :datetime
+#  money_raised                 :integer
+#  source                       :string
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  donation_site_id             :integer
+#  manufacturer_id              :bigint
+#  organization_id              :integer
+#  product_drive_id             :bigint
+#  product_drive_participant_id :integer
+#  storage_location_id          :integer
 #
 
 class Donation < ApplicationRecord
-  SOURCES = { diaper_drive: "Product Drive",
+  SOURCES = { product_drive: "Product Drive",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
               misc: "Misc. Donation" }.freeze
@@ -27,8 +27,8 @@ class Donation < ApplicationRecord
   belongs_to :organization
 
   belongs_to :donation_site, optional: true # Validation is conditionally handled below.
-  belongs_to :diaper_drive_participant, optional: proc { |d| d.from_diaper_drive? } # Validation is conditionally handled below.
-  belongs_to :diaper_drive, optional: true
+  belongs_to :product_drive_participant, optional: proc { |d| d.from_product_drive? } # Validation is conditionally handled below.
+  belongs_to :product_drive, optional: true
   belongs_to :manufacturer, optional: proc { |d| d.from_manufacturer? } # Validation is conditionally handled below.
   belongs_to :storage_location
 
@@ -41,11 +41,11 @@ class Donation < ApplicationRecord
     where(storage_location_id: storage_location_id)
   }
   scope :from_donation_site, ->(donation_site_id) { where(donation_site_id: donation_site_id) }
-  scope :by_diaper_drive, ->(diaper_drive_id) {
-    where(diaper_drive_id: diaper_drive_id)
+  scope :by_product_drive, ->(product_drive_id) {
+    where(product_drive_id: product_drive_id)
   }
-  scope :by_diaper_drive_participant, ->(diaper_drive_participant_id) {
-    where(diaper_drive_participant_id: diaper_drive_participant_id)
+  scope :by_product_drive_participant, ->(product_drive_participant_id) {
+    where(product_drive_participant_id: product_drive_participant_id)
   }
   scope :from_manufacturer, ->(manufacturer_id) {
     where(manufacturer_id: manufacturer_id)
@@ -59,16 +59,12 @@ class Donation < ApplicationRecord
   before_create :combine_duplicates
 
   validates :donation_site, presence:
-    { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" },
-                            if: :from_donation_site?
-  validates :diaper_drive, presence:
-    { message: "must be specified since you chose '#{SOURCES[:diaper_drive]}'" },
-                           if: :from_diaper_drive?
+    { message: "must be specified since you chose '#{SOURCES[:donation_site]}'" }, if: :from_donation_site?
+  validates :product_drive, presence:
+    { message: "must be specified since you chose '#{SOURCES[:product_drive]}'" }, if: :from_product_drive?
   validates :manufacturer, presence:
-    { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" },
-                           if: :from_manufacturer?
-  validates :source, presence: true, inclusion: { in: SOURCES.values,
-                                                  message: "Must be a valid source." }
+    { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" }, if: :from_manufacturer?
+  validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
 
   include IssuedAt
 
@@ -83,8 +79,8 @@ class Donation < ApplicationRecord
 
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
 
-  def from_diaper_drive?
-    source == SOURCES[:diaper_drive]
+  def from_product_drive?
+    source == SOURCES[:product_drive]
   end
 
   def from_manufacturer?
@@ -96,9 +92,9 @@ class Donation < ApplicationRecord
   end
 
   def source_view
-    return source unless from_diaper_drive?
+    return source unless from_product_drive?
 
-    diaper_drive_participant&.donation_source_view || diaper_drive.donation_source_view
+    product_drive_participant&.donation_source_view || product_drive.donation_source_view
   end
 
   def self.daily_quantities_by_source(start, stop)

@@ -1,0 +1,90 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Product Drive Participants - Agencies - #{current_organization.name}" %>
+        <h1>
+          Product Drive Participants
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Product Drive Participants</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-footer">
+            <div class="pull-right">
+              <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Product Drive Participants", size: "md"}) if @product_drive_participants.empty? %>
+              <%= download_button_to(product_drive_participants_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Product Drive Participants", size: "md"}) if @product_drive_participants.any? %>
+
+              <%= new_button_to new_product_drive_participant_path(organization_id: current_organization), text: "New Product Drive Participant" %>
+            </div>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+      <!--/.col (left) -->
+
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Business Name</th>
+                <th>Contact Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Total Diapers</th>
+                <th class="text-center">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <%= render partial: "product_drive_participant_row", collection: @product_drive_participants %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+  <%= render(
+          layout: "shared/csv_import_modal",
+          locals: {
+              title: "Import Product Drive Participants",
+              csv_template_url: "/product_drive_participants.csv",
+              csv_import_url: import_csv_product_drive_participants_path
+          }
+      ) do %>
+    <li>Open the csv file with excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter the product drive participant names, emails and phone numbers in the appropriate
+      columns.
+    </li>
+    <li>Save the file as a csv file.</li>
+  <% end %>
+</section>

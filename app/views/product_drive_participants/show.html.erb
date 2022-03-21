@@ -1,0 +1,93 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Product Drive Participants - #{@product_drive_participant.contact_name} - Agencies - #{current_organization.name}" %>
+        <h1>
+          Product Drive Participant Information
+          <small>for <%= @product_drive_participant.contact_name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", (product_drive_participants_path) %></li>
+          <li class="breadcrumb-item"><%= @product_drive_participant.contact_name %></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Business Name</th>
+                <th>Contact Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td><%= @product_drive_participant.business_name %></td>
+                <td><%= @product_drive_participant.contact_name %></td>
+                <td><%= @product_drive_participant.phone %></td>
+                <td><%= @product_drive_participant.email %></td>
+                <td><%= @product_drive_participant.address %></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Date</th>
+                <th>Volume</th>
+                <th>Details</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @product_drive_participant.donations.each do |donation| %>
+                <tr>
+                  <td><%= donation.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= donation.line_items.total %></td>
+                  <td><%= view_button_to donation, { text: "View donation details" } %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>

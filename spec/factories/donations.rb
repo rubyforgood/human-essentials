@@ -2,19 +2,19 @@
 #
 # Table name: donations
 #
-#  id                          :integer          not null, primary key
-#  comment                     :text
-#  issued_at                   :datetime
-#  money_raised                :integer
-#  source                      :string
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
-#  diaper_drive_id             :bigint
-#  diaper_drive_participant_id :integer
-#  donation_site_id            :integer
-#  manufacturer_id             :bigint
-#  organization_id             :integer
-#  storage_location_id         :integer
+#  id                           :integer          not null, primary key
+#  comment                      :text
+#  issued_at                    :datetime
+#  money_raised                 :integer
+#  source                       :string
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  donation_site_id             :integer
+#  manufacturer_id              :bigint
+#  organization_id              :integer
+#  product_drive_id             :bigint
+#  product_drive_participant_id :integer
+#  storage_location_id          :integer
 #
 
 FactoryBot.define do
@@ -30,10 +30,10 @@ FactoryBot.define do
       source { Donation::SOURCES[:manufacturer] }
     end
 
-    factory :diaper_drive_donation do
-      diaper_drive
-      diaper_drive_participant
-      source { Donation::SOURCES[:diaper_drive] }
+    factory :product_drive_donation do
+      product_drive
+      product_drive_participant
+      source { Donation::SOURCES[:product_drive] }
     end
 
     factory :donation_site_donation do
