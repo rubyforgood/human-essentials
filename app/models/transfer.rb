@@ -13,8 +13,7 @@
 
 class Transfer < ApplicationRecord
   belongs_to :organization, inverse_of: :transfers
-  belongs_to :from, class_name: "StorageLocation",
-                    inverse_of: :transfers_from
+  belongs_to :from, class_name: "StorageLocation", inverse_of: :transfers_from
   belongs_to :to, class_name: "StorageLocation", inverse_of: :transfers_to
 
   include Itemizable

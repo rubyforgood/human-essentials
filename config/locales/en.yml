@@ -32,7 +32,3 @@
 en:
   hello: "Hello world"
 
-  activerecord:
-    models:
-      diaper_drive: "Product drive"
-      diaper_drive_participant: "Product drive participant"

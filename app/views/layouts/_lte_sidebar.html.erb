@@ -5,21 +5,21 @@
       <p>Dashboard</p>
     <% end %>
   </li>
-  <li class="nav-item has-treeview <%= menu_open?(['diaper_drives']) %>">
-    <a href="#" class="nav-link <%= active_class(['diaper_drives']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['product_drives']) %>">
+    <a href="#" class="nav-link <%= active_class(['product_drives']) %>">
       <i class="nav-icon fas fa-trophy"></i>
       <p>Product Drives
         <i class="fas fa-angle-left right"></i></p>
     </a>
     <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(diaper_drives_path) %>">
-        <%= link_to(diaper_drives_path, class: "nav-link #{"active" if current_page?(diaper_drives_path(organization_id: current_user.organization))}") do %>
+      <li class="nav-item <%= 'active' if current_page?(product_drives_path) %>">
+        <%= link_to(product_drives_path, class: "nav-link #{"active" if current_page?(product_drives_path(organization_id: current_user.organization))}") do %>
           <i class="nav-icon far fa-circle"></i>
           <p>All Product Drives</p>
         <% end %>
       </li>
-      <li class="nav-item <%= 'active' if current_page?(new_diaper_drive_path) %>">
-        <%= link_to(new_diaper_drive_path, class: "nav-link #{"active" if current_page?(new_diaper_drive_path)}") do %>
+      <li class="nav-item <%= 'active' if current_page?(new_product_drive_path) %>">
+        <%= link_to(new_product_drive_path, class: "nav-link #{"active" if current_page?(new_product_drive_path)}") do %>
           <i class="nav-icon far fa-circle"></i>
           <p>New Product Drive</p>
         <% end %>
@@ -128,8 +128,8 @@
       </li>
     </ul>
   </li>
-  <li class="nav-item has-treeview <%= menu_open?(['donation_sites', 'diaper_drive_participants', 'manufacturers', 'vendors']) %>">
-    <a href="#" class="nav-link <%= active_class(['donation_sites', 'diaper_drive_participants', 'manufacturers', 'vendors']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['donation_sites', 'product_drive_participants', 'manufacturers', 'vendors']) %>">
+    <a href="#" class="nav-link <%= active_class(['donation_sites', 'product_drive_participants', 'manufacturers', 'vendors']) %>">
       <i class="nav-icon fa fa-laptop"></i>
       <p>Community
         <i class="fas fa-angle-left right"></i></p>
@@ -140,8 +140,8 @@
           <i class="nav-icon fa fa-circle-o"></i> Donation Sites
         <% end %>
       </li>
-      <li class="nav-item <%= active_class(['diaper_drive_participants']) %>">
-        <%= link_to(diaper_drive_participants_path(organization_id: current_user.organization), class: "nav-link #{active_class(['diaper_drive_participants'])}") do %>
+      <li class="nav-item <%= active_class(['product_drive_participants']) %>">
+        <%= link_to(product_drive_participants_path(organization_id: current_user.organization), class: "nav-link #{active_class(['product_drive_participants'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Product Drive Participants
         <% end %>
       </li>

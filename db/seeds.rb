@@ -400,7 +400,7 @@ end
     start_date: Time.current,
     organization: pdx_org
   }
-].each { |drive| DiaperDrive.create! drive }
+].each { |drive| ProductDrive.create! drive }
 
 # ----------------------------------------------------------------------------
 # Product Drive Participants
@@ -415,7 +415,7 @@ end
     contact_name: "wilma",
     email: "ok@place.is",
     organization: pdx_org }
-].each { |participant| DiaperDriveParticipant.create! participant }
+].each { |participant| ProductDriveParticipant.create! participant }
 
 # ----------------------------------------------------------------------------
 # Product Drives
@@ -434,7 +434,7 @@ end
     start_date: 2.weeks.ago,
     end_date: 1.week.ago,
     organization: pdx_org }
-].each { |diaper_drive| DiaperDrive.find_or_create_by! diaper_drive }
+].each { |product_drive| ProductDrive.find_or_create_by! product_drive }
 
 # ----------------------------------------------------------------------------
 # Manufacturers
@@ -510,10 +510,10 @@ end
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
   donation = case source
-             when Donation::SOURCES[:diaper_drive]
+             when Donation::SOURCES[:product_drive]
                Donation.create! source: source,
-                                diaper_drive: DiaperDrive.first,
-                                diaper_drive_participant: random_record_for_org(pdx_org, DiaperDriveParticipant),
+                                product_drive: ProductDrive.first,
+                                product_drive_participant: random_record_for_org(pdx_org, ProductDriveParticipant),
                                 storage_location: random_record_for_org(pdx_org, StorageLocation),
                                 organization: pdx_org,
                                 issued_at: Time.zone.now

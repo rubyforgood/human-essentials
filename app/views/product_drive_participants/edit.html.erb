@@ -1,0 +1,25 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Edit - Product Drive Participants - #{@product_drive_participant.contact_name} - #{current_organization.name}" %>
+        <h1>
+          Editing Product Drive Participant
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", (product_drive_participants_path) %></li>
+          <li class="breadcrumb-item"><a href="#">Update record for <%= @product_drive_participant.contact_name %></a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<%= render partial: "form", object: @product_drive_participant %>

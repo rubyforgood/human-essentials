@@ -13,9 +13,9 @@ RSpec.describe "Partner Dashboard", type: :system, js: true, skip_seed: true do
 
       it 'displays requests that are pending' do
         FactoryBot.create(:request, :pending, partner: partner,
-                                              request_items: [{ "item_id": item1.id, "quantity": '16' }])
+          request_items: [{ "item_id": item1.id, "quantity": '16' }])
         FactoryBot.create(:request, :pending, partner: partner,
-                                              request_items: [{ "item_id": item2.id, "quantity": '16' }])
+          request_items: [{ "item_id": item2.id, "quantity": '16' }])
         visit partners_dashboard_path
         expect(page).to have_content(item1.name)
         expect(page).to have_content(item2.name)
@@ -23,9 +23,9 @@ RSpec.describe "Partner Dashboard", type: :system, js: true, skip_seed: true do
 
       it 'does not display requests in other states' do
         FactoryBot.create(:request, :fulfilled, partner: partner,
-                                                request_items: [{ "item_id": item1.id, "quantity": '16' }])
+          request_items: [{ "item_id": item1.id, "quantity": '16' }])
         FactoryBot.create(:request, :started, partner: partner,
-                                              request_items: [{ "item_id": item2.id, "quantity": '16' }])
+          request_items: [{ "item_id": item2.id, "quantity": '16' }])
         visit partners_dashboard_path
         expect(page).to_not have_content(item1.name)
         expect(page).to_not have_content(item2.name)
@@ -52,7 +52,7 @@ RSpec.describe "Partner Dashboard", type: :system, js: true, skip_seed: true do
 
     it 'displays prior distributions' do
       FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
-                                                    issued_at: past_date, item_quantity: 200)
+        issued_at: past_date, item_quantity: 200)
       visit partners_dashboard_path
       expect(page).to have_content("200")
       expect(page).to have_content(past_date.strftime("%m/%d/%Y"))

@@ -1,6 +1,6 @@
 require "csv"
 # Encapsulates some common behaviors for third-parties that provide inventory
-# e.g. DiaperDriveParticipant, Vendor
+# e.g. ProductDriveParticipant, Vendor
 module Provideable
   include Exportable
   extend ActiveSupport::Concern
