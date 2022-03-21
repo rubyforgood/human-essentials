@@ -1,9 +1,4 @@
-<!doctype html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Simple Transactional Email</title>
+<% content_for(:head) do %>
   <style>
     /* -------------------------------------
         GLOBAL RESETS
@@ -323,32 +318,33 @@
     }
 
   </style>
-</head>
-<body class="">
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
-  <tr>
-    <td>&nbsp;</td>
-    <td class="container">
-      <div class="content">
+<% end %>
 
-        <!-- START CENTERED WHITE CONTAINER -->
+<% content_for(:body) do %>
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+    <tr>
+      <td>&nbsp;</td>
+      <td class="container">
+        <div class="content">
+
+          <!-- START CENTERED WHITE CONTAINER -->
         <span class="preheader">Your essentials request has been approved.</span>
-        <table role="presentation" class="main">
+          <table role="presentation" class="main">
 
-          <!-- START MAIN CONTENT AREA -->
-          <tr>
-            <td class="wrapper">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td>
+            <!-- START MAIN CONTENT AREA -->
+            <tr>
+              <td class="wrapper">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td>
                     From: <a href="mailto:<%= @from_email %>"><%= @from_email %></a>
-                  </td>
+                    </td>
                 </tr>
-                <tr>
-                  <td>
+                  <tr>
+                    <td>
                     <%= @default_email_text_interpolated.html_safe %>
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
                 <% if @distribution_changes.present? %>
                   <tr>
                     <td>
@@ -356,35 +352,34 @@
                     </td>
                   </tr>
                 <% end %>
-              </table>
-            </td>
-          </tr>
-
-          <!-- END MAIN CONTENT AREA -->
-        </table>
-
-        <!-- START FOOTER -->
-        <div class="footer">
-          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-            <tr>
-              <td class="content-block">
-                <span class="apple-link">This email was sent with ❤ by <a href="https://humanessentials.app">Human Essentials</a>.️</span>
+                </table>
               </td>
             </tr>
-            <tr>
-              <td class="content-block powered-by">
-                Supported by <a href="https://rubyforgood.org">Ruby for Good</a>.
-              </td>
-            </tr>
+
+            <!-- END MAIN CONTENT AREA -->
           </table>
-        </div>
-        <!-- END FOOTER -->
 
-        <!-- END CENTERED WHITE CONTAINER -->
-      </div>
-    </td>
-    <td>&nbsp;</td>
-  </tr>
-</table>
-</body>
-</html>
+          <!-- START FOOTER -->
+          <div class="footer">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td class="content-block">
+                <span class="apple-link">This email was sent with ❤ by <a href="https://humanessentials.app">Human Essentials</a>.️</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="content-block powered-by">
+                  Supported by <a href="https://rubyforgood.org">Ruby for Good</a>.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <!-- END FOOTER -->
+
+          <!-- END CENTERED WHITE CONTAINER -->
+        </div>
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+<% end %>
