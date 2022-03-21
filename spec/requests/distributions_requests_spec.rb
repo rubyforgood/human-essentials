@@ -5,6 +5,13 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
     { organization_id: @organization.to_param }
   end
 
+  let(:secret_key) { "HI MOM THIS IS ME AND I'M CODING" }
+  let(:crypt) { ActiveSupport::MessageEncryptor.new(secret_key) }
+  let(:hashed_id) { crypt.encrypt_and_sign(@organization.id) }
+  before(:each) do
+    allow(Rails.application.secrets).to receive(:secret_key_base).and_return(secret_key)
+  end
+
   context "While signed in" do
     before do
       sign_in(@user)
@@ -144,6 +151,10 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
       it "returns http success" do
         get schedule_distributions_path(default_params)
         expect(response).to be_successful
+        page = Nokogiri::HTML(response.body)
+        url = page.at_css('#copy-calendar-button').attributes['data-url'].value
+        hash = url.match(/\?hash=(.*)&/)[1]
+        expect(crypt.decrypt_and_verify(CGI.unescape(hash))).to eq(@organization.id)
       end
     end
 
@@ -312,5 +323,28 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
     let(:object) { create(:distribution) }
 
     include_examples "requiring authorization"
+
+    # calendar does not need signin
+    describe 'GET #calendar' do
+      before(:each) do
+        allow(CalendarService).to receive(:calendar).and_return("SOME ICS STRING")
+      end
+
+      context 'with a correct hash id' do
+        it 'should render the calendar' do
+          get distributions_calendar_path(hash: hashed_id)
+          expect(CalendarService).to have_received(:calendar).with(@organization.id)
+          expect(response.content_type).to include('text/calendar')
+          expect(response.body).to eq('SOME ICS STRING')
+        end
+      end
+
+      context 'without a correct hash id' do
+        it 'should error unauthorized' do
+          get distributions_calendar_path(hash: 'some-wrong-id')
+          expect(response.status).to eq(401)
+        end
+      end
+    end
   end
 end

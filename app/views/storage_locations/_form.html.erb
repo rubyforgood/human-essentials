@@ -26,6 +26,9 @@
                 <% end %>
 
                 <%= f.input :warehouse_type, label: "Warehouse Type", wrapper: :input_group, collection: StorageLocation::WAREHOUSE_TYPES %>
+
+                <%= f.input :time_zone, label: "Time Zone", wrapper: :input_group,
+                            collection: CalendarService.time_zones %>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
