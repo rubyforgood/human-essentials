@@ -77,9 +77,39 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
     end
 
     describe "GET #new" do
+      let!(:partner) { create(:partner) }
+      let(:request) { create(:request, partner: partner) }
+      let(:storage_location) { create(:storage_location, :with_items) }
+      let(:default_params) { { organization_id: @organization.to_param, request_id: request.id } }
+
       it "returns http success" do
         get new_distribution_path(default_params)
         expect(response).to be_successful
+        # default should be nothing selected
+        page = Nokogiri::HTML(response.body)
+        expect(page.css('#distribution_storage_location_id option[selected]')).to be_empty
+      end
+
+      context "with org default but no partner default" do
+        it "selects org default" do
+          @organization.update!(default_storage_location: storage_location.id)
+          get new_distribution_path(default_params)
+          expect(response).to be_successful
+          page = Nokogiri::HTML(response.body)
+          expect(page.css(%(#distribution_storage_location_id option[selected][value="#{storage_location.id}"]))).not_to be_empty
+        end
+      end
+
+      context "with partner default" do
+        it "selects partner default" do
+          location2 = create(:storage_location, :with_items)
+          @organization.update!(default_storage_location: location2.id)
+          partner.update!(default_storage_location_id: storage_location.id)
+          get new_distribution_path(default_params)
+          expect(response).to be_successful
+          page = Nokogiri::HTML(response.body)
+          expect(page.css(%(#distribution_storage_location_id option[selected][value="#{storage_location.id}"]))).not_to be_empty
+        end
       end
     end
 

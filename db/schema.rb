@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_26_173715) do
+ActiveRecord::Schema.define(version: 2022_03_20_202902) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -381,6 +381,8 @@ ActiveRecord::Schema.define(version: 2022_02_26_173715) do
     t.text "notes"
     t.integer "quota"
     t.bigint "partner_group_id"
+    t.bigint "default_storage_location_id"
+    t.index ["default_storage_location_id"], name: "index_partners_on_default_storage_location_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
   end

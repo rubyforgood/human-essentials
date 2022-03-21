@@ -17,21 +17,27 @@
                 <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                 <%= f.input_field :email, class: "form-control"%>
               <% end %>
+              <%= f.input :default_storage_location_id, :collection => current_organization.storage_locations.alphabetized,
+                          :label_method => :name,
+                          :value_method => :id,
+                          :label => "Default Storage Location",
+                          :include_blank => true,
+                          wrapper: :input_group %>
               <div class='w-50'>
                 <%= f.input :partner_group_id, label: "Group", wrapper: :input_group do %>
                   <%= f.input_field :partner_group_id, collection: @partner_groups, class: "form-control", include_blank: "None" %>
                 <% end %>
               </div>
-                  
+
               <div data-partner-reminder-form>
                 <%= f.input :send_reminders, label: "Do you want this partner to receive emails for distributions and reminders from the system?", wrapper: :input_group do %>
                   <%= f.check_box :send_reminders, {class: "input-group-text", id: "send_reminders", data: { 'partner-reminder-form-checkbox': '' } }, "true", "false" %>
-                 <% end %> 
-                  
+                 <% end %>
+
                 <div class='mb-2' data-partner-reminder-form-nested-form>
                   <div class="flex items-center bg-yellow-300 text-sm font-bold px-4 py-3" role="alert">
                     <p>Please note that reminders will be sent out according to the settings of their partner group OR organization. This won't work unless you've set up at least one.</p>
-                  </div> 
+                  </div>
                 </div>
               </div>
 

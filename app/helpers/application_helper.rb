@@ -132,4 +132,16 @@ module ApplicationHelper
       <script>#{base_script}</script>
     HTML
   end
+
+  # @param source_object [ApplicationRecord]
+  # @return [Integer]
+  def storage_location_for_source(source_object)
+    if source_object.storage_location
+      return source_object.storage_location.id
+    end
+    if source_object.respond_to?(:partner) && source_object.partner&.default_storage_location_id
+      return source_object.partner.default_storage_location_id
+    end
+    current_organization.default_storage_location
+  end
 end
