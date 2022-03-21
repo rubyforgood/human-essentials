@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_16_134415) do
+ActiveRecord::Schema.define(version: 2022_03_20_202902) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -355,6 +355,8 @@ ActiveRecord::Schema.define(version: 2022_03_16_134415) do
     t.text "notes"
     t.integer "quota"
     t.bigint "partner_group_id"
+    t.bigint "default_storage_location_id"
+    t.index ["default_storage_location_id"], name: "index_partners_on_default_storage_location_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
   end
@@ -439,6 +441,7 @@ ActiveRecord::Schema.define(version: 2022_03_16_134415) do
     t.float "longitude"
     t.integer "square_footage"
     t.string "warehouse_type"
+    t.string "time_zone", default: "America/Los_Angeles", null: false
     t.index ["latitude", "longitude"], name: "index_storage_locations_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end

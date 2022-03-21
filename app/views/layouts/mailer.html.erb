@@ -1,13 +1,123 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <style>
-      /* Email styles need to be inline */
-    </style>
-  </head>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" style="background: #ffffff;margin: 0 auto;padding: 0;width: 100%;height: 100%;background-color: #ffffff;">
 
-  <body>
-    <%= yield %>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title></title>
+    <meta name="x-apple-disable-message-reformatting">
+    <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
+    <style type="text/css">
+        a {
+            text-decoration: none;
+        }
+    </style>
+    <!--[if mso]>
+    <xml>
+    <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+    </xml>
+
+    <style type="text/css">
+      .col, div.col { width:100% !important; max-width:100% !important; }
+      .hidden-outlook, .hidden-outlook table {
+        display:none !important;
+        mso-hide:all !important;
+      }
+
+      * {
+        font-family: sans-serif !important;
+        -ms-text-size-adjust: 100%;
+      }
+
+      img {
+        -ms-interpolation-mode:bicubic;
+      }
+
+      td.body-content {
+        width: 680px;
+      }
+
+      td.row-content {
+        font-size:0;
+      }
+    </style>
+  <![endif]-->
+  <!--[if !mso]><!-->
+  <style type="text/css">
+
+        .visible-outlook {
+            display: none !important;
+        }
+
+        a[x-apple-data-detectors],
+        .unstyle-auto-detected-links a {
+            border-bottom: 0 !important;
+            cursor: default !important;
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+    </style>
+    <!--<![endif]-->
+  <!--[if !mso]><!-->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat+Alternates&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work+Sans&amp;display=swap">
+    <!--<![endif]-->
+  <!--[if mso]><style type="text/css">.ms-t1{line-height:1.45;font-family:'Source Sans Pro',sans-serif;color:#212529;font-size:16px;text-align:left;font-weight:400}.ms-t2{line-height:1.45;font-family:'Source Sans Pro',sans-serif;color:#212529;font-size:16px;text-align:left;font-weight:400}</style><![endif]-->
+    <% if content_for?(:head) %>
+      <%= yield(:head) %>
+    <% end %>
+</head>
+
+  <body style="background: #ffffff;margin: 0 auto;padding: 0;width: 100%;height: 100%;background-color: #ffffff;">
+    <% if content_for?(:head) %>
+      <%= yield(:body) %>
+    <% else %>
+    <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background: #ffffff;border-collapse: collapse;background-color: #ffffff;">
+        <tbody>
+            <tr><!--[if mso]>
+ <td></td> <![endif]--><td class="body-content" style="font-size: 16px;color: #212529;font-weight: normal;line-height: 1.45;text-align: left;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;font-family: 'Source Sans Pro', sans-serif;padding-right: -3px;">
+                    <table class="ms-t1 container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse;width: 100%;max-width: 680px;margin: 0 auto;">
+                        <tbody>
+                            <tr>
+                                <td class="container-content" style="padding: 0px;vertical-align: top;max-width: 680px;">
+                                    <h1 style="font-weight: bold;margin: 0 0 10px 0;mso-line-height-rule: exactly;font-family: 'Work Sans', sans-serif;font-size: 13px;"></h1>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="ms-t1 box" role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;width: 100%;">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;width: 100%;" class="ms-t1">
+                                        <tbody>
+                                            <tr>
+                                                <td class="box-content" align="left" height="237" style="height: 237px;padding: 8px;padding-left: 76PX;">
+      <%= yield %>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                  <h1 class="text-left" style="font-weight: bold;margin: 0 0 10px 0;mso-line-height-rule: exactly;font-size: 11px;margin-top: 24px;text-align: left;">Made with ❤️ by&nbsp; <a href="https://rubyforgood.org/" style="text-decoration: none;color: #0a6fe4;">Ruby for Good</a></h1>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </td>
+            </tr>
+        </tbody>
+    </table>
+    <% end %>
+
+    <hr />
   </body>
 </html>
