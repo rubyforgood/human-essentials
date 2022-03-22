@@ -8,6 +8,7 @@
 #  longitude       :float
 #  name            :string
 #  square_footage  :integer
+#  time_zone       :string           default("America/Los_Angeles"), not null
 #  warehouse_type  :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
