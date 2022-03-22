@@ -1,5 +1,5 @@
 describe Exports::ExportPurchasesCSVService, skip_seed: true do
-  describe '#generate_csv_data' do
+  describe "#generate_csv_data" do
     subject { described_class.new(purchase_ids: purchase_ids).generate_csv_data }
     let(:purchase_ids) { purchases.map(&:id) }
     let(:duplicate_item) do
@@ -36,10 +36,14 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
         purchase = create(
           :purchase,
           vendor: create(
-            :vendor, business_name: "Vendor Name #{i}",
+            :vendor, business_name: "Vendor Name #{i}"
           ),
           issued_at: start_time + i.days,
-          comment: "This is the #{i}-th purchase in the test."
+          comment: "This is the #{i}-th purchase in the test.",
+          amount_spent_in_cents: i * 3 + 425,
+          amount_spent_on_diapers_cents: i + 100,
+          amount_spent_on_adult_incontinence_cents: i + 125,
+          amount_spent_on_other_cents: i + 200
         )
 
         items.each do |(item, quantity)|
@@ -59,7 +63,11 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
         "Purchased Date",
         "Quantity of Items",
         "Variety of Items",
-        "Comments"
+        "Amount Spent",
+        "Spent on Diapers",
+        "Spent on Adult Incontinence",
+        "Spent on Other",
+        "Comment"
       ] + expected_item_headers
     end
 
@@ -81,7 +89,7 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
       item_names
     end
 
-    it 'should match the expected content for the csv' do
+    it "should match the expected content for the csv" do
       expect(subject[0]).to eq(expected_headers)
 
       purchases.zip(total_item_quantities).each_with_index do |(purchase, total_item_quantity), idx|
@@ -91,6 +99,10 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
           purchase.issued_at.strftime("%F"),
           purchase.line_items.total,
           total_item_quantity.count(&:positive?),
+          purchase.amount_spent,
+          purchase.amount_spent_on_diapers,
+          purchase.amount_spent_on_adult_incontinence,
+          purchase.amount_spent_on_other,
           purchase.comment
         ]
 

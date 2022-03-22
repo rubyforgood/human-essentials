@@ -9,7 +9,7 @@ module Exports
         :vendor,
         line_items: [:item]
       ).where(
-        id: purchase_ids,
+        id: purchase_ids
       ).order(created_at: :asc)
     end
 
@@ -76,7 +76,19 @@ module Exports
         "Variety of Items" => ->(purchase) {
           purchase.line_items.map(&:name).uniq.size
         },
-        "Comments" => ->(purchase) {
+        "Amount Spent" => ->(purchase) {
+          purchase.amount_spent
+        },
+        "Spent on Diapers" => ->(purchase) {
+          purchase.amount_spent_on_diapers
+        },
+        "Spent on Adult Incontinence" => ->(purchase) {
+          purchase.amount_spent_on_adult_incontinence
+        },
+        "Spent on Other" => ->(purchase) {
+          purchase.amount_spent_on_other
+        },
+        "Comment" => ->(purchase) {
           purchase.comment
         }
       }

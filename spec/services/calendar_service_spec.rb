@@ -8,17 +8,13 @@ describe CalendarService do
         partner1 = create(:partner, name: "Partner 1")
         partner2 = create(:partner, name: "Partner 2")
         create(:distribution, issued_at: time_zone.local(2022, 3, 17, 10, 0, 0),
-                       partner: partner1,
-                       storage_location: storage_location)
+          partner: partner1, storage_location: storage_location)
         create(:distribution, issued_at: time_zone.local(2022, 2, 17, 9, 0, 0),
-                       partner: partner1,
-                       storage_location: storage_location)
+          partner: partner1, storage_location: storage_location)
         create(:distribution, issued_at: time_zone.local(2019, 1, 1),
-                       partner: partner2,
-                       storage_location: storage_location)
+          partner: partner2, storage_location: storage_location)
         create(:distribution, issued_at: time_zone.local(2023, 3, 17),
-                       partner: partner2,
-                       storage_location: storage_location)
+          partner: partner2, storage_location: storage_location)
       end
       result = described_class.calendar(@organization.id)
       expected = <<~ICAL
