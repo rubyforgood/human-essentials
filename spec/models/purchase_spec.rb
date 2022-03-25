@@ -161,16 +161,5 @@ RSpec.describe Purchase, type: :model, skip_seed: true do
         end
       end
     end
-
-    describe "#csv_export_attributes" do
-      let(:purchase) { create(:purchase, :with_items) }
-
-      it "includes purchase information" do
-        expect(purchase.csv_export_attributes).to include(purchase.purchased_from_view)
-        expect(purchase.csv_export_attributes).to include(purchase.storage_location.name)
-        expect(purchase.csv_export_attributes).to include(purchase.issued_at.strftime("%Y-%m-%d"))
-        expect(purchase.csv_export_attributes).to include(purchase.amount_spent_in_dollars)
-      end
-    end
   end
 end

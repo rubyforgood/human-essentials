@@ -88,8 +88,7 @@ RSpec.describe AccountRequestMailer, type: :mailer, skip_seed: true do
   describe '#rejection' do
     let(:account_request_id) { account_request.id }
     let(:account_request) {
-      FactoryBot.create(:account_request, email: 'me@me.com',
-                                              rejection_reason: 'because I said so')
+      FactoryBot.create(:account_request, email: 'me@me.com', rejection_reason: 'because I said so')
     }
     let(:mail) { AccountRequestMailer.rejection(account_request_id: account_request_id) }
 

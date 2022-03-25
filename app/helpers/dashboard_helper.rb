@@ -20,8 +20,8 @@ module DashboardHelper
     number_with_delimiter total_received_donations_unformatted(range)
   end
 
-  def total_received_from_diaper_drives(range = selected_range)
-    number_with_delimiter total_received_from_diaper_drives_unformatted(range)
+  def total_received_from_product_drives(range = selected_range)
+    number_with_delimiter total_received_from_product_drives_unformatted(range)
   end
 
   def total_purchased(range = selected_range)
@@ -42,8 +42,8 @@ module DashboardHelper
     LineItem.active.where(itemizable: current_organization.donations.during(range)).sum(:quantity)
   end
 
-  def total_received_from_diaper_drives_unformatted(range = selected_range)
-    LineItem.active.where(itemizable: current_organization.donations.by_source(:diaper_drive).during(range)).sum(:quantity)
+  def total_received_from_product_drives_unformatted(range = selected_range)
+    LineItem.active.where(itemizable: current_organization.donations.by_source(:product_drive).during(range)).sum(:quantity)
   end
 
   def total_purchased_unformatted(range = selected_range)

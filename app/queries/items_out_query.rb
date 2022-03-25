@@ -19,11 +19,11 @@ LEFT OUTER JOIN distributions ON distributions.id = line_items.itemizable_id AND
 LEFT OUTER JOIN items ON items.id = line_items.item_id
 LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
 LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-                        .where("(distributions.storage_location_id = :id or (adjustments.storage_location_id= :id and line_items.quantity < 0) or transfers.from_id = :id) and items.organization_id= :organization_id", id: @storage_location.id,
-                                                                                                                                                                                                                         organization_id: @organization.id)
-                        .select("sum( case when line_items.quantity < 0 then -1*line_items.quantity else line_items.quantity END ) as quantity, items.id AS item_id, items.name")
-                        .group("items.name, items.id")
-                        .order("items.name")
+  .where("(distributions.storage_location_id = :id or (adjustments.storage_location_id= :id and line_items.quantity < 0) or transfers.from_id = :id) and items.organization_id= :organization_id",
+    id: @storage_location.id, organization_id: @organization.id)
+    .select("sum( case when line_items.quantity < 0 then -1*line_items.quantity else line_items.quantity END ) as quantity, items.id AS item_id, items.name")
+    .group("items.name, items.id")
+    .order("items.name")
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 end

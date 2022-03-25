@@ -16,11 +16,11 @@ module Reports
                     entries: {
                       'Disposable diapers distributed' => number_with_delimiter(distributed_diapers),
                       'Average monthly disposable diapers distributed' => number_with_delimiter(monthly_disposable_diapers),
-                      'Total diaper drives' => annual_drives.count,
+                      'Total product drives' => annual_drives.count,
                       'Disposable diapers collected from drives' => number_with_delimiter(disposable_diapers_from_drives),
-                      'Money raised from diaper drives' => number_to_currency(money_from_drives),
-                      'Total diaper drives (virtual)' => virtual_diaper_drives.count,
-                      'Money raised from diaper drives (virtual)' => number_to_currency(money_from_virtual_drives),
+                      'Money raised from product drives' => number_to_currency(money_from_drives),
+                      'Total product drives (virtual)' => virtual_product_drives.count,
+                      'Money raised from product drives (virtual)' => number_to_currency(money_from_virtual_drives),
                       'Disposable diapers collected from drives (virtual)' => number_with_delimiter(disposable_diapers_from_virtual_drives),
                       '% diapers donated' => "#{percent_donated.round}%",
                       '% diapers bought' => "#{percent_bought.round}%",
@@ -47,7 +47,7 @@ module Reports
 
     # @return [ActiveRecord::Relation]
     def annual_drives
-      organization.diaper_drives.within_date_range("#{year}-01-01 - #{year}-12-31").where(virtual: false)
+      organization.product_drives.within_date_range("#{year}-01-01 - #{year}-12-31").where(virtual: false)
     end
 
     # @return [Integer]
@@ -62,18 +62,18 @@ module Reports
     end
 
     # @return [Integer]
-    def virtual_diaper_drives
-      organization.diaper_drives.within_date_range("#{year}-01-01 - #{year}-12-31").where(virtual: true)
+    def virtual_product_drives
+      organization.product_drives.within_date_range("#{year}-01-01 - #{year}-12-31").where(virtual: true)
     end
 
     # @return [Float]
     def money_from_virtual_drives
-      virtual_diaper_drives.joins(:donations).sum(:money_raised) / 100
+      virtual_product_drives.joins(:donations).sum(:money_raised) / 100
     end
 
     # @return [Integer]
     def disposable_diapers_from_virtual_drives
-      @disposable_diapers_from_virtual_drives ||= virtual_diaper_drives
+      @disposable_diapers_from_virtual_drives ||= virtual_product_drives
                                                   .joins(donations: { line_items: :item })
                                                   .merge(Item.disposable)
                                                   .sum(:quantity)

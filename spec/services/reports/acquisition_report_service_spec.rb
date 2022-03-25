@@ -38,13 +38,13 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
     # Donations outside drives
     non_drive_donations = create_list(:donation, 2,
-                                      diaper_drive: nil,
+                                      product_drive: nil,
                                       issued_at: within_time,
                                       money_raised: 1000,
                                       organization: organization)
 
     non_drive_donations += create_list(:donation, 2,
-                                       diaper_drive: nil,
+                                       product_drive: nil,
                                        issued_at: outside_time,
                                        money_raised: 1000,
                                        organization: organization)
@@ -54,21 +54,21 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       create_list(:line_item, 3, :donation, quantity: 10, item: non_disposable_item, itemizable: donation)
     end
 
-    # Diaper drives
-    drives = create_list(:diaper_drive, 2,
+    # Product drives
+    drives = create_list(:product_drive, 2,
                          start_date: within_time,
                          end_date: nil,
                          virtual: false,
                          organization: organization)
-    outside_drives = create_list(:diaper_drive, 2,
+    outside_drives = create_list(:product_drive, 2,
                                  start_date: outside_time - 1.month,
                                  end_date: outside_time,
                                  organization: organization,
                                  virtual: false)
 
     donations = (drives + outside_drives).map do |drive|
-      create_list(:diaper_drive_donation, 3,
-                  diaper_drive: drive,
+      create_list(:product_drive_donation, 3,
+                  product_drive: drive,
                   issued_at: drive.start_date + 1.day,
                   money_raised: 1000,
                   organization: organization)
@@ -79,21 +79,21 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       create_list(:line_item, 5, :donation, quantity: 30, item: non_disposable_item, itemizable: donation)
     end
 
-    # Virtual diaper drives
-    vdrives = create_list(:diaper_drive, 2,
+    # Virtual product drives
+    vdrives = create_list(:product_drive, 2,
                           start_date: within_time,
                           end_date: nil,
                           virtual: true,
                           organization: organization)
-    outside_vdrives = create_list(:diaper_drive, 2,
+    outside_vdrives = create_list(:product_drive, 2,
                                   start_date: outside_time - 1.month,
                                   end_date: outside_time,
                                   organization: organization,
                                   virtual: true)
 
     vdonations = (vdrives + outside_vdrives).map do |drive|
-      create(:diaper_drive_donation,
-             diaper_drive: drive,
+      create(:product_drive_donation,
+             product_drive: drive,
              money_raised: 1000,
              issued_at: drive.start_date + 1.day,
              organization: organization)
@@ -157,12 +157,12 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                                              "Disposable diapers collected from drives" => "600",
                                              "Disposable diapers collected from drives (virtual)" => "120",
                                              "Disposable diapers distributed" => "200",
-                                             "Money raised from diaper drives" => "$60.00",
-                                             "Money raised from diaper drives (virtual)" => "$20.00",
+                                             "Money raised from product drives" => "$60.00",
+                                             "Money raised from product drives (virtual)" => "$20.00",
                                              "Money spent purchasing diapers" => "$60.00",
                                              "Purchased from" => "Google, Walmart",
-                                             "Total diaper drives" => 2,
-                                             "Total diaper drives (virtual)" => 2,
+                                             "Total product drives" => 2,
+                                             "Total product drives (virtual)" => 2,
                                              "Vendors diapers purchased through" => "Vendor 1, Vendor 2" },
                                   name: "Diaper Acquisition"
                                 })

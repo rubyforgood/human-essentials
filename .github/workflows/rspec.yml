@@ -51,10 +51,6 @@ jobs:
       - name: Install PostgreSQL client
         run: |
           sudo apt-get -yqq install libpq-dev
-      - name: Fix the datetime
-        run: |
-          sudo timedatectl set-ntp 0
-          sudo timedatectl set-time 2022-02-17
       - name: Build App
         env:
           POSTGRES_HOST: localhost
@@ -71,9 +67,6 @@ jobs:
           bundle exec rake db:create
           bundle exec rake db:schema:load
           bundle exec rails webpacker:compile
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter before-build
       - name: Run rspec
         env:
           POSTGRES_HOST: localhost

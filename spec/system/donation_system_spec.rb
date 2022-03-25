@@ -51,28 +51,28 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
-      it "Filters by diaper drives" do
-        a = create(:diaper_drive, name: 'A')
-        b = create(:diaper_drive, name: "B")
-        x = create(:diaper_drive_participant, business_name: "X")
-        create(:diaper_drive_donation, diaper_drive: a, diaper_drive_participant: x)
-        create(:diaper_drive_donation, diaper_drive: b, diaper_drive_participant: x)
+      it "Filters by product drives" do
+        a = create(:product_drive, name: 'A')
+        b = create(:product_drive, name: "B")
+        x = create(:product_drive_participant, business_name: "X")
+        create(:product_drive_donation, product_drive: a, product_drive_participant: x)
+        create(:product_drive_donation, product_drive: b, product_drive_participant: x)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.name, from: "filters_by_diaper_drive"
+        select a.name, from: "filters_by_product_drive"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
-      it "Filters by diaper drive participant" do
-        x = create(:diaper_drive, name: 'x')
-        a = create(:diaper_drive_participant, business_name: "A")
-        b = create(:diaper_drive_participant, business_name: "B")
-        create(:diaper_drive_donation, diaper_drive: x, diaper_drive_participant: a)
-        create(:diaper_drive_donation, diaper_drive: x, diaper_drive_participant: b)
+      it "Filters by product drive participant" do
+        x = create(:product_drive, name: 'x')
+        a = create(:product_drive_participant, business_name: "A")
+        b = create(:product_drive_participant, business_name: "B")
+        create(:product_drive_donation, product_drive: x, product_drive_participant: a)
+        create(:product_drive_donation, product_drive: x, product_drive_participant: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.business_name, from: "filters_by_diaper_drive_participant"
+        select a.business_name, from: "filters_by_product_drive_participant"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -133,8 +133,8 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:item, organization: @organization)
         create(:storage_location, organization: @organization)
         create(:donation_site, organization: @organization)
-        create(:diaper_drive, organization: @organization)
-        create(:diaper_drive_participant, organization: @organization)
+        create(:product_drive, organization: @organization)
+        create(:product_drive_participant, organization: @organization)
         create(:manufacturer, organization: @organization)
         @organization.reload
       end
@@ -204,13 +204,13 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).to have_no_content(item.name)
         end
 
-        it "Allows User to create a donation for a Diaper Drive Participant source" do
-          select Donation::SOURCES[:diaper_drive], from: "donation_source"
-          expect(page).to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
+        it "Allows User to create a donation for a ProductDrive Participant source" do
+          select Donation::SOURCES[:product_drive], from: "donation_source"
+          expect(page).to have_xpath("//select[@id='donation_product_drive_participant_id']")
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
           expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
-          select DiaperDrive.first.name, from: "donation_diaper_drive_id"
-          select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
+          select ProductDrive.first.name, from: "donation_product_drive_id"
+          select ProductDriveParticipant.first.business_name, from: "donation_product_drive_participant_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -220,31 +220,31 @@ RSpec.describe "Donations", type: :system, js: true do
           end.to change { Donation.count }.by(1)
         end
 
-        it "Allows User to create a Diaper Drive from donation" do
-          select Donation::SOURCES[:diaper_drive], from: "donation_source"
-          select "---Create new Diaper Drive---", from: "donation_diaper_drive_id"
-          expect(page).to have_content("New Diaper Drive")
-          fill_in "diaper_drive_name", with: "drivenametest"
-          fill_in "diaper_drive_start_date", with: Time.current
-          click_on "diaper_drive_submit"
-          select "drivenametest", from: "donation_diaper_drive_id"
+        it "Allows User to create a Product Drive from donation" do
+          select Donation::SOURCES[:product_drive], from: "donation_source"
+          select "---Create new Product Drive---", from: "donation_product_drive_id"
+          expect(page).to have_content("New Product Drive")
+          fill_in "product_drive_name", with: "drivenametest"
+          fill_in "product_drive_start_date", with: Time.current
+          click_on "product_drive_submit"
+          select "drivenametest", from: "donation_product_drive_id"
         end
 
-        it "Allows User to create a Diaper Drive Participant from donation" do
-          select Donation::SOURCES[:diaper_drive], from: "donation_source"
-          select "---Create new Participant---", from: "donation_diaper_drive_participant_id"
-          expect(page).to have_content("New Diaper Drive Participant")
-          fill_in "diaper_drive_participant_business_name", with: "businesstest"
-          fill_in "diaper_drive_participant_contact_name", with: "test"
-          fill_in "diaper_drive_participant_email", with: "123@mail.ru"
+        it "Allows User to create a Product Drive Participant from donation" do
+          select Donation::SOURCES[:product_drive], from: "donation_source"
+          select "---Create new Participant---", from: "donation_product_drive_participant_id"
+          expect(page).to have_content("New Product Drive Participant")
+          fill_in "product_drive_participant_business_name", with: "businesstest"
+          fill_in "product_drive_participant_contact_name", with: "test"
+          fill_in "product_drive_participant_email", with: "123@mail.ru"
           click_on "diaper-drive-participant-submit"
-          select "businesstest", from: "donation_diaper_drive_participant_id"
+          select "businesstest", from: "donation_product_drive_participant_id"
         end
 
         it "Allows User to create a donation for a Manufacturer source" do
           select Donation::SOURCES[:manufacturer], from: "donation_source"
           expect(page).to have_xpath("//select[@id='donation_manufacturer_id']")
-          expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
+          expect(page).not_to have_xpath("//select[@id='donation_product_drive_participant_id']")
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
           select Manufacturer.first.name, from: "donation_manufacturer_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
@@ -268,7 +268,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a donation for a Donation Site source" do
           select Donation::SOURCES[:donation_site], from: "donation_source"
           expect(page).to have_xpath("//select[@id='donation_donation_site_id']")
-          expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
+          expect(page).not_to have_xpath("//select[@id='donation_product_drive_participant_id']")
           expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
           select DonationSite.first.name, from: "donation_donation_site_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
@@ -283,7 +283,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a donation for Purchased Supplies" do
           select Donation::SOURCES[:misc], from: "donation_source"
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
-          expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
+          expect(page).not_to have_xpath("//select[@id='donation_product_drive_participant_id']")
           expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -297,7 +297,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a donation with a Miscellaneous source" do
           select Donation::SOURCES[:misc], from: "donation_source"
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
-          expect(page).not_to have_xpath("//select[@id='donation_diaper_drive_participant_id']")
+          expect(page).not_to have_xpath("//select[@id='donation_product_drive_participant_id']")
           expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -310,14 +310,14 @@ RSpec.describe "Donations", type: :system, js: true do
 
         # Since the form only shows/hides the irrelevant field, if the user already selected something it would still
         # submit. The app should sanitize this so we aren't saving extraneous data
-        it "Strips extraneous data if the user adds both Donation Site and Diaper Drive Participant" do
+        it "Strips extraneous data if the user adds both Donation Site and Product Drive Participant" do
           select Donation::SOURCES[:donation_site], from: "donation_source"
           select DonationSite.first.name, from: "donation_donation_site_id"
           select Donation::SOURCES[:manufacturer], from: "donation_source"
           select Manufacturer.first.name, from: "donation_manufacturer_id"
-          select Donation::SOURCES[:diaper_drive], from: "donation_source"
-          select DiaperDrive.first.name, from: "donation_diaper_drive_id"
-          select DiaperDriveParticipant.first.business_name, from: "donation_diaper_drive_participant_id"
+          select Donation::SOURCES[:product_drive], from: "donation_source"
+          select ProductDrive.first.name, from: "donation_product_drive_id"
+          select ProductDriveParticipant.first.business_name, from: "donation_product_drive_participant_id"
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
@@ -325,7 +325,7 @@ RSpec.describe "Donations", type: :system, js: true do
           click_button "Save"
           donation = Donation.last
 
-          expect(donation.diaper_drive).to be_present
+          expect(donation.product_drive).to be_present
           expect(donation.manufacturer_id).to be_nil
           expect(donation.donation_site_id).to be_nil
         end
@@ -507,8 +507,8 @@ RSpec.describe "Donations", type: :system, js: true do
         item = create(:item, organization: @organization, name: "Rare Candy")
         create(:storage_location, organization: @organization)
         create(:donation_site, organization: @organization)
-        create(:diaper_drive, organization: @organization)
-        create(:diaper_drive_participant, organization: @organization)
+        create(:product_drive, organization: @organization)
+        create(:product_drive_participant, organization: @organization)
         create(:manufacturer, organization: @organization)
         create(:donation, :with_items, item: item, organization: @organization)
         @organization.reload

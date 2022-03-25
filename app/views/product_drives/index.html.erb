@@ -1,0 +1,115 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Product Drives - #{current_organization.name}" %>
+        <h1>
+          Product Drives
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Product Drives</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Product Drive Filters</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= form_tag(product_drives_path, method: :get, organization_id: current_organization) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= filter_select(scope: :by_name, collection: @product_drives, key: :name, value: :name, selected: @selected_name_filter) %>
+                </div>
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= label_tag "Date Range" %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                </div>
+              </div>
+              </div>
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= clear_filter_button %>
+                <span class="float-right">
+                  <%= new_button_to new_product_drive_path(organization_id: current_organization), {text: "New Product Drive"} %>
+                  </span>
+              </div>
+            <% end # form %>
+            </div>
+        <!-- /.card -->
+      </div>
+      <!--/.col (left) -->
+      <!-- right column -->
+      <div class="col-md-6">
+
+      </div>
+      <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Product Drive Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Held Virtually?</th>
+                <th class="numeric">Quantity of Items</th>
+                <th class="numeric">Variety of Items</th>
+                <th class="numeric">In Kind Value</th>
+                <th class="text-right">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @product_drives.each do |product_drive| %>
+                <tr>
+                  <td><%= product_drive.name %></td>
+                  <td><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
+                  <td><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>
+                  <td><%= is_virtual(product_drive: product_drive) %></td>
+                  <td class="text-right"><%= product_drive.donation_quantity %></td>
+                  <td class="text-right"><%= product_drive.distinct_items %></td>
+                  <td class="text-right"><strong><%= dollar_value(product_drive.in_kind_value) %></strong></td>
+                  <td class="text-right"><%= view_button_to product_drive_path(product_drive.id) %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <!--          <div class="card-footer clearfix">-->
+          <%#= paginate @paginated_requests %>
+          <!--          </div>-->
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>

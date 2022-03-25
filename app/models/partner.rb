@@ -2,17 +2,18 @@
 #
 # Table name: partners
 #
-#  id               :integer          not null, primary key
-#  email            :string
-#  name             :string
-#  notes            :text
-#  quota            :integer
-#  send_reminders   :boolean          default(FALSE), not null
-#  status           :integer          default("uninvited")
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  organization_id  :integer
-#  partner_group_id :bigint
+#  id                          :integer          not null, primary key
+#  email                       :string
+#  name                        :string
+#  notes                       :text
+#  quota                       :integer
+#  send_reminders              :boolean          default(FALSE), not null
+#  status                      :integer          default("uninvited")
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  default_storage_location_id :bigint
+#  organization_id             :integer
+#  partner_group_id            :bigint
 #
 
 class Partner < ApplicationRecord
@@ -39,9 +40,8 @@ class Partner < ApplicationRecord
   validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
 
-  validates :email, presence: true,
-                    uniqueness: { case_sensitive: false },
-                    format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
+  validates :email, presence: true, uniqueness: { case_sensitive: false },
+    format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
 
   validates :quota, numericality: true, allow_blank: true
 
@@ -55,6 +55,7 @@ class Partner < ApplicationRecord
   }
 
   scope :alphabetized, -> { order(:name) }
+  scope :active, -> { where.not(status: :deactivated) }
 
   include Filterable
   include Exportable
@@ -64,6 +65,14 @@ class Partner < ApplicationRecord
 
   def deactivated?
     status == 'deactivated'
+  end
+
+  # @return [Boolean]
+  def deletable?
+    uninvited? &&
+      distributions.none? &&
+      requests.none? &&
+      (profile.nil? || profile&.users&.none?)
   end
 
   #

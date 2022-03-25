@@ -2,17 +2,18 @@
 #
 # Table name: partners
 #
-#  id               :integer          not null, primary key
-#  email            :string
-#  name             :string
-#  notes            :text
-#  quota            :integer
-#  send_reminders   :boolean          default(FALSE), not null
-#  status           :integer          default("uninvited")
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  organization_id  :integer
-#  partner_group_id :bigint
+#  id                          :integer          not null, primary key
+#  email                       :string
+#  name                        :string
+#  notes                       :text
+#  quota                       :integer
+#  send_reminders              :boolean          default(FALSE), not null
+#  status                      :integer          default("uninvited")
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  default_storage_location_id :bigint
+#  organization_id             :integer
+#  partner_group_id            :bigint
 #
 
 RSpec.describe Partner, type: :model, skip_seed: true do
@@ -97,6 +98,55 @@ RSpec.describe Partner, type: :model, skip_seed: true do
 
       it 'should return false' do
         expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe '#deletable?' do
+    context 'when status is not uninvited' do
+      it 'should return false' do
+        expect(build(:partner, status: :invited)).not_to be_deletable
+        expect(build(:partner, status: :awaiting_review)).not_to be_deletable
+        expect(build(:partner, status: :approved)).not_to be_deletable
+        expect(build(:partner, status: :error)).not_to be_deletable
+        expect(build(:partner, status: :recertification_required)).not_to be_deletable
+        expect(build(:partner, status: :deactivated)).not_to be_deletable
+      end
+    end
+
+    context 'when status is uninvited' do
+      let(:partner) { create(:partner, :uninvited, without_profile: true) }
+
+      context 'when it has no other associations' do
+        it 'should return true' do
+          expect(partner).to be_deletable
+        end
+      end
+
+      context 'when it has a request' do
+        it 'should return false' do
+          create(:request, partner: partner)
+          expect(partner.reload).not_to be_deletable
+        end
+      end
+      context 'when it has a distribution' do
+        it 'should return false' do
+          create(:distribution, partner: partner)
+          expect(partner.reload).not_to be_deletable
+        end
+      end
+      context 'when it has a profile but no users' do
+        it 'should return true' do
+          create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          expect(partner.reload).to be_deletable
+        end
+      end
+      context 'when it has a profile and users' do
+        it 'should return false' do
+          partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
+          expect(partner.reload).not_to be_deletable
+        end
       end
     end
   end

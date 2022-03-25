@@ -92,8 +92,8 @@ module UiHelper
   end
 
   # Used for keying off JavaScript.
-  def js_button(options = {})
-    _link_to '', { icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md" }.merge(options)
+  def js_button(options = {}, properties = {})
+    _link_to '', { icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md" }.merge(options), properties
   end
 
   def modal_button_to(target_id, options = {})

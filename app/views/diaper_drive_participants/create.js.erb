@@ -1,7 +1,0 @@
-<% flash.discard %>
-$("#modal_new").modal("hide");
-$("#donation_diaper_drive_participant_id").empty();
-$("#donation_diaper_drive_participant_id").
-html('<%= j options_from_collection_for_select(current_organization.diaper_drive_participants, :id, :business_name) %>');
-$("#donation_diaper_drive_participant_id").append('<option value="">---Create new Participant---</option>');
-$("#donation_diaper_drive_participant_id").val('<%= @diaper_drive_participant[:id] %>');

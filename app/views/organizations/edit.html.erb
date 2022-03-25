@@ -1,6 +1,6 @@
 <section class="content-header">
   <div class="container-fluid">
-    <div class="row mb-2">
+    <div class="mb-2 row">
       <div class="col-sm-6">
         <% content_for :title, "Edit - Organizations - #{@organization.name} - " %>
         <h1>
@@ -20,9 +20,6 @@
     </div>
   </div><!-- /.container-fluid -->
 </section>
-
-
-
 
 <%= simple_form_for current_organization, url: {controller: "organizations", action: "update"} do |f| %>
   <section class="content">
@@ -46,6 +43,9 @@
                 <%= f.input :short_name, required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-desktop"></i></span>
                   <%= f.input_field :short_name, disabled: true, class: "form-control" %>
+                <% end %>
+                <%= f.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
+                  <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
                 <% end %>
                 <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-link"></i></span>

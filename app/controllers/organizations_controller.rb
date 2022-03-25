@@ -5,6 +5,7 @@ class OrganizationsController < ApplicationController
 
   def show
     @organization = current_organization
+    @header_link = dashboard_path
   end
 
   def edit
@@ -75,6 +76,7 @@ class OrganizationsController < ApplicationController
       :default_storage_location, :default_email_text,
       :invitation_text, :reminder_day, :deadline_day,
       :repackage_essentials, :distribute_monthly,
+      :ndbn_member_id,
       partner_form_fields: []
     )
   end

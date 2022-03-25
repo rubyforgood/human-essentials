@@ -23,7 +23,10 @@ class PurchasesController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv { send_data Purchase.generate_csv(@purchases), filename: "Purchases-#{Time.zone.today}.csv" }
+      #  format.csv { send_data Purchase.generate_csv(@purchases), filename: "Purchases-#{Time.zone.today}.csv" }
+      format.csv do
+        send_data Exports::ExportPurchasesCSVService.new(purchase_ids: @purchases.map(&:id)).generate_csv, filename: "Purchases-#{Time.zone.today}.csv"
+      end
     end
   end
 

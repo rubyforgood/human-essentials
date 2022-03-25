@@ -95,6 +95,11 @@ def stub_addresses
   end
 end
 
+# Create global var for use in
+# config.before(:each, type: :system)
+# below
+have_run_webpacker_for_specs = false
+
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
@@ -140,9 +145,6 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
-    # Compile assets neccessary for browser tests to pass
-    `NODE_ENV=test bin/webpack`
-
     Rails.logger.info <<~ASCIIART
       -~~==]}>        ######## ###########  ####      ########    ###########
       -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
@@ -172,6 +174,15 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
+    unless have_run_webpacker_for_specs
+      Rails.logger.info "** Running webpack"
+
+      # Compile assets neccessary for browser tests to pass
+      `NODE_ENV=test bin/webpack`
+
+      have_run_webpacker_for_specs = true
+    end
+
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
@@ -186,7 +197,9 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |example|
-    unless example.metadata[:persisted_data]
+    if example.metadata[:persisted_data]
+      DatabaseCleaner.strategy = :truncation
+    else
       # The database cleaner will now begin at this point
       # up anything after this point when `.clean` is called.
       DatabaseCleaner.start

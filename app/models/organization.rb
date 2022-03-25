@@ -24,10 +24,11 @@
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  account_request_id       :integer
+#  ndbn_member_id           :bigint
 #
 
 class Organization < ApplicationRecord
-  DIAPER_APP_LOGO = Rails.root.join("public", "img", "diaperbase-logo-full.png")
+  DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
 
   include Deadlinable
 
@@ -38,13 +39,14 @@ class Organization < ApplicationRecord
   validate :correct_logo_mime_type
 
   belongs_to :account_request, optional: true
+  belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
 
   with_options dependent: :destroy do
     has_many :adjustments
     has_many :annual_reports
     has_many :audits
-    has_many :diaper_drive_participants
-    has_many :diaper_drives
+    has_many :product_drive_participants
+    has_many :product_drives
     has_many :donation_sites
     has_many :donations
     has_many :manufacturers

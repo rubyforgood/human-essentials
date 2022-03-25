@@ -25,7 +25,10 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
-  devise_for :users, controllers: { sessions: "users/sessions" }
+  devise_for :users, controllers: {
+    sessions: "users/sessions",
+    omniauth_callbacks: 'users/omniauth_callbacks'
+  }
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
   resources :logins, only: [:new, :create], controller: "consolidated_logins"
 
@@ -57,7 +60,7 @@ Rails.application.routes.draw do
     get :dashboard
     resources :base_items
     resources :organizations
-    resources :partners, except: %i[new create destroy]
+    resources :partners, except: %i[new create]
     resources :users
     resources :barcode_items
     resources :account_requests, only: [:index] do
@@ -126,7 +129,7 @@ Rails.application.routes.draw do
         post :import_csv
       end
     end
-    resources :diaper_drive_participants, except: [:destroy] do
+    resources :product_drive_participants, except: [:destroy] do
       collection do
         post :import_csv
       end
@@ -172,7 +175,7 @@ Rails.application.routes.draw do
 
     resources :partner_groups, only: [:new, :create, :edit, :update]
 
-    resources :diaper_drives
+    resources :product_drives
     resources :donations do
       # collection do
       #   get :scale
@@ -205,11 +208,12 @@ Rails.application.routes.draw do
   end
 
   resources :attachments, only: %i(destroy)
+  get "distributions/calendar", to: "distributions#calendar"
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get "help", to: "help#show"
   get "pages/:name", to: "static#page"
-  get "/register", to: "static#register"
+  get "/privacypolicy", to: "static#privacypolicy"
   resources :account_requests, only: [:new, :create] do
     collection do
       get 'confirmation'

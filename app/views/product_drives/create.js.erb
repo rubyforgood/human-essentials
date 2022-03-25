@@ -1,0 +1,7 @@
+<% flash.discard %>
+$("#modal_new").modal("hide");
+$("#donation_product_drive_id").empty();
+$("#donation_product_drive_id").
+  html('<%= j options_from_collection_for_select(current_organization.product_drives, :id, :name) %>');
+$("#donation_product_drive_id").append('<option value="">---Create new Product Drive---</option>');
+$("#donation_product_drive_id").val('<%= @product_drive[:id] %>');
