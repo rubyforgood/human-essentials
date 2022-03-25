@@ -163,7 +163,7 @@ class Partner < ApplicationRecord
   private
 
   def correct_document_mime_type
-    if documents.attached? && documents.any? { |doc| !doc.content_type.in?(ALLOWED_MIME_TYPES) }
+    if documents.attached? && documents.any? { |doc| !doc.media_type.in?(ALLOWED_MIME_TYPES) }
       errors.add(:documents, "Must be a PDF or DOC file")
     end
   end

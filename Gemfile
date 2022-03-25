@@ -16,7 +16,7 @@ gem "pg", "~> 1.3.4"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "~> 6.1.5"
+gem "rails", "7.0.2.3"
 
 ###### MODELS / DATABASE #######
 
@@ -47,7 +47,6 @@ gem 'bootstrap-select-rails'
 gem "chartkick"
 # Installs fonts for Rails frontend.
 gem "font-awesome-rails"
-gem "font-ionicons-rails"
 # A jQuery calendar widget.
 gem "fullcalendar-rails"
 # jQuery framework (DOM methods, Ajax, chaining, etc.)
@@ -96,8 +95,6 @@ gem "bugsnag"
 gem 'delayed_job_active_record'
 # UI for showing job status.
 gem 'delayed_job_web'
-# Enforces secure passwords for users via policies.
-gem 'devise-secure_password', '~> 2.0'
 # Sends invitations via e-mail for new users.
 gem "devise_invitable"
 # Environment variable and configuration management.
@@ -122,7 +119,7 @@ gem "jwt"
 gem "mini_racer", "~> 0.6.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.0.3"
+gem "sprockets-rails", "~> 3.4.0"
 
 group :production do
   # Reduce the noise of logs and include custom fields to it for easier access

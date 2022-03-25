@@ -243,7 +243,7 @@ class Organization < ApplicationRecord
   end
 
   def correct_logo_mime_type
-    if logo.attached? && !logo.content_type
+    if logo.attached? && !logo.media_type
                               .in?(%w(image/jpeg image/jpg image/pjpeg image/png image/x-png))
       self.logo = nil
       errors.add(:logo, "Must be a JPG or a PNG file")
