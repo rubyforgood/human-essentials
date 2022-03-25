@@ -8,7 +8,7 @@ class DeadlineService
 
   def next_deadline
     day = @partner.partner_group&.deadline_day ||
-          @partner.organization.deadline_day
+      @partner.organization.deadline_day
 
     return if day.blank?
 
