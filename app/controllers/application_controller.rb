@@ -106,7 +106,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-
   protected
 
   def setup_date_range_picker
