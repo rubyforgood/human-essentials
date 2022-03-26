@@ -339,7 +339,7 @@ note = [
       comments: Faker::Lorem.paragraph,
       partner: partner,
       for_families: Faker::Boolean.boolean,
-      partner_user: partner.primary_user
+      partner_user_id: partner.primary_user.id
     )
 
     # Ensure that the item requests are valid with
