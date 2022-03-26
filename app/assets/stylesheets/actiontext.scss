@@ -1,9 +1,8 @@
-//
+// Comments below refer to "Trix" which we are no longer using but this stylesheet is still active in the project.
+
 // Provides a drop-in pointer for the default Trix stylesheet that will format the toolbar and
 // the trix-editor content (whether displayed or under editing). Feel free to incorporate this
 // inclusion directly in any other asset bundle and remove this file.
-//
-//= require trix/dist/trix
 
 // We need to override trix.css’s image gallery styles to accommodate the
 // <action-text-attachment> element we wrap around attachments. Otherwise,

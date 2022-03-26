@@ -32,14 +32,14 @@ module.exports = function(api) {
           useBuiltIns: 'entry',
           corejs: 3,
           modules: false,
-          exclude: ['transform-typeof-symbol']
+          exclude: ['@babel/plugin-transform-typeof-symbol']
         }
       ]
     ].filter(Boolean),
     plugins: [
-      'babel-plugin-macros',
+      'macros',
       '@babel/plugin-syntax-dynamic-import',
-      isTestEnv && 'babel-plugin-dynamic-import-node',
+      isTestEnv && 'dynamic-import-node',
       '@babel/plugin-transform-destructuring',
       [
         '@babel/plugin-proposal-class-properties',
@@ -49,6 +49,12 @@ module.exports = function(api) {
       ],
       [
         '@babel/plugin-proposal-private-methods',
+        {
+          loose: true
+        }
+      ],
+      [
+        '@babel/plugin-proposal-private-property-in-object',
         {
           loose: true
         }
@@ -69,6 +75,19 @@ module.exports = function(api) {
         '@babel/plugin-transform-regenerator',
         {
           async: false
+        }
+      ],
+      [
+        '@babel/plugin-transform-spread',
+        {
+          loose: true
+        }
+      ],
+      [
+        '@babel/plugin-transform-classes',
+        {
+          spec: true,
+          loose: true
         }
       ]
     ].filter(Boolean)
