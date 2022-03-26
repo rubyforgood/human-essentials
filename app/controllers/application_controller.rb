@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
     return options if current_user.blank?
 
     if current_organization.present? && !options.key?(:organization_id)
-      options[:organization_id] = current_organization.to_para
+      options[:organization_id] = current_organization.to_param
     elsif current_user && !current_user.super_admin? && current_user.organization.present?
       options[:organization_id] = current_user.organization.to_param
     elsif current_user&.super_admin?
