@@ -92,6 +92,7 @@ RSpec.describe User, type: :model do
             @super_admin,
             @super_admin_no_org,
             @user,
+            @partner.primary_partner_user,
             z_name_user,
             deactivated_a_name_user,
             deactivated_z_name_user
