@@ -53,10 +53,14 @@ module ApplicationHelper
   ## Devise overrides
 
   def after_sign_in_path_for(resource)
+    binding.pry
+
     # default to the stored location
     if resource.is_a?(User) && resource.organization.present?
       # go to user's dashboard
       dashboard_path(organization_id: resource.organization.id)
+    elsif resource.is_a?(User) && resource.partner.present?
+      partner_user_root
     else
       stored_location_for(resource) || new_organization_path
       # send new users to organization creation page

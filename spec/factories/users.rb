@@ -31,6 +31,7 @@
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
 #  organization_id        :integer
+#  partner_id             :integer
 #
 
 FactoryBot.define do

@@ -9,7 +9,7 @@
 #  send_reminders        :boolean          default(FALSE), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
-#  organization_id       :bigint
+#  organization_id       :integer
 #
 
 FactoryBot.define do

@@ -4,12 +4,16 @@ module Partners
 
     skip_before_action :authenticate_user!
     skip_before_action :authorize_user
-    before_action :authenticate_partner_user!
+    before_action :authenticate_user!
 
     private
 
     def redirect_to_root
       redirect_to root_path
+    end
+
+    def current_partner_user
+      current_user
     end
 
     helper_method :current_partner

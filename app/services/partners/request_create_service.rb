@@ -92,7 +92,7 @@ module Partners
     end
 
     def partner
-      @partner ||= Partners::User.find(partner_user_id).partner
+      @partner ||= ::User.find(partner_user_id).partner
     end
 
     def build_organization_request(partner_request)

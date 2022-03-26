@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
     return options if current_user.blank?
 
     if current_organization.present? && !options.key?(:organization_id)
-      options[:organization_id] = current_organization.to_param
+      options[:organization_id] = current_organization.to_para
     elsif current_user && !current_user.super_admin? && current_user.organization.present?
       options[:organization_id] = current_user.organization.to_param
     elsif current_user&.super_admin?
@@ -43,7 +43,10 @@ class ApplicationController < ActionController::Base
 
   def authorize_user
     return unless params[:controller] # part of omniauth controller flow
-    verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
+
+    if current_user&.organization&.present?
+      verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
+    end
   end
 
   def authorize_admin
@@ -54,7 +57,6 @@ class ApplicationController < ActionController::Base
     if current_user && should_update_last_request_at?
       # we don't want the user record to validate or run callbacks when we're tracking activity
       current_user.update_columns(last_request_at: Time.now.utc)
-
     end
   end
 
@@ -90,6 +92,20 @@ class ApplicationController < ActionController::Base
   def swaddled
     response.headers["swaddled-by"] = "rubyforgood"
   end
+
+  def after_sign_in_path_for(resource)
+    # default to the stored location
+    if resource.is_a?(User) && resource.organization.present?
+      # go to user's dashboard
+      dashboard_path(organization_id: resource.organization.id)
+    elsif resource.is_a?(User) && resource.partner.present?
+      partner_user_root_path
+    else
+      stored_location_for(resource) || new_organization_path
+      # send new users to organization creation page
+    end
+  end
+
 
   protected
 

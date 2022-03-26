@@ -87,7 +87,7 @@
 #
 module Partners
   class Partner < Base
-    has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :partner
+    #has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :partner
     has_many :users, dependent: :destroy
     has_many :requests, dependent: :destroy
     has_many :families, dependent: :destroy
@@ -147,6 +147,10 @@ module Partners
 
     def deactivated?
       status_in_diaper_base == DEACTIVATED_STATUS
+    end
+
+    def primary_user
+      ::User.where(partner_id: id).order('created_at ASC').first
     end
 
     def organization

@@ -17,7 +17,7 @@ module Partners
     self.table_name = "partner_requests"
 
     belongs_to :partner, dependent: :destroy
-    belongs_to :partner_user, class_name: "Partners::User", optional: true
+    belongs_to :partner_user, class_name: "User", optional: true
 
     has_many :item_requests, class_name: 'Partners::ItemRequest', foreign_key: :partner_request_id, dependent: :destroy, inverse_of: :request
     accepts_nested_attributes_for :item_requests, allow_destroy: true, reject_if: proc { |attributes| attributes["quantity"].blank? }

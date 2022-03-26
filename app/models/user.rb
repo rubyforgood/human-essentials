@@ -31,6 +31,7 @@
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
 #  organization_id        :integer
+#  partner_id             :integer
 #
 
 class User < ApplicationRecord
@@ -69,6 +70,12 @@ class User < ApplicationRecord
     return true if invitation_status == "invited" && invitation_sent_at <= 7.days.ago
 
     false
+  end
+
+  def partner
+    # Use this as a entry point for Partner::Users to access Partner accounts
+    # that they have access to.
+    Partners::Partner.find(partner_id)
   end
 
   def self.from_omniauth(access_token)
