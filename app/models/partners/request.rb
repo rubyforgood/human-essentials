@@ -23,6 +23,7 @@ module Partners
     has_many :child_item_requests, through: :item_requests
 
     validates :partner, presence: true
+    validates :partner_user_id, presence: true, on: :create
     validates_associated :item_requests
 
     def partner_user

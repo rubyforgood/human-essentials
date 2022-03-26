@@ -23,8 +23,18 @@ RSpec.describe Partners::Request, type: :model, skip_seed: true do
 
   describe 'validations' do
     it { should validate_presence_of(:partner) }
-    it { should validate_presence_of(:partner_user).on(:create) }
+    it { should validate_presence_of(:partner_user_id).on(:create) }
     it { should accept_nested_attributes_for(:item_requests) }
+  end
+
+  describe '#partner_user' do
+    subject { partner_request.partner_user }
+    let(:user) { create(:user) }
+    let(:partner_request) { Partners::Request.new(partner_user_id: user.id) }
+
+    it 'should run the User record associated to the partner_user_id' do
+      expect(subject).to eq(user)
+    end
   end
 end
 

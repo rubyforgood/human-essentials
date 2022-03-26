@@ -177,8 +177,8 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     subject { partner.primary_partner_user }
     let(:partner) { create(:partner) }
 
-    it 'should return the asssociated primary Partners::User' do
-      partner_users = Partners::User.where(partner_id: partner.profile.id)
+    it 'should return the asssociated primary User with corresponding partner_id' do
+      partner_users = ::User.where(partner_id: partner.profile.id)
       expect(partner_users).to include(subject)
     end
   end
