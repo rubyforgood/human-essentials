@@ -32,12 +32,20 @@ module Partners
 
     # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
     devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable,
-           :invitable, :trackable, :password_has_required_content
+           :invitable, :trackable
 
     has_many :requests, class_name: 'Partners::Request', foreign_key: :partner_id, dependent: :destroy, inverse_of: :user
     has_many :submitted_partner_requests, class_name: 'Partners::Request', foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
     has_many :submitted_requests, class_name: 'Request', foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
 
     belongs_to :partner, dependent: :destroy
+
+    validate :password_compexity
+
+    def password_complexity
+      return if password.blank? || password =~ /(?=.*?[#?!@$%^&*-])/
+
+      errors.add :password, 'Complexity requirement not met. Please use at least 1 special character'
+    end
   end
 end

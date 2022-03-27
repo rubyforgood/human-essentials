@@ -2,10 +2,9 @@
 #
 # Table name: users
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint           not null, primary key
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :inet
-#  discarded_at           :datetime
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  invitation_accepted_at :datetime
@@ -15,22 +14,17 @@
 #  invitation_token       :string
 #  invitations_count      :integer          default(0)
 #  invited_by_type        :string
-#  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("CHANGEME"), not null
-#  organization_admin     :boolean
-#  provider               :string
+#  name                   :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  sign_in_count          :integer          default(0), not null
-#  super_admin            :boolean          default(FALSE)
-#  uid                    :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  invited_by_id          :integer
-#  organization_id        :integer
+#  invited_by_id          :bigint
+#  partner_id             :bigint
 #
 
 class User < ApplicationRecord
@@ -40,13 +34,20 @@ class User < ApplicationRecord
   # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :timeoutable, :password_has_required_content
+         :timeoutable
   devise :omniauthable, omniauth_providers: [:google_oauth2]
 
   validates :name, :email, presence: true
+  validate :password_complexity
 
   default_scope -> { kept }
   scope :alphabetized, -> { order(discarded_at: :desc, name: :asc) }
+
+  def password_complexity
+    return if password.blank? || password =~ /(?=.*?[#?!@$%^&*-])/
+
+    errors.add :password, 'Complexity requirement not met. Please use at least 1 special character'
+  end
 
   def invitation_status
     return "joined" if current_sign_in_at.present?

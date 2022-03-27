@@ -12,7 +12,6 @@
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <%= render 'magic_test/support' if Rails.env.test? %>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
