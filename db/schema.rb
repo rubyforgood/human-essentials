@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_20_202902) do
+ActiveRecord::Schema.define(version: 2022_03_28_220318) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -400,6 +400,7 @@ ActiveRecord::Schema.define(version: 2022_03_20_202902) do
     t.integer "amount_spent_on_diapers_cents", default: 0, null: false
     t.integer "amount_spent_on_adult_incontinence_cents", default: 0, null: false
     t.integer "amount_spent_on_other_cents", default: 0, null: false
+    t.integer "amount_spent_on_period_supplies_cents", default: 0, null: false
     t.index ["organization_id"], name: "index_purchases_on_organization_id"
     t.index ["storage_location_id"], name: "index_purchases_on_storage_location_id"
   end

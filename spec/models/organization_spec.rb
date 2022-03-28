@@ -434,4 +434,25 @@ RSpec.describe Organization, type: :model do
       expect(build(:organization, reminder_day: 28, deadline_day: 14)).to_not be_valid
     end
   end
+
+  describe 'earliest reporting year' do
+    # re 2813 update annual report -- allowing an earliest reporting year will let us do system testing and staging for annual reports
+    it 'is the organization created year if no associated data' do
+      org = create(:organization)
+      expect(org.earliest_reporting_year).to eq(org.created_at.year)
+    end
+    it 'is the year of the earliest of donation, purchase, or distribution if they are earlier ' do
+      org = create(:organization)
+      create(:donation, organization: org, issued_at: 1.year.from_now)
+      create(:purchase, organization: org, issued_at: 1.year.from_now)
+      create(:distribution, organization: org, issued_at: 1.year.from_now)
+      expect(org.earliest_reporting_year).to eq(org.created_at.year)
+      create(:donation, organization: org, issued_at: 5.years.ago)
+      expect(org.earliest_reporting_year).to eq(5.years.ago.year)
+      create(:purchase, organization: org, issued_at: 6.years.ago)
+      expect(org.earliest_reporting_year).to eq(6.years.ago.year)
+      create(:purchase, organization: org, issued_at: 7.years.ago)
+      expect(org.earliest_reporting_year).to eq(7.years.ago.year)
+    end
+  end
 end
