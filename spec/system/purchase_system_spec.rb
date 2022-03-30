@@ -170,30 +170,6 @@ RSpec.describe "Purchases", type: :system, js: true do
           expect(Purchase.last.line_items.first.quantity).to eq(16)
         end
 
-        # Issue 2318 -- adding in tests to confirm that the category sum checks work properly.
-        # In support of change to add period supply category for annual reports
-
-        it "should allow all zero category totals" do
-          select Vendor.first.business_name, from: "purchase_vendor_id"
-          select StorageLocation.first.name, from: "purchase_storage_location_id"
-          fill_in "purchase_amount_spent", with: "10"
-          expect do
-            click_button "Save"
-          end.to change { Purchase.count }.by(1)
-        end
-        it "should save if the category totals sum to the grand total" do
-          select Vendor.first.business_name, from: "purchase_vendor_id"
-          select StorageLocation.first.name, from: "purchase_storage_location_id"
-          fill_in "purchase_amount_spent", with: "10"
-          fill_in "purchase_amount_spent_on_diapers", with: "1"
-          fill_in "purchase_amount_spent_on_adult_incontinence", with: "2"
-          fill_in "purchase_amount_spent_on_period_supplies", with: "3"
-          fill_in "purchase_amount_spent_on_other", with: "4"
-          expect do
-            click_button "Save"
-          end.to change { Purchase.count }.by(1)
-        end
-
         context 'when creating a purchase incorrectly' do
           # Bug fix -- Issue #71
           # When a user creates a purchase without it passing validation, the items
@@ -212,28 +188,6 @@ RSpec.describe "Purchases", type: :system, js: true do
             expect(page).to have_content('Failed to create purchase due to: ["Vendor must exist", "Amount spent is not a number", "Amount spent in cents must be greater than 0"]')
           end
 
-          # Issue 2318 -- adding in tests to confirm that the category sum checks work properly.
-          # In support of change to add period supply category for annual reports
-          it "should display appropriate message if non-zero category totals does not equal purchase total" do
-            select Vendor.first.business_name, from: "purchase_vendor_id"
-            select StorageLocation.first.name, from: "purchase_storage_location_id"
-            fill_in "purchase_amount_spent", with: "10"
-            fill_in "purchase_amount_spent_on_diapers", with: "1"
-            fill_in "purchase_amount_spent_on_adult_incontinence", with: "2"
-            fill_in "purchase_amount_spent_on_period_supplies", with: "3"
-            fill_in "purchase_amount_spent_on_other", with: "5"
-            click_button "Save"
-            expect(page).to have_content('Failed to create purchase due to: ["Amount spent does not equal all categories - categories add to $11.00 but given total is $10.00"]')
-          end
-          # this covers off making sure it's checking the case of period supplies only (which it won't be before we make it so)
-          it "should display appropriate message if non-zero category totals does not equal purchase total, period supplies only case" do
-            select Vendor.first.business_name, from: "purchase_vendor_id"
-            select StorageLocation.first.name, from: "purchase_storage_location_id"
-            fill_in "purchase_amount_spent", with: "10"
-            fill_in "purchase_amount_spent_on_period_supplies", with: "3"
-            click_button "Save"
-            expect(page).to have_content('Failed to create purchase due to: ["Amount spent does not equal all categories - categories add to $3.00 but given total is $10.00"]')
-          end
         end
       end
 
