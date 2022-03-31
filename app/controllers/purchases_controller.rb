@@ -94,7 +94,8 @@ class PurchasesController < ApplicationController
   def purchase_params
     params = compact_line_items
     params.require(:purchase).permit(:comment, :amount_spent, :purchased_from,
-      :amount_spent_on_diapers, :amount_spent_on_adult_incontinence, :amount_spent_on_other,
+      :amount_spent_on_diapers, :amount_spent_on_adult_incontinence, :amount_spent_on_period_supplies,
+      :amount_spent_on_other,
       :storage_location_id, :issued_at, :vendor_id,
       line_items_attributes: %i(id item_id quantity _destroy))
       .merge(organization: current_organization)

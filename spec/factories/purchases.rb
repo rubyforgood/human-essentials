@@ -7,6 +7,7 @@
 #  amount_spent_on_adult_incontinence_cents :integer          default(0), not null
 #  amount_spent_on_diapers_cents            :integer          default(0), not null
 #  amount_spent_on_other_cents              :integer          default(0), not null
+#  amount_spent_on_period_supplies_cents    :integer          default(0), not null
 #  comment                                  :text
 #  issued_at                                :datetime
 #  purchased_from                           :string
