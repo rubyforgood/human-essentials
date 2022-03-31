@@ -2,7 +2,10 @@ class Reports::AnnualReportsController < ApplicationController
   before_action :validate_show_params, only: [:show, :recalculate]
 
   def index
-    foundation_year = current_organization.created_at.year
+    # 2813_update_annual_report -- changed to earliest_reporting_year
+    # so that we can do system tests and staging
+    foundation_year = current_organization.earliest_reporting_year
+
     @actual_year = Time.current.year
 
     @years = (foundation_year...@actual_year).to_a

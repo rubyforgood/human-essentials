@@ -40,9 +40,10 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
           ),
           issued_at: start_time + i.days,
           comment: "This is the #{i}-th purchase in the test.",
-          amount_spent_in_cents: i * 3 + 425,
+          amount_spent_in_cents: i * 4 + 555,
           amount_spent_on_diapers_cents: i + 100,
           amount_spent_on_adult_incontinence_cents: i + 125,
+          amount_spent_on_period_supplies_cents: i + 130,
           amount_spent_on_other_cents: i + 200
         )
 
@@ -66,6 +67,7 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
         "Amount Spent",
         "Spent on Diapers",
         "Spent on Adult Incontinence",
+        "Spent on Period Supplies",
         "Spent on Other",
         "Comment"
       ] + expected_item_headers
@@ -102,6 +104,7 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
           purchase.amount_spent,
           purchase.amount_spent_on_diapers,
           purchase.amount_spent_on_adult_incontinence,
+          purchase.amount_spent_on_period_supplies,
           purchase.amount_spent_on_other,
           purchase.comment
         ]

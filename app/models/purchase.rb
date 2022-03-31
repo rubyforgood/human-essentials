@@ -7,6 +7,7 @@
 #  amount_spent_on_adult_incontinence_cents :integer          default(0), not null
 #  amount_spent_on_diapers_cents            :integer          default(0), not null
 #  amount_spent_on_other_cents              :integer          default(0), not null
+#  amount_spent_on_period_supplies_cents    :integer          default(0), not null
 #  comment                                  :text
 #  issued_at                                :datetime
 #  purchased_from                           :string
@@ -32,6 +33,7 @@ class Purchase < ApplicationRecord
   monetize :amount_spent_in_cents, as: :amount_spent
   monetize :amount_spent_on_diapers_cents
   monetize :amount_spent_on_adult_incontinence_cents
+  monetize :amount_spent_on_period_supplies_cents
   monetize :amount_spent_on_other_cents
 
   before_save :strip_symbols_from_money
@@ -110,7 +112,7 @@ class Purchase < ApplicationRecord
   end
 
   def strip_symbols_from_money
-    %w[amount_spent amount_spent_on_diapers amount_spent_on_adult_incontinence amount_spent_on_other].each do |field|
+    %w[amount_spent amount_spent_on_diapers amount_spent_on_adult_incontinence amount_spent_on_period_supplies amount_spent_on_other].each do |field|
       if self[field].is_a?(String)
         self[field] = self[field].tr("$", "").tr(",", "").to_i
       end
@@ -121,9 +123,10 @@ class Purchase < ApplicationRecord
     return unless amount_spent&.nonzero?
     return if !amount_spent_on_diapers&.nonzero? &&
       !amount_spent_on_adult_incontinence&.nonzero? &&
+      !amount_spent_on_period_supplies&.nonzero? &&
       !amount_spent_on_other.nonzero?
 
-    category_total = amount_spent_on_diapers + amount_spent_on_adult_incontinence + amount_spent_on_other
+    category_total = amount_spent_on_diapers + amount_spent_on_adult_incontinence + amount_spent_on_period_supplies + amount_spent_on_other
     if category_total != amount_spent
       cat_total = humanized_money_with_symbol(category_total)
       total = humanized_money_with_symbol(amount_spent)

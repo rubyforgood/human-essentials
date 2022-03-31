@@ -74,9 +74,15 @@ class Item < ApplicationRecord
       .or(where("items.partner_key LIKE '%adult%' AND items.partner_key NOT LIKE '%cloth%'"))
   }
 
+  scope :period_supplies, -> {
+    joins(:base_item)
+      .where(items: { partner_key: %w(tampons pads) })
+      .or(where("base_items.category = 'Period Supplies'"))
+  }
+
   scope :other_categories, -> {
     joins(:base_item)
-      .where(items: { partner_key: %w(pads tampons cloth_training_pants wipes adult_wipes) })
+      .where(items: { partner_key: %w(cloth_training_pants wipes adult_wipes) })
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 
