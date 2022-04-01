@@ -41,8 +41,8 @@ class Item < ApplicationRecord
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
   has_many :storage_locations, through: :inventory_items
-  has_many :donations, through: :line_items, source: :itemizable, source_type: '::Donation'
-  has_many :distributions, through: :line_items, source: :itemizable, source_type: '::Distribution'
+  has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
+  has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
 
   scope :active, -> { where(active: true) }
 

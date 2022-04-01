@@ -46,7 +46,7 @@ class User < ApplicationRecord
   def password_complexity
     return if password.blank? || password =~ /(?=.*?[#?!@$%^&*-])/
 
-    errors.add :password, 'Complexity requirement not met. Please use at least 1 special character'
+    errors.add :password, "Complexity requirement not met. Please use at least 1 special character"
   end
 
   def invitation_status

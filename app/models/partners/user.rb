@@ -40,7 +40,7 @@ module Partners
 
     belongs_to :partner, dependent: :destroy
 
-    validate :password_compexity
+    validate :password_complexity
 
     def password_complexity
       return if password.blank? || password =~ /(?=.*?[#?!@$%^&*-])/
