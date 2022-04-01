@@ -7,6 +7,7 @@
 #  amount_spent_on_adult_incontinence_cents :integer          default(0), not null
 #  amount_spent_on_diapers_cents            :integer          default(0), not null
 #  amount_spent_on_other_cents              :integer          default(0), not null
+#  amount_spent_on_period_supplies_cents    :integer          default(0), not null
 #  comment                                  :text
 #  issued_at                                :datetime
 #  purchased_from                           :string
@@ -37,16 +38,49 @@ RSpec.describe Purchase, type: :model, skip_seed: true do
       expect(d).to be_valid
     end
 
+    # re 2813_update_annual_report, adding in amount_spent_on_period_supplies_cents to test.
+    # also adding in amount_spend_on_incontinence_cents because it was missing.
+
+    it "is not valid if any category is non-zero but does not add up to the total" do
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 300)
+      expect(d).not_to be_valid
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_adult_incontinence_cents: 300)
+      expect(d).not_to be_valid
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_period_supplies_cents: 300)
+      expect(d).not_to be_valid
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_other_cents: 300)
+      expect(d).not_to be_valid
+    end
+
     it "is valid if all categories add up to total" do
-      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 200, amount_spent_on_other_cents: 250)
+      d = build(:purchase, amount_spent_in_cents: 1150,
+        amount_spent_on_diapers_cents: 200,
+        amount_spent_on_adult_incontinence_cents: 300,
+        amount_spent_on_period_supplies_cents: 400,
+        amount_spent_on_other_cents: 250)
       expect(d).to be_valid
     end
 
-    it "is not valid if categories do not add up" do
-      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 200)
+    # 2813 update annual reports -- this covers off making sure it's checking the case of period supplies only (which it won't be before we make it so)
+
+    it "is not valid if period supplies is non-zero but no other category is " do
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 0,
+        amount_spent_on_adult_incontinence_cents: 0,
+        amount_spent_on_period_supplies_cents: 350,
+        amount_spent_on_other_cents: 0)
       expect(d).not_to be_valid
       expect(d.errors.full_messages)
-        .to eq(["Amount spent does not equal all categories - categories add to $2.00 but given total is $4.50"])
+        .to eq(["Amount spent does not equal all categories - categories add to $3.50 but given total is $4.50"])
+    end
+
+    it "is not valid if categories do not add up" do
+      d = build(:purchase, amount_spent_in_cents: 450, amount_spent_on_diapers_cents: 200,
+        amount_spent_on_adult_incontinence_cents: 250,
+        amount_spent_on_period_supplies_cents: 350,
+        amount_spent_on_other_cents: 725)
+      expect(d).not_to be_valid
+      expect(d.errors.full_messages)
+        .to eq(["Amount spent does not equal all categories - categories add to $15.25 but given total is $4.50"])
     end
   end
 

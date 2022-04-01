@@ -264,7 +264,7 @@ RSpec.describe "Purchases", type: :system, js: true do
     end
   end
 
-  context "while singed in as an organization admin" do
+  context "while signed in as an organization admin" do
     let!(:purchase) { create(:purchase, :with_items, item_quantity: 10) }
     subject { url_prefix + "/purchases" }
 

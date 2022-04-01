@@ -638,6 +638,24 @@ comments = [
   )
 end
 
+#re 2813_update_annual_report add some data for last year (enables system testing of reports)
+5.times do
+  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  vendor = random_record_for_org(pdx_org, Vendor)
+  Purchase.create(
+    purchased_from: suppliers.sample,
+    comment: comments.sample,
+    organization_id: pdx_org.id,
+    storage_location_id: storage_location.id,
+    amount_spent_in_cents: rand(200..10_000),
+    issued_at: (Time.zone.today - 1.year),
+    created_at: (Time.zone.today - 1.year),
+    updated_at: (Time.zone.today - 1.year),
+    vendor_id: vendor.id
+  )
+end
+
+
 # ----------------------------------------------------------------------------
 # Flipper
 # ----------------------------------------------------------------------------

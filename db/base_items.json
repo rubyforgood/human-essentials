@@ -42,7 +42,7 @@
     { "key": "adult_incontinence", "name": "Adult Incontinence Pads", "qty": { "arbor": 0, "pdxdb": 2304 } },
     { "key": "underpads", "name": "Underpads (Pack)", "qty": { "arbor": 0, "pdxdb": 2 } }
   ],
-  "Menstrual Supplies/Items": [
+  "Period Supplies": [
     { "key": "pads", "name": "Pads", "qty": { "arbor": 0, "pdxdb": 1232 } },
     { "key": "tampons", "name": "Tampons", "qty": { "arbor": 0, "pdxdb": 5162 } },
     { "key": "liners", "name": "Adult Liners", "qty": { "arbor": 0, "pdxdb": 5162 } }

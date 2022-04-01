@@ -85,6 +85,9 @@ module Exports
         "Spent on Adult Incontinence" => ->(purchase) {
           purchase.amount_spent_on_adult_incontinence
         },
+        "Spent on Period Supplies" => ->(purchase) {
+          purchase.amount_spent_on_period_supplies
+        },
         "Spent on Other" => ->(purchase) {
           purchase.amount_spent_on_other
         },
