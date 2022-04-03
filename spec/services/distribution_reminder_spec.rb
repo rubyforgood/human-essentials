@@ -14,32 +14,32 @@ RSpec.describe DistributionReminder, skip_seed: true do
       it "does not send mail for non existent distributions" do
         expect do
           DistributionReminder.perform(0)
-        end.not_to have_enqueued_job(ActionMailer::DeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now')
+        end.not_to have_enqueued_job(ActionMailer::MailDeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now')
       end
     end
 
     it "does not send mail for past distributions" do
       expect do
         DistributionReminder.perform(past_distribution.id)
-      end.not_to have_enqueued_job(ActionMailer::DeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now')
+      end.not_to have_enqueued_job(ActionMailer::MailDeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now')
     end
 
     it "sends mail for future distributions" do
       expect do
         DistributionReminder.perform(future_distribution.id)
-      end.to have_enqueued_job(ActionMailer::DeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now', future_distribution.id)
+      end.to have_enqueued_job(ActionMailer::MailDeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now', args: [future_distribution.id])
     end
 
     it "does not send mail for future distributions if the partner wants no reminders" do
       expect do
         DistributionReminder.perform(distribution_without_reminder.id)
-      end.not_to have_enqueued_job(ActionMailer::DeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now')
+      end.not_to have_enqueued_job(ActionMailer::MailDeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now')
     end
 
     it "sends mail for future distributions where the partner wants reminders" do
       expect do
         DistributionReminder.perform(distribution_with_reminder.id)
-      end.to have_enqueued_job(ActionMailer::DeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now', distribution_with_reminder.id)
+      end.to have_enqueued_job(ActionMailer::MailDeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now', args: [distribution_with_reminder.id])
     end
 
     context "when the partner is deactivated" do
@@ -49,7 +49,7 @@ RSpec.describe DistributionReminder, skip_seed: true do
       it "does not send mail" do
         expect do
           DistributionReminder.perform(distribution.id)
-        end.not_to have_enqueued_job(ActionMailer::DeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now')
+        end.not_to have_enqueued_job(ActionMailer::MailDeliveryJob).with('DistributionMailer', 'reminder_email', 'deliver_now')
       end
     end
   end
