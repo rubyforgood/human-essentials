@@ -8,6 +8,7 @@ module Reports
         Reports::AcquisitionReportService.new(year: year, organization: organization).report,
         Reports::WarehouseReportService.new(year: year, organization: organization).report,
         Reports::AdultIncontinenceReportService.new(year: year, organization: organization).report,
+        Reports::PeriodSupplyReportService.new(year: year, organization: organization).report,
         Reports::OtherProductsReportService.new(year: year, organization: organization).report,
         Reports::PartnerInfoReportService.new(year: year, organization: organization).report,
         Reports::ChildrenServedReportService.new(year: year, organization: organization).report,

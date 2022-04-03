@@ -231,6 +231,22 @@ class Organization < ApplicationRecord
     email
   end
 
+  # re 2813 update annual report -- allowing an earliest reporting year will let us do system testing and staging for annual reports
+  def earliest_reporting_year
+    year = created_at.year
+    if donations.any?
+      year = [year, donations.minimum(:issued_at).year].min
+    end
+
+    if purchases.any?
+      year = [year, purchases.minimum(:issued_at).year].min
+    end
+    if distributions.any?
+      year = [year, distributions.minimum(:issued_at).year].min
+    end
+    year
+  end
+
   private
 
   def sync_visible_partner_form_sections

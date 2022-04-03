@@ -411,4 +411,49 @@ RSpec.describe Organization, type: :model do
       expect(org.from_email).to eq(admin.email)
     end
   end
+
+  describe 'reminder_day' do
+    it "can only contain numbers 1-14" do
+      expect(build(:organization, reminder_day: 14)).to be_valid
+      expect(build(:organization, reminder_day: 1)).to be_valid
+      expect(build(:organization, reminder_day: 0)).to_not be_valid
+      expect(build(:organization, reminder_day: -5)).to_not be_valid
+      expect(build(:organization, reminder_day: 15)).to_not be_valid
+    end
+  end
+  describe 'deadline_day' do
+    it "can only contain numbers 1-28" do
+      expect(build(:organization, deadline_day: 28)).to be_valid
+      expect(build(:organization, deadline_day: 0)).to_not be_valid
+      expect(build(:organization, deadline_day: -5)).to_not be_valid
+      expect(build(:organization, deadline_day: 29)).to_not be_valid
+    end
+  end
+  describe 'deadline_after_reminder' do
+    it "deadline must be after reminder" do
+      expect(build(:organization, reminder_day: 14, deadline_day: 28)).to be_valid
+      expect(build(:organization, reminder_day: 28, deadline_day: 14)).to_not be_valid
+    end
+  end
+
+  describe 'earliest reporting year' do
+    # re 2813 update annual report -- allowing an earliest reporting year will let us do system testing and staging for annual reports
+    it 'is the organization created year if no associated data' do
+      org = create(:organization)
+      expect(org.earliest_reporting_year).to eq(org.created_at.year)
+    end
+    it 'is the year of the earliest of donation, purchase, or distribution if they are earlier ' do
+      org = create(:organization)
+      create(:donation, organization: org, issued_at: 1.year.from_now)
+      create(:purchase, organization: org, issued_at: 1.year.from_now)
+      create(:distribution, organization: org, issued_at: 1.year.from_now)
+      expect(org.earliest_reporting_year).to eq(org.created_at.year)
+      create(:donation, organization: org, issued_at: 5.years.ago)
+      expect(org.earliest_reporting_year).to eq(5.years.ago.year)
+      create(:purchase, organization: org, issued_at: 6.years.ago)
+      expect(org.earliest_reporting_year).to eq(6.years.ago.year)
+      create(:purchase, organization: org, issued_at: 7.years.ago)
+      expect(org.earliest_reporting_year).to eq(7.years.ago.year)
+    end
+  end
 end
