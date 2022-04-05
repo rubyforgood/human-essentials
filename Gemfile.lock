@@ -678,7 +678,7 @@ DEPENDENCIES
   simple_form
   simplecov
   skylight
-  sprockets-rails (~> 3.4.0)
+  sprockets (~> 4.0.3)
   standard (~> 1.0)
   strong_migrations (~> 1.0.0)
   toastr-rails
