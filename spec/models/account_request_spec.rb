@@ -96,7 +96,7 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
 
     it 'should return a JWT token that contains the id of the account_request_id' do
       token = subject
-      decoded_token = JWT.decode(token, Rails.application.secrets[:secret_key_base], true, { algorithm: 'HS256' })
+      decoded_token = JWT.decode(token, Rails.application.secret_key_base, true, { algorithm: 'HS256' })
       expect(decoded_token[0]["account_request_id"]).to eq(account_request.id)
     end
   end
