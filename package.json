@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@babel/core": "^7.5.5",
+    "@rails/actiontext": "^6.1.5",
     "@rails/webpacker": "5.3.0",
     "actiontext": "https://github.com/rails/actiontext#archive",
     "babel-cli": "^6.26.0",
@@ -19,6 +20,7 @@
     "mixin-deep": "^2.0.1",
     "set-value": "^3.0.1",
     "tailwindcss": "^2.1.2",
+    "trix": "^2.0.0-beta.0",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12"
   },
