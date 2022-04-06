@@ -9,7 +9,7 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
   let(:crypt) { ActiveSupport::MessageEncryptor.new(secret_key) }
   let(:hashed_id) { crypt.encrypt_and_sign(@organization.id) }
   before(:each) do
-    allow(Rails.application.secrets).to receive(:secret_key_base).and_return(secret_key)
+    allow(Rails.application).to receive(:secret_key_base).and_return(secret_key)
   end
 
   context "While signed in" do
