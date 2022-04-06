@@ -198,7 +198,7 @@ GEM
     geocoder (1.7.5)
     globalid (1.0.0)
       activesupport (>= 5.0)
-    groupdate (6.0.1)
+    groupdate (6.1.0)
       activesupport (>= 5.2)
     guard (2.18.0)
       formatador (>= 0.2.4)
@@ -616,7 +616,7 @@ DEPENDENCIES
   foreman
   fullcalendar-rails
   geocoder
-  groupdate (~> 6.0)
+  groupdate (~> 6.1)
   guard-rspec
   httparty
   icalendar
