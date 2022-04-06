@@ -30,7 +30,7 @@ class PartnerUser < Partners::User
   # Define the devise options in this model as `trackable` won't work
   # without being on this specific model
   devise :database_authenticatable, :registerable, :recoverable, :rememberable,
-         :validatable, :invitable, :trackable, :password_has_required_content
+         :validatable, :invitable, :trackable
 
   # Using this to appease our challenge with using
   # devise /w a namespaced class like Partners::User

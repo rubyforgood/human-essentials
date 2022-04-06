@@ -157,7 +157,7 @@ class DistributionsController < ApplicationController
     organization_id = crypt.decrypt_and_verify(CGI.unescape(params[:hash]))
 
     render body: CalendarService.calendar(organization_id), content_type: Mime::Type.lookup("text/calendar")
-  rescue ActiveSupport::MessageVerifier::InvalidSignature
+  rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveSupport::MessageEncryptor::InvalidMessage
     head :unauthorized
   end
 
