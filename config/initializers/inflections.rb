@@ -14,4 +14,6 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular 'drive', 'drives'
   inflect.acronym 'API'
   inflect.acronym 'V1'
+  inflect.acronym 'NDBN'
+  inflect.acronym 'CSV'
 end

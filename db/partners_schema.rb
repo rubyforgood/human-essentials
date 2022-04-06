@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_24_155700) do
-
+ActiveRecord::Schema[7.0].define(version: 2021_09_24_155700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -20,7 +19,7 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -32,7 +31,7 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.text "metadata"
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -43,16 +42,16 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.string "gender"
     t.text "comments"
     t.bigint "family_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["family_id"], name: "index_authorized_family_members_on_family_id"
   end
 
   create_table "child_item_requests", force: :cascade do |t|
     t.bigint "child_id"
     t.bigint "item_request_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "picked_up", default: false
     t.integer "quantity_picked_up"
     t.integer "picked_up_item_diaperid"
@@ -71,8 +70,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.string "agency_child_id"
     t.jsonb "health_insurance"
     t.text "comments"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "family_id"
     t.integer "item_needed_diaperid"
     t.boolean "active", default: true
@@ -96,8 +95,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.decimal "guardian_monthly_pay"
     t.jsonb "guardian_health_insurance"
     t.text "comments"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "partner_id"
     t.boolean "military", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
@@ -105,8 +104,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
 
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["key"], name: "index_flipper_features_on_key", unique: true
   end
 
@@ -114,8 +113,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.string "feature_key", null: false
     t.string "key", null: false
     t.string "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
@@ -123,8 +122,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.string "name"
     t.string "quantity"
     t.bigint "partner_request_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "partner_key"
     t.integer "item_id"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
@@ -134,8 +133,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
   create_table "partner_forms", force: :cascade do |t|
     t.integer "diaper_bank_id"
     t.text "sections", default: [], array: true
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "partner_requests", force: :cascade do |t|
@@ -143,8 +142,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.bigint "partner_id"
     t.bigint "organization_id"
     t.boolean "sent", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "for_families"
     t.integer "partner_user_id"
     t.index ["organization_id"], name: "index_partner_requests_on_organization_id"
@@ -229,8 +228,8 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.string "sources_of_diapers"
     t.string "diaper_budget"
     t.string "diaper_funding_source"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "other_agency_type"
     t.string "status_in_diaper_base"
     t.index ["diaper_bank_id"], name: "index_partners_on_diaper_bank_id"
@@ -240,19 +239,19 @@ ActiveRecord::Schema.define(version: 2021_09_24_155700) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "invitation_token"
-    t.datetime "invitation_created_at"
-    t.datetime "invitation_sent_at"
-    t.datetime "invitation_accepted_at"
+    t.datetime "invitation_created_at", precision: nil
+    t.datetime "invitation_sent_at", precision: nil
+    t.datetime "invitation_accepted_at", precision: nil
     t.integer "invitation_limit"
     t.string "invited_by_type"
     t.bigint "invited_by_id"

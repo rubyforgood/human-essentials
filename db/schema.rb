@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_28_220318) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_03_28_220318) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -20,10 +19,10 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "email", null: false
     t.string "organization_name", null: false
     t.string "organization_website"
-    t.datetime "confirmed_at"
+    t.datetime "confirmed_at", precision: nil
     t.text "request_details", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "rejection_reason"
     t.string "status", default: "started", null: false
     t.index ["status"], name: "index_account_requests_on_status"
@@ -34,8 +33,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.text "body"
     t.string "record_type", null: false
     t.bigint "record_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
@@ -44,7 +43,7 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -56,7 +55,7 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.text "metadata"
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
@@ -64,8 +63,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   create_table "active_storage_variant_records", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
@@ -73,8 +72,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.integer "organization_id"
     t.integer "storage_location_id"
     t.text "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id"
     t.index ["organization_id"], name: "index_adjustments_on_organization_id"
     t.index ["storage_location_id"], name: "index_adjustments_on_storage_location_id"
@@ -85,8 +84,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.bigint "organization_id"
     t.integer "year"
     t.json "all_reports"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_annual_reports_on_organization_id"
   end
 
@@ -96,8 +95,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.bigint "adjustment_id"
     t.bigint "storage_location_id"
     t.integer "status", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["adjustment_id"], name: "index_audits_on_adjustment_id"
     t.index ["organization_id"], name: "index_audits_on_organization_id"
     t.index ["storage_location_id"], name: "index_audits_on_storage_location_id"
@@ -108,8 +107,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "value"
     t.integer "barcodeable_id"
     t.integer "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "organization_id"
     t.string "barcodeable_type", default: "Item"
     t.index ["barcodeable_type", "barcodeable_id"], name: "index_barcode_items_on_barcodeable_type_and_barcodeable_id"
@@ -120,8 +119,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "name"
     t.string "category"
     t.integer "barcode_count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "size"
     t.integer "item_count"
     t.string "partner_key"
@@ -132,13 +131,13 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.integer "attempts", default: 0, null: false
     t.text "handler", null: false
     t.text "last_error"
-    t.datetime "run_at"
-    t.datetime "locked_at"
-    t.datetime "failed_at"
+    t.datetime "run_at", precision: nil
+    t.datetime "locked_at", precision: nil
+    t.datetime "failed_at", precision: nil
     t.string "locked_by"
     t.string "queue"
-    t.datetime "created_at", precision: 6
-    t.datetime "updated_at", precision: 6
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
@@ -146,24 +145,25 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.bigint "user_id"
     t.text "message"
     t.string "path"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "resolved"
     t.index ["user_id"], name: "index_deprecated_feedback_messages_on_user_id"
   end
 
   create_table "distributions", id: :serial, force: :cascade do |t|
     t.text "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "storage_location_id"
     t.integer "partner_id"
     t.integer "organization_id"
-    t.datetime "issued_at"
+    t.datetime "issued_at", precision: nil
     t.string "agency_rep"
     t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
+    t.string "event_id"
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -172,8 +172,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   create_table "donation_sites", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
@@ -184,13 +184,13 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   create_table "donations", id: :serial, force: :cascade do |t|
     t.string "source"
     t.integer "donation_site_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "storage_location_id"
     t.text "comment"
     t.integer "organization_id"
     t.integer "product_drive_participant_id"
-    t.datetime "issued_at"
+    t.datetime "issued_at", precision: nil
     t.integer "money_raised"
     t.bigint "manufacturer_id"
     t.bigint "product_drive_id"
@@ -203,8 +203,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
 
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["key"], name: "index_flipper_features_on_key", unique: true
   end
 
@@ -212,8 +212,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "feature_key", null: false
     t.string "key", null: false
     t.string "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
@@ -221,24 +221,24 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.integer "storage_location_id"
     t.integer "item_id"
     t.integer "quantity", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "item_categories", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
     t.integer "organization_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name", "organization_id"], name: "index_item_categories_on_name_and_organization_id", unique: true
   end
 
   create_table "item_categories_partner_groups", force: :cascade do |t|
     t.bigint "partner_group_id", null: false
     t.bigint "item_category_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["item_category_id"], name: "index_item_categories_partner_groups_on_item_category_id"
     t.index ["partner_group_id"], name: "index_item_categories_partner_groups_on_partner_group_id"
   end
@@ -246,8 +246,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "category"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "barcode_count"
     t.integer "organization_id"
     t.boolean "active", default: true
@@ -269,8 +269,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   create_table "kits", force: :cascade do |t|
     t.string "name", null: false
     t.integer "organization_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "active", default: true
     t.boolean "visible_to_partners", default: true, null: false
     t.integer "value_in_cents", default: 0
@@ -283,23 +283,23 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.integer "item_id"
     t.integer "itemizable_id"
     t.string "itemizable_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["itemizable_id", "itemizable_type"], name: "index_line_items_on_itemizable_id_and_itemizable_type"
   end
 
   create_table "manufacturers", force: :cascade do |t|
     t.string "name"
     t.bigint "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["organization_id"], name: "index_manufacturers_on_organization_id"
   end
 
   create_table "ndbn_members", primary_key: "ndbn_member_id", force: :cascade do |t|
     t.string "account_name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "organizations", id: :serial, force: :cascade do |t|
@@ -307,8 +307,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "short_name"
     t.string "email"
     t.string "url"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "intake_location"
     t.string "street"
     t.string "city"
@@ -332,8 +332,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   create_table "partner_groups", force: :cascade do |t|
     t.bigint "organization_id"
     t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "send_reminders", default: false, null: false
     t.integer "reminder_day_of_month"
     t.integer "deadline_day_of_month"
@@ -347,8 +347,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   create_table "partners", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "organization_id"
     t.integer "status", default: 0
     t.boolean "send_reminders", default: false, null: false
@@ -367,8 +367,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "phone"
     t.string "comment"
     t.integer "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "address"
     t.string "business_name"
     t.float "latitude"
@@ -380,8 +380,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "name"
     t.date "start_date"
     t.date "end_date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "organization_id"
     t.boolean "virtual", default: false, null: false
     t.index ["organization_id"], name: "index_product_drives_on_organization_id"
@@ -393,9 +393,9 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.integer "organization_id"
     t.integer "storage_location_id"
     t.integer "amount_spent_in_cents"
-    t.datetime "issued_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "issued_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "vendor_id"
     t.integer "amount_spent_on_diapers_cents", default: 0, null: false
     t.integer "amount_spent_on_adult_incontinence_cents", default: 0, null: false
@@ -409,8 +409,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "title", null: false
     t.boolean "for_partners", default: true, null: false
     t.boolean "for_banks", default: true, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "requests", force: :cascade do |t|
@@ -418,11 +418,11 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.bigint "organization_id"
     t.jsonb "request_items", default: {}
     t.text "comments"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "distribution_id"
     t.integer "status", default: 0
-    t.datetime "discarded_at"
+    t.datetime "discarded_at", precision: nil
     t.text "discard_reason"
     t.integer "partner_user_id"
     t.index ["discarded_at"], name: "index_requests_on_discarded_at"
@@ -435,8 +435,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   create_table "storage_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
@@ -451,8 +451,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.integer "from_id"
     t.integer "to_id"
     t.string "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "organization_id"
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
@@ -461,20 +461,20 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "organization_id"
     t.string "invitation_token"
-    t.datetime "invitation_created_at"
-    t.datetime "invitation_sent_at"
-    t.datetime "invitation_accepted_at"
+    t.datetime "invitation_created_at", precision: nil
+    t.datetime "invitation_sent_at", precision: nil
+    t.datetime "invitation_accepted_at", precision: nil
     t.integer "invitation_limit"
     t.string "invited_by_type"
     t.integer "invited_by_id"
@@ -482,8 +482,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.boolean "organization_admin"
     t.string "name", default: "CHANGEME", null: false
     t.boolean "super_admin", default: false
-    t.datetime "last_request_at"
-    t.datetime "discarded_at"
+    t.datetime "last_request_at", precision: nil
+    t.datetime "discarded_at", precision: nil
     t.string "provider"
     t.string "uid"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
@@ -505,8 +505,8 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "business_name"
     t.float "latitude"
     t.float "longitude"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 
@@ -516,13 +516,12 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
     t.string "event", null: false
     t.string "whodunnit"
     t.jsonb "object"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.jsonb "object_changes"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
   add_foreign_key "annual_reports", "organizations"
@@ -531,19 +530,13 @@ ActiveRecord::Schema.define(version: 2022_03_28_220318) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
-  add_foreign_key "kits", "organizations"
-  add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
-  add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
-  add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
-  add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

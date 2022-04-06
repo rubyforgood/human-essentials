@@ -16,7 +16,8 @@ module Diaper
     end
 
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.0
+    config.load_defaults 7.0
+    config.legacy_connection_handling = false
     config.action_dispatch.return_only_media_type_on_content_type = false
     config.exceptions_app = routes
 
