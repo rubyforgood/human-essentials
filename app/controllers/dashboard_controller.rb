@@ -11,13 +11,12 @@ class DashboardController < ApplicationController
     @recent_purchases = @purchases.recent.includes(:vendor)
     @recent_distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range).recent
 
-    if Flipper.enabled?(:itemized_distributions, current_user)
-      @itemized_distributions = current_organization.distributions.includes(:line_items).during(helpers.selected_range)
-      @onhand_quantities = current_organization.inventory_items.group("items.name").sum(:quantity)
-      @onhand_minimums = current_organization.inventory_items
-                                             .group("items.name")
-                                             .maximum("items.on_hand_minimum_quantity")
-    end
+    @itemized_distributions = current_organization.distributions.includes(:line_items).during(helpers.selected_range)
+    @onhand_quantities = current_organization.inventory_items.group("items.name").sum(:quantity)
+    @onhand_minimums = current_organization.inventory_items
+                                           .group("items.name")
+                                           .maximum("items.on_hand_minimum_quantity")
+
     @total_inventory = current_organization.total_inventory
 
     @org_stats = OrganizationStats.new(current_organization)

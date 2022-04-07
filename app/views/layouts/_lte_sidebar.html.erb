@@ -171,17 +171,14 @@
             <i class="nav-icon fa fa-circle-o"></i> Inventory Audit
           <% end %>
         </li>
-        <% if Flipper.enabled?(:reports, current_user) %>
-          <li class="nav-item <%= active_class(['reports']) %>">
-            <%= link_to(reports_annual_reports_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports'])}") do %>
-              <i class="nav-icon fa fa-circle-o"></i> Annual Survey
-            <% end %>
-          </li>
-        <% end %>
+        <li class="nav-item <%= active_class(['reports']) %>">
+          <%= link_to(reports_annual_reports_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> Annual Survey
+          <% end %>
+        </li>
       </ul>
     </li>
   <% end %>
-  <% if Flipper.enabled?(:forecasting, current_user) %>
     <li class="nav-item has-treeview <%= menu_open?(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
       <a href="#" class="nav-link <%= active_class(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
         <i class="nav-icon fa fa-bar-chart"></i>
@@ -206,7 +203,6 @@
         </li>
       </ul>
     </li>
-  <% end %>
   <% if current_user.organization_admin %>
     <li class="nav-item">
       <%= link_to(organization_path, class: "nav-link") do %>
