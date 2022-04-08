@@ -60,3 +60,19 @@ The most recent test coverage statistics are available online at the Code Climat
 * [aggregate, including other kinds of information](https://codeclimate.com/github/rubyforgood/human-essentials)
 
 Of the two (local and cloud), the local page is better organized and has more test coverage information. Sample screenshots can be seen in the simplecov [readme](https://github.com/colszowka/simplecov#example-output).
+
+## Production Data
+
+If for whatever reason you need to work with a production data set, you can follow these steps:
+
+1. Shout out in the #human-essentials Slack channel that you need the data.
+2. You will be given the credentials for the Azure account for Human Essentials. Add these to your `.env` file, along with a fourth line which is needed for `pg_restore` to work:
+
+```
+AZURE_STORAGE_ACCOUNT_NAME="diaperbase"
+AZURE_STORAGE_ACCESS_KEY="****REDACTED****"
+AZURE_STORAGE_CONTAINER="development"
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+```
+3. Run `rake fetch_latest_db`. ***Note that this will wipe away your local DB and replace it with the prod data.***
+4. Once done, *remove* the last line (`DISABLE_DATABASE_ENVIRONMENT_CHECK`) from your `.env` file, as it is dangerous to keep it there.
