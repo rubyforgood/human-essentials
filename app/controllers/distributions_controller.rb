@@ -153,11 +153,11 @@ class DistributionsController < ApplicationController
   end
 
   def calendar
-    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31])
+    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secret_key_base[0..31])
     organization_id = crypt.decrypt_and_verify(CGI.unescape(params[:hash]))
 
     render body: CalendarService.calendar(organization_id), content_type: Mime::Type.lookup("text/calendar")
-  rescue ActiveSupport::MessageVerifier::InvalidSignature
+  rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveSupport::MessageEncryptor::InvalidMessage
     head :unauthorized
   end
 

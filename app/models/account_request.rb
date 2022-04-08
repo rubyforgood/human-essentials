@@ -31,7 +31,7 @@ class AccountRequest < ApplicationRecord
   scope :closed, -> { where(status: %w[admin_approved rejected]) }
 
   def self.get_by_identity_token(identity_token)
-    decrypted_token = JWT.decode(identity_token, Rails.application.secrets[:secret_key_base], true, { algorithm: 'HS256' })
+    decrypted_token = JWT.decode(identity_token, Rails.application.secret_key_base, true, { algorithm: 'HS256' })
     account_request_id = decrypted_token[0]["account_request_id"]
 
     AccountRequest.find_by(id: account_request_id)
@@ -44,7 +44,7 @@ class AccountRequest < ApplicationRecord
   def identity_token
     raise 'must have an id' unless persisted?
 
-    JWT.encode({ account_request_id: id }, Rails.application.secrets[:secret_key_base], 'HS256')
+    JWT.encode({ account_request_id: id }, Rails.application.secret_key_base, 'HS256')
   end
 
   # @return [Boolean]

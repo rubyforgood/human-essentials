@@ -181,7 +181,7 @@ RSpec.describe Distribution, type: :model, skip_seed: true do
       it "condenses duplicate line_items if the item_ids match" do
         distribution.line_items << create(:line_item, item: item, quantity: 5, itemizable: distribution)
         distribution.line_items << create(:line_item, item: item, quantity: 10, itemizable: distribution)
-        distribution.combine_duplicates
+        distribution.reload.combine_duplicates
         expect(distribution.line_items.size).to eq 1
         expect(distribution.line_items.first.quantity).to eq 15
       end

@@ -9,7 +9,7 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
   let(:crypt) { ActiveSupport::MessageEncryptor.new(secret_key) }
   let(:hashed_id) { crypt.encrypt_and_sign(@organization.id) }
   before(:each) do
-    allow(Rails.application.secrets).to receive(:secret_key_base).and_return(secret_key)
+    allow(Rails.application).to receive(:secret_key_base).and_return(secret_key)
   end
 
   context "While signed in" do
@@ -334,7 +334,7 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
         it 'should render the calendar' do
           get distributions_calendar_path(hash: hashed_id)
           expect(CalendarService).to have_received(:calendar).with(@organization.id)
-          expect(response.content_type).to include('text/calendar')
+          expect(response.media_type).to include('text/calendar')
           expect(response.body).to eq('SOME ICS STRING')
         end
       end
