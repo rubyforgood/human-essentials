@@ -413,12 +413,12 @@ RSpec.describe Organization, type: :model do
   end
 
   describe 'reminder_day' do
-    it "can only contain numbers 1-14" do
-      expect(build(:organization, reminder_day: 14)).to be_valid
+    it "can only contain numbers 1-28" do
+      expect(build(:organization, reminder_day: 28)).to be_valid
       expect(build(:organization, reminder_day: 1)).to be_valid
       expect(build(:organization, reminder_day: 0)).to_not be_valid
       expect(build(:organization, reminder_day: -5)).to_not be_valid
-      expect(build(:organization, reminder_day: 15)).to_not be_valid
+      expect(build(:organization, reminder_day: 29)).to_not be_valid
     end
   end
   describe 'deadline_day' do
@@ -427,12 +427,6 @@ RSpec.describe Organization, type: :model do
       expect(build(:organization, deadline_day: 0)).to_not be_valid
       expect(build(:organization, deadline_day: -5)).to_not be_valid
       expect(build(:organization, deadline_day: 29)).to_not be_valid
-    end
-  end
-  describe 'deadline_after_reminder' do
-    it "deadline must be after reminder" do
-      expect(build(:organization, reminder_day: 14, deadline_day: 28)).to be_valid
-      expect(build(:organization, reminder_day: 28, deadline_day: 14)).to_not be_valid
     end
   end
 
