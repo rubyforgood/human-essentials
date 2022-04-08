@@ -21,7 +21,7 @@ gem "rails", "7.0.2.3"
 ###### MODELS / DATABASE #######
 
 # These two gems are used to hook into ActiveStorage to store blobs in Azure Storage Service.
-gem 'azure-storage', '~> 0.15.0.preview', require: false
+# gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.0'
