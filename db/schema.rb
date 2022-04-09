@@ -335,13 +335,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_28_220318) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "send_reminders", default: false, null: false
-    t.integer "reminder_day_of_month"
-    t.integer "deadline_day_of_month"
+    t.integer "reminder_day"
+    t.integer "deadline_day"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
-    t.check_constraint "deadline_day_of_month <= 28", name: "deadline_day_of_month_check"
-    t.check_constraint "deadline_day_of_month > reminder_day_of_month", name: "reminder_day_of_month_and_deadline_day_of_month_check"
-    t.check_constraint "reminder_day_of_month <= 14", name: "reminder_day_of_month_check"
+    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check"
+    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check"
   end
 
   create_table "partners", id: :serial, force: :cascade do |t|

@@ -29,6 +29,20 @@
 
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
+
+  describe "validations" do
+    it "validates that attachments are png or jpgs" do
+      expect(build(:organization,
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"),
+                                                      "image/jpeg")))
+        .to be_valid
+      expect(build(:organization,
+                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.gif"),
+                                                      "image/gif")))
+        .to_not be_valid
+    end
+  end
+
   context "Associations >" do
     it { should have_many(:item_categories) }
     it { should belong_to(:ndbn_member).class_name("NDBNMember").optional }
@@ -227,19 +241,6 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe "ActiveStorage validation" do
-    it "validates that attachments are png or jpgs" do
-      expect(build(:organization,
-                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"),
-                                                      "image/jpeg")))
-        .to be_valid
-      expect(build(:organization,
-                   logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.gif"),
-                                                      "image/gif")))
-        .to_not be_valid
-    end
-  end
-
   describe "#short_name" do
     it "can only contain valid characters" do
       expect(build(:organization, short_name: "asdf")).to be_valid
@@ -412,12 +413,12 @@ RSpec.describe Organization, type: :model do
   end
 
   describe 'reminder_day' do
-    it "can only contain numbers 1-14" do
-      expect(build(:organization, reminder_day: 14)).to be_valid
+    it "can only contain numbers 1-28" do
+      expect(build(:organization, reminder_day: 28)).to be_valid
       expect(build(:organization, reminder_day: 1)).to be_valid
       expect(build(:organization, reminder_day: 0)).to_not be_valid
       expect(build(:organization, reminder_day: -5)).to_not be_valid
-      expect(build(:organization, reminder_day: 15)).to_not be_valid
+      expect(build(:organization, reminder_day: 29)).to_not be_valid
     end
   end
   describe 'deadline_day' do
@@ -426,12 +427,6 @@ RSpec.describe Organization, type: :model do
       expect(build(:organization, deadline_day: 0)).to_not be_valid
       expect(build(:organization, deadline_day: -5)).to_not be_valid
       expect(build(:organization, deadline_day: 29)).to_not be_valid
-    end
-  end
-  describe 'deadline_after_reminder' do
-    it "deadline must be after reminder" do
-      expect(build(:organization, reminder_day: 14, deadline_day: 28)).to be_valid
-      expect(build(:organization, reminder_day: 28, deadline_day: 14)).to_not be_valid
     end
   end
 
