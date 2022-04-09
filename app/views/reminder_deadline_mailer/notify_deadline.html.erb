@@ -1,6 +1,6 @@
 <p>Hello <%= @partner.name %>,</p>
     <p>
-    This is a friendly reminder that <%= @organization.name%> requires your human essentials requests to be submitted by <%= "#{Date.current.year}-#{Date.current.month}-#{@deadline_day}".to_date.strftime('%a, %d %b %Y')  %>
+    This is a friendly reminder that <%= @organization.name %> requires your human essentials requests to be submitted by <%= @deadline.strftime('%a, %d %b %Y') %>
 if you would like to receive a distribution next month.</p>
     <p>Please log into <a href="https://humanessentials.app">partnerbase</a>
 before this date and submit your request if you are intending to submit a diaper request.</p>

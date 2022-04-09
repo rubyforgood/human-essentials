@@ -30,14 +30,13 @@
 class Organization < ApplicationRecord
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
 
+  include Deadlinable
+
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
-  validates :deadline_day, numericality: { only_integer: true, less_than_or_equal_to: 28, greater_than_or_equal_to: 1, allow_nil: true }
-  validates :reminder_day, numericality: { only_integer: true, less_than_or_equal_to: 14, greater_than_or_equal_to: 1, allow_nil: true }
-  validate :deadline_after_reminder
 
   belongs_to :account_request, optional: true
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
@@ -264,12 +263,6 @@ class Organization < ApplicationRecord
       self.logo = nil
       errors.add(:logo, "Must be a JPG or a PNG file")
     end
-  end
-
-  def deadline_after_reminder
-    return if deadline_day.blank? || reminder_day.blank?
-
-    errors.add(:deadline_day, "must be after the reminder date") if deadline_day < reminder_day
   end
 
   def get_admin_email
