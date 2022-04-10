@@ -8,6 +8,7 @@ end
 
 # Activate all feature flags
 Flipper.enable(:onebase)
+Flipper.enable(:single_database)
 
 # ----------------------------------------------------------------------------
 # Random Record Generators

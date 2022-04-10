@@ -82,11 +82,14 @@
 #  zips_served                :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  diaper_bank_id             :bigint
+#  diaper_bank_id             :integer
 #  diaper_partner_id          :integer
 #
 module Partners
   class Partner < Base
+    if Flipper.enabled?(:single_database)
+      self.table_name = "partner_profiles"
+    end
     has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :partner
     has_many :users, dependent: :destroy
     has_many :requests, dependent: :destroy
