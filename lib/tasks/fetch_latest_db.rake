@@ -6,7 +6,7 @@ task :fetch_latest_db => :environment do
   diaper_backup, partner_backup = fetch_latest_backups
 
   puts "Recreating databases..."
-  system("rails db:migrate db:drop db:create")
+  system("rails db:drop db:create db:migrate")
 
   puts "Restoring the diaper_dev database with #{diaper_backup.name}..."
   diaper_backup_filepath = fetch_file_path(diaper_backup)
