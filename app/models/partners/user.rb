@@ -28,10 +28,14 @@
 #
 module Partners
   class User < Base
-    self.table_name = if Flipper.enabled?(:single_database)
-      "partner_users"
-    else
-      "users"
+    begin
+      self.table_name = if Flipper.enabled?(:single_database)
+        "partner_users"
+      else
+        "users"
+      end
+    rescue ActiveRecord::NoDatabaseError
+      self.table_name = "users"
     end
 
     # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
