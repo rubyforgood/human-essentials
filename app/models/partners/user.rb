@@ -34,7 +34,7 @@ module Partners
       else
         "users"
       end
-    rescue ActiveRecord::NoDatabaseError
+    rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
       self.table_name = "users"
     end
 

@@ -91,7 +91,7 @@ module Partners
       if Flipper.enabled?(:single_database)
         self.table_name = "partner_profiles"
       end
-    rescue ActiveRecord::NoDatabaseError
+    rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
     end
     has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :partner
     has_many :users, dependent: :destroy

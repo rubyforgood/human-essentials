@@ -6,7 +6,7 @@ module Partners
       unless Flipper.enabled?(:single_database)
         connects_to database: { writing: :partners, reading: :partners }
       end
-    rescue ActiveRecord::NoDatabaseError
+    rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
     end
   end
 end
