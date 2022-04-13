@@ -6,13 +6,13 @@ task :fetch_latest_db => :environment do
   diaper_backup, partner_backup = fetch_latest_backups
 
   puts "Recreating databases..."
-  system("rails db:drop && rails db:create")
+  system("rails db:drop db:create db:migrate")
 
   puts "Restoring the diaper_dev database with #{diaper_backup.name}..."
   diaper_backup_filepath = fetch_file_path(diaper_backup)
   system("pg_restore --clean --no-acl --no-owner -h localhost -d diaper_dev #{diaper_backup_filepath}")
   puts "Done! Next up is the partner database"
-  
+
   puts "Restoring the diaper_dev database with #{partner_backup.name}..."
   partner_backup_filepath = fetch_file_path(partner_backup)
   system("pg_restore --clean --no-acl --no-owner -h localhost -d partner_dev #{partner_backup_filepath}")
@@ -20,7 +20,7 @@ task :fetch_latest_db => :environment do
 
   puts "Replacing all the passwords with the replacement: '#{PASSWORD_REPLACEMENT}'"
   replace_user_passwords
-  
+
   puts "DONE!"
 end
 
@@ -78,7 +78,7 @@ def fetch_file_path(backup)
 end
 
 def replace_user_passwords
-  # Generate the encrypted password so that we can quickly update 
+  # Generate the encrypted password so that we can quickly update
   # all users with `update_all`
 
   u = User.new(password: PASSWORD_REPLACEMENT)
