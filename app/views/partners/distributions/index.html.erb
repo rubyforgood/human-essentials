@@ -1,0 +1,15 @@
+<header class="container mx-auto mb-8">
+  <h1 class="block font-bold mb-1">Dashboard - <%= @partner.name %></h1>
+  <h3><button class="bg-yellow-400 mx-auto p-2 font-bold rounded-2xl">
+    <%= @partner.partner_status.titleize %> Partner</button></h3>
+</header>
+
+<main>
+  <section class="container mx-auto my-8">
+    <%= render partial: "distribution_section",
+               locals: {distributions: @distributions,
+             title: "Distributions",
+             date_header: "Distribution date",
+             item_header: "Items"}%>
+  </section>
+</main>

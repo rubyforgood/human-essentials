@@ -12,9 +12,12 @@ module Partners
       @upcoming_distributions = ::Partner.find(@partner.diaper_partner_id)
                                          .distributions.order(issued_at: :desc)
                                          .where('issued_at >= ?', Time.zone.today)
+      # 2859 Partner distributions -- limit the prior distributions
+      # shown on dashboard to 5
       @distributions = ::Partner.find(@partner.diaper_partner_id)
                                 .distributions.order(issued_at: :desc)
                                 .where('issued_at < ?', Time.zone.today)
+                                .limit(5)
 
       @parent_org = Organization.find(@partner.diaper_bank_id)
 

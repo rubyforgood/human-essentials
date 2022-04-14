@@ -52,6 +52,8 @@ Rails.application.routes.draw do
     end
     resources :families
     resources :authorized_family_members
+    # 2859 Partner distributions
+    resources :distributions, only: [:index]
   end
 
   # This is where a superadmin CRUDs all the things
