@@ -1,16 +1,16 @@
 <section class="container mx-auto my-8">
-  <h2 class="font-bold">Prior Distributions</h2>
+  <h2 class="font-bold"><%= title %></h2>
 
   <table class="bg-white rounded-md w-full shadow">
     <thead>
       <tr class="border-b border-gray-200">
-        <th scope="col" class="p-4 w-40">Distribution Date</th>
+        <th scope="col" class="p-4 w-40"><%= date_header %></th>
         <th scope="col" class="p-4">Total Items</th>
-        <th scope="col" class="p-4">Items Received</th>
+        <th scope="col" class="p-4"><%= item_header %></th>
       </tr>
     </thead>
     <tbody>
-    <% @distributions.each do |dist| %>
+    <% distributions.each do |dist| %>
         <tr class="hover:bg-gray-100 border-b border-gray-200 last:border-b-0">
           <td class="p-4 w-40">
             <i class="text-blue-900 far fa-file-alt mr-1"></i>

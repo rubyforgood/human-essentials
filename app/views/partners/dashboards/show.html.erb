@@ -12,12 +12,22 @@
   </section>
 
   <section class="container mx-auto my-8">
-    <%= render partial: "upcoming_distributions" %>
+    <%= render partial: "partners/distributions/distribution_section",
+               locals: {
+                 distributions: @upcoming_distributions,
+                 title: "Upcoming Distributions", date_header: "Pick Up Date",
+                 item_header: "Items To Receive"
+               } %>
   </section>
 
   <section class="container mx-auto my-8">
-    <%= render partial: "distributions" %>
-  </section>
+    <%= render partial: "partners/distributions/distribution_section",
+     locals: {
+        distributions: @distributions,
+        title: "Prior Distributions", date_header: "Date Received",
+        item_header: "Items Received"
+      } %>
+    </section>
 
   <section class="container mx-auto my-8">
     <%= render partial: "family_details" %>
