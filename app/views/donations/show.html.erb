@@ -15,7 +15,7 @@
             <% end %>
           </li>
           <li class="breadcrumb-item"><%= link_to "Donations", (donations_path) %></li>
-          <li class="breadcrumb-item"><a href="#"><%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></a></li>
+          <li class="breadcrumb-item"><a href="#"><%= @donation.source %> on <%= @donation.created_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
     </div>
@@ -39,7 +39,7 @@
               </tr>
               </thead>
               <tbody>
-              <td><%= @donation.created_at.to_s(:distribution_date) %></td>
+              <td><%= @donation.created_at.to_fs(:distribution_date) %></td>
               <td><%= @donation.source %></td>
               <td><%= @donation.donation_site_view %></td>
               <td><%= @donation.storage_view %></td>              </tbody>

@@ -122,7 +122,7 @@ RSpec.describe "StorageLocations", type: :request do
               end
               travel 2.weeks do
                 get storage_location_path(storage_location, default_params.merge(format: response_format,
-                  version_date: 9.days.ago.to_date.to_s(:db)))
+                  version_date: 9.days.ago.to_date.to_fs(:db)))
                 expect(response).to be_successful
                 expect(response.body).to include("Smithsonian")
                 expect(response.body).to include("Test Item")
@@ -134,7 +134,7 @@ RSpec.describe "StorageLocations", type: :request do
           context "with no version found" do
             it "should show N/A" do
               get storage_location_path(storage_location, default_params.merge(format: response_format,
-                version_date: 1.week.ago.to_date.to_s(:db)))
+                version_date: 1.week.ago.to_date.to_fs(:db)))
               expect(response).to be_successful
               expect(response.body).to include("Smithsonian")
               expect(response.body).to include("Test Item")
