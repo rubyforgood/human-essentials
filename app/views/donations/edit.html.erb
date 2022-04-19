@@ -16,7 +16,7 @@
           </li>
           <li class="breadcrumb-item"><%= link_to "Donations", (donations_path) %></li>
           <li class="breadcrumb-item">
-            <a href="#">Editing <%= @donation.source %> on <%= @donation.created_at.to_s(:distribution_date) %></a></li>
+            <a href="#">Editing <%= @donation.source %> on <%= @donation.created_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
     </div>
