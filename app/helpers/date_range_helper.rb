@@ -43,7 +43,7 @@ module DateRangeHelper
     elsif end_date == Time.zone.today
       "since #{start_date}"
     else
-      "during the period #{start_date.to_s(:short)} to #{end_date.to_s(:short)}"
+      "during the period #{start_date.to_fs(:short)} to #{end_date.to_fs(:short)}"
     end
   end
 end
