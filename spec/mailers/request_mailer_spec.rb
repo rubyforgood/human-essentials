@@ -4,8 +4,12 @@ RSpec.describe RequestMailer, type: :mailer, skip_seed: true do
     let(:request) { create(:request) }
 
     it "renders the body with correct text with partner information" do
-      expect(subject.body.encoded).to include("Hello there, <strong>#{request.partner.name}</strong>")
-      expect(subject.body.encoded).to include("One of your essentials requests (##{request.id}) have been canceled.")
+      html = html_body(subject)
+      expect(html).to include("Hello there, <strong>#{request.partner.name}</strong>")
+      expect(html).to include("One of your essentials requests (##{request.id}) have been canceled.")
+      text = text_body(subject)
+      expect(text).to include("Hello there, #{request.partner.name}")
+      expect(text).to include("One of your essentials requests (##{request.id}) have been canceled.")
     end
 
     it "should be sent to the partner main email with the correct subject line" do

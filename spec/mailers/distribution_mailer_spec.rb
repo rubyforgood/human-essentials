@@ -66,11 +66,24 @@ RSpec.describe DistributionMailer, type: :mailer, needs_users: true do
   describe "#reminder_email" do
     let(:mail) { DistributionMailer.reminder_email(@distribution.id) }
 
-    it "renders the body with organization's email text" do
-      expect(mail.body.encoded).to match("This is a friendly reminder")
-      expect(mail.body).to match(%(For more information: <a href="mailto:me@org.com">me@org.com</a>))
-      expect(mail.from).to eq(["info@humanessentials.app"])
-      expect(mail.subject).to eq("PARTNER Distribution Reminder")
+    context 'HTML format' do
+      it "renders the body with organization's email text" do
+        html = html_body(mail)
+        expect(html).to match("This is a friendly reminder")
+        expect(html).to match(%(For more information: <a href="mailto:me@org.com">me@org.com</a>))
+        expect(mail.from).to eq(["info@humanessentials.app"])
+        expect(mail.subject).to eq("PARTNER Distribution Reminder")
+      end
+    end
+
+    context 'Text format' do
+      it "renders the body with organization's email text" do
+        text = text_body(mail)
+        expect(text).to match("This is a friendly reminder")
+        expect(text).to match(%(For more information: me@org.com))
+        expect(mail.from).to eq(["info@humanessentials.app"])
+        expect(mail.subject).to eq("PARTNER Distribution Reminder")
+      end
     end
 
     context "with deliver_method: :pick_up" do

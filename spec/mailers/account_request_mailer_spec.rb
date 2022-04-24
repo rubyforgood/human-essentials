@@ -24,24 +24,50 @@ RSpec.describe AccountRequestMailer, type: :mailer, skip_seed: true do
       expect(mail.subject).to eq('[Action Required] Human Essential Account Request')
     end
 
-    it 'should include the staging/demo account information' do
-      expect(mail.body.encoded).to match(%r{<a href='https://staging.humanessentials.app/users/sign_in'>Human Essentials</a>})
-      expect(mail.body.encoded).to match('Username: org_admin1@example.com')
-      expect(mail.body.encoded).to match('Password: password!')
+    context 'HTML format' do
+      it 'should include the staging/demo account information' do
+        html = html_body(mail)
+        expect(html).to match(%r{<a href='https://staging.humanessentials.app/users/sign_in'>Human Essentials</a>})
+        expect(html).to match('Username: org_admin1@example.com')
+        expect(html).to match('Password: password!')
 
-      expect(mail.body.encoded).to match(%r{<a href='https://staging.humanessentials.app/partner_users/sign_in'>PartnerBase</a>})
-      expect(mail.body.encoded).to match('Username: verified@example.com')
-      expect(mail.body.encoded).to match('Password: password!')
+        expect(html).to match(%r{<a href='https://staging.humanessentials.app/partner_users/sign_in'>PartnerBase</a>})
+        expect(html).to match('Username: verified@example.com')
+        expect(html).to match('Password: password!')
+      end
+
+      it 'should include the instruction video link' do
+        expect(html_body(mail)).to include('https://www.youtube.com/watch?v=fwo3WKMGM_4&feature=youtu.be')
+      end
+
+      it 'should include the button to confirm the request' do
+        expect(html_body(mail)).to include(
+          confirmation_account_requests_url(token: account_request.identity_token)
+        )
+      end
     end
 
-    it 'should include the instruction video link' do
-      expect(mail.body.encoded).to include('https://www.youtube.com/watch?v=fwo3WKMGM_4&feature=youtu.be')
-    end
+    context 'Text format' do
+      it 'should include the staging/demo account information' do
+        text = text_body(mail)
+        expect(text).to match(%r{https://staging.humanessentials.app/users/sign_in})
+        expect(text).to match('Username: org_admin1@example.com')
+        expect(text).to match('Password: password!')
 
-    it 'should include the button to confirm the request' do
-      expect(mail.body.encoded).to include(
-        confirmation_account_requests_url(token: account_request.identity_token)
-      )
+        expect(text).to match(%r{https://staging.humanessentials.app/partner_users/sign_in})
+        expect(text).to match('Username: verified@example.com')
+        expect(text).to match('Password: password!')
+      end
+
+      it 'should include the instruction video link' do
+        expect(text_body(mail)).to include('https://www.youtube.com/watch?v=fwo3WKMGM_4&feature=youtu.be')
+      end
+
+      it 'should include the button to confirm the request' do
+        expect(text_body(mail)).to include(
+          confirmation_account_requests_url(token: account_request.identity_token)
+        )
+      end
     end
   end
 

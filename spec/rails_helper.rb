@@ -257,6 +257,14 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
+def html_body(mail)
+  mail.body.parts.find { |p| p.content_type =~ /html/ }.body.encoded
+end
+
+def text_body(mail)
+  mail.body.parts.find { |p| p.content_type =~ /text/ }.body.encoded
+end
+
 def create_default_users
   Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
   @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
