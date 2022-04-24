@@ -1,3 +1,19 @@
-Distribution#partner_mailer
+Your essentials request has been approved.
+From: <%= @from_email %>
 
-<%= @greeting %>, find me in app/views/distribution_mailer/partner_mailer.text.erb
+<%= @default_email_text_interpolated %>
+<% if @distribution_changes.present? %>
+  Here are some Items that we need change based on Human Essentials
+  <% if !@distribution_changes[:updates].empty? %>
+    Items Updated:
+    <% @distribution_changes[:updates].each do |item| %>
+    * <%= "#{item[:name]} from #{item[:old_quantity]} to #{item[:new_quantity]}" %>
+    <% end %>
+  <% end %>
+  <% if !@distribution_changes[:removed].empty? %>
+    Items Removed:
+    <% @distribution_changes[:removed].each do |item| %>
+    * <%= item[:name] %>
+    <% end %>
+  <% end %>
+<% end %>
