@@ -1,0 +1,16 @@
+***One of your essentials requests (#<%= @request.id %>) have been canceled.***
+
+Hello there, <%= @partner.name %>:
+
+We are emailing you to notify you that a essentials request you've made to <%= @organization.name %> has been canceled. See below for details:
+
+Request ID: <%= @request.id %>
+Reason Provided: <%= @request.discard_reason || 'N/A' %>
+Items requested:
+<% @formatted_requested_items.each do |rt| %>
+* <%= rt[:quantity] %> x <%= rt[:name] %>
+<% end %>
+
+If you need any help, don’t hesitate to reach out to us at <%= @organization.email %> !
+
+Supported By HumanEssentials.app

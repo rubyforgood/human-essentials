@@ -1,0 +1,9 @@
+We've just received a confirmed account request from <%= @account_request.organization_name %>
+
+Here are their details:
+<% @account_request.attributes.each do |ar, val| %>
+* <%= ar.humanize %>: <%= val %>
+<% end %>
+
+Create This Organization: <%=new_admin_organization_url(token: @account_request.identity_token) %>
+Reject This Organization: <%=for_rejection_admin_account_requests_url(token: @account_request.identity_token) %>
