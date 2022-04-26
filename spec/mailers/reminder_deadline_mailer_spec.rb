@@ -23,7 +23,10 @@ describe ReminderDeadlineMailer, type: :job, skip_seed: true do
 
     it 'renders the body' do
       travel_to today do
-        expect(subject.body)
+        expect(html_body(subject))
+          .to include("This is a friendly reminder that #{@organization.name} requires your human essentials requests to "\
+                       "be submitted by Tue, 01 Feb 2022")
+        expect(text_body(subject))
           .to include("This is a friendly reminder that #{@organization.name} requires your human essentials requests to "\
                        "be submitted by Tue, 01 Feb 2022")
       end
