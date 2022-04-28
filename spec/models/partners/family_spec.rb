@@ -4,7 +4,7 @@
 #
 #  id                        :bigint           not null, primary key
 #  comments                  :text
-#  guardian_country          :string
+#  guardian_county           :string
 #  guardian_employed         :boolean
 #  guardian_employment_type  :jsonb
 #  guardian_first_name       :string
