@@ -158,3 +158,7 @@ body a {
 #copy-calendar-button {
   margin-left: 10px;
 }
+
+.main-sidebar, .main-sidebar::before {
+  width: 280px;
+}
