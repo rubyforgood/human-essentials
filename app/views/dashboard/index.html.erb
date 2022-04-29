@@ -157,7 +157,7 @@
                 <div class="box-body">
                   <div class="box-body text-center">
                     <h5 class="text-center"></h5>
-                    <%= bar_chart received_distributed_data %>
+                    <div id="received-data-chart"></div>
                   </div>
                 </div>
               </div>
@@ -317,3 +317,34 @@
     </div>
   </div>
 </div>
+
+<script>
+
+<% data = received_distributed_data %>
+$(() => {
+  Highcharts.chart('received-data-chart', {
+    chart: {
+      type: 'bar'
+    },
+    title: '',
+    xAxis: {
+      categories: <%= data.keys.to_json.html_safe %>,
+      title: {
+        text: null
+      }
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    legend: {
+      enabled: false
+    },
+    series: [
+      { data: <%= data.values.to_json.html_safe %> }
+    ]
+  })
+  $('#received-data-chart')
+});
+</script>
