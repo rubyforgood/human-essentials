@@ -41,10 +41,6 @@ gem 'bootstrap', '~> 4.6.0'
 # Displays a date range picker, i.e. a way for a user to select a start and end date in
 # a single widget.
 gem 'bootstrap-daterangepicker-rails'
-# Delivers assets for a superpowered dropdown using Bootstrap.
-gem 'bootstrap-select-rails'
-# Creates JavaScript graphs.
-gem "chartkick"
 # Installs fonts for Rails frontend.
 gem "font-awesome-rails"
 # A jQuery calendar widget.
