@@ -16,14 +16,11 @@
 //= require bootstrap
 // require jquery_ujs
 //= require filterrific/filterrific-jquery
-//= require bootstrap-select
 //= require bootstrap/alert
 //= require fastclick
 //= require adminlte.min
 //= require cocoon
 //= require toastr
-//= require Chart.bundle
-//= require chartkick
 //= require moment
 //= require fullcalendar
 //= require quagga
