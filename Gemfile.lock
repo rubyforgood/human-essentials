@@ -97,7 +97,6 @@ GEM
       sassc-rails (>= 2.0.0)
     bootstrap-daterangepicker-rails (3.0.4)
       railties (>= 4.0)
-    bootstrap-select-rails (1.13.8)
     brakeman (5.2.2)
     bugsnag (6.24.2)
       concurrent-ruby (~> 1.0)
@@ -117,7 +116,6 @@ GEM
     capybara-screenshot (1.0.26)
       capybara (>= 1.0, < 4)
       launchy
-    chartkick (4.1.3)
     childprocess (4.1.0)
     choice (0.2.0)
     cocoon (1.2.15)
@@ -622,13 +620,11 @@ DEPENDENCIES
   binding_of_caller
   bootstrap (~> 4.6.0)
   bootstrap-daterangepicker-rails
-  bootstrap-select-rails
   brakeman
   bugsnag
   bullet
   capybara (~> 3.0)
   capybara-screenshot
-  chartkick
   cocoon
   database_cleaner (= 1.8.5)
   delayed_job_active_record
