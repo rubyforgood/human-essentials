@@ -270,7 +270,7 @@ note = [
       guardian_first_name: Faker::Name.first_name,
       guardian_last_name: Faker::Name.last_name,
       guardian_zip_code: Faker::Address.zip_code,
-      guardian_country: "United States",
+      guardian_county: Faker::Address.community, # Faker doesn't have county, this has same flavor, and isn't country
       guardian_phone: Faker::PhoneNumber.phone_number,
       agency_guardian_id: Faker::Name.name,
       home_adult_count: [1, 2, 3].sample,

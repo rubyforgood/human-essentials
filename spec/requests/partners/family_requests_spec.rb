@@ -8,7 +8,7 @@ RSpec.describe "/partners/family", type: :request do
       guardian_first_name: "John",
       guardian_last_name: "Smith",
       guardian_zip_code: "90210",
-      guardian_country: "United States",
+      guardian_county: "Franklin",
       guardian_phone: "416-555-2345",
       agency_guardian_id: "Jane Smith",
       home_adult_count: 2,
@@ -29,7 +29,7 @@ RSpec.describe "/partners/family", type: :request do
       guardian_first_name: "Mark",
       guardian_last_name: "Smith",
       guardian_zip_code: "90210",
-      guardian_country: "United States",
+      guardian_county: "Jefferson",
       guardian_phone: "416-555-0987",
       agency_guardian_id: "Jane Smith",
       home_adult_count: 1,
@@ -59,9 +59,9 @@ RSpec.describe "/partners/family", type: :request do
       headers = {"Accept" => "text/csv", "Content-Type" => "text/csv"}
       get partners_families_path, headers: headers
       csv = <<~CSV
-        id,guardian_first_name,guardian_last_name,guardian_zip_code,guardian_country,guardian_phone,agency_guardian_id,home_adult_count,home_child_count,home_young_child_count,sources_of_income,guardian_employed,guardian_employment_type,guardian_monthly_pay,guardian_health_insurance,comments,created_at,updated_at,partner_id,military
-        #{family1.id},John,Smith,90210,United States,416-555-2345,Jane Smith,2,3,1,"SSI,TANF",true,Part-time,4.0,Medicaid,Some comment,#{family1.created_at},#{family1.updated_at},2,false
-        #{family2.id},Mark,Smith,90210,United States,416-555-0987,Jane Smith,1,2,2,TANF,false,Part-time,4.0,Medicaid,Some comment 2,#{family2.created_at},#{family2.updated_at},2,true
+        id,guardian_first_name,guardian_last_name,guardian_zip_code,guardian_county,guardian_phone,agency_guardian_id,home_adult_count,home_child_count,home_young_child_count,sources_of_income,guardian_employed,guardian_employment_type,guardian_monthly_pay,guardian_health_insurance,comments,created_at,updated_at,partner_id,military
+        #{family1.id},John,Smith,90210,Franklin,416-555-2345,Jane Smith,2,3,1,"SSI,TANF",true,Part-time,4.0,Medicaid,Some comment,#{family1.created_at},#{family1.updated_at},2,false
+        #{family2.id},Mark,Smith,90210,Jefferson,416-555-0987,Jane Smith,1,2,2,TANF,false,Part-time,4.0,Medicaid,Some comment 2,#{family2.created_at},#{family2.updated_at},2,true
       CSV
       expect(response.body).to eq(csv)
     end
