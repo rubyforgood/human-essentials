@@ -4,7 +4,7 @@
 #
 #  id                        :bigint           not null, primary key
 #  comments                  :text
-#  guardian_country          :string
+#  guardian_county           :string
 #  guardian_employed         :boolean
 #  guardian_employment_type  :jsonb
 #  guardian_first_name       :string
@@ -67,7 +67,7 @@ module Partners
 
     def self.csv_export_headers
       %w[
-        id guardian_first_name guardian_last_name guardian_zip_code guardian_country
+        id guardian_first_name guardian_last_name guardian_zip_code guardian_county
         guardian_phone agency_guardian_id home_adult_count home_child_count home_young_child_count
         sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
         guardian_health_insurance comments created_at updated_at partner_id military
@@ -80,7 +80,7 @@ module Partners
         guardian_first_name,
         guardian_last_name,
         guardian_zip_code,
-        guardian_country,
+        guardian_county,
         guardian_phone,
         agency_guardian_id,
         home_adult_count,

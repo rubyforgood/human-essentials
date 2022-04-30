@@ -70,7 +70,7 @@ module Partners
       params.require(:partners_family).permit(
         :agency_guardian_id,
         :comments,
-        :guardian_country,
+        :guardian_county,
         :guardian_employed,
         :guardian_employment_type,
         :guardian_first_name,

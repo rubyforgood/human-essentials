@@ -3,7 +3,8 @@ FactoryBot.define do
     association :partner, factory: :partners_partner
 
     comments                  { Faker::Lorem.paragraph }
-    guardian_country          { Faker::Address.country }
+    # Faker doesn't have county, community is same flavour, we don't use it, and it is not country.
+    guardian_county          { Faker::Address.community }
     guardian_employed         { false }
     guardian_employment_type  { nil }
     guardian_first_name       { Faker::Name.first_name }
