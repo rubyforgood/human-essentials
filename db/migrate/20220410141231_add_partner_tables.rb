@@ -49,7 +49,7 @@ class AddPartnerTables < ActiveRecord::Migration[7.0]
         t.string "guardian_first_name"
         t.string "guardian_last_name"
         t.string "guardian_zip_code"
-        t.string "guardian_country"
+        t.string "guardian_county"
         t.string "guardian_phone"
         t.string "agency_guardian_id"
         t.integer "home_adult_count"
