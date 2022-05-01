@@ -21,10 +21,8 @@
 //= require adminlte.min
 //= require cocoon
 //= require toastr
-//= require moment
 //= require fullcalendar
 //= require quagga
-//= require daterangepicker
 //= require_tree .
 
 function isMobileResolution() {

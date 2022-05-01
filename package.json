@@ -21,6 +21,8 @@
     "lodash.mergewith": "^4.6.2",
     "lodash.template": "^4.5.0",
     "mem": "^5.1.1",
+    "litepicker": "^2.0.12",
+    "luxon": "^2.3.2",
     "mixin-deep": "^2.0.1",
     "set-value": "^3.0.1",
     "tailwindcss": "^2.1.2",

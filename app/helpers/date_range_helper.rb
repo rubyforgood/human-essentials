@@ -24,11 +24,11 @@ module DateRangeHelper
   end
 
   def this_year
-    "01/01/#{Time.zone.today.year} - 12/31/#{Time.zone.today.year}"
+    "January 1, #{Time.zone.today.year} - December 31, #{Time.zone.today.year}"
   end
 
   def selected_interval
-    date_range_params.split(" - ").map { |d| Date.strptime(d, "%m/%d/%Y") }
+    date_range_params.split(" - ").map { |d| Date.strptime(d, "%B %d, %Y") }
   end
 
   def selected_range

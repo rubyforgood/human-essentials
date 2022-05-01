@@ -95,8 +95,6 @@ GEM
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 1.14.3, < 2)
       sassc-rails (>= 2.0.0)
-    bootstrap-daterangepicker-rails (3.0.4)
-      railties (>= 4.0)
     brakeman (5.2.2)
     bugsnag (6.24.2)
       concurrent-ruby (~> 1.0)
@@ -619,7 +617,6 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootstrap (~> 4.6.0)
-  bootstrap-daterangepicker-rails
   brakeman
   bugsnag
   bullet
@@ -659,7 +656,6 @@ DEPENDENCIES
   lograge
   magic_test
   mini_racer (~> 0.6.0)
-  momentjs-rails
   money-rails
   nokogiri (>= 1.10.4)
   omniauth
