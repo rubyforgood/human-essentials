@@ -42,7 +42,7 @@ $(document).ready(function () {
     if (deadline_day) {
       $(container).find(deadline_container_selector).find(server_validation_selector).remove();
 
-      const next_deadline_month = (deadline_day >= current_day) ? next_month : current_month;
+      const next_deadline_month = (current_day >= deadline_day) ? next_month : current_month;
       $deadline_text.text(`Your next deadline will be on ${deadline_day} ${next_deadline_month}`);
     }
   }
