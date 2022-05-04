@@ -8,7 +8,7 @@ Accepted
 
 ## Context
 
-We've been using Barcode values that have been recorded as either private (associated only with an organization) or global (available to all organizations). The idea was that Diaper Banks could decide to "Share" a barcode with everyone by making it global, and that this barcode could then be used by others. The implementation, as well as the actual use-cases by Diaper Banks in beta testing, has contraindicated this utility. Additionally, it's unclear how Barcode lookup happens with regard to Base Items.
+We've been using Barcode values that have been recorded as either private (associated only with an organization) or global (available to all organizations). The idea was that Essentials Banks could decide to "Share" a barcode with everyone by making it global, and that this barcode could then be used by others. The implementation, as well as the actual use-cases by Essentials Banks in beta testing, has contraindicated this utility. Additionally, it's unclear how Barcode lookup happens with regard to Base Items.
 
 ## Decision
 

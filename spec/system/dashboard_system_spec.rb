@@ -1,7 +1,7 @@
 require 'ostruct'
 
 RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
-  context "With a new Diaper bank" do
+  context "With a new essentials bank" do
     before :each do
       @new_organization = create(:organization)
       @user = create(:user, organization: @new_organization)
@@ -66,7 +66,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
     end
   end
 
-  context "With an existing Diaper bank" do
+  context "With an existing essentials bank" do
     before do
       sign_in(@user)
     end

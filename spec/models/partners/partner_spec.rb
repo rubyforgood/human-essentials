@@ -159,7 +159,7 @@ RSpec.describe Partners::Partner, type: :model, skip_seed: true do
     subject { partner.organization }
     let(:partner) { FactoryBot.create(:partners_partner) }
 
-    it 'should return the associated organization using its diaper bank id' do
+    it 'should return the associated organization using its essentials bank id' do
       expect(subject).to eq(Organization.find_by!(id: partner.diaper_bank_id))
     end
   end
