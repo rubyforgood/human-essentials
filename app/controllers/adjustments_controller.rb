@@ -1,4 +1,4 @@
-# Provides limited CRUD for Adjustments, which are the way that Diaper Banks fix incorrect inventory totals at Storage Locations
+# Provides limited CRUD for Adjustments, which are the way that Essentials Banks fix incorrect inventory totals at Storage Locations
 class AdjustmentsController < ApplicationController
   # GET /adjustments
   # GET /adjustments.json

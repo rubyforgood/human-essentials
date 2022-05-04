@@ -42,8 +42,8 @@
       <p>Evidence Based: <%= partner_profile.evidence_based %></p>
       <p>Evidence Based Description: <%= partner_profile.evidence_based_description %></p>
       <p>Program Client Improvement: <%= partner_profile.program_client_improvement %></p>
-      <p>Diaper Use: <%= partner_profile.diaper_use %></p>
-      <p>Other Diaper Use: <%= partner_profile.other_diaper_use %></p>
+      <p>Essentials Item Use: <%= partner_profile.diaper_use %></p>
+      <p>Other Essentials Item Use: <%= partner_profile.other_diaper_use %></p>
       <p>Currently Provide Diapers: <%= partner_profile.currently_provide_diapers %></p>
       <p>Turn Away Child Care: <%= partner_profile.turn_away_child_care %></p>
       <br>
@@ -117,7 +117,7 @@
       <br>
     <% end %>
     <% if partner_profile_fields.include?('diaper_pick_up_person') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Diaper Pick Up Person</h2>
+      <h2 class='text-2xl underline'>Pick Up Person</h2>
       <p>Pick Up Method: <%= partner_profile.pick_up_method %></p>
       <p>Pick Up Name: <%= partner_profile.pick_up_name %></p>
       <p>Pick Up Phone: <%= partner_profile.pick_up_phone %></p>
@@ -135,8 +135,8 @@
       <h2 class='text-2xl underline'>Sources of Funding</h2>
       <p>Sources of Funding: <%= partner_profile.sources_of_funding %></p>
       <p>Sources of Diapers: <%= partner_profile.sources_of_diapers %> </p>
-      <p>Diaper Budget:<%= partner_profile.diaper_budget %></p>
-      <p>Diaper Funding Source: <%= partner_profile.diaper_funding_source %></p>
+      <p>Essentials Budget:<%= partner_profile.diaper_budget %></p>
+      <p>Essentials Funding Source: <%= partner_profile.diaper_funding_source %></p>
     <% end %>
     <% if partner_profile_fields.include?('attached_documents') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Other Documents</h2>

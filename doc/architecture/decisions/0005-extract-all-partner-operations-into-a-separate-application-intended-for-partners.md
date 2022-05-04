@@ -16,4 +16,4 @@ A new application, Partnerbase, will be created to handle the CRM aspects. It wi
 
 ## Consequences
 
-Depending on the future features required, this may or may not be the right decision. We now have 2 applications to maintain and there will be duplicated efforts when we have to do updates, as well as a division of labor and domain knowledge. Diaper Banks will not be able to see Partner data, which is both a feature and a liability (since they need some of that for reporting).
+Depending on the future features required, this may or may not be the right decision. We now have 2 applications to maintain and there will be duplicated efforts when we have to do updates, as well as a division of labor and domain knowledge. Essentials Banks will not be able to see Partner data, which is both a feature and a liability (since they need some of that for reporting).
