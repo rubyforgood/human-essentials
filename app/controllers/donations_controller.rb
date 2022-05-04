@@ -28,7 +28,7 @@ class DonationsController < ApplicationController
     @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
     @selected_donation_site = filter_params[:from_donation_site]
     @selected_product_drive = filter_params[:by_product_drive]
-    @selected_diaper_participant_drive = filter_params[:by_product_drive_participant]
+    @selected_product_drive_participant = filter_params[:by_product_drive_participant]
     @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
     @selected_manufacturer = filter_params[:from_manufacturer]
 
