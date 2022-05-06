@@ -163,7 +163,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_28_220318) do
     t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
-    t.string "event_id"
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -521,6 +520,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_28_220318) do
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
   add_foreign_key "annual_reports", "organizations"
@@ -529,13 +529,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_28_220318) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
+  add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
+  add_foreign_key "kits", "organizations"
+  add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
+  add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
+  add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
+  add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
 end

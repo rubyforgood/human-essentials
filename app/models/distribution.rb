@@ -12,7 +12,6 @@ require 'time_util'
 #  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  event_id               :string
 #  organization_id        :integer
 #  partner_id             :integer
 #  storage_location_id    :integer
