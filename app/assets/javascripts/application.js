@@ -20,7 +20,6 @@
 //= require fastclick
 //= require adminlte.min
 //= require cocoon
-//= require toastr
 //= require quagga
 //= require_tree .
 
@@ -31,11 +30,6 @@ window.setTimeout(function() {
     $(this).remove();
   });
 }, 2500);
-
-// Global toastr options
-toastr.options = {
-  "timeOut": "1400"
-}
 
 $(document).ready(function() {
   Filterrific.init();

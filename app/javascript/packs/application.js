@@ -24,12 +24,20 @@ import { Calendar } from '@fullcalendar/core';
 import luxonPlugin from '@fullcalendar/luxon'
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
+import toastr from 'toastr';
 import 'litepicker/dist/plugins/ranges';
 import "@fortawesome/fontawesome-free/css/fontawesome.css";
 import "@fortawesome/fontawesome-free/css/solid.css";
 import "@fortawesome/fontawesome-free/css/regular.css";
 import "@fortawesome/fontawesome-free/css/brands.css";
 import "@fortawesome/fontawesome-free/css/v4-shims.css";
+import "toastr/build/toastr.css"
+
+// Global toastr options
+window.toastr = toastr;
+toastr.options = {
+  "timeOut": "1400"
+}
 
 function isMobileResolution() {
   return $(window).width() < 992;

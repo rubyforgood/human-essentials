@@ -43,8 +43,6 @@ gem "jquery-rails"
 gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# Toast (non-blocking notification) library.
-gem "toastr-rails"
 # JavaScript minified, used in asset compilation.
 gem "uglifier", ">= 1.3.0"
 # JavaScript bundler.
