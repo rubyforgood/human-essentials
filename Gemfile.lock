@@ -201,10 +201,6 @@ GEM
       sanitize (< 7)
     foreman (0.87.2)
     formatador (0.3.0)
-    fullcalendar-rails (3.9.0.0)
-      jquery-rails (>= 4.0.5, < 5.0.0)
-      jquery-ui-rails (>= 5.0.2)
-      momentjs-rails (>= 2.9.0)
     geocoder (1.7.5)
     globalid (1.0.0)
       activesupport (>= 5.0)
@@ -299,8 +295,6 @@ GEM
     mini_racer (0.6.1)
       libv8-node (~> 16.10.0.0)
     minitest (5.15.0)
-    momentjs-rails (2.20.1)
-      railties (>= 3.1)
     monetize (1.11.0)
       money (~> 6.12)
     money (6.16.0)
@@ -635,7 +629,6 @@ DEPENDENCIES
   flipper-active_record
   flipper-ui
   foreman
-  fullcalendar-rails
   geocoder
   groupdate (~> 6.1)
   guard-rspec

@@ -20,6 +20,10 @@ import "stylesheets/application.scss"
 
 import {DateTime} from "luxon";
 import Litepicker from 'litepicker';
+import { Calendar } from '@fullcalendar/core';
+import luxonPlugin from '@fullcalendar/luxon'
+import dayGridPlugin from '@fullcalendar/daygrid';
+import listPlugin from '@fullcalendar/list';
 import 'litepicker/dist/plugins/ranges';
 import "@fortawesome/fontawesome-free/css/fontawesome.css";
 import "@fortawesome/fontawesome-free/css/solid.css";
@@ -27,35 +31,59 @@ import "@fortawesome/fontawesome-free/css/regular.css";
 import "@fortawesome/fontawesome-free/css/brands.css";
 import "@fortawesome/fontawesome-free/css/v4-shims.css";
 
+function isMobileResolution() {
+  return $(window).width() < 992;
+}
+
+function isShortHeightScreen() {
+  return $(window).height() < 768 && !isMobileResolution();
+}
+
 document.addEventListener("DOMContentLoaded", function() {
-    const rangeElement = document.getElementById("filters_date_range");
-    if (!rangeElement) {
-      return;
-    }
+  const isMobile = isMobileResolution();
+  const isShortHeight = isShortHeightScreen();
 
-    const today = DateTime.now();
-    const startDate = new Date(rangeElement.dataset["initialStartDate"]);
-    const endDate = new Date(rangeElement.dataset["initialEndDate"]);
+  const calendarElement = document.getElementById('calendar');
+  if (calendarElement) {
+    new Calendar(calendarElement, {
+      firstDay: 1,
+      plugins: [luxonPlugin, dayGridPlugin, listPlugin],
+      displayEventTime: true,
+      eventLimit: true,
+      events: 'schedule.json',
+      height: isMobile || isShortHeight ? 'auto' : 'parent',
+      defaultView: isMobile ? 'listWeek' : 'month'
+    }).render();
+  }
 
-    const picker = new Litepicker({
-      element: rangeElement,
-      plugins: ['ranges'],
-      startDate: startDate,
-      endDate: endDate,
-      format: "MMMM D, YYYY",
-      ranges: {
-        customRanges: {
-          'All Time': [today.minus({ 'years': 100}).toJSDate(), today.toJSDate()],
-          'Today': [today.toJSDate(), today.toJSDate()],
-          'Yesterday': [today.minus({'days': 1}).toJSDate(), today.minus({'days': 1}).toJSDate()],
-          'Last 7 Days': [today.minus({'days': 7}).toJSDate(), today.toJSDate()],
-          'Last 30 Days': [today.minus({'days': 29}).toJSDate(), today.toJSDate()],
-          'This Month': [today.startOf('month').toJSDate(), today.endOf('month').toJSDate()],
-          'Last Month': [today.minus({'months': 1}).startOf('month').toJSDate(),
-            today.minus({'month': 1}).endOf('month').toJSDate()],
-          'This Year': [today.startOf('year').toJSDate(), today.endOf('year').toJSDate()]
-        }
+  const rangeElement = document.getElementById("filters_date_range");
+  if (!rangeElement) {
+    return;
+  }
+
+  const today = DateTime.now();
+  const startDate = new Date(rangeElement.dataset["initialStartDate"]);
+  const endDate = new Date(rangeElement.dataset["initialEndDate"]);
+
+  const picker = new Litepicker({
+    element: rangeElement,
+    plugins: ['ranges'],
+    startDate: startDate,
+    endDate: endDate,
+    format: "MMMM D, YYYY",
+    ranges: {
+      customRanges: {
+        'All Time': [today.minus({ 'years': 100}).toJSDate(), today.toJSDate()],
+        'Today': [today.toJSDate(), today.toJSDate()],
+        'Yesterday': [today.minus({'days': 1}).toJSDate(), today.minus({'days': 1}).toJSDate()],
+        'Last 7 Days': [today.minus({'days': 7}).toJSDate(), today.toJSDate()],
+        'Last 30 Days': [today.minus({'days': 29}).toJSDate(), today.toJSDate()],
+        'This Month': [today.startOf('month').toJSDate(), today.endOf('month').toJSDate()],
+        'Last Month': [today.minus({'months': 1}).startOf('month').toJSDate(),
+          today.minus({'month': 1}).endOf('month').toJSDate()],
+        'This Year': [today.startOf('year').toJSDate(), today.endOf('year').toJSDate()]
       }
-    });
-    picker.setDateRange(startDate, endDate);
+    }
+  });
+  picker.setDateRange(startDate, endDate);
 }, false);
