@@ -11,8 +11,6 @@
  * It is generally better to create a new file per style scope.
  *
  *= require toastr
- *= require font-awesome
- *= require fontawesome
  *= require fullcalendar
  *= require barcode_reader
  */
@@ -27,7 +25,6 @@
 @import 'AdminLTE';
 @import 'bootstrap';
 @import 'simple_form-bootstrap/simple_form-bootstrap';
-@import 'font-awesome';
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';

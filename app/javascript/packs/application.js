@@ -21,6 +21,11 @@ import "stylesheets/application.scss"
 import {DateTime} from "luxon";
 import Litepicker from 'litepicker';
 import 'litepicker/dist/plugins/ranges';
+import "@fortawesome/fontawesome-free/css/fontawesome.css";
+import "@fortawesome/fontawesome-free/css/solid.css";
+import "@fortawesome/fontawesome-free/css/regular.css";
+import "@fortawesome/fontawesome-free/css/brands.css";
+import "@fortawesome/fontawesome-free/css/v4-shims.css";
 
 document.addEventListener("DOMContentLoaded", function() {
     const rangeElement = document.getElementById("filters_date_range");

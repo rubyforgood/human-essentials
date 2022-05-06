@@ -38,8 +38,6 @@ gem "strong_migrations", "~> 1.0.0"
 
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
-# Installs fonts for Rails frontend.
-gem "font-awesome-rails"
 # A jQuery calendar widget.
 gem "fullcalendar-rails"
 # jQuery framework (DOM methods, Ajax, chaining, etc.)

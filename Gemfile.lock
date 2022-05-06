@@ -199,8 +199,6 @@ GEM
       rack (>= 1.4, < 3)
       rack-protection (>= 1.5.3, <= 2.2.0)
       sanitize (< 7)
-    font-awesome-rails (4.7.0.8)
-      railties (>= 3.2, < 8.0)
     foreman (0.87.2)
     formatador (0.3.0)
     fullcalendar-rails (3.9.0.0)
@@ -636,7 +634,6 @@ DEPENDENCIES
   flipper
   flipper-active_record
   flipper-ui
-  font-awesome-rails
   foreman
   fullcalendar-rails
   geocoder
