@@ -43,15 +43,6 @@
   </div>
   <!-- /.card-body -->
   <div class="card-footer">
-    <%= view_button_to '#partner-information', { text: "View Their Information" } %>
-    <%= edit_button_to edit_partner_path(partner) %>
-    <% if partner.deactivated? %>
-      <%= reactivate_button_to reactivate_partner_path(partner), {confirm: confirm_reactivate_msg(partner.name)} %>
-    <% else %>
-      <%= deactivate_button_to deactivate_partner_path(partner), {confirm: confirm_deactivate_msg(partner.name)} %>
-    <% end %>
-    <%= modal_button_to("#addUserModal", {text: "Add/Remind Partner", size: "xs"}) if can_administrate? %>
-    <%= print_button_to approve_application_partner_path(partner), {text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "xs"} if can_administrate? %>
     <span class="float-right">
       <%= download_button_to(partner_path(partner, format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Partner Distributions", size: "md"}) if partner_distributions.any? %>
     </span>
