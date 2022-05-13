@@ -185,7 +185,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.0"
+  gem "capybara", "~> 3.37"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
