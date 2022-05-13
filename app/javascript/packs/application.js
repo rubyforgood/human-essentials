@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
         'All Time': [today.minus({ 'years': 100}).toJSDate(), today.toJSDate()],
         'Today': [today.toJSDate(), today.toJSDate()],
         'Yesterday': [today.minus({'days': 1}).toJSDate(), today.minus({'days': 1}).toJSDate()],
-        'Last 7 Days': [today.minus({'days': 7}).toJSDate(), today.toJSDate()],
+        'Last 7 Days': [today.minus({'days': 6}).toJSDate(), today.toJSDate()],
         'Last 30 Days': [today.minus({'days': 29}).toJSDate(), today.toJSDate()],
         'This Month': [today.startOf('month').toJSDate(), today.endOf('month').toJSDate()],
         'Last Month': [today.minus({'months': 1}).startOf('month').toJSDate(),
