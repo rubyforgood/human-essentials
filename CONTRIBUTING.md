@@ -6,7 +6,7 @@ Ruby for Good [code of conduct](https://github.com/rubyforgood/code-of-conduct).
 **First:** if you're unsure or afraid of *anything*, just ask or submit the issue or pull request anyways. You won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely asked to change something. We appreciate any sort of contributions, and don't want a wall of rules to get in the way of that.
 
 ## Onboarding the App
-You can find detailed instructions on how to seup the app locally in [installation.md](/installation.md).
+You can find detailed instructions on how to setup the app locally in [installation.md](/installation.md).
  1. Fork the repo.
  2. Clone your fork
  3. Run `cp config/database.yml.example config/database.yml` - This will copy the contents of `database.yml.example ` and put it in a new file called `database.yml`.

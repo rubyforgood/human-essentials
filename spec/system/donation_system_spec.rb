@@ -76,6 +76,20 @@ RSpec.describe "Donations", type: :system, js: true do
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
+
+      it "Filter by product drive participant sticks around" do
+        x = create(:product_drive, name: 'x')
+        a = create(:product_drive_participant, business_name: "A")
+        b = create(:product_drive_participant, business_name: "B")
+        create(:product_drive_donation, product_drive: x, product_drive_participant: a)
+        create(:product_drive_donation, product_drive: x, product_drive_participant: b)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select a.business_name, from: "filters_by_product_drive_participant"
+        click_button "Filter"
+        expect(page).to have_select("filters_by_product_drive_participant", selected: a.business_name)
+      end
+
       it "Filters by manufacturer" do
         a = create(:manufacturer, name: "A")
         b = create(:manufacturer, name: "B")
