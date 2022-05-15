@@ -35,7 +35,7 @@ module IconHelper
     classes.concat Array(options.delete(:class))
     text = options.delete(:text)
     right_icon = options.delete(:right)
-    icon = tag(:i, options.merge(:class => classes))
+    icon = content_tag(:i, nil, options.merge(:class => classes)) # rubocop:disable Rails/ContentTag
     Private.icon_join(icon, text, right_icon)
   end
 
