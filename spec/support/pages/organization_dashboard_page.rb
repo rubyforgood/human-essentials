@@ -131,7 +131,7 @@ class OrganizationDashboardPage < OrganizationPage
 
     if range_name
       within ".container__predefined-ranges" do
-        find('button', text: range_name).click
+        find("button", text: range_name).click
       end
     end
   end

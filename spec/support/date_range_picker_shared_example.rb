@@ -1,4 +1,5 @@
 DATE_FORMAT = "%B %-d, %Y"
+
 def date_range_picker_params(start_date, end_date)
   "#{start_date.strftime(DATE_FORMAT)} - #{end_date.strftime(DATE_FORMAT)}"
 end
