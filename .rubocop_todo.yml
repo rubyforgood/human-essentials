@@ -49,7 +49,6 @@ Layout/ArgumentAlignment:
     - 'spec/services/reports/adult_incontinence_report_service_spec.rb'
     - 'spec/services/reports/other_products_report_service_spec.rb'
     - 'spec/services/reports/summary_report_service_spec.rb'
-    - 'spec/services/reports/warehouse_report_service_spec.rb'
     - 'spec/support/provideable_shared_example.rb'
 
 # Offense count: 53
