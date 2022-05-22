@@ -64,8 +64,8 @@ module UiHelper
       data: {
         toggle: "dropdown"
       },
-      'aria-haspopup': true,
-      'aria-expanded': true
+      "aria-haspopup": true,
+      "aria-expanded": true
     }
 
     _button_to({ submit_type: "button", text: "Set the 'text' property", size: "md", icon: "caret-down" }.merge(options), additional_properties)
