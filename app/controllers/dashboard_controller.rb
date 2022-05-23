@@ -9,14 +9,11 @@ class DashboardController < ApplicationController
     @recent_donations = @donations.recent
     @purchases = current_organization.purchases.during(helpers.selected_range)
     @recent_purchases = @purchases.recent.includes(:vendor)
-    @recent_distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range).recent
 
-    @itemized_distributions = current_organization.distributions.includes(:line_items).during(helpers.selected_range)
-    @onhand_quantities = current_organization.inventory_items.group("items.name").sum(:quantity)
-    @onhand_minimums = current_organization.inventory_items
-                                           .group("items.name")
-                                           .maximum("items.on_hand_minimum_quantity")
+    distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
+    @recent_distributions = distributions.recent
 
+    @itemized_distribution_data = DistributionFetchItemizedBreakdownService.new(organization: current_organization, distribution_ids: distributions.pluck(:id)).fetch
     @total_inventory = current_organization.total_inventory
 
     @org_stats = OrganizationStats.new(current_organization)

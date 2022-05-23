@@ -21,7 +21,7 @@ class DistributionFetchItemizedBreakdownService
   def fetch
     items_distributed = fetch_items_distributed
 
-    # Inject the "onhand" metrics
+    # Inject the "onhand" data
     items_distributed.each do |item_name, value|
       items_distributed[item_name] = value.merge({
         current_onhand: current_onhand_quantities[item_name],
