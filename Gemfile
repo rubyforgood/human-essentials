@@ -16,7 +16,7 @@ gem "pg", "~> 1.3.5"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.2.4"
+gem "rails", "7.0.3"
 
 ###### MODELS / DATABASE #######
 
@@ -185,7 +185,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.0"
+  gem "capybara", "~> 3.37"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
