@@ -140,7 +140,7 @@
               <%= download_button_to(itemized_breakdown_distributions_path(format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
             </div>
             
-            <%= render partial: "itemized_partial", object: @itemized_distributions, as: :item_to_itemize %>
+            <%= render partial: "itemized_partial" %>
           </div>
         </div>
 
