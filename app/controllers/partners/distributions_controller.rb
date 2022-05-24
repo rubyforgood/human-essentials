@@ -12,5 +12,18 @@ module Partners
 
       @parent_org = Organization.find(@partner.diaper_bank_id)
     end
+
+    def print
+      distribution = Distribution.find(params[:id])
+      respond_to do |format|
+        format.any do
+          pdf = DistributionPdf.new(distribution.organization, distribution)
+          send_data pdf.render,
+            filename: format("%s %s.pdf", distribution.partner.name, sortable_date(distribution.created_at)),
+            type: "application/pdf",
+            disposition: "inline"
+        end
+      end
+    end
   end
 end
