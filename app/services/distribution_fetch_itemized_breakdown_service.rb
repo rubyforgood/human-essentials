@@ -17,8 +17,8 @@ class DistributionFetchItemizedBreakdownService
   # Returns a hash containing the itemized breakdown of
   # what was distributed.
   #
-  # @return [Hash]
-  def fetch
+  # @return [Hash, Array]
+  def fetch(as_csv: false)
     items_distributed = fetch_items_distributed
 
     # Inject the "onhand" data
@@ -30,7 +30,11 @@ class DistributionFetchItemizedBreakdownService
       })
     end
 
-    items_distributed
+    if as_csv
+      convert_to_csv(items_distributed)
+    else
+      items_distributed
+    end
   end
 
   private
@@ -54,6 +58,16 @@ class DistributionFetchItemizedBreakdownService
       end
 
       acc
+    end
+  end
+
+  def convert_to_csv(items_distributed_data)
+    CSV.generate do |csv|
+      csv << ["Item", "Total Distribution", "Total On Hand"]
+
+      items_distributed_data.sort_by { |name, value| -value[:distributed] }.each do |key, value|
+        csv << [key, value[:distributed], value[:current_onhand]]
+      end
     end
   end
 
