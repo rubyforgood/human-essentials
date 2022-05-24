@@ -1,5 +1,4 @@
 class DistributionFetchItemizedBreakdownService
-
   #
   # Initializes the DistributionFetchItemizedBreakdownService whoms
   # purpose to construct a itemized breakdown of items distributed
@@ -7,7 +6,7 @@ class DistributionFetchItemizedBreakdownService
   #
   # @param organization [Organization]
   # @param distribution_ids [Array<Integer>]
-  # @return [DistributionFetchItemizedBreakdownService] 
+  # @return [DistributionFetchItemizedBreakdownService]
   def initialize(organization:, distribution_ids:)
     @organization = organization
     @distributions = organization.distributions.where(id: distribution_ids).includes(line_items: :item)
@@ -38,7 +37,7 @@ class DistributionFetchItemizedBreakdownService
   end
 
   private
-  
+
   attr_reader :organization, :distributions
 
   def current_onhand_quantities
@@ -50,14 +49,12 @@ class DistributionFetchItemizedBreakdownService
   end
 
   def fetch_items_distributed
-    item_breakdown = distributions.inject({}) do |acc, d| 
-      d.line_items.each do |i| 
+    distributions.each_with_object({}) do |d, acc|
+      d.line_items.each do |i|
         key = i.item.name
-        acc[key] ||= { distributed: 0 }
+        acc[key] ||= {distributed: 0}
         acc[key][:distributed] += i.quantity
       end
-
-      acc
     end
   end
 
@@ -70,5 +67,4 @@ class DistributionFetchItemizedBreakdownService
       end
     end
   end
-
 end
