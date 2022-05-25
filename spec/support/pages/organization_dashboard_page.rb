@@ -34,7 +34,9 @@ class OrganizationDashboardPage < OrganizationPage
     select_date_filter_range range_name
 
     if custom_dates.present?
-      fill_in :filters_date_range, with: "#{custom_dates}\n"
+      fill_in :filters_date_range, with: ""
+      fill_in :filters_date_range, with: custom_dates
+      page.find(:xpath, "//*[contains(text(),'- Dashboard')]").click
     end
 
     click_on "Filter"
@@ -126,8 +128,11 @@ class OrganizationDashboardPage < OrganizationPage
 
   def select_date_filter_range(range_name)
     find("#filters_date_range").click
-    within ".ranges" do
-      find("li[data-range-key='#{range_name}']").click
+
+    if range_name
+      within ".container__predefined-ranges" do
+        find("button", text: range_name).click
+      end
     end
   end
 

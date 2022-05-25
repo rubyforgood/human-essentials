@@ -1,3 +1,5 @@
+DATE_FORMAT = "%B %-d, %Y"
+
 RSpec.describe "Transfers", type: :request, skip_seed: true do
   let(:valid_params) do
     { organization_id: @organization.short_name }
@@ -32,8 +34,8 @@ RSpec.describe "Transfers", type: :request, skip_seed: true do
 
           context 'when date parameters are supplied' do
             it 'only returns the correct obejects' do
-              start_date = 3.days.ago.strftime "%m/%d/%Y"
-              end_date = Time.zone.today.strftime "%m/%d/%Y"
+              start_date = 3.days.ago.strftime DATE_FORMAT
+              end_date = Time.zone.today.strftime DATE_FORMAT
               get transfers_path(valid_params.merge(filters: { date_range: "#{start_date} - #{end_date}" }))
               expect(assigns(:transfers)).to eq([new_transfer])
             end

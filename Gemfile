@@ -38,22 +38,11 @@ gem "strong_migrations", "~> 1.0.0"
 
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
-# Displays a date range picker, i.e. a way for a user to select a start and end date in
-# a single widget.
-gem 'bootstrap-daterangepicker-rails'
-# Installs fonts for Rails frontend.
-gem "font-awesome-rails"
-# A jQuery calendar widget.
-gem "fullcalendar-rails"
 # jQuery framework (DOM methods, Ajax, chaining, etc.)
 gem "jquery-rails"
 gem "jquery-ui-rails"
-# JavaScript date handling functions
-gem "momentjs-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# Toast (non-blocking notification) library.
-gem "toastr-rails"
 # JavaScript minified, used in asset compilation.
 gem "uglifier", ">= 1.3.0"
 # JavaScript bundler.
