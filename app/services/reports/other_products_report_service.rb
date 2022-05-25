@@ -14,11 +14,11 @@ module Reports
     def report
       @report ||= { name: 'Other Items',
                     entries: {
-                      'Non-diaper products distributed' => number_with_delimiter(distributed_products),
-                      '% non-diaper products donated' => "#{percent_donated.round}%",
-                      '% non-diaper products bought' => "#{percent_bought.round}%",
-                      'Money spent on non-diaper products' => number_to_currency(money_spent),
-                      'List of non-diaper products' => product_list
+                      'Other products distributed' => number_with_delimiter(distributed_products),
+                      '% other products donated' => "#{percent_donated.round}%",
+                      '% other products bought' => "#{percent_bought.round}%",
+                      'Money spent on other products' => number_to_currency(money_spent),
+                      'List of other products' => product_list
                     } }
     end
 

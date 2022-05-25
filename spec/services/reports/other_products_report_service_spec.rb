@@ -10,11 +10,11 @@ RSpec.describe Reports::OtherProductsReportService, type: :service, skip_seed: t
     it 'should report zero values' do
       expect(report.report).to eq({
                                     entries: {
-                                      'Non-diaper products distributed' => '0',
-                                      '% non-diaper products donated' => "0%",
-                                      '% non-diaper products bought' => "0%",
-                                      'Money spent on non-diaper products' => '$0.00',
-                                      'List of non-diaper products' => organization.items.other_categories.map(&:name).sort.uniq.join(', ')
+                                      'Other products distributed' => '0',
+                                      '% other products donated' => "0%",
+                                      '% other products bought' => "0%",
+                                      'Money spent on other products' => '$0.00',
+                                      'List of other products' => organization.items.other_categories.map(&:name).sort.uniq.join(', ')
                                     },
                                     name: "Other Items"
                                   })
