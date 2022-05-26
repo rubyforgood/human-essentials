@@ -82,11 +82,11 @@ RSpec.describe Reports::OtherProductsReportService, type: :service, skip_seed: t
 
       expect(report.report).to eq({
                                     entries: {
-                                      'Non-diaper products distributed' => '200',
-                                      '% non-diaper products donated' => "40%",
-                                      '% non-diaper products bought' => "60%",
-                                      'Money spent on non-diaper products' => '$30.00',
-                                      'List of non-diaper products' => organization.items.other_categories.map(&:name).sort.uniq.join(', ')
+                                      'Other products distributed' => '200',
+                                      '% other products donated' => "40%",
+                                      '% other products bought' => "60%",
+                                      'Money spent on other products' => '$30.00',
+                                      'List of other products' => organization.items.other_categories.map(&:name).sort.uniq.join(', ')
                                     },
                                     name: "Other Items"
                                   })
