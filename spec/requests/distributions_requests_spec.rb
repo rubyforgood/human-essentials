@@ -17,6 +17,21 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
       sign_in(@user)
     end
 
+    describe "GET #itemized_breakdown" do
+      let(:fake_csv) { "FAKE OUTPUT" }
+
+      before do
+        allow_any_instance_of(DistributionItemizedBreakdownService).to receive(:fetch_csv).and_return(fake_csv)
+      end
+
+      it "returns http success" do
+        get itemized_breakdown_distributions_path(default_params.merge(format: :csv))
+
+        expect(response).to be_successful
+        expect(response.body).to eq(fake_csv)
+      end 
+    end
+
     describe "GET #print" do
       it "returns http success" do
         get print_distribution_path(default_params.merge(id: create(:distribution).id))
