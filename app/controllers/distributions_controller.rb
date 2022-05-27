@@ -153,7 +153,7 @@ class DistributionsController < ApplicationController
     distributions = current_organization.distributions.during(helpers.selected_range)
     itemized_distribution_data_csv = DistributionItemizedBreakdownService
       .new(organization: current_organization, distribution_ids: distributions.pluck(:id))
-      .fetch(as_csv: true)
+      .fetch_csv
 
     respond_to do |format|
       format.csv do

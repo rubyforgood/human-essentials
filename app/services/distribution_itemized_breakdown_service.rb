@@ -16,8 +16,8 @@ class DistributionItemizedBreakdownService
   # Returns a hash containing the itemized breakdown of
   # what was distributed.
   #
-  # @return [Hash, Array]
-  def fetch(as_csv: false)
+  # @return [Hash]
+  def fetch
     items_distributed = fetch_items_distributed
 
     # Inject the "onhand" data
@@ -29,11 +29,16 @@ class DistributionItemizedBreakdownService
       })
     end
 
-    if as_csv
-      convert_to_csv(items_distributed)
-    else
-      items_distributed
-    end
+    items_distributed
+  end
+
+  #
+  # Returns a CSV string representation of the itemized breakdown of
+  # what was distributed
+  #
+  # @return [String]
+  def fetch_csv
+    convert_to_csv(fetch)
   end
 
   private
