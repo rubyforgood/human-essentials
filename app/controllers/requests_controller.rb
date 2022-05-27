@@ -45,7 +45,10 @@ class RequestsController < ApplicationController
   def load_items
     return unless @request.request_items
 
-    @request.request_items.map { |json| RequestItem.from_json(json, current_organization) }
+    location_id = @request.partner.default_storage_location_id ||
+      current_organization.default_storage_location
+    location = StorageLocation.find_by(id: location_id)
+    @request.request_items.map { |json| RequestItem.from_json(json, current_organization, location) }
   end
 
   helper_method \
