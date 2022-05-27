@@ -1,4 +1,4 @@
-RSpec.describe DistributionFetchItemizedBreakdownService, type: :service, skip_seed: true do
+RSpec.describe DistributionItemizedBreakdownService, type: :service, skip_seed: true do
   describe ".fetch(as_csv: false)" do
     subject { service.fetch(as_csv: as_csv) }
     let(:service) { described_class.new(organization: organization, distribution_ids: distribution_ids) }

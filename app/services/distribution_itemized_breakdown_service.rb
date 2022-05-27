@@ -1,12 +1,12 @@
-class DistributionFetchItemizedBreakdownService
+class DistributionItemizedBreakdownService
   #
-  # Initializes the DistributionFetchItemizedBreakdownService whoms
+  # Initializes the DistributionItemizedBreakdownService whoms
   # purpose to construct a itemized breakdown of items distributed
   # and what is left on-hand currently (at the time of running)
   #
   # @param organization [Organization]
   # @param distribution_ids [Array<Integer>]
-  # @return [DistributionFetchItemizedBreakdownService]
+  # @return [DistributionItemizedBreakdownService]
   def initialize(organization:, distribution_ids:)
     @organization = organization
     @distributions = organization.distributions.where(id: distribution_ids).includes(line_items: :item)

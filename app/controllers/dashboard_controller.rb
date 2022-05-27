@@ -13,7 +13,7 @@ class DashboardController < ApplicationController
     distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
     @recent_distributions = distributions.recent
 
-    @itemized_distribution_data = DistributionFetchItemizedBreakdownService.new(organization: current_organization, distribution_ids: distributions.pluck(:id)).fetch
+    @itemized_distribution_data = DistributionItemizedBreakdownService.new(organization: current_organization, distribution_ids: distributions.pluck(:id)).fetch
     @total_inventory = current_organization.total_inventory
 
     @org_stats = OrganizationStats.new(current_organization)
