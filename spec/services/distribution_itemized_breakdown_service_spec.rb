@@ -1,24 +1,24 @@
 RSpec.describe DistributionItemizedBreakdownService, type: :service, skip_seed: true do
   let(:organization) { create(:organization) }
   let(:distribution_ids) { [distribution_1, distribution_2, distribution_3].map(&:id) }
-  let(:item_a) do 
+  let(:item_a) do
     create(:item, organization: organization, on_hand_minimum_quantity: 9999)
   end
-  let(:item_b) do 
+  let(:item_b) do
     create(:item, organization: organization, on_hand_minimum_quantity: 5)
   end
   let(:distribution_1) { create(:distribution, :with_items, item: item_a, item_quantity: 500, organization: organization) }
   let(:distribution_2) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization) }
   let(:distribution_3) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization) }
-  let(:expected_output) do 
+  let(:expected_output) do
     [
-      { name: item_a.name, distributed: 500, current_onhand: 100, onhand_minimum: item_a.on_hand_minimum_quantity, below_onhand_minimum: true },
-      { name: item_b.name, distributed: 200, current_onhand: 200, onhand_minimum: item_b.on_hand_minimum_quantity, below_onhand_minimum: false },
+      {name: item_a.name, distributed: 500, current_onhand: 100, onhand_minimum: item_a.on_hand_minimum_quantity, below_onhand_minimum: true},
+      {name: item_b.name, distributed: 200, current_onhand: 200, onhand_minimum: item_b.on_hand_minimum_quantity, below_onhand_minimum: false}
     ]
   end
 
   let(:distribution_ids) { [distribution_1, distribution_2, distribution_3].map(&:id) }
-  
+
   describe "#fetch" do
     subject { service.fetch }
     let(:service) { described_class.new(organization: organization, distribution_ids: distribution_ids) }
@@ -31,7 +31,7 @@ RSpec.describe DistributionItemizedBreakdownService, type: :service, skip_seed: 
   describe "#fetch_csv" do
     subject { service.fetch_csv }
     let(:service) { described_class.new(organization: organization, distribution_ids: distribution_ids) }
-    
+
     it "should output the expected output but in CSV format" do
       expected_output_csv = CSV.generate do |csv|
         csv << ["Item", "Total Distribution", "Total On Hand"]

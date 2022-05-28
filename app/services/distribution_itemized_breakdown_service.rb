@@ -65,7 +65,7 @@ class DistributionItemizedBreakdownService
     end
 
     item_distribution_hash.inject([]) do |acc, key_value|
-      acc << { name: key_value[0] }.merge(key_value[1])
+      acc << {name: key_value[0]}.merge(key_value[1])
     end
   end
 

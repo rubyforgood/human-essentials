@@ -29,7 +29,7 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
 
         expect(response).to be_successful
         expect(response.body).to eq(fake_csv)
-      end 
+      end
     end
 
     describe "GET #print" do

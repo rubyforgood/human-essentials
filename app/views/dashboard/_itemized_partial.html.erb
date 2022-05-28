@@ -7,13 +7,13 @@
   </tr>
   </thead>
   <% # Ordering from highest distributed to lowest %>
-  <% @itemized_distribution_data.each do |item_name, value| %>
+  <% @itemized_distribution_data.each do |item| %>
     <tbody>
       <tr>
-        <td>&nbsp&nbsp&nbsp<%= item_name %></td>
-        <td><%= value[:distributed] %></td>
-        <td class="<%= 'table-danger' if value[:below_onhand_minimum] %>">
-          <%= value[:current_onhand] %>
+        <td>&nbsp&nbsp&nbsp<%= item[:name] %></td>
+        <td><%= item[:distributed] %></td>
+        <td class="<%= 'table-danger' if item[:below_onhand_minimum] %>">
+          <%= item[:current_onhand] %>
         </td>
       </tr>
     <% end %>
