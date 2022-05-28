@@ -21,15 +21,17 @@ class DistributionItemizedBreakdownService
     items_distributed = fetch_items_distributed
 
     # Inject the "onhand" data
-    items_distributed.each do |item_name, value|
-      items_distributed[item_name] = value.merge({
+    items_distributed.map! do |item|
+      item_name = item[:name]
+
+      item.merge({
         current_onhand: current_onhand_quantities[item_name],
         onhand_minimum: current_onhand_minimums[item_name],
         below_onhand_minimum: current_onhand_quantities[item_name] < current_onhand_minimums[item_name]
       })
     end
 
-    items_distributed
+    items_distributed.sort_by { |item| -item[:distributed] }
   end
 
   #
@@ -54,12 +56,16 @@ class DistributionItemizedBreakdownService
   end
 
   def fetch_items_distributed
-    distributions.each_with_object({}) do |d, acc|
+    item_distribution_hash = distributions.each_with_object({}) do |d, acc|
       d.line_items.each do |i|
         key = i.item.name
         acc[key] ||= {distributed: 0}
         acc[key][:distributed] += i.quantity
       end
+    end
+
+    item_distribution_hash.inject([]) do |acc, key_value|
+      acc << { name: key_value[0] }.merge(key_value[1])
     end
   end
 
@@ -67,8 +73,8 @@ class DistributionItemizedBreakdownService
     CSV.generate do |csv|
       csv << ["Item", "Total Distribution", "Total On Hand"]
 
-      items_distributed_data.sort_by { |name, value| -value[:distributed] }.each do |key, value|
-        csv << [key, value[:distributed], value[:current_onhand]]
+      items_distributed_data.each do |item|
+        csv << [item[:name], item[:distributed], item[:current_onhand]]
       end
     end
   end

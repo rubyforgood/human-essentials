@@ -1,26 +1,25 @@
 RSpec.describe DistributionItemizedBreakdownService, type: :service, skip_seed: true do
-  let(:distribution_ids) { distributions.pluck(:id) }
-  let(:distributions) { create_list(:distribution, 2, :with_items, item_quantity: distribution_per_item, organization: organization) }
-  let(:distribution_per_item) { 50 }
-  let(:expected_output) do
-    distributions.map(&:items).flatten.each_with_object({}) do |item, acc|
-      acc[item.name] ||= {}
-      acc[item.name] = {
-        distributed: distribution_per_item,
-        current_onhand: InventoryItem.find_by(item_id: item.id).quantity,
-        onhand_minimum: item.on_hand_minimum_quantity,
-        below_onhand_minimum: item.on_hand_minimum_quantity > InventoryItem.find_by(item_id: item.id).quantity
-      }
-    end
-  end
   let(:organization) { create(:organization) }
-
-  before do
-    # Force one of onhand minimums to be very high so that we can see it turns out true
-    distributions.last.items.first.update(on_hand_minimum_quantity: 9999)
+  let(:distribution_ids) { [distribution_1, distribution_2, distribution_3].map(&:id) }
+  let(:item_a) do 
+    create(:item, organization: organization, on_hand_minimum_quantity: 9999)
+  end
+  let(:item_b) do 
+    create(:item, organization: organization, on_hand_minimum_quantity: 5)
+  end
+  let(:distribution_1) { create(:distribution, :with_items, item: item_a, item_quantity: 500, organization: organization) }
+  let(:distribution_2) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization) }
+  let(:distribution_3) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization) }
+  let(:expected_output) do 
+    [
+      { name: item_a.name, distributed: 500, current_onhand: 100, onhand_minimum: item_a.on_hand_minimum_quantity, below_onhand_minimum: true },
+      { name: item_b.name, distributed: 200, current_onhand: 200, onhand_minimum: item_b.on_hand_minimum_quantity, below_onhand_minimum: false },
+    ]
   end
 
-  describe ".fetch" do
+  let(:distribution_ids) { [distribution_1, distribution_2, distribution_3].map(&:id) }
+  
+  describe "#fetch" do
     subject { service.fetch }
     let(:service) { described_class.new(organization: organization, distribution_ids: distribution_ids) }
 
@@ -29,7 +28,7 @@ RSpec.describe DistributionItemizedBreakdownService, type: :service, skip_seed: 
     end
   end
 
-  describe ".fetch_csv" do
+  describe "#fetch_csv" do
     subject { service.fetch_csv }
     let(:service) { described_class.new(organization: organization, distribution_ids: distribution_ids) }
     
@@ -37,8 +36,8 @@ RSpec.describe DistributionItemizedBreakdownService, type: :service, skip_seed: 
       expected_output_csv = CSV.generate do |csv|
         csv << ["Item", "Total Distribution", "Total On Hand"]
 
-        expected_output.sort_by { |name, value| -value[:distributed] }.each do |key, value|
-          csv << [key, value[:distributed], value[:current_onhand]]
+        expected_output.each do |row|
+          csv << [row[:name], row[:distributed], row[:current_onhand]]
         end
       end
 

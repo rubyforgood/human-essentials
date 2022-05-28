@@ -7,7 +7,7 @@
   </tr>
   </thead>
   <% # Ordering from highest distributed to lowest %>
-  <% @itemized_distribution_data.sort_by { |name, value| -value[:distributed] }.each do |item_name, value| %>
+  <% @itemized_distribution_data.each do |item_name, value| %>
     <tbody>
       <tr>
         <td>&nbsp&nbsp&nbsp<%= item_name %></td>
