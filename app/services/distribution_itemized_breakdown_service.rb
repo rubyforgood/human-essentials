@@ -9,14 +9,14 @@ class DistributionItemizedBreakdownService
   # @return [DistributionItemizedBreakdownService]
   def initialize(organization:, distribution_ids:)
     @organization = organization
-    @distributions = organization.distributions.where(id: distribution_ids).includes(line_items: :item)
+    @distribution_ids = distribution_ids
   end
 
   #
   # Returns a hash containing the itemized breakdown of
   # what was distributed.
   #
-  # @return [Hash]
+  # @return [Array]
   def fetch
     items_distributed = fetch_items_distributed
 
@@ -45,7 +45,11 @@ class DistributionItemizedBreakdownService
 
   private
 
-  attr_reader :organization, :distributions
+  attr_reader :organization, :distribution_ids
+
+  def distributions
+    @distributions ||= organization.distributions.where(id: distribution_ids).includes(line_items: :item)
+  end
 
   def current_onhand_quantities
     @current_onhand_quantities ||= organization.inventory_items.group("items.name").sum(:quantity)
@@ -64,9 +68,7 @@ class DistributionItemizedBreakdownService
       end
     end
 
-    item_distribution_hash.inject([]) do |acc, key_value|
-      acc << {name: key_value[0]}.merge(key_value[1])
-    end
+    item_distribution_hash.map { |k, v| v.merge(name: k) }
   end
 
   def convert_to_csv(items_distributed_data)
