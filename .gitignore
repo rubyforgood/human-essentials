@@ -75,3 +75,6 @@ coverage
 yarn-debug.log*
 .yarn-integrity
 package-lock.json
+
+# plugin history
+.history/
