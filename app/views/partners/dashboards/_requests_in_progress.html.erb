@@ -18,7 +18,7 @@
           </td>
           <td class="p-4"><%= request.total_items %></td>
           <td class="p-4">
-            <%request_item = request.request_items.map { |json| RequestItem.from_json(json, @parent_org) } %>
+            <%request_item = request.request_items.map { |json| RequestItem.from_json(json, request) } %>
 
             <% request_item.map do |item| %>
               <span class="inline-block p-1 mr-1 mb-2 lg:mb-0 bg-white border border-gray-600 rounded-sm">
