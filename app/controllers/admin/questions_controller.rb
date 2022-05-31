@@ -41,8 +41,8 @@ class Admin::QuestionsController < AdminController
   private
 
   def error_messages(errors)
-    errors.map { |attribute, message|
-      "#{attribute.to_s.humanize(capitalize: true)} #{message}. "
+    errors.to_a.map { |attribute, message|
+      "#{attribute.to_s.humanize(capitalize: true)}#{message}. "
     }.join("")
   end
 
