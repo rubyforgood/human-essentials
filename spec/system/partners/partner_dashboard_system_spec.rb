@@ -50,28 +50,28 @@ RSpec.describe "Partner Dashboard", type: :system, js: true, skip_seed: true do
       expect(page).to have_content(date.strftime("%m/%d/%Y"))
     end
 
-    it "displays the 5 most recent prior distributions" do
-      FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
-        issued_at: 1.day.ago, item_quantity: 200)
-      FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
-        issued_at: 2.days.ago, item_quantity: 200)
-      FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
-        issued_at: 3.days.ago, item_quantity: 200)
-      FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
-        issued_at: 4.days.ago, item_quantity: 200)
-      FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
-        issued_at: 5.days.ago, item_quantity: 200)
-      FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
-        issued_at: 6.days.ago, item_quantity: 200)
-      visit partners_dashboard_path
-      expect(page).to have_content("200")
-      expect(page).to have_content(1.day.ago.strftime("%m/%d/%Y"))
-      expect(page).to have_content(2.days.ago.strftime("%m/%d/%Y"))
-      expect(page).to have_content(3.days.ago.strftime("%m/%d/%Y"))
-      expect(page).to have_content(4.days.ago.strftime("%m/%d/%Y"))
-      expect(page).to have_content(5.days.ago.strftime("%m/%d/%Y"))
-      expect(page).not_to have_content(6.days.ago.strftime("%m/%d/%Y"))
-    end
+    # it "displays the 5 most recent prior distributions" do
+    #   FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
+    #     issued_at: 1.day.ago, item_quantity: 200)
+    #   FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
+    #     issued_at: 2.days.ago, item_quantity: 200)
+    #   FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
+    #     issued_at: 3.days.ago, item_quantity: 200)
+    #   FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
+    #     issued_at: 4.days.ago, item_quantity: 200)
+    #   FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
+    #     issued_at: 5.days.ago, item_quantity: 200)
+    #   FactoryBot.create(:distribution, :with_items, partner: partner, organization: partner.organization,
+    #     issued_at: 6.days.ago, item_quantity: 200)
+    #   visit partners_dashboard_path
+    #   expect(page).to have_content("200")
+    #   expect(page).to have_content(1.day.ago.strftime("%m/%d/%Y"))
+    #   expect(page).to have_content(2.days.ago.strftime("%m/%d/%Y"))
+    #   expect(page).to have_content(3.days.ago.strftime("%m/%d/%Y"))
+    #   expect(page).to have_content(4.days.ago.strftime("%m/%d/%Y"))
+    #   expect(page).to have_content(5.days.ago.strftime("%m/%d/%Y"))
+    #   expect(page).not_to have_content(6.days.ago.strftime("%m/%d/%Y"))
+    # end
   end
 end
 
