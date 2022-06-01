@@ -13,7 +13,7 @@ class Admin::QuestionsController < AdminController
     if @question.save
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to create question. #{error_messages(@question.errors)}"
+      flash[:error] = "Failed to create question. #{@question.punctuate(@question.errors.to_a)}"
       render :new
     end
   end
@@ -27,7 +27,7 @@ class Admin::QuestionsController < AdminController
     if @question.update(question_params)
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to update question. #{error_messages(@question.errors)}"
+      flash[:error] = "Failed to update question. #{@question.punctuate(@question.errors.to_a)}"
       render :edit
     end
   end
@@ -39,12 +39,6 @@ class Admin::QuestionsController < AdminController
   end
 
   private
-
-  def error_messages(errors)
-    errors.to_a.map { |attribute, message|
-      "#{attribute.to_s.humanize(capitalize: true)}#{message}. "
-    }.join("")
-  end
 
   def current_question
     @current_question ||= Question.find(params[:id])
