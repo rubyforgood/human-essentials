@@ -67,6 +67,7 @@ gem "omniauth-rails_csrf_protection"
 # Allow login via Google.
 gem "omniauth-google-oauth2"
 
+gem "matrix"
 # Generate PDFs as views.
 gem "prawn-rails"
 # Reduces boilerplate HTML code when writing forms.
