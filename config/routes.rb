@@ -119,6 +119,7 @@ Rails.application.routes.draw do
       collection do
         get :schedule
         get :pickup_day
+        get :itemized_breakdown
       end
       patch :picked_up, on: :member
     end
