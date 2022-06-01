@@ -643,6 +643,7 @@ DEPENDENCIES
   listen (~> 3.7.0)
   lograge
   magic_test
+  matrix
   mini_racer (~> 0.6.0)
   money-rails
   nokogiri (>= 1.10.4)
