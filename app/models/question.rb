@@ -24,4 +24,15 @@ class Question < ApplicationRecord
       :search_title
     ]
   )
+
+  def punctuate(errors)
+    remove_redundant_error(errors).map { |error| error + ". " }.join("")
+  end
+
+  def remove_redundant_error(errors)
+    if errors.include?("For banks and for partners can't both be unchecked")
+      errors.delete("For banks and for partners can't both be unchecked")
+    end
+    errors
+  end
 end
