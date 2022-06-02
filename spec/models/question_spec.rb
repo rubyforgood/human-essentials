@@ -67,4 +67,27 @@ RSpec.describe Question, type: :model do
       expect(question).to_not be_valid
     end
   end
+
+  describe "remove_redundant_error" do
+    it "should return an array with only one error message related to the checkboxes." do
+      question = build(:question)
+      errors = [
+        "For banks and for partners can't both be unchecked",
+        "For partners and for banks can't both be unchecked"
+      ]
+      expect(question.remove_redundant_error(errors)).to eq ["For partners and for banks can't both be unchecked"]
+    end
+  end
+
+  describe "punctuate" do
+    it "should punctuate each string in a given array" do
+      sentences = [
+        "This is a sentence",
+        "This is another sentence",
+        "This is a third sentence"
+      ]
+      question = build(:question)
+      expect(question.punctuate(sentences)).to eq "This is a sentence. This is another sentence. This is a third sentence. "
+    end
+  end
 end
