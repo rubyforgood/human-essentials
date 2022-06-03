@@ -17,7 +17,10 @@ RSpec.describe RequestItem, type: :model do
         ]
       end
 
-      subject { described_class.from_json(request_item_json.first, organization, location) }
+      subject do
+        organization.update!(default_storage_location: location)
+        described_class.from_json(request_item_json.first, request)
+      end
 
       before(:each) do
         create(:inventory_item,
