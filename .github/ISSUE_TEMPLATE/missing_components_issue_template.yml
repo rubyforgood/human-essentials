@@ -1,0 +1,50 @@
+name: Missing Components for Redesign
+description: A page contains components that are not included in Mosaic's admin dashboard template
+title: "[FEv2]: <view> Page"
+labels:
+  - Design
+  - Front-end v2
+assignees:
+  - meg-gutshall
+  - justalilhonest
+body:
+- type: dropdown
+  attributes:
+    label: Which part of the app is this issue for?
+    description: Pick one.
+    options:
+      - Human Essentials
+      - Partner Base
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Page
+    description: The name of the view file or partial that this issue focuses on.
+    placeholder: |
+      organizations/show
+      organizations/details
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Missing Components
+    description: A description of which components from the page are missing.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Screenshots
+    description: |
+      Include screenshots if you think they'll be helpful.
+
+      Tip: You can attach images by clicking this area to highlight it and then dragging files in.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Anything else?
+    description: |
+      Links? References? Anything that will give us more context about the missing components!
+  validations:
+    required: false
