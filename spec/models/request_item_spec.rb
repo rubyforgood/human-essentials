@@ -18,7 +18,7 @@ RSpec.describe RequestItem, type: :model do
       end
 
       subject do
-        organization.update!(default_storage_location: location)
+        organization.update!(default_storage_location: location.id)
         described_class.from_json(request_item_json.first, request)
       end
 
