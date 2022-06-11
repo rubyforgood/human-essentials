@@ -38,6 +38,7 @@ FileUtils.chdir APP_ROOT do
   end
 
   log "== Installing dependencies =="
+  system! "gem install foreman"
   system! "gem install bundler --conservative"
   system("bundle check") || system!("bundle install")
 
