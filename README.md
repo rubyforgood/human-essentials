@@ -3,11 +3,22 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-111-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
 [![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
 
-# Welcome Contributors!
+## 💖 Mission
+
+Human Essentials is an inventory management system that is built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible, and later adapted to meet the need of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other means of intaking human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data, and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
+
+## 🌟 Impact
+
+Human Essentials serves over X organizations across the United States at **no cost to them**. It has managed Y number of distributions to Z number of families. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings T number of non-profit organizations that distribute essential products to people.
+
+**We are proud of our achievements up to date but there is much more to do! This is where you come in...**
+
+## 👋 Welcome Contributors!
 
 Thanks for checking us out!
 
@@ -18,59 +29,59 @@ If you're new here, here are some things you should know:
  - Check the `CONTRIBUTING.md` file for a guide on how to get started
  - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
-Please feel free to join us on Slack! You can sign up at https://rubyforgood.herokuapp.com We're in #human-essentials
+#### 💬 Join us on slack
+Please feel free to join us on Slack!
+You can sign up at https://rubyforgood.herokuapp.com and find us in #human-essentials.
 
-The core team leads are: @albert @angela @sean @scott
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
-# README
+## 🛠️ Getting Started
 
-## About
+### Install Ruby
+You will need to first install the required ruby version specified in the `.ruby-version` file.  It is highly recommended you use a ruby version manager like [rbenv](https://github.com/rbenv/rbenv) or [asdf](https://asdf-vm.com/)
 
-This application is an inventory management system that is built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible, and later adapted to meet the need of other Essentials Banks.  Essentials Banks maintain inventory, receive donations and other means of intaking human essentials supplies (e.g. diapers, period supplies), and issue Distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data, and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
+GoRails has a very detail oriented guide for installing ruby on Ubuntu, Windows, and macOSX. You can check out that guide [here](https://gorails.com/setup/osx/12-monterey). **Follow only the Installing Ruby step, as our project setup differs**
 
-For a general overview of the application, please see the [Application Overview](https://github.com/rubyforgood/human-essentials/wiki/Application-Overview) wiki article.
+Once you've succesfully installed ruby. You may proceed to the next section!
 
-### Origins
+### Install Node
+You must install the version of node specified in `.nvmrc`. It is highly recommended to use [nvm](https://github.com/nvm-sh/nvm).
 
+You can follow the guide [here](https://heynode.com/tutorial/install-nodejs-locally-nvm/) for setting up node.
 
-This project took what we built for the [Portland Diaper Bank in 2016](https://github.com/rubyforgood/pdx_diaper) and turned it into a multitenant application, something that all essentials banks can use. We re-used models, code and other documentation where applicable as well as implemented new features and functionality requested by the prime stakeholder (PDXDB). We're super excited to have had Rachel Alston, the director of the Portland Diaper Bank, attending our event in 2017, providing guidance and giving us the best chance of success!
+*NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.*
 
+### Install Postgres
+You must install postgres and run the database locally. Instructions differ depending on the operating system.
 
-## Development
+Follow one of these guides to install postgres:
 
-### Installation Instructions
+###### MacOSX
+https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
 
-The `installation.md` file ([https://github.com/rubyforgood/human-essentials/blob/main/installation.md](https://github.com/rubyforgood/human-essentials/blob/main/installation.md)) has detailed instructions for installation and configuration of an Ubuntu host to run this software. Although there is not a document for Mac OS, it may be helpful for that as well.
+###### Ubuntu
+TODO
 
-### Ruby Version
-This app uses Ruby version 3.0.2, indicated in `/.ruby-version` and `Gemfile`, which will be auto-selected if you use a Ruby versioning manager like `rvm`, `rbenv`, or `asdf`.
+###### Windows
+TODO
 
-### Yarn Installation
-If you don't have Yarn installed, you can install with Homebrew on macOS `brew install yarn` or visit [https://yarnpkg.com/en/docs/install](https://yarnpkg.com/en/docs/install). Be sure to run `yarn install` after installing Yarn. NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.
+After completing this step, you should have both ruby, node, and postgres installed. Now you can proceed to the next step which is to setup the application.
 
-### Install dependencies using Yarn
-Run `yarn` to install project dependencies.
-
-### Create your .env with database credentials
-Be sure to create a `.env` file in the root of the app that includes the following lines (change to whatever is appropriate for your system):
+### Run Setup
+Run the following command should run all the neccessary steps to get up and running.
 ```
-PG_USERNAME=username
-PG_PASSWORD=password
+bin/setup
 ```
-If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplied`, it's because you have probably not done this.
 
-### Database Configuration
-This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev`, `diaper_test`, `partner_dev`, and `partner_test` respectively. This should all be handled with `rails db:setup`.
-Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called `database.yml.example` as an example and just change the credentials.
+### Run the application
+Run the following command to start the server locally.
+```
+bin/start
+```
 
-### Seed the database
-From the root of the app, run `bundle exec rails db:seed`. This will create some initial data to use while testing the app and developing new features, including setting up the default user.
+You should be able to open up a browser and goto http://localhost:3000/ and see the human essentials page.
 
-### Start the app
-Run `bundle exec rails server` or `bin/start` (recommended since it runs webpacker in the background!) and browse to http://localhost:3000/
-
-### Login
+### Login as a sample user
 To login to the web application, use these default credentials:
 
 **Super Users**
@@ -90,7 +101,7 @@ User
   Password: password!
 ```
 
-**Partnerbase Users**
+**Partner Users**
 ```
 Verified Partner
   Email: verified@example.com
@@ -109,7 +120,12 @@ Recertification Required Partner
   Password: password!
 ```
 
-## Contributing
+Let's recap! You should now be able to run `bin/start` and login as one of the sample users to see their dashboard. If you've gotten to that point, you are ready to start contributing!
+
+### 🤭 Something went wrong in the setup process?
+Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well. *Documentation often goes out of date... documentations... ama'right?*
+
+## 🤝 Contributing Guidelines
 
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
 
@@ -137,10 +153,19 @@ There's no hard and fast rule here about this (for now), just use your best judg
 
 At that point, someone will work with you on doing a code review (typically pretty minor unless it's a very significant PR). If TravisCI gives :+1: to the PR merging, we can then merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged.
 
+### In-flight Pull Requests
+
+Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
+
+### Becoming a Repo Contributor
+
+Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
+
 ### Stay Scoped
 
 Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/human-essentials/issues/new)
 
+## 🧪 Testing
 ### Writing Tests/Specs
 
 Run all the tests with:
@@ -185,33 +210,7 @@ MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
 
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
-### Running delayed jobs
-
-You can run delayed jobs locally by running the `rake jobs:work` command. You'll need to do this to see any e-mails (they should
-pop up in your browser). Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
-
-```ruby
-Delayed::Job.last.invoke_job
-```
-
-You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
-
-### In-flight Pull Requests
-
-Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
-
-### Additional Notes
-
-* The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
-* If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
-
- ```rvm install 2.6.4 --with-openssl-dir=`brew --prefix openssl` ```.
-
-### Becoming a Repo Contributor
-
-Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
-
-# Deployment Process
+# 🚀 Deployment Process
 The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
 #### Requirements
@@ -240,14 +239,13 @@ puts "Email Address\n" + emails.join("\n") # Copy this output
 3. Draft the email and send it with updates.
 
 # Acknowledgements
-
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
 
-## License
+# License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_large)
 
 
-## Contributors ✨
+# ✨ Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
