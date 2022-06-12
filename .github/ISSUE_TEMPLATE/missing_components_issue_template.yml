@@ -55,3 +55,11 @@ body:
       Links? References? Anything that will give us more context about the missing components!
   validations:
     required: false
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Code of Conduct
+    description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/rubyforgood/human-essentials/blob/1f90a512824d8fae1951c7517cdcf491ca3218dc/code-of-conduct.md)
+    options:
+      - label: I've read the Code of Conduct and understand my responsibilities as a member of the Ruby for Good community
+        required: true
