@@ -151,7 +151,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_28_165803) do
   end
 
   create_table "partners", force: :cascade do |t|
-    t.bigint "diaper_bank_id"
+    t.integer "diaper_bank_id"
+    t.string "executive_director_name"
+    t.string "program_contact_name"
+    t.string "pick_up_name"
     t.text "application_data"
     t.integer "diaper_partner_id"
     t.string "partner_status", default: "pending"
@@ -210,15 +213,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_28_165803) do
     t.integer "greater_2_times_fpl"
     t.integer "poverty_unknown"
     t.string "ages_served"
-    t.string "executive_director_name"
     t.string "executive_director_phone"
     t.string "executive_director_email"
-    t.string "program_contact_name"
     t.string "program_contact_phone"
     t.string "program_contact_mobile"
     t.string "program_contact_email"
     t.string "pick_up_method"
-    t.string "pick_up_name"
     t.string "pick_up_phone"
     t.string "pick_up_email"
     t.string "distribution_times"
@@ -262,7 +262,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_28_165803) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

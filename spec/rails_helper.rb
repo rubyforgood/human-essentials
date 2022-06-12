@@ -200,6 +200,7 @@ RSpec.configure do |config|
       # The database cleaner will now begin at this point
       # up anything after this point when `.clean` is called.
       DatabaseCleaner.start
+      Flipper.enable(:single_database)
 
       # "Dirty" the database by adding the essential records
       # necessary to run tests.
