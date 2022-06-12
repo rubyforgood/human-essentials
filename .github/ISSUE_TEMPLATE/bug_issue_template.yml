@@ -1,6 +1,6 @@
-name: 🐞 Bug
-description: File a bug/issue
-title: "[BUG] <title>"
+name: 🐞 Bug Report
+description: Is something broken? Create a report to help us fix it!
+title: "[BUG]: <title>"
 labels: ["🐞 Bug"]
 body:
 - type: checkboxes
