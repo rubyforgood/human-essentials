@@ -2,6 +2,12 @@ name: ✨ Feature
 description: Request a new feature
 title: "[Feat] <title>"
 body:
+- type: markdown
+  attributes:
+    value: |
+      # Thank you for taking the time to help us improve the app!
+
+      ![red panda](https://github.com/rubyforgood/human-essentials/blob/main/public/img/red-panda.png)
 - type: checkboxes
   attributes:
     label: Is there an existing request for this feature?
