@@ -1,6 +1,6 @@
 name: ✨ Feature Request
 description: Suggest an idea for the app
-title: "[Feat] <title>"
+title: "[FEAT]: <title>"
 body:
 - type: markdown
   attributes:
