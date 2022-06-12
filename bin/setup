@@ -52,6 +52,7 @@ FileUtils.chdir APP_ROOT do
   end
 
   log "== Preparing database =="
+  log "⚠️  If you use docker to run postgres, make sure your database is running ⚠️"
   system! 'bin/rails db:setup'
 
   log "== Removing old logs and tempfiles =="
