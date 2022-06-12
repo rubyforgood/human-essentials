@@ -28,9 +28,15 @@ body:
     label: Page
     description: The name of the view file or partial that this issue focuses on.
     placeholder: |
-      For a page: `audits/show.html.erb`
-      - OR -
-      For a partial: `partners/_table.html.erb` in `partners/index.html.erb`
+      `audits/show.html.erb` - OR - `partners/_table.html.erb`
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: URL
+    description: The link to the page on staging where this component renders.
+    placeholder: |
+      https://staging.humanessentials.app/admin/account_requests?organization_id=admin
   validations:
     required: true
 - type: textarea
