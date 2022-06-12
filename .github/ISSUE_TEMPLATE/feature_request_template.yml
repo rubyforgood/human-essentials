@@ -1,5 +1,5 @@
-name: ✨ Feature
-description: Request a new feature
+name: ✨ Feature Request
+description: Suggest an idea for the app
 title: "[Feat] <title>"
 body:
 - type: markdown
