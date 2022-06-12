@@ -17,6 +17,14 @@ body:
       required: true
 - type: textarea
   attributes:
+    label: Is there a pain point in the app driving this feature request?
+    description: Describe any problems/annoyances you're experiencing in the app.
+    placeholder: |
+      When I click on this button, it always takes me back to the beginning instead of...
+  validations:
+    required: false
+- type: textarea
+  attributes:
     label: Desired Behavior
     description: A concise description of what you'd like to experience differently in the app.
   validations:
