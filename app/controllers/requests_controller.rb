@@ -45,7 +45,7 @@ class RequestsController < ApplicationController
   def load_items
     return unless @request.request_items
 
-    @request.request_items.map { |json| RequestItem.from_json(json, current_organization) }
+    @request.request_items.map { |json| RequestItem.from_json(json, @request) }
   end
 
   helper_method \
