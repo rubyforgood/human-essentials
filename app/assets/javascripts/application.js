@@ -14,6 +14,7 @@
 //= require jquery
 //= require popper
 //= require bootstrap
+//= require bootstrap-select
 // require jquery_ujs
 //= require filterrific/filterrific-jquery
 //= require bootstrap/alert
