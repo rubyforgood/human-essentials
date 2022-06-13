@@ -65,7 +65,8 @@
               <tr>
                 <th>Item</th>
                 <th>Quantity</th>
-                <th>Estimated on-hand</th>
+                <th>Fulfillment Location Inventory</th>
+                <th>Total Inventory</th>
               </tr>
               </thead>
               <tbody>
@@ -73,6 +74,7 @@
                 <tr>
                   <td><%= item.name %></td>
                   <td><%= item.quantity %></td>
+                  <td><%= item.on_hand_for_location %></td>
                   <td><%= item.on_hand %></td>
                 </tr>
               <% end %>
