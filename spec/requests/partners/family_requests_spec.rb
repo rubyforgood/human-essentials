@@ -1,7 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "/partners/family", type: :request do
-  let(:partner_user) { Partners::Partner.find_by(diaper_partner_id: partner.id).primary_user }
+  let(:partners_partner) { Partners::Partner.find_by(diaper_partner_id: partner.id) }
+  let(:partner_user) { partners_partner.primary_user }
   let(:partner) { create(:partner) }
   let!(:family1) do
     create(:partners_family,
@@ -21,7 +22,7 @@ RSpec.describe "/partners/family", type: :request do
       guardian_health_insurance: "Medicaid",
       comments: "Some comment",
       military: false,
-      partner: partner)
+      partner: partners_partner)
   end
 
   let!(:family2) do
@@ -42,7 +43,7 @@ RSpec.describe "/partners/family", type: :request do
       guardian_health_insurance: "Medicaid",
       comments: "Some comment 2",
       military: true,
-      partner: partner)
+      partner: partners_partner)
   end
 
   describe "GET #index" do
