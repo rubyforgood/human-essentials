@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_10_141231) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -248,7 +248,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_10_141231) do
     t.string "guardian_first_name"
     t.string "guardian_last_name"
     t.string "guardian_zip_code"
-    t.string "guardian_country"
+    t.string "guardian_county"
     t.string "guardian_phone"
     t.string "agency_guardian_id"
     t.integer "home_adult_count"
@@ -749,7 +749,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_10_141231) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "families", "partners"
+  add_foreign_key "families", "partner_profiles", column: "partner_id"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
