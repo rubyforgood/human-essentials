@@ -14,7 +14,7 @@ Human Essentials is an inventory management system that was built to address the
 
 ## 🌟 Impact
 
-Human Essentials serves over X organizations across the United States at **no cost to them**. It has managed Y number of distributions to Z number of families. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings T number of non-profit organizations that distribute essential products to people.
+Human Essentials has over 200 registered banks across the United States at **no cost to them**. It is currently helping over **3 million children** receive diapers and over **400k period supply recipients** receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous of non-profit organizations that distribute essential products to people.
 
 **We are proud of our achievements up to date but there is much more to do! This is where you come in...**
 
