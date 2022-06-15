@@ -63,7 +63,7 @@ https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your
 TODO
 
 ###### Windows
-TODO
+Do you develop on windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
 
 After completing this step, you should have both ruby, node, and postgres installed. Now you can proceed to the next step which is to setup the application.
 
