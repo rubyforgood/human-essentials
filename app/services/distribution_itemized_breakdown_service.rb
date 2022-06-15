@@ -20,14 +20,21 @@ class DistributionItemizedBreakdownService
   def fetch
     items_distributed = fetch_items_distributed
 
+
     # Inject the "onhand" data
     items_distributed.map! do |item|
       item_name = item[:name]
 
+      below_onhand_minimum = if current_onhand_quantities[item_name] && current_onhand_minimums[item_name]
+                               current_onhand_quantities[item_name] < current_onhand_minimums[item_name]
+                             else
+                               nil
+                             end
+
       item.merge({
         current_onhand: current_onhand_quantities[item_name],
         onhand_minimum: current_onhand_minimums[item_name],
-        below_onhand_minimum: current_onhand_quantities[item_name] < current_onhand_minimums[item_name]
+        below_onhand_minimum: below_onhand_minimum
       })
     end
 
