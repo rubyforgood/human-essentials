@@ -13,7 +13,7 @@
         <td>&nbsp&nbsp&nbsp<%= item[:name] %></td>
         <td><%= item[:distributed] %></td>
         <td class="<%= 'table-danger' if item[:below_onhand_minimum] %>">
-          <%= item[:current_onhand] %>
+          <%= item[:current_onhand] || "Unknown" %>
         </td>
       </tr>
     <% end %>
