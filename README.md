@@ -38,32 +38,47 @@ There are numerous other folks that can chime in and answer questions -- please 
 ## 🛠️ Getting Started
 
 ### Install Ruby
-You will need to first install the required ruby version specified in the `.ruby-version` file.  It is highly recommended you use a ruby version manager like [rbenv](https://github.com/rbenv/rbenv) or [asdf](https://asdf-vm.com/)
+You will need to first install the required ruby version specified in the `.ruby-version` file. GoRails has a very detail oriented guide for installing ruby on Ubuntu, Windows, and macOSX. You can check out that guide [here](https://gorails.com/setup/osx/12-monterey). **Follow only the Installing Ruby step, as our project setup differs**
 
-GoRails has a very detail oriented guide for installing ruby on Ubuntu, Windows, and macOSX. You can check out that guide [here](https://gorails.com/setup/osx/12-monterey). **Follow only the Installing Ruby step, as our project setup differs**
+
+It is highly recommended you use a ruby version manager such as:
+- [rbenv](https://github.com/rbenv/rbenv) 
+- [asdf](https://asdf-vm.com/)
+- [rvm](https://rvm.io/)
+
+You can verify that your ruby installation was successful and matches the version in `.ruby-version`  in the project directory:
+```
+ruby -v
+```
 
 Once you've succesfully installed ruby. You may proceed to the next section!
 
 ### Install Node
-You must install the version of node specified in `.nvmrc`. It is highly recommended to use [nvm](https://github.com/nvm-sh/nvm).
+You must install the version of node specified in `.nvmrc`. You can follow the guide [here](https://heynode.com/tutorial/install-nodejs-locally-nvm/) for setting up node.
 
-You can follow the guide [here](https://heynode.com/tutorial/install-nodejs-locally-nvm/) for setting up node.
+You can verify that your node installation was successful and matches the version in `.nvmrc` by running in the project directory:
+```
+node -v
+```
 
 *NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.*
+
+### Install Yarn
+You can install yarn by following the instructions [here](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
+
+You can verify that yarn was installed correctly by running this and seeing a version get returned in the project directory:
+```
+yarn -v
+```
 
 ### Install Postgres
 You must install postgres and run the database locally. Instructions differ depending on the operating system.
 
 Follow one of these guides to install postgres:
 
-###### MacOSX
-https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
-
-###### Ubuntu
-TODO
-
-###### Windows
-Do you develop on windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
+- MacOSX - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
+- Ubuntu - TODO
+- Windows - Do you develop on windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
 
 After completing this step, you should have both ruby, node, and postgres installed. Now you can proceed to the next step which is to setup the application.
 
@@ -404,4 +419,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
 
