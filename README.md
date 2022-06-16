@@ -232,13 +232,12 @@ MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
 
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
-<<<<<<< HEAD
 # 🚀 Deployment Process
 The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
 #### Requirements
 - You will need SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
-=======
+
 #### Running delayed jobs
 
 You can run delayed jobs locally by running the `rake jobs:work` command. You'll need to do this to see any e-mails (they should
@@ -274,7 +273,7 @@ The human-essentials application should be deployed ideally on a weekly or bi-we
 
 - You will need SSH access to our servers
   - Access is usually only given to core maintainers of the human-essentials project
->>>>>>> d97e5595a6390ad27c164c1b85ccd6444272287c
+
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
 #### Tag & Release
