@@ -32,10 +32,11 @@ gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
 # Enforces "safe" migrations.
-gem "strong_migrations", "~> 1.0.0"
+gem "strong_migrations", "0.8.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
+gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
 # jQuery framework (DOM methods, Ajax, chaining, etc.)
