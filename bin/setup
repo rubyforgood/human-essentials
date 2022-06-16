@@ -55,13 +55,13 @@ FileUtils.chdir APP_ROOT do
   log "⚠️  If you use docker to run postgres, make sure your database is running ⚠️"
   system! 'bin/rails db:setup'
 
-  log "== Removing old logs and tempfiles =="
-  system! 'bin/rails log:clear tmp:clear'
+  log "== Removing old logs, tempfiles, and jobs =="
+  system! 'bin/rails log:clear tmp:clear jobs:clear'
 
   log "== Restarting application server =="
   system! 'bin/rails restart'
 
   log "---------------------"
-  log "❤️  Done! Run bin/start to run the application locally ❤️"
+  log "❤️  Done! Run bin/start to run the application locally at http://localhost:3000 ❤️"
   log "---------------------"
 end
