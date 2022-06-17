@@ -35,7 +35,7 @@
         (Link): <%= link_to partner_profile.proof_of_form_990.filename, rails_blob_path(partner_profile.proof_of_form_990, disposition: 'attachment') %>
     <% end %>
       </p>
-      <p>Program Name <%= partner_profile.program_name %></p>
+      <p>Program Name(s) <%= partner_profile.program_name %></p>
       <p>Program Description <%= partner_profile.program_description %></p>
       <p>Program Age <%= partner_profile.program_age %></p>
       <p>Case Management: <%= partner_profile.case_management %></p>
@@ -68,7 +68,7 @@
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Population Served</h2>
       <p>Income Requirement
-      Description: <%= partner_profile.income_requirement_desc %></p>
+      Description(s): <%= partner_profile.income_requirement_desc %></p>
       <p>Serve Income Circumstances: <%= partner_profile.serve_income_circumstances %></p>
       <p>Income Verification: <%= partner_profile.income_verification %></p>
       <p>Internal DB: <%= partner_profile.internal_db %></p>

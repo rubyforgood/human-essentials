@@ -16,7 +16,7 @@
         <dd>Form 990 not on file</dd>
       <% end %>
 
-      <dt>Program Name</dt>
+      <dt>Program Name(s)</dt>
       <dd><%= partner.program_name %></dd>
 
       <dt>Program Description</dt>
@@ -50,7 +50,7 @@
       <dd><%= humanize_boolean(partner.turn_away_child_care) %></dd>
 
       <address>
-        <strong>Program Address</strong> <br>
+        <strong>Program Address (If Different)</strong> <br>
         <%= partner.program_address1 %> <br>
         <% unless partner.program_address2.blank? %>
           <%= partner.program_address2 %> <br>
