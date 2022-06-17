@@ -43,7 +43,7 @@ FileUtils.chdir APP_ROOT do
   system("bundle check") || system!("bundle install")
 
   # Install JavaScript dependencies if using Yarn
-  log '== Installing javascript depedencies via yarn == '
+  log '== Installing javascript dependencies via yarn == '
   system('bin/yarn')
 
   unless File.exist?('.env')
