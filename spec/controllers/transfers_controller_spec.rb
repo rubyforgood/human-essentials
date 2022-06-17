@@ -1,5 +1,3 @@
-DATE_FORMAT = "%B %-d, %Y"
-
 RSpec.describe TransfersController, type: :controller, skip_seed: true do
   context "While signed in" do
     before do
@@ -24,8 +22,8 @@ RSpec.describe TransfersController, type: :controller, skip_seed: true do
 
         context 'when date parameters are supplied' do
           it 'only returns the correct obejects' do
-            start_date = 3.days.ago.strftime DATE_FORMAT
-            end_date = Time.zone.today.strftime DATE_FORMAT
+            start_date = 3.days.ago.to_formatted_s(:date_picker)
+            end_date = Time.zone.today.to_formatted_s(:date_picker)
             get :index, params: { organization_id: @organization.short_name, filters: { date_range: "#{start_date} - #{end_date}" } }
             expect(assigns(:transfers)).to eq([new_transfer])
           end
