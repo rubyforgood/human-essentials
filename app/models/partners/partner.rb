@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: partners
+# Table name: partner_profiles
 #
 #  id                         :bigint           not null, primary key
 #  above_1_2_times_fpl        :integer
@@ -82,7 +82,7 @@
 #  zips_served                :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  diaper_bank_id             :integer
+#  diaper_bank_id             :bigint
 #  diaper_partner_id          :integer
 #
 module Partners

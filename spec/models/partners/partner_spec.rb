@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: partners
+# Table name: partner_profiles
 #
 #  id                         :bigint           not null, primary key
 #  above_1_2_times_fpl        :integer
