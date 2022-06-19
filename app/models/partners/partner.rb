@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: partners
+# Table name: partner_profiles
 #
 #  id                         :bigint           not null, primary key
 #  above_1_2_times_fpl        :integer
@@ -82,17 +82,13 @@
 #  zips_served                :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  diaper_bank_id             :integer
+#  diaper_bank_id             :bigint
 #  diaper_partner_id          :integer
 #
 module Partners
   class Partner < Base
-    begin
-      if Flipper.enabled?(:single_database)
-        self.table_name = "partner_profiles"
-      end
-    rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
-    end
+    self.table_name = "partner_profiles"
+
     has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :partner
     has_many :users, dependent: :destroy
     has_many :requests, dependent: :destroy
