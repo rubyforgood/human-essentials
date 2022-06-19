@@ -51,7 +51,10 @@ You can verify that your ruby installation was successful and matches the versio
 ruby -v
 ```
 
-Once you've succesfully installed ruby. You may proceed to the next section!
+Once you've successfully installed ruby. You may proceed to the next section!
+
+#### Troubleshooting
+The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the state of the rbenv installation and if a ruby version is installed
 
 ### Install Node
 You must install the version of node specified in `.nvmrc`. You can follow the guide [here](https://heynode.com/tutorial/install-nodejs-locally-nvm/) for setting up node.
