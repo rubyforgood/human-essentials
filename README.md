@@ -54,6 +54,7 @@ ruby -v
 Once you've successfully installed ruby. You may proceed to the next section!
 
 #### Troubleshooting
+**My RBENV installation did not work**
 The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the state of the rbenv installation and if a ruby version is installed
 
 ### Install Node
