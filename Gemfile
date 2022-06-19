@@ -47,7 +47,7 @@ gem "sass-rails"
 # JavaScript minified, used in asset compilation.
 gem "uglifier", ">= 1.3.0"
 # JavaScript bundler.
-gem 'webpacker', '~> 5.0'
+gem 'jsbundling-rails'
 # Used to verify that the user is a human.
 gem "recaptcha"
 
