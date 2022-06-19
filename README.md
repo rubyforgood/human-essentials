@@ -78,6 +78,9 @@ yarn -v
 You must install postgres and run the database locally. Instructions differ depending on the operating system.
 
 Follow one of these guides to install postgres:
+This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test` respectively. This should all be handled with `rails db:setup`.
+Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called `database.yml.example` as an example and just change the credentials.
+>>>>>>> d97e5595a6390ad27c164c1b85ccd6444272287c
 
 - MacOSX - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
 - Ubuntu - TODO
@@ -109,7 +112,7 @@ password: password!
 ```
 
 **Bank users**
-```
+```bash
 Organization Admin
   Email: org_admin1@example.com
   Password: password!
@@ -120,7 +123,7 @@ User
 ```
 
 **Partner Users**
-```
+```bash
 Verified Partner
   Email: verified@example.com
   Password: password!
@@ -228,11 +231,49 @@ MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
 
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
+<<<<<<< HEAD
 # 🚀 Deployment Process
 The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
 #### Requirements
 - You will need SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
+=======
+#### Running delayed jobs
+
+You can run delayed jobs locally by running the `rake jobs:work` command. You'll need to do this to see any e-mails (they should
+pop up in your browser). Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
+
+```ruby
+Delayed::Job.last.invoke_job
+```
+
+You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
+
+#### In-flight Pull Requests
+
+Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
+
+#### Additional Notes
+
+- The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
+- If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
+
+```bash
+rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
+```
+
+#### Becoming a Repo Contributor
+
+Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
+
+### Deployment Process
+The human-essentials application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
+
+#### Requirements
+
+- You will need SSH access to our servers
+  - Access is usually only given to core maintainers of the human-essentials project
+>>>>>>> d97e5595a6390ad27c164c1b85ccd6444272287c
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
 #### Tag & Release
