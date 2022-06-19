@@ -67,7 +67,7 @@ If you're getting the error `PG::ConnectionBad: fe_sendauth: no password supplie
 
 #### Database Configuration
 
-This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev`, `diaper_test`, `partner_dev`, and `partner_test` respectively. This should all be handled with `rails db:setup`.
+This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test` respectively. This should all be handled with `rails db:setup`.
 Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called `database.yml.example` as an example and just change the credentials.
 
 #### Seed the database
@@ -101,7 +101,7 @@ User
   Password: password!
 ```
 
-**Partnerbase Users**
+**Partner Users**
 
 ```bash
 Verified Partner
@@ -230,12 +230,12 @@ rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
 
 ### Deployment Process
-The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
+The human-essentials application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
 #### Requirements
 
 - You will need SSH access to our servers
-  - Access is usually only given to core maintainers of the human-essentials & partner projects
+  - Access is usually only given to core maintainers of the human-essentials project
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
 ##### Tag & Release
