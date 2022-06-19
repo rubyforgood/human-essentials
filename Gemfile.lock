@@ -124,6 +124,8 @@ GEM
     crack (0.4.5)
       rexml
     crass (1.0.6)
+    cssbundling-rails (1.1.1)
+      railties (>= 6.0.0)
     database_cleaner (1.8.5)
     debug_inspector (1.1.0)
     delayed_job (4.1.10)
@@ -609,6 +611,7 @@ DEPENDENCIES
   capybara (~> 3.37)
   capybara-screenshot
   cocoon
+  cssbundling-rails
   database_cleaner (= 1.8.5)
   delayed_job_active_record
   delayed_job_web

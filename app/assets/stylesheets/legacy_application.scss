@@ -13,6 +13,11 @@
  *= require barcode_reader
  */
 
+
+h2 {
+  color: red;
+}
+
  //Use @import in order to process SCSS variables
  // import reusable variables
  @import 'colors';

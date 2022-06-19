@@ -46,8 +46,9 @@ gem "jquery-ui-rails"
 gem "sass-rails"
 # JavaScript minified, used in asset compilation.
 gem "uglifier", ">= 1.3.0"
-# JavaScript bundler.
+# JavaScript & CSS bundler.
 gem 'jsbundling-rails'
+gem 'cssbundling-rails'
 # Used to verify that the user is a human.
 gem "recaptcha"
 
