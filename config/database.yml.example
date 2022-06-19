@@ -1,0 +1,22 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  database: diaper_dev
+  username: postgres
+  password: password
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  timeout: 5000
+
+test:
+  <<: *default
+  database: diaper_test
+  timeout: 5000
+
+production:
+  <<: *default
+  database: diaper_production
+  password: <%= ENV['DIAPER_DATABASE_PASSWORD'] %>
