@@ -4,6 +4,7 @@ default: &default
   host: localhost
   database: diaper_dev
   username: <%= ENV.fetch("PG_USERNAME", 'postgres') %>
+  password: <%= ENV.fetch("PG_USERNAME", 'password') %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 

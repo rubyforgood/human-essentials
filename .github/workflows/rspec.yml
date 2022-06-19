@@ -20,8 +20,6 @@ jobs:
     services:
       db:
         image: postgres:12.3
-        env:
-          POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
         options: >-
