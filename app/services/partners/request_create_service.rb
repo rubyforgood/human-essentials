@@ -98,7 +98,7 @@ module Partners
     def build_organization_request(partner_request)
       ::Request.new(
         organization_id: partner_request.organization_id,
-        partner_id: partner_request.partner.diaper_partner_id,
+        partner_id: partner_request.partner.partner_id,
         partner_user_id: partner_user_id,
         comments: partner_request.comments,
         request_items: partner_request.item_requests.map do |ir|

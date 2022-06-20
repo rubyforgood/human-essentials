@@ -224,7 +224,7 @@ note = [
                                         website: Faker::Internet.domain_name,
                                         zips_served: Faker::Address.zip,
                                         essentials_bank_id: pdx_org.id,
-                                        diaper_partner_id: p.id,
+                                        partner_id: p.id,
                                         executive_director_name: Faker::Name.name,
                                         executive_director_email: p.email,
                                         executive_director_phone: Faker::PhoneNumber.phone_number,

@@ -22,7 +22,7 @@ class PartnerCreateService
 
       Partners::Partner.create!({
                                   essentials_bank_id: organization.id,
-                                  diaper_partner_id: @partner.id,
+                                  partner_id: @partner.id,
                                   name: @partner.name
                                 })
     rescue StandardError => e

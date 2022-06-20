@@ -156,7 +156,7 @@ module Partners
     end
 
     def partner
-      ::Partner.find_by!(id: diaper_partner_id)
+      ::Partner.find_by!(id: partner_id)
     end
 
     def partials_to_show
