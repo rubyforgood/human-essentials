@@ -82,8 +82,8 @@
 #  zips_served                :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  diaper_partner_id          :integer
 #  essentials_bank_id         :bigint
+#  partner_id                 :integer
 #
 require "rails_helper"
 

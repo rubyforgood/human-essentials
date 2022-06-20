@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_20_132610) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_20_183920) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -431,7 +431,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_20_132610) do
   create_table "partner_profiles", force: :cascade do |t|
     t.bigint "essentials_bank_id"
     t.text "application_data"
-    t.integer "diaper_partner_id"
+    t.integer "partner_id"
     t.string "partner_status", default: "pending"
     t.string "name"
     t.string "distributor_type"
