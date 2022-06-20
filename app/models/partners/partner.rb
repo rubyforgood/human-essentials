@@ -82,8 +82,8 @@
 #  zips_served                :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  diaper_bank_id             :bigint
 #  diaper_partner_id          :integer
+#  essentials_bank_id         :bigint
 #
 module Partners
   class Partner < Base
@@ -95,7 +95,7 @@ module Partners
     has_many :families, dependent: :destroy
     has_many :children, through: :families
     has_many :authorized_family_members, through: :families
-    has_one :partner_form, primary_key: :diaper_bank_id, foreign_key: :diaper_bank_id, dependent: :destroy, inverse_of: :partner
+    has_one :partner_form, primary_key: :essentials_bank_id, foreign_key: :essentials_bank_id, dependent: :destroy, inverse_of: :partner
 
     has_one_attached :proof_of_partner_status
     has_one_attached :proof_of_form_990
@@ -152,7 +152,7 @@ module Partners
     end
 
     def organization
-      Organization.find_by!(id: diaper_bank_id)
+      Organization.find_by!(id: essentials_bank_id)
     end
 
     def partner

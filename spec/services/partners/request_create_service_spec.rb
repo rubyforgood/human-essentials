@@ -77,7 +77,7 @@ describe Partners::RequestCreateService, skip_seed: true do
       end
 
       before do
-        allow(Organization).to receive(:find_by).with(id: partner_user.partner.diaper_bank_id).and_return(
+        allow(Organization).to receive(:find_by).with(id: partner_user.partner.essentials_bank_id).and_return(
           double(Organization, valid_items: fake_organization_valid_items)
         )
         allow(NotifyPartnerJob).to receive(:perform_now)

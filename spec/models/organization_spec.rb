@@ -257,18 +257,18 @@ RSpec.describe Organization, type: :model do
 
       context 'and a Partners::PartnerForm does not exist yet' do
         before do
-          expect(Partners::PartnerForm.where(diaper_bank_id: organization.id).count).to eq(0)
+          expect(Partners::PartnerForm.where(essentials_bank_id: organization.id).count).to eq(0)
         end
 
         it 'should create or update the new partner form with the correct section values' do
           expect { organization.save }.to change {
-            Partners::PartnerForm.where(diaper_bank_id: organization.id, sections: organization.partner_form_fields).count
+            Partners::PartnerForm.where(essentials_bank_id: organization.id, sections: organization.partner_form_fields).count
           }.by(1)
         end
       end
 
       context 'and a Partners::PartnerForm already exists' do
-        let!(:existing_partner_form) { Partners::PartnerForm.new(diaper_bank_id: organization.id, sections: []).tap(&:save!) }
+        let!(:existing_partner_form) { Partners::PartnerForm.new(essentials_bank_id: organization.id, sections: []).tap(&:save!) }
 
         it 'should update the existing partner form' do
           expect { organization.save }.to change {

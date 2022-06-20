@@ -21,7 +21,7 @@ class PartnerCreateService
       @partner.save!
 
       Partners::Partner.create!({
-                                  diaper_bank_id: organization.id,
+                                  essentials_bank_id: organization.id,
                                   diaper_partner_id: @partner.id,
                                   name: @partner.name
                                 })

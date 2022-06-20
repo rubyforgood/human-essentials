@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_20_132610) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -408,7 +408,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
   end
 
   create_table "partner_forms", force: :cascade do |t|
-    t.integer "diaper_bank_id"
+    t.integer "essentials_bank_id"
     t.text "sections", default: [], array: true
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
@@ -429,7 +429,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
   end
 
   create_table "partner_profiles", force: :cascade do |t|
-    t.bigint "diaper_bank_id"
+    t.bigint "essentials_bank_id"
     t.text "application_data"
     t.integer "diaper_partner_id"
     t.string "partner_status", default: "pending"
@@ -510,7 +510,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "other_agency_type"
     t.string "status_in_diaper_base"
-    t.index ["diaper_bank_id"], name: "index_partners_on_diaper_bank_id"
+    t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 
   create_table "partner_requests", force: :cascade do |t|

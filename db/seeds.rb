@@ -223,7 +223,7 @@ note = [
                                         zip_code: Faker::Address.zip,
                                         website: Faker::Internet.domain_name,
                                         zips_served: Faker::Address.zip,
-                                        diaper_bank_id: pdx_org.id,
+                                        essentials_bank_id: pdx_org.id,
                                         diaper_partner_id: p.id,
                                         executive_director_name: Faker::Name.name,
                                         executive_director_email: p.email,

@@ -35,7 +35,7 @@ module Partners
       else
         @partner_request = create_service.partner_request
         @errors = create_service.errors
-        @formatted_requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
+        @formatted_requestable_items = Organization.find(current_partner.essentials_bank_id).valid_items.map do |item|
           [item[:name], item[:id]]
         end.sort
 

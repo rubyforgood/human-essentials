@@ -82,8 +82,8 @@
 #  zips_served                :string
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
-#  diaper_bank_id             :bigint
 #  diaper_partner_id          :integer
+#  essentials_bank_id         :bigint
 #
 require "rails_helper"
 
@@ -93,7 +93,7 @@ RSpec.describe Partners::Partner, type: :model, skip_seed: true do
     it { should have_many(:requests).dependent(:destroy) }
     it { should have_many(:families).dependent(:destroy) }
     it { should have_many(:children).through(:families) }
-    it { should have_one(:partner_form).with_primary_key(:diaper_bank_id).with_foreign_key(:diaper_bank_id).dependent(:destroy) }
+    it { should have_one(:partner_form).with_primary_key(:essentials_bank_id).with_foreign_key(:essentials_bank_id).dependent(:destroy) }
     it { should have_one_attached(:proof_of_partner_status) }
     it { should have_one_attached(:proof_of_form_990) }
     it { should have_many_attached(:documents) }
@@ -160,7 +160,7 @@ RSpec.describe Partners::Partner, type: :model, skip_seed: true do
     let(:partner) { FactoryBot.create(:partners_partner) }
 
     it 'should return the associated organization using its essentials bank id' do
-      expect(subject).to eq(Organization.find_by!(id: partner.diaper_bank_id))
+      expect(subject).to eq(Organization.find_by!(id: partner.essentials_bank_id))
     end
   end
 

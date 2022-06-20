@@ -17,7 +17,7 @@ module Partners
                                 .where('issued_at < ?', Time.zone.today)
                                 .limit(5)
 
-      @parent_org = Organization.find(@partner.diaper_bank_id)
+      @parent_org = Organization.find(@partner.essentials_bank_id)
 
       @requests_in_progress = @parent_org
                               .ordered_requests
