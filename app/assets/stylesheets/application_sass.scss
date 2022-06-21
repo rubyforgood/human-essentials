@@ -13,18 +13,13 @@
  *= require barcode_reader
  */
 
+//Use @import in order to process SCSS variables
+// import reusable variables
+@import 'colors';
+@import 'base/_variables';
+@import 'resources/*';
 
-h2 {
-  color: red;
-}
-
- //Use @import in order to process SCSS variables
- // import reusable variables
- @import 'colors';
- @import 'base/_variables';
- @import 'resources/*';
-
- // import other stylesheets after variables
+// import other stylesheets after variables
 @import 'AdminLTE';
 @import 'bootstrap';
 @import 'simple_form-bootstrap/simple_form-bootstrap';
@@ -33,6 +28,14 @@ h2 {
 @import 'audits';
 @import 'modal-dialog';
 @import 'custom';
+
+// Carried over from webpacker implementation that was removed
+@import "@fortawesome/fontawesome-free/css/fontawesome.css";
+@import "@fortawesome/fontawesome-free/css/solid.css";
+@import "@fortawesome/fontawesome-free/css/regular.css";
+@import "@fortawesome/fontawesome-free/css/brands.css";
+@import "@fortawesome/fontawesome-free/css/v4-shims.css";
+@import "toastr/build/toastr.css";
 
 .modal-dialog {
   display: flex;
@@ -164,3 +167,5 @@ body a {
 body:not(.sidebar-mini-md) .content-wrapper, body:not(.sidebar-mini-md) .main-footer, body:not(.sidebar-mini-md) .main-header {
   margin-left: 280px;
 }
+
+
