@@ -41,7 +41,7 @@ class ProfilesController < ApplicationController
       :evidence_based,
       :evidence_based_description,
       :program_client_improvement,
-      :diaper_use,
+      :essentials_use,
       :receives_essentials_from_other,
       :currently_provide_diapers,
       :turn_away_child_care,
