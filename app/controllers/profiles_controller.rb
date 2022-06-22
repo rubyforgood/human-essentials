@@ -91,7 +91,7 @@ class ProfilesController < ApplicationController
       :more_docs_required,
       :sources_of_funding,
       :sources_of_diapers,
-      :diaper_budget,
+      :essentials_budget,
       :diaper_funding_source,
       documents: []
     )

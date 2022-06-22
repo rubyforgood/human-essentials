@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_22_130937) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_22_202435) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -504,7 +504,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_130937) do
     t.string "more_docs_required"
     t.string "sources_of_funding"
     t.string "sources_of_diapers"
-    t.string "diaper_budget"
+    t.string "essentials_budget"
     t.string "diaper_funding_source"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
