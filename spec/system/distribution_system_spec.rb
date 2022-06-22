@@ -328,9 +328,9 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
       end
 
       it "User creates duplicate line items" do
-        diaper_type = @distribution.line_items.first.item.name
+        item_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
-        select(diaper_type, from: first_item_name_field)
+        select(item_type, from: first_item_name_field)
         find_all(".numeric")[0].set 1
 
         click_on "Add another item"
@@ -339,10 +339,10 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
         first("button", text: "Save").click
 
         expect(page).to have_css "td"
-        item_row = find("td", text: diaper_type).find(:xpath, '..')
+        item_row = find("td", text: item_type).find(:xpath, '..')
 
-        # TODO: Find out how to test for diaper type and 4 without the dollar amounts.
-        expect(item_row).to have_content("#{diaper_type} $1.00 $4.00 4")
+        # TODO: Find out how to test for item type and 4 without the dollar amounts.
+        expect(item_row).to have_content("#{item_type} $1.00 $4.00 4")
       end
     end
   end
