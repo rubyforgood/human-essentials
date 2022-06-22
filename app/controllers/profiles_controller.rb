@@ -42,7 +42,7 @@ class ProfilesController < ApplicationController
       :evidence_based_description,
       :program_client_improvement,
       :diaper_use,
-      :other_diaper_use,
+      :receives_essentials_from_other,
       :currently_provide_diapers,
       :turn_away_child_care,
       :program_address1,

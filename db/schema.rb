@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_20_183920) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_22_122404) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -455,7 +455,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_20_183920) do
     t.text "evidence_based_description"
     t.text "program_client_improvement"
     t.string "diaper_use"
-    t.string "other_diaper_use"
+    t.string "receives_essentials_from_other"
     t.boolean "currently_provide_diapers"
     t.boolean "turn_away_child_care"
     t.string "program_address1"
