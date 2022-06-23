@@ -92,7 +92,7 @@ class ProfilesController < ApplicationController
       :sources_of_funding,
       :sources_of_diapers,
       :essentials_budget,
-      :diaper_funding_source,
+      :essentials_funding_source,
       documents: []
     )
   end

@@ -15,10 +15,10 @@
 #  city                           :string
 #  currently_provide_diapers      :boolean
 #  describe_storage_space         :text
-#  diaper_funding_source          :string
 #  distribution_times             :string
 #  distributor_type               :string
 #  essentials_budget              :string
+#  essentials_funding_source      :string
 #  essentials_use                 :string
 #  evidence_based                 :boolean
 #  evidence_based_description     :text
