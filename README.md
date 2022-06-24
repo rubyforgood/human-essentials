@@ -80,7 +80,7 @@ You must install postgres and run the database locally. Instructions differ depe
 
 Follow one of these guides to install postgres:
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test` respectively. This should all be handled with `rails db:setup`.
-Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called [`database.yml.example`](database.yml.example) as an example and just change the credentials.
+Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called [`database.yml.example`](config/database.yml.example) as an example and just change the credentials.
 >>>>>>> d97e5595a6390ad27c164c1b85ccd6444272287c
 
 - MacOSX - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
