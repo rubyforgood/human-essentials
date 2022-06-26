@@ -21,8 +21,8 @@ class PartnerCreateService
       @partner.save!
 
       Partners::Partner.create!({
-                                  diaper_bank_id: organization.id,
-                                  diaper_partner_id: @partner.id,
+                                  essentials_bank_id: organization.id,
+                                  partner_id: @partner.id,
                                   name: @partner.name
                                 })
     rescue StandardError => e

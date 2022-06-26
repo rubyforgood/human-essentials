@@ -1,6 +1,6 @@
 module Partners
   class FamilyRequestsController < BaseController
-    before_action :verify_status_in_diaper_base
+    before_action :verify_partner_is_active
     before_action :authorize_verified_partners
 
     def new

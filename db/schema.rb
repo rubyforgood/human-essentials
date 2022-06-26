@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_22_224746) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -408,7 +408,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
   end
 
   create_table "partner_forms", force: :cascade do |t|
-    t.integer "diaper_bank_id"
+    t.integer "essentials_bank_id"
     t.text "sections", default: [], array: true
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
@@ -429,9 +429,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
   end
 
   create_table "partner_profiles", force: :cascade do |t|
-    t.bigint "diaper_bank_id"
+    t.bigint "essentials_bank_id"
     t.text "application_data"
-    t.integer "diaper_partner_id"
+    t.integer "partner_id"
     t.string "partner_status", default: "pending"
     t.string "name"
     t.string "distributor_type"
@@ -454,8 +454,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
     t.boolean "evidence_based"
     t.text "evidence_based_description"
     t.text "program_client_improvement"
-    t.string "diaper_use"
-    t.string "other_diaper_use"
+    t.string "essentials_use"
+    t.string "receives_essentials_from_other"
     t.boolean "currently_provide_diapers"
     t.boolean "turn_away_child_care"
     t.string "program_address1"
@@ -504,13 +504,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_164609) do
     t.string "more_docs_required"
     t.string "sources_of_funding"
     t.string "sources_of_diapers"
-    t.string "diaper_budget"
-    t.string "diaper_funding_source"
+    t.string "essentials_budget"
+    t.string "essentials_funding_source"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "other_agency_type"
     t.string "status_in_diaper_base"
-    t.index ["diaper_bank_id"], name: "index_partners_on_diaper_bank_id"
+    t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 
   create_table "partner_requests", force: :cascade do |t|
