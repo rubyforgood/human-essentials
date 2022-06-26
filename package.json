@@ -22,6 +22,7 @@
     "esbuild": "^0.14.46",
     "fstream": "^1.0.12",
     "highcharts": "^9.0.0",
+    "jquery": "^3.6.0",
     "js-yaml": "^3.13.1",
     "litepicker": "^2.0.12",
     "lodash": "^4.17.15",

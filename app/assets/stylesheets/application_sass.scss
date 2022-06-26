@@ -30,6 +30,8 @@
 @import 'custom';
 
 // Carried over from webpacker implementation that was removed
+@import "trix/dist/trix";
+@import "actiontext";
 @import "@fortawesome/fontawesome-free/css/fontawesome.css";
 @import "@fortawesome/fontawesome-free/css/solid.css";
 @import "@fortawesome/fontawesome-free/css/regular.css";
@@ -164,8 +166,11 @@ body a {
 .main-sidebar, .main-sidebar::before {
   width: 280px;
 }
+
 body:not(.sidebar-mini-md) .content-wrapper, body:not(.sidebar-mini-md) .main-footer, body:not(.sidebar-mini-md) .main-header {
   margin-left: 280px;
 }
+
+
 
 

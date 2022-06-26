@@ -2,6 +2,11 @@
 
 import "trix";
 import "@rails/actiontext";
+
+import jquery from 'jquery';
+window.jQuery = jquery;
+window.$ = jquery;
+
 import Highcharts from "highcharts";
 require("highcharts/modules/data")(Highcharts);
 require("highcharts/modules/exporting")(Highcharts);
