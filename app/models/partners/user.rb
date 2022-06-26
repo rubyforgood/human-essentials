@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: users
+# Table name: partner_users
 #
 #  id                     :bigint           not null, primary key
 #  current_sign_in_at     :datetime
@@ -28,15 +28,7 @@
 #
 module Partners
   class User < Base
-    begin
-      self.table_name = if Flipper.enabled?(:single_database)
-        "partner_users"
-      else
-        "users"
-      end
-    rescue ActiveRecord::NoDatabaseError, ActiveRecord::StatementInvalid
-      self.table_name = "users"
-    end
+    self.table_name = "partner_users"
 
     # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
     devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable,
