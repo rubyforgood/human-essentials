@@ -26,7 +26,7 @@ If you're new here, here are some things you should know:
  - We actively curate issues and try to make them as self-contained as possible for people new to the application; those ones are tagged "Help Wanted"
  - We're actively watching for Pull Requests and you shouldn't have to wait very long for a review. Try to make sure your build passes (`rubocop -a` is a frequent need) and that you've addressed the requirements in the issue
  - There is a wiki article called [Application Overview](https://github.com/rubyforgood/human-essentials/wiki/Application-Overview). It needs a tiny bit of updating, but is mostly still accurate. It will introduce you to some vocabulary and general concepts, if you find something confusing and want to find the answer on your own.
- - Check the `CONTRIBUTING.md` file for a guide on how to get started
+ - Check the [`CONTRIBUTING.md`](CONTRIBUTING.md) file for a guide on how to get started
  - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
 #### 💬 Join us on slack
@@ -38,7 +38,7 @@ There are numerous other folks that can chime in and answer questions -- please 
 ## 🛠️ Getting Started
 
 ### Install Ruby
-You will need to first install the required ruby version specified in the `.ruby-version` file. GoRails has a very detail oriented guide for installing ruby on Ubuntu, Windows, and macOSX. You can check out that guide [here](https://gorails.com/setup/osx/12-monterey). **Follow only the Installing Ruby step, as our project setup differs**
+You will need to first install the required ruby version specified in the [`.ruby-version`](.ruby-version) file. GoRails has a very detail oriented guide for installing ruby on Ubuntu, Windows, and macOSX. You can check out that guide [here](https://gorails.com/setup/osx/12-monterey). **Follow only the Installing Ruby step, as our project setup differs**
 
 
 It is highly recommended you use a ruby version manager such as:
@@ -46,7 +46,7 @@ It is highly recommended you use a ruby version manager such as:
 - [asdf](https://asdf-vm.com/)
 - [rvm](https://rvm.io/)
 
-You can verify that your ruby installation was successful and matches the version in `.ruby-version`  in the project directory:
+You can verify that your ruby installation was successful and matches the version in [`.ruby-version`](.ruby-version) in the project directory:
 ```
 ruby -v
 ```
@@ -58,9 +58,9 @@ Once you've successfully installed ruby. You may proceed to the next section!
 The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the state of the rbenv installation and if a ruby version is installed
 
 ### Install Node
-You must install the version of node specified in `.nvmrc`. You can follow the guide [here](https://heynode.com/tutorial/install-nodejs-locally-nvm/) for setting up node.
+You must install the version of node specified in [`.nvmrc`](.nvmrc). You can follow the guide [here](https://heynode.com/tutorial/install-nodejs-locally-nvm/) for setting up node.
 
-You can verify that your node installation was successful and matches the version in `.nvmrc` by running in the project directory:
+You can verify that your node installation was successful and matches the version in [`.nvmrc`](.nvmrc) by running in the project directory:
 ```
 node -v
 ```
@@ -80,7 +80,7 @@ You must install postgres and run the database locally. Instructions differ depe
 
 Follow one of these guides to install postgres:
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test` respectively. This should all be handled with `rails db:setup`.
-Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called `database.yml.example` as an example and just change the credentials.
+Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called [`database.yml.example`](config/database.yml.example) as an example and just change the credentials.
 >>>>>>> d97e5595a6390ad27c164c1b85ccd6444272287c
 
 - MacOSX - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
@@ -232,13 +232,12 @@ MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
 
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
-<<<<<<< HEAD
 # 🚀 Deployment Process
 The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
 #### Requirements
 - You will need SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
-=======
+
 #### Running delayed jobs
 
 You can run delayed jobs locally by running the `rake jobs:work` command. You'll need to do this to see any e-mails (they should
@@ -274,7 +273,7 @@ The human-essentials application should be deployed ideally on a weekly or bi-we
 
 - You will need SSH access to our servers
   - Access is usually only given to core maintainers of the human-essentials project
->>>>>>> d97e5595a6390ad27c164c1b85ccd6444272287c
+
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
 #### Tag & Release
