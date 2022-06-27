@@ -148,7 +148,7 @@ group :development, :test do
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.9.0"
+  gem "rubocop-rails", "~> 2.15.1"
   # Default rules for Rubocop.
   gem "standard", "~> 1.0"
 end
