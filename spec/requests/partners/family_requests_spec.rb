@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "/partners/family", type: :request do
-  let(:partners_partner) { Partners::Partner.find_by(diaper_partner_id: partner.id) }
+  let(:partners_partner) { Partners::Partner.find_by(partner_id: partner.id) }
   let(:partner_user) { partners_partner.primary_user }
   let(:partner) { create(:partner) }
   let!(:family1) do

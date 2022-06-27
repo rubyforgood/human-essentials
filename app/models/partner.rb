@@ -80,7 +80,7 @@ class Partner < ApplicationRecord
   # the partnerbase DB and contains mostly profile data of
   # the partner user.
   def profile
-    @profile ||= ::Partners::Partner.find_by(diaper_partner_id: id)
+    @profile ||= ::Partners::Partner.find_by(partner_id: id)
   end
 
   #

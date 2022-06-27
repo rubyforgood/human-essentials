@@ -24,7 +24,7 @@ module Partners
       else
         @request = FamilyRequest.new({}, initial_items: 1)
         @errors = create_service.errors
-        @requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
+        @requestable_items = Organization.find(current_partner.essentials_bank_id).valid_items.map do |item|
           [item[:name], item[:id]]
         end.sort
 
