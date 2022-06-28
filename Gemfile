@@ -106,7 +106,7 @@ gem "jwt"
 gem "mini_racer", "~> 0.6.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.0.3"
+gem "sprockets", "~> 4.1.1"
 
 group :production do
   # Reduce the noise of logs and include custom fields to it for easier access
