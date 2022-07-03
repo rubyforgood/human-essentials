@@ -3,10 +3,14 @@ BACKUP_CONTAINER_NAME = 'backups'
 PASSWORD_REPLACEMENT = 'password'
 
 task :fetch_latest_db => :environment do
+  if Rails.env.production?
+    raise "You may not run this backup script in production!"
+  end
+
   backup = fetch_latest_backups
 
   puts "Recreating databases..."
-  system("rails db:drop db:create db:migrate")
+  system("RAILS_ENV=development rails db:drop:create:migrate")
 
   puts "Restoring the database with #{backup.name}"
   backup_filepath = fetch_file_path(backup)
