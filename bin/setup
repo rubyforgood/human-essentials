@@ -35,7 +35,7 @@ FileUtils.chdir APP_ROOT do
   log "❤️  Setup started... ❤️"
   log "---------------------"
 
-  log "Encountered any issues with setup?\n If so, please open an issue @ https://github.com/rubyforgood/human-essentials/issues/new/choose", color: :red
+  log "Encountered any issues with setup?\nIf so, please open an issue @ https://github.com/rubyforgood/human-essentials/issues/new/choose", color: :red
 
   #
   # Validate that the ruby version requirement is met.
@@ -63,8 +63,8 @@ FileUtils.chdir APP_ROOT do
 
   log "== Preparing database =="
   log "⚠️  If you use docker to run postgres, make sure your database is running ⚠️"
-  system! 'bin/rails db:environment:set RAILS_ENV=development'
   system! 'bin/rails db:setup'
+  system! 'bin/rails db:test:prepare'
 
   log "== Removing old logs, tempfiles, and jobs =="
   system! 'bin/rails log:clear tmp:clear jobs:clear'
@@ -77,5 +77,6 @@ FileUtils.chdir APP_ROOT do
 
   log "---------------------"
   log "❤️  Done! Run bin/start to run the application locally at http://localhost:3000 ❤️"
+  log "[Note] It may take up to 5-10 seconds for the styles to compile, refresh after 10 seconds if the styles are looking unusual.", color: :red
   log "---------------------"
 end
