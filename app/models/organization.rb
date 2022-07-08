@@ -32,6 +32,8 @@ class Organization < ApplicationRecord
 
   include Deadlinable
 
+  resourcify
+
   validates :name, presence: true
   validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true

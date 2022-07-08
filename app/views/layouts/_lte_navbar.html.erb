@@ -1,4 +1,4 @@
-<% if current_user.super_admin? %>
+<% if current_user.has_role?(:super_admin) %>
 <li class="nav-item dropdown">
   <a class="nav-link" data-toggle="dropdown" href="#">
     <i class="fa fa-lock"></i> Administration
@@ -67,15 +67,12 @@
     <%= link_to edit_user_registration_path(organization_id: nil), class:"dropdown-item" do %>
     <i class="fa fa-cog text-aqua"></i> Account Settings
     <% end %>
-    <% if current_organization.id.present? &&
-        (current_user.super_admin? ||
-            (current_user.organization_admin? &&
-                current_organization.id == current_user.organization_id)) %>
-    <% with_options organization_id: current_user.organization.to_param do |with_org| %>
+    <% if current_organization.id.present? && OrganizationPolicy.new(current_user, current_organization).allowed? %>
+      <% with_options organization_id: current_user.organization.to_param do |with_org| %>
 
-    <div class="dropdown-divider"></div>
-    <%= link_to with_org.users_path, class:"dropdown-item" do %>
-    <i class="fas fa-users mr-2"></i> My Co-Workers
+      <div class="dropdown-divider"></div>
+      <%= link_to with_org.users_path, class:"dropdown-item" do %>
+      <i class="fas fa-users mr-2"></i> My Co-Workers
     <% end %>
     <div class="dropdown-divider"></div>
     <%= link_to with_org.organization_path, class:"dropdown-item" do %>

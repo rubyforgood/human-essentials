@@ -7,13 +7,7 @@ class StaticController < ApplicationController
   layout false
 
   def index
-    if current_user
-      if current_user.organization.present?
-        redirect_to dashboard_url(current_user.organization)
-      elsif current_user.super_admin?
-        redirect_to admin_dashboard_url if current_user.super_admin?
-      end
-    end
+    redirect_to dashboard_path_from_user
   end
 
   def register; end

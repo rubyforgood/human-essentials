@@ -88,6 +88,7 @@
 module Partners
   class Partner < Base
     self.table_name = "partner_profiles"
+    resourcify
 
     has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :partner
     has_many :users, dependent: :destroy

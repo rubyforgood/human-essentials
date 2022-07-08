@@ -15,8 +15,12 @@ gem "devise", '>= 4.7.1'
 gem "pg", "~> 1.3.5"
 # Web server.
 gem "puma"
+# Authorization library for user permissions.
+gem "pundit", "~> 2.0"
 # Rails web framework.
 gem "rails", "7.0.3"
+# Associates users with roles.
+gem "rolify", "~> 6.0"
 
 ###### MODELS / DATABASE #######
 

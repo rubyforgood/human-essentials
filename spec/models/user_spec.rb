@@ -31,6 +31,7 @@
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
 #  organization_id        :integer
+#  partner_id             :bigint
 #
 
 RSpec.describe User, type: :model do
@@ -108,9 +109,9 @@ RSpec.describe User, type: :model do
     end
 
     it "#kind" do
-      expect(build(:super_admin).kind).to eq("super")
-      expect(build(:organization_admin).kind).to eq("admin")
-      expect(build(:user).kind).to eq("normal")
+      expect(build(:super_admin).kind).to eq("super_admin")
+      expect(build(:organization_admin).kind).to eq("org_admin")
+      expect(build(:user).kind).to eq("bank")
     end
 
     it "#reinvitable?" do
