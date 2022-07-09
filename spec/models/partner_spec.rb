@@ -151,19 +151,35 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     end
   end
 
-  describe '#invite_new_partner' do
+  describe 'changing emails' do
     let(:partner) { create(:partner) }
 
-    it "should call the PartnerUser.invite! when the partner is changed" do
+    before do
       allow(PartnerUser).to receive(:invite!)
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
+    end
+
+    [:invited, :awaiting_review, :recertification_required, :approved].each do |test_status|
+      it "should call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+        partner.status = test_status
+        partner.email = "randomtest@email.com"
+        partner.save!
+        expect(PartnerUser).to have_received(:invite!).with(
+          {email: "randomtest@email.com", partner: partner.profile}
+        )
+      end
+    end
+
+    [:uninvited, :deactivated].each do |test_status|
+      it "should not call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+        partner.status = test_status
+        partner.email = "randomtest@email.com"
+        partner.save!
+        expect(PartnerUser).not_to have_received(:invite!).with(
+          {email: "randomtest@email.com", partner: partner.profile}
+        )
+      end
     end
   end
-
   describe '#profile' do
     subject { partner.profile }
     let(:partner) { create(:partner) }
