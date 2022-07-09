@@ -137,13 +137,13 @@ RSpec.describe Partner, type: :model, skip_seed: true do
       end
       context 'when it has a profile but no users' do
         it 'should return true' do
-          create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
           expect(partner.reload).to be_deletable
         end
       end
       context 'when it has a profile and users' do
         it 'should return false' do
-          partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          partners_partner = create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
           create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
           expect(partner.reload).not_to be_deletable
         end
@@ -169,7 +169,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     let(:partner) { create(:partner) }
 
     it 'should return the associated Partners::Partner record' do
-      expect(subject).to eq(Partners::Partner.find_by(diaper_partner_id: partner.id))
+      expect(subject).to eq(Partners::Partner.find_by(partner_id: partner.id))
     end
   end
 

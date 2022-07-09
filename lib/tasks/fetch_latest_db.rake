@@ -3,22 +3,21 @@ BACKUP_CONTAINER_NAME = 'backups'
 PASSWORD_REPLACEMENT = 'password'
 
 task :fetch_latest_db => :environment do
-  diaper_backup, partner_backup = fetch_latest_backups
+  if Rails.env.production?
+    raise "You may not run this backup script in production!"
+  end
+
+  backup = fetch_latest_backups
 
   puts "Recreating databases..."
-  system("rails db:drop db:create db:migrate")
+  system("RAILS_ENV=development rails db:drop:create:migrate")
 
-  puts "Restoring the diaper_dev database with #{diaper_backup.name}..."
-  diaper_backup_filepath = fetch_file_path(diaper_backup)
-  system("pg_restore --clean --no-acl --no-owner -h localhost -d diaper_dev #{diaper_backup_filepath}")
-  puts "Done! Next up is the partner database"
+  puts "Restoring the database with #{backup.name}"
+  backup_filepath = fetch_file_path(backup)
+  system("pg_restore --clean --no-acl --no-owner -h localhost -d diaper_dev #{backup_filepath}")
+  puts "Done!"
 
-  puts "Restoring the diaper_dev database with #{partner_backup.name}..."
-  partner_backup_filepath = fetch_file_path(partner_backup)
-  system("pg_restore --clean --no-acl --no-owner -h localhost -d partner_dev #{partner_backup_filepath}")
-  puts "Done and... done!"
-
-  puts "Replacing all the passwords with the replacement: '#{PASSWORD_REPLACEMENT}'"
+  puts "Replacing all the passwords with the replacement for ease of use: '#{PASSWORD_REPLACEMENT}'"
   replace_user_passwords
 
   puts "DONE!"
@@ -30,31 +29,25 @@ def fetch_latest_backups
   backups = blob_client.list_blobs(BACKUP_CONTAINER_NAME)
 
   #
-  # Retrieve the most up to date versions of the DB dump
+  # Retrieve the most up to date version of the DB dump
   #
-  latest_partner_backup = backups.select { |b| b.name.match?("partner.dump") }.sort do |a,b|
-    Time.parse(a.properties[:last_modified]) <=> Time.parse(b.properties[:last_modified])
-  end.reverse.first
-
-  latest_diaper_backup = backups.select { |b| b.name.match?("diaper.dump") }.sort do |a,b|
+  backup = backups.select { |b| b.name.match?("diaper.dump") }.sort do |a,b|
     Time.parse(a.properties[:last_modified]) <=> Time.parse(b.properties[:last_modified])
   end.reverse.first
 
   #
   # Download each of the backups onto the local disk in tmp
   #
-  [latest_diaper_backup, latest_partner_backup].each do |backup|
-    filepath = fetch_file_path(backup)
-    puts "\nDownloading blob #{backup.name} to #{filepath}"
-    blob, content = blob_client.get_blob(BACKUP_CONTAINER_NAME, backup.name)
-    File.open(filepath, "wb") { |f| f.write(content)  }
-  end
+  filepath = fetch_file_path(backup)
+  puts "\nDownloading blob #{backup.name} to #{filepath}"
+  blob, content = blob_client.get_blob(BACKUP_CONTAINER_NAME, backup.name)
+  File.open(filepath, "wb") { |f| f.write(content)  }
 
   #
   # At this point, the dumps should be stored on the local
   # machine of the user under tmp.
   #
-  return latest_diaper_backup, latest_partner_backup
+  return backup
 end
 
 def blob_client

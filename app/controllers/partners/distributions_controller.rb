@@ -7,10 +7,10 @@ module Partners
 
     def index
       @partner = current_partner
-      @distributions = ::Partner.find(@partner.diaper_partner_id)
+      @distributions = ::Partner.find(@partner.partner_id)
         .distributions.order(issued_at: :desc)
 
-      @parent_org = Organization.find(@partner.diaper_bank_id)
+      @parent_org = Organization.find(@partner.essentials_bank_id)
     end
 
     def print

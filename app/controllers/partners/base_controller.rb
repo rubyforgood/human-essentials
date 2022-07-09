@@ -17,7 +17,7 @@ module Partners
       current_partner_user.partner
     end
 
-    def verify_status_in_diaper_base
+    def verify_partner_is_active
       if current_partner.deactivated?
         flash[:alert] = 'Your account has been disabled, contact the organization via their email to reactivate'
         redirect_to partners_requests_path
