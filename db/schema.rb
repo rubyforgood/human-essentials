@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_22_224746) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_30_123838) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -250,7 +250,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_224746) do
     t.string "guardian_zip_code"
     t.string "guardian_county"
     t.string "guardian_phone"
-    t.string "agency_guardian_id"
+    t.string "case_manager"
     t.integer "home_adult_count"
     t.integer "home_child_count"
     t.integer "home_young_child_count"
