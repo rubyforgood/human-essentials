@@ -35,8 +35,8 @@
         (Link): <%= link_to partner_profile.proof_of_form_990.filename, rails_blob_path(partner_profile.proof_of_form_990, disposition: 'attachment') %>
     <% end %>
       </p>
-      <p>Program Name <%= partner_profile.program_name %></p>
-      <p>Program Description <%= partner_profile.program_description %></p>
+      <p>Program Name(s) <%= partner_profile.program_name %></p>
+      <p>Program Description(s) <%= partner_profile.program_description %></p>
       <p>Program Age <%= partner_profile.program_age %></p>
       <p>Case Management: <%= partner_profile.case_management %></p>
       <p>Evidence Based: <%= partner_profile.evidence_based %></p>
@@ -47,7 +47,7 @@
       <p>Currently Provide Diapers: <%= partner_profile.currently_provide_diapers %></p>
       <p>Turn Away Child Care: <%= partner_profile.turn_away_child_care %></p>
       <br>
-      <h3>Program Address</h3>
+      <h3>Program Address (if different)</h3>
       <p>Program Address: <%= partner_profile.program_address1 %></p>
       <p>Program Address: <%= partner_profile.program_address2 %></p>
       <p>Program City: <%= partner_profile.program_city %></p>
