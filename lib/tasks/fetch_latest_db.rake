@@ -10,12 +10,22 @@ task :fetch_latest_db => :environment do
   backup = fetch_latest_backups
 
   puts "Recreating databases..."
-  system("RAILS_ENV=development rails db:drop:create:migrate")
+  system("bin/rails db:environment:set RAILS_ENV=development")
+  system("rails db:drop db:create db:schema:load")
 
   puts "Restoring the database with #{backup.name}"
   backup_filepath = fetch_file_path(backup)
   system("pg_restore --clean --no-acl --no-owner -h localhost -d diaper_dev #{backup_filepath}")
   puts "Done!"
+
+  # Update the ar_internal_metadata table to have the correct environment
+  # This is needed because attempting to drop the development DB will
+  # raise a protected environment error.
+  system("bin/rails db:environment:set RAILS_ENV=development")
+
+  # Clear out the job queue so that you aren't running jobs in the local
+  # environment.
+  system("bin/rails jobs:clear")
 
   puts "Replacing all the passwords with the replacement for ease of use: '#{PASSWORD_REPLACEMENT}'"
   replace_user_passwords
