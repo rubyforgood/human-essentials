@@ -50,6 +50,7 @@ FileUtils.chdir APP_ROOT do
   log "== Installing dependencies =="
   system! "gem install foreman"
   system! "gem install bundler --conservative"
+  system!("bundle update --bundler --verbose")
   system!("bundle check") || system!("bundle install")
 
   # Install JavaScript dependencies if using Yarn
