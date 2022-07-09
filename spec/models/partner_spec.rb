@@ -154,62 +154,33 @@ RSpec.describe Partner, type: :model, skip_seed: true do
   describe 'changing emails' do
     let(:partner) { create(:partner) }
 
-    it "should not call the PartnerUser.invite! when the partner has status uninvited and the email is changed" do
+    before do
       allow(PartnerUser).to receive(:invite!)
-      partner.status = :uninvited
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).not_to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
     end
-    it "should not call the PartnerUser.invite! when the partner has status deactivated and the email is changed" do
-      allow(PartnerUser).to receive(:invite!)
-      partner.status = :uninvited
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).not_to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
-    end
-    it "should call the PartnerUser.invite! when the partner has status invited and the email is changed" do
-      allow(PartnerUser).to receive(:invite!)
-      partner.status = :invited
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
-    end
-    it "should call the PartnerUser.invite! when the partner has status awaiting_review and the email is changed" do
-      allow(PartnerUser).to receive(:invite!)
-      partner.status = :awaiting_review
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
-    end
-    it "should call the PartnerUser.invite! when the partner has status recertification_required and the email is changed" do
-      allow(PartnerUser).to receive(:invite!)
-      partner.status = :recertification_required
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
-    end
-    it "should call the PartnerUser.invite! when the partner has status approved and the email is changed" do
-      allow(PartnerUser).to receive(:invite!)
-      partner.status = :approved
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
-    end
-  end
 
+    [:invited, :awaiting_review,:recertification_required, :approved ].each do |test_status|
+      it "should call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+        partner.status = test_status
+        partner.email = "randomtest@email.com"
+        partner.save!
+        expect(PartnerUser).to have_received(:invite!).with(
+          {email: "randomtest@email.com", partner: partner.profile}
+        )
+      end
+    end
+
+    [:uninvited, :deactivated].each do |test_status|
+      it "should not call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+        partner.status = test_status
+        partner.email = "randomtest@email.com"
+        partner.save!
+        expect(PartnerUser).not_to have_received(:invite!).with(
+          {email: "randomtest@email.com", partner: partner.profile}
+        )
+      end
+    end
+
+  end
   describe '#profile' do
     subject { partner.profile }
     let(:partner) { create(:partner) }
