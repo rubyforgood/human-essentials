@@ -158,7 +158,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
       allow(PartnerUser).to receive(:invite!)
     end
 
-    [:invited, :awaiting_review,:recertification_required, :approved ].each do |test_status|
+    [:invited, :awaiting_review, :recertification_required, :approved].each do |test_status|
       it "should call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
         partner.status = test_status
         partner.email = "randomtest@email.com"
@@ -179,7 +179,6 @@ RSpec.describe Partner, type: :model, skip_seed: true do
         )
       end
     end
-
   end
   describe '#profile' do
     subject { partner.profile }
