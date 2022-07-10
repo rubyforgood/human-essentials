@@ -58,7 +58,7 @@
                   <h4 class='text-2xl underline'> Partner Status </h4>
                 </div>
                 <% if @partner.deactivated? %>
-                  <%= reactivate_button_to reactivate_partner_path(@partner), { confirm: confirm_reactivate_msg(partner.name), size: 'm' } %>
+                  <%= reactivate_button_to reactivate_partner_path(@partner), { confirm: confirm_reactivate_msg(@partner.name), size: 'm' } %>
                 <% else %>
                   <%= deactivate_button_to deactivate_partner_path(@partner), { text: "Deactivate Partner", confirm: confirm_deactivate_msg(@partner.name), size: 'm' } %>
                 <% end %>
