@@ -46,26 +46,29 @@ Use your best judgement of what to include or not to include. Ideally, aim to be
 
 ### Deploy To Production
 
+Now that you've cut the release, it is time to deploy it to production which is currently being hosted on Heroku.
+
+1. If you haven't set up the heroku remote yet, you must first add it:
 ```
-git push heroku x.y.z:HEAD -f
+git remote add heroku <HEROKU_GIT_URL>
 ```
 
-### **Optional** Smoke Test
-
+2. Push the release tag to production
+```
+git push heroku x.y.z:main -f
+```
 
 ### Notify our users about the update
+Once deployment is completed, you are now ready to notify our users on what has changed.
 
+1. Fetch the list of emails of banks by pulling down production via `rails fetch_latest_db` and run
+```
+emails = User.all.pluck(:email)
+puts "Email Address\n" + emails.join("\n") 
+```
 
-1. Cut the release
-
-2. Write up the changes
-
-3. Deploy to production
-
-4. Quick smoke test. Attempt to login.
-
-5. Send email out to bank users about the changes.
+2. Send a short email and include details from the release notes.
 
 ## What happens if we something goes wrong?
 
-Rollback changes!
+If you notice that something didn't work out, you are able to rollback. Navigate to the "Activity" tab of the project in heroku and click "Roll back to here" on the last deployment. If that doesn't work -- you should notify the rest of the release managers to get some assistance.
