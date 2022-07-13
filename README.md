@@ -1,7 +1,7 @@
 # Human Essentials
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-111-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-112-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
@@ -423,6 +423,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/bobmazanec"><img src="https://avatars.githubusercontent.com/u/2031462?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bob Mazanec</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=bobmazanec" title="Code">💻</a></td>
     <td align="center"><a href="https://www.linkedin.com/in/markcyen/"><img src="https://avatars.githubusercontent.com/u/77414433?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mark Yen</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=markcyen" title="Code">💻</a></td>
     <td align="center"><a href="https://twitch.tv/ChaelCodes"><img src="https://avatars.githubusercontent.com/u/8124558?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Rachael Wright-Munn</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=ChaelCodes" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/italomatos"><img src="https://avatars.githubusercontent.com/u/836472?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ítalo Matos</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=italomatos" title="Code">💻</a></td>
   </tr>
 </table>
 
