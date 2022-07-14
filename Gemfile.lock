@@ -293,7 +293,7 @@ GEM
     mime-types-data (3.2022.0105)
     mini_magick (4.11.0)
     mini_mime (1.1.2)
-    mini_racer (0.6.2)
+    mini_racer (0.6.1)
       libv8-node (~> 16.10.0.0)
     minitest (5.16.2)
     monetize (1.11.0)
@@ -476,6 +476,8 @@ GEM
       rspec-expectations (~> 3.10)
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
+    rspec-retry (0.6.2)
+      rspec-core (> 3.3)
     rspec-support (3.10.3)
     rubocop (1.23.0)
       parallel (~> 1.10)
@@ -664,6 +666,7 @@ DEPENDENCIES
   rails-erd
   recaptcha
   rspec-rails (~> 5.1.2)
+  rspec-retry
   rubocop
   rubocop-rails (~> 2.9.0)
   sass-rails
