@@ -66,7 +66,7 @@ jobs:
           yarn
           bundle exec rake db:create
           bundle exec rake db:schema:load
-          bundle exec rails webpacker:compile
+          bundle exec rails assets:precompile
       - name: Run rspec
         env:
           POSTGRES_HOST: localhost
