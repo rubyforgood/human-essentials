@@ -95,7 +95,7 @@ end
 # Create global var for use in
 # config.before(:each, type: :system)
 # below
-have_run_webpacker_for_specs = false
+# have_run_webpacker_for_specs = false
 
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
@@ -171,15 +171,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
-    unless have_run_webpacker_for_specs
-      Rails.logger.info "** Running webpack"
-
-      # Compile assets neccessary for browser tests to pass
-      `NODE_ENV=test bin/webpack`
-
-      have_run_webpacker_for_specs = true
-    end
-
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
