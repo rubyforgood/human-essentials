@@ -283,48 +283,6 @@ def seed_base_items_for_tests
   Rails.logger.info "~-=> Done creating Base Items!"
 end
 
-def __start_db_cleaning_with_log
-  Rails.logger.info "======> SISYPHUS, PUSH THAT BOULDER BACK UP THE HILL <========"
-  Rails.logger.info <<~ASCIIART
-        ,-'"""`-.
-      ,'         `.
-      /        `    \\
-    (    /          \)
-    |             " |
-    (               \)
-    `.\\\\          \\ /
-      `:.      , \\ ,\\ _
-    hh  `:-.___,-`-.{\\\)
-          `.         |/ \\
-            `.         \\ \\
-              `-.      _\\,|
-                `.   |,-||
-                  `..|| ||
-  ASCIIART
-
-  DatabaseCleaner.start
-end
-
-def __sweep_up_db_with_log
-  DatabaseCleaner.clean
-  Rails.logger.info "========= ONE MUST IMAGINE SISYPHUS HAPPY ===================="
-  Rails.logger.info <<~ASCIIART
-                  /             _
-        ,-'"""`-.    /         _ |
-      ,'         `.      ;    {\\\)|
-    /        `    \\   :. :   /\\ \\
-    (    /          | .     _/  \\ \\
-    |             " |;  .-``.   _\\,|
-    (               |.-`     `-|,-||
-    \\\\            /.`         ||.||
-      :.     ,   ,`               |.
-    amh  :-.___,-``
-            .`
-          .`
-      .-`
-  ASCIIART
-end
-
 def create_organization
   Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
   @organization = create(:organization, name: "DEFAULT", skip_items: true)
