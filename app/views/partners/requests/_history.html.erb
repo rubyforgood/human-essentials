@@ -22,17 +22,19 @@
                 <%= item.quantity %> <%= item.name%>
               </span>
             <% end %>
-            <button type="button" class="float-right w-28 text-blue-900 border-2 border-blue-900 rounded-sm py-1 px-2" id="more-button-<%= partner_request.id %>">
-              <i class="fas fa-caret-down mr-1 pointer-events-none"></i>
-              <%= partner_request.item_requests.count - 2 %> MORE
-            </button>
-            <ul class="absolute bg-white right-0 z-10 mt-10 lg:mt-2 py-2 px-4 shadow" id="requested-items-list-<%= partner_request.id %>">
-              <% partner_request.item_requests.drop(2).each.map do |item| %>
-                <li class="border-b last:border-b-0 py-2">
-                  <%= item.quantity %> <%= item.name %>
-                </li>
-              <% end %>
-            </ul>
+            <% if partner_request.item_requests.count > 2 %>
+              <button type="button" class="float-right w-28 text-blue-900 border-2 border-blue-900 rounded-sm py-1 px-2" id="more-button-<%= partner_request.id %>">
+                <i class="fas fa-caret-down mr-1 pointer-events-none"></i>
+                <%= partner_request.item_requests.count - 2 %> MORE
+              </button>
+              <ul class="absolute bg-white right-0 z-10 mt-10 lg:mt-2 py-2 px-4 shadow" id="requested-items-list-<%= partner_request.id %>">
+                <% partner_request.item_requests.drop(2).each.map do |item| %>
+                  <li class="border-b last:border-b-0 py-2">
+                    <%= item.quantity %> <%= item.name %>
+                  </li>
+                <% end %>
+              </ul>
+            <% end %>
           </td>
         </tr>
       <% end %>
@@ -43,7 +45,7 @@
 <script>
   const allMoreButtons = document.querySelectorAll('*[id^="more-button-"]');
   const allItemsLists = document.querySelectorAll('*[id^="requested-items-list-"]');
-  
+
   window.onload = () => {
     allItemsLists.forEach(list => {
       list.style.display = "none";
@@ -62,7 +64,7 @@
     button.addEventListener("click", event => {
       const elementId = event.target.id.replace("more-button-", "");
       const itemsList = document.getElementById(`requested-items-list-${elementId}`);
-    
+
       toggleList(itemsList);
     });
   });

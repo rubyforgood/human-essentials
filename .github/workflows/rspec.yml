@@ -55,9 +55,8 @@ jobs:
         env:
           POSTGRES_HOST: localhost
           DATABASE_HOST: localhost
-          POSTGRES_USER: postgres
-          DIAPER_DATABASE_PASSWORD: password
-          POSTGRES_PASSWORD: password
+          PG_USERNAME: postgres
+          PG_PASSWORD: password
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
           RAILS_ENV: test
@@ -66,14 +65,13 @@ jobs:
           yarn
           bundle exec rake db:create
           bundle exec rake db:schema:load
-          bundle exec rails webpacker:compile
+          bundle exec rails assets:precompile
       - name: Run rspec
         env:
           POSTGRES_HOST: localhost
           DATABASE_HOST: localhost
-          POSTGRES_USER: postgres
-          DIAPER_DATABASE_PASSWORD: password
-          POSTGRES_PASSWORD: password
+          PG_USERNAME: postgres
+          PG_PASSWORD: password
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
           PGHOST: localhost

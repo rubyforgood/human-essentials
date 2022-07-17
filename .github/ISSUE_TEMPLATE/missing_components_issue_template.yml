@@ -11,9 +11,11 @@ body:
 - type: markdown
   attributes:
     value: |
-      This issue is a child of Meta issue #2965: Evaluate template for missing components.
+      # Missing Components Issue Form
 
-      This issue identifies a page in the app which has a component that is **not** included in the [Mosaic](https://cruip.com/mosaic/) admin dashboard template.
+      **PLEASE NOTE!!** This issue template should only be used in conjunction with meta issue #2965 - Evaluate template for missing components.
+
+      This issue identifies a page in the app which has a component that is **NOT** included in the [Mosaic](https://cruip.com/mosaic/) admin dashboard template.
 - type: dropdown
   attributes:
     label: Which part of the app is this issue for?
@@ -28,9 +30,15 @@ body:
     label: Page
     description: The name of the view file or partial that this issue focuses on.
     placeholder: |
-      For a page: `audits/show.html.erb`
-      - OR -
-      For a partial: `partners/_table.html.erb` in `partners/index.html.erb`
+      `audits/show.html.erb` - OR - `partners/_table.html.erb`
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: URL
+    description: The link to the page on staging where this component renders.
+    placeholder: |
+      https://staging.humanessentials.app/admin/account_requests?organization_id=admin
   validations:
     required: true
 - type: textarea
@@ -55,3 +63,11 @@ body:
       Links? References? Anything that will give us more context about the missing components!
   validations:
     required: false
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Code of Conduct
+    description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/rubyforgood/human-essentials/blob/1f90a512824d8fae1951c7517cdcf491ca3218dc/code-of-conduct.md)
+    options:
+      - label: I've read the Code of Conduct and understand my responsibilities as a member of the Ruby for Good community
+        required: true
