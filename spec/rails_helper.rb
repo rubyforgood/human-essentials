@@ -92,11 +92,6 @@ def stub_addresses
   end
 end
 
-# Create global var for use in
-# config.before(:each, type: :system)
-# below
-# have_run_webpacker_for_specs = false
-
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
@@ -142,6 +137,11 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
+    unless File.exist?(Rails.root.join("public", "packs-task"))
+      Rails.logger.info "Detected missing webpack assets for testing. Running compilation step"
+      `NODE_ENV=test bin/webpack`
+    end
+
     Rails.logger.info <<~ASCIIART
       -~~==]}>        ######## ###########  ####      ########    ###########
       -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
