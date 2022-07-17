@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.3.5"
+gem "pg", "~> 1.4.1"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -32,7 +32,7 @@ gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
 # Enforces "safe" migrations.
-gem "strong_migrations", "0.8.0"
+gem "strong_migrations", "1.2.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -106,7 +106,7 @@ gem "jwt"
 gem "mini_racer", "~> 0.6.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.0.3"
+gem "sprockets", "~> 4.1.1"
 
 group :production do
   # Reduce the noise of logs and include custom fields to it for easier access

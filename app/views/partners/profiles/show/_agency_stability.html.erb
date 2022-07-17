@@ -16,10 +16,10 @@
         <dd>Form 990 not on file</dd>
       <% end %>
 
-      <dt>Program Name</dt>
+      <dt>Program Name(s)</dt>
       <dd><%= partner.program_name %></dd>
 
-      <dt>Program Description</dt>
+      <dt>Program Description(s)</dt>
       <dd><%= partner.program_description %></dd>
 
       <dt>Agency Age</dt>
@@ -38,10 +38,10 @@
       <dd><%= partner.program_client_improvement %></dd>
 
       <dt>How Are Essentials (e.g. diapers, period supplies) Used In Your Program?</dt>
-      <dd><%= partner.diaper_use %></dd>
+      <dd><%= partner.essentials_use %></dd>
 
       <dt>Do You Receive Essentials From Other Sources?</dt>
-      <dd><%= partner.other_diaper_use %></dd>
+      <dd><%= partner.receives_essentials_from_other %></dd>
 
       <dt>Current Providing Diapers</dt>
       <dd><%= humanize_boolean(partner.currently_provide_diapers) %></dd>
@@ -50,7 +50,7 @@
       <dd><%= humanize_boolean(partner.turn_away_child_care) %></dd>
 
       <address>
-        <strong>Program Address</strong> <br>
+        <strong>Program Address (if different)</strong> <br>
         <%= partner.program_address1 %> <br>
         <% unless partner.program_address2.blank? %>
           <%= partner.program_address2 %> <br>

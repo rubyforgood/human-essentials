@@ -41,8 +41,8 @@ module Partners
         :evidence_based,
         :evidence_based_description,
         :program_client_improvement,
-        :diaper_use,
-        :other_diaper_use,
+        :essentials_use,
+        :receives_essentials_from_other,
         :currently_provide_diapers,
         :turn_away_child_care,
         :program_address1,
@@ -91,8 +91,8 @@ module Partners
         :more_docs_required,
         :sources_of_funding,
         :sources_of_diapers,
-        :diaper_budget,
-        :diaper_funding_source,
+        :essentials_budget,
+        :essentials_funding_source,
         documents: []
       )
     end

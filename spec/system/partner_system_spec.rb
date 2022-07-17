@@ -226,6 +226,15 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
       end
 
+      context "when viewing a deactivated partner" do
+        let(:deactivated) { create(:partner, name: "Deactivated Partner", status: :deactivated) }
+        subject { url_prefix + "/partners/#{deactivated.id}" }
+        it 'allows reactivation ' do
+          visit subject
+          expect(page).to have_selector(:link_or_button, 'Reactivate')
+        end
+      end
+
       context "when exporting as CSV" do
         subject { url_prefix + "/partners/#{partner.id}" }
 

@@ -3,6 +3,7 @@
 # Table name: families
 #
 #  id                        :bigint           not null, primary key
+#  case_manager              :string
 #  comments                  :text
 #  guardian_county           :string
 #  guardian_employed         :boolean
@@ -20,7 +21,6 @@
 #  sources_of_income         :jsonb
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  agency_guardian_id        :string
 #  partner_id                :bigint
 #
 module Partners
@@ -42,7 +42,7 @@ module Partners
     )
 
     scope :search_guardian_names, ->(query) { where('guardian_first_name ilike ? OR guardian_last_name ilike ?', "%#{query}%", "%#{query}%") }
-    scope :search_agency_guardians, ->(query) { where('agency_guardian_id ilike ?', "%#{query}%") }
+    scope :search_agency_guardians, ->(query) { where('case_manager ilike ?', "%#{query}%") }
 
     INCOME_TYPES = ['SSI', 'SNAP/FOOD Stamps', 'TANF', 'WIC', 'Housing/subsidized', 'Housing/unsubsidized', 'N/A'].freeze
     INSURANCE_TYPES = ['Private insurance', 'Medicaid', 'Uninsured'].freeze
@@ -68,7 +68,7 @@ module Partners
     def self.csv_export_headers
       %w[
         id guardian_first_name guardian_last_name guardian_zip_code guardian_county
-        guardian_phone agency_guardian_id home_adult_count home_child_count home_young_child_count
+        guardian_phone case_manager home_adult_count home_child_count home_young_child_count
         sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
         guardian_health_insurance comments created_at updated_at partner_id military
       ].freeze
@@ -82,7 +82,7 @@ module Partners
         guardian_zip_code,
         guardian_county,
         guardian_phone,
-        agency_guardian_id,
+        case_manager,
         home_adult_count,
         home_child_count,
         home_young_child_count,

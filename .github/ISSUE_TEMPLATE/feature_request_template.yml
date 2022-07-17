@@ -1,7 +1,13 @@
-name: ✨ Feature
-description: Request a new feature
-title: "[Feat] <title>"
+name: ✨ Feature Request
+description: Suggest an idea for the app
+title: "[FEAT]: <title>"
 body:
+- type: markdown
+  attributes:
+    value: |
+      # Thank you for taking the time to help us improve the app!
+
+      ![red panda](https://github.com/rubyforgood/human-essentials/blob/main/public/img/red-panda.png)
 - type: checkboxes
   attributes:
     label: Is there an existing request for this feature?
@@ -9,6 +15,14 @@ body:
     options:
     - label: I have searched the existing issues
       required: true
+- type: textarea
+  attributes:
+    label: Is there a pain point in the app driving this feature request?
+    description: Describe any problems/annoyances you're experiencing in the app.
+    placeholder: |
+      When I click on this button, it always takes me back to the beginning instead of...
+  validations:
+    required: false
 - type: textarea
   attributes:
     label: Desired Behavior
@@ -29,8 +43,16 @@ body:
   attributes:
     label: Anything else?
     description: |
-      Links? References? Anything that will give us more context about the feature you are requesting!
+      Links? References? Anything that will give us more context about the feature you are requesting - propose your solutions here!
 
       Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
   validations:
     required: false
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Code of Conduct
+    description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/rubyforgood/human-essentials/blob/1f90a512824d8fae1951c7517cdcf491ca3218dc/code-of-conduct.md)
+    options:
+      - label: I've read the Code of Conduct and understand my responsibilities as a member of the Ruby for Good community
+        required: true

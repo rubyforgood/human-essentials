@@ -47,7 +47,7 @@ class Partner < ApplicationRecord
 
   validate :correct_document_mime_type
 
-  before_update :invite_new_partner, if: :email_changed?
+  before_update :invite_new_partner, if: :should_invite_because_email_changed?
 
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
@@ -80,7 +80,7 @@ class Partner < ApplicationRecord
   # the partnerbase DB and contains mostly profile data of
   # the partner user.
   def profile
-    @profile ||= ::Partners::Partner.find_by(diaper_partner_id: id)
+    @profile ||= ::Partners::Partner.find_by(partner_id: id)
   end
 
   #
@@ -170,5 +170,9 @@ class Partner < ApplicationRecord
 
   def invite_new_partner
     PartnerUser.invite!(email: email, partner: profile)
+  end
+
+  def should_invite_because_email_changed?
+    email_changed? and (invited? or awaiting_review? or recertification_required? or approved?)
   end
 end

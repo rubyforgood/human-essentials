@@ -137,13 +137,13 @@ RSpec.describe Partner, type: :model, skip_seed: true do
       end
       context 'when it has a profile but no users' do
         it 'should return true' do
-          create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
           expect(partner.reload).to be_deletable
         end
       end
       context 'when it has a profile and users' do
         it 'should return false' do
-          partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          partners_partner = create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
           create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
           expect(partner.reload).not_to be_deletable
         end
@@ -151,25 +151,41 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     end
   end
 
-  describe '#invite_new_partner' do
+  describe 'changing emails' do
     let(:partner) { create(:partner) }
 
-    it "should call the PartnerUser.invite! when the partner is changed" do
+    before do
       allow(PartnerUser).to receive(:invite!)
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
+    end
+
+    [:invited, :awaiting_review, :recertification_required, :approved].each do |test_status|
+      it "should call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+        partner.status = test_status
+        partner.email = "randomtest@email.com"
+        partner.save!
+        expect(PartnerUser).to have_received(:invite!).with(
+          {email: "randomtest@email.com", partner: partner.profile}
+        )
+      end
+    end
+
+    [:uninvited, :deactivated].each do |test_status|
+      it "should not call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+        partner.status = test_status
+        partner.email = "randomtest@email.com"
+        partner.save!
+        expect(PartnerUser).not_to have_received(:invite!).with(
+          {email: "randomtest@email.com", partner: partner.profile}
+        )
+      end
     end
   end
-
   describe '#profile' do
     subject { partner.profile }
     let(:partner) { create(:partner) }
 
     it 'should return the associated Partners::Partner record' do
-      expect(subject).to eq(Partners::Partner.find_by(diaper_partner_id: partner.id))
+      expect(subject).to eq(Partners::Partner.find_by(partner_id: partner.id))
     end
   end
 

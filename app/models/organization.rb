@@ -251,7 +251,7 @@ class Organization < ApplicationRecord
 
   def sync_visible_partner_form_sections
     partner_form = Partners::PartnerForm.where(
-      diaper_bank_id: id,
+      essentials_bank_id: id,
     ).first_or_create
 
     partner_form.update!(sections: partner_form_fields)

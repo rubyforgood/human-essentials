@@ -1017,6 +1017,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "italomatos",
+      "name": "Ítalo Matos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/836472?v=4",
+      "profile": "https://github.com/italomatos",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "heyapricot",
+      "name": "Alvaro Sanchez Diaz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14355495?v=4",
+      "profile": "https://github.com/heyapricot",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

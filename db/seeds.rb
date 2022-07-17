@@ -8,7 +8,6 @@ end
 
 # Activate all feature flags
 Flipper.enable(:onebase)
-Flipper.enable(:single_database)
 
 # ----------------------------------------------------------------------------
 # Random Record Generators
@@ -224,8 +223,8 @@ note = [
                                         zip_code: Faker::Address.zip,
                                         website: Faker::Internet.domain_name,
                                         zips_served: Faker::Address.zip,
-                                        diaper_bank_id: pdx_org.id,
-                                        diaper_partner_id: p.id,
+                                        essentials_bank_id: pdx_org.id,
+                                        partner_id: p.id,
                                         executive_director_name: Faker::Name.name,
                                         executive_director_email: p.email,
                                         executive_director_phone: Faker::PhoneNumber.phone_number,
@@ -273,7 +272,7 @@ note = [
       guardian_zip_code: Faker::Address.zip_code,
       guardian_county: Faker::Address.community, # Faker doesn't have county, this has same flavor, and isn't country
       guardian_phone: Faker::PhoneNumber.phone_number,
-      agency_guardian_id: Faker::Name.name,
+      case_manager: Faker::Name.name,
       home_adult_count: [1, 2, 3].sample,
       home_child_count: [0, 1, 2, 3, 4, 5].sample,
       home_young_child_count: [1, 2, 3, 4].sample,
@@ -301,13 +300,13 @@ note = [
     family.home_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: Faker::Name.first_name,
+        first_name: family.guardian_first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 5, max_age: 18),
         gender: Faker::Gender.binary_type,
         child_lives_with: Partners::Child::CAN_LIVE_WITH.sample(2),
         race: Partners::Child::RACES.sample,
-        agency_child_id: family.agency_guardian_id,
+        agency_child_id: family.case_manager + family.guardian_last_name + family.guardian_first_name,
         health_insurance: family.guardian_health_insurance,
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
@@ -319,13 +318,13 @@ note = [
     family.home_young_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: Faker::Name.first_name,
+        first_name: family.guardian_first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 0, max_age: 5),
         gender: Faker::Gender.binary_type,
         child_lives_with: Partners::Child::CAN_LIVE_WITH.sample(2),
         race: Partners::Child::RACES.sample,
-        agency_child_id: family.agency_guardian_id,
+        agency_child_id: family.case_manager + family.guardian_last_name + family.guardian_first_name,
         health_insurance: family.guardian_health_insurance,
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
