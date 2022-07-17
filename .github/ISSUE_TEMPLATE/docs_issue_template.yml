@@ -47,7 +47,7 @@ body:
     description: |
       Include anyone who may be relevant to the discussion by mentioning them via their GitHub user name.
     placeholder: |
-      `@meg-gutshall` do you have any thoughts here?
+      @meg-gutshall do you have any thoughts here?
   validations:
     required: false
 - type: checkboxes
