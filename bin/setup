@@ -1,72 +1,83 @@
 #!/usr/bin/env ruby
-require 'pathname'
-require 'fileutils'
-include FileUtils
 
-def detect_os
-  if `uname`.chomp == "Darwin"
-    'mac'
-  elsif `expr substr $(uname -s) 1 5`.chomp == "Linux"
-    'linux'
-  end
-end
-
-def install_pg_dev
-  case detect_os
-  when 'mac'
-    puts "Attempting Homebrew installation of 'libpq'; if you don't use Homebrew (https://brew.sh), look up how to install dependencies for 'pg' on MacOS"
-    system('brew install libpq') || system!('sudo brew install libpq')
-  when 'linux'
-    puts "Attempting Aptitude installation of 'libpq-dev'; if you don't use Aptitude, install the package using your package manager"
-    system!('sudo apt install libpq-dev')
-  else
-    abort "\nUnable to detect OS {install_pg_dev}\n"
-  end
-end
-
-def can_install_postgres?
-  puts "Checking if environment can install 'pg' gem..."
-  # This evaluates to false if it fails
-  system('gem install pg')
-end
-
-def ruby_version_ok?
-  expected_version = `cat .ruby-version`.chomp
-  current_version = `ruby -v`.chomp
-  current_version.include?(expected_version)
-end
+require "fileutils"
 
 # path to your application root.
-APP_ROOT = Pathname.new File.expand_path('../../', __FILE__)
+APP_ROOT = File.expand_path("..", __dir__)
 
 def system!(*args)
   system(*args) || abort("\n== Command #{args} failed ==")
 end
 
-chdir APP_ROOT do
-  # This script is a starting point to setup your application.
-  # Add necessary setup steps to this file.
+#
+# Prints the log message with a yellow color to distinguish logs
+# See more information here - https://stackoverflow.com/questions/1489183/how-can-i-use-ruby-to-colorize-the-text-output-to-a-terminal
+#
+def log(message, color: :yellow)
+  color_code = if color == :yellow
+                 "33"
+               elsif color == :red
+                 "31"
+               else
+                 "37"
+               end
 
-  puts '== Installing dependencies =='
-  system! 'gem install bundler --conservative'
-  install_pg_dev unless can_install_postgres?
-  system('bundle check') || system!('bundle install')
+  printf "\033[1;#{color_code}m";
+
+  puts "\n[ bin/setup ] #{message}"
+
+  printf "\033[0m"
+end
+
+
+FileUtils.chdir APP_ROOT do
+  log "---------------------"
+  log "❤️  Setup started... ❤️"
+  log "---------------------"
+
+  log "Encountered any issues with setup?\nIf so, please open an issue @ https://github.com/rubyforgood/human-essentials/issues/new/choose", color: :red
+
+  #
+  # Validate that the ruby version requirement is met.
+  #
+  expected_version = `cat .ruby-version`.chomp
+  current_version = `ruby -v`.chomp
+  unless current_version.include?(expected_version)
+    log "Ruby version must be #{expected_version}. You are on #{current_version}"
+    exit
+  end
+
+  log "== Installing dependencies =="
+  system! "gem install foreman"
+  system! "gem install bundler --conservative"
+  system!("bundle update --bundler --verbose")
+  system!("bundle check") || system!("bundle install")
 
   # Install JavaScript dependencies if using Yarn
-  puts 'Setting up yarn'
+  log '== Installing javascript dependencies via yarn == '
   system('bin/yarn')
 
-  # puts "\n== Copying sample files =="
-  # unless File.exist?('config/database.yml')
-  #   cp 'config/database.yml.sample', 'config/database.yml'
-  # end
+  unless File.exist?('.env')
+    log "== Setup .env file from .env.example =="
+    system!('cp .env.example .env')
+  end
 
-  puts "\n== Preparing database =="
+  log "== Preparing database =="
+  log "⚠️  If you use docker to run postgres, make sure your database is running ⚠️"
   system! 'bin/rails db:setup'
+  system! 'bin/rails db:test:prepare'
 
-  puts "\n== Removing old logs and tempfiles =="
-  system! 'bin/rails log:clear tmp:clear'
+  log "== Removing old logs, tempfiles, and jobs =="
+  system! 'bin/rails log:clear tmp:clear jobs:clear'
 
-  puts "\n== Restarting application server =="
+  log "== Restarting application server =="
   system! 'bin/rails restart'
+
+  log "== Precompiling assets =="
+  system! 'bin/rails assets:precompile'
+
+  log "---------------------"
+  log "❤️  Done! Run bin/start to run the application locally at http://localhost:3000 ❤️"
+  log "[Note] It may take up to 5-10 seconds for the styles to compile, refresh after 10 seconds if the styles are looking unusual.", color: :red
+  log "---------------------"
 end
