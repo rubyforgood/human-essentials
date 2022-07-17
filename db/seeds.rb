@@ -300,13 +300,13 @@ note = [
     family.home_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: Faker::Name.first_name,
+        first_name: family.guardian_first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 5, max_age: 18),
         gender: Faker::Gender.binary_type,
         child_lives_with: Partners::Child::CAN_LIVE_WITH.sample(2),
         race: Partners::Child::RACES.sample,
-        agency_child_id: family.case_manager + last_name + first_name,
+        agency_child_id: family.case_manager + family.guardian_last_name + family.guardian_first_name,
         health_insurance: family.guardian_health_insurance,
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
@@ -318,13 +318,13 @@ note = [
     family.home_young_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: Faker::Name.first_name,
+        first_name: family.guardian_first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 0, max_age: 5),
         gender: Faker::Gender.binary_type,
         child_lives_with: Partners::Child::CAN_LIVE_WITH.sample(2),
         race: Partners::Child::RACES.sample,
-        agency_child_id: family.case_manager + last_name + first_name,
+        agency_child_id: family.case_manager + family.guardian_last_name + family.guardian_first_name,
         health_insurance: family.guardian_health_insurance,
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
