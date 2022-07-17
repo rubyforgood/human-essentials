@@ -1,4 +1,6 @@
-# Human Essentials 
+# Human Essentials
+
+<!-- Does this change trigger a CI run? -->
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-114-orange.svg?style=flat-square)](#contributors-)
@@ -41,7 +43,7 @@ You will need to first install the required ruby version specified in the [`.rub
 
 
 It is highly recommended you use a ruby version manager such as:
-- [rbenv](https://github.com/rbenv/rbenv) 
+- [rbenv](https://github.com/rbenv/rbenv)
 - [asdf](https://asdf-vm.com/)
 - [rvm](https://rvm.io/)
 
@@ -130,11 +132,11 @@ Verified Partner
 Invited Partner
   Email: invited@pawneehomeless.com
   Password: password!
-  
+
 Unverified Partner
   Email: unverified@pawneepregnancy.com
   Password: password!
-  
+
 Recertification Required Partner
   Email: recertification_required@example.com
   Password: password!
@@ -288,7 +290,7 @@ We will now want to inform the stakeholders that we've recently made a deploymen
 1. Fetch all the emails of our users by accessing our human essentials production database
 ```ruby
 cap production rails:console
-emails = User.all.pluck(:email) 
+emails = User.all.pluck(:email)
 puts "Email Address\n" + emails.join("\n") # Copy this output
 ```
 2. Use the list of the emails copied from the output from the previous step to send a update audience via [Mailchimp](https://mailchimp.com/). Go to Audience > Manage Audience > Import Contacts and select "Copy and paste" option. Then paste the output of step 1. Complete the subsequent steps.
@@ -466,5 +468,3 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
-
