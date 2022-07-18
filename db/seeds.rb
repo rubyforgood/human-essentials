@@ -184,7 +184,7 @@ note = [
   },
   {
     name: "Pawnee Homeless Shelter",
-    email: "invited@pawneehomelss.com",
+    email: "invited@pawneehomeless.com",
     status: :invited,
     notes: note.sample
   },

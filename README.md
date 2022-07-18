@@ -129,7 +129,7 @@ Verified Partner
   Password: password!
 
 Invited Partner
-  Email: invited@pawneehomelss.com
+  Email: invited@pawneehomeless.com
   Password: password!
   
 Unverified Partner
