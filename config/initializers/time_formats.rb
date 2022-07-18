@@ -6,3 +6,7 @@
 #
 Time::DATE_FORMATS[:distribution_date_time] = "%B %-d %Y %-l:%M%P"
 Time::DATE_FORMATS[:distribution_date] = "%B %-d %Y"
+Time::DATE_FORMATS[:date_picker] = "%B %-d, %Y"
+
+DateTime::DATE_FORMATS[:date_picker] = "%B %-d, %Y"
+Date::DATE_FORMATS[:date_picker] = "%B %-d, %Y"
