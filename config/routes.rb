@@ -1,20 +1,3 @@
-def set_up_delayed_job
-  if Rails.env.production?
-    DelayedJobWeb.use Rack::Auth::Basic do |username, password|
-      ActiveSupport::SecurityUtils.variable_size_secure_compare(
-        ENV["DELAYED_JOB_USERNAME"],
-        username
-      ) &&
-        ActiveSupport::SecurityUtils.variable_size_secure_compare(
-          ENV["DELAYED_JOB_PASSWORD"],
-          password
-        )
-    end
-  end
-
-  match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
-end
-
 def set_up_flipper
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
@@ -32,7 +15,14 @@ Rails.application.routes.draw do
   devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
   resources :logins, only: [:new, :create], controller: "consolidated_logins"
 
-  set_up_delayed_job
+  #
+  # Mount web interface to see delayed job status and queue length.
+  # Visible only to logged in users with the `super_admin` flag set to true
+  #
+  authenticated :user, ->(user) { user.super_admin? } do
+    mount DelayedJobWeb, at: "/delayed_job"
+  end
+
   set_up_flipper
 
   # Add route partners/dashboard so that we can define it as partner_user_root
