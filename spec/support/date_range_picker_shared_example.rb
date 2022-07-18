@@ -1,7 +1,5 @@
-DATE_FORMAT = "%B %-d, %Y"
-
 def date_range_picker_params(start_date, end_date)
-  "#{start_date.strftime(DATE_FORMAT)} - #{end_date.strftime(DATE_FORMAT)}"
+  "#{start_date.to_formatted_s(:date_picker)} - #{end_date.to_formatted_s(:date_picker)}"
 end
 
 def date_range_picker_select_range(range_name)
@@ -36,7 +34,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
 
     it "shows all the records" do
       visit subject
-      date_range = "#{Time.zone.local(1919, 7, 1).strftime(DATE_FORMAT)} - #{Time.zone.local(2019, 7, 31).strftime(DATE_FORMAT)}"
+      date_range = "#{Time.zone.local(1919, 7, 1).to_formatted_s(:date_picker)} - #{Time.zone.local(2019, 7, 31).to_formatted_s(:date_picker)}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table tbody tr", count: 3)
@@ -58,7 +56,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     # The dates being set may or may not respect the time travelling.
     it "shows only 2 of the records" do
       visit subject
-      date_range = "#{Time.zone.local(2019, 7, 1).strftime(DATE_FORMAT)} - #{Time.zone.local(2019, 7, 31).strftime(DATE_FORMAT)}"
+      date_range = "#{Time.zone.local(2019, 7, 1).to_formatted_s(:date_picker)} - #{Time.zone.local(2019, 7, 31).to_formatted_s(:date_picker)}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table tbody tr", count: 2)
@@ -68,7 +66,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   context "when choosing a date range that only includes the previous week" do
     it "shows only 1 record" do
       visit subject
-      date_range = "#{Time.zone.local(2019, 7, 22).strftime(DATE_FORMAT)} - #{Time.zone.local(2019, 7, 28).strftime(DATE_FORMAT)}"
+      date_range = "#{Time.zone.local(2019, 7, 22).to_formatted_s(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_formatted_s(:date_picker)}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table tbody tr", count: 1)

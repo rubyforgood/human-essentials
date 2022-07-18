@@ -28,7 +28,11 @@ module DateRangeHelper
   end
 
   def selected_interval
-    date_range_params.split(" - ").map { |d| Date.strptime(d, "%B %d, %Y") }
+    date_range_params.split(" - ").map do |d|
+      Date.strptime(d, "%B %d, %Y")
+    rescue
+      raise "Invalid date: #{d} in #{date_range_params}"
+    end
   end
 
   def selected_range

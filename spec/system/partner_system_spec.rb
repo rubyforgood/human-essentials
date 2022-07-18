@@ -353,8 +353,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         subject { url_prefix + "/partners/#{partner.id}" }
         let(:partner) { create(:partner, name: "Partner") }
         let(:partner_user) { partner.profile.users.first }
-        let(:invitation_sent_at) { partner_user.invitation_sent_at.strftime('%B %-d, %Y') }
-        let(:last_sign_in_at) { partner_user.last_sign_in_at.strftime('%B %-d, %Y') }
+        let(:invitation_sent_at) { partner_user.invitation_sent_at.to_formatted_s(:date_picker) }
+        let(:last_sign_in_at) { partner_user.last_sign_in_at.to_formatted_s(:date_picker) }
 
         it 'can show users of a partner' do
           visit subject

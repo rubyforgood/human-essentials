@@ -1,7 +1,5 @@
 require 'ostruct'
 
-DATE_FORMAT = "%B %-d, %Y"
-
 RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
   context "With a new essentials bank" do
     before :each do
@@ -173,7 +171,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime DATE_FORMAT}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -290,7 +288,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime DATE_FORMAT}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -395,7 +393,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime DATE_FORMAT}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -517,7 +515,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime DATE_FORMAT}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -660,7 +658,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime DATE_FORMAT}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -686,11 +684,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               OpenStruct.new name: name, partner: create(:partner, name: name, organization: @organization)
             end
 
-            def create_next_product_drive_distribution(distribution_date:)
+            def create_next_product_drive_distribution(date_picker:)
               quantity_in_distribution = @item_quantity.next
               partner = @partners.sample
 
-              create :distribution, :with_items, partner: partner.partner, issued_at: distribution_date, item_quantity: quantity_in_distribution, storage_location: storage_location, organization: @organization
+              create :distribution, :with_items, partner: partner.partner, issued_at: date_picker, item_quantity: quantity_in_distribution, storage_location: storage_location, organization: @organization
 
               OpenStruct.new partner_name: partner.name, quantity: quantity_in_distribution
             end
@@ -700,11 +698,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             # days_this_year.sample(num_distributions_in_filtered_period).each
             # because Array#sample(n) on an Array with m<n elements returns only m elements
             @distributions_in_filtered_date_range = num_distributions_in_filtered_period.times.map do
-              create_next_product_drive_distribution distribution_date: filtered_dates.sample
+              create_next_product_drive_distribution date_picker: filtered_dates.sample
             end
 
             # create Distributions before & after the filtered date range
-            [before_filtered_date_range, after_filtered_date_range].each { create_next_product_drive_distribution distribution_date: _1 }
+            [before_filtered_date_range, after_filtered_date_range].each { create_next_product_drive_distribution date_picker: _1 }
           end
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
