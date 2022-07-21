@@ -127,7 +127,7 @@ class AddPartnerTables < ActiveRecord::Migration[7.0]
         t.text "evidence_based_description"
         t.text "program_client_improvement"
         t.string "diaper_use"
-        t.string "receives_essentials_from_other"
+        t.string "other_diaper_use"
         t.boolean "currently_provide_diapers"
         t.boolean "turn_away_child_care"
         t.string "program_address1"
