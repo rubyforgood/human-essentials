@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_30_123838) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_22_215911) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -510,6 +510,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_30_123838) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "other_agency_type"
     t.string "status_in_diaper_base"
+    t.string "client_capacity"
+    t.string "primary_contact_name"
+    t.string "primary_contact_phone"
+    t.string "primary_contact_mobile"
+    t.string "primary_contact_email"
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 

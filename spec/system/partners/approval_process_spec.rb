@@ -35,7 +35,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true, skip_se
           fill_in 'Executive Director Name', with: 'Lorem'
           fill_in 'Executive Director Phone', with: '8889990000'
           fill_in 'Executive Director Email', with: 'lorem@example.com'
-          fill_in 'Program Contact Phone', with: '8889990000'
+          fill_in 'Primary Contact Phone', with: '8889990000'
 
           click_on 'Update Information'
           assert page.has_content? 'Details were successfully updated.'

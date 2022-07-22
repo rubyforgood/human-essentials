@@ -13,6 +13,7 @@
 #  at_fpl_or_below                :integer
 #  case_management                :boolean
 #  city                           :string
+#  client_capacity                :string
 #  currently_provide_diapers      :boolean
 #  describe_storage_space         :text
 #  distribution_times             :string
@@ -53,6 +54,10 @@
 #  population_other               :integer
 #  population_white               :integer
 #  poverty_unknown                :integer
+#  primary_contact_email          :string
+#  primary_contact_mobile         :string
+#  primary_contact_name           :string
+#  primary_contact_phone          :string
 #  program_address1               :string
 #  program_address2               :string
 #  program_age                    :string

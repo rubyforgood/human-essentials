@@ -235,9 +235,9 @@ RSpec.describe Partner, type: :model, skip_seed: true do
 
     before do
       partner.profile.update({
-                               program_contact_name: contact_name,
-                               program_contact_email: contact_email,
-                               program_contact_phone: contact_phone
+                               primary_contact_name: contact_name,
+                               primary_contact_email: contact_email,
+                               primary_contact_phone: contact_phone
                              })
     end
 

@@ -101,18 +101,18 @@
                 <div>
                   <h4 class='text-2xl underline'> Program Manager </h4>
                   <div>
-                    <label>Name:</label> <%= optional_data_text(@partner.profile.program_contact_name) %>
+                    <label>Name:</label> <%= optional_data_text(@partner.profile.primary_contact_name) %>
                   </div>
                   <div>
-                    <label>Email:</label> <%= optional_data_text(@partner.profile.program_contact_email) %>
+                    <label>Email:</label> <%= optional_data_text(@partner.profile.primary_contact_email) %>
                   </div>
                   <div>
-                    <label>Phone:</label> <%= optional_data_text(@partner.profile.program_contact_phone) %>
+                    <label>Phone:</label> <%= optional_data_text(@partner.profile.primary_contact_phone) %>
                   </div>
                   <div>
                     <% # NOTE! The reason why the Mobile field appears for Program Manager and not the others is %>
                     <% # because the existing table doesn't have the mobile field for the others %>
-                    <label>Mobile:</label> <%= optional_data_text(@partner.profile.program_contact_mobile) %>
+                    <label>Mobile:</label> <%= optional_data_text(@partner.profile.primary_contact_mobile) %>
                   </div>
                 </div>
               </div>
