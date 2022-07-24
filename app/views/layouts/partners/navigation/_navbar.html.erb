@@ -14,15 +14,21 @@
       <i class="fa fa-users mr-2"></i> My Co-Workers
     <% end %>
 
-      <div class="dropdown-divider"></div>
-     <li id="help", class="nav-item dropdown">
-       <%= link_to 'Need Help?', partners_help_path, class: 'nav-link bg-yellow-400 mx-2 font-bold rounded-2xl' %>
-     </li>
-
+    <div class="dropdown-divider"></div>
+    <% if current_user.organization.present? %>
+      <%= link_to switch_to_bank_role_partners_users_path, class:"dropdown-item" do %>
+        <i class="fa fa-repeat text-aqua"></i> Switch To Bank Role
+      <% end %>
+    <% end %>
 
     <div class="dropdown-divider"></div>
-    <%= link_to destroy_partner_user_session_path, method: :delete, class: "dropdown-item" do %>
+    <%= link_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>
       <i class="fa fa-sign-out fa-lg"></i> Logout
     <% end %>
+
   </div>
+
+   <li id="help" class="nav-item dropdown">
+     <%= link_to 'Need Help?', partners_help_path, class: 'nav-link bg-yellow-400 mx-2 font-bold rounded-2xl' %>
+   </li>
 </li>

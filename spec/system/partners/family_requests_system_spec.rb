@@ -6,7 +6,7 @@ RSpec.describe "Family requests", type: :system, js: true do
 
   before do
     partner.profile.update(partner_status: :verified)
-    login_as(partner_user, scope: :partner_user)
+    login_as(partner_user)
   end
 
   describe "for children with different items, from different families" do

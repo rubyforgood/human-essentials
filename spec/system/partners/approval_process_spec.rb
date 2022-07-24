@@ -5,7 +5,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true, skip_se
 
     context 'GIVEN a partner user is new and wants to request approval' do
       before do
-        login_as(partner_user, scope: :partner_user)
+        login_as(partner_user)
         visit partner_user_root_path
       end
 

@@ -6,7 +6,7 @@ RSpec.describe "Partner Distributions", type: :system, js: true, skip_seed: true
     let!(:partner) { FactoryBot.create(:partner) }
 
     before do
-      login_as(partner_user, scope: :partner_user)
+      login_as(partner_user)
     end
 
     it "displays upcoming distributions" do
