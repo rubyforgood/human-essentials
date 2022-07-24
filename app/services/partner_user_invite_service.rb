@@ -8,7 +8,7 @@ class PartnerUserInviteService
 
   def call
     if existing_partner_user.present?
-      partner_user.invite!
+      existing_partner_user.invite!
     else
       PartnerUser.invite!(email: email, partner: partner.profile)
     end

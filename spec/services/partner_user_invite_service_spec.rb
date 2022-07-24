@@ -8,7 +8,7 @@ describe PartnerUserInviteService, skip_seed: true do
   describe "#call" do
     subject { described_class.new(partner: partner, email: email).call }
 
-    context "when partner user exist in database" do
+    context "when the partner user exist in database" do
       before do
         allow(PartnerUser).to receive(:find_by).with(email: email, partner: partner.profile).and_return(partner_user)
       end
@@ -19,7 +19,7 @@ describe PartnerUserInviteService, skip_seed: true do
       end
     end
 
-    context "when partner user doesnt exist in database" do
+    context "when the partner user doesnt exist in database" do
       before do
         allow(PartnerUser).to receive(:invite!)
         allow(PartnerUser).to receive(:find_by).with(email: email, partner: partner.profile)

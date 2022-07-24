@@ -296,11 +296,12 @@ RSpec.describe "Partners", type: :request do
       end
     end
 
-    context 'when there is error in invite' do
+    context 'when there is an error in invite' do
       let(:error_message) { 'Error message' }
       before do
         allow(PartnerUserInviteService).to receive(:new).and_raise(StandardError.new(error_message))
       end
+
       it 'redirect to partner url with error message' do
         subject.call
         expect(response).to redirect_to(partner_path(partner))
