@@ -101,6 +101,21 @@ module Partners
     has_one_attached :proof_of_form_990
     has_many_attached :documents
 
+    # TODO [7/23/2022] - check to see if the following fields should still be ignored
+    self.ignored_columns = %w[
+      evidence_based_description
+      program_client_improvement
+      incorporate_plan
+      turn_away_child_care
+      responsible_staff_position
+      trusted_pickup
+      serve_income_circumstances
+      internal_db
+      maac
+      pick_up_method
+      ages_served
+    ]
+
     VERIFIED_STATUS = 'verified'.freeze
     RECERTIFICATION_REQUESTED_STATUS = 'recertification_required'.freeze
     DEACTIVATED_STATUS = "deactivated".freeze

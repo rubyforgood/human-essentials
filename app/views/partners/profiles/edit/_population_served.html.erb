@@ -3,19 +3,13 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header bg-white">
+          <div class="bg-white card-header">
             <h3 class="card-title"><strong>Population Served</strong></h3>
           </div>
           <div class="card-body">
             <%= form.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
                            as: :boolean, class: "form-control", wrapper: :input_group %>
-            <%= form.input :serve_income_circumstances,label: "Serve Income Circumstances",
-                           as: :boolean, class: "form-control", wrapper: :input_group %>
             <%= form.input :income_verification,label: "Do You Verify The Income Of Your Clients?",
-                           as: :boolean, class: "form-control", wrapper: :input_group %>
-            <%= form.input :internal_db,label: "Do you maintain an internal database?",
-                           as: :boolean, class: "form-control", wrapper: :input_group %>
-            <%= form.input :maac,label: "Are you a MAAC Program Participant?",
                            as: :boolean, class: "form-control", wrapper: :input_group %>
           </div>
         </div>
@@ -29,7 +23,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header bg-white">
+          <div class="bg-white card-header">
             <h3 class="card-title"><strong>Ethnic Composition of Those Served</strong></h3>
           </div>
           <div class="card-body">
@@ -50,7 +44,7 @@
             <%= form.input :population_other, label: "% Other", as: :integer,
                            class: "form-control", wrapper: :input_group %>
             <%= form.input :zips_served, label: "Zip Codes Served", class: "form-control", wrapper: :input_group %>
-            <h3 class="font-weight-bold pt-3">Poverty Information of Those Served</h3>
+            <h3 class="pt-3 font-weight-bold">Poverty Information of Those Served</h3>
             <%= form.input :at_fpl_or_below, label: "% At FPL or Below", as: :integer,
                            class: "form-control", wrapper: :input_group %>
             <%= form.input :above_1_2_times_fpl, label: "% Above 1-2 times FPL", as: :integer,
@@ -59,7 +53,6 @@
                            class: "form-control", wrapper: :input_group %>
             <%= form.input :poverty_unknown, label: "% Poverty Unknown", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :ages_served, label: "Ages Served", class: "form-control", wrapper: :input_group %>
           </div>
         </div>
       </div>
