@@ -9,7 +9,7 @@ module Partners
     end
 
     def create
-      user = PartnerUser.invite!(
+      user = ::User.invite!(
         email: user_params[:email],
         name: user_params[:name],
         partner: current_partner,
@@ -22,7 +22,7 @@ module Partners
     private
 
     def user_params
-      params.require(:partners_user).permit(:name, :email)
+      params.require(:user).permit(:name, :email)
     end
   end
 end

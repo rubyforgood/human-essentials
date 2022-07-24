@@ -23,7 +23,7 @@
     </a>
 
     <ul class="navbar-nav ml-auto">
-      <% if partner_user_signed_in?  %>
+      <% if user_signed_in?  %>
         <%= render partial: "layouts/partners/navigation/navbar" %>
       <% end %>
     </ul>
@@ -40,7 +40,7 @@
     <div class="sidebar">
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <% if partner_user_signed_in? %>
+          <% if user_signed_in? %>
             <%= render partial: "layouts/partners/navigation/sidebar" %>
           <% end %>
         </ul>

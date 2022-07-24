@@ -14,7 +14,7 @@ class RequestsController < ApplicationController
     @items = current_organization.items.alphabetized
     @partners = current_organization.partners.order(:name)
     @statuses = Request.statuses.transform_keys(&:humanize)
-    @partner_users = Partners::User.where(id: @paginated_requests.pluck(:partner_user_id))
+    @partner_users = User.where(id: @paginated_requests.pluck(:partner_user_id))
     @selected_request_item = filter_params[:by_request_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_status]
