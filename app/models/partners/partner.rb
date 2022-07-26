@@ -35,7 +35,6 @@
 #  incorporate_plan               :text
 #  internal_db                    :boolean
 #  maac                           :boolean
-#  max_serve                      :string
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
@@ -63,10 +62,6 @@
 #  program_age                    :string
 #  program_city                   :string
 #  program_client_improvement     :text
-#  program_contact_email          :string
-#  program_contact_mobile         :string
-#  program_contact_name           :string
-#  program_contact_phone          :string
 #  program_description            :text
 #  program_name                   :string
 #  program_state                  :string
