@@ -277,6 +277,39 @@ RSpec.describe "Partners", type: :request do
     end
   end
 
+  describe "POST #invite_partner_user" do
+    subject { -> { post invite_partner_user_partner_path(default_params.merge(id: partner.id, partner: partner.id, email: email)) } }
+    let(:partner) { create(:partner, organization: @organization) }
+    let(:email) { Faker::Internet.email }
+    let(:fake_partner_user_invite_service) { instance_double(PartnerUserInviteService, call: -> {}) }
+
+    before do
+      allow(PartnerUserInviteService).to receive(:new).with(partner: partner, email: email).and_return(fake_partner_user_invite_service)
+    end
+
+    context 'when the invite successfully' do
+      it "send the invite" do
+        subject.call
+        expect(fake_partner_user_invite_service).to have_received(:call)
+        expect(response).to redirect_to(partner_path(partner))
+        expect(flash[:notice]).to eq("We have invited #{email} to #{partner.name}!")
+      end
+    end
+
+    context 'when there is an error in invite' do
+      let(:error_message) { 'Error message' }
+      before do
+        allow(PartnerUserInviteService).to receive(:new).and_raise(StandardError.new(error_message))
+      end
+
+      it 'redirect to partner url with error message' do
+        subject.call
+        expect(response).to redirect_to(partner_path(partner))
+        expect(flash[:error]).to eq("Failed to invite #{email} to #{partner.name} due to: #{error_message}")
+      end
+    end
+  end
+
   describe "PUT #deactivate" do
     let(:partner) { create(:partner, organization: @organization, status: "approved") }
 
