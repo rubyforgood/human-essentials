@@ -101,7 +101,6 @@ module Partners
     has_one_attached :proof_of_form_990
     has_many_attached :documents
 
-    # TODO [7/23/2022] - check to see if the following fields should still be ignored
     self.ignored_columns = %w[
       evidence_based_description
       program_client_improvement
