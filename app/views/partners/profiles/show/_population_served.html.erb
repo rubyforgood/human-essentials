@@ -1,21 +1,12 @@
-<div class="card mb-4">
-  <h5 class="card-header bg-primary text-white">Population Served</h5>
+<div class="mb-4 card">
+  <h5 class="text-white card-header bg-primary">Population Served</h5>
   <div class="card-body">
     <dl>
       <dt>Clients Have An Income Requirement to Work With You</dt>
       <dd><%= humanize_boolean(partner.income_requirement_desc) %></dd>
 
-      <dt>Serve Income Circumstances</dt>
-      <dd><%= humanize_boolean(partner.serve_income_circumstances) %></dd>
-
       <dt>Do You Verify The Income Of Your Clients</dt>
       <dd><%= humanize_boolean(partner.income_verification) %></dd>
-
-      <dt>Internal DB</dt>
-      <dd><%= humanize_boolean(partner.internal_db) %></dd>
-
-      <dt>MAAC Program Participant</dt>
-      <dd><%= humanize_boolean(partner.maac) %></dd>
 
       <h6>Ethnic Composition of Those Served</h6>
       <dt>African American</dt>
@@ -57,10 +48,6 @@
 
       <dt>Poverty Unknown</dt>
       <dd><%= partner.poverty_unknown || t(:not_provided) %></dd>
-
-      <h6>Ages Served</h6>
-      <dt>Ages</dt>
-      <dd><%= partner.ages_served || t(:not_provided) %></dd>
     </dl>
   </div>
 </div>
