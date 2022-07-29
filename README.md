@@ -1,7 +1,7 @@
 # Human Essentials 
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-113-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-114-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
@@ -456,6 +456,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/heyapricot"><img src="https://avatars.githubusercontent.com/u/14355495?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alvaro Sanchez Diaz</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=heyapricot" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mbrundige"><img src="https://avatars.githubusercontent.com/u/16763501?v=4?s=100" width="100px;" alt=""/><br /><sub><b>mbrundige</b></sub></a><br /><a href="https://github.com/rubyforgood/human-essentials/commits?author=mbrundige" title="Code">💻</a></td>
   </tr>
 </table>
 
