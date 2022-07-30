@@ -62,6 +62,13 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     end
   end
 
+  context "callbacks" do
+    it "properly downcases email" do
+      partner = create(:partner, name: "Foo", email: "Foo@example.com")
+      expect(partner.email).to eq("foo@example.com")
+    end
+  end
+
   describe "Filters" do
     describe "by_status" do
       it "yields partners with the provided status" do
