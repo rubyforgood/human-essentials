@@ -67,6 +67,11 @@
     <%= link_to edit_user_registration_path(organization_id: nil), class:"dropdown-item" do %>
     <i class="fa fa-cog text-aqua"></i> Account Settings
     <% end %>
+    <% if current_user.partner.present? %>
+      <%= link_to switch_to_partner_role_users_path, class:"dropdown-item" do %>
+        <i class="fa fa-repeat text-aqua"></i> Switch To Partner Role
+      <% end %>
+    <% end %>
     <% if current_organization.id.present? &&
         (current_user.super_admin? ||
             (current_user.organization_admin? &&

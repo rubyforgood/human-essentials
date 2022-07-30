@@ -40,7 +40,7 @@ RSpec.describe "/partners/children", type: :request do
 
   describe "GET #index" do
     before do
-      sign_in(partner_user, scope: :partner_user)
+      sign_in(partner_user)
     end
 
     it "should render without any issues" do

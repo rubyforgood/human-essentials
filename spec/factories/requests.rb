@@ -27,7 +27,7 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     request_items { random_request_items }
     comments { "Urgent" }
-    partner_user { Partners::User.try(:first) || create(:partners_user) }
+    partner_user { ::User.partner_users.first || create(:partners_user) }
   end
 
   trait :started do

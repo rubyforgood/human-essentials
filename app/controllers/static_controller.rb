@@ -10,6 +10,8 @@ class StaticController < ApplicationController
     if current_user
       if current_user.organization.present?
         redirect_to dashboard_url(current_user.organization)
+      elsif current_user.partner.present?
+        redirect_to partners_dashboard_path
       elsif current_user.super_admin?
         redirect_to admin_dashboard_url if current_user.super_admin?
       end

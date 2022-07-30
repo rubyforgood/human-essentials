@@ -5,7 +5,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
     context 'GIVEN a partner user is permitted to make a request' do
       before do
-        login_as(partner_user, scope: :partner_user)
+        login_as(partner_user)
         visit new_partners_individuals_request_path
       end
 
@@ -77,7 +77,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
     context 'GIVEN a partner user is permitted to make a request' do
       before do
-        login_as(partner_user, scope: :partner_user)
+        login_as(partner_user)
         visit new_partners_request_path
       end
 

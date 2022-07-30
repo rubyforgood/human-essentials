@@ -14,6 +14,16 @@ RSpec.describe "Dashboard", type: :request, skip_seed: true do
       it "returns http success" do
         get dashboard_path(default_params)
         expect(response).to be_successful
+        expect(response.body).not_to include('switch_to_partner_role')
+      end
+
+      context 'with both roles' do
+        it 'should include the switch link' do
+          partner = FactoryBot.create(:partners_partner)
+          @user.update!(partner_id: partner.id)
+          get dashboard_path(default_params)
+          expect(response.body).to include('switch_to_partner_role')
+        end
       end
 
       context "for another org" do

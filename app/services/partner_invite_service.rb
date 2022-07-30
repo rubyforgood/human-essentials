@@ -9,7 +9,7 @@ class PartnerInviteService
     return self unless valid?
 
     partner.update!(status: 'invited')
-    PartnerUser.invite!(email: partner.email, partner: partner.profile)
+    User.invite!(email: partner.email, partner: partner.profile)
   end
 
   private
