@@ -140,7 +140,7 @@
               <%= download_button_to(itemized_breakdown_distributions_path(format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
             </div>
             
-            <%= render partial: "itemized_partial" %>
+            <%= render partial: "itemized_distributions_partial", locals: { itemized_breakdown: @itemized_distribution_data } %>
           </div>
         </div>
 
@@ -313,7 +313,7 @@
             </div>
           </div>
           <div class="box-body table-responsive no-padding">
-            <%= render partial: "itemized_partial", object: @donations, as: :item_to_itemize %>
+            <%= render partial: "itemized_donations_partial", locals: { itemized_breakdown: @itemized_donation_data } %>
           </div>
         </div>
 
