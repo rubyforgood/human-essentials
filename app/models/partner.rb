@@ -147,10 +147,10 @@ class Partner < ApplicationRecord
     return {} if profile.blank?
 
     @contact_person = {
-      name: profile.program_contact_name,
-      email: profile.program_contact_email,
-      phone: profile.program_contact_phone ||
-             profile.program_contact_mobile
+      name: profile.primary_contact_name,
+      email: profile.primary_contact_email,
+      phone: profile.primary_contact_phone ||
+             profile.primary_contact_mobile
     }
   end
 
