@@ -51,7 +51,6 @@ dump.rdb
 /spec/example_failures.txt
 
 # Ignore Docker stuff (see issues #503, #603)
-Dockerfile
 docker-compose.yml
 /public/packs
 /public/packs-test
