@@ -47,6 +47,7 @@ class Partner < ApplicationRecord
 
   validate :correct_document_mime_type
 
+  before_save { email&.downcase! }
   before_update :invite_new_partner, if: :should_invite_because_email_changed?
 
   scope :for_csv_export, ->(organization, *) {
