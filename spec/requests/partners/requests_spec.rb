@@ -7,7 +7,7 @@ RSpec.describe "/partners/requests", type: :request do
     let(:partner) { create(:partner) }
 
     before do
-      sign_in(partner_user, scope: :partner_user)
+      sign_in(partner_user)
     end
 
     it 'should render without any issues' do
@@ -22,7 +22,7 @@ RSpec.describe "/partners/requests", type: :request do
     let(:partner) { create(:partner) }
 
     before do
-      sign_in(partner_user, scope: :partner_user)
+      sign_in(partner_user)
     end
 
     it 'should render without any issues' do
@@ -55,7 +55,7 @@ RSpec.describe "/partners/requests", type: :request do
     let(:partner) { create(:partner) }
 
     before do
-      sign_in(partner_user, scope: :partner_user)
+      sign_in(partner_user)
     end
 
     context 'when given valid parameters' do

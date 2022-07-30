@@ -4,7 +4,7 @@ RSpec.describe "Help", type: :system, skip_seed: true do
 
   before do
     partner.profile.update(partner_status: :verified)
-    login_as(partner_user, scope: :partner_user)
+    login_as(partner_user)
   end
 
   describe "for partner users" do

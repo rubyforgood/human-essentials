@@ -239,7 +239,7 @@ note = [
                                         status_in_diaper_base: partner_option[:status]
                                       })
 
-  Partners::User.create!(
+  ::User.create!(
     name: Faker::Name.name,
     password: "password!",
     password_confirmation: "password!",
@@ -249,7 +249,7 @@ note = [
     last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
   )
 
-  Partners::User.create!(
+  ::User.create!(
     name: Faker::Name.name,
     password: "password!",
     password_confirmation: "password!",
@@ -595,7 +595,20 @@ end
 # ----------------------------------------------------------------------------
 
 # Create some Vendors so Purchases can have vendor_ids
-5.times do
+Vendor.create(
+  contact_name: Faker::FunnyName.two_word_name,
+  email: Faker::Internet.email,
+  phone: Faker::PhoneNumber.cell_phone,
+  comment: Faker::Lorem.paragraph(sentence_count: 2),
+  organization_id: pdx_org.id,
+  address: "#{Faker::Address.street_address} #{Faker::Address.city}, #{Faker::Address.state_abbr} #{Faker::Address.zip_code}",
+  business_name: Faker::Company.name,
+  latitude: rand(-90.000000000...90.000000000),
+  longitude: rand(-180.000000000...180.000000000),
+  created_at: (Time.zone.today - rand(15).days),
+  updated_at: (Time.zone.today - rand(15).days),
+)
+4.times do
   Vendor.create(
     contact_name: Faker::FunnyName.two_word_name,
     email: Faker::Internet.email,
