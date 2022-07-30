@@ -84,7 +84,7 @@ class Partner < ApplicationRecord
   end
 
   #
-  # Returns the primary Partners::User record which is the
+  # Returns the primary User record which is the
   # first & main user associated to a partner agency.
   def primary_partner_user
     profile&.primary_user
@@ -169,7 +169,7 @@ class Partner < ApplicationRecord
   end
 
   def invite_new_partner
-    PartnerUser.invite!(email: email, partner: profile)
+    User.invite!(email: email, partner: profile)
   end
 
   def should_invite_because_email_changed?

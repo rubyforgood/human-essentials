@@ -8,7 +8,7 @@
   </ul>
 </div>
 
-<%= form_for @user, html: {method: :post} do |form| %>
+<%= form_for @user, html: {method: :post}, url: partners_users_path(@user) do |form| %>
   <div class="row p-3">
 
     <div class="col-md-12">

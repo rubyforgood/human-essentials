@@ -31,6 +31,7 @@
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
 #  organization_id        :integer
+#  partner_id             :bigint
 #
 
 RSpec.describe User, type: :model do
@@ -82,14 +83,13 @@ RSpec.describe User, type: :model do
 
       it "retrieves users in the correct order" do
         create_default_users
-        alphabetized_list = described_class.with_discarded.alphabetized
+        alphabetized_list = described_class.org_users.with_discarded.alphabetized
 
         expect(alphabetized_list).to eq(
           [
             a_name_user,
             @organization_admin,
             @super_admin,
-            @super_admin_no_org,
             @user,
             z_name_user,
             deactivated_a_name_user,

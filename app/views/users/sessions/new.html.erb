@@ -6,7 +6,7 @@
       <div class="card-body login-card-body">
         <p class="login-box-msg">Sign in to start your session</p>
         <% if @failed_login %>
-         <p class="failed-login-banner">Invalid Credentials. You may try logging in via <%= link_to "partner login here", (partners_users_path) %> if you believe your credentials should work.</p>
+         <p class="failed-login-banner">Invalid Credentials.</p>
         <% end %>
         <div class="form-inputs">
           <%= f.input :email, autofocus: true %>

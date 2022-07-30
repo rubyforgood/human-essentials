@@ -27,7 +27,7 @@ describe PartnerInviteService, skip_seed: true do
     end
 
     before do
-      allow(PartnerUser).to receive(:invite!)
+      allow(User).to receive(:invite!)
     end
 
     it 'should update the status of the partner to invited' do
@@ -36,7 +36,7 @@ describe PartnerInviteService, skip_seed: true do
 
     it 'should invite them' do
       subject
-      expect(PartnerUser).to have_received(:invite!).with(
+      expect(User).to have_received(:invite!).with(
         email: partner.email,
         partner: partner.profile
       )

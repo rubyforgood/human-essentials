@@ -12,8 +12,6 @@ Rails.application.routes.draw do
     sessions: "users/sessions",
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
-  devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
-  resources :logins, only: [:new, :create], controller: "consolidated_logins"
 
   #
   # Mount web interface to see delayed job status and queue length.
@@ -33,7 +31,9 @@ Rails.application.routes.draw do
     resources :requests, only: [:show, :new, :index, :create]
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
-    resources :users, only: [:index, :new, :create]
+    resources :users, only: [:index, :new, :create] do
+      get :switch_to_bank_role, on: :collection
+    end
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
 
@@ -67,7 +67,9 @@ Rails.application.routes.draw do
   match "/500", to: "errors#internal_server_error", via: :all
 
   scope path: ":organization_id" do
-    resources :users
+    resources :users do
+      get :switch_to_partner_role, on: :collection
+    end
 
     # Users that are organization admins can manage the organization itself
     resource :organization, only: [:show]

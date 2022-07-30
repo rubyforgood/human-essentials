@@ -8,7 +8,7 @@ RSpec.describe "/partners/distributions", type: :request do
     subject { -> { get partners_distributions_path } }
 
     before do
-      sign_in(partner_user, scope: :partner_user)
+      sign_in(partner_user)
     end
 
     it "should render without any issues" do
@@ -19,7 +19,7 @@ RSpec.describe "/partners/distributions", type: :request do
 
   describe "GET #print" do
     before do
-      sign_in(partner_user, scope: :partner_user)
+      sign_in(partner_user)
     end
 
     let(:distribution) { FactoryBot.create(:distribution, partner: partner) }
