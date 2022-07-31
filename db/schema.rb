@@ -767,7 +767,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_22_215911) do
   add_foreign_key "partner_users", "partner_profiles", column: "partner_id"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
-  add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
