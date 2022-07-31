@@ -9,8 +9,6 @@ class PartnerInviteService
     return self unless valid?
 
     partner.update!(status: 'invited')
-    User.invite!(email: partner.email, partner: partner.profile)
-
     user = User.invite!(email: partner.email, partner: partner.profile, skip_invitation: true)
 
     user.reload

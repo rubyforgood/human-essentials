@@ -8,7 +8,7 @@ describe PartnerInviteService, skip_seed: true do
     expect(subject).to be_a_kind_of(PartnerInviteService)
   end
 
-  context 'when the partner user has already been invited' do
+  context 'when the user has already been invited' do
     before do
       expect(partner.profile.primary_user).not_to eq(nil)
     end
@@ -18,7 +18,7 @@ describe PartnerInviteService, skip_seed: true do
     end
   end
 
-  context 'when the partner user has not been invited yet' do
+  context 'when the user has not been invited yet' do
     let(:partner) do
       partner = create(:partner, :uninvited)
       partner.profile.primary_user.delete
@@ -26,10 +26,10 @@ describe PartnerInviteService, skip_seed: true do
       partner
     end
 
-    let(:partner_user) { instance_double(PartnerUser, reload: -> {}, deliver_invitation: -> {}) }
+    let(:user) { instance_double(User, reload: -> {}, deliver_invitation: -> {}) }
 
     before do
-      allow(User).to receive(:invite!)
+      allow(User).to receive(:invite!).and_return(user)
     end
 
     it 'should update the status of the partner to invited' do
@@ -45,14 +45,14 @@ describe PartnerInviteService, skip_seed: true do
       )
     end
 
-    it 'should reload partner user object' do
+    it 'should reload user object' do
       subject
-      expect(partner_user).to have_received(:reload)
+      expect(user).to have_received(:reload)
     end
 
     it 'should invite them' do
       subject
-      expect(partner_user).to have_received(:deliver_invitation)
+      expect(user).to have_received(:deliver_invitation)
     end
   end
 end
