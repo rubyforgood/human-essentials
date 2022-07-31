@@ -40,12 +40,9 @@
       <p>Program Age <%= partner_profile.program_age %></p>
       <p>Case Management: <%= partner_profile.case_management %></p>
       <p>Evidence Based: <%= partner_profile.evidence_based %></p>
-      <p>Evidence Based Description: <%= partner_profile.evidence_based_description %></p>
-      <p>Program Client Improvement: <%= partner_profile.program_client_improvement %></p>
       <p>How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
       <p>Do You Receive Essentials from Other Sources? <%= partner_profile.receives_essentials_from_other %></p>
       <p>Currently Provide Diapers: <%= partner_profile.currently_provide_diapers %></p>
-      <p>Turn Away Child Care: <%= partner_profile.turn_away_child_care %></p>
       <br>
       <h3>Program Address (if different)</h3>
       <p>Program Address: <%= partner_profile.program_address1 %></p>
@@ -57,28 +54,22 @@
     <% end %>
     <% if partner_profile_fields.include?('organizational_capacity') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Organizational Capacity</h2>
-      <p>Max Serve <%= partner_profile.max_serve %></p>
-      <p>Incorporate Plan: <%= partner_profile.incorporate_plan %></p>
-      <p>Responsible Staff Position: <%= partner_profile.responsible_staff_position %></p>
+      <p>Client Capacity: <%= partner_profile.client_capacity %></p>
       <p>Storage Space: <%= partner_profile.storage_space %></p>
       <p>Storage Space Description: <%= partner_profile.describe_storage_space %></p>
-      <p>Trusted Pickup:</p>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Population Served</h2>
       <p>Income Requirement
       Description: <%= partner_profile.income_requirement_desc %></p>
-      <p>Serve Income Circumstances: <%= partner_profile.serve_income_circumstances %></p>
       <p>Income Verification: <%= partner_profile.income_verification %></p>
-      <p>Internal DB: <%= partner_profile.internal_db %></p>
-      <p>MAAC: <%= partner_profile.maac %></p>
       <br>
     <% end %>
   </div>
   <div class="col-md-6">
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Ethnic Composition of Those Served</h2>
+      <h2 class='text-2xl underline'>Race/Ethnicity of Client Base</h2>
       <p>African American: <%= partner_profile.population_black %></p>
       <p>Caucasian: <%= partner_profile.population_white %></p>
       <p>Hispanic: <%= partner_profile.population_hispanic %></p>
@@ -99,9 +90,6 @@
       FPL: <%= partner_profile.greater_2_times_fpl %></p>
       <p>Poverty Unknown: <%= partner_profile.poverty_unknown %></p>
       <br>
-      <h3>Ages Served</h3>
-      <p>Ages: <%= partner_profile.ages_served %></p>
-      <br>
     <% end %>
     <% if partner_profile_fields.include?('executive_director') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Executive Director</h2>
@@ -109,16 +97,15 @@
       <p>Executive Director Phone: <%= partner_profile.executive_director_phone %></p>
       <p>Executive Director Email: <%= partner_profile.executive_director_email %></p>
       <br>
-      <h2 class='text-2xl underline'>Program Contact Person</h2>
-      <p>Program Contact Name: <%= partner_profile.program_contact_name %></p>
-      <p>Program Contact Phone: <%= partner_profile.program_contact_phone %></p>
-      <p>Program Contact Mobile: <%= partner_profile.program_contact_mobile %></p>
-      <p>Program Contact Email: <%= partner_profile.program_contact_email %> </p>
+      <h2 class='text-2xl underline'>Primary Contact Person</h2>
+      <p>Primary Contact Name: <%= partner_profile.primary_contact_name %></p>
+      <p>Primary Contact Phone: <%= partner_profile.primary_contact_phone %></p>
+      <p>Primary Contact Mobile: <%= partner_profile.primary_contact_mobile %></p>
+      <p>Primary Contact Email: <%= partner_profile.primary_contact_email %> </p>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('diaper_pick_up_person') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Pick Up Person</h2>
-      <p>Pick Up Method: <%= partner_profile.pick_up_method %></p>
       <p>Pick Up Name: <%= partner_profile.pick_up_name %></p>
       <p>Pick Up Phone: <%= partner_profile.pick_up_phone %></p>
       <p>Pick Up Email: <%= partner_profile.pick_up_email %></p>

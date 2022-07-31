@@ -110,8 +110,7 @@ Rails.application.configure do
   config.lograge.custom_payload do |controller|
     {
       host: controller.request.host,
-      user_id: controller.current_user.try(:id),
-      partner_user_id: controller.current_partner_user.try(:id)
+      user_id: controller.current_user.try(:id)
     }
   end
   config.lograge.custom_options = lambda do |event|

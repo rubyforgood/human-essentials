@@ -62,6 +62,13 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     end
   end
 
+  context "callbacks" do
+    it "properly downcases email" do
+      partner = create(:partner, name: "Foo", email: "Foo@example.com")
+      expect(partner.email).to eq("foo@example.com")
+    end
+  end
+
   describe "Filters" do
     describe "by_status" do
       it "yields partners with the provided status" do
@@ -152,10 +159,9 @@ RSpec.describe Partner, type: :model, skip_seed: true do
   end
 
   describe 'changing emails' do
-    let(:partner) { create(:partner) }
-
+    let(:partner) { create(:partner, status: :invited) }
     before do
-      allow(PartnerUser).to receive(:invite!)
+      allow(User).to receive(:invite!)
     end
 
     [:invited, :awaiting_review, :recertification_required, :approved].each do |test_status|
@@ -163,7 +169,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
         partner.status = test_status
         partner.email = "randomtest@email.com"
         partner.save!
-        expect(PartnerUser).to have_received(:invite!).with(
+        expect(User).to have_received(:invite!).with(
           {email: "randomtest@email.com", partner: partner.profile}
         )
       end
@@ -174,7 +180,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
         partner.status = test_status
         partner.email = "randomtest@email.com"
         partner.save!
-        expect(PartnerUser).not_to have_received(:invite!).with(
+        expect(User).not_to have_received(:invite!).with(
           {email: "randomtest@email.com", partner: partner.profile}
         )
       end
@@ -193,8 +199,8 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     subject { partner.primary_partner_user }
     let(:partner) { create(:partner) }
 
-    it 'should return the asssociated primary Partners::User' do
-      partner_users = Partners::User.where(partner_id: partner.profile.id)
+    it 'should return the asssociated primary User' do
+      partner_users = ::User.where(partner_id: partner.profile.id)
       expect(partner_users).to include(subject)
     end
   end
@@ -235,9 +241,9 @@ RSpec.describe Partner, type: :model, skip_seed: true do
 
     before do
       partner.profile.update({
-                               program_contact_name: contact_name,
-                               program_contact_email: contact_email,
-                               program_contact_phone: contact_phone
+                               primary_contact_name: contact_name,
+                               primary_contact_email: contact_email,
+                               primary_contact_phone: contact_phone
                              })
     end
 

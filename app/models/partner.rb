@@ -47,6 +47,7 @@ class Partner < ApplicationRecord
 
   validate :correct_document_mime_type
 
+  before_save { email&.downcase! }
   before_update :invite_new_partner, if: :should_invite_because_email_changed?
 
   scope :for_csv_export, ->(organization, *) {
@@ -84,7 +85,7 @@ class Partner < ApplicationRecord
   end
 
   #
-  # Returns the primary Partners::User record which is the
+  # Returns the primary User record which is the
   # first & main user associated to a partner agency.
   def primary_partner_user
     profile&.primary_user
@@ -146,10 +147,10 @@ class Partner < ApplicationRecord
     return {} if profile.blank?
 
     @contact_person = {
-      name: profile.program_contact_name,
-      email: profile.program_contact_email,
-      phone: profile.program_contact_phone ||
-             profile.program_contact_mobile
+      name: profile.primary_contact_name,
+      email: profile.primary_contact_email,
+      phone: profile.primary_contact_phone ||
+             profile.primary_contact_mobile
     }
   end
 
@@ -169,7 +170,7 @@ class Partner < ApplicationRecord
   end
 
   def invite_new_partner
-    PartnerUser.invite!(email: email, partner: profile)
+    User.invite!(email: email, partner: profile)
   end
 
   def should_invite_because_email_changed?

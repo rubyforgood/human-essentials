@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :partners_user, class: Partners::User do
+  factory :partners_user, class: ::User do
     name { "Partner User" }
     sequence(:email) { |n| "partner_user_#{n}@example.com" }
     partner { Partners::Partner.first || create(:partners_partner) }

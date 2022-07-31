@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_30_123838) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_22_215911) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -463,7 +463,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_30_123838) do
     t.string "program_city"
     t.string "program_state"
     t.integer "program_zip_code"
-    t.string "max_serve"
+    t.string "client_capacity"
     t.text "incorporate_plan"
     t.boolean "responsible_staff_position"
     t.boolean "storage_space"
@@ -491,10 +491,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_30_123838) do
     t.string "executive_director_name"
     t.string "executive_director_phone"
     t.string "executive_director_email"
-    t.string "program_contact_name"
-    t.string "program_contact_phone"
-    t.string "program_contact_mobile"
-    t.string "program_contact_email"
+    t.string "primary_contact_name"
+    t.string "primary_contact_phone"
+    t.string "primary_contact_mobile"
+    t.string "primary_contact_email"
     t.string "pick_up_method"
     t.string "pick_up_name"
     t.string "pick_up_phone"
@@ -700,12 +700,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_30_123838) do
     t.datetime "discarded_at", precision: nil
     t.string "provider"
     t.string "uid"
+    t.bigint "partner_id"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -761,11 +763,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_30_123838) do
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
-  add_foreign_key "partner_requests", "partner_users"
+  add_foreign_key "partner_requests", "users", column: "partner_user_id"
   add_foreign_key "partner_users", "partner_profiles", column: "partner_id"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
+  add_foreign_key "users", "partner_profiles", column: "partner_id"
 end

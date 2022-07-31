@@ -8,7 +8,7 @@ RSpec.describe "Coworking invitations", type: :system, js: true, skip_seed: true
       let(:new_user_email) { Faker::Internet.email }
 
       before do
-        login_as(partner_user, scope: :partner_user)
+        login_as(partner_user)
         visit partner_user_root_path
 
         click_on partner_user.email
@@ -25,7 +25,7 @@ RSpec.describe "Coworking invitations", type: :system, js: true, skip_seed: true
       end
 
       it 'should create a new partner user for the partner account' do
-        expect(Partners::User.find_by(email: new_user_email, partner: partner_user.partner)).not_to eq(nil)
+        expect(::User.find_by(email: new_user_email, partner: partner_user.partner)).not_to eq(nil)
       end
     end
   end

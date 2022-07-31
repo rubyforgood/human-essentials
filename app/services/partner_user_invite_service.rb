@@ -10,7 +10,7 @@ class PartnerUserInviteService
     if existing_partner_user.present?
       existing_partner_user.invite!
     else
-      PartnerUser.invite!(email: email, partner: partner.profile)
+      User.invite!(email: email, partner: partner.profile)
     end
   end
 
@@ -19,6 +19,6 @@ class PartnerUserInviteService
   attr_reader :partner, :email
 
   def existing_partner_user
-    @existing_partner_user ||= PartnerUser.find_by(email: email, partner: partner.profile)
+    @existing_partner_user ||= User.find_by(email: email, partner: partner.profile)
   end
 end

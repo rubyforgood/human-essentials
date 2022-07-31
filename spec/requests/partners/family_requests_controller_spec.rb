@@ -8,7 +8,7 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
   let(:children) { FactoryBot.create_list(:partners_child, 3, family: family) }
   let(:partner_user) { partners_partner.primary_user }
 
-  before { sign_in(partner_user, scope: :partner_user) }
+  before { sign_in(partner_user) }
 
   describe 'GET #new' do
     subject { get new_partners_family_request_path }

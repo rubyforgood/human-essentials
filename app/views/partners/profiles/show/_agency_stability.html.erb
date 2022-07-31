@@ -1,5 +1,5 @@
-<div class="card mb-4">
-  <h5 class="card-header bg-primary text-white">Agency Stability</h5>
+<div class="mb-4 card">
+  <h5 class="text-white card-header bg-primary">Agency Stability</h5>
   <div class="card-body">
     <dl>
       <dt>Year Founded</dt>
@@ -31,12 +31,6 @@
       <dt>Evidence Based</dt>
       <dd><%= humanize_boolean(partner.evidence_based) %></dd>
 
-      <dt>Evidence Base Description</dt>
-      <dd><%= partner.evidence_based_description %></dd>
-
-      <dt>Verified Successes of Program</dt>
-      <dd><%= partner.program_client_improvement %></dd>
-
       <dt>How Are Essentials (e.g. diapers, period supplies) Used In Your Program?</dt>
       <dd><%= partner.essentials_use %></dd>
 
@@ -45,9 +39,6 @@
 
       <dt>Current Providing Diapers</dt>
       <dd><%= humanize_boolean(partner.currently_provide_diapers) %></dd>
-
-      <dt>Turn Away Child Care</dt>
-      <dd><%= humanize_boolean(partner.turn_away_child_care) %></dd>
 
       <address>
         <strong>Program Address (if different)</strong> <br>

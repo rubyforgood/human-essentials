@@ -13,6 +13,7 @@
 #  at_fpl_or_below                :integer
 #  case_management                :boolean
 #  city                           :string
+#  client_capacity                :string
 #  currently_provide_diapers      :boolean
 #  describe_storage_space         :text
 #  distribution_times             :string
@@ -34,7 +35,6 @@
 #  incorporate_plan               :text
 #  internal_db                    :boolean
 #  maac                           :boolean
-#  max_serve                      :string
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
@@ -53,15 +53,15 @@
 #  population_other               :integer
 #  population_white               :integer
 #  poverty_unknown                :integer
+#  primary_contact_email          :string
+#  primary_contact_mobile         :string
+#  primary_contact_name           :string
+#  primary_contact_phone          :string
 #  program_address1               :string
 #  program_address2               :string
 #  program_age                    :string
 #  program_city                   :string
 #  program_client_improvement     :text
-#  program_contact_email          :string
-#  program_contact_mobile         :string
-#  program_contact_name           :string
-#  program_contact_phone          :string
 #  program_description            :text
 #  program_name                   :string
 #  program_state                  :string
@@ -89,8 +89,8 @@ module Partners
   class Partner < Base
     self.table_name = "partner_profiles"
 
-    has_one :primary_user, -> { order('created_at ASC') }, class_name: 'Partners::User', inverse_of: :partner
-    has_many :users, dependent: :destroy
+    has_one :primary_user, -> { order('created_at ASC') }, class_name: '::User', inverse_of: :partner
+    has_many :users, class_name: '::User', dependent: :destroy
     has_many :requests, dependent: :destroy
     has_many :families, dependent: :destroy
     has_many :children, through: :families
@@ -100,6 +100,20 @@ module Partners
     has_one_attached :proof_of_partner_status
     has_one_attached :proof_of_form_990
     has_many_attached :documents
+
+    self.ignored_columns = %w[
+      evidence_based_description
+      program_client_improvement
+      incorporate_plan
+      turn_away_child_care
+      responsible_staff_position
+      trusted_pickup
+      serve_income_circumstances
+      internal_db
+      maac
+      pick_up_method
+      ages_served
+    ]
 
     VERIFIED_STATUS = 'verified'.freeze
     RECERTIFICATION_REQUESTED_STATUS = 'recertification_required'.freeze
