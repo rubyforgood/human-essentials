@@ -21,6 +21,7 @@ worker = "bundle exec rails jobs:work"
 [env]
   PORT = "8080"
   SERVER_COMMAND = "bundle exec puma -C config/puma.rb"
+  RAILS_ENV = "staging"
 
 [experimental]
   allowed_public_ports = []
