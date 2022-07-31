@@ -15,17 +15,26 @@ RSpec.describe CustomDeviseMailer, type: :mailer, skip_seed: true do
 
       it "invites to primary user" do
         expect(mail.subject).to eq("You've been invited to be a partner with #{user.partner.organization.name}")
-        # expect(mail.html_part.body).to include("You've been invited to become a partner organization with <strong>#{user.partner.organization.name}!</strong>")
+        expect(mail.html_part.body).to include("You've been invited to become a partner organization with <strong>#{user.partner.organization.name}!</strong>")
       end
     end
 
-    context "when invited by other partner users" do
+    context "when other partner users invited" do
       let(:partner) { create(:partner) }
       let(:user) { create(:user, partner: partner.profile) }
 
       it "invites to partner user" do
         expect(mail.subject).to eq("You've been invited to #{user.partner.name}'s partnerbase account")
-        # expect(mail.html_part.body).to include("You've been invited to <strong>#{user.partner.name}'s</strong> account for requesting items from <strong>#{user.partner.organization.name}!")
+        expect(mail.html_part.body).to include("You've been invited to <strong>#{user.partner.name}'s</strong> account for requesting items from <strong>#{user.partner.organization.name}!")
+      end
+    end
+
+    context "when user is invited" do
+      let(:user) { create(:user) }
+
+      it "invites to user" do
+        expect(mail.subject).to eq("Your Human Essentials App Account Approval")
+        expect(mail.html_part.body).to include("Your request has been approved and you're invited to become an user of the Human Essentials inventory management system!")
       end
     end
   end

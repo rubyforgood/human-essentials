@@ -341,10 +341,20 @@
               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <p>Hi there!</p>
-
-                    <p>Your request has been approved and you're invited to become an user of the Human Essentials inventory management system!</p>
-                    <p>Please, click the button below to accept this invitation and create a password to access your account.</p>
+                    <% organization = @resource.partner&.organization %>
+                    <% is_primary_partner = @resource.id == @resource.partner&.primary_user&.id %>
+                    <p>Hello <%= @resource.email %></p>
+                    <% if @resource.partner.present? && is_primary_partner %>
+                      <p>You've been invited to become a partner organization with <strong><%= organization.name %>!</strong></p>
+                      <p>Please click the link below to accept your invitation and create an account and you'll be able to begin requesting distributions.</p>
+                      <p><strong> Please contact <%= organization.email %> if you are encountering any issues. </strong></p>
+                    <% elsif @resource.partner.present? && !is_primary_partner %>
+                      <p>You've been invited to <strong><%= @resource.partner.name %>'s</strong> account for requesting items from <strong><%= organization.name %>!</strong></p>
+                      <p>Please click the link below to accept your invitation and create an account and you'll be able to begin requesting distributions.</p>
+                    <% else %>
+                      <p>Your request has been approved and you're invited to become an user of the Human Essentials inventory management system!</p>
+                      <p>Please, click the button below to accept this invitation and create a password to access your account.</p>
+                    <% end %>
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                       <tbody>
                       <tr>
@@ -363,7 +373,8 @@
                     <% if @resource.invitation_due_at %>
                       <p><%= t("devise.mailer.invitation_instructions.accept_until", due_date: l(@resource.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format')) %></p>
                     <% end %>
-                    <p>If you didn't request an invite or feel you received this email in error, just ignore this email.</p>
+                    <p>Feel free to ignore this email if you are not interested or if you feel it was sent by
+                        mistake.</p>
                   </td>
                 </tr>
               </table>
