@@ -8,7 +8,7 @@ processes = []
 [processes]
 web = "bundle exec puma -t 5:5 -p 8080"
 worker = "bundle exec rails jobs:work"
-clock = "clockwork clock.rb"
+clock = "bundle exec clockwork clock.rb"
 
 [build]
   [build.args]
