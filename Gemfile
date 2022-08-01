@@ -17,6 +17,8 @@ gem "pg", "~> 1.4.1"
 gem "puma"
 # Rails web framework.
 gem "rails", "7.0.3.1"
+# Management periodic tasks.
+gem "clockwork"
 
 ###### MODELS / DATABASE #######
 
