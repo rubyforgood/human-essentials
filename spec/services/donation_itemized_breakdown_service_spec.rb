@@ -11,7 +11,7 @@ RSpec.describe DonationItemizedBreakdownService, type: :service, skip_seed: true
 
   let(:expected_output) do
     [
-      {name: item_a.name, donated: 1200, current_onhand: 1100},
+      {name: item_a.name, donated: 1000, current_onhand: 1200},
       {name: item_b.name, donated: 500, current_onhand: 600}
     ]
   end
