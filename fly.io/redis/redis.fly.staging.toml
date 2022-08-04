@@ -1,0 +1,22 @@
+# fly.toml file generated for human-essentials-staging-redis on 2022-08-03T20:47:51-05:00
+# Following https://fly.io/docs/reference/redis/
+
+app = "human-essentials-staging-redis"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[build]
+  image = "flyio/redis:6.2.6"
+
+[env]
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+
+[[mounts]]
+  destination = "/data"
+  source = "redis_server"
