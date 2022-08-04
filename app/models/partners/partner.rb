@@ -8,7 +8,6 @@
 #  address2                       :string
 #  agency_mission                 :text
 #  agency_type                    :string
-#  ages_served                    :string
 #  application_data               :text
 #  at_fpl_or_below                :integer
 #  case_management                :boolean
@@ -22,7 +21,6 @@
 #  essentials_funding_source      :string
 #  essentials_use                 :string
 #  evidence_based                 :boolean
-#  evidence_based_description     :text
 #  executive_director_email       :string
 #  executive_director_name        :string
 #  executive_director_phone       :string
@@ -32,16 +30,12 @@
 #  greater_2_times_fpl            :integer
 #  income_requirement_desc        :boolean
 #  income_verification            :boolean
-#  incorporate_plan               :text
-#  internal_db                    :boolean
-#  maac                           :boolean
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
 #  other_agency_type              :string
 #  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
-#  pick_up_method                 :string
 #  pick_up_name                   :string
 #  pick_up_phone                  :string
 #  population_american_indian     :integer
@@ -61,21 +55,16 @@
 #  program_address2               :string
 #  program_age                    :string
 #  program_city                   :string
-#  program_client_improvement     :text
 #  program_description            :text
 #  program_name                   :string
 #  program_state                  :string
 #  program_zip_code               :integer
 #  receives_essentials_from_other :string
-#  responsible_staff_position     :boolean
-#  serve_income_circumstances     :boolean
 #  sources_of_diapers             :string
 #  sources_of_funding             :string
 #  state                          :string
 #  status_in_diaper_base          :string
 #  storage_space                  :boolean
-#  trusted_pickup                 :boolean
-#  turn_away_child_care           :boolean
 #  twitter                        :string
 #  website                        :string
 #  zip_code                       :string
