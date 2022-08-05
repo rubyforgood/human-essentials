@@ -43,6 +43,9 @@
       <p>How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
       <p>Do You Receive Essentials from Other Sources? <%= partner_profile.receives_essentials_from_other %></p>
       <p>Currently Provide Diapers: <%= partner_profile.currently_provide_diapers %></p>
+      <% if partner_profile.organization.enable_child_based_requests? %>
+        <p>Enable Child-based Requests: <%= partner_profile.enable_child_based_requests? %></p>
+      <% end %>
       <br>
       <h3>Program Address (if different)</h3>
       <p>Program Address: <%= partner_profile.program_address1 %></p>

@@ -40,6 +40,11 @@
       <dt>Current Providing Diapers</dt>
       <dd><%= humanize_boolean(partner.currently_provide_diapers) %></dd>
 
+      <% if partner.organization.enable_child_based_requests? %>
+        <dt>Current Providing Diapers</dt>
+        <dd><%= humanize_boolean(partner.enable_child_based_requests) %></dd>
+      <% end %>
+
       <address>
         <strong>Program Address (if different)</strong> <br>
         <%= partner.program_address1 %> <br>

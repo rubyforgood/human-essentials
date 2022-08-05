@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_22_215911) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_05_193936) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -403,6 +403,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_22_215911) do
     t.boolean "repackage_essentials", default: false, null: false
     t.boolean "distribute_monthly", default: false, null: false
     t.bigint "ndbn_member_id"
+    t.boolean "enable_child_based_requests", default: true, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -510,6 +511,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_22_215911) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "other_agency_type"
     t.string "status_in_diaper_base"
+    t.boolean "enable_child_based_requests", default: true, null: false
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 

@@ -14,17 +14,19 @@
           "aria-label": "Create a request by quantity" %>
     </article>
 
-    <article class="flex flex-col justify-between flex-1 p-4 mr-4 border-2 border-blue-900 rounded-lg shadow">
-      <div>
-        <h3>Child</h3>
-        <p>Specify the family and child you are requesting for.</p>
-      </div>
+    <% if current_partner.enable_child_based_requests? %>
+      <article class="flex flex-col justify-between flex-1 p-4 mr-4 border-2 border-blue-900 rounded-lg shadow">
+        <div>
+          <h3>Child</h3>
+          <p>Specify the family and child you are requesting for.</p>
+        </div>
 
-      <%= link_to "Create Request",
-          new_partners_family_request_path,
-          class: "bg-blue-900 hover:bg-blue-600 text-white w-full text-center py-2 px-4 rounded",
-          "aria-label": "Create a request for a child or family" %>
-    </article>
+        <%= link_to "Create Request",
+            new_partners_family_request_path,
+            class: "bg-blue-900 hover:bg-blue-600 text-white w-full text-center py-2 px-4 rounded",
+            "aria-label": "Create a request for a child or family" %>
+      </article>
+    <% end %>
 
     <article class="flex flex-col justify-between flex-1 p-4 border-2 border-blue-900 rounded-lg shadow">
       <div>

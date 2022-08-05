@@ -33,7 +33,11 @@
                            class: "form-control", wrapper: :input_group %>
             <%= form.input :currently_provide_diapers, label: "Currently Providing Diapers?", as: :boolean,
                            class: "form-control", wrapper: :input_group %>
-
+            <% if form.object.organization.enable_child_based_requests? %>
+              <%= form.input :enable_child_based_requests, label: "Enable Child-based Requests (unclick if you only do bulk requests)",
+                             as: :boolean,
+                             class: "form-control", wrapper: :input_group %>
+            <% end %>
           </div>
         </div>
       </div>

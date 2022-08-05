@@ -82,6 +82,7 @@ module Partners
         :sources_of_diapers,
         :essentials_budget,
         :essentials_funding_source,
+        :enable_child_based_requests,
         documents: []
       )
     end

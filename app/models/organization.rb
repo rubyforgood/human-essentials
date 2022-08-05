@@ -2,29 +2,30 @@
 #
 # Table name: organizations
 #
-#  id                       :integer          not null, primary key
-#  city                     :string
-#  deadline_day             :integer
-#  default_storage_location :integer
-#  distribute_monthly       :boolean          default(FALSE), not null
-#  email                    :string
-#  intake_location          :integer
-#  invitation_text          :text
-#  latitude                 :float
-#  longitude                :float
-#  name                     :string
-#  partner_form_fields      :text             default([]), is an Array
-#  reminder_day             :integer
-#  repackage_essentials     :boolean          default(FALSE), not null
-#  short_name               :string
-#  state                    :string
-#  street                   :string
-#  url                      :string
-#  zipcode                  :string
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  account_request_id       :integer
-#  ndbn_member_id           :bigint
+#  id                          :integer          not null, primary key
+#  city                        :string
+#  deadline_day                :integer
+#  default_storage_location    :integer
+#  distribute_monthly          :boolean          default(FALSE), not null
+#  email                       :string
+#  enable_child_based_requests :boolean          default(TRUE), not null
+#  intake_location             :integer
+#  invitation_text             :text
+#  latitude                    :float
+#  longitude                   :float
+#  name                        :string
+#  partner_form_fields         :text             default([]), is an Array
+#  reminder_day                :integer
+#  repackage_essentials        :boolean          default(FALSE), not null
+#  short_name                  :string
+#  state                       :string
+#  street                      :string
+#  url                         :string
+#  zipcode                     :string
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  account_request_id          :integer
+#  ndbn_member_id              :bigint
 #
 
 class Organization < ApplicationRecord
@@ -95,8 +96,6 @@ class Organization < ApplicationRecord
       this_week.scheduled.where('issued_at >= ?', Time.zone.today)
     end
   end
-
-  before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
 
   after_create do
     account_request&.update!(status: "admin_approved")
@@ -248,14 +247,6 @@ class Organization < ApplicationRecord
   end
 
   private
-
-  def sync_visible_partner_form_sections
-    partner_form = Partners::PartnerForm.where(
-      essentials_bank_id: id,
-    ).first_or_create
-
-    partner_form.update!(sections: partner_form_fields)
-  end
 
   def correct_logo_mime_type
     if logo.attached? && !logo.content_type
