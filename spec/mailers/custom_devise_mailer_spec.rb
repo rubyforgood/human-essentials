@@ -15,7 +15,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer, skip_seed: true do
 
       it "invites to primary user" do
         expect(mail.subject).to eq("You've been invited to be a partner with #{user.partner.organization.name}")
-        expect(mail.html_part.body).to include("You've been invited to become a partner organization with <strong>#{user.partner.organization.name}!</strong>")
+        expect(mail.html_part.body).to include("You've been invited to become a partner with <strong>#{user.partner.organization.name}!</strong>")
       end
     end
 
