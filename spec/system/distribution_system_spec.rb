@@ -278,6 +278,16 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
     end
   end
 
+  context "When showing a individual distribution" do
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today, state: :complete) }
+
+    before { visit @url_prefix + "/distributions/#{distribution.id}" }
+
+    it "Show partner name in title" do
+      expect(page).to have_content("Distribution from #{distribution.storage_location.name} to #{distribution.partner.name}")
+    end
+  end
+
   context "When creating a distribution from a donation" do
     let(:donation) { create :donation, :with_items }
     before do
