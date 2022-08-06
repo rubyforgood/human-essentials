@@ -230,23 +230,6 @@ MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
 
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
-# 🚀 Deployment Process
-The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
-
-#### Requirements
-- You will need SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
-
-#### Running delayed jobs
-
-You can run delayed jobs locally by running the `rake jobs:work` command. You'll need to do this to see any e-mails (they should
-pop up in your browser). Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
-
-```ruby
-Delayed::Job.last.invoke_job
-```
-
-You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
-
 #### In-flight Pull Requests
 
 Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
@@ -263,37 +246,6 @@ rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
 #### Becoming a Repo Contributor
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
-
-### Deployment Process
-The human-essentials application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
-
-#### Requirements
-
-- You will need SSH access to our servers
-  - Access is usually only given to core maintainers of the human-essentials project
-
-- Login credentials to our [Mailchimp](https://mailchimp.com/) account
-
-#### Tag & Release
-1. You'll need to push up a tag with the proper semantic versioning. Check out the [releases](https://github.com/rubyforgood/human-essentials/releases) to get the correct semantic versioning tag to use. For example, if the last release was `2.1.0` and the update is a hotfix then the next one should be `2.1.1`
-```sh
-git tag x.y.z
-git push --tags
-```
-2. Publish a release associated to that tag pushed up in the previous step. You can do that [here](https://github.com/rubyforgood/human-essentials/releases/new). Make sure to include details on what the release's updates achieves (we use this to notify our stakeholders on updates via email).
-
-#### Send Update Email To Human Essential Users
-We will now want to inform the stakeholders that we've recently made a deployment and include details on what was updated. This is achieved by accessing all the user records and sending out a email via our Mailchimp account.
-
-1. Fetch all the emails of our users by accessing our human essentials production database
-```ruby
-cap production rails:console
-emails = User.all.pluck(:email) 
-puts "Email Address\n" + emails.join("\n") # Copy this output
-```
-2. Use the list of the emails copied from the output from the previous step to send a update audience via [Mailchimp](https://mailchimp.com/). Go to Audience > Manage Audience > Import Contacts and select "Copy and paste" option. Then paste the output of step 1. Complete the subsequent steps.
-
-3. Draft the email and send it with updates.
 
 # Acknowledgements
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
