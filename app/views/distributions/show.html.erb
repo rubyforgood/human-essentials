@@ -5,7 +5,7 @@
         <% content_for :title, "#{@distribution.storage_location.name} - Distributions - #{current_organization.name}" %>
         <h1>
           Distribution
-          <small>for <%= @distribution.storage_location.name %></small>
+          <small>from <%= @distribution.storage_location.name %> to <b><%=@distribution.partner.name %></b></small>
         </h1>
       </div>
       <div class="col-sm-6">
