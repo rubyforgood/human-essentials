@@ -6,14 +6,13 @@ labels:
   - Front-end v2
 assignees:
   - meg-gutshall
-  - justalilhonest
 body:
 - type: markdown
   attributes:
     value: |
       # Missing Components Issue Form
 
-      **PLEASE NOTE!!** This issue template should only be used in conjunction with meta issue #2965 - Evaluate template for missing components.
+      **PLEASE NOTE!!** This issue template should only be used in conjunction with [meta issue #2965](https://github.com/rubyforgood/human-essentials/issues/2965) - Evaluate template for missing components.
 
       This issue identifies a page in the app which has a component that is **NOT** included in the [Mosaic](https://cruip.com/mosaic/) admin dashboard template.
 - type: dropdown
