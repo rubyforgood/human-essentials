@@ -9,7 +9,12 @@ class PartnerInviteService
     return self unless valid?
 
     partner.update!(status: 'invited')
-    User.invite!(email: partner.email, partner: partner.profile)
+    # skip invitation is necessary because when email will be send for this situation needs partner reference updated,
+    # and, in this case, we create invite, reload object and send invitation email.
+    user = User.invite!(email: partner.email, partner: partner.profile, skip_invitation: true)
+
+    user.reload
+    user.deliver_invitation
   end
 
   private
