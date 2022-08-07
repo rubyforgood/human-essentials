@@ -2,19 +2,17 @@
   <thead>
   <tr>
     <th>&nbsp&nbsp&nbspItem</th>
-    <th>Total Distributed</th>
+    <th>Total Donated</th>
     <th>Total On Hand</th>
   </tr>
   </thead>
   <% # Ordering from highest distributed to lowest %>
-  <% @itemized_distribution_data.each do |item| %>
+  <% (local_assigns[:itemized_breakdown] || []).each do |item| %>
     <tbody>
       <tr>
         <td>&nbsp&nbsp&nbsp<%= item[:name] %></td>
-        <td><%= item[:distributed] %></td>
-        <td class="<%= 'table-danger' if item[:below_onhand_minimum] %>">
-          <%= item[:current_onhand] || "Unknown" %>
-        </td>
+        <td><%= item[:donated] %></td>
+        <td><%= item[:current_onhand] || "Unknown" %></td>
       </tr>
     <% end %>
   </tbody>
