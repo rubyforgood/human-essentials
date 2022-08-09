@@ -41,7 +41,7 @@ def fetch_latest_backups
   #
   # Retrieve the most up to date version of the DB dump
   #
-  backup = backups.select { |b| b.name.match?("diaper.dump") }.sort do |a,b|
+  backup = backups.select { |b| b.name.match?(".dump") }.sort do |a,b|
     Time.parse(a.properties[:last_modified]) <=> Time.parse(b.properties[:last_modified])
   end.reverse.first
 
