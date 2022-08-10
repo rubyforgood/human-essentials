@@ -192,7 +192,7 @@ group :test do
   # Selenium webdriver automatic installation and update.
   gem 'webdrivers', '~> 5.0'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.16"
+  gem "webmock", "~> 3.17"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
