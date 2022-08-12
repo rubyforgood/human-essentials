@@ -67,6 +67,7 @@ describe OrganizationUpdateService, skip_seed: true do
       let(:partner_fields) { Organization::ALL_PARTIALS.map { |t| t[0] }.sample(3) }
       before do
         organization.partner_form_fields = partner_fields
+        organization.save!
       end
 
       context "and a Partners::PartnerForm does not exist yet" do
