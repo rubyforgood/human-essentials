@@ -83,6 +83,7 @@ module Partners
         :essentials_budget,
         :essentials_funding_source,
         :enable_child_based_requests,
+        :enable_individual_requests,
         documents: []
       )
     end

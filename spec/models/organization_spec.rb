@@ -9,6 +9,7 @@
 #  distribute_monthly          :boolean          default(FALSE), not null
 #  email                       :string
 #  enable_child_based_requests :boolean          default(TRUE), not null
+#  enable_individual_requests  :boolean          default(TRUE), not null
 #  intake_location             :integer
 #  invitation_text             :text
 #  latitude                    :float

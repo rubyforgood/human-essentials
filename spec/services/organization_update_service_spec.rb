@@ -22,25 +22,31 @@ describe OrganizationUpdateService, skip_seed: true do
     end
   end
 
-  describe "#update_child_enabled_flag" do
+  describe "#update_partner_flags" do
     before(:each) do
       partners = create_list(:partner, 2, organization: organization)
-      partners.each { |p| p.profile.update!(enable_child_based_requests: true) }
+      partners.each { |p| p.profile.update!(
+        enable_individual_requests: true,
+        enable_child_based_requests: true) }
     end
 
     context "when field hasn't changed" do
       it "should not update partners" do
-        described_class.update_child_enabled_flag(organization)
+        described_class.update_partner_flags(organization)
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
+          .to eq([true, true])
+        expect(organization.partners.map { |p| p.profile.enable_individual_requests })
           .to eq([true, true])
       end
     end
 
     context "when field has changed" do
       it "should update partners" do
-        organization.update!(enable_child_based_requests: false)
-        described_class.update_child_enabled_flag(organization)
+        organization.update!(enable_child_based_requests: false, enable_individual_requests: false)
+        described_class.update_partner_flags(organization)
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
+          .to eq([false, false])
+        expect(organization.partners.map { |p| p.profile.enable_individual_requests })
           .to eq([false, false])
       end
     end

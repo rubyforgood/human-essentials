@@ -3,7 +3,9 @@ require 'rails_helper'
 describe PartnerCreateService, skip_seed: true do
   describe '#call' do
     subject { described_class.new(organization: organization, partner_attrs: partner_attrs).call }
-    let(:organization) { create(:organization, enable_child_based_requests: false) }
+    let(:organization) { create(:organization,
+                                enable_individual_requests: false,
+                                enable_child_based_requests: false) }
     let(:partner_attrs) { FactoryBot.attributes_for(:partner).except(:organization_id) }
 
     it 'should return an instance of itself' do
@@ -36,6 +38,7 @@ describe PartnerCreateService, skip_seed: true do
         query = Partners::Partner.where(name: partner_attrs[:name])
         expect { subject }.to change { query.count }.from(0).to(1)
         expect(query.first.enable_child_based_requests).to eq(false)
+        expect(query.first.enable_individual_requests).to eq(false)
       end
 
       context 'but there was an unexpected issue with saving the' do

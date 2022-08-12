@@ -18,6 +18,7 @@
 #  distribution_times             :string
 #  distributor_type               :string
 #  enable_child_based_requests    :boolean          default(TRUE), not null
+#  enable_individual_requests     :boolean          default(TRUE), not null
 #  essentials_budget              :string
 #  essentials_funding_source      :string
 #  essentials_use                 :string

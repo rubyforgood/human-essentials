@@ -7,7 +7,7 @@ class OrganizationUpdateService
     return false unless result
 
     sync_visible_partner_form_sections(organization)
-    update_child_enabled_flag(organization)
+    update_partner_flags(organization)
     true
   end
 
@@ -20,10 +20,14 @@ class OrganizationUpdateService
   end
 
   # @param organization [Organization]
-  def self.update_child_enabled_flag(organization)
-    return unless organization.saved_change_to_attribute?(:enable_child_based_requests)
-    organization.partners.map(&:profile).each do |profile|
-      profile.update!(enable_child_based_requests: organization.enable_child_based_requests)
+  def self.update_partner_flags(organization)
+    fields = %i(enable_child_based_requests enable_individual_requests)
+    fields.each do |field|
+      next unless organization.saved_change_to_attribute?(field)
+      organization.partners.map(&:profile).each do |profile|
+        profile.update!(field => organization.send(field))
+      end
     end
   end
+
 end

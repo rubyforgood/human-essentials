@@ -38,6 +38,12 @@
                              as: :boolean,
                              class: "form-control", wrapper: :input_group %>
             <% end %>
+
+            <% if form.object.organization.enable_individual_requests? %>
+              <%= form.input :enable_individual_requests, label: "Enable Requests for Individuals",
+                             as: :boolean,
+                             class: "form-control", wrapper: :input_group %>
+            <% end %>
           </div>
         </div>
       </div>
