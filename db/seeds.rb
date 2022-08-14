@@ -115,7 +115,7 @@ Organization.all.each do |org|
   # Setup the Partner Group & their item categories
   partner_group = FactoryBot.create(:partner_group, organization: org)
 
-  total_item_categories_to_add = Faker::Number.between(from: 0, to: 2)
+  total_item_categories_to_add = Faker::Number.between(from: 1, to: 2)
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
     partner_group.item_categories << item_category
   end
