@@ -9,7 +9,7 @@ class PartnerInviteService
     return self unless valid?
 
     existing_user = User.find_by(email: partner.email)
-    if existing_user
+    if existing_user && existing_user.partner_id.nil?
       existing_user.update!(partner_id: partner.id)
       return
     end
