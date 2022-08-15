@@ -4,10 +4,15 @@ class FixRequests < ActiveRecord::Migration[7.0]
       self.table_name = 'partner_users'
     end
 
-    klass.all.each do |user|
-      main_user = ::User.unscoped.find_by(email: user.email)
-      ::Request.where(partner_user_id: user.id).
-        update_all(partner_user_id: main_user.id, updated_at: Time.zone.now)
+    ::Request.where('created_at < "2022-08-14 15:17:00').each do |request|
+      partner_user = klass.find(request.partner_user_id)
+      main_user = ::User.unscoped.find_by(email: partner_user.email)
+      request.update!(partner_user_id: main_user.id)
     end
+    # Partners::Request.where('created_at < "2022-08-14 15:17:00').each do |request|
+    #   partner_user = klass.find(request.partner_user_id)
+    #   main_user = ::User.unscoped.find_by(email: partner_user.email)
+    #   request.update!(partner_user_id: main_user.id)
+    # end
   end
 end
