@@ -362,7 +362,7 @@ GEM
       capybara (>= 1.1)
       rspec (>= 2.14)
     orm_adapter (0.5.0)
-    paper_trail (12.3.0)
+    paper_trail (13.0.0)
       activerecord (>= 5.2)
       request_store (~> 1.1)
     parallel (1.21.0)
