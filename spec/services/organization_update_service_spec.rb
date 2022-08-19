@@ -25,9 +25,12 @@ describe OrganizationUpdateService, skip_seed: true do
   describe "#update_partner_flags" do
     before(:each) do
       partners = create_list(:partner, 2, organization: organization)
-      partners.each { |p| p.profile.update!(
-        enable_individual_requests: true,
-        enable_child_based_requests: true) }
+      partners.each { |p|
+        p.profile.update!(
+          enable_individual_requests: true,
+          enable_child_based_requests: true
+        )
+      }
     end
 
     context "when field hasn't changed" do
