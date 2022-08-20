@@ -14,7 +14,7 @@ class DistributionContentChangeService
   end
 
   def any_change?
-    !updates.empty? || !removed.empty?
+    updates.any? || removed.any?
   end
 
   def changes

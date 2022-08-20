@@ -40,7 +40,7 @@ class Admin::BaseItemsController < AdminController
 
   def destroy
     @base_item = BaseItem.includes(:items).find(params[:id])
-    if !@base_item.items.empty? && @base_item.destroy
+    if @base_item.items.any? && @base_item.destroy
       redirect_to admin_base_items_path, notice: "Base Item deleted!"
     else
       redirect_to admin_base_items_path, alert: "Failed to delete Base Item. Are there still items attached?"
