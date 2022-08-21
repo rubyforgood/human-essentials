@@ -28,6 +28,10 @@ RSpec.describe ProductDrive, type: :model, skip_seed: true do
     expect(product_drive.in_kind_value).to be_a Integer
   end
 
+
+
+
+
   describe "validations" do
     it { expect(build(:product_drive, name: nil)).not_to be_valid }
     it { expect(build(:product_drive, start_date: nil)).not_to be_valid }
@@ -44,6 +48,73 @@ RSpec.describe ProductDrive, type: :model, skip_seed: true do
       expect(subject.donations).to include(donation)
     end
   end
+
+  describe "distinct_items" do
+
+    let!(:item_1) { create(:item, name: "item_1") }
+    let!(:item_2) { create(:item, name: "item_2") }
+    let!(:item_3) { create(:item, name: "item_3") }
+    let!(:item_4) { create(:item, name: "item_4") }
+
+    it("counts the items correctly for 1 donation with multiple items") do
+      product_drive =  create(:product_drive)
+      donation_1 =  create(:donation, product_drive: product_drive)
+
+      line_item_1_1 = create(:line_item,  itemizable: donation_1, item: item_1, quantity: 4)
+      line_item_1_2 = create(:line_item,  itemizable: donation_1, item: item_2, quantity: 5)
+      line_item_1_3 = create(:line_item,  itemizable: donation_1, item: item_3, quantity: 6)
+
+      print line_item_1_1.item_id
+      print line_item_1_2.item_id
+      print line_item_1_3.item_id
+
+
+      donation_1.line_items << line_item_1_1
+      donation_1.line_items << line_item_1_2
+      donation_1.line_items << line_item_1_3
+      donation_1.save()
+
+
+      expect(product_drive.distinct_items_count).to eq 3
+    end
+
+
+    it("doesn't double_count the items if there are two donations for the same item") do
+      product_drive =  create(:product_drive)
+      donation_1 =  create(:donation, product_drive: product_drive)
+      donation_2 =  create(:donation, product_drive: product_drive)
+      line_item_1_1 = create(:line_item,  itemizable: donation_1, item: item_1, quantity: 4)
+      line_item_2_1 = create(:line_item,  itemizable: donation_2, item: item_1, quantity: 75)
+
+      donation_1.line_items << line_item_1_1
+      donation_2.line_items << line_item_2_1
+      expect(product_drive.distinct_items_count).to eq 1
+    end
+
+    it("counts the distinct items correctly in overlapping donations") do
+
+      product_drive =  create(:product_drive)
+      donation_1 =  create(:donation, product_drive: product_drive)
+      donation_2 =  create(:donation, product_drive: product_drive)
+      line_item_1_1 = create(:line_item,  itemizable: donation_1, item: item_1, quantity: 4)
+      line_item_1_2 = create(:line_item,  itemizable: donation_1, item: item_2, quantity: 5)
+      line_item_2_1 = create(:line_item,  itemizable: donation_2, item: item_1, quantity: 75)
+      line_item_2_4 = create(:line_item,  itemizable: donation_2, item: item_4, quantity: 65)
+
+      donation_1.line_items << line_item_1_1;
+      donation_1.line_items << line_item_1_2;
+
+      donation_2.line_items << line_item_2_1;
+      donation_2.line_items << line_item_2_4;
+
+      expect(product_drive.distinct_items_count).to eq 3
+    end
+
+  end
+
+
+
+
 
   describe "scopes" do
     describe ".by_name" do
