@@ -47,7 +47,7 @@ class ProductDrive < ApplicationRecord
   end
 
   def distinct_items_count
-    self.donations. joins(:line_items). select('line_items.item_id'). distinct. count
+    donations.joins(:line_items).select('line_items.item_id').distinct.count
   end
 
   def in_kind_value
