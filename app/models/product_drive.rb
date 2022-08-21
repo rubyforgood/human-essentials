@@ -47,13 +47,7 @@ class ProductDrive < ApplicationRecord
   end
 
   def distinct_items_count
-    item_ids = []
-    donations.each do |donation|
-      donation.line_items.each do |line_item|
-        item_ids << line_item.item_id
-      end
-    end
-    item_ids.uniq.size
+    self.donations. joins(:line_items). select('line_items.item_id'). distinct. count
   end
 
   def in_kind_value
