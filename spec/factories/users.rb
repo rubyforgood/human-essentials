@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("CHANGEME"), not null
+#  name                   :string           default("Unnamed"), not null
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -40,22 +40,34 @@ FactoryBot.define do
     sequence(:email, 100) { |n| "person#{n}@example.com" }
     password { "password!" }
     password_confirmation { "password!" }
-    organization { Organization.try(:first) || create(:organization) }
+    transient do
+      organization { Organization.try(:first) || create(:organization) }
+    end
+
+    after(:create) do |user, evaluator|
+      user.add_role(:org_user, evaluator.organization)
+    end
 
     factory :organization_admin do
       name { "Very Organized Admin" }
-      organization_admin { true }
+      after(:create) do |user, evaluator|
+        user.add_role(:org_admin, evaluator.organization)
+      end
     end
 
     factory :super_admin do
       name { "Administrative User" }
-      super_admin { true }
+      after(:create) do |user|
+        user.add_role(:super_admin)
+      end
     end
 
     factory :super_admin_no_org do
       name { "Administrative User No Org" }
-      super_admin { true }
-      organization_id { nil }
+      after(:create) do |user, evaluator|
+        user.add_role(:super_admin)
+        user.remove_role(:org_user, evaluator.organization)
+      end
     end
 
     trait :deactivated do

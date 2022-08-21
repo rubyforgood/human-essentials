@@ -18,6 +18,10 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_organization
 
+  def current_role
+    Role.find(session[:current_role])
+  end
+
   def organization_url_options(options = {})
     options.merge(organization_id: current_organization.to_param)
   end
@@ -32,22 +36,33 @@ class ApplicationController < ActionController::Base
 
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
-    elsif current_user && !current_user.super_admin? && current_user.organization.present?
+    elsif current_role.name == :org_admin
       options[:organization_id] = current_user.organization.to_param
-    elsif current_user&.super_admin?
+    elsif current_role.name == :super_admin
       # FIXME: This *might* not be the best way to approach this...
       options[:organization_id] = "admin"
     end
     options
   end
 
+  def dashboard_path_from_role
+    if current_role.name == :super_admin
+      admin_dashboard_path
+    else
+      dashboard_path(current_user.organization)
+    end
+  end
+
   def authorize_user
     return unless params[:controller] # part of omniauth controller flow
-    verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
+    verboten! unless params[:controller].include?("devise") ||
+      current_user.has_role?(:super_admin) ||
+      current_user.has_role?(:org_user, current_organization.id)
   end
 
   def authorize_admin
-    verboten! unless current_user.super_admin? || (current_user.organization_admin? && current_organization.id == current_user.organization_id)
+    verboten! unless current_user.has_role?(:super_admin) ||
+      current_user.has_role?(:org_admin, current_organization.id)
   end
 
   def log_active_user

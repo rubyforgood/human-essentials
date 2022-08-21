@@ -8,13 +8,15 @@ class UsersController < ApplicationController
     @user = User.new
   end
 
-  def switch_to_partner_role
-    if current_user.partner.nil?
-      error_message = "Attempted to switch to a partner role but you have no partner associated with your account!"
+  def switch_to_role
+    role = Role.find(params[:role_id])
+    session[:current_role] = params[:role_id]
+    unless current_user.roles.include?(role)
+      error_message = "Attempted to switch to a role that doesn't belong to you!"
       redirect_back(fallback_location: root_path, alert: error_message)
       return
     end
 
-    redirect_to partner_user_root_path
+    redirect_to dashboard_path_from_role
   end
 end

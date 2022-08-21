@@ -16,6 +16,10 @@ class Users::SessionsController < Devise::SessionsController
   # POST /resource/sign_in
   def create
     super
+    role = current_user.roles.find { |r| r.name == :super_admin }
+    role ||= current_user.roles.find { |r| r.name == :org_user }
+    role ||= current_user.roles.find { |r| r.name == :partner }
+    session[:current_role] = role
   end
 
   # DELETE /resource/sign_out

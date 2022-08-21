@@ -15,9 +15,9 @@ Rails.application.routes.draw do
 
   #
   # Mount web interface to see delayed job status and queue length.
-  # Visible only to logged in users with the `super_admin` flag set to true
+  # Visible only to logged in users with the `super_admin` role
   #
-  authenticated :user, ->(user) { user.super_admin? } do
+  authenticated :user, ->(user) { user.has_role?(:super_admin) } do
     mount DelayedJobWeb, at: "/delayed_job"
   end
 

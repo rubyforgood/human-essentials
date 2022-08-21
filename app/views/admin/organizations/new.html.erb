@@ -59,9 +59,6 @@
                 <h1>Add a user</h1>
                 <%= f.simple_fields_for :users do |user| %>
                   <%= render 'admin/users/user_form_fields', f: user %>
-                  <%= user.input :organization_admin, label: "Organization Admin?", wrapper: :input_group do %>
-                    <%= user.check_box :organization_admin %>
-                  <% end %>
                 <% end %>
 
               </div>

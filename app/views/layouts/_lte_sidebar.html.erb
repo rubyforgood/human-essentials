@@ -157,7 +157,7 @@
       </li>
     </ul>
   </li>
-  <% if current_user.organization_admin %>
+  <% if current_user.has_role?(:org_admin, current_organization) %>
     <li class="nav-item has-treeview <%= menu_open?(['audits', 'reports']) %>">
       <a href="#" class="nav-link <%= active_class(['audits', 'reports']) %>">
         <i class="nav-icon fa fa-tasks"></i>
@@ -203,7 +203,7 @@
         </li>
       </ul>
     </li>
-  <% if current_user.organization_admin %>
+  <% if current_user.has_role?(:org_admin, current_organization) %>
     <li class="nav-item">
       <%= link_to(organization_path, class: "nav-link") do %>
         <i class="nav-icon fas fa-home"></i>

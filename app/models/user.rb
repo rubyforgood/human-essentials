@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("CHANGEME"), not null
+#  name                   :string           default("Unnamed"), not null
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -35,9 +35,20 @@
 #
 
 class User < ApplicationRecord
+  rolify
   include Discard::Model
-  belongs_to :organization, optional: true
-  belongs_to :partner, class_name: "Partners::Partner", optional: true
+
+  has_one :organization_role_join, class_name: 'UsersRole', foreign_key: :user_id
+  has_one :organization_role, through: :organization_role_join, class_name: 'Role', source: :role
+  has_one :organization, through: :organization_role, source: :resource, source_type: 'Organization'
+  has_many :organizations, through: :roles, source: :resource, source_type: 'Organization'
+
+  has_one :partner_role_join, class_name: 'UsersRole', foreign_key: :user_id
+  has_one :partner_role, through: :partner_role_join, class_name: 'Role', source: :role
+  has_one :partner, through: :partner_role, source: :resource, source_type: 'Partners::Partner'
+  has_many :partners, through: :roles, source: :resource, source_type: 'Partners::Partner'
+
+  attr_accessor :organization_admin # for creation / update time
 
   # :invitable is from the devise_invitable gem
   # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
@@ -71,8 +82,9 @@ class User < ApplicationRecord
   end
 
   def kind
-    return "super" if super_admin?
-    return "admin" if organization_admin?
+    return "super" if user.has_role?(:super_admin)
+    return "admin" if user.has_role?(:org_admin)
+    return "partner" if user.has_role?(:partner)
 
     "normal"
   end

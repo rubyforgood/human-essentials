@@ -1,29 +1,6 @@
 require "rails_helper"
 
 RSpec.describe ApplicationHelper, type: :helper, skip_seed: true do
-  describe "dashboard_path_from_user" do
-    before(:each) do
-      allow(helper).to receive(:current_user).and_return(user)
-    end
-
-    context "As a super admin" do
-      let(:user) { create :super_admin }
-
-      it "links to the admin dashboard" do
-        expect(helper.dashboard_path_from_user).to eq "/admin/dashboard"
-      end
-    end
-
-    context "As a user without super admin status" do
-      let(:user) { create :organization_admin }
-
-      it "links to the general dashboard" do
-        org_name = user.organization.short_name
-        expect(helper.dashboard_path_from_user).to eq "/#{org_name}/dashboard"
-      end
-    end
-  end
-
   describe "default_title_content" do
     helper do
       def current_organization; end

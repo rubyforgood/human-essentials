@@ -82,7 +82,7 @@
           </div>
           <div class="card-footer">
             <%= update_button_to picked_up_distribution_path(@distribution), {text: "Distribution Complete", size: "md"} if @distribution.scheduled? %>
-            <% if @distribution.future? || current_user.organization_admin? %>
+            <% if @distribution.future? || current_user.has_role?(:org_admin, current_organization) %>
               <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "md"} %>
             <% end %>
             <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>                        </div>

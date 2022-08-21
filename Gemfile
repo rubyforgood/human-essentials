@@ -31,6 +31,8 @@ gem "groupdate", "~> 6.1"
 gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
+# Associates users with roles.
+gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
 gem "strong_migrations", "1.2.0"
 

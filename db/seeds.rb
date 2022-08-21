@@ -134,14 +134,18 @@ end
   { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
   { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org }
 ].each do |user|
-  User.create(
+  user = User.create(
     email: user[:email],
     password: 'password!',
-    password_confirmation: 'password!',
-    organization_admin: user[:organization_admin],
-    super_admin: user[:super_admin],
-    organization: user[:organization]
+    password_confirmation: 'password!'
   )
+  if user[:organization_admin]
+    user.add_role(:org_admin, user[:organization])
+  end
+  if user[:super_admin]
+    user.add_role(:super_admin)
+  end
+
 end
 
 # ----------------------------------------------------------------------------
@@ -457,7 +461,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   adjustment = organization.adjustments.create!(
     comment: "Starting inventory",
     storage_location: storage_location,
-    user: organization.users.find_by(organization_admin: true)
+    user: User.with_role(:org_admin, organization)
   )
 
   LineItem.create!(quantity: quantity, item: item, itemizable: adjustment)

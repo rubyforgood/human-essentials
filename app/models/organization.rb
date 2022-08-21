@@ -2,32 +2,36 @@
 #
 # Table name: organizations
 #
-#  id                       :integer          not null, primary key
-#  city                     :string
-#  deadline_day             :integer
-#  default_storage_location :integer
-#  distribute_monthly       :boolean          default(FALSE), not null
-#  email                    :string
-#  intake_location          :integer
-#  invitation_text          :text
-#  latitude                 :float
-#  longitude                :float
-#  name                     :string
-#  partner_form_fields      :text             default([]), is an Array
-#  reminder_day             :integer
-#  repackage_essentials     :boolean          default(FALSE), not null
-#  short_name               :string
-#  state                    :string
-#  street                   :string
-#  url                      :string
-#  zipcode                  :string
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  account_request_id       :integer
-#  ndbn_member_id           :bigint
+#  id                          :integer          not null, primary key
+#  city                        :string
+#  deadline_day                :integer
+#  default_storage_location    :integer
+#  distribute_monthly          :boolean          default(FALSE), not null
+#  email                       :string
+#  enable_child_based_requests :boolean          default(TRUE), not null
+#  enable_individual_requests  :boolean          default(TRUE), not null
+#  intake_location             :integer
+#  invitation_text             :text
+#  latitude                    :float
+#  longitude                   :float
+#  name                        :string
+#  partner_form_fields         :text             default([]), is an Array
+#  reminder_day                :integer
+#  repackage_essentials        :boolean          default(FALSE), not null
+#  short_name                  :string
+#  state                       :string
+#  street                      :string
+#  url                         :string
+#  zipcode                     :string
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  account_request_id          :integer
+#  ndbn_member_id              :bigint
 #
 
 class Organization < ApplicationRecord
+  resourcify
+
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
 
   include Deadlinable
@@ -58,7 +62,7 @@ class Organization < ApplicationRecord
     has_many :inventory_items, through: :storage_locations
     has_many :kits
     has_many :transfers
-    has_many :users
+    has_many :users, through: :roles
     has_many :vendors
   end
 
@@ -140,7 +144,6 @@ class Organization < ApplicationRecord
     )
 
     users.build(
-      organization_admin: true,
       email: account_request.email,
       name: account_request.name
     )
@@ -266,6 +269,6 @@ class Organization < ApplicationRecord
   end
 
   def get_admin_email
-    User.where(organization_id: id, organization_admin: true).sample.email
+    User.with_role(:org_admin, self).sample.email
   end
 end
