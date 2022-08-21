@@ -53,7 +53,7 @@ class ProductDrive < ApplicationRecord
         item_ids << line_item.item_id
       end
     end
-    item_ids.uniq().size
+    item_ids.uniq.size
   end
 
   def in_kind_value
