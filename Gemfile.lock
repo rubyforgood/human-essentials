@@ -293,7 +293,7 @@ GEM
     mime-types-data (3.2022.0105)
     mini_magick (4.11.0)
     mini_mime (1.1.2)
-    mini_racer (0.6.1)
+    mini_racer (0.6.3)
       libv8-node (~> 16.10.0.0)
     minitest (5.16.2)
     monetize (1.11.0)
@@ -428,7 +428,7 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-erd (1.7.1)
+    rails-erd (1.7.2)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
       choice (~> 0.2.0)
@@ -646,7 +646,7 @@ DEPENDENCIES
   lograge
   magic_test
   matrix
-  mini_racer (~> 0.6.0)
+  mini_racer (~> 0.6.3)
   money-rails
   nokogiri (>= 1.10.4)
   omniauth

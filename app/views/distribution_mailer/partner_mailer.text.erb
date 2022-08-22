@@ -4,13 +4,13 @@ From: <%= @from_email %>
 <%= @default_email_text_interpolated %>
 <% if @distribution_changes.present? %>
   Here are some Items that we need change based on Human Essentials
-  <% if !@distribution_changes[:updates].empty? %>
+  <% if @distribution_changes[:updates].any? %>
     Items Updated:
     <% @distribution_changes[:updates].each do |item| %>
     * <%= "#{item[:name]} from #{item[:old_quantity]} to #{item[:new_quantity]}" %>
     <% end %>
   <% end %>
-  <% if !@distribution_changes[:removed].empty? %>
+  <% if @distribution_changes[:removed].any? %>
     Items Removed:
     <% @distribution_changes[:removed].each do |item| %>
     * <%= item[:name] %>

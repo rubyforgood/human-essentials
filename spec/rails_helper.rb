@@ -152,10 +152,6 @@ RSpec.configure do |config|
       -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
     ASCIIART
 
-    DatabaseCleaner[:active_record, { model: Partners::Base }]
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
-
     DatabaseCleaner[:active_record, { model: ApplicationRecord }]
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
