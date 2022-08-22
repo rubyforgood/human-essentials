@@ -11,7 +11,7 @@
   <td><%= user.invitation_status %></td>
   <td nowrap><%= reinvite_user_link(user) %></td>
   <td>
-      <% unless user.has_role?(:super_admin) || user.has_role?(:org_admin, current_organization.id) %>
+      <% unless user.has_role?(:super_admin) || user.has_role?(:org_admin, current_organization) %>
         <div class="dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" id=<%= dom_id(user, "dropdownMenu") %> data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             Actions

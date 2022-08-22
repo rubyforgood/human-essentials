@@ -67,7 +67,7 @@ class OrganizationsController < ApplicationController
 
   def authorize_user
     verboten! unless current_user.has_role?(:super_admin) ||
-      current_user.has_role?(:org_user, current_organization.id)
+      current_user.has_role?(:org_user, current_organization)
   end
 
   def organization_params

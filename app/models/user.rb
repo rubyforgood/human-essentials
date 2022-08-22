@@ -62,8 +62,8 @@ class User < ApplicationRecord
 
   default_scope -> { kept }
   scope :alphabetized, -> { order(discarded_at: :desc, name: :asc) }
-  scope :partner_users, -> { where.not(partner_id: nil) }
-  scope :org_users, -> { where.not(organization_id: nil) }
+  scope :partner_users, -> { with_role(:partner, :any) }
+  scope :org_users, -> { with_role(:org_user, :any) }
 
   has_many :requests, class_name: "Partners::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_partner_requests, class_name: "Partners::Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
@@ -82,9 +82,9 @@ class User < ApplicationRecord
   end
 
   def kind
-    return "super" if user.has_role?(:super_admin)
-    return "admin" if user.has_role?(:org_admin)
-    return "partner" if user.has_role?(:partner)
+    return "super" if self.has_role?(:super_admin)
+    return "admin" if self.has_role?(:org_admin)
+    return "partner" if self.has_role?(:partner)
 
     "normal"
   end

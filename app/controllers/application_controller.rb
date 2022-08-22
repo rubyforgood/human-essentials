@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_organization
 
   def current_role
-    Role.find(session[:current_role])
+    session[:current_role] ? Role.find(session[:current_role]) : current_user.roles.first
   end
 
   def organization_url_options(options = {})
@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
   end
 
   def dashboard_path_from_role
-    if current_role.name == :super_admin
+    if current_role.name == 'super_admin'
       admin_dashboard_path
     else
       dashboard_path(current_user.organization)
@@ -57,12 +57,12 @@ class ApplicationController < ActionController::Base
     return unless params[:controller] # part of omniauth controller flow
     verboten! unless params[:controller].include?("devise") ||
       current_user.has_role?(:super_admin) ||
-      current_user.has_role?(:org_user, current_organization.id)
+      current_user.has_role?(:org_user, current_organization)
   end
 
   def authorize_admin
     verboten! unless current_user.has_role?(:super_admin) ||
-      current_user.has_role?(:org_admin, current_organization.id)
+      current_user.has_role?(:org_admin, current_organization)
   end
 
   def log_active_user

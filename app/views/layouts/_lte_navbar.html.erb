@@ -74,7 +74,7 @@
       <% end %>
     <% end %>
     <% if current_organization.id.present? &&
-        (current_user.has_role?(:super_admin) || current_user.has_role?(:org_admin, current_organization.id)) %>
+        (current_user.has_role?(:super_admin) || current_user.has_role?(:org_admin, current_organization)) %>
     <% with_options organization_id: current_user.organization.to_param do |with_org| %>
 
     <div class="dropdown-divider"></div>

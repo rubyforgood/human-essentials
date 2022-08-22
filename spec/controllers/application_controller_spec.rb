@@ -9,7 +9,9 @@ describe ApplicationController do
       let(:user) { create(:super_admin) }
 
       it "links to the admin dashboard" do
-        expect(controller.dashboard_path_from_role).to eq "/admin/dashboard"
+        allow(controller).to receive(:current_role).
+          and_return(user.roles.find { |r| r.name == 'super_admin'})
+        expect(controller.dashboard_path_from_role).to match %r{/admin/dashboard.*}
       end
     end
 

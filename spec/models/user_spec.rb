@@ -39,13 +39,6 @@ RSpec.describe User, type: :model do
     expect(build(:user)).to be_valid
   end
 
-  context "Associations" do
-    it {
-      expect(described_class.reflect_on_association(:organization).macro)
-        .to eq(:belongs_to)
-    }
-  end
-
   context "Validations >" do
     it "requires a name" do
       expect(build(:user, name: nil)).not_to be_valid

@@ -50,7 +50,7 @@ RSpec.describe ApplicationHelper, type: :helper, skip_seed: true do
     end
 
     context "User is org admin and part of org" do
-      let(:user) { create :user, organization_admin: true, organization: org_1 }
+      let(:user) { create :organization_admin, organization: org_1 }
 
       it "can administrate" do
         expect(helper.can_administrate?).to be_truthy
@@ -58,7 +58,7 @@ RSpec.describe ApplicationHelper, type: :helper, skip_seed: true do
     end
 
     context "User is org admin and not part of org" do
-      let(:user) { create :user, organization_admin: true, organization: org_2 }
+      let(:user) { create :organization_admin, organization: org_2 }
 
       it "cannot administrate" do
         expect(helper.can_administrate?).to be_falsy
