@@ -21,8 +21,6 @@
   </div><!-- /.container-fluid -->
 </section>
 
-
-
 <%= simple_form_for @partner, url: admin_partner_path do |f| %>
   <section class="content">
     <div class="container-fluid">
@@ -43,7 +41,9 @@
                 <%= f.input_field :email, class: "form-control" %>
               <% end %>
               <%= f.input :send_reminders, label: "Send Reminders?", wrapper: :input_group do %>
-                <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
+                <div class="form-check">
+                  <%= f.check_box :send_reminders, {class: "form-check-input", id: "send_reminders"}, "true", "false" %>
+                </div>
               <% end %>
             </div>
             <!-- /.card-body -->
@@ -59,21 +59,3 @@
     </div><!-- /.container-fluid -->
   </section>
 <% end %>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
