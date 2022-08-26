@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("Unnamed"), not null
+#  name                   :string           default("Name Not Provided"), not null
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -83,10 +83,21 @@ class User < ApplicationRecord
 
   def kind
     return "super" if self.has_role?(:super_admin)
-    return "admin" if self.has_role?(:org_admin)
-    return "partner" if self.has_role?(:partner)
+    return "admin" if self.has_role?(:org_admin, self.organization)
+    return "normal" if self.has_role?(:org_user, self.organization)
+    return "partner" if self.has_role?(:partner, self.partner)
 
     "normal"
+  end
+
+  def switchable_roles
+    all_roles = self.roles.to_a.group_by(&:resource_id)
+    all_roles.values.each do |role_list|
+      if role_list.any? { |r| r.name == 'org_admin'}
+        role_list.delete_if { |r| r.name == 'org_user'}
+      end
+    end
+    all_roles.values.flatten
   end
 
   def flipper_id

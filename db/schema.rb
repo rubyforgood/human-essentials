@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_19_194804) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -708,7 +708,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
     t.integer "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
-    t.string "name", default: "Unnamed", null: false
+    t.string "name", default: "Name Not Provided", null: false
     t.boolean "super_admin", default: false
     t.datetime "last_request_at", precision: nil
     t.datetime "discarded_at", precision: nil

@@ -122,7 +122,7 @@ class Organization < ApplicationRecord
 
   has_one_attached :logo
 
-  accepts_nested_attributes_for :users_roles
+  accepts_nested_attributes_for :users
 
   include Geocodable
 
@@ -141,11 +141,6 @@ class Organization < ApplicationRecord
       url: account_request.organization_website,
       email: account_request.email,
       account_request_id: account_request.id
-    )
-
-    users.build(
-      email: account_request.email,
-      name: account_request.name
     )
 
     self

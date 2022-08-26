@@ -7,7 +7,7 @@ class StaticController < ApplicationController
   layout false
 
   def index
-    redirect_to dashboard_path_from_role
+    redirect_to dashboard_path_from_role if current_user
   end
 
   def register; end

@@ -22,7 +22,7 @@ RSpec.describe "Dashboard", type: :request, skip_seed: true do
           partner = FactoryBot.create(:partners_partner)
           @user.update!(partner_id: partner.id)
           get dashboard_path(default_params)
-          expect(response.body).to include('switch_to_partner_role')
+          expect(response.body).to include('switch_to_role')
         end
       end
 

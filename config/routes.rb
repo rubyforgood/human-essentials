@@ -31,9 +31,7 @@ Rails.application.routes.draw do
     resources :requests, only: [:show, :new, :index, :create]
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
-    resources :users, only: [:index, :new, :create] do
-      get :switch_to_bank_role, on: :collection
-    end
+    resources :users, only: [:index, :new, :create]
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
 
@@ -68,7 +66,7 @@ Rails.application.routes.draw do
 
   scope path: ":organization_id" do
     resources :users do
-      get :switch_to_partner_role, on: :collection
+      get :switch_to_role, on: :collection
     end
 
     # Users that are organization admins can manage the organization itself

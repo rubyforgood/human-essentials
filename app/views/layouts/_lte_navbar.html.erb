@@ -67,10 +67,10 @@
     <%= link_to edit_user_registration_path(organization_id: nil), class:"dropdown-item" do %>
     <i class="fa fa-cog text-aqua"></i> Account Settings
     <% end %>
-    <% current_user.roles.each do |role| %>
+    <% current_user.switchable_roles.each do |role| %>
       <% next if role == current_role %>
-      <%= link_to switch_to_role_users_path(role_id: role.id) do %>
-        <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.name.to_s.titleize}: #{role.resource.name}" %>
+      <%= link_to switch_to_role_users_path(role_id: role.id), class:"dropdown-item" do %>
+        <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource.name}" %>
       <% end %>
     <% end %>
     <% if current_organization.id.present? &&

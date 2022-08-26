@@ -158,14 +158,6 @@ RSpec.describe Organization, type: :model do
         account_request_id: account_request.id
       }.stringify_keys)
     end
-
-    it 'should build a admin user with the account request attributes' do
-      expect(subject.users.first.attributes).to include({
-        organization_admin: true,
-        email: account_request.email,
-        name: account_request.name
-      }.stringify_keys)
-    end
   end
 
   describe 'after_create' do

@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   before_action :swaddled
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_paper_trail_whodunnit
+  helper_method :current_role
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
@@ -19,7 +20,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_organization
 
   def current_role
-    session[:current_role] ? Role.find(session[:current_role]) : current_user.roles.first
+    session[:current_role] ? Role.find(session[:current_role]) : current_user&.roles&.first
   end
 
   def organization_url_options(options = {})
@@ -36,9 +37,9 @@ class ApplicationController < ActionController::Base
 
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
-    elsif current_role.name == :org_admin
+    elsif current_role.name == 'org_admin'
       options[:organization_id] = current_user.organization.to_param
-    elsif current_role.name == :super_admin
+    elsif current_role.name == 'super_admin'
       # FIXME: This *might* not be the best way to approach this...
       options[:organization_id] = "admin"
     end
@@ -48,6 +49,8 @@ class ApplicationController < ActionController::Base
   def dashboard_path_from_role
     if current_role.name == 'super_admin'
       admin_dashboard_path
+    elsif current_role.name == 'partner'
+      partners_dashboard_path(current_user.partner)
     else
       dashboard_path(current_user.organization)
     end

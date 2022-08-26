@@ -34,17 +34,19 @@ class OrganizationsController < ApplicationController
   end
 
   def promote_to_org_admin
-    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
-    user.remove_role(:org_admin, current_organization)
+    user = User.find(params[:user_id])
+    raise ActiveRecord::RecordNotFound unless user.has_role?(:org_user, current_organization)
+    user.add_role(:org_admin, current_organization)
     redirect_to organization_path, notice: "User has been promoted!"
   end
 
   def demote_to_user
-    user = User.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user = User.find(params[:user_id])
+    raise ActiveRecord::RecordNotFound unless user.has_role?(:org_user, current_organization)
     if user.has_role?(:super_admin)
       notice = "Unable to convert super to user."
     else
-      user.remove_role(:org_admin, current_organization.id)
+      user.remove_role(:org_admin, current_organization)
       notice = "Admin has been changed to User!"
     end
 
@@ -52,13 +54,15 @@ class OrganizationsController < ApplicationController
   end
 
   def deactivate_user
-    user = User.with_discarded.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user = User.with_discarded.find_by!(id: params[:user_id])
+    raise ActiveRecord::RecordNotFound unless user.has_role?(:org_user, current_organization)
     user.discard!
     redirect_to organization_path, notice: "User has been deactivated."
   end
 
   def reactivate_user
-    user = User.with_discarded.find_by!(id: params[:user_id], organization_id: current_organization.id)
+    user = User.with_discarded.find_by!(id: params[:user_id])
+    raise ActiveRecord::RecordNotFound unless user.has_role?(:org_user, current_organization)
     user.undiscard!
     redirect_to organization_path, notice: "User has been reactivated."
   end

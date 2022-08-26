@@ -11,22 +11,13 @@ module Partners
     def create
       user = ::User.invite!(
         email: user_params[:email],
-        name: user_params[:name],
-        partner: current_partner,
-      )
+        name: user_params[:name]
+      ) do |user|
+        user.add_role(:partner, current_partner)
+      end
 
       flash[:success] = "You have invited #{user.name} to join your organization!"
       redirect_to partners_users_path
-    end
-
-    def switch_to_bank_role
-      if current_user.organization.nil?
-        error_message = "Attempted to switch to a bank role but you have no bank associated with your account!"
-        redirect_back(fallback_location: root_path, alert: error_message)
-        return
-      end
-
-      redirect_to dashboard_path(current_user.organization)
     end
 
     private

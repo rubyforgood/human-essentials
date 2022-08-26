@@ -57,7 +57,7 @@
                   Only jpeg/png format is supported.
                 </p>
                 <h1>Add a user</h1>
-                <%= f.simple_fields_for :users do |user| %>
+                <%= f.simple_fields_for :user, @user do |user| %>
                   <%= render 'admin/users/user_form_fields', f: user %>
                 <% end %>
 

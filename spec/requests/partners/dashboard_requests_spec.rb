@@ -44,7 +44,7 @@ RSpec.describe "/partners/dashboard", type: :request do
   context "with just partner role" do
     it "should not display the switch link" do
       get partners_dashboard_path
-      expect(response.body).not_to include("switch_to_bank_role")
+      expect(response.body).not_to include("switch_to_role")
     end
   end
 
@@ -52,7 +52,7 @@ RSpec.describe "/partners/dashboard", type: :request do
     it "should include the switch link" do
       partner_user.update!(organization_id: @organization.id)
       get partners_dashboard_path
-      expect(response.body).to include("switch_to_bank_role")
+      expect(response.body).to include("switch_to_role")
     end
   end
 end

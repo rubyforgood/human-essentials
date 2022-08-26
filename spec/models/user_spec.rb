@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("Unnamed"), not null
+#  name                   :string           default("Name Not Provided"), not null
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -101,9 +101,9 @@ RSpec.describe User, type: :model do
     end
 
     it "#kind" do
-      expect(build(:super_admin).kind).to eq("super")
-      expect(build(:organization_admin).kind).to eq("admin")
-      expect(build(:user).kind).to eq("normal")
+      expect(create(:super_admin).kind).to eq("super")
+      expect(create(:organization_admin).kind).to eq("admin")
+      expect(create(:user).kind).to eq("normal")
     end
 
     it "#reinvitable?" do
