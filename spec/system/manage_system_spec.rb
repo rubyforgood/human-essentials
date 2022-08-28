@@ -32,7 +32,8 @@ RSpec.describe "Organization Administration", type: :system, js: true, skip_seed
 
     context "When looking at a single organization" do
       before do
-        @organization.users << create(:user, email: "yet_another_user@website.com")
+        user = create(:user, email: "yet_another_user@website.com")
+        user.add_role(:org_user, @organization)
         visit subject
       end
 

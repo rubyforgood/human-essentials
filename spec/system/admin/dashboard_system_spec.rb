@@ -15,7 +15,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
   context "When the super admin user does not have an organization assigned" do
     before do
-      @super_admin.remove_role(:org_user, organization)
+      @super_admin.remove_role(:org_user, @organization)
       @super_admin.save
       sign_in(@super_admin)
       visit subject

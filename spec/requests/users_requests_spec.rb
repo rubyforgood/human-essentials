@@ -26,7 +26,8 @@ RSpec.describe "Users", type: :request, skip_seed: true do
 
   describe "GET #switch_to_partner_role" do
     let(:admin_user) do
-      create(:user, organization: @organization, name: "ADMIN USER")
+      org = create(:organization)
+      create(:user, organization: org, name: "ADMIN USER")
     end
     context "with a partner role" do
       it "should redirect to the partner path" do

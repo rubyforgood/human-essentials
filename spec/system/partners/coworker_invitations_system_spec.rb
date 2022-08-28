@@ -25,7 +25,8 @@ RSpec.describe "Coworking invitations", type: :system, js: true, skip_seed: true
       end
 
       it 'should create a new partner user for the partner account' do
-        expect(::User.find_by(email: new_user_email, partner: partner_user.partner)).not_to eq(nil)
+        user = ::User.find_by(email: new_user_email)
+        expect(user.has_role?(:partner, partner_user.partner)).to be_truthy
       end
     end
   end
