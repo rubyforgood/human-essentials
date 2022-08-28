@@ -528,10 +528,8 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
           # By design, the setup may have created more Donations during the period than are visible in the Recent Donation links
           # Make sure each Recent Donation link uniquely matches a single Donation
           expect(@product_drive_donations.intersection(recent_donations)).to match_array recent_donations
-
         end
       end
-
     end
 
     describe "Manufacturer Donations" do
