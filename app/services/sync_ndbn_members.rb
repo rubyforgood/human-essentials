@@ -19,7 +19,7 @@ class SyncNDBNMembers
           next
         elsif ndbn_member.persisted? && ndbn_member.changed?
           Rails.logger.info("#{ndbn_member.id} changed their account name from #{ndbn_member.account_name_was} to #{ndbn_member.account_name}.")
-        elsif !ndbn_member.persisted?
+        elsif ndbn_member.new_record?
           Rails.logger.info("New record found! #{ndbn_member.id} - #{ndbn_member.account_name} has been added!")
         end
 

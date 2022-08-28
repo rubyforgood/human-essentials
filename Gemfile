@@ -105,7 +105,7 @@ gem "jwt"
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
-gem "mini_racer", "~> 0.6.0"
+gem "mini_racer", "~> 0.6.3"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.1.1"
@@ -194,7 +194,7 @@ group :test do
   # Selenium webdriver automatic installation and update.
   gem 'webdrivers', '~> 5.0'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.16"
+  gem "webmock", "~> 3.18"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

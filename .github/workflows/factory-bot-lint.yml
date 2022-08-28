@@ -7,6 +7,10 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'bin/*'
 
 jobs:
   factory_bot_lint:
