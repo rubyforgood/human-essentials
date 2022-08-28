@@ -85,5 +85,4 @@ class Admin::OrganizationsController < AdminController
   def user_params
     params.require(:organization).require(:user).permit(:name, :email)
   end
-
 end

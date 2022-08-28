@@ -32,7 +32,7 @@ RSpec.describe "Users", type: :request, skip_seed: true do
       it "should redirect to the partner path" do
         @user.add_role(:partner, Partners::Partner.find_by(partner_id: partner.id))
         get switch_to_role_users_path(@organization,
-                                      role_id: @user.roles.find { |r| r.name == 'partner'})
+          role_id: @user.roles.find { |r| r.name == "partner" })
         # all bank controllers add organization_id to all routes - there's no way to
         # avoid it
         expect(response).to redirect_to(partners_dashboard_path(organization_id: @organization.to_param))

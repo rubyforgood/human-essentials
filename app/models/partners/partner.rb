@@ -149,7 +149,7 @@ module Partners
     ].freeze
 
     def primary_user
-      self.users.order('created_at ASC').first
+      users.order('created_at ASC').first
     end
 
     def verified?

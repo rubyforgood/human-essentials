@@ -38,15 +38,15 @@ class User < ApplicationRecord
   rolify
   include Discard::Model
 
-  has_one :organization_role_join, class_name: 'UsersRole', foreign_key: :user_id
-  has_one :organization_role, through: :organization_role_join, class_name: 'Role', source: :role
-  has_one :organization, through: :organization_role, source: :resource, source_type: 'Organization'
-  has_many :organizations, through: :roles, source: :resource, source_type: 'Organization'
+  has_one :organization_role_join, class_name: "UsersRole", dependent: :destroy
+  has_one :organization_role, through: :organization_role_join, class_name: "Role", source: :role
+  has_one :organization, through: :organization_role, source: :resource, source_type: "Organization"
+  has_many :organizations, through: :roles, source: :resource, source_type: "Organization"
 
-  has_one :partner_role_join, class_name: 'UsersRole', foreign_key: :user_id
-  has_one :partner_role, through: :partner_role_join, class_name: 'Role', source: :role
-  has_one :partner, through: :partner_role, source: :resource, source_type: 'Partners::Partner'
-  has_many :partners, through: :roles, source: :resource, source_type: 'Partners::Partner'
+  has_one :partner_role_join, class_name: "UsersRole", dependent: :destroy
+  has_one :partner_role, through: :partner_role_join, class_name: "Role", source: :role
+  has_one :partner, through: :partner_role, source: :resource, source_type: "Partners::Partner"
+  has_many :partners, through: :roles, source: :resource, source_type: "Partners::Partner"
 
   attr_accessor :organization_admin # for creation / update time
 
@@ -82,19 +82,19 @@ class User < ApplicationRecord
   end
 
   def kind
-    return "super" if self.has_role?(:super_admin)
-    return "admin" if self.has_role?(:org_admin, self.organization)
-    return "normal" if self.has_role?(:org_user, self.organization)
-    return "partner" if self.has_role?(:partner, self.partner)
+    return "super" if has_role?(:super_admin)
+    return "admin" if has_role?(:org_admin, organization)
+    return "normal" if has_role?(:org_user, organization)
+    return "partner" if has_role?(:partner, partner)
 
     "normal"
   end
 
   def switchable_roles
-    all_roles = self.roles.to_a.group_by(&:resource_id)
+    all_roles = roles.to_a.group_by(&:resource_id)
     all_roles.values.each do |role_list|
-      if role_list.any? { |r| r.name == 'org_admin'}
-        role_list.delete_if { |r| r.name == 'org_user'}
+      if role_list.any? { |r| r.name == "org_admin" }
+        role_list.delete_if { |r| r.name == "org_user" }
       end
     end
     all_roles.values.flatten
