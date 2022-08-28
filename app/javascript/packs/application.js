@@ -8,6 +8,8 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import "@hotwired/turbo-rails"
+import "../controllers/index"
+
 import "trix"
 import "@rails/actiontext"
 import Highcharts from 'highcharts';

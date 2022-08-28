@@ -52,6 +52,8 @@ gem 'webpacker', '~> 5.0'
 gem "recaptcha"
 # Hotwire for SPA like without much JS
 gem "turbo-rails"
+# Sprinkle a little JS to add interactivity
+gem "stimulus-rails"
 
 ##### VIEWS/CONTROLLERS #####
 
