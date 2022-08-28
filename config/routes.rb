@@ -13,6 +13,10 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
 
+  authenticate :user, lambda { |u| u.super_admin? } do
+    mount Coverband::Reporters::Web.new, at: '/coverage'
+  end
+
   #
   # Mount web interface to see delayed job status and queue length.
   # Visible only to logged in users with the `super_admin` flag set to true

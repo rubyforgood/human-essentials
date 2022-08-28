@@ -98,6 +98,8 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Tool to detect unused code through knowing which methods are used in which files.
+gem 'coverband'
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
