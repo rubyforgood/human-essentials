@@ -30,6 +30,12 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  def product_drive_total_money_raised
+    within product_drives_section do
+      parse_formatted_currency find(".total_money_raised").text
+    end
+  end
+
   def filter_to_date_range(range_name, custom_dates = nil)
     select_date_filter_range range_name
 
