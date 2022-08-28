@@ -50,9 +50,11 @@ class ApplicationController < ActionController::Base
     if current_role.name == 'super_admin'
       admin_dashboard_path
     elsif current_role.name == 'partner'
-      partners_dashboard_path(current_user.partner)
-    else
+      partners_dashboard_path
+    elsif current_user.organization
       dashboard_path(current_user.organization)
+    else
+      root_path
     end
   end
 

@@ -10,7 +10,7 @@ describe PartnerUserInviteService, skip_seed: true do
 
     context "when the partner user exist in database" do
       before do
-        allow(User).to receive(:find_by).with(email: email, partner: partner.profile).and_return(partner_user)
+        allow(User).to receive(:find_by).with(email: email).and_return(partner_user)
       end
 
       it "calls invite! partner user method" do
@@ -23,12 +23,12 @@ describe PartnerUserInviteService, skip_seed: true do
       before do
         allow(User).to receive(:invite!)
         allow(User).to receive(:find_by).with(email: email)
-        allow(User).to receive(:find_by).with(email: email, partner: partner.profile)
+        allow(User).to receive(:find_by).with(email: email)
       end
 
       it "calls invite! User class method" do
         subject
-        expect(User).to have_received(:invite!).with(email: email, partner: partner.profile)
+        expect(User).to have_received(:invite!).with(email: email)
       end
     end
   end

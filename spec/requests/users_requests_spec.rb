@@ -25,10 +25,14 @@ RSpec.describe "Users", type: :request, skip_seed: true do
   end
 
   describe "GET #switch_to_partner_role" do
+    let(:admin_user) do
+      create(:user, organization: @organization, name: "ADMIN USER")
+    end
     context "with a partner role" do
       it "should redirect to the partner path" do
-        @user.update!(partner_id: Partners::Partner.find_by(partner_id: partner.id).id)
-        get switch_to_partner_role_users_path(@organization)
+        @user.add_role(:partner, Partners::Partner.find_by(partner_id: partner.id))
+        get switch_to_role_users_path(@organization,
+                                      role_id: @user.roles.find { |r| r.name == 'partner'})
         # all bank controllers add organization_id to all routes - there's no way to
         # avoid it
         expect(response).to redirect_to(partners_dashboard_path(organization_id: @organization.to_param))
@@ -37,8 +41,8 @@ RSpec.describe "Users", type: :request, skip_seed: true do
 
     context "without a partner role" do
       it "should redirect to the root path with an error" do
-        get switch_to_partner_role_users_path(@organization)
-        message = "Attempted to switch to a partner role but you have no partner associated with your account!"
+        get switch_to_role_users_path(@organization, role_id: admin_user.roles.first.id)
+        message = "Attempted to switch to a role that doesn't belong to you!"
         expect(flash[:alert]).to eq(message)
         expect(response).to redirect_to(root_path(@organization))
       end

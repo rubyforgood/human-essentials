@@ -51,9 +51,8 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, skip_se
         select("VA", from: "organization_state")
         fill_in "organization_zipcode", with: "22630"
 
-        fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
-        fill_in "organization_users_attributes_0_email", with: admin_user_params[:email]
-        check "organization_users_attributes_0_organization_admin"
+        fill_in "organization_user_name", with: admin_user_params[:name]
+        fill_in "organization_user_email", with: admin_user_params[:email]
 
         click_on "Save"
       end
@@ -110,9 +109,8 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, skip_se
       fill_in "organization_zipcode", with: "22630"
 
       admin_user_params = attributes_for(:organization_admin)
-      fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
-      fill_in "organization_users_attributes_0_email", with: admin_user_params[:email]
-      check "organization_users_attributes_0_organization_admin"
+      fill_in "organization_user_name", with: admin_user_params[:name]
+      fill_in "organization_user_email", with: admin_user_params[:email]
 
       click_on "Save"
 

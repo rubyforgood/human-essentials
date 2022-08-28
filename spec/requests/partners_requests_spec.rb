@@ -132,7 +132,7 @@ RSpec.describe "Partners", type: :request do
         context 'when the partner has no users' do
           # see the deletable? method which is tested separately in the partner model spec
           it 'shows the delete button' do
-            partner.profile.users.destroy_all
+            partner.profile.users.each(&:destroy)
             expect(subject.body).to include('Delete')
           end
         end
