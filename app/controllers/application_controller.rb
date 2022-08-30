@@ -62,7 +62,8 @@ class ApplicationController < ActionController::Base
     return unless params[:controller] # part of omniauth controller flow
     verboten! unless params[:controller].include?("devise") ||
       current_user.has_role?(:super_admin) ||
-      current_user.has_role?(:org_user, current_organization)
+      current_user.has_role?(:org_user, current_organization) ||
+      current_user.has_role?(:org_admin, current_organization)
   end
 
   def authorize_admin
