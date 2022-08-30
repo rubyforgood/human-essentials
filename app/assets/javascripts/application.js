@@ -18,7 +18,6 @@
 // require jquery_ujs
 //= require filterrific/filterrific-jquery
 //= require bootstrap/alert
-//= require fastclick
 //= require adminlte.min
 //= require cocoon
 //= require quagga
