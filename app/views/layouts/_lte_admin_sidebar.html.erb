@@ -117,12 +117,14 @@
     <% end %>
   </li>
   
-  <li class="nav-item <%= 'active' if current_page?(admin_questions_path) %>">
-    <%= link_to("/coverage", class: "nav-link #{"active" if current_page?(admin_questions_path)}") do %>
-      <i class="nav-icon fa-solid fa-chart-bar"></i>
-      <p>Coverband</p>
-    <% end %>
-  </li>
+  <% if Rails.env.production? %>
+    <li class="nav-item <%= 'active' if current_page?(admin_questions_path) %>">
+      <%= link_to("/coverage", class: "nav-link #{"active" if current_page?(admin_questions_path)}") do %>
+        <i class="nav-icon fa-solid fa-chart-bar"></i>
+        <p>Coverband</p>
+      <% end %>
+    </li>
+  <% end %>
 
   <% if (current_user.organization.present?) %>
     <li class="nav-item">
