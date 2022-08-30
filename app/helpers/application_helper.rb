@@ -34,7 +34,6 @@ module ApplicationHelper
     (current_user.organization_admin? && current_user.organization_id == current_organization.id)
   end
 
-  # wraps link_to_unless_current to provide Foundation6 friendly <a> tags
   def navigation_link_to(*args)
     link_to_unless_current(*args) do
       tag.a(args.first, class: "active", disabled: true)
