@@ -1,5 +1,5 @@
 Coverband.configure do |config|
-  config.store = Coverband::Adapters::RedisStore.new(Redis.new(url: ENV['REDIS_URL']))
+  config.store = Coverband::Adapters::RedisStore.new(Redis.new(url: ENV["REDIS_URL"]))
   config.logger = Rails.logger
 
   # default false. Experimental support for tracking view layer tracking.
