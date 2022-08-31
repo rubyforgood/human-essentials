@@ -459,7 +459,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               expect(org_dashboard_page.product_drive_total_money_raised).to eq @donations_in_filtered_date_range.map(&:money_raised).sum
             end
 
-            it "shows  #{expected_recent_donation_links_count} Recent Donation link(s) " do
+            it "shows #{expected_recent_donation_links_count} Recent Donation link(s)" do
               recent_donation_links = org_dashboard_page.recent_product_drive_donation_links
 
               expect(recent_donation_links.count).to eq expected_recent_donation_links_count
