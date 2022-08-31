@@ -238,7 +238,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Product Drive---", from: "donation_product_drive_id"
 
-          find(".modal-content", match: :first)
+          find(".modal-content")
           expect(page).to have_content("New Product Drive")
 
           fill_in "product_drive_name", with: "drivenametest"
@@ -251,7 +251,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
 
-          find(".modal-content", match: :first)
+          find(".modal-content")
           expect(page).to have_content("New Product Drive Participant")
 
           fill_in "product_drive_participant_business_name", with: "businesstest"
@@ -280,7 +280,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Donation::SOURCES[:manufacturer], from: "donation_source"
           select "---Create new Manufacturer---", from: "donation_manufacturer_id"
 
-          find(".modal-content", match: :first)
+          find(".modal-content")
           expect(page).to have_content("New Manufacturer")
 
           fill_in "manufacturer_name", with: "nametest"
