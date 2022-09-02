@@ -105,11 +105,7 @@ RSpec.configure do |config|
     end
 
     DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata))
-  end
 
-  # Run all the needed seeds and stubbing to 
-  # allow the tests to run without errors.
-  config.before(:all) do
     # Stub out the Geocoder since we
     Geocoder.configure(lookup: :test)
 
@@ -213,15 +209,15 @@ def seed_base_items_for_tests
   BaseItem.create!(base_items_data)
 
   # Create organization
-  @organization = create(:organization, name: "DEFAULT", skip_items: true)
+  @organization = FactoryBot.create(:organization, name: "DEFAULT", skip_items: true)
   Organization.seed_items(@organization)
 
   # Create default users
-  @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
-  @user = create(:user, organization: @organization, name: "DEFAULT USER")
-  @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
-  @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
+  @organization_admin = FactoryBot.create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
+  @user = FactoryBot.create(:user, organization: @organization, name: "DEFAULT USER")
+  @super_admin = FactoryBot.create(:super_admin, name: "DEFAULT SUPERADMIN")
+  @super_admin_no_org = FactoryBot.create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
 
   # Seed with default partner record
-  @partner = create(:partner, organization: @organization)
+  @partner = FactoryBot.create(:partner, organization: @organization)
 end
