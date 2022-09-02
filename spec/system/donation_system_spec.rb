@@ -237,7 +237,10 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a Product Drive from donation" do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Product Drive---", from: "donation_product_drive_id"
+
+          find(".modal-content")
           expect(page).to have_content("New Product Drive")
+
           fill_in "product_drive_name", with: "drivenametest"
           fill_in "product_drive_start_date", with: Time.current
           click_on "product_drive_submit"
@@ -247,7 +250,10 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a Product Drive Participant from donation" do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
+
+          find(".modal-content")
           expect(page).to have_content("New Product Drive Participant")
+
           fill_in "product_drive_participant_business_name", with: "businesstest"
           fill_in "product_drive_participant_contact_name", with: "test"
           fill_in "product_drive_participant_email", with: "123@mail.ru"
@@ -273,7 +279,10 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a Manufacturer from donation" do
           select Donation::SOURCES[:manufacturer], from: "donation_source"
           select "---Create new Manufacturer---", from: "donation_manufacturer_id"
+
+          find(".modal-content")
           expect(page).to have_content("New Manufacturer")
+
           fill_in "manufacturer_name", with: "nametest"
           click_on "manufacturer-submit"
           select "nametest", from: "donation_manufacturer_id"
