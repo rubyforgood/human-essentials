@@ -103,6 +103,8 @@ Rails.application.routes.draw do
 
     resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
+      put :deactivate
+      put :reactivate
       collection do
         post :import_csv
         post :import_inventory

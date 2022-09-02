@@ -9,23 +9,40 @@ RSpec.describe "StorageLocations", type: :request do
     end
 
     describe "GET #index" do
-      subject do
-        get storage_locations_path(default_params.merge(format: response_format))
-        response
-      end
-
       before { create(:storage_location) }
 
       context "html" do
         let(:response_format) { 'html' }
 
-        it { is_expected.to be_successful }
+        it "succeeds" do
+          get storage_locations_path(default_params.merge(format: response_format))
+          expect(response).to be_successful
+        end
+
+        context "with inactive locations" do
+          let!(:discarded_storage_location) { create(:storage_location, name: "Some Random Location", discarded_at: rand(10.years).seconds.ago) }
+
+          it "does not includes the inactive location" do
+            get storage_locations_path(default_params.merge(format: response_format))
+            expect(response.parsed_body).to_not include(discarded_storage_location.name)
+          end
+
+          context "with include_inactive_locations" do
+            it "includes the inactive location" do
+              get storage_locations_path(default_params.merge(include_inactive_storage_locations: "1", format: response_format))
+              expect(response.parsed_body).to include(discarded_storage_location.name)
+            end
+          end
+        end
       end
 
       context "csv" do
         let(:response_format) { 'csv' }
 
-        it { is_expected.to be_successful }
+        it "succeeds" do
+          get storage_locations_path(default_params.merge(format: response_format))
+          expect(response).to be_successful
+        end
       end
     end
 
@@ -158,6 +175,33 @@ RSpec.describe "StorageLocations", type: :request do
       it "redirects to #index" do
         delete storage_location_path(default_params.merge(id: create(:storage_location, organization: @organization)))
         expect(response).to redirect_to(storage_locations_path)
+      end
+    end
+
+    describe "PUT #deactivate" do
+      context "with inventory" do
+        let(:storage_location) { create(:storage_location, :with_items, organization: @organization) }
+
+        it "does not discard" do
+          put storage_location_deactivate_path(default_params.merge(storage_location_id: storage_location.id, format: :json))
+          expect(storage_location.discarded?).to eq(false)
+        end
+      end
+
+      let(:storage_location) { create(:storage_location, organization: @organization) }
+
+      it "discards" do
+        put storage_location_deactivate_path(default_params.merge(storage_location_id: storage_location.id, format: :json))
+        expect(storage_location.reload.discarded?).to eq(true)
+      end
+    end
+
+    describe "PUT #reactivate" do
+      let(:storage_location) { create(:storage_location, organization: @organization, discarded_at: Time.zone.now) }
+
+      it "discards" do
+        put storage_location_reactivate_path(default_params.merge(storage_location_id: storage_location.id, format: :json))
+        expect(storage_location.reload.discarded?).to eq(false)
       end
     end
 

@@ -95,6 +95,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       create(:item, name: Faker::Lorem.unique.word)
       location1 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Foo")
       location2 = create(:storage_location, name: "Bar")
+      location3 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Baz", discarded_at: rand(2.years).seconds.ago)
       visit subject
 
       select item.name, from: "filters_containing"
@@ -103,6 +104,28 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(page).to have_css("table tr", count: 2)
       expect(page).to have_xpath("//table/tbody/tr/td", text: location1.name)
       expect(page).not_to have_xpath("//table/tbody/tr/td", text: location2.name)
+      expect(page).not_to have_xpath("//table/tbody/tr/td", text: location3.name)
+
+      check "include_inactive_storage_locations"
+      click_button "Filter"
+
+      expect(page).to have_css("table tr", count: 3)
+      expect(page).to have_xpath("//table/tbody/tr/td", text: location3.name)
+    end
+
+    it "Allows user to filter discarded storage locations" do
+      location1 = create(:storage_location, name: "Bar")
+      location2 = create(:storage_location, discarded_at: rand(2.years).seconds.ago)
+      visit subject
+
+      expect(page).to have_xpath("//table/tbody/tr/td", text: location1.name)
+      expect(page).not_to have_xpath("//table/tbody/tr/td", text: location2.name)
+
+      check "include_inactive_storage_locations"
+      click_button "Filter"
+
+      expect(page).to have_xpath("//table/tbody/tr/td", text: location1.name)
+      expect(page).to have_xpath("//table/tbody/tr/td", text: location2.name)
     end
 
     it "Filter list presented to user is in alphabetical order by item name" do

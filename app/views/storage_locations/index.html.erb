@@ -41,6 +41,11 @@
                   <%= filter_select(label: "Filter by Item Category", scope: :containing, collection: @items, selected: @selected_item_category) %>
                 </div>
               </div>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= filter_checkbox(label: "include inactive storage locations", scope: :include_inactive_storage_locations, selected: @include_inactive_storage_locations) %>
+                </div>
+              </div>
               <div class="card-footer">
                 <%= filter_button %>
                 <%= clear_filter_button %>

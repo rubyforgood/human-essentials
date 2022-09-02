@@ -8,6 +8,10 @@
   <td class="text-right">
     <%= view_button_to storage_location %>
     <%= edit_button_to edit_storage_location_path(storage_location) %>
-    <%= delete_button_to storage_location, { confirm: confirm_delete_msg(storage_location.name) } %>
+    <% if storage_location.discarded? %>
+      <%= reactivate_button_to storage_location_reactivate_path(storage_location), { confirm: confirm_deactivate_msg(storage_location.name) } %>
+    <% else %>
+      <%= deactivate_button_to storage_location_deactivate_path(storage_location), { confirm: confirm_reactivate_msg(storage_location.name) } %>
+    <% end %>
   </td>
 </tr>

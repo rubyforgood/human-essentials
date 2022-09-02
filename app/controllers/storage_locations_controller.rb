@@ -11,7 +11,12 @@ class StorageLocationsController < ApplicationController
   def index
     @selected_item_category = filter_params[:containing]
     @items = current_organization.storage_locations.items_inventoried
-    @storage_locations = current_organization.storage_locations.alphabetized.includes(:inventory_items).class_filter(filter_params)
+    @include_inactive_storage_locations = params[:include_inactive_storage_locations].present?
+    @storage_locations = current_organization.storage_locations.alphabetized.class_filter(filter_params)
+
+    unless @include_inactive_storage_locations
+      @storage_locations = @storage_locations.kept
+    end
 
     respond_to do |format|
       format.html
@@ -72,6 +77,23 @@ class StorageLocationsController < ApplicationController
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
+    end
+  end
+
+  def deactivate
+    @storage_location = current_organization.storage_locations.kept.find(params[:storage_location_id])
+    @storage_location.discard!
+    redirect_to storage_locations_path, notice: "Storage Location deactivated successfully"
+  rescue Errors::StorageLocationNotEmpty => e
+    redirect_back(fallback_location: storage_locations_path(organization_id: current_organization), error: e.message)
+  end
+
+  def reactivate
+    @storage_location = current_organization.storage_locations.all.find(params[:storage_location_id])
+    if @storage_location.undiscard!
+      redirect_to storage_locations_path, notice: "Storage Location reactivated successfully"
+    else
+      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization), error: "Something didn't work quite right -- try again?")
     end
   end
 

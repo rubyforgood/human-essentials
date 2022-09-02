@@ -48,4 +48,10 @@ module Errors
       "Storage location kit doesn't match"
     end
   end
+
+  class StorageLocationNotEmpty < StandardError
+    def message
+      "Cannot deactivate storage location containing inventory items with non-zero quantities"
+    end
+  end
 end
