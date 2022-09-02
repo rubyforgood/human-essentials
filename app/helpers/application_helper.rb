@@ -26,7 +26,6 @@ module ApplicationHelper
     current_user.has_role?(:org_admin, current_organization)
   end
 
-  # wraps link_to_unless_current to provide Foundation6 friendly <a> tags
   def navigation_link_to(*args)
     link_to_unless_current(*args) do
       tag.a(args.first, class: "active", disabled: true)
