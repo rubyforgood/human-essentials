@@ -45,14 +45,13 @@ class Admin::OrganizationsController < AdminController
 
   def create
     @organization = Organization.new(organization_params)
-    @user = User.new(user_params)
-    @user.assign_attributes(password: SecureRandom.uuid)
 
     if @organization.save
       Organization.seed_items(@organization)
-      @user.add_role(:org_user, @organization)
-      @user.add_role(:org_admin, @organization)
-      @user.invite!
+      @user = UserInviteService.invite(name: user_params[:name],
+                                       email: user_params[:email],
+                                       roles: %i(org_user org_admin),
+                                       resource: @organization)
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."

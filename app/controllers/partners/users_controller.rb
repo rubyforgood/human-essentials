@@ -9,12 +9,10 @@ module Partners
     end
 
     def create
-      user = ::User.invite!(
+      user = UserInviteService.invite(name: user_params[:name],
         email: user_params[:email],
-        name: user_params[:name]
-      ) do |user|
-        user.add_role(:partner, current_partner)
-      end
+        roles: %i[partner],
+        resource: current_partner)
 
       flash[:success] = "You have invited #{user.name} to join your organization!"
       redirect_to partners_users_path

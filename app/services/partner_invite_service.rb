@@ -15,13 +15,9 @@ class PartnerInviteService
     end
 
     partner.update!(status: 'invited')
-    # skip invitation is necessary because when email will be send for this situation needs partner reference updated,
-    # and, in this case, we create invite, reload object and send invitation email.
-    user = User.invite!(email: partner.email, skip_invitation: true)
-    user.add_role(:partner, partner.profile)
-
-    user.reload
-    user.deliver_invitation
+    UserInviteService.invite(email: partner.email,
+      roles: %i[partner],
+      resource: partner.profile)
   end
 
   private
