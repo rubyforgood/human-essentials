@@ -21,7 +21,6 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service, skip_seed: 
     end
 
     it 'should report normal values' do
-      seed_base_items_for_tests
       Organization.seed_items(organization)
       organization.update!(distribute_monthly: true, repackage_essentials: true)
 
@@ -53,7 +52,6 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service, skip_seed: 
     end
 
     it 'should work with no distribution_quantity' do
-      seed_base_items_for_tests
       Organization.seed_items(organization)
       organization.update!(distribute_monthly: true, repackage_essentials: true)
 

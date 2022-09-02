@@ -19,7 +19,6 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
   before(:all) do
     DatabaseCleaner.start
     create_organization
-    seed_base_items_for_tests
 
     Organization.seed_items(organization)
     disposable_item = organization.items.disposable.first

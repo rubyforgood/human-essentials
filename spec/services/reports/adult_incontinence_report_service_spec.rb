@@ -32,7 +32,6 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
 
     describe 'with values' do
       before(:each) do
-        seed_base_items_for_tests
         Organization.seed_items(organization)
 
         within_time = Time.zone.parse("2020-05-31 14:00:00")
