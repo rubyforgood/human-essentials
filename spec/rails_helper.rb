@@ -70,28 +70,6 @@ Capybara.asset_host = "http://localhost:3000"
 # Only keep the most recent run
 Capybara::Screenshot.prune_strategy = :keep_last_run
 
-def stub_addresses
-  Geocoder.configure(lookup: :test)
-
-  ["1500 Remount Road, Front Royal, VA 22630",
-   "123 Donation Site Way",
-   "Smithsonian Conservation Center new"].each do |address|
-    Geocoder::Lookup::Test.add_stub(
-      address, [
-        {
-          "latitude" => 40.7143528,
-          "longitude" => -74.0059731,
-          "address" => "1500 Remount Road, Front Royal, VA",
-          "state" => "Virginia",
-          "state_code" => "VA",
-          "country" => "United States",
-          "country_code" => "US"
-        }
-      ]
-    )
-  end
-end
-
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
@@ -108,7 +86,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   # Location for fixtures (logo, etc)
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -119,22 +97,6 @@ RSpec.configure do |config|
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
 
-  # Stub out Geocoder or else...
-  config.before(:all) do
-    stub_addresses
-  end
-
-  # set driver for system tests
-  config.before(:each, type: :system) do
-    clear_downloads
-    driven_by :chrome
-    Capybara.server = :puma, { Silent: true }
-  end
-
-  config.after(:each, type: :system, js: true) do
-    clear_downloads
-  end
-
   # Preparatifyication
   config.before(:suite) do
     unless File.exist?(Rails.root.join("public", "packs-task"))
@@ -142,85 +104,69 @@ RSpec.configure do |config|
       `NODE_ENV=test bin/webpack`
     end
 
-    Rails.logger.info <<~ASCIIART
-      -~~==]}>        ######## ###########  ####      ########    ###########
-      -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
-      -~~==]}>     +#+           +#+    +#+   +#+   +#+      +#+    +#+
-      -~~==]}>    +:++#++:++    +:+    +:++#++:++  +:++#++:++      +:+
-      -~~==]}>          +:+    +:+    +:+    +:+  +:+     +:+     +:+
-      -~~==]}>  :+:    :+:    :+:    :+:    :+:  :+:      :+:    :+:
-      -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
-    ASCIIART
-
-    DatabaseCleaner[:active_record, { model: ApplicationRecord }]
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
-
-    raise if Partners::Partner.count > 0
-    raise if Organization.count > 0
+    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata))
   end
 
-  config.before(:each) do
-    Faker::Config.random = Random.new(42)
+  # Run all the needed seeds and stubbing to 
+  # allow the tests to run without errors.
+  config.before(:all) do
+    # Stub out the Geocoder since we
+    Geocoder.configure(lookup: :test)
 
-    DatabaseCleaner.strategy = :transaction
+    ["1500 Remount Road, Front Royal, VA 22630",
+     "123 Donation Site Way",
+     "Smithsonian Conservation Center new"].each do |address|
+       Geocoder::Lookup::Test.add_stub(
+         address, [
+           {
+             "latitude" => 40.7143528,
+             "longitude" => -74.0059731,
+             "address" => "1500 Remount Road, Front Royal, VA",
+             "state" => "Virginia",
+             "state_code" => "VA",
+             "country" => "United States",
+             "country_code" => "US"
+           }
+         ]
+       )
+     end
+
+    seed_base_items_for_tests
   end
 
   config.before(:each, type: :system) do
-    # Use truncation in the case of doing `browser` tests because it
-    # appears that transactions won't work since it really does
-    # depend on the database to have records.
-    DatabaseCleaner.strategy = :truncation
+    clear_downloads
+    driven_by :chrome
+    Capybara.server = :puma, { Silent: true }
   end
 
-  config.before(:each, type: :request) do
-    # Use truncation in the case of doing `browser` tests because it
-    # appears that transactions won't work since it really does
-    # depend on the database to have records.
-    DatabaseCleaner.strategy = :truncation
+  config.before(:each) do
+    # Faker::Config.random = Random.new(42)
+
+    # DatabaseCleaner.strategy = :transaction
   end
+
 
   config.before(:each) do |example|
-    if example.metadata[:persisted_data]
-      DatabaseCleaner.strategy = :truncation
-    else
-      # The database cleaner will now begin at this point
-      # up anything after this point when `.clean` is called.
-      DatabaseCleaner.start
-
-      # "Dirty" the database by adding the essential records
-      # necessary to run tests.
-      #
-      # If you are using :transaction, it will just rollback any additions
-      # when `.clean` is called. Any previous changes will be kept prior to
-      # the call `DatabaseCleaner.start`
-      #
-      # If you are using :truncation, it will erase everything once `.clean`
-      # is called.
-      seed_base_items_for_tests
-      # Always create organization, almost no tests can be run without one
-      create_organization
-
-      seed_with_default_records unless example.metadata[:skip_seed]
-    end
+    # seed_with_default_records unless example.metadata[:skip_seed]
   end
 
   config.before(:each, type: proc { |v| %i[request system controller].include?(v) }) do
-    create_default_users
+    # create_default_users
   end
 
   config.before(:each, :needs_users) do
-    create_default_users
+    # create_default_users
   end
 
   config.after(:each) do |example|
     # Ensure to clean-up the database by whichever means
     # were specified before the test ran
-    DatabaseCleaner.clean unless example.metadata[:persisted_data]
+    # DatabaseCleaner.clean unless example.metadata[:persisted_data]
 
     # Remove any /tmp/storage files that might have been
     # added as a consequence of the test.
-    FileUtils.rm_rf(Dir["#{Rails.root}/tmp/storage"])
+    # FileUtils.rm_rf(Dir["#{Rails.root}/tmp/storage"])
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
@@ -249,43 +195,33 @@ def text_body(mail)
   mail.body.parts.find { |p| p.content_type =~ /text/ }.body.encoded
 end
 
-def create_default_users
-  Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
+def seed_base_items_for_tests
+  # Create base items that are used to handle seeding Organization with items
+  base_items = File.read(Rails.root.join("db", "base_items.json"))
+  items_by_category = JSON.parse(base_items)
+  base_items_data = items_by_category.map do |category, entries|
+    entries.map do |entry|
+      { 
+        name: entry["name"],
+        category: category,
+        partner_key: entry["key"],
+        updated_at: Time.zone.now,
+        created_at: Time.zone.now 
+      }
+    end
+  end.flatten
+  BaseItem.create!(base_items_data)
+
+  # Create organization
+  @organization = create(:organization, name: "DEFAULT", skip_items: true)
+  Organization.seed_items(@organization)
+
+  # Create default users
   @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
   @user = create(:user, organization: @organization, name: "DEFAULT USER")
   @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
   @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
-end
 
-def seed_base_items_for_tests
-  Rails.logger.info "-~=> Destroying all Base Items ... "
-  BaseItem.delete_all
-  unless @_base_items
-    base_items = File.read(Rails.root.join("db", "base_items.json"))
-    items_by_category = JSON.parse(base_items)
-    Rails.logger.info "Creating Base Items: "
-    @_base_items = []
-    items_by_category.each do |category, entries|
-      entries.each do |entry|
-        @_base_items << { name: entry["name"],
-                          category: category,
-                          partner_key: entry["key"],
-                          updated_at: Time.zone.now,
-                          created_at: Time.zone.now }
-      end
-    end
-  end
-  BaseItem.insert_all(@_base_items) # rubocop:disable Rails/SkipsModelValidations
-  Rails.logger.info "~-=> Done creating Base Items!"
-end
-
-def create_organization
-  Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
-  @organization = create(:organization, name: "DEFAULT", skip_items: true)
-end
-
-def seed_with_default_records
-  Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
+  # Seed with default partner record
   @partner = create(:partner, organization: @organization)
-  Organization.seed_items(@organization)
 end
