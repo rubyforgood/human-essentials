@@ -10,7 +10,7 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
   end
 
   context "When going to the Pick Ups & Deliveries page" do
-    let(:issued_at) { "2022-08-07 19:00:00".to_datetime }
+    let(:issued_at) { Time.current.utc.change(hour: 19, minute: 0).to_datetime }
     before do
       item1 = create(:item, value_in_cents: 1050)
       @distribution = create(:distribution, :with_items, item: item1, agency_rep: "A Person", organization: @user.organization, issued_at: issued_at)
