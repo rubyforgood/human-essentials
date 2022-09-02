@@ -11,7 +11,7 @@ module Partners
 
     def create
       create_service = Partners::FamilyRequestCreateService.new(
-        partner_user_id: current_partner_user.id,
+        partner_user_id: current_user.id,
         comments: individuals_request_params[:comments],
         family_requests_attributes: individuals_request_params[:items_attributes]&.values
       )
@@ -24,11 +24,11 @@ module Partners
       else
         @request = FamilyRequest.new({}, initial_items: 1)
         @errors = create_service.errors
-        @requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
+        @requestable_items = Organization.find(current_partner.essentials_bank_id).valid_items.map do |item|
           [item[:name], item[:id]]
         end.sort
 
-        Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_partner_user.id} reason=#{@errors.full_messages}")
+        Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
         render :new, status: :unprocessable_entity
       end

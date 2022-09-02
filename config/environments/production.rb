@@ -6,8 +6,6 @@ Rails.application.configure do
   # Code is not reloaded between requests.
   config.cache_classes = true
 
-  config.require_master_key = true
-
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
   # and those relying on copy on write to perform better.
@@ -110,8 +108,7 @@ Rails.application.configure do
   config.lograge.custom_payload do |controller|
     {
       host: controller.request.host,
-      user_id: controller.current_user.try(:id),
-      partner_user_id: controller.current_partner_user.try(:id)
+      user_id: controller.current_user.try(:id)
     }
   end
   config.lograge.custom_options = lambda do |event|

@@ -8,11 +8,11 @@ Accepted
 
 ## Context
 
-Discussion about whether to make this application a multi-tenant (single instance with many Diaper Banks) or single-tenant (each Diaper Bank gets their own instance).
+Discussion about whether to make this application a multi-tenant (single instance with many Essentials Banks) or single-tenant (each Essentials Bank gets their own instance).
 
 ## Decision
 
-We've decided to go with a multi-tenancy. Rails has good support for this, with some initial configuration. This will help keep costs down and allow us to provide it as a cheap/free service. This will require ongoing support by us, to maintain the production instance, but since this is intended to be an ongoing project that was implied anyways. This will also ensure that all Diaper Banks have access to the same version of the software, universally.
+We've decided to go with a multi-tenancy. Rails has good support for this, with some initial configuration. This will help keep costs down and allow us to provide it as a cheap/free service. This will require ongoing support by us, to maintain the production instance, but since this is intended to be an ongoing project that was implied anyways. This will also ensure that all Essentials Banks have access to the same version of the software, universally.
 
 ## Consequences
 

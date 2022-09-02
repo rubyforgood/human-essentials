@@ -5,18 +5,18 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "3.0.2"
+ruby "3.1.2"
 
 ###### BASIC FRAMEWORKS ######
 
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.3.5"
+gem "pg", "~> 1.4.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.2.4"
+gem "rails", "7.0.3.1"
 
 ###### MODELS / DATABASE #######
 
@@ -32,32 +32,18 @@ gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
 # Enforces "safe" migrations.
-gem "strong_migrations", "~> 1.0.0"
+gem "strong_migrations", "1.3.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
+gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
-# Displays a date range picker, i.e. a way for a user to select a start and end date in
-# a single widget.
-gem 'bootstrap-daterangepicker-rails'
-# Delivers assets for a superpowered dropdown using Bootstrap.
-gem 'bootstrap-select-rails'
-# Creates JavaScript graphs.
-gem "chartkick"
-# Installs fonts for Rails frontend.
-gem "font-awesome-rails"
-# A jQuery calendar widget.
-gem "fullcalendar-rails"
 # jQuery framework (DOM methods, Ajax, chaining, etc.)
 gem "jquery-rails"
 gem "jquery-ui-rails"
-# JavaScript date handling functions
-gem "momentjs-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# Toast (non-blocking notification) library.
-gem "toastr-rails"
 # JavaScript minified, used in asset compilation.
 gem "uglifier", ">= 1.3.0"
 # JavaScript bundler.
@@ -82,6 +68,7 @@ gem "omniauth-rails_csrf_protection"
 # Allow login via Google.
 gem "omniauth-google-oauth2"
 
+gem "matrix"
 # Generate PDFs as views.
 gem "prawn-rails"
 # Reduces boilerplate HTML code when writing forms.
@@ -116,10 +103,10 @@ gem "jwt"
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
-gem "mini_racer", "~> 0.6.0"
+gem "mini_racer", "~> 0.6.3"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.0.3"
+gem "sprockets", "~> 4.1.1"
 
 group :production do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -155,7 +142,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 5.1.1"
+  gem "rspec-rails", "~> 5.1.2"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
@@ -189,7 +176,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.0"
+  gem "capybara", "~> 3.37"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
@@ -205,7 +192,7 @@ group :test do
   # Selenium webdriver automatic installation and update.
   gem 'webdrivers', '~> 5.0'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.0"
+  gem "webmock", "~> 3.18"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

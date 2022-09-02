@@ -26,8 +26,6 @@ Layout/ArgumentAlignment:
     - 'app/models/product_drive.rb'
     - 'app/models/distribution.rb'
     - 'app/models/organization_stats.rb'
-    - 'app/models/partner_user.rb'
-    - 'app/models/partners/user.rb'
     - 'app/models/storage_location.rb'
     - 'app/models/user.rb'
     - 'app/pdfs/distribution_pdf.rb'
@@ -49,7 +47,6 @@ Layout/ArgumentAlignment:
     - 'spec/services/reports/adult_incontinence_report_service_spec.rb'
     - 'spec/services/reports/other_products_report_service_spec.rb'
     - 'spec/services/reports/summary_report_service_spec.rb'
-    - 'spec/services/reports/warehouse_report_service_spec.rb'
     - 'spec/support/provideable_shared_example.rb'
 
 # Offense count: 53
@@ -728,7 +725,6 @@ Style/StringLiterals:
     - 'spec/models/organization_spec.rb'
     - 'spec/models/partner_group_spec.rb'
     - 'spec/models/partner_spec.rb'
-    - 'spec/models/partner_user_spec.rb'
     - 'spec/models/partners/authorized_family_member_spec.rb'
     - 'spec/models/partners/child_item_request_spec.rb'
     - 'spec/models/partners/child_spec.rb'
@@ -736,7 +732,6 @@ Style/StringLiterals:
     - 'spec/models/partners/partner_form_spec.rb'
     - 'spec/models/partners/partner_spec.rb'
     - 'spec/models/partners/request_spec.rb'
-    - 'spec/models/partners/user_spec.rb'
     - 'spec/models/request_item_spec.rb'
     - 'spec/models/user_spec.rb'
     - 'spec/rails_helper.rb'

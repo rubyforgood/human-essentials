@@ -3,8 +3,9 @@
 # Table name: families
 #
 #  id                        :bigint           not null, primary key
+#  case_manager              :string
 #  comments                  :text
-#  guardian_country          :string
+#  guardian_county           :string
 #  guardian_employed         :boolean
 #  guardian_employment_type  :jsonb
 #  guardian_first_name       :string
@@ -20,7 +21,6 @@
 #  sources_of_income         :jsonb
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  agency_guardian_id        :string
 #  partner_id                :bigint
 #
 

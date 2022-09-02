@@ -120,7 +120,7 @@ RSpec.describe "Requests", type: :system, js: true do
     it "should show the request with a request sender if a partner user is set" do
       visit subject
       expect(page).to have_content("Request from #{request.partner.name}")
-      expect(page).to have_content("Estimated on-hand")
+      expect(page).to have_content("Fulfillment Location Inventory")
       expect(page).to have_content("Request Sender:")
       partner_user = request.partner_user
       expect(page).to have_content("#{partner_user.name} <#{partner_user.email}>")
@@ -132,7 +132,7 @@ RSpec.describe "Requests", type: :system, js: true do
       request.save!
       visit subject
       expect(page).to have_content("Request from #{request.partner.name}")
-      expect(page).to have_content("Estimated on-hand")
+      expect(page).to have_content("Fulfillment Location Inventory")
       expect(page).to have_content("Request Sender:")
       expect(page).not_to have_content("#{partner_user.name} <#{partner_user.email}>")
     end

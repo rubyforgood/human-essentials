@@ -10,21 +10,21 @@ RSpec.describe Reports::WarehouseReportService, type: :service, skip_seed: true 
   describe '#report' do
     it 'should print normal values' do
       create(:storage_location,
-             square_footage: 500,
-             warehouse_type: 'Residential space used',
-             organization: organization)
+        square_footage: 500,
+        warehouse_type: 'Residential space used',
+        organization: organization)
       create(:storage_location,
-             square_footage: 1500,
-             warehouse_type: 'Consumer, self-storage or container space',
-             organization: organization)
+        square_footage: 1500,
+        warehouse_type: 'Consumer, self-storage or container space',
+        organization: organization)
       create(:storage_location,
-             square_footage: 1000,
-             warehouse_type: 'Warehouse with loading bay',
-             organization: organization)
+        square_footage: 1000,
+        warehouse_type: 'Warehouse with loading bay',
+        organization: organization)
       create(:storage_location,
-             square_footage: 2000,
-             warehouse_type: 'Warehouse with loading bay',
-             organization: another_organization)
+        square_footage: 2000,
+        warehouse_type: 'Warehouse with loading bay',
+        organization: another_organization)
 
       expect(report.report).to eq({
                                     entries: { "Largest storage site type" => "Consumer, self-storage or container space",
@@ -59,17 +59,17 @@ RSpec.describe Reports::WarehouseReportService, type: :service, skip_seed: true 
 
     it 'should print unknown square footage' do
       create(:storage_location,
-             square_footage: 500,
-             warehouse_type: 'Residential space used',
-             organization: organization)
+        square_footage: 500,
+        warehouse_type: 'Residential space used',
+        organization: organization)
       create(:storage_location,
-             square_footage: nil,
-             warehouse_type: 'Consumer, self-storage or container space',
-             organization: organization)
+        square_footage: nil,
+        warehouse_type: 'Consumer, self-storage or container space',
+        organization: organization)
       create(:storage_location,
-             square_footage: nil,
-             warehouse_type: 'Warehouse with loading bay',
-             organization: organization)
+        square_footage: nil,
+        warehouse_type: 'Warehouse with loading bay',
+        organization: organization)
 
       expect(report.report).to eq({
                                     entries: { "Largest storage site type" => "Residential space used",

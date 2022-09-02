@@ -26,6 +26,50 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">
+
+        <% unless @partner.uninvited? %>
+
+      <section class="card card-info card-outline">
+          <div class="card-header">
+            <h2 class="card-title">Partner Actions</h2>
+          </div>
+          <div class="card-body p-3">
+            <div class="row px-2">
+              <div class="col-lg-4 col-sm-12">
+                <div>
+                  <h4 class='text-2xl underline'> Partner Details </h4>
+                </div>
+                <%= edit_button_to edit_partner_path(@partner), { text: "Edit Partner Information", icon: "pencil-square-o", type: "primary", size: "m" } %>
+                <br>
+                <br>
+                <%= view_button_to '#partner-information', { text: "View Partner Information", type: "secondary", size: "m" } %>
+              </div>
+              <div class="col-lg-4 col-sm-12">
+                <div>
+                  <h4 class='text-2xl underline'> Partner Membership </h4>
+                  <%= modal_button_to("#resetPasswordModal", { text: "Reset Partner Password", icon: "check", type: "warning", size: "m" }) if can_administrate? %>
+                  <br>
+                  <br>
+                  <%= modal_button_to("#addUserModal", { text: "Add User To Partner", icon: "plus", type: "warning", size: "m" }) if can_administrate? %>
+                </div>
+              </div>
+              <div class="col-lg-4 col-sm-12">
+                <div>
+                  <h4 class='text-2xl underline'> Partner Status </h4>
+                </div>
+                <% if @partner.deactivated? %>
+                  <%= reactivate_button_to reactivate_partner_path(@partner), { confirm: confirm_reactivate_msg(@partner.name), size: 'm' } %>
+                <% else %>
+                  <%= deactivate_button_to deactivate_partner_path(@partner), { text: "Deactivate Partner", confirm: confirm_deactivate_msg(@partner.name), size: 'm' } %>
+                <% end %>
+                <br>
+                <br>
+                <%= print_button_to approve_application_partner_path(@partner), { text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "m" } if can_administrate? %>
+              </div>
+            </div>
+          </div>
+        </section>
+        <% end %>
         <!-- Default box -->
         <% if @partner.uninvited? %>
           <%= render "uninvited_header", partner: @partner %>
@@ -57,18 +101,18 @@
                 <div>
                   <h4 class='text-2xl underline'> Program Manager </h4>
                   <div>
-                    <label>Name:</label> <%= optional_data_text(@partner.profile.program_contact_name) %>
+                    <label>Name:</label> <%= optional_data_text(@partner.profile.primary_contact_name) %>
                   </div>
                   <div>
-                    <label>Email:</label> <%= optional_data_text(@partner.profile.program_contact_email) %>
+                    <label>Email:</label> <%= optional_data_text(@partner.profile.primary_contact_email) %>
                   </div>
                   <div>
-                    <label>Phone:</label> <%= optional_data_text(@partner.profile.program_contact_phone) %>
+                    <label>Phone:</label> <%= optional_data_text(@partner.profile.primary_contact_phone) %>
                   </div>
                   <div>
                     <% # NOTE! The reason why the Mobile field appears for Program Manager and not the others is %>
                     <% # because the existing table doesn't have the mobile field for the others %>
-                    <label>Mobile:</label> <%= optional_data_text(@partner.profile.program_contact_mobile) %>
+                    <label>Mobile:</label> <%= optional_data_text(@partner.profile.primary_contact_mobile) %>
                   </div>
                 </div>
               </div>
@@ -188,7 +232,7 @@
           <div class="card-body p-2">
             <div class="row">
               <div class="col-xs-12 col-sm-12 p-4">
-                <%= render partial: 'profiles/show', locals: { partner_profile: @partner.profile, partner_profile_fields: @partner_profile_fields  } %>
+                <%= render partial: 'profiles/show', locals: { partner_profile: @partner.profile, partner_profile_fields: @partner_profile_fields } %>
               </div>
             </div>
           </div>
@@ -248,13 +292,12 @@
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Add a User or Send a Reminder for <%= @partner.name %></h4>
+          <h4 class="modal-title">Add a User to <%= @partner.name %></h4>
         </div><!-- modal-header -->
         <div class="modal-body">
           <div class="box-body">
             <p>
-              This will invite an additional member of the partner organization to Partnerbase unless a user with that
-              exists in the Partnerbase system. If a user with that email exists it will send them a password reminder.
+              This will invite an additional member of the partner organization to become a partner user in the system. This user will show up on the lists of users who can access this partner after being invited and you will be able to track their most recent log in as well.
             </p>
             <br/>
             <%= form_tag invite_partner_user_partner_path do %>
@@ -264,7 +307,37 @@
                 <%= hidden_field_tag :partner, @partner.id %><br>
               </div>
               <br>
-              <%= submit_button({text: "Invite User", icon: "envelope"}) %>
+              <%= submit_button({ text: "Invite User", icon: "envelope" }) %>
+            <% end # form %>
+          </div><!-- box-body -->
+        </div><!-- modal-body -->
+      </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+  </div><!-- addUserModal -->
+  <div id="resetPasswordModal" class="modal fade">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Reset Password <%= @partner.name %></h4>
+        </div><!-- modal-header -->
+        <div class="modal-body">
+          <div class="box-body">
+            <p>
+              If your partner is unable to log in because they have forgotten their password, this will send your partner an email to reset their password so are able to can log in again. The person receiving this email should exist in the list of users who can access this partner. That list is available on the current page <a href="#partner-users">here.</a>
+            </p>
+            <p>
+              Note: If the email entered for the partner does not match a user on the partner an email will be sent inviting that person to be a user of the partner agency.
+            </p>
+            <br/>
+            <%= form_tag invite_partner_user_partner_path do %>
+              <div class="input-group">
+                <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
+                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
+                <%= hidden_field_tag :partner, @partner.id %><br>
+              </div>
+              <br>
+              <%= submit_button({ text: "Reset Password", icon: "envelope" }) %>
             <% end # form %>
           </div><!-- box-body -->
         </div><!-- modal-body -->
@@ -274,7 +347,7 @@
 </section>
 
 <script>
-$(function () {
-  $('#pending-approval-request-tooltip').tooltip()
-})
+  $(function () {
+    $('#pending-approval-request-tooltip').tooltip()
+  })
 </script>

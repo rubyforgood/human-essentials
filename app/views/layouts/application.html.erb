@@ -48,9 +48,11 @@
 
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <%= link_to dashboard_path, class: "brand-link" do %>
-      <img src="/img/essentials.svg" alt="Essentials Logo (icon)" title="HumanEssentials" class="main_logo">
+    <% if current_user %>
+      <!-- Brand Logo -->
+      <%= link_to dashboard_path, class: "brand-link" do %>
+        <img src="/img/essentials.svg" alt="Essentials Logo (icon)" title="HumanEssentials" class="main_logo">
+      <% end %>
     <% end %>
 
     <!-- Sidebar -->

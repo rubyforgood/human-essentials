@@ -147,6 +147,21 @@ class DistributionsController < ApplicationController
     end
   end
 
+  def itemized_breakdown
+    setup_date_range_picker
+
+    distributions = current_organization.distributions.during(helpers.selected_range)
+    itemized_distribution_data_csv = DistributionItemizedBreakdownService
+      .new(organization: current_organization, distribution_ids: distributions.pluck(:id))
+      .fetch_csv
+
+    respond_to do |format|
+      format.csv do
+        send_data itemized_distribution_data_csv, filename: "Itemized-Breakdown-Distributions-#{Time.zone.today}.csv"
+      end
+    end
+  end
+
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def schedule
     @pick_ups = current_organization.distributions

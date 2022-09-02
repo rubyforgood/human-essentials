@@ -32,8 +32,8 @@ RSpec.describe "Transfers", type: :request, skip_seed: true do
 
           context 'when date parameters are supplied' do
             it 'only returns the correct obejects' do
-              start_date = 3.days.ago.strftime "%m/%d/%Y"
-              end_date = Time.zone.today.strftime "%m/%d/%Y"
+              start_date = 3.days.ago.to_formatted_s(:date_picker)
+              end_date = Time.zone.today.to_formatted_s(:date_picker)
               get transfers_path(valid_params.merge(filters: { date_range: "#{start_date} - #{end_date}" }))
               expect(assigns(:transfers)).to eq([new_transfer])
             end

@@ -27,11 +27,6 @@ updates:
   - dependency-name: knapsack_pro
     versions:
     - 2.13.0
-  - dependency-name: chartkick
-    versions:
-    - 4.0.0
-    - 4.0.2
-    - 4.0.3
   - dependency-name: mini_racer
     versions:
     - 0.5.0

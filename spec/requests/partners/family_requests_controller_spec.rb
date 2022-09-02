@@ -3,12 +3,12 @@ require "rails_helper"
 RSpec.describe Partners::FamilyRequestsController, type: :request do
   let(:partner) { create(:partner) }
   let(:params) { { 'child-1' => true, 'child-2' => true, 'child-3' => true } }
-  let(:partners_partner) { Partners::Partner.find_by(diaper_partner_id: partner.id) }
+  let(:partners_partner) { Partners::Partner.find_by(partner_id: partner.id) }
   let(:family) { create(:partners_family, partner_id: partners_partner.id) }
   let(:children) { FactoryBot.create_list(:partners_child, 3, family: family) }
   let(:partner_user) { partners_partner.primary_user }
 
-  before { sign_in(partner_user, scope: :partner_user) }
+  before { sign_in(partner_user) }
 
   describe 'GET #new' do
     subject { get new_partners_family_request_path }

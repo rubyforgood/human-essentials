@@ -31,7 +31,7 @@ FactoryBot.define do
         item { nil }
       end
 
-      storage_location { create :storage_location, :with_items, item: item }
+      storage_location { create :storage_location, :with_items, item: item, organization: organization }
 
       after(:build) do |instance, evaluator|
         item = if evaluator.item.nil?

@@ -17,7 +17,7 @@ en:
         submit_button: "Set my password"
     mailer:
       invitation_instructions:
-        subject: "Your Diaper App Account Approval"
+        subject: "Your Human Essentials App Account Approval"
         hello: "Hello %{email}"
         someone_invited_you: "Someone has invited you to %{url}, you can accept it through the link below."
         accept: "Accept invitation"

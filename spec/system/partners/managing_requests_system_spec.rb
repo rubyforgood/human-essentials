@@ -5,7 +5,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
     context 'GIVEN a partner user is permitted to make a request' do
       before do
-        login_as(partner_user, scope: :partner_user)
+        login_as(partner_user)
         visit new_partners_individuals_request_path
       end
 
@@ -22,7 +22,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
       end
 
       context 'WHEN they create a request properly' do
-        let(:items_to_select) { Organization.find(partner_user.partner.diaper_bank_id).valid_items.sample(3) }
+        let(:items_to_select) { Organization.find(partner_user.partner.essentials_bank_id).valid_items.sample(3) }
         let(:item_details) do
           items_to_select.map do |item|
             default_quantity = Item.find(item[:id]).default_quantity
@@ -77,7 +77,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
     context 'GIVEN a partner user is permitted to make a request' do
       before do
-        login_as(partner_user, scope: :partner_user)
+        login_as(partner_user)
         visit new_partners_request_path
       end
 
@@ -108,7 +108,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
       end
 
       context 'WHEN they create a request properly' do
-        let(:items_to_select) { Organization.find(partner_user.partner.diaper_bank_id).valid_items.sample(3) }
+        let(:items_to_select) { Organization.find(partner_user.partner.essentials_bank_id).valid_items.sample(3) }
         let(:item_details) do
           items_to_select.map do |item|
             {

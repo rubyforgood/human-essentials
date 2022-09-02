@@ -10,12 +10,7 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
- *= require toastr
- *= require font-awesome
- *= require fontawesome
- *= require fullcalendar
  *= require barcode_reader
- *= require daterangepicker
  */
 
  //Use @import in order to process SCSS variables
@@ -27,9 +22,8 @@
  // import other stylesheets after variables
 @import 'AdminLTE';
 @import 'bootstrap';
-@import 'bootstrap-select';
 @import 'simple_form-bootstrap/simple_form-bootstrap';
-@import 'font-awesome';
+@import 'bootstrap-select';
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';
@@ -157,4 +151,11 @@ body a {
 
 #copy-calendar-button {
   margin-left: 10px;
+}
+
+.main-sidebar, .main-sidebar::before {
+  width: 280px;
+}
+body:not(.sidebar-mini-md) .content-wrapper, body:not(.sidebar-mini-md) .main-footer, body:not(.sidebar-mini-md) .main-header {
+  margin-left: 280px;
 }

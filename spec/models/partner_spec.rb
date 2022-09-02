@@ -2,88 +2,18 @@
 #
 # Table name: partners
 #
-#  id                         :bigint           not null, primary key
-#  above_1_2_times_fpl        :integer
-#  address1                   :string
-#  address2                   :string
-#  agency_mission             :text
-#  agency_type                :string
-#  ages_served                :string
-#  application_data           :text
-#  at_fpl_or_below            :integer
-#  case_management            :boolean
-#  city                       :string
-#  currently_provide_diapers  :boolean
-#  describe_storage_space     :text
-#  diaper_budget              :string
-#  diaper_funding_source      :string
-#  diaper_use                 :string
-#  distribution_times         :string
-#  distributor_type           :string
-#  evidence_based             :boolean
-#  evidence_based_description :text
-#  executive_director_email   :string
-#  executive_director_name    :string
-#  executive_director_phone   :string
-#  facebook                   :string
-#  form_990                   :boolean
-#  founded                    :integer
-#  greater_2_times_fpl        :integer
-#  income_requirement_desc    :boolean
-#  income_verification        :boolean
-#  incorporate_plan           :text
-#  internal_db                :boolean
-#  maac                       :boolean
-#  max_serve                  :string
-#  more_docs_required         :string
-#  name                       :string
-#  new_client_times           :string
-#  other_agency_type          :string
-#  other_diaper_use           :string
-#  partner_status             :string           default("pending")
-#  pick_up_email              :string
-#  pick_up_method             :string
-#  pick_up_name               :string
-#  pick_up_phone              :string
-#  population_american_indian :integer
-#  population_asian           :integer
-#  population_black           :integer
-#  population_hispanic        :integer
-#  population_island          :integer
-#  population_multi_racial    :integer
-#  population_other           :integer
-#  population_white           :integer
-#  poverty_unknown            :integer
-#  program_address1           :string
-#  program_address2           :string
-#  program_age                :string
-#  program_city               :string
-#  program_client_improvement :text
-#  program_contact_email      :string
-#  program_contact_mobile     :string
-#  program_contact_name       :string
-#  program_contact_phone      :string
-#  program_description        :text
-#  program_name               :string
-#  program_state              :string
-#  program_zip_code           :integer
-#  responsible_staff_position :boolean
-#  serve_income_circumstances :boolean
-#  sources_of_diapers         :string
-#  sources_of_funding         :string
-#  state                      :string
-#  status_in_diaper_base      :string
-#  storage_space              :boolean
-#  trusted_pickup             :boolean
-#  turn_away_child_care       :boolean
-#  twitter                    :string
-#  website                    :string
-#  zip_code                   :string
-#  zips_served                :string
-#  created_at                 :datetime         not null
-#  updated_at                 :datetime         not null
-#  diaper_bank_id             :bigint
-#  diaper_partner_id          :integer
+#  id                          :integer          not null, primary key
+#  email                       :string
+#  name                        :string
+#  notes                       :text
+#  quota                       :integer
+#  send_reminders              :boolean          default(FALSE), not null
+#  status                      :integer          default("uninvited")
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  default_storage_location_id :bigint
+#  organization_id             :integer
+#  partner_group_id            :bigint
 #
 
 RSpec.describe Partner, type: :model, skip_seed: true do
@@ -129,6 +59,13 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     it "validates the quota is a number but it is not required" do
       is_expected.to validate_numericality_of(:quota)
       expect(build(:partner, email: "foo@bar.com", quota: "")).to be_valid
+    end
+  end
+
+  context "callbacks" do
+    it "properly downcases email" do
+      partner = create(:partner, name: "Foo", email: "Foo@example.com")
+      expect(partner.email).to eq("foo@example.com")
     end
   end
 
@@ -207,13 +144,13 @@ RSpec.describe Partner, type: :model, skip_seed: true do
       end
       context 'when it has a profile but no users' do
         it 'should return true' do
-          create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
           expect(partner.reload).to be_deletable
         end
       end
       context 'when it has a profile and users' do
         it 'should return false' do
-          partners_partner = create(:partners_partner, diaper_bank_id: partner.organization_id, diaper_partner_id: partner.id, name: partner.name)
+          partners_partner = create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
           create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
           expect(partner.reload).not_to be_deletable
         end
@@ -221,25 +158,40 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     end
   end
 
-  describe '#invite_new_partner' do
-    let(:partner) { create(:partner) }
+  describe 'changing emails' do
+    let(:partner) { create(:partner, status: :invited) }
+    before do
+      allow(User).to receive(:invite!)
+    end
 
-    it "should call the PartnerUser.invite! when the partner is changed" do
-      allow(PartnerUser).to receive(:invite!)
-      partner.email = "randomtest@email.com"
-      partner.save!
-      expect(PartnerUser).to have_received(:invite!).with(
-        {email: "randomtest@email.com", partner: partner.profile}
-      )
+    [:invited, :awaiting_review, :recertification_required, :approved].each do |test_status|
+      it "should call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+        partner.status = test_status
+        partner.email = "randomtest@email.com"
+        partner.save!
+        expect(User).to have_received(:invite!).with(
+          {email: "randomtest@email.com", partner: partner.profile}
+        )
+      end
+    end
+
+    [:uninvited, :deactivated].each do |test_status|
+      it "should not call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+        partner.status = test_status
+        partner.email = "randomtest@email.com"
+        partner.save!
+        expect(User).not_to have_received(:invite!).with(
+          {email: "randomtest@email.com", partner: partner.profile}
+        )
+      end
     end
   end
-
   describe '#profile' do
     subject { partner.profile }
     let(:partner) { create(:partner) }
 
     it 'should return the associated Partners::Partner record' do
-      expect(subject).to eq(Partners::Partner.find_by(diaper_partner_id: partner.id))
+      expect(subject).to eq(Partners::Partner.find_by(partner_id: partner.id))
     end
   end
 
@@ -247,8 +199,8 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     subject { partner.primary_partner_user }
     let(:partner) { create(:partner) }
 
-    it 'should return the asssociated primary Partners::User' do
-      partner_users = Partners::User.where(partner_id: partner.profile.id)
+    it 'should return the asssociated primary User' do
+      partner_users = ::User.where(partner_id: partner.profile.id)
       expect(partner_users).to include(subject)
     end
   end
@@ -289,9 +241,9 @@ RSpec.describe Partner, type: :model, skip_seed: true do
 
     before do
       partner.profile.update({
-                               program_contact_name: contact_name,
-                               program_contact_email: contact_email,
-                               program_contact_phone: contact_phone
+                               primary_contact_name: contact_name,
+                               primary_contact_email: contact_email,
+                               primary_contact_phone: contact_phone
                              })
     end
 

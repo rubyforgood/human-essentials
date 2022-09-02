@@ -33,7 +33,7 @@
               <% end %>
               <br>
               <%= form.input :race, collection: ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: "form-control", :include_blank => true %>
-              <%= form.input :agency_child_id, class: "form-control", label: "Agency Child" %>
+              <%= form.input :agency_child_id, class: "form-control", label: "Agency Child ID" %>
               <%#= form.label :health_insurance, 'Health Insurance' %>
               <%= form.input :health_insurance, as: :radio_buttons,
                              collection: [['Private Insurance', 'Private Insurance'],

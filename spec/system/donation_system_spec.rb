@@ -76,6 +76,20 @@ RSpec.describe "Donations", type: :system, js: true do
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
+
+      it "Filter by product drive participant sticks around" do
+        x = create(:product_drive, name: 'x')
+        a = create(:product_drive_participant, business_name: "A")
+        b = create(:product_drive_participant, business_name: "B")
+        create(:product_drive_donation, product_drive: x, product_drive_participant: a)
+        create(:product_drive_donation, product_drive: x, product_drive_participant: b)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select a.business_name, from: "filters_by_product_drive_participant"
+        click_button "Filter"
+        expect(page).to have_select("filters_by_product_drive_participant", selected: a.business_name)
+      end
+
       it "Filters by manufacturer" do
         a = create(:manufacturer, name: "A")
         b = create(:manufacturer, name: "B")
@@ -223,7 +237,10 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a Product Drive from donation" do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Product Drive---", from: "donation_product_drive_id"
+
+          find(".modal-content")
           expect(page).to have_content("New Product Drive")
+
           fill_in "product_drive_name", with: "drivenametest"
           fill_in "product_drive_start_date", with: Time.current
           click_on "product_drive_submit"
@@ -233,7 +250,10 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a Product Drive Participant from donation" do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
+
+          find(".modal-content")
           expect(page).to have_content("New Product Drive Participant")
+
           fill_in "product_drive_participant_business_name", with: "businesstest"
           fill_in "product_drive_participant_contact_name", with: "test"
           fill_in "product_drive_participant_email", with: "123@mail.ru"
@@ -259,7 +279,10 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Allows User to create a Manufacturer from donation" do
           select Donation::SOURCES[:manufacturer], from: "donation_source"
           select "---Create new Manufacturer---", from: "donation_manufacturer_id"
+
+          find(".modal-content")
           expect(page).to have_content("New Manufacturer")
+
           fill_in "manufacturer_name", with: "nametest"
           click_on "manufacturer-submit"
           select "nametest", from: "donation_manufacturer_id"

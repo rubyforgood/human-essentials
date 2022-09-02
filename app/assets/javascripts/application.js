@@ -14,29 +14,14 @@
 //= require jquery
 //= require popper
 //= require bootstrap
+//= require bootstrap-select
 // require jquery_ujs
 //= require filterrific/filterrific-jquery
-//= require bootstrap-select
 //= require bootstrap/alert
-//= require fastclick
 //= require adminlte.min
 //= require cocoon
-//= require toastr
-//= require Chart.bundle
-//= require chartkick
-//= require moment
-//= require fullcalendar
 //= require quagga
-//= require daterangepicker
 //= require_tree .
-
-function isMobileResolution() {
-  return $(window).width() < 992;
-}
-
-function isShortHeightScreen() {
-  return $(window).height() < 768 && !isMobileResolution();
-}
 
 window.setTimeout(function() {
   // When the user is given an error message, we should not auto-hide it so that
@@ -45,25 +30,6 @@ window.setTimeout(function() {
     $(this).remove();
   });
 }, 2500);
-
-// Global toastr options
-toastr.options = {
-  "timeOut": "1400"
-}
-
-$(document).ready(function () {
-  const isMobile = isMobileResolution();
-  const isShortHeight = isShortHeightScreen();
-
-  $('#calendar').fullCalendar({
-    firstDay: 1,
-    displayEventTime: true,
-    eventLimit: true,
-    events: 'schedule.json',
-    height: isMobile || isShortHeight ? 'auto' : 'parent',
-    defaultView: isMobile ? 'listWeek' : 'month'
-  });
-});
 
 $(document).ready(function() {
   Filterrific.init();

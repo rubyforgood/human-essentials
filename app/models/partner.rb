@@ -2,88 +2,18 @@
 #
 # Table name: partners
 #
-#  id                         :bigint           not null, primary key
-#  above_1_2_times_fpl        :integer
-#  address1                   :string
-#  address2                   :string
-#  agency_mission             :text
-#  agency_type                :string
-#  ages_served                :string
-#  application_data           :text
-#  at_fpl_or_below            :integer
-#  case_management            :boolean
-#  city                       :string
-#  currently_provide_diapers  :boolean
-#  describe_storage_space     :text
-#  diaper_budget              :string
-#  diaper_funding_source      :string
-#  diaper_use                 :string
-#  distribution_times         :string
-#  distributor_type           :string
-#  evidence_based             :boolean
-#  evidence_based_description :text
-#  executive_director_email   :string
-#  executive_director_name    :string
-#  executive_director_phone   :string
-#  facebook                   :string
-#  form_990                   :boolean
-#  founded                    :integer
-#  greater_2_times_fpl        :integer
-#  income_requirement_desc    :boolean
-#  income_verification        :boolean
-#  incorporate_plan           :text
-#  internal_db                :boolean
-#  maac                       :boolean
-#  max_serve                  :string
-#  more_docs_required         :string
-#  name                       :string
-#  new_client_times           :string
-#  other_agency_type          :string
-#  other_diaper_use           :string
-#  partner_status             :string           default("pending")
-#  pick_up_email              :string
-#  pick_up_method             :string
-#  pick_up_name               :string
-#  pick_up_phone              :string
-#  population_american_indian :integer
-#  population_asian           :integer
-#  population_black           :integer
-#  population_hispanic        :integer
-#  population_island          :integer
-#  population_multi_racial    :integer
-#  population_other           :integer
-#  population_white           :integer
-#  poverty_unknown            :integer
-#  program_address1           :string
-#  program_address2           :string
-#  program_age                :string
-#  program_city               :string
-#  program_client_improvement :text
-#  program_contact_email      :string
-#  program_contact_mobile     :string
-#  program_contact_name       :string
-#  program_contact_phone      :string
-#  program_description        :text
-#  program_name               :string
-#  program_state              :string
-#  program_zip_code           :integer
-#  responsible_staff_position :boolean
-#  serve_income_circumstances :boolean
-#  sources_of_diapers         :string
-#  sources_of_funding         :string
-#  state                      :string
-#  status_in_diaper_base      :string
-#  storage_space              :boolean
-#  trusted_pickup             :boolean
-#  turn_away_child_care       :boolean
-#  twitter                    :string
-#  website                    :string
-#  zip_code                   :string
-#  zips_served                :string
-#  created_at                 :datetime         not null
-#  updated_at                 :datetime         not null
-#  diaper_bank_id             :bigint
-#  diaper_partner_id          :integer
+#  id                          :integer          not null, primary key
+#  email                       :string
+#  name                        :string
+#  notes                       :text
+#  quota                       :integer
+#  send_reminders              :boolean          default(FALSE), not null
+#  status                      :integer          default("uninvited")
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  default_storage_location_id :bigint
+#  organization_id             :integer
+#  partner_group_id            :bigint
 #
 
 class Partner < ApplicationRecord
@@ -117,7 +47,8 @@ class Partner < ApplicationRecord
 
   validate :correct_document_mime_type
 
-  before_update :invite_new_partner, if: :email_changed?
+  before_save { email&.downcase! }
+  before_update :invite_new_partner, if: :should_invite_because_email_changed?
 
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
@@ -150,11 +81,11 @@ class Partner < ApplicationRecord
   # the partnerbase DB and contains mostly profile data of
   # the partner user.
   def profile
-    @profile ||= ::Partners::Partner.find_by(diaper_partner_id: id)
+    @profile ||= ::Partners::Partner.find_by(partner_id: id)
   end
 
   #
-  # Returns the primary Partners::User record which is the
+  # Returns the primary User record which is the
   # first & main user associated to a partner agency.
   def primary_partner_user
     profile&.primary_user
@@ -216,10 +147,10 @@ class Partner < ApplicationRecord
     return {} if profile.blank?
 
     @contact_person = {
-      name: profile.program_contact_name,
-      email: profile.program_contact_email,
-      phone: profile.program_contact_phone ||
-             profile.program_contact_mobile
+      name: profile.primary_contact_name,
+      email: profile.primary_contact_email,
+      phone: profile.primary_contact_phone ||
+             profile.primary_contact_mobile
     }
   end
 
@@ -239,6 +170,10 @@ class Partner < ApplicationRecord
   end
 
   def invite_new_partner
-    PartnerUser.invite!(email: email, partner: profile)
+    User.invite!(email: email, partner: profile)
+  end
+
+  def should_invite_because_email_changed?
+    email_changed? and (invited? or awaiting_review? or recertification_required? or approved?)
   end
 end

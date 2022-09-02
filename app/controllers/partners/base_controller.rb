@@ -2,9 +2,7 @@ module Partners
   class BaseController < ApplicationController
     layout 'partners/application'
 
-    skip_before_action :authenticate_user!
     skip_before_action :authorize_user
-    before_action :authenticate_partner_user!
 
     private
 
@@ -14,10 +12,10 @@ module Partners
 
     helper_method :current_partner
     def current_partner
-      current_partner_user.partner
+      current_user.partner
     end
 
-    def verify_status_in_diaper_base
+    def verify_partner_is_active
       if current_partner.deactivated?
         flash[:alert] = 'Your account has been disabled, contact the organization via their email to reactivate'
         redirect_to partners_requests_path

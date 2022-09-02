@@ -34,7 +34,7 @@ RSpec.describe Request, type: :model do
   describe "item data" do
     it "coerces item quantity and id to always be an integer before saving" do
       request = create(:request,
-                       partner_user: Partners::User.first,
+                       partner_user: ::User.partner_users.first,
                        request_items: [
                          { item_id: "25", quantity: "15" },
                          { item_id: "35", quantity: 18 }

@@ -1,6 +1,5 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
-require 'simplecov'
 require File.expand_path("../config/environment", __dir__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -14,8 +13,6 @@ require 'webdrivers'
 require 'knapsack_pro'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-
-SimpleCov.start
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -95,11 +92,6 @@ def stub_addresses
   end
 end
 
-# Create global var for use in
-# config.before(:each, type: :system)
-# below
-have_run_webpacker_for_specs = false
-
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
@@ -145,6 +137,11 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
+    unless File.exist?(Rails.root.join("public", "packs-task"))
+      Rails.logger.info "Detected missing webpack assets for testing. Running compilation step"
+      `NODE_ENV=test bin/webpack`
+    end
+
     Rails.logger.info <<~ASCIIART
       -~~==]}>        ######## ###########  ####      ########    ###########
       -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
@@ -154,10 +151,6 @@ RSpec.configure do |config|
       -~~==]}>  :+:    :+:    :+:    :+:    :+:  :+:      :+:    :+:
       -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
     ASCIIART
-
-    DatabaseCleaner[:active_record, { model: Partners::Base }]
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
 
     DatabaseCleaner[:active_record, { model: ApplicationRecord }]
     DatabaseCleaner.strategy = :truncation
@@ -174,15 +167,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
-    unless have_run_webpacker_for_specs
-      Rails.logger.info "** Running webpack"
-
-      # Compile assets neccessary for browser tests to pass
-      `NODE_ENV=test bin/webpack`
-
-      have_run_webpacker_for_specs = true
-    end
-
     # Use truncation in the case of doing `browser` tests because it
     # appears that transactions won't work since it really does
     # depend on the database to have records.
@@ -293,48 +277,6 @@ def seed_base_items_for_tests
   end
   BaseItem.insert_all(@_base_items) # rubocop:disable Rails/SkipsModelValidations
   Rails.logger.info "~-=> Done creating Base Items!"
-end
-
-def __start_db_cleaning_with_log
-  Rails.logger.info "======> SISYPHUS, PUSH THAT BOULDER BACK UP THE HILL <========"
-  Rails.logger.info <<~ASCIIART
-        ,-'"""`-.
-      ,'         `.
-      /        `    \\
-    (    /          \)
-    |             " |
-    (               \)
-    `.\\\\          \\ /
-      `:.      , \\ ,\\ _
-    hh  `:-.___,-`-.{\\\)
-          `.         |/ \\
-            `.         \\ \\
-              `-.      _\\,|
-                `.   |,-||
-                  `..|| ||
-  ASCIIART
-
-  DatabaseCleaner.start
-end
-
-def __sweep_up_db_with_log
-  DatabaseCleaner.clean
-  Rails.logger.info "========= ONE MUST IMAGINE SISYPHUS HAPPY ===================="
-  Rails.logger.info <<~ASCIIART
-                  /             _
-        ,-'"""`-.    /         _ |
-      ,'         `.      ;    {\\\)|
-    /        `    \\   :. :   /\\ \\
-    (    /          | .     _/  \\ \\
-    |             " |;  .-``.   _\\,|
-    (               |.-`     `-|,-||
-    \\\\            /.`         ||.||
-      :.     ,   ,`               |.
-    amh  :-.___,-``
-            .`
-          .`
-      .-`
-  ASCIIART
 end
 
 def create_organization

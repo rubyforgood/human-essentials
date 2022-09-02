@@ -1,20 +1,3 @@
-def set_up_delayed_job
-  if Rails.env.production?
-    DelayedJobWeb.use Rack::Auth::Basic do |username, password|
-      ActiveSupport::SecurityUtils.variable_size_secure_compare(
-        ENV["DELAYED_JOB_USERNAME"],
-        username
-      ) &&
-        ActiveSupport::SecurityUtils.variable_size_secure_compare(
-          ENV["DELAYED_JOB_PASSWORD"],
-          password
-        )
-    end
-  end
-
-  match "/delayed_job" => DelayedJobWeb, :anchor => false, :via => [:get, :post]
-end
-
 def set_up_flipper
   flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
@@ -29,10 +12,15 @@ Rails.application.routes.draw do
     sessions: "users/sessions",
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
-  devise_for :partner_users, controllers: { sessions: "partners/sessions", invitations: 'partners/invitations', passwords: 'partners/passwords' }
-  resources :logins, only: [:new, :create], controller: "consolidated_logins"
 
-  set_up_delayed_job
+  #
+  # Mount web interface to see delayed job status and queue length.
+  # Visible only to logged in users with the `super_admin` flag set to true
+  #
+  authenticated :user, ->(user) { user.super_admin? } do
+    mount DelayedJobWeb, at: "/delayed_job"
+  end
+
   set_up_flipper
 
   # Add route partners/dashboard so that we can define it as partner_user_root
@@ -43,7 +31,9 @@ Rails.application.routes.draw do
     resources :requests, only: [:show, :new, :index, :create]
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
-    resources :users, only: [:index, :new, :create]
+    resources :users, only: [:index, :new, :create] do
+      get :switch_to_bank_role, on: :collection
+    end
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
 
@@ -52,7 +42,9 @@ Rails.application.routes.draw do
     end
     resources :families
     resources :authorized_family_members
-    resources :distributions, only: [:index]
+    resources :distributions, only: [:index] do
+      get :print, on: :member
+    end
   end
 
   # This is where a superadmin CRUDs all the things
@@ -75,7 +67,9 @@ Rails.application.routes.draw do
   match "/500", to: "errors#internal_server_error", via: :all
 
   scope path: ":organization_id" do
-    resources :users
+    resources :users do
+      get :switch_to_partner_role, on: :collection
+    end
 
     # Users that are organization admins can manage the organization itself
     resource :organization, only: [:show]
@@ -117,6 +111,7 @@ Rails.application.routes.draw do
       collection do
         get :schedule
         get :pickup_day
+        get :itemized_breakdown
       end
       patch :picked_up, on: :member
     end

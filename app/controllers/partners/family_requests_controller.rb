@@ -1,6 +1,6 @@
 module Partners
   class FamilyRequestsController < BaseController
-    before_action :verify_status_in_diaper_base
+    before_action :verify_partner_is_active
     before_action :authorize_verified_partners
 
     def new
@@ -31,7 +31,7 @@ module Partners
       end
 
       create_service = Partners::FamilyRequestCreateService.new(
-        partner_user_id: current_partner_user.id,
+        partner_user_id: current_user.id,
         family_requests_attributes: family_requests_attributes,
         for_families: true
       )

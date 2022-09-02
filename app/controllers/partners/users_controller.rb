@@ -9,7 +9,7 @@ module Partners
     end
 
     def create
-      user = PartnerUser.invite!(
+      user = ::User.invite!(
         email: user_params[:email],
         name: user_params[:name],
         partner: current_partner,
@@ -19,10 +19,20 @@ module Partners
       redirect_to partners_users_path
     end
 
+    def switch_to_bank_role
+      if current_user.organization.nil?
+        error_message = "Attempted to switch to a bank role but you have no bank associated with your account!"
+        redirect_back(fallback_location: root_path, alert: error_message)
+        return
+      end
+
+      redirect_to dashboard_path(current_user.organization)
+    end
+
     private
 
     def user_params
-      params.require(:partners_user).permit(:name, :email)
+      params.require(:user).permit(:name, :email)
     end
   end
 end

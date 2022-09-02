@@ -115,7 +115,7 @@ Organization.all.each do |org|
   # Setup the Partner Group & their item categories
   partner_group = FactoryBot.create(:partner_group, organization: org)
 
-  total_item_categories_to_add = Faker::Number.between(from: 0, to: 2)
+  total_item_categories_to_add = Faker::Number.between(from: 1, to: 2)
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
     partner_group.item_categories << item_category
   end
@@ -184,7 +184,7 @@ note = [
   },
   {
     name: "Pawnee Homeless Shelter",
-    email: "invited@pawneehomelss.com",
+    email: "invited@pawneehomeless.com",
     status: :invited,
     notes: note.sample
   },
@@ -223,15 +223,15 @@ note = [
                                         zip_code: Faker::Address.zip,
                                         website: Faker::Internet.domain_name,
                                         zips_served: Faker::Address.zip,
-                                        diaper_bank_id: pdx_org.id,
-                                        diaper_partner_id: p.id,
+                                        essentials_bank_id: pdx_org.id,
+                                        partner_id: p.id,
                                         executive_director_name: Faker::Name.name,
                                         executive_director_email: p.email,
                                         executive_director_phone: Faker::PhoneNumber.phone_number,
-                                        program_contact_name: Faker::Name.name,
-                                        program_contact_email: Faker::Internet.email,
-                                        program_contact_phone: Faker::PhoneNumber.phone_number,
-                                        program_contact_mobile: Faker::PhoneNumber.phone_number,
+                                        primary_contact_name: Faker::Name.name,
+                                        primary_contact_email: Faker::Internet.email,
+                                        primary_contact_phone: Faker::PhoneNumber.phone_number,
+                                        primary_contact_mobile: Faker::PhoneNumber.phone_number,
                                         pick_up_name: Faker::Name.name,
                                         pick_up_email: Faker::Internet.email,
                                         pick_up_phone: Faker::PhoneNumber.phone_number,
@@ -239,7 +239,7 @@ note = [
                                         status_in_diaper_base: partner_option[:status]
                                       })
 
-  Partners::User.create!(
+  ::User.create!(
     name: Faker::Name.name,
     password: "password!",
     password_confirmation: "password!",
@@ -249,7 +249,7 @@ note = [
     last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
   )
 
-  Partners::User.create!(
+  ::User.create!(
     name: Faker::Name.name,
     password: "password!",
     password_confirmation: "password!",
@@ -270,9 +270,9 @@ note = [
       guardian_first_name: Faker::Name.first_name,
       guardian_last_name: Faker::Name.last_name,
       guardian_zip_code: Faker::Address.zip_code,
-      guardian_country: "United States",
+      guardian_county: Faker::Address.community, # Faker doesn't have county, this has same flavor, and isn't country
       guardian_phone: Faker::PhoneNumber.phone_number,
-      agency_guardian_id: Faker::Name.name,
+      case_manager: Faker::Name.name,
       home_adult_count: [1, 2, 3].sample,
       home_child_count: [0, 1, 2, 3, 4, 5].sample,
       home_young_child_count: [1, 2, 3, 4].sample,
@@ -300,13 +300,13 @@ note = [
     family.home_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: Faker::Name.first_name,
+        first_name: family.guardian_first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 5, max_age: 18),
         gender: Faker::Gender.binary_type,
         child_lives_with: Partners::Child::CAN_LIVE_WITH.sample(2),
         race: Partners::Child::RACES.sample,
-        agency_child_id: family.agency_guardian_id,
+        agency_child_id: family.case_manager + family.guardian_last_name + family.guardian_first_name,
         health_insurance: family.guardian_health_insurance,
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
@@ -318,13 +318,13 @@ note = [
     family.home_young_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: Faker::Name.first_name,
+        first_name: family.guardian_first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 0, max_age: 5),
         gender: Faker::Gender.binary_type,
         child_lives_with: Partners::Child::CAN_LIVE_WITH.sample(2),
         race: Partners::Child::RACES.sample,
-        agency_child_id: family.agency_guardian_id,
+        agency_child_id: family.case_manager + family.guardian_last_name + family.guardian_first_name,
         health_insurance: family.guardian_health_insurance,
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
@@ -595,7 +595,20 @@ end
 # ----------------------------------------------------------------------------
 
 # Create some Vendors so Purchases can have vendor_ids
-5.times do
+Vendor.create(
+  contact_name: Faker::FunnyName.two_word_name,
+  email: Faker::Internet.email,
+  phone: Faker::PhoneNumber.cell_phone,
+  comment: Faker::Lorem.paragraph(sentence_count: 2),
+  organization_id: pdx_org.id,
+  address: "#{Faker::Address.street_address} #{Faker::Address.city}, #{Faker::Address.state_abbr} #{Faker::Address.zip_code}",
+  business_name: Faker::Company.name,
+  latitude: rand(-90.000000000...90.000000000),
+  longitude: rand(-180.000000000...180.000000000),
+  created_at: (Time.zone.today - rand(15).days),
+  updated_at: (Time.zone.today - rand(15).days),
+)
+4.times do
   Vendor.create(
     contact_name: Faker::FunnyName.two_word_name,
     email: Faker::Internet.email,

@@ -9,6 +9,20 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
     setup_storage_location(@storage_location)
   end
 
+  context "When going to the Pick Ups & Deliveries page" do
+    let(:issued_at) { Time.current.utc.change(hour: 19, minute: 0).to_datetime }
+    before do
+      item1 = create(:item, value_in_cents: 1050)
+      @distribution = create(:distribution, :with_items, item: item1, agency_rep: "A Person", organization: @user.organization, issued_at: issued_at)
+    end
+
+    it "appears distribution in calendar with correct time & timezone" do
+      visit @url_prefix + "/distributions/schedule"
+      expect(page.find(".fc-event-time")).to have_content "7p"
+      expect(page.find(".fc-event-title")).to have_content @distribution.partner.name
+    end
+  end
+
   context "When creating a new distribution manually" do
     it "Allows a distribution to be created" do
       # update items to check for inactive ones
@@ -278,6 +292,16 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
     end
   end
 
+  context "When showing a individual distribution" do
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today, state: :complete) }
+
+    before { visit @url_prefix + "/distributions/#{distribution.id}" }
+
+    it "Show partner name in title" do
+      expect(page).to have_content("Distribution from #{distribution.storage_location.name} to #{distribution.partner.name}")
+    end
+  end
+
   context "When creating a distribution from a donation" do
     let(:donation) { create :donation, :with_items }
     before do
@@ -328,9 +352,9 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
       end
 
       it "User creates duplicate line items" do
-        diaper_type = @distribution.line_items.first.item.name
+        item_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
-        select(diaper_type, from: first_item_name_field)
+        select(item_type, from: first_item_name_field)
         find_all(".numeric")[0].set 1
 
         click_on "Add another item"
@@ -339,10 +363,10 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
         first("button", text: "Save").click
 
         expect(page).to have_css "td"
-        item_row = find("td", text: diaper_type).find(:xpath, '..')
+        item_row = find("td", text: item_type).find(:xpath, '..')
 
-        # TODO: Find out how to test for diaper type and 4 without the dollar amounts.
-        expect(item_row).to have_content("#{diaper_type} $1.00 $4.00 4")
+        # TODO: Find out how to test for item type and 4 without the dollar amounts.
+        expect(item_row).to have_content("#{item_type} $1.00 $4.00 4")
       end
     end
   end

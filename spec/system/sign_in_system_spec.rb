@@ -27,6 +27,18 @@ RSpec.describe "User sign-in handling", type: :system, js: true, skip_seed: true
     end
   end
 
+  context 'when a partner user logs in' do
+    it 'redirects to the partner page' do
+      partner = create(:partner)
+      partner_user = create(:partners_user, partner: partner.profile)
+      fill_in "Email", with: partner_user.email
+      fill_in "user_password", with: partner_user.password
+      click_button "Log in"
+
+      expect(page).to have_current_path(partners_dashboard_path)
+    end
+  end
+
   context "when users are valid and don't belong to an organization" do
     it "redirects to home " do
       user_no_org = create(:user, organization: nil)

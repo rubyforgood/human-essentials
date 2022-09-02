@@ -68,9 +68,9 @@ module Partners
 
     def family_params
       params.require(:partners_family).permit(
-        :agency_guardian_id,
+        :case_manager,
         :comments,
-        :guardian_country,
+        :guardian_county,
         :guardian_employed,
         :guardian_employment_type,
         :guardian_first_name,

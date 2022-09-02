@@ -23,7 +23,7 @@ module Partners
 
     def create
       create_service = Partners::RequestCreateService.new(
-        partner_user_id: current_partner_user.id,
+        partner_user_id: current_user.id,
         comments: partner_request_params[:comments],
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
       )
@@ -35,11 +35,11 @@ module Partners
       else
         @partner_request = create_service.partner_request
         @errors = create_service.errors
-        @formatted_requestable_items = Organization.find(current_partner.diaper_bank_id).valid_items.map do |item|
+        @formatted_requestable_items = Organization.find(current_partner.essentials_bank_id).valid_items.map do |item|
           [item[:name], item[:id]]
         end.sort
 
-        Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_partner_user.id} reason=#{@errors.full_messages}")
+        Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
         render :new, status: :unprocessable_entity
       end

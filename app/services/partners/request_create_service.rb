@@ -88,17 +88,17 @@ module Partners
     end
 
     def organization_id
-      @organization_id ||= partner.diaper_bank_id
+      @organization_id ||= partner.essentials_bank_id
     end
 
     def partner
-      @partner ||= Partners::User.find(partner_user_id).partner
+      @partner ||= ::User.find(partner_user_id).partner
     end
 
     def build_organization_request(partner_request)
       ::Request.new(
         organization_id: partner_request.organization_id,
-        partner_id: partner_request.partner.diaper_partner_id,
+        partner_id: partner_request.partner.partner_id,
         partner_user_id: partner_user_id,
         comments: partner_request.comments,
         request_items: partner_request.item_requests.map do |ir|

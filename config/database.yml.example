@@ -8,25 +8,13 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
-  primary:
-    <<: *default
-    timeout: 5000
-  partners:
-    <<: *default
-    database: partner_dev
-    migrations_paths: db/partners_migrate
-    timeout: 5000
+  <<: *default
+  timeout: 5000
 
 test:
-  primary:
-    <<: *default
-    database: diaper_test
-    timeout: 5000
-  partners:
-    <<: *default
-    database: partner_test
-    migrations_paths: db/partners_migrate
-    timeout: 5000
+  <<: *default
+  database: diaper_test
+  timeout: 5000
 
 production:
   <<: *default

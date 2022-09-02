@@ -1,7 +1,7 @@
 require 'ostruct'
 
 RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
-  context "With a new Diaper bank" do
+  context "With a new essentials bank" do
     before :each do
       @new_organization = create(:organization)
       @user = create(:user, organization: @new_organization)
@@ -66,7 +66,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
     end
   end
 
-  context "With an existing Diaper bank" do
+  context "With an existing essentials bank" do
     before do
       sign_in(@user)
     end
@@ -154,6 +154,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
 
       [
         # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
+        [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates], # arbitrary values
         ["Today",        test_time,                               test_time],
         ["Yesterday",    test_time.yesterday,                     test_time.yesterday],
         ["Last 7 Days",  test_time -  6.days,                     test_time],
@@ -161,8 +162,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
-        ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        ["All Time",     test_time - 100.years,                   test_time]
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
         filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
@@ -171,7 +171,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -279,7 +279,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
         ["All Time",     test_time - 100.years,                   test_time],
-        ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
         filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
@@ -288,7 +288,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -384,7 +384,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
         ["All Time",     test_time - 100.years,                   test_time],
-        ["Custom Range", test_time - 2.years,                     test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        [nil, test_time - 2.years,                     test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
         filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
@@ -393,7 +393,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -506,7 +506,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
         ["All Time",     test_time - 100.years,                   test_time],
-        ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
         filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
@@ -515,7 +515,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -649,7 +649,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
         ["All Time",     test_time - 100.years,                   test_time],
-        ["Custom Range", test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
+        [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
         filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
@@ -658,7 +658,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.strftime "%m/%d/%y"}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -684,11 +684,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               OpenStruct.new name: name, partner: create(:partner, name: name, organization: @organization)
             end
 
-            def create_next_product_drive_distribution(distribution_date:)
+            def create_next_product_drive_distribution(date_picker:)
               quantity_in_distribution = @item_quantity.next
               partner = @partners.sample
 
-              create :distribution, :with_items, partner: partner.partner, issued_at: distribution_date, item_quantity: quantity_in_distribution, storage_location: storage_location, organization: @organization
+              create :distribution, :with_items, partner: partner.partner, issued_at: date_picker, item_quantity: quantity_in_distribution, storage_location: storage_location, organization: @organization
 
               OpenStruct.new partner_name: partner.name, quantity: quantity_in_distribution
             end
@@ -698,11 +698,11 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
             # days_this_year.sample(num_distributions_in_filtered_period).each
             # because Array#sample(n) on an Array with m<n elements returns only m elements
             @distributions_in_filtered_date_range = num_distributions_in_filtered_period.times.map do
-              create_next_product_drive_distribution distribution_date: filtered_dates.sample
+              create_next_product_drive_distribution date_picker: filtered_dates.sample
             end
 
             # create Distributions before & after the filtered date range
-            [before_filtered_date_range, after_filtered_date_range].each { create_next_product_drive_distribution distribution_date: _1 }
+            [before_filtered_date_range, after_filtered_date_range].each { create_next_product_drive_distribution date_picker: _1 }
           end
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do

@@ -7,6 +7,10 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'bin/*'
 
 jobs:
   factory_bot_lint:
@@ -40,9 +44,8 @@ jobs:
         env:
           POSTGRES_HOST: localhost
           DATABASE_HOST: localhost
-          POSTGRES_USER: postgres
-          DIAPER_DATABASE_PASSWORD: password
-          POSTGRES_PASSWORD: password
+          PG_USERNAME: postgres
+          PG_PASSWORD: password
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
         run: |
@@ -53,9 +56,8 @@ jobs:
         env:
           POSTGRES_HOST: localhost
           DATABASE_HOST: localhost
-          POSTGRES_USER: postgres
-          DIAPER_DATABASE_PASSWORD: password
-          POSTGRES_PASSWORD: password
+          PG_USERNAME: postgres
+          PG_PASSWORD: password
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
           PGHOST: localhost

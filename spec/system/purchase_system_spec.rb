@@ -98,7 +98,10 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         it "User can create vendor from purchase" do
           select "---Not Listed---", from: "purchase_vendor_id"
+
+          find(".modal-content")
           expect(page).to have_content("New Vendor")
+
           fill_in "vendor_business_name", with: "businesstest"
           fill_in "vendor_contact_name", with: "test"
           fill_in "vendor_email", with: "123@mail.ru"

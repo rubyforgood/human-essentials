@@ -136,7 +136,11 @@
             </div>
           </div>
           <div class="box-body table-responsive no-padding">
-            <%= render partial: "itemized_partial", object: @itemized_distributions, as: :item_to_itemize %>
+            <div class='p-2 pull-right'>
+              <%= download_button_to(itemized_breakdown_distributions_path(format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
+            </div>
+            
+            <%= render partial: "itemized_distributions_partial", locals: { itemized_breakdown: @itemized_distribution_data } %>
           </div>
         </div>
 
@@ -157,7 +161,7 @@
                 <div class="box-body">
                   <div class="box-body text-center">
                     <h5 class="text-center"></h5>
-                    <%= bar_chart received_distributed_data %>
+                    <div id="received-data-chart"></div>
                   </div>
                 </div>
               </div>
@@ -309,7 +313,7 @@
             </div>
           </div>
           <div class="box-body table-responsive no-padding">
-            <%= render partial: "itemized_partial", object: @donations, as: :item_to_itemize %>
+            <%= render partial: "itemized_donations_partial", locals: { itemized_breakdown: @itemized_donation_data } %>
           </div>
         </div>
 
@@ -317,3 +321,34 @@
     </div>
   </div>
 </div>
+
+<script>
+
+<% data = received_distributed_data %>
+$(() => {
+  Highcharts.chart('received-data-chart', {
+    chart: {
+      type: 'bar'
+    },
+    title: '',
+    xAxis: {
+      categories: <%= data.keys.to_json.html_safe %>,
+      title: {
+        text: null
+      }
+    },
+    yAxis: {
+      title: {
+        text: null
+      }
+    },
+    legend: {
+      enabled: false
+    },
+    series: [
+      { data: <%= data.values.to_json.html_safe %> }
+    ]
+  })
+  $('#received-data-chart')
+});
+</script>

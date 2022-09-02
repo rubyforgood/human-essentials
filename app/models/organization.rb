@@ -109,7 +109,7 @@ class Organization < ApplicationRecord
     ['Sources of Funding', 'sources_of_funding'],
     ['Population Served', 'population_served'],
     ['Executive Director', 'executive_director'],
-    ['Diaper Pickup Person', 'diaper_pick_up_person'],
+    ['Pickup Person', 'diaper_pick_up_person'],
     ['Agency Distribution Information', 'agency_distribution_information'],
     ['Attached Documents', 'attached_documents']
   ].freeze
@@ -251,7 +251,7 @@ class Organization < ApplicationRecord
 
   def sync_visible_partner_form_sections
     partner_form = Partners::PartnerForm.where(
-      diaper_bank_id: id,
+      essentials_bank_id: id,
     ).first_or_create
 
     partner_form.update!(sections: partner_form_fields)
