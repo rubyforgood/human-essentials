@@ -23,7 +23,10 @@ class OrganizationsController < ApplicationController
   end
 
   def invite_user
-    User.invite!(email: params[:email], name: params[:name], organization_id: params[:org])
+    UserInviteService.invite(email: params[:email],
+      name: params[:name],
+      roles: %i[org_user],
+      resource: Organization.find(params[:org]))
     redirect_to organization_path, notice: "User invited to organization!"
   end
 

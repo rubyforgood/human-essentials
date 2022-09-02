@@ -2,6 +2,7 @@
 #
 # Table name: users_roles
 #
+#  id      :bigint           not null, primary key
 #  role_id :bigint
 #  user_id :bigint
 #

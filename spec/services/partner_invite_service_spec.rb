@@ -29,7 +29,7 @@ describe PartnerInviteService, skip_seed: true do
     let(:user) { instance_double(User, reload: -> {}, deliver_invitation: -> {}) }
 
     before do
-      allow(User).to receive(:invite!).and_return(user)
+      allow(UserInviteService).to receive(:invite).and_return(user)
     end
 
     it 'should update the status of the partner to invited' do
@@ -38,21 +38,11 @@ describe PartnerInviteService, skip_seed: true do
 
     it 'should create invite' do
       subject
-      expect(User).to have_received(:invite!).with(
+      expect(UserInviteService).to have_received(:invite).with(
         email: partner.email,
-        partner: partner.profile,
-        skip_invitation: true
+        roles: %i[partner],
+        resource: partner.profile
       )
-    end
-
-    it 'should reload user object' do
-      subject
-      expect(user).to have_received(:reload)
-    end
-
-    it 'should invite them' do
-      subject
-      expect(user).to have_received(:deliver_invitation)
     end
   end
 end

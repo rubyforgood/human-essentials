@@ -1,5 +1,5 @@
 class MigrateRoles < ActiveRecord::Migration[7.0]
-  def change
+  def up
     User.find_each do |user|
       if user.organization_id.present?
         org = Organization.find_by_id(user.organization_id)
@@ -17,5 +17,8 @@ class MigrateRoles < ActiveRecord::Migration[7.0]
       end
     end
 
+  end
+
+  def down
   end
 end

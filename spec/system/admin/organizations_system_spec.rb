@@ -37,7 +37,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, skip_se
     end
 
     it "creates a new organization" do
-      allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path
       admin_user_params = attributes_for(:organization_admin)
       org_params = attributes_for(:organization)
@@ -96,7 +95,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, skip_se
     end
 
     it "creates a new organization" do
-      allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path
       org_params = attributes_for(:organization)
       fill_in "organization_name", with: org_params[:name]
