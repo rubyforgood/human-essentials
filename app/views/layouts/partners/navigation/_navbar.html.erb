@@ -6,7 +6,7 @@
 
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
     <%= link_to '', class:"dropdown-item" do %>
-    <i class="fa fa-cog text-aqua"></i> Organization Settings
+    <i class="fa fa-cog text-aqua mr-2"></i> Organization Settings
     <% end %>
 
     <div class="dropdown-divider"></div>
@@ -17,13 +17,13 @@
     <div class="dropdown-divider"></div>
     <% if current_user.organization.present? %>
       <%= link_to switch_to_bank_role_partners_users_path, class:"dropdown-item" do %>
-        <i class="fa fa-repeat text-aqua"></i> Switch To Bank Role
+        <i class="fa fa-repeat text-aqua mr-2"></i> Switch To Bank Role
       <% end %>
     <% end %>
 
     <div class="dropdown-divider"></div>
     <%= link_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>
-      <i class="fa fa-sign-out fa-lg"></i> Logout
+      <i class="fa fa-sign-out fa-lg mr-2"></i> Logout
     <% end %>
 
   </div>
