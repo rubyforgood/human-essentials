@@ -137,14 +137,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    # Faker::Config.random = Random.new(42)
-
-    # DatabaseCleaner.strategy = :transaction
-  end
-
-
-  config.before(:each) do |example|
-    # seed_with_default_records unless example.metadata[:skip_seed]
+    seed_users
   end
 
   config.before(:each, type: proc { |v| %i[request system controller].include?(v) }) do
@@ -191,6 +184,20 @@ def text_body(mail)
   mail.body.parts.find { |p| p.content_type =~ /text/ }.body.encoded
 end
 
+def seed_users
+  @organization = FactoryBot.create(:organization, name: "DEFAULT", skip_items: true)
+  Organization.seed_items(@organization)
+
+  # Create default users
+  @organization_admin = FactoryBot.create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
+  @user = FactoryBot.create(:user, organization: @organization, name: "DEFAULT USER")
+  @super_admin = FactoryBot.create(:super_admin, name: "DEFAULT SUPERADMIN")
+  @super_admin_no_org = FactoryBot.create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
+
+  # Seed with default partner record
+  @partner = FactoryBot.create(:partner, organization: @organization)
+end
+
 def seed_base_items_for_tests
   # Create base items that are used to handle seeding Organization with items
   base_items = File.read(Rails.root.join("db", "base_items.json"))
@@ -206,18 +213,6 @@ def seed_base_items_for_tests
       }
     end
   end.flatten
+
   BaseItem.create!(base_items_data)
-
-  # Create organization
-  @organization = FactoryBot.create(:organization, name: "DEFAULT", skip_items: true)
-  Organization.seed_items(@organization)
-
-  # Create default users
-  @organization_admin = FactoryBot.create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
-  @user = FactoryBot.create(:user, organization: @organization, name: "DEFAULT USER")
-  @super_admin = FactoryBot.create(:super_admin, name: "DEFAULT SUPERADMIN")
-  @super_admin_no_org = FactoryBot.create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
-
-  # Seed with default partner record
-  @partner = FactoryBot.create(:partner, organization: @organization)
 end
