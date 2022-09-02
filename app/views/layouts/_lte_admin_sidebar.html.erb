@@ -119,7 +119,7 @@
   
   <% if Rails.env.production? %>
     <li class="nav-item">
-      <%= link_to("/coverage", class: "nav-link #{"active" if current_page?(admin_questions_path)}") do %>
+      <%= link_to("/coverage", class: "nav-link") do %>
         <i class="nav-icon fa-solid fa-chart-bar"></i>
         <p>Coverband</p>
       <% end %>
