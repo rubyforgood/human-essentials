@@ -184,7 +184,7 @@ RSpec.describe "StorageLocations", type: :request do
 
         it "does not discard" do
           put storage_location_deactivate_path(default_params.merge(storage_location_id: storage_location.id, format: :json))
-          expect(storage_location.discarded?).to eq(false)
+          expect(storage_location.reload.discarded?).to eq(false)
         end
       end
 
@@ -199,7 +199,7 @@ RSpec.describe "StorageLocations", type: :request do
     describe "PUT #reactivate" do
       let(:storage_location) { create(:storage_location, organization: @organization, discarded_at: Time.zone.now) }
 
-      it "discards" do
+      it "undiscards" do
         put storage_location_reactivate_path(default_params.merge(storage_location_id: storage_location.id, format: :json))
         expect(storage_location.reload.discarded?).to eq(false)
       end

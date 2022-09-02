@@ -214,18 +214,5 @@ RSpec.describe StorageLocation, type: :model do
         expect(storage_location.longitude).not_to eq(nil)
       end
     end
-
-    describe "discard" do
-      context "with inventory" do
-        it "does not record the storage location as discarded" do
-          storage_location = create(:storage_location,
-                                   "address" => "1500 Remount Road, Front Royal, VA 22630")
-          item1 = create(:item, value_in_cents: 1_00)
-          create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 10)
-          expect(storage_location.discard).to eq(false)
-          expect { storage_location.discard! }.to raise_error(Errors::StorageLocationNotEmpty, "Cannot deactivate storage location containing inventory items with non-zero quantities")
-        end
-      end
-    end
   end
 end

@@ -81,18 +81,6 @@ class StorageLocation < ApplicationRecord
     inventory_items.sum(:quantity)
   end
 
-  def discard
-    return false if size > 0
-
-    super
-  end
-
-  def discard!
-    raise Errors::StorageLocationNotEmpty if size > 0
-
-    super
-  end
-
   def inventory_total_value_in_dollars
     inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
       value_in_cents = inventory_item.item.try(:value_in_cents)

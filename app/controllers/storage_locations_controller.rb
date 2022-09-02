@@ -82,7 +82,8 @@ class StorageLocationsController < ApplicationController
 
   def deactivate
     @storage_location = current_organization.storage_locations.kept.find(params[:storage_location_id])
-    @storage_location.discard!
+    svc = StorageLocationDeactivateService.new(@storage_location)
+    svc.call
     redirect_to storage_locations_path, notice: "Storage Location deactivated successfully"
   rescue Errors::StorageLocationNotEmpty => e
     redirect_back(fallback_location: storage_locations_path(organization_id: current_organization), error: e.message)
