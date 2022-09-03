@@ -137,25 +137,9 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    # Seeding users in the `each` block because it makes the @ variables defined
+    # through the specs
     seed_users
-  end
-
-  config.before(:each, type: proc { |v| %i[request system controller].include?(v) }) do
-    # create_default_users
-  end
-
-  config.before(:each, :needs_users) do
-    # create_default_users
-  end
-
-  config.after(:each) do |example|
-    # Ensure to clean-up the database by whichever means
-    # were specified before the test ran
-    # DatabaseCleaner.clean unless example.metadata[:persisted_data]
-
-    # Remove any /tmp/storage files that might have been
-    # added as a consequence of the test.
-    # FileUtils.rm_rf(Dir["#{Rails.root}/tmp/storage"])
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
