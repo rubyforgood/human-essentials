@@ -14,7 +14,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Audit, type: :model, needs_users: true do
+RSpec.describe Audit, type: :model do
   it_behaves_like "itemizable"
 
   context "Validations >" do
