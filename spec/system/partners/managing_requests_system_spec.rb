@@ -148,7 +148,6 @@ RSpec.describe "Managing requests", type: :system, js: true do
           it 'AND the partner_user can view the details of the created request in a seperate page' do
             visit partners_request_path(id: partner.requests.last.id)
 
-
             item_details.each do |item|
               expect(page).to have_content("#{item[:quantity]} of #{item[:name]}")
             end
