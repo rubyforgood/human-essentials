@@ -104,7 +104,7 @@ RSpec.configure do |config|
       `NODE_ENV=test bin/webpack`
     end
 
-    DatabaseCleaner.clean_with(:truncation, except: %w(ar_internal_metadata))
+    DatabaseCleaner.clean_with(:truncation, except: %w[ar_internal_metadata])
 
     # Stub out the Geocoder since we
     Geocoder.configure(lookup: :test)
@@ -188,12 +188,12 @@ def seed_base_items_for_tests
   items_by_category = JSON.parse(base_items)
   base_items_data = items_by_category.map do |category, entries|
     entries.map do |entry|
-      { 
+      {
         name: entry["name"],
         category: category,
         partner_key: entry["key"],
         updated_at: Time.zone.now,
-        created_at: Time.zone.now 
+        created_at: Time.zone.now
       }
     end
   end.flatten

@@ -3,10 +3,9 @@ require "rails_helper"
 RSpec.describe Partners::FamilyRequestsController, type: :request do
   let(:partner) { create(:partner) }
   let(:params) do
-    children.inject({}) do |hash, child|
-      hash["child-#{child.id}"] =  true
-      hash
-    end 
+    children.each_with_object({}) do |child, hash|
+      hash["child-#{child.id}"] = true
+    end
   end
   let(:partners_partner) { Partners::Partner.find_by(partner_id: partner.id) }
   let(:family) { create(:partners_family, partner_id: partners_partner.id) }

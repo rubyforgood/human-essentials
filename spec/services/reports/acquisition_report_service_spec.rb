@@ -106,13 +106,13 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                  purchased_from: 'Google',
                  amount_spent_in_cents: 1000,
                  amount_spent_on_diapers_cents: 1000),
-                 create(:purchase,
-                        issued_at: within_time,
-                        vendor: vendor,
-                        organization: organization,
-                        purchased_from: 'Walmart',
-                        amount_spent_in_cents: 2000,
-                        amount_spent_on_diapers_cents: 2000),
+          create(:purchase,
+                 issued_at: within_time,
+                 vendor: vendor,
+                 organization: organization,
+                 purchased_from: 'Walmart',
+                 amount_spent_in_cents: 2000,
+                 amount_spent_on_diapers_cents: 2000),
         ]
         purchases += create_list(:purchase, 2,
                                  issued_at: outside_time,
@@ -142,7 +142,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                    "Total product drives" => 2,
                    "Total product drives (virtual)" => 2,
                    "Vendors diapers purchased through" => "Vendor 1, Vendor 2" },
-                   name: "Diaper Acquisition"
+        name: "Diaper Acquisition"
       })
     end
   end
