@@ -2,10 +2,15 @@ require "rails_helper"
 
 RSpec.describe Partners::FamilyRequestsController, type: :request do
   let(:partner) { create(:partner) }
-  let(:params) { { 'child-1' => true, 'child-2' => true, 'child-3' => true } }
+  let(:params) do
+    children.inject({}) do |hash, child|
+      hash["child-#{child.id}"] =  true
+      hash
+    end 
+  end
   let(:partners_partner) { Partners::Partner.find_by(partner_id: partner.id) }
   let(:family) { create(:partners_family, partner_id: partners_partner.id) }
-  let(:children) { FactoryBot.create_list(:partners_child, 3, family: family) }
+  let!(:children) { FactoryBot.create_list(:partners_child, 3, family: family) }
   let(:partner_user) { partners_partner.primary_user }
 
   before { sign_in(partner_user) }
