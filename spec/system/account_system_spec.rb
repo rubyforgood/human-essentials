@@ -1,4 +1,4 @@
-RSpec.describe "User account management", type: :system, js: true, skip_seed: true do
+RSpec.describe "User account management", type: :system, js: true do
   subject { "/users/edit" }
 
   before do

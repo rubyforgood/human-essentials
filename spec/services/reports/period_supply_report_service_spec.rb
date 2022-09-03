@@ -1,4 +1,4 @@
-RSpec.describe Reports::PeriodSupplyReportService, type: :service, skip_seed: true do
+RSpec.describe Reports::PeriodSupplyReportService, type: :service do
   let(:year) { 2020 }
   let(:organization) { create(:organization) }
 

@@ -11,7 +11,7 @@
 
 require "rails_helper"
 
-RSpec.describe Manufacturer, type: :model, skip_seed: true do
+RSpec.describe Manufacturer, type: :model do
   context "Validations" do
     it "must belong to an organization" do
       expect(build(:manufacturer, organization: nil)).not_to be_valid

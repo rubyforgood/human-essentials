@@ -1,4 +1,4 @@
-RSpec.describe "Authentication", type: :system, js: true, skip_seed: true do
+RSpec.describe "Authentication", type: :system, js: true do
   describe "Success" do
     it "should show dashboard upon signin" do
       sign_in(@user)

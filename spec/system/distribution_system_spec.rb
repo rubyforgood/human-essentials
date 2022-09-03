@@ -1,4 +1,4 @@
-RSpec.feature "Distributions", type: :system, skip_seed: true do
+RSpec.feature "Distributions", type: :system do
   before do
     sign_in(@user)
     @url_prefix = "/#{@organization.to_param}"

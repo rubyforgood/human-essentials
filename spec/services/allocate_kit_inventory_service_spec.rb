@@ -1,4 +1,4 @@
-RSpec.describe AllocateKitInventoryService, type: :service, skip_seed: true do
+RSpec.describe AllocateKitInventoryService, type: :service do
   let(:organization) { create :organization }
   let(:item) { create(:item, name: "Item", organization: organization, on_hand_minimum_quantity: 5) }
   let(:item_out_of_stock) { create(:item, name: "Item out of stock", organization: organization, on_hand_minimum_quantity: 0) }

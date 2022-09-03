@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PartnerUserInviteService, skip_seed: true do
+describe PartnerUserInviteService do
   let(:partner) { create(:partner) }
   let(:email) { Faker::Internet.email }
   let!(:partner_user) { instance_spy(User) }

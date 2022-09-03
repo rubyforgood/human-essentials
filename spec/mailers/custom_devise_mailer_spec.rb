@@ -1,4 +1,4 @@
-RSpec.describe CustomDeviseMailer, type: :mailer, skip_seed: true do
+RSpec.describe CustomDeviseMailer, type: :mailer do
   describe "#invitation_instructions" do
     let(:user) { create(:user) }
     let(:mail) { described_class.invitation_instructions(user, SecureRandom.uuid) }

@@ -1,4 +1,4 @@
-RSpec.describe 'Account request flow', type: :system, js: true, skip_seed: true do
+RSpec.describe 'Account request flow', type: :system, js: true do
   context 'when in staging' do
     before do
       allow(Rails.env).to receive(:staging?).and_return(true)

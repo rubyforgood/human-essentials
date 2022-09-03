@@ -1,4 +1,4 @@
-RSpec.describe "Transfers", type: :request, skip_seed: true do
+RSpec.describe "Transfers", type: :request do
   let(:valid_params) do
     { organization_id: @organization.short_name }
   end

@@ -1,4 +1,4 @@
-RSpec.describe "Layout", type: :system, skip_seed: true do
+RSpec.describe "Layout", type: :system do
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
   describe "Body CSS Data" do
