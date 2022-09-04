@@ -99,11 +99,6 @@ RSpec.configure do |config|
 
   # Preparatifyication
   config.before(:suite) do
-    unless File.exist?(Rails.root.join("public", "packs-task"))
-      Rails.logger.info "Detected missing webpack assets for testing. Running compilation step"
-      `NODE_ENV=test bin/webpack`
-    end
-
     DatabaseCleaner.clean_with(:truncation, except: %w[ar_internal_metadata])
 
     # Stub out the Geocoder since we
@@ -131,6 +126,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
+    unless File.exist?(Rails.root.join("public", "packs-task"))
+      Rails.logger.info "Detected missing webpack assets for testing. Running compilation step"
+      `NODE_ENV=test bin/webpack`
+    end
+
     clear_downloads
     driven_by :chrome
     Capybara.server = :puma, { Silent: true }
