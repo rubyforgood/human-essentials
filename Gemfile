@@ -115,6 +115,8 @@ group :production do
   gem 'lograge'
   # Profiler (third party app) showing performance and metrics.
   gem "skylight"
+  # Tool to detect unused code through knowing which methods are used in which files.
+  gem 'coverband'
 end
 
 group :development, :test, :staging do
