@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("CHANGEME"), not null
+#  name                   :string           default("Name Not Provided"), not null
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
