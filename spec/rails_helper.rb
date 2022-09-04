@@ -97,6 +97,78 @@ RSpec.configure do |config|
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
 
+  #
+  # --------------------
+  # START - Seeding helpers for tests setup
+  # --------------------
+  #
+
+  #
+  # Disable this rubocop rule here so we are permitted to set constants within
+  # the RSpec.configure block.
+  # rubocop:disable Lint/ConstantDefinitionInBlock
+  DEFAULT_TEST_ORGANIZATION_NAME = "DEFAULT"
+  DEFAULT_TEST_USER_NAME = "DEFAULT USER"
+  DEFAULT_TEST_ORG_ADMIN_USER_NAME = "DEFAULT ORG ADMIN"
+  DEFAULT_TEST_SUPER_ADMIN_USER_NAME = "DEFAULT SUPERADMIN"
+  DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME = "DEFAULT SUPERADMIN NO ORG"
+  DEFAULT_TEST_PARTNER_NAME = "DEFAULT PARTNER"
+  DEFAULT_USER_PASSWORD = "password!"
+  # rubocop:enable Lint/ConstantDefinitionInBlock
+
+  def define_global_variables
+    @organization = Organization.find_by!(name: DEFAULT_TEST_ORGANIZATION_NAME)
+
+    user_names = [
+      DEFAULT_TEST_USER_NAME,
+      DEFAULT_TEST_ORG_ADMIN_USER_NAME,
+      DEFAULT_TEST_SUPER_ADMIN_USER_NAME,
+      DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME
+    ]
+    users = User.where(name: user_names)
+    @organization_admin = users.find { |u| u.name == DEFAULT_TEST_ORG_ADMIN_USER_NAME }
+    @user = users.find { |u| u.name == DEFAULT_TEST_USER_NAME }
+    @super_admin = users.find { |u| u.name == DEFAULT_TEST_SUPER_ADMIN_USER_NAME }
+    @super_admin_no_org = users.find { |u| u.name == DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME }
+
+    @partner = Partner.find_by!(name: DEFAULT_TEST_PARTNER_NAME)
+  end
+
+  def seed_base_data_for_tests
+    # Create base items that are used to handle seeding Organization with items
+    base_items = File.read(Rails.root.join("db", "base_items.json"))
+    items_by_category = JSON.parse(base_items)
+    base_items_data = items_by_category.map do |category, entries|
+      entries.map do |entry|
+        {
+          name: entry["name"],
+          category: category,
+          partner_key: entry["key"],
+          updated_at: Time.zone.now,
+          created_at: Time.zone.now
+        }
+      end
+    end.flatten
+
+    BaseItem.create!(base_items_data)
+
+    # Create default organization
+    organization = FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME)
+
+    # Create default users
+    FactoryBot.create(:organization_admin, organization: organization, name: DEFAULT_TEST_ORG_ADMIN_USER_NAME)
+    FactoryBot.create(:user, organization: organization, name: DEFAULT_TEST_USER_NAME)
+    FactoryBot.create(:super_admin, name: DEFAULT_TEST_SUPER_ADMIN_USER_NAME)
+    FactoryBot.create(:super_admin_no_org, name: DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME)
+
+    # Seed with default partner record
+    FactoryBot.create(:partner, organization: organization, name: DEFAULT_TEST_PARTNER_NAME)
+  end
+
+  # --------------------
+  # END - Seeding helpers for tests setup
+  # --------------------
+
   # Preparatifyication
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation, except: %w[ar_internal_metadata])
@@ -122,7 +194,7 @@ RSpec.configure do |config|
        )
      end
 
-    seed_base_items_for_tests
+    seed_base_data_for_tests
   end
 
   config.before(:each, type: :system) do
@@ -137,9 +209,8 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    # Seeding users in the `each` block because it makes the @ variables defined
-    # through the specs
-    seed_users
+    # Defined shared @ global variables used throughout the test suite.
+    define_global_variables
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
@@ -166,37 +237,4 @@ end
 
 def text_body(mail)
   mail.body.parts.find { |p| p.content_type =~ /text/ }.body.encoded
-end
-
-def seed_users
-  @organization = FactoryBot.create(:organization, name: "DEFAULT", skip_items: true)
-  Organization.seed_items(@organization)
-
-  # Create default users
-  @organization_admin = FactoryBot.create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
-  @user = FactoryBot.create(:user, organization: @organization, name: "DEFAULT USER")
-  @super_admin = FactoryBot.create(:super_admin, name: "DEFAULT SUPERADMIN")
-  @super_admin_no_org = FactoryBot.create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
-
-  # Seed with default partner record
-  @partner = FactoryBot.create(:partner, organization: @organization)
-end
-
-def seed_base_items_for_tests
-  # Create base items that are used to handle seeding Organization with items
-  base_items = File.read(Rails.root.join("db", "base_items.json"))
-  items_by_category = JSON.parse(base_items)
-  base_items_data = items_by_category.map do |category, entries|
-    entries.map do |entry|
-      {
-        name: entry["name"],
-        category: category,
-        partner_key: entry["key"],
-        updated_at: Time.zone.now,
-        created_at: Time.zone.now
-      }
-    end
-  end.flatten
-
-  BaseItem.create!(base_items_data)
 end
