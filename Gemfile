@@ -32,7 +32,7 @@ gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.2.0"
+gem "strong_migrations", "1.3.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -113,6 +113,8 @@ group :production do
   gem 'lograge'
   # Profiler (third party app) showing performance and metrics.
   gem "skylight"
+  # Tool to detect unused code through knowing which methods are used in which files.
+  gem 'coverband'
 end
 
 group :development, :test, :staging do

@@ -116,6 +116,15 @@
       <p>FAQ</p>
     <% end %>
   </li>
+  
+  <% if Rails.env.production? %>
+    <li class="nav-item">
+      <%= link_to("/coverage", class: "nav-link") do %>
+        <i class="nav-icon fa-solid fa-chart-bar"></i>
+        <p>Coverband</p>
+      <% end %>
+    </li>
+  <% end %>
 
   <% if (current_user.organization.present?) %>
     <li class="nav-item">
