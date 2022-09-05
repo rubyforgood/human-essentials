@@ -21,7 +21,7 @@ describe Exports::ExportDonationsCSVService do
         ],
         *(Array.new(3) do |i|
           [[FactoryBot.create(
-            :item, name: Faker::Appliance.equipment
+            :item, name: "item_#{i}"
           ), i + 1]]
         end)
       ]
