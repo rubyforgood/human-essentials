@@ -13,7 +13,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Partners::ItemRequest, type: :model, skip_seed: true do
+RSpec.describe Partners::ItemRequest, type: :model do
   describe 'associations' do
     it { should belong_to(:request).class_name('Partners::Request').with_foreign_key(:partner_request_id) }
     it { should have_many(:child_item_requests).dependent(:destroy) }

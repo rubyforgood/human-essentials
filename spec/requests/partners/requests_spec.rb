@@ -70,9 +70,10 @@ RSpec.describe "/partners/requests", type: :request do
           }
         }
       end
-      it 'should redirect to the dashboard' do
+
+      it 'should redirect to the show page' do
         subject.call
-        expect(response).to redirect_to(partners_request_path(Request.last.id))
+        expect(response).to redirect_to(partners_request_path(Partners::Request.last.id))
       end
     end
 

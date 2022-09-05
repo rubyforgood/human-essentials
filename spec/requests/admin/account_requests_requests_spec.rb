@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Admin::AccountRequestsController', type: :request, skip_seed: true do
+RSpec.describe 'Admin::AccountRequestsController', type: :request do
   context 'while signed in as a super admin' do
     before do
       sign_in(@super_admin)

@@ -1,4 +1,4 @@
-RSpec.describe RequestsConfirmationMailer, type: :mailer, skip_seed: true do
+RSpec.describe RequestsConfirmationMailer, type: :mailer do
   let(:request) { create(:request) }
 
   describe "#confirmation_email" do

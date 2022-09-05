@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe HelpController, type: :controller, skip_seed: true do
+RSpec.describe HelpController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end

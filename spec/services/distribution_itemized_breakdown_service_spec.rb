@@ -1,4 +1,4 @@
-RSpec.describe DistributionItemizedBreakdownService, type: :service, skip_seed: true do
+RSpec.describe DistributionItemizedBreakdownService, type: :service do
   let(:organization) { create(:organization) }
   let(:distribution_ids) { [distribution_1, distribution_2, distribution_3].map(&:id) }
   let(:item_a) do

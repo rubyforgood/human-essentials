@@ -1,4 +1,4 @@
-RSpec.describe DonationsController, type: :controller, skip_seed: true do
+RSpec.describe DonationsController, type: :controller do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
