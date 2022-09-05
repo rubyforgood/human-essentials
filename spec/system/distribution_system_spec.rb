@@ -4,6 +4,9 @@ RSpec.feature "Distributions", type: :system do
     @url_prefix = "/#{@organization.to_param}"
 
     @partner = create(:partner, organization: @organization)
+    @organization.logo = Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg")
+    @organization.save!
+
     # allow_any_instance_of(StorageLocation).to receive(:geocode).and_return(true)
     @storage_location = create(:storage_location, organization: @organization)
     setup_storage_location(@storage_location)
