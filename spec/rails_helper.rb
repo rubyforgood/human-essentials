@@ -1,5 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= "test"
+ENV["RAILS_ENV"] = "test"
+ENV["NODE_ENV"] = "test"
+
 require File.expand_path("../config/environment", __dir__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -198,11 +200,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each, type: :system) do
-    unless File.exist?(Rails.root.join("public", "packs-task"))
-      Rails.logger.info "Detected missing webpack assets for testing. Running compilation step"
-      `NODE_ENV=test bin/webpack`
-    end
-
     clear_downloads
     driven_by :chrome
     Capybara.server = :puma, { Silent: true }
