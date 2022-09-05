@@ -1,4 +1,4 @@
-RSpec.describe "Partner Distributions", type: :system, js: true, skip_seed: true do
+RSpec.describe "Partner Distributions", type: :system, js: true do
   describe "Distributions" do
     let(:partner_user) { partner.primary_partner_user }
     let(:date) { 1.week.from_now }

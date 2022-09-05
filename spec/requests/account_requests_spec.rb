@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "/account_requests", type: :request, skip_seed: true do
+RSpec.describe "/account_requests", type: :request do
   describe "GET #new" do
     it "renders a successful response" do
       get new_account_request_url

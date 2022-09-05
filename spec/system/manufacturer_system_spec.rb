@@ -1,4 +1,4 @@
-RSpec.describe "Manufacturer", type: :system, skip_seed: true do
+RSpec.describe "Manufacturer", type: :system do
   before do
     sign_in(@user)
   end

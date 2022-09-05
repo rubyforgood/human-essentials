@@ -18,7 +18,7 @@
 
 require "rails_helper"
 
-RSpec.describe ProductDriveParticipant, type: :model, skip_seed: true do
+RSpec.describe ProductDriveParticipant, type: :model do
   it_behaves_like "provideable"
 
   context "Validations" do
