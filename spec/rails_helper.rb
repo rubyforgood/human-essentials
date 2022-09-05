@@ -173,7 +173,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation, except: %w[ar_internal_metadata])
 
-    # Stub out the Geocoder since we
+    # Stub out the Geocoder since we don't want to hit the API
     Geocoder.configure(lookup: :test)
 
     ["1500 Remount Road, Front Royal, VA 22630",

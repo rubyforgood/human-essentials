@@ -159,7 +159,7 @@ RSpec.describe "Admin::Organizations", type: :request do
     describe "DELETE #destroy" do
       it "redirects" do
         delete admin_organization_path({ id: @organization.id })
-        expect(response).to redirect_to(admin_organizations_path({ organization_id: @organization }))
+        expect(response).to redirect_to(admin_organizations_path({ organization_id: "admin" }))
       end
     end
   end

@@ -16,7 +16,6 @@ RSpec.describe "Transfers", type: :request do
 
       around do |example|
         travel_to Time.zone.local(2019, 7, 1)
-        create(:transfer)
         example.run
         travel_back
       end
