@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Admin::Partners", type: :request, skip_seed: true do
+RSpec.describe "Admin::Partners", type: :request do
   context "When logged in as a super admin" do
     before do
       sign_in(@super_admin)

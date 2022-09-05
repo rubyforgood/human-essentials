@@ -1,4 +1,4 @@
-name: rspec
+name: rspec-system
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
       - 'bin/*'
 
 jobs:
-  rspec:
+  rspec-system:
 
     runs-on: ubuntu-latest
 
@@ -36,10 +36,10 @@ jobs:
         # Set N number of parallel jobs you want to run tests on.
         # Use higher number if you have slow tests to split them on more parallel jobs.
         # Remember to update ci_node_index below to 0..N-1
-        ci_node_total: [2]
+        ci_node_total: [6]
         # set N-1 indexes for parallel jobs
         # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
-        ci_node_index: [0, 1]
+        ci_node_index: [0, 1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@v2
 
@@ -51,7 +51,7 @@ jobs:
       - name: Install PostgreSQL client
         run: |
           sudo apt-get -yqq install libpq-dev
-      - name: Build App
+      - name: Build App with asset compilation
         env:
           POSTGRES_HOST: localhost
           DATABASE_HOST: localhost
@@ -60,10 +60,13 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
           RAILS_ENV: test
+          NODE_ENV: test
         run: |
           bundle exec skylight disable_dev_warning
+          yarn
           bundle exec rake db:create
           bundle exec rake db:schema:load
+          bundle exec rails assets:precompile
       - name: Run rspec
         env:
           POSTGRES_HOST: localhost
@@ -75,12 +78,13 @@ jobs:
           PGHOST: localhost
           PGUSER: postgres
           RAILS_ENV: test
+          NODE_ENV: test
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
           KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
           KNAPSACK_PRO_LOG_LEVEL: info
-          KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN: "{spec/system/**{,/*/**}/*_spec.rb,spec/requests/**{,/*/**}/*_spec.rb}"
+          KNAPSACK_PRO_TEST_FILE_PATTERN: "{spec/system/**{,/*/**}/*_spec.rb,spec/requests/**{,/*/**}/*_spec.rb}"
         run: |
           RUBYOPT='-W:no-deprecated -W:no-experimental' bin/knapsack_pro_rspec
       - name: Upload artifacts

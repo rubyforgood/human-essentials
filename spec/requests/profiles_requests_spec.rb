@@ -1,4 +1,4 @@
-RSpec.describe "Profiles", type: :request, skip_seed: true do
+RSpec.describe "Profiles", type: :request do
   let(:partner) { FactoryBot.create(:partner, organization: @organization) }
 
   let(:default_params) do

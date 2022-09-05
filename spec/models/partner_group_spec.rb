@@ -11,7 +11,7 @@
 #  updated_at      :datetime         not null
 #  organization_id :bigint
 #
-RSpec.describe PartnerGroup, type: :model, skip_seed: true do
+RSpec.describe PartnerGroup, type: :model do
   describe 'associations' do
     it { should belong_to(:organization) }
     it { should have_many(:partners) }

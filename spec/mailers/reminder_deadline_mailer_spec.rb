@@ -1,4 +1,4 @@
-describe ReminderDeadlineMailer, type: :job, skip_seed: true do
+describe ReminderDeadlineMailer, type: :job do
   describe 'notify deadline' do
     let(:today) { Date.new(2022, 1, 10) }
     let(:partner) { create(:partner) }

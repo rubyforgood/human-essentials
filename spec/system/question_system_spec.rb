@@ -1,4 +1,4 @@
-RSpec.describe "Question search", type: :system, js: true, skip_seed: true do
+RSpec.describe "Question search", type: :system, js: true do
   context "while logged in" do
     before do
       sign_in(@user)

@@ -1,4 +1,4 @@
-RSpec.describe ItemCreateService, type: :service, skip_seed: true do
+RSpec.describe ItemCreateService, type: :service do
   describe '#call' do
     subject { described_class.new(organization_id: organization_id, item_params: item_params).call }
     let(:organization_id) { organization.id }

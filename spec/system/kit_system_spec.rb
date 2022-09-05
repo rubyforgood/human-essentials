@@ -1,4 +1,4 @@
-RSpec.describe "Kit management", type: :system, skip_seed: true do
+RSpec.describe "Kit management", type: :system do
   before do
     sign_in(@user)
   end

@@ -1,4 +1,4 @@
-RSpec.describe "Approval process for partners", type: :system, js: true, skip_seed: true do
+RSpec.describe "Approval process for partners", type: :system, js: true do
   describe 'filling in organization details and requesting for approval' do
     let(:partner_user) { partner.primary_partner_user }
     let!(:partner) { FactoryBot.create(:partner) }

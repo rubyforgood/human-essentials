@@ -1,4 +1,4 @@
-RSpec.describe DistributionContentChangeService, type: :service, skip_seed: true do
+RSpec.describe DistributionContentChangeService, type: :service do
   let(:line_item1) { { active: true, item_id: 32, name: "Adult Incontinence Pads", quantity: 382 } }
   let(:line_item2) { { active: true, item_id: 38, name: "Bed Pads (Disposable)", quantity: 36 } }
   let(:line_item3) { { active: true, item_id: 43, name: "Wipes (Adult)", quantity: 88 } }

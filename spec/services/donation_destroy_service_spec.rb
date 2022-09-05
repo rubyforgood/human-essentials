@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe DonationDestroyService, skip_seed: true do
+describe DonationDestroyService do
   describe '#call' do
     subject { described_class.new(organization_id: organization_id, donation_id: donation_id) }
     let(:organization_id) { Faker::Number.number }

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Exports::ExportReportCSVService, skip_seed: true do
+describe Exports::ExportReportCSVService do
   describe ".generate_csv_data" do
     it "creates CSV data including headers" do
       report = {

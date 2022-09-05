@@ -1,4 +1,4 @@
-RSpec.describe "Organization management", type: :system, js: true, skip_seed: true do
+RSpec.describe "Organization management", type: :system, js: true do
   include ActionView::RecordIdentifier
   let!(:url_prefix) { "/#{@organization.to_param}" }
 

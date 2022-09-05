@@ -1,4 +1,4 @@
-RSpec.describe "User sign-in handling", type: :system, js: true, skip_seed: true do
+RSpec.describe "User sign-in handling", type: :system, js: true do
   subject { new_user_session_path }
 
   before do
@@ -18,7 +18,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true, skip_seed: true
   context "when users are valid and belong to an organization" do
     it "redirects to user's dashboard" do
       fill_in "Email", with: @user.email
-      fill_in "Password", with: @user.password
+      fill_in "Password", with: DEFAULT_USER_PASSWORD
       click_button "Log in"
 
       expect(page).to have_current_path(
