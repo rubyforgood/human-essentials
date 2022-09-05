@@ -54,12 +54,12 @@ RSpec.describe "Managing requests", type: :system, js: true do
           before do
             expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
 
-            expect(current_path).to eq(partners_request_path(partner.requests.last.id))
+            expect(current_path).to eq(partners_request_path(Partners::Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
           end
 
           it 'AND the partner_user can view the details of the created individuals request in a seperate page' do
-            visit partners_request_path(id: partner.requests.last.id)
+            visit partners_request_path(id: Partners::Request.last.id)
 
             # Should have the proper quantity per each item.
             item_details.each do |item|
@@ -140,13 +140,13 @@ RSpec.describe "Managing requests", type: :system, js: true do
           before do
             expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
 
-            expect(current_path).to eq(partners_request_path(partner.requests.last.id))
+            expect(current_path).to eq(partners_request_path(Partners::Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
             expect(page).to have_content("#{partner.organization.name} should have received the request.")
           end
 
           it 'AND the partner_user can view the details of the created request in a seperate page' do
-            visit partners_request_path(id: partner.requests.last.id)
+            visit partners_request_path(id: Partners::Request.last.id)
 
             item_details.each do |item|
               expect(page).to have_content("#{item[:quantity]} of #{item[:name]}")
