@@ -36,10 +36,10 @@ jobs:
         # Set N number of parallel jobs you want to run tests on.
         # Use higher number if you have slow tests to split them on more parallel jobs.
         # Remember to update ci_node_index below to 0..N-1
-        ci_node_total: [4]
+        ci_node_total: [2]
         # set N-1 indexes for parallel jobs
         # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
-        ci_node_index: [0, 1, 2, 3]
+        ci_node_index: [0, 1]
     steps:
       - uses: actions/checkout@v2
 
