@@ -132,11 +132,21 @@
       <p>Essentials Funding Source: <%= partner_profile.essentials_funding_source %></p>
     <% end %>
     <% if partner_profile_fields.include?('attached_documents') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Other Documents</h2>
+      <h2 class='text-2xl underline'>Other Documents</h2><br/>
       <ul>
         <% partner_profile.documents.each do |document| %>
           <li><%= link_to document.filename, rails_blob_path(document, disposition: 'inline') %></li>
         <% end %>
+      </ul>
+    <h2 class='text-2xl underline'>Settings</h2>
+      <ul>
+      <% if partner_profile.organization.enable_child_based_requests? %>
+        <li>Uses Child Based Requests: <%= humanize_boolean(partner_profile.enable_child_based_requests) %></li>
+      <% end %>
+      <% if partner_profile.organization.enable_individual_requests? %>
+        <li>Uses Individual Requests: <%= humanize_boolean(partner_profile.enable_individual_requests) %></li>
+      <% end %>
+
       </ul>
   </div>
 <% end %>
