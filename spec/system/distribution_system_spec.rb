@@ -4,7 +4,6 @@ RSpec.feature "Distributions", type: :system do
     @url_prefix = "/#{@organization.to_param}"
 
     @partner = create(:partner, organization: @organization)
-    allow_any_instance_of(Organization).to receive(:logo).and_return(instance_double('fake-logo', attached?: true, download: "logo"))
 
     @storage_location = create(:storage_location, organization: @organization)
     setup_storage_location(@storage_location)
