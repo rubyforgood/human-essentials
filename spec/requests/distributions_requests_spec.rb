@@ -34,7 +34,6 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #print" do
-
       it "returns http success" do
         get print_distribution_path(default_params.merge(id: create(:distribution).id))
         expect(response).to be_successful
