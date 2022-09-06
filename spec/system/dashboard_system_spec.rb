@@ -510,11 +510,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
         it "only counts product drive donations for product drive" do
           expect(org_dashboard_page.product_drive_total_donations).to eq @product_drive_donations.map(&:quantity).sum
         end
-        
+
         it "only counts product drive money raised" do
           expect(org_dashboard_page.product_drive_total_money_raised).to eq @product_drive_donations.map(&:money_raised).sum
         end
-        
+
         it "only shows product drive donations as product drive donations" do
           recent_donation_links = org_dashboard_page.recent_product_drive_donation_links
 
