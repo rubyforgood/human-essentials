@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PartnerInviteService, skip_seed: true do
+describe PartnerInviteService do
   subject { described_class.new(partner: partner).call }
   let(:partner) { create(:partner) }
 

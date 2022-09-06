@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ApplicationHelper, type: :helper, skip_seed: true do
+RSpec.describe ApplicationHelper, type: :helper do
   describe "default_title_content" do
     helper do
       def current_organization; end

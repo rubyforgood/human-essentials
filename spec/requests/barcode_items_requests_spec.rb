@@ -1,4 +1,4 @@
-RSpec.describe "BarcodeItems", type: :request, skip_seed: true do
+RSpec.describe "BarcodeItems", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Users", type: :request, skip_seed: true do
+RSpec.describe "Users", type: :request do
   let(:partner) { create(:partner) }
   let(:default_params) do
     { organization_id: @organization.to_param }

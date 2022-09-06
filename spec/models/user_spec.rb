@@ -56,7 +56,6 @@ RSpec.describe User, type: :model do
       let!(:a_name_user) { create(:user, name: 'Amanda') }
 
       it "retrieves users in the correct order" do
-        create_default_users
         alphabetized_list = described_class.alphabetized
 
         expect(alphabetized_list.first).to eq(a_name_user)
@@ -75,7 +74,6 @@ RSpec.describe User, type: :model do
       let!(:deactivated_z_name_user) { create(:user, name: 'Zeke', discarded_at: discarded_at) }
 
       it "retrieves users in the correct order" do
-        create_default_users
         alphabetized_list = described_class.org_users.with_discarded.alphabetized
 
         expect(alphabetized_list).to eq(

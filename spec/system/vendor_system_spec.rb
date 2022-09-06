@@ -1,4 +1,4 @@
-RSpec.describe "Vendor", type: :system, js: true, skip_seed: true do
+RSpec.describe "Vendor", type: :system, js: true do
   before do
     sign_in(@user)
   end

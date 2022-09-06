@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe ServiceObjectErrorsMixin, skip_seed: true do
+describe ServiceObjectErrorsMixin do
   describe 'self.included' do
     before do
       stub_const 'TestClass', Class.new

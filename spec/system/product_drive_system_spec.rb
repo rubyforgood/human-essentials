@@ -1,4 +1,4 @@
-RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
+RSpec.describe "Product Drives", type: :system, js: true do
   include DateRangeHelper
 
   before do

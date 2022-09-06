@@ -1,4 +1,4 @@
-RSpec.describe "Transfer management", type: :system, skip_seed: true do
+RSpec.describe "Transfer management", type: :system do
   before do
     sign_in(@user)
   end
