@@ -1,4 +1,4 @@
-RSpec.describe "Base Item Admin", type: :system, js: true, skip_seed: true do
+RSpec.describe "Base Item Admin", type: :system, js: true do
   context "While signed in as an Administrative User (super admin)" do
     before do
       sign_in(@super_admin)

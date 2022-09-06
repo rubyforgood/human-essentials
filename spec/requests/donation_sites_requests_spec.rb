@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "DonationSites", type: :request, skip_seed: true do
+RSpec.describe "DonationSites", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end

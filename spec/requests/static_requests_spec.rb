@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Static", type: :request, skip_seed: true do
+RSpec.describe "Static", type: :request do
   describe "Not signed in" do
     describe "GET #index" do
       it "returns http success" do

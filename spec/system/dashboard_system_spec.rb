@@ -1,6 +1,6 @@
 require 'ostruct'
 
-RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
+RSpec.describe "Dashboard", type: :system, js: true do
   context "With a new essentials bank" do
     before :each do
       @new_organization = create(:organization)

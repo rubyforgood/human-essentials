@@ -54,7 +54,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
           before do
             expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
 
-            expect(current_path).to eq(partners_request_path(Request.last.id))
+            expect(current_path).to eq(partners_request_path(Partners::Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
           end
 
@@ -101,7 +101,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         it 'should be created without any issue' do
           expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
 
-          expect(current_path).to eq(partners_request_path(Request.last.id))
+          expect(current_path).to eq(partners_request_path(Partners::Request.last.id))
           expect(page).to have_content('Request has been successfully created!')
           expect(page).to have_content("#{partner.organization.name} should have received the request.")
         end
@@ -140,7 +140,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
           before do
             expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
 
-            expect(current_path).to eq(partners_request_path(Request.last.id))
+            expect(current_path).to eq(partners_request_path(Partners::Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
             expect(page).to have_content("#{partner.organization.name} should have received the request.")
           end

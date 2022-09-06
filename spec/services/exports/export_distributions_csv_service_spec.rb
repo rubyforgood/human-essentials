@@ -1,4 +1,4 @@
-describe Exports::ExportDistributionsCSVService, skip_seed: true do
+describe Exports::ExportDistributionsCSVService do
   describe '#generate_csv_data' do
     subject { described_class.new(distribution_ids: distribution_ids).generate_csv_data }
     let(:distribution_ids) { distributions.map(&:id) }

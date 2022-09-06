@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PartnerApprovalService, skip_seed: true do
+describe PartnerApprovalService do
   describe '#call' do
     subject { described_class.new(partner: partner).call }
     let(:partner) { create(:partner) }

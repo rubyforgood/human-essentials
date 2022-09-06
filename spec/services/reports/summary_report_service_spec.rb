@@ -1,4 +1,4 @@
-RSpec.describe Reports::SummaryReportService, type: :service, skip_seed: true do
+RSpec.describe Reports::SummaryReportService, type: :service do
   let(:year) { 2020 }
   let(:organization) { create(:organization) }
   let(:another_organization) { create(:organization) }
@@ -18,7 +18,6 @@ RSpec.describe Reports::SummaryReportService, type: :service, skip_seed: true do
     end
 
     it 'should report positive values' do
-      seed_base_items_for_tests
       Organization.seed_items(organization)
       disposable_item = organization.items.disposable.first
       non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
@@ -52,7 +51,6 @@ RSpec.describe Reports::SummaryReportService, type: :service, skip_seed: true do
     end
 
     it 'should report negative values' do
-      seed_base_items_for_tests
       Organization.seed_items(organization)
       disposable_item = organization.items.disposable.first
       non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
