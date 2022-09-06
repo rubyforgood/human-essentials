@@ -12,13 +12,6 @@ import "../controllers/index"
 
 import "trix"
 import "@rails/actiontext"
-import Highcharts from 'highcharts';
-require("highcharts/modules/data")(Highcharts)
-require("highcharts/modules/exporting")(Highcharts)
-require("highcharts/modules/offline-exporting")(Highcharts)
-require("highcharts/modules/map")(Highcharts)
-window.Highcharts = Highcharts;
-
 import "stylesheets/application.scss"
 
 import {DateTime} from "luxon";
