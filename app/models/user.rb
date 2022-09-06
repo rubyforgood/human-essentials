@@ -62,8 +62,8 @@ class User < ApplicationRecord
 
   default_scope -> { kept }
   scope :alphabetized, -> { order(discarded_at: :desc, name: :asc) }
-  scope :partner_users, -> { with_role(:partner, :any) }
-  scope :org_users, -> { with_role(:org_user, :any) }
+  scope :partner_users, -> { with_role(Role::PARTNER, :any) }
+  scope :org_users, -> { with_role(Role::ORG_USER, :any) }
 
   has_many :requests, class_name: "Partners::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_partner_requests, class_name: "Partners::Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
@@ -82,10 +82,10 @@ class User < ApplicationRecord
   end
 
   def kind
-    return "super" if has_role?(:super_admin)
-    return "admin" if has_role?(:org_admin, organization)
-    return "normal" if has_role?(:org_user, organization)
-    return "partner" if has_role?(:partner, partner)
+    return "super" if has_role?(Role::SUPER_ADMIN)
+    return "admin" if has_role?(Role::ORG_ADMIN, organization)
+    return "normal" if has_role?(Role::ORG_USER, organization)
+    return "partner" if has_role?(Role::PARTNER, partner)
 
     "normal"
   end
@@ -93,8 +93,8 @@ class User < ApplicationRecord
   def switchable_roles
     all_roles = roles.to_a.group_by(&:resource_id)
     all_roles.values.each do |role_list|
-      if role_list.any? { |r| r.name == "org_admin" }
-        role_list.delete_if { |r| r.name == "org_user" }
+      if role_list.any? { |r| r.name == Role::ORG_ADMIN.to_s }
+        role_list.delete_if { |r| r.name == Role::ORG_USER.to_s }
       end
     end
     all_roles.values.flatten

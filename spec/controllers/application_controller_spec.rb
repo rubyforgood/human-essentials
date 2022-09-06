@@ -1,5 +1,5 @@
 describe ApplicationController do
-  describe "dashboard_path_from_role" do
+  describe "dashboard_path_from_current_role" do
     before(:each) do
       allow(controller).to receive(:current_user).and_return(user)
       allow(controller).to receive(:current_role).and_return(user.roles.first)
@@ -10,8 +10,8 @@ describe ApplicationController do
 
       it "links to the admin dashboard" do
         allow(controller).to receive(:current_role)
-          .and_return(user.roles.find { |r| r.name == "super_admin" })
-        expect(controller.dashboard_path_from_role).to match %r{/admin/dashboard.*}
+          .and_return(user.roles.find { |r| r.name == Role::SUPER_ADMIN.to_s })
+        expect(controller.dashboard_path_from_current_role).to match %r{/admin/dashboard.*}
       end
     end
 
@@ -20,7 +20,7 @@ describe ApplicationController do
 
       it "links to the general dashboard" do
         org_name = @organization.short_name
-        expect(controller.dashboard_path_from_role).to eq "/#{org_name}/dashboard"
+        expect(controller.dashboard_path_from_current_role).to eq "/#{org_name}/dashboard"
       end
     end
   end

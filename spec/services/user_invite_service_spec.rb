@@ -14,11 +14,11 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
 
     it "should add roles to existing user" do
       described_class.invite(email: "email@email.com",
-        roles: %i[org_user org_admin],
+        roles: [Role::ORG_USER, Role::ORG_ADMIN],
         resource: organization)
-      expect(user).to have_role(:org_user, organization)
-      expect(user).to have_role(:org_admin, organization)
-      expect(user).not_to have_role(:partner, :any)
+      expect(user).to have_role(Role::ORG_USER, organization)
+      expect(user).to have_role(Role::ORG_ADMIN, organization)
+      expect(user).not_to have_role(Role::PARTNER, :any)
     end
   end
 
@@ -26,13 +26,13 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
     it "should create the user with roles" do
       result = described_class.invite(name: "Another Name",
         email: "email2@email.com",
-        roles: %i[org_user org_admin],
+        roles: [Role::ORG_USER, Role::ORG_ADMIN],
         resource: organization)
       expect(result.name).to eq("Another Name")
       expect(result.email).to eq("email2@email.com")
-      expect(result).to have_role(:org_user, organization)
-      expect(result).to have_role(:org_admin, organization)
-      expect(result).not_to have_role(:partner, :any)
+      expect(result).to have_role(Role::ORG_USER, organization)
+      expect(result).to have_role(Role::ORG_ADMIN, organization)
+      expect(result).not_to have_role(Role::PARTNER, :any)
     end
   end
 end

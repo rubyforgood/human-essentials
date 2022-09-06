@@ -1,4 +1,4 @@
-<% if current_user.has_role?(:super_admin) %>
+<% if current_user.has_role?(Role::SUPER_ADMIN) %>
 <li class="nav-item dropdown">
   <a class="nav-link" data-toggle="dropdown" href="#">
     <i class="fa fa-lock"></i> Administration
@@ -74,7 +74,7 @@
       <% end %>
     <% end %>
     <% if current_organization.id.present? &&
-        (current_user.has_role?(:super_admin) || current_user.has_role?(:org_admin, current_organization)) %>
+        (current_user.has_role?(Role::SUPER_ADMIN) || current_user.has_role?(Role::ORG_ADMIN, current_organization)) %>
     <% with_options organization_id: current_user.organization.to_param do |with_org| %>
 
     <div class="dropdown-divider"></div>

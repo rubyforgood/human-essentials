@@ -109,7 +109,7 @@ class PartnersController < ApplicationController
   def invite_partner_user
     partner = current_organization.partners.find(params[:partner])
     UserInviteService.invite(email: params[:email],
-      roles: %i[partner],
+      roles: [Role::PARTNER],
       resource: partner)
 
     redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"

@@ -170,7 +170,7 @@ class Partner < ApplicationRecord
   end
 
   def invite_new_partner
-    UserInviteService.invite(email: email, roles: %i[partner], resource: profile)
+    UserInviteService.invite(email: email, roles: [Role::PARTNER], resource: profile)
   end
 
   def should_invite_because_email_changed?

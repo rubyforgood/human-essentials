@@ -3,7 +3,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
   context "When the super admin user also has an organization assigned" do
     before do
-      @super_admin.add_role(:org_user, @organization)
+      @super_admin.add_role(Role::ORG_USER, @organization)
       sign_in(@super_admin)
       visit subject
     end
@@ -15,7 +15,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
   context "When the super admin user does not have an organization assigned" do
     before do
-      @super_admin.remove_role(:org_user, @organization)
+      @super_admin.remove_role(Role::ORG_USER, @organization)
       @super_admin.save
       sign_in(@super_admin)
       visit subject

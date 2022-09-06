@@ -11,7 +11,7 @@ module Partners
     def create
       user = UserInviteService.invite(name: user_params[:name],
         email: user_params[:email],
-        roles: %i[partner],
+        roles: [Role::PARTNER],
         resource: current_partner)
 
       flash[:success] = "You have invited #{user.name} to join your organization!"

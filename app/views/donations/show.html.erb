@@ -73,7 +73,7 @@
           <div class="card-footer">
             <%= edit_button_to edit_donation_path(@donation), { text: "Make a correction", size: "md" } %>
             <%= new_button_to new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
-            <%= delete_button_to donation_path(@donation), { size: "md", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.has_role?(:org_admin, current_organization) %>
+            <%= delete_button_to donation_path(@donation), { size: "md", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
           </div>
           </div>
       </div>

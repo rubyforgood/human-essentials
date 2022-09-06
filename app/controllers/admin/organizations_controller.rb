@@ -50,7 +50,7 @@ class Admin::OrganizationsController < AdminController
       Organization.seed_items(@organization)
       @user = UserInviteService.invite(name: user_params[:name],
                                        email: user_params[:email],
-                                       roles: %i(org_user org_admin),
+                                       roles: [Role::ORG_USER, Role::ORG_ADMIN],
                                        resource: @organization)
       redirect_to admin_organizations_path, notice: "Organization added!"
     else

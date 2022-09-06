@@ -45,28 +45,28 @@ FactoryBot.define do
     end
 
     after(:create) do |user, evaluator|
-      user.add_role(:org_user, evaluator.organization)
+      user.add_role(Role::ORG_USER, evaluator.organization)
     end
 
     factory :organization_admin do
       name { "Very Organized Admin" }
       after(:create) do |user, evaluator|
-        user.add_role(:org_admin, evaluator.organization)
+        user.add_role(Role::ORG_ADMIN, evaluator.organization)
       end
     end
 
     factory :super_admin do
       name { "Administrative User" }
       after(:create) do |user|
-        user.add_role(:super_admin)
+        user.add_role(Role::SUPER_ADMIN)
       end
     end
 
     factory :super_admin_no_org do
       name { "Administrative User No Org" }
       after(:create) do |user, evaluator|
-        user.add_role(:super_admin)
-        user.remove_role(:org_user, evaluator.organization)
+        user.add_role(Role::SUPER_ADMIN)
+        user.remove_role(Role::ORG_USER, evaluator.organization)
       end
     end
 

@@ -264,6 +264,6 @@ class Organization < ApplicationRecord
   end
 
   def get_admin_email
-    User.with_role(:org_admin, self).sample.email
+    User.with_role(Role::ORG_ADMIN, self).sample.email
   end
 end

@@ -10,7 +10,7 @@ FactoryBot.define do
       partner { Partners::Partner.first || create(:partners_partner) }
     end
     after(:create) do |instance, evaluator|
-      instance.add_role(:partner, evaluator.partner)
+      instance.add_role(Role::PARTNER, evaluator.partner)
     end
   end
 end

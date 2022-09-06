@@ -171,7 +171,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
         partner.save!
         expect(UserInviteService).to have_received(:invite).with(
           email: "randomtest@email.com",
-          roles: %i[partner],
+          roles: [Role::PARTNER],
           resource: partner.profile
         )
       end
@@ -184,7 +184,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
         partner.save!
         expect(UserInviteService).not_to have_received(:invite).with(
           email: "randomtest@email.com",
-          roles: %i[partner],
+          roles: [Role::PARTNER],
           resource: partner.profile
         )
       end
@@ -204,7 +204,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     let(:partner) { create(:partner) }
 
     it 'should return the associated primary User' do
-      partner_users = ::User.with_role(:partner, partner.profile)
+      partner_users = ::User.with_role(Role::PARTNER, partner.profile)
       expect(partner_users).to include(subject)
     end
   end

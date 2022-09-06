@@ -69,7 +69,7 @@
           </div>
           <div class="card-footer">
             <%= edit_button_to edit_purchase_path(@purchase), { text: "Make a correction", size: "md" } %>
-            <%= delete_button_to purchase_path(@purchase), { size: "md", confirm: "Are you sure you want to permanently remove this purchase?" } if current_user.has_role?(:org_admin, current_organization) %>
+            <%= delete_button_to purchase_path(@purchase), { size: "md", confirm: "Are you sure you want to permanently remove this purchase?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
           </div>
         </div>
       </div>

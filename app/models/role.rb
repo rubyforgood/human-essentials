@@ -22,4 +22,10 @@ class Role < ApplicationRecord
     allow_nil: true
 
   scopify
+
+  # constants to ensure we don't use invalid roles
+  ORG_USER = :org_user
+  ORG_ADMIN = :org_admin
+  SUPER_ADMIN = :super_admin
+  PARTNER = :partner
 end

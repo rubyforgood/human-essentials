@@ -77,7 +77,7 @@
                   <tr>
                     <td><%= item.name %> </td>
                     <td><%= view_button_to item_path(item) %>
-                      <% if current_user.has_role?(:org_admin, current_organization) %>
+                      <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
                         <%= delete_button_to(remove_category_item_path(item), method: :patch, text: "Remove from category") %>
                       <% end %>
                     </td>

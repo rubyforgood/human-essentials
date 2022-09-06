@@ -28,7 +28,7 @@ class Admin::UsersController < AdminController
   def create
     UserInviteService.invite(name: user_params[:name],
       email: user_params[:email],
-      roles: %i[org_user],
+      roles: [Role::ORG_USER],
       resource: Organization.find(user_params[:organization_id]))
     flash[:notice] = "Created a new user!"
     redirect_to admin_users_path

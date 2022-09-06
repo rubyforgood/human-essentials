@@ -200,7 +200,7 @@ RSpec.describe StorageLocation, type: :model do
         StorageLocation.import_inventory(import_file_path, @organization.id, storage_location.id)
         expect(storage_location.size).to eq 14_842
         expect(donations_count).to eq Donation.count
-        expect(@organization.adjustments.last.user_id).to eq(@organization.users.with_role(:org_admin, @organization).first.id)
+        expect(@organization.adjustments.last.user_id).to eq(@organization.users.with_role(Role::ORG_ADMIN, @organization).first.id)
       end
     end
 

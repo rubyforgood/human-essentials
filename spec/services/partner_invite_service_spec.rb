@@ -40,7 +40,7 @@ describe PartnerInviteService, skip_seed: true do
       subject
       expect(UserInviteService).to have_received(:invite).with(
         email: partner.email,
-        roles: %i[partner],
+        roles: [Role::PARTNER],
         resource: partner.profile
       )
     end

@@ -117,7 +117,7 @@ class DistributionsController < ApplicationController
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     if (!@distribution.complete? && @distribution.future?) ||
-        current_user.has_role?(:org_admin, current_organization)
+        current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized

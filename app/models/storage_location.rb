@@ -110,7 +110,7 @@ class StorageLocation < ApplicationRecord
   def self.import_inventory(filename, org, loc)
     current_org = Organization.find(org)
     adjustment = current_org.adjustments.create!(storage_location_id: loc.to_i,
-                                                 user_id: User.with_role(:org_admin, current_org).first&.id,
+                                                 user_id: User.with_role(Role::ORG_ADMIN, current_org).first&.id,
                                                  comment: "Starting Inventory")
     # NOTE: this was originally headers: false; it may create buggy behavior
     CSV.parse(filename, headers: true) do |row|

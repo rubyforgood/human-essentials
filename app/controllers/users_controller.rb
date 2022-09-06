@@ -17,6 +17,6 @@ class UsersController < ApplicationController
     end
 
     session[:current_role] = params[:role_id]
-    redirect_to dashboard_path_from_role
+    redirect_to dashboard_path_from_current_role
   end
 end

@@ -37,19 +37,19 @@ class ApplicationController < ActionController::Base
 
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
-    elsif current_role.name == "org_admin"
+    elsif current_role.name == Role::ORG_ADMIN.to_s
       options[:organization_id] = current_user.organization.to_param
-    elsif current_role.name == "super_admin"
+    elsif current_role.name == Role::SUPER_ADMIN.to_s
       # FIXME: This *might* not be the best way to approach this...
       options[:organization_id] = "admin"
     end
     options
   end
 
-  def dashboard_path_from_role
-    if current_role.name == "super_admin"
+  def dashboard_path_from_current_role
+    if current_role.name == Role::SUPER_ADMIN.to_s
       admin_dashboard_path
-    elsif current_role.name == "partner"
+    elsif current_role.name == Role::PARTNER.to_s
       partners_dashboard_path
     elsif current_user.organization
       dashboard_path(current_user.organization)
@@ -61,14 +61,14 @@ class ApplicationController < ActionController::Base
   def authorize_user
     return unless params[:controller] # part of omniauth controller flow
     verboten! unless params[:controller].include?("devise") ||
-      current_user.has_role?(:super_admin) ||
-      current_user.has_role?(:org_user, current_organization) ||
-      current_user.has_role?(:org_admin, current_organization)
+      current_user.has_role?(Role::SUPER_ADMIN) ||
+      current_user.has_role?(Role::ORG_USER, current_organization) ||
+      current_user.has_role?(Role::ORG_ADMIN, current_organization)
   end
 
   def authorize_admin
-    verboten! unless current_user.has_role?(:super_admin) ||
-      current_user.has_role?(:org_admin, current_organization)
+    verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
+      current_user.has_role?(Role::ORG_ADMIN, current_organization)
   end
 
   def log_active_user

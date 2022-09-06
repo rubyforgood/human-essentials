@@ -103,7 +103,7 @@ RSpec.describe "Organizations", type: :request do
       end
       it "demotes the user to user" do
         subject
-        expect(admin_user.reload.has_role?(:org_admin, admin_user.organization)).to be_falsey
+        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
       end
     end
 
