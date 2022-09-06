@@ -1,12 +1,26 @@
-RSpec.feature "Distributions", type: :system, skip_seed: true do
+RSpec.feature "Distributions", type: :system do
   before do
     sign_in(@user)
     @url_prefix = "/#{@organization.to_param}"
 
     @partner = create(:partner, organization: @organization)
-    # allow_any_instance_of(StorageLocation).to receive(:geocode).and_return(true)
+
     @storage_location = create(:storage_location, organization: @organization)
     setup_storage_location(@storage_location)
+  end
+
+  context "When going to the Pick Ups & Deliveries page" do
+    let(:issued_at) { Time.current.utc.change(hour: 19, minute: 0).to_datetime }
+    before do
+      item1 = create(:item, value_in_cents: 1050)
+      @distribution = create(:distribution, :with_items, item: item1, agency_rep: "A Person", organization: @user.organization, issued_at: issued_at)
+    end
+
+    it "appears distribution in calendar with correct time & timezone" do
+      visit @url_prefix + "/distributions/schedule"
+      expect(page.find(".fc-event-time")).to have_content "7p"
+      expect(page.find(".fc-event-title")).to have_content @distribution.partner.name
+    end
   end
 
   context "When creating a new distribution manually" do

@@ -8,6 +8,12 @@ class PartnerInviteService
   def call
     return self unless valid?
 
+    existing_user = User.find_by(email: partner.email)
+    if existing_user && existing_user.partner_id.nil?
+      existing_user.update!(partner_id: partner.profile.id)
+      return
+    end
+
     partner.update!(status: 'invited')
     # skip invitation is necessary because when email will be send for this situation needs partner reference updated,
     # and, in this case, we create invite, reload object and send invitation email.

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PartnerUserInviteService, skip_seed: true do
+describe PartnerUserInviteService do
   let(:partner) { create(:partner) }
   let(:email) { Faker::Internet.email }
   let!(:partner_user) { instance_spy(User) }
@@ -22,6 +22,7 @@ describe PartnerUserInviteService, skip_seed: true do
     context "when the partner user doesnt exist in database" do
       before do
         allow(User).to receive(:invite!)
+        allow(User).to receive(:find_by).with(email: email)
         allow(User).to receive(:find_by).with(email: email, partner: partner.profile)
       end
 

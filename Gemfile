@@ -32,7 +32,7 @@ gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.2.0"
+gem "strong_migrations", "1.3.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -103,7 +103,7 @@ gem "jwt"
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
-gem "mini_racer", "~> 0.6.0"
+gem "mini_racer", "~> 0.6.3"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.1.1"
@@ -113,6 +113,8 @@ group :production do
   gem 'lograge'
   # Profiler (third party app) showing performance and metrics.
   gem "skylight"
+  # Tool to detect unused code through knowing which methods are used in which files.
+  gem 'coverband'
 end
 
 group :development, :test, :staging do
@@ -192,7 +194,7 @@ group :test do
   # Selenium webdriver automatic installation and update.
   gem 'webdrivers', '~> 5.0'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.16"
+  gem "webmock", "~> 3.18"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

@@ -1,6 +1,6 @@
 <p>Here are some Items that we need change based on Human Essentials</p>
 <ul style="list-style-type:none">
-<% if !@distribution_changes[:updates].empty? %>
+<% if @distribution_changes[:updates].any? %>
     <li>Items Updated</li>
     <ol style="list-style-type:none">
         <% @distribution_changes[:updates].each do |item| %>
@@ -11,7 +11,7 @@
     </ol>
     </li>
 <% end %>
-<% if !@distribution_changes[:removed].empty? %>
+<% if @distribution_changes[:removed].any? %>
     <li>Items Removed</li>
     <ol style="list-style-type:none">
         <% @distribution_changes[:removed].each do |item| %>

@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const calendarElement = document.getElementById('calendar');
   if (calendarElement) {
     new Calendar(calendarElement, {
+      timeZone: 'UTC',
       firstDay: 1,
       plugins: [luxonPlugin, dayGridPlugin, listPlugin],
       displayEventTime: true,
