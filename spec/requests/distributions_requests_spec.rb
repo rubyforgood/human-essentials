@@ -7,7 +7,7 @@ RSpec.describe "Distributions", type: :request do
 
   let(:secret_key) { "HI MOM THIS IS ME AND I'M CODING" }
   let(:crypt) { ActiveSupport::MessageEncryptor.new(secret_key) }
-  let(:hashed_id) { crypt.encrypt_and_sign(@organization.id) }
+  let(:hashed_id) { CGI.escape(crypt.encrypt_and_sign(@organization.id)) }
   before(:each) do
     allow(Rails.application).to receive(:secret_key_base).and_return(secret_key)
     allow(DistributionPdf).to receive(:new).and_return(double("DistributionPdf", render: "PDF"))
