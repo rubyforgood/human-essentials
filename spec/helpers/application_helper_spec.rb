@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ApplicationHelper, type: :helper, skip_seed: true do
+RSpec.describe ApplicationHelper, type: :helper do
   describe "dashboard_path_from_user" do
     before(:each) do
       allow(helper).to receive(:current_user).and_return(user)

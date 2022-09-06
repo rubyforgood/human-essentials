@@ -1,5 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= "test"
+ENV["RAILS_ENV"] = "test"
+ENV["NODE_ENV"] = "test"
+
 require File.expand_path("../config/environment", __dir__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -70,28 +72,6 @@ Capybara.asset_host = "http://localhost:3000"
 # Only keep the most recent run
 Capybara::Screenshot.prune_strategy = :keep_last_run
 
-def stub_addresses
-  Geocoder.configure(lookup: :test)
-
-  ["1500 Remount Road, Front Royal, VA 22630",
-   "123 Donation Site Way",
-   "Smithsonian Conservation Center new"].each do |address|
-    Geocoder::Lookup::Test.add_stub(
-      address, [
-        {
-          "latitude" => 40.7143528,
-          "longitude" => -74.0059731,
-          "address" => "1500 Remount Road, Front Royal, VA",
-          "state" => "Virginia",
-          "state_code" => "VA",
-          "country" => "United States",
-          "country_code" => "US"
-        }
-      ]
-    )
-  end
-end
-
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
@@ -108,7 +88,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   # Location for fixtures (logo, etc)
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -119,108 +99,115 @@ RSpec.configure do |config|
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
 
-  # Stub out Geocoder or else...
-  config.before(:all) do
-    stub_addresses
+  #
+  # --------------------
+  # START - Seeding helpers for tests setup
+  # --------------------
+  #
+
+  #
+  # Disable this rubocop rule here so we are permitted to set constants within
+  # the RSpec.configure block.
+  # rubocop:disable Lint/ConstantDefinitionInBlock
+  DEFAULT_TEST_ORGANIZATION_NAME = "DEFAULT"
+  DEFAULT_TEST_USER_NAME = "DEFAULT USER"
+  DEFAULT_TEST_ORG_ADMIN_USER_NAME = "DEFAULT ORG ADMIN"
+  DEFAULT_TEST_SUPER_ADMIN_USER_NAME = "DEFAULT SUPERADMIN"
+  DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME = "DEFAULT SUPERADMIN NO ORG"
+  DEFAULT_TEST_PARTNER_NAME = "DEFAULT PARTNER"
+  DEFAULT_USER_PASSWORD = "password!"
+  # rubocop:enable Lint/ConstantDefinitionInBlock
+
+  def define_global_variables
+    @organization = Organization.find_by!(name: DEFAULT_TEST_ORGANIZATION_NAME)
+
+    user_names = [
+      DEFAULT_TEST_USER_NAME,
+      DEFAULT_TEST_ORG_ADMIN_USER_NAME,
+      DEFAULT_TEST_SUPER_ADMIN_USER_NAME,
+      DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME
+    ]
+    users = User.where(name: user_names)
+    @organization_admin = users.find { |u| u.name == DEFAULT_TEST_ORG_ADMIN_USER_NAME }
+    @user = users.find { |u| u.name == DEFAULT_TEST_USER_NAME }
+    @super_admin = users.find { |u| u.name == DEFAULT_TEST_SUPER_ADMIN_USER_NAME }
+    @super_admin_no_org = users.find { |u| u.name == DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME }
+
+    @partner = Partner.find_by!(name: DEFAULT_TEST_PARTNER_NAME)
   end
 
-  # set driver for system tests
+  def seed_base_data_for_tests
+    # Create base items that are used to handle seeding Organization with items
+    base_items = File.read(Rails.root.join("db", "base_items.json"))
+    items_by_category = JSON.parse(base_items)
+    base_items_data = items_by_category.map do |category, entries|
+      entries.map do |entry|
+        {
+          name: entry["name"],
+          category: category,
+          partner_key: entry["key"],
+          updated_at: Time.zone.now,
+          created_at: Time.zone.now
+        }
+      end
+    end.flatten
+
+    BaseItem.create!(base_items_data)
+
+    # Create default organization
+    organization = FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME)
+
+    # Create default users
+    FactoryBot.create(:organization_admin, organization: organization, name: DEFAULT_TEST_ORG_ADMIN_USER_NAME)
+    FactoryBot.create(:user, organization: organization, name: DEFAULT_TEST_USER_NAME)
+    FactoryBot.create(:super_admin, name: DEFAULT_TEST_SUPER_ADMIN_USER_NAME)
+    FactoryBot.create(:super_admin_no_org, name: DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME)
+
+    # Seed with default partner record
+    FactoryBot.create(:partner, organization: organization, name: DEFAULT_TEST_PARTNER_NAME)
+  end
+
+  # --------------------
+  # END - Seeding helpers for tests setup
+  # --------------------
+
+  # Preparatifyication
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation, except: %w[ar_internal_metadata])
+
+    # Stub out the Geocoder since we don't want to hit the API
+    Geocoder.configure(lookup: :test)
+
+    ["1500 Remount Road, Front Royal, VA 22630",
+     "123 Donation Site Way",
+     "Smithsonian Conservation Center new"].each do |address|
+       Geocoder::Lookup::Test.add_stub(
+         address, [
+           {
+             "latitude" => 40.7143528,
+             "longitude" => -74.0059731,
+             "address" => "1500 Remount Road, Front Royal, VA",
+             "state" => "Virginia",
+             "state_code" => "VA",
+             "country" => "United States",
+             "country_code" => "US"
+           }
+         ]
+       )
+     end
+
+    seed_base_data_for_tests
+  end
+
   config.before(:each, type: :system) do
     clear_downloads
     driven_by :chrome
     Capybara.server = :puma, { Silent: true }
   end
 
-  config.after(:each, type: :system, js: true) do
-    clear_downloads
-  end
-
-  # Preparatifyication
-  config.before(:suite) do
-    unless File.exist?(Rails.root.join("public", "packs-task"))
-      Rails.logger.info "Detected missing webpack assets for testing. Running compilation step"
-      `NODE_ENV=test bin/webpack`
-    end
-
-    Rails.logger.info <<~ASCIIART
-      -~~==]}>        ######## ###########  ####      ########    ###########
-      -~~==]}>      #+#    #+#    #+#     #+# #+#    #+#     #+#     #+#
-      -~~==]}>     +#+           +#+    +#+   +#+   +#+      +#+    +#+
-      -~~==]}>    +:++#++:++    +:+    +:++#++:++  +:++#++:++      +:+
-      -~~==]}>          +:+    +:+    +:+    +:+  +:+     +:+     +:+
-      -~~==]}>  :+:    :+:    :+:    :+:    :+:  :+:      :+:    :+:
-      -~~==]}>  ::::::::     :::    :::    :::  :::      :::    :::
-    ASCIIART
-
-    DatabaseCleaner[:active_record, { model: ApplicationRecord }]
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
-
-    raise if Partners::Partner.count > 0
-    raise if Organization.count > 0
-  end
-
   config.before(:each) do
-    Faker::Config.random = Random.new(42)
-
-    DatabaseCleaner.strategy = :transaction
-  end
-
-  config.before(:each, type: :system) do
-    # Use truncation in the case of doing `browser` tests because it
-    # appears that transactions won't work since it really does
-    # depend on the database to have records.
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.before(:each, type: :request) do
-    # Use truncation in the case of doing `browser` tests because it
-    # appears that transactions won't work since it really does
-    # depend on the database to have records.
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.before(:each) do |example|
-    if example.metadata[:persisted_data]
-      DatabaseCleaner.strategy = :truncation
-    else
-      # The database cleaner will now begin at this point
-      # up anything after this point when `.clean` is called.
-      DatabaseCleaner.start
-
-      # "Dirty" the database by adding the essential records
-      # necessary to run tests.
-      #
-      # If you are using :transaction, it will just rollback any additions
-      # when `.clean` is called. Any previous changes will be kept prior to
-      # the call `DatabaseCleaner.start`
-      #
-      # If you are using :truncation, it will erase everything once `.clean`
-      # is called.
-      seed_base_items_for_tests
-      # Always create organization, almost no tests can be run without one
-      create_organization
-
-      seed_with_default_records unless example.metadata[:skip_seed]
-    end
-  end
-
-  config.before(:each, type: proc { |v| %i[request system controller].include?(v) }) do
-    create_default_users
-  end
-
-  config.before(:each, :needs_users) do
-    create_default_users
-  end
-
-  config.after(:each) do |example|
-    # Ensure to clean-up the database by whichever means
-    # were specified before the test ran
-    DatabaseCleaner.clean unless example.metadata[:persisted_data]
-
-    # Remove any /tmp/storage files that might have been
-    # added as a consequence of the test.
-    FileUtils.rm_rf(Dir["#{Rails.root}/tmp/storage"])
+    # Defined shared @ global variables used throughout the test suite.
+    define_global_variables
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
@@ -247,45 +234,4 @@ end
 
 def text_body(mail)
   mail.body.parts.find { |p| p.content_type =~ /text/ }.body.encoded
-end
-
-def create_default_users
-  Rails.logger.info "\n\n-~=> Creating DEFAULT admins & user"
-  @organization_admin = create(:organization_admin, name: "DEFAULT ORG ADMIN", organization: @organization)
-  @user = create(:user, organization: @organization, name: "DEFAULT USER")
-  @super_admin = create(:super_admin, name: "DEFAULT SUPERADMIN")
-  @super_admin_no_org = create(:super_admin_no_org, name: "DEFAULT SUPERADMIN NO ORG")
-end
-
-def seed_base_items_for_tests
-  Rails.logger.info "-~=> Destroying all Base Items ... "
-  BaseItem.delete_all
-  unless @_base_items
-    base_items = File.read(Rails.root.join("db", "base_items.json"))
-    items_by_category = JSON.parse(base_items)
-    Rails.logger.info "Creating Base Items: "
-    @_base_items = []
-    items_by_category.each do |category, entries|
-      entries.each do |entry|
-        @_base_items << { name: entry["name"],
-                          category: category,
-                          partner_key: entry["key"],
-                          updated_at: Time.zone.now,
-                          created_at: Time.zone.now }
-      end
-    end
-  end
-  BaseItem.insert_all(@_base_items) # rubocop:disable Rails/SkipsModelValidations
-  Rails.logger.info "~-=> Done creating Base Items!"
-end
-
-def create_organization
-  Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
-  @organization = create(:organization, name: "DEFAULT", skip_items: true)
-end
-
-def seed_with_default_records
-  Rails.logger.info "\n\n-~=> Creating DEFAULT organization"
-  @partner = create(:partner, organization: @organization)
-  Organization.seed_items(@organization)
 end

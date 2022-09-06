@@ -10,7 +10,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Partners::PartnerForm, type: :model, skip_seed: true do
+RSpec.describe Partners::PartnerForm, type: :model do
   describe 'associations' do
     it { should have_one(:partner).with_primary_key(:essentials_bank_id).with_foreign_key(:essentials_bank_id) }
   end

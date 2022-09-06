@@ -1,6 +1,6 @@
 # Spec for /app/queries/items_in_total_query.rb
 
-RSpec.describe ItemsInTotalQuery, skip_seed: true do
+RSpec.describe ItemsInTotalQuery do
   let!(:storage_location) { create(:storage_location, organization: @organization) }
   let!(:other_storage_location) { create(:storage_location, :with_items, item: create(:item), item_quantity: 10, organization: @organization) }
   let!(:shared_item) { create(:item) }

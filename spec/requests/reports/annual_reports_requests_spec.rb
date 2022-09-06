@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Annual Reports", type: :request, skip_seed: true do
+RSpec.describe "Annual Reports", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param, year: 2018 }
   end

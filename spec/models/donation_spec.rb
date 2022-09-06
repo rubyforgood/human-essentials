@@ -17,9 +17,10 @@
 #  storage_location_id          :integer
 #
 
-RSpec.describe Donation, type: :model, needs_users: true do
+RSpec.describe Donation, type: :model do
   it_behaves_like "itemizable"
-  it_behaves_like "pagination"
+  # This mixes feature specs with model specs... idealy we do not want to do this
+  # it_behaves_like "pagination"
 
   context "Validations >" do
     it "must belong to an organization" do

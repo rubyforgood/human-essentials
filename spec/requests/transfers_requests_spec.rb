@@ -1,4 +1,4 @@
-RSpec.describe "Transfers", type: :request, skip_seed: true do
+RSpec.describe "Transfers", type: :request do
   let(:valid_params) do
     { organization_id: @organization.short_name }
   end
@@ -16,7 +16,6 @@ RSpec.describe "Transfers", type: :request, skip_seed: true do
 
       around do |example|
         travel_to Time.zone.local(2019, 7, 1)
-        create(:transfer)
         example.run
         travel_back
       end

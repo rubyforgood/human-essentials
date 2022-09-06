@@ -1,10 +1,10 @@
-RSpec.feature "Distributions", type: :system, skip_seed: true do
+RSpec.feature "Distributions", type: :system do
   before do
     sign_in(@user)
     @url_prefix = "/#{@organization.to_param}"
 
     @partner = create(:partner, organization: @organization)
-    # allow_any_instance_of(StorageLocation).to receive(:geocode).and_return(true)
+
     @storage_location = create(:storage_location, organization: @organization)
     setup_storage_location(@storage_location)
   end

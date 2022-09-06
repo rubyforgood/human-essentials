@@ -16,7 +16,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe AccountRequest, type: :model, skip_seed: true do
+RSpec.describe AccountRequest, type: :model do
   let(:account_request) { FactoryBot.create(:account_request) }
 
   describe 'associations' do
