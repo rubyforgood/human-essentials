@@ -1,12 +1,12 @@
 class StorageLocationDeactivateService
   include ServiceObjectErrorsMixin
 
-  def initialize(storage_location)
+  def initialize(storage_location:)
     @storage_location = storage_location
   end
 
   def call
-    raise Errors::StorageLocationNotEmpty unless valid?
+    return false unless valid?
 
     @storage_location.discard!
 

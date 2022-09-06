@@ -82,11 +82,13 @@ class StorageLocationsController < ApplicationController
 
   def deactivate
     @storage_location = current_organization.storage_locations.kept.find(params[:storage_location_id])
-    svc = StorageLocationDeactivateService.new(@storage_location)
-    svc.call
-    redirect_to storage_locations_path, notice: "Storage Location deactivated successfully"
-  rescue Errors::StorageLocationNotEmpty => e
-    redirect_back(fallback_location: storage_locations_path(organization_id: current_organization), error: e.message)
+    svc = StorageLocationDeactivateService.new(storage_location: @storage_location)
+    if svc.call
+      redirect_to storage_locations_path, notice: "Storage Location deactivated successfully"
+    else
+      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization),
+        error: "Cannot deactivate storage location containing inventory items with non-zero quantities")
+    end
   end
 
   def reactivate
