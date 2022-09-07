@@ -8,7 +8,7 @@ class Forecasting::DistributionsController < Forecasting::BaseController
         height: 850
       },
       title: {
-        text:  title
+        text: title
       },
       subtitle: {
         text: "Source: humanessentials.app"

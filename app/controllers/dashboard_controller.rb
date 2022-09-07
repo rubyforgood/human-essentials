@@ -28,9 +28,9 @@ class DashboardController < ApplicationController
     distribution_data = helpers.received_distributed_data(helpers.selected_range)
     @activity_chart_config = {
       chart: {
-        type: "bar",
+        type: "bar"
       },
-      title: '',
+      title: "",
       xAxis: {
         categories: distribution_data.keys,
         title: {
@@ -52,6 +52,4 @@ class DashboardController < ApplicationController
       ]
     }.to_json
   end
-
-
 end
