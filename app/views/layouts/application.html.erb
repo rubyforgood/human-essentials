@@ -18,8 +18,14 @@
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <%= render 'magic_test/support' if Rails.env.test? %>
+  <% unless @turbo %>
+    <meta name="turbo-visit-control" content="reload" />
+    <meta name="turbo-cache-control" content="no-cache" />
+  <% end %>
 </head>
-<body id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/,'_') %>" class="<%= params.fetch(:action, '') %> hold-transition sidebar-mini layout-fixed">
+<body 
+  data-turbo="<%= @turbo %>"
+  id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/,'_') %>" class="<%= params.fetch(:action, '') %> hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
