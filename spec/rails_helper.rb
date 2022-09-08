@@ -175,6 +175,12 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation, except: %w[ar_internal_metadata])
 
+    # Stub out the organization logo lookup to ensure the presence or absence of the logo 
+    # does not affect the tests
+    fake_logo = "fake_logo.jpeg"
+    allow_any_instance_of(Organization).to receive_message_chain(:logo, :download).and_return(fake_logo)
+    allow(StringIO).to receive(:open).with(fake_logo).and_return(Rails.root.join("spec/fixtures/files/logo.jpg"))
+
     # Stub out the Geocoder since we don't want to hit the API
     Geocoder.configure(lookup: :test)
 
