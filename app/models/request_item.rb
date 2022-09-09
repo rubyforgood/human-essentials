@@ -18,12 +18,10 @@ class RequestItem
     new(item, quantity, on_hand, on_hand_for_location)
   end
 
-  def name
-    item.name
-  end
+  delegate :name, to: :item
 
-  def initialize(name, quantity, on_hand, on_hand_for_location)
-    @name = name
+  def initialize(item, quantity, on_hand, on_hand_for_location)
+    @item = item
     @quantity = quantity
     @on_hand = on_hand
     @on_hand_for_location = on_hand_for_location

@@ -24,5 +24,4 @@ class LineItem < ApplicationRecord
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
   delegate :name, to: :item
-
 end

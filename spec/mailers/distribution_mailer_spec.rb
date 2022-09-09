@@ -4,6 +4,7 @@ RSpec.describe DistributionMailer, type: :mailer do
     @partner = create(:partner, name: 'PARTNER')
     @distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner)
     @organization.update!(email: "me@org.com")
+    allow(DistributionPdf).to receive(:new).and_return(double('DistributionPdf', compute_and_render: ''))
   end
 
   describe "#partner_mailer" do

@@ -5,22 +5,26 @@ class DistributionPdf
 
   def initialize(organization, distribution)
     @distribution = Distribution.includes(:partner, line_items: [:item]).find_by(id: distribution.id)
+    @organization = organization
+  end
+
+  def compute_and_render
     font_families["OpenSans"] = PrawnRails.config["font_families"][:OpenSans]
     font "OpenSans"
     font_size 10
 
-    logo_image = if organization.logo.attached?
-                   StringIO.open(organization.logo.download)
-                 else
-                   Organization::DIAPER_APP_LOGO
-                 end
+    logo_image = # if @organization.logo.attached?
+      #  StringIO.open(@organization.logo.download)
+      #             else
+      Organization::DIAPER_APP_LOGO
+    #            end
 
     image logo_image, fit: [325, 110]
 
     bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
-      text organization.name, align: :right
-      text organization.address, align: :right
-      text organization.email, align: :right
+      text @organization.name, align: :right
+      text @organization.address, align: :right
+      text @organization.email, align: :right
     end
 
     text "Issued to:", style: :bold, align: :right
@@ -48,13 +52,14 @@ class DistributionPdf
     move_down 20
 
     data = @distribution.request ? request_data : non_request_data
+    has_request = @distribution.request.present?
 
     font_size 11
     # Line item table
     table(data) do
       self.header = true
       self.cell_style = {
-        padding: [5, 20, 5, 20]
+        padding: has_request ? [5, 10, 5, 10] : [5, 20, 5, 20]
       }
       self.row_colors = %w(dddddd ffffff)
 
@@ -64,7 +69,7 @@ class DistributionPdf
       row(0).borders = [:bottom]
       row(0).border_width = 2
       row(0).font_style = :bold
-      row(0).size = 9
+      row(0).size = has_request ? 8 : 9
       row(0).column(1..-1).borders = %i(bottom left)
 
       # Total Items footer row
@@ -83,6 +88,7 @@ class DistributionPdf
       column(1..-1).row(1..-3).borders = [:left]
       column(1..-1).row(1..-3).border_left_color = "aaaaaa"
       column(1).style align: :right
+      column(-1).row(-1).borders = [:left, :bottom]
     end
 
     number_pages "Page <page> of <total>",
@@ -106,75 +112,72 @@ class DistributionPdf
         end
       end
     end
+
+    render
   end
 
   def request_data
     data = [["Items Received",
-             "Requested",
-             "Received",
-             "Value/item",
-             "In-Kind Value Received",
-             "Packages"]]
+      "Requested",
+      "Received",
+      "Value/item",
+      "In-Kind Value Received",
+      "Packages"]]
 
     request_items = @distribution.request.request_items.dup
+    line_items = @distribution.line_items.sorted
 
     requested_not_received = request_items.filter_map do |request_item|
-      if total_items.none? { |i| i.id == request_item['item_id']}
+      if line_items.none? { |i| i.item_id == request_item["item_id"] }
         RequestItem.from_json(request_item, @distribution.request)
       end
     end
 
-    data += @distribution.line_items.sorted.map do |c|
+    data += line_items.map do |c|
       [c.item.name,
-       c.quantity,
-       c.quantity,
-       dollar_value(c.item.value_in_cents),
-       dollar_value(c.value_per_line_item),
-       c.package_count
-      ]
+        c.quantity,
+        c.quantity,
+        dollar_value(c.item.value_in_cents),
+        dollar_value(c.value_per_line_item),
+        c.package_count]
     end
 
     data += requested_not_received.sort_by(&:name).map do |c|
       [c.item.name,
-       c.quantity,
-       nil,
-       dollar_value(c.item.value_in_cents),
-       dollar_value(c.value_per_line_item),
-       c.package_count
-      ]
+        c.quantity,
+        "",
+        dollar_value(c.item.value_in_cents),
+        dollar_value(c.value_per_line_item),
+        c.package_count]
     end
 
     data + [["", "", "", "", ""],
-             ["Total Items Received",
-              "",
-              dollar_value(@distribution.value_per_itemizable),
-              @distribution.line_items.total,
-              ""
-             ]
-    ]
+      ["Total Items Received",
+        @distribution.line_items.total + requested_not_received.map(&:quantity).sum,
+        @distribution.line_items.total,
+        "",
+        dollar_value(@distribution.value_per_itemizable),
+        ""]]
   end
 
   def non_request_data
     data = [["Items Received",
-             "Value/item",
-             "In-Kind Value",
-             "Quantity",
-             "Packages"]]
+      "Value/item",
+      "In-Kind Value",
+      "Quantity",
+      "Packages"]]
     data += @distribution.line_items.sorted.map do |c|
       [c.item.name,
-       dollar_value(c.item.value_in_cents),
-       dollar_value(c.value_per_line_item),
-       c.quantity,
-       c.package_count]
+        dollar_value(c.item.value_in_cents),
+        dollar_value(c.value_per_line_item),
+        c.quantity,
+        c.package_count]
     end
     data + [["", "", "", "", ""],
-             ["Total Items Received",
-              "",
-              dollar_value(@distribution.value_per_itemizable),
-              @distribution.line_items.total,
-              ""
-             ]
-    ]
+      ["Total Items Received",
+        "",
+        dollar_value(@distribution.value_per_itemizable),
+        @distribution.line_items.total,
+        ""]]
   end
-
 end
