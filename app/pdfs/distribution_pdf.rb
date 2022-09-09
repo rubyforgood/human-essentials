@@ -47,11 +47,7 @@ class DistributionPdf
 
     move_down 20
 
-    data = [["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"]]
-    data += @distribution.line_items.sorted.map do |c|
-      [c.item.name, dollar_value(c.item.value_in_cents), dollar_value(c.value_per_line_item), c.quantity, c.package_count]
-    end
-    data += [["", "", "", "", ""], ["Total Items Received", "", dollar_value(@distribution.value_per_itemizable), @distribution.line_items.total, ""]]
+    data = @distribution.request ? request_data : non_request_data
 
     font_size 11
     # Line item table
@@ -111,4 +107,74 @@ class DistributionPdf
       end
     end
   end
+
+  def request_data
+    data = [["Items Received",
+             "Requested",
+             "Received",
+             "Value/item",
+             "In-Kind Value Received",
+             "Packages"]]
+
+    request_items = @distribution.request.request_items.dup
+
+    requested_not_received = request_items.filter_map do |request_item|
+      if total_items.none? { |i| i.id == request_item['item_id']}
+        RequestItem.from_json(request_item, @distribution.request)
+      end
+    end
+
+    data += @distribution.line_items.sorted.map do |c|
+      [c.item.name,
+       c.quantity,
+       c.quantity,
+       dollar_value(c.item.value_in_cents),
+       dollar_value(c.value_per_line_item),
+       c.package_count
+      ]
+    end
+
+    data += requested_not_received.sort_by(&:name).map do |c|
+      [c.item.name,
+       c.quantity,
+       nil,
+       dollar_value(c.item.value_in_cents),
+       dollar_value(c.value_per_line_item),
+       c.package_count
+      ]
+    end
+
+    data + [["", "", "", "", ""],
+             ["Total Items Received",
+              "",
+              dollar_value(@distribution.value_per_itemizable),
+              @distribution.line_items.total,
+              ""
+             ]
+    ]
+  end
+
+  def non_request_data
+    data = [["Items Received",
+             "Value/item",
+             "In-Kind Value",
+             "Quantity",
+             "Packages"]]
+    data += @distribution.line_items.sorted.map do |c|
+      [c.item.name,
+       dollar_value(c.item.value_in_cents),
+       dollar_value(c.value_per_line_item),
+       c.quantity,
+       c.package_count]
+    end
+    data + [["", "", "", "", ""],
+             ["Total Items Received",
+              "",
+              dollar_value(@distribution.value_per_itemizable),
+              @distribution.line_items.total,
+              ""
+             ]
+    ]
+  end
+
 end
