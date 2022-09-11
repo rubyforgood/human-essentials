@@ -36,7 +36,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
 
           expect(response).to be_successful
           expect(response.header['Content-Type']).to include 'text/csv'
-          
+
           expected_headers = "Product Drive Name,Start Date,End Date,Held Virtually?,Quantity of Items,Variety of Items,In Kind Value\n"
           expect(response.body).to eq(expected_headers)
         end
@@ -46,7 +46,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           FactoryBot.create(:product_drive, name: 'unassociated_product_drive', organization: FactoryBot.create(:organization))
 
           subject
-          
+
           expect(response.body).to include('product_drive')
           expect(response.body).not_to include('unassociated_product_drive')
         end
@@ -55,21 +55,21 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           default_params.merge!(filters: { date_range: date_range_picker_params(Date.parse('30/01/1979'), Date.parse('30/01/1982')) })
 
           FactoryBot.create(
-            :product_drive, 
+            :product_drive,
             name: 'early_product_drive',
             start_date: '30/01/1970',
             end_date: '30/01/1971',
             organization: organization
           )
           FactoryBot.create(
-            :product_drive, 
+            :product_drive,
             name: 'product_drive_within_date_range',
             start_date: '30/01/1980',
             end_date: '30/01/1981',
             organization: organization
           )
           FactoryBot.create(
-            :product_drive, 
+            :product_drive,
             name: 'product_drive_on_date_range',
             start_date: '30/01/1979',
             end_date: '30/01/1982',
@@ -77,7 +77,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           )
 
           FactoryBot.create(
-            :product_drive, 
+            :product_drive,
             name: 'late_product_drive',
             start_date: '30/01/1990',
             end_date: '30/01/1991',
@@ -85,12 +85,12 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           )
 
           subject
-          
+
           expect(response.body).to include('product_drive_within_date_range')
           expect(response.body).to include('product_drive_on_date_range')
           expect(response.body).not_to include('early_product_drive')
           expect(response.body).not_to include('late_product_drive')
-        end       
+        end
       end
     end
 

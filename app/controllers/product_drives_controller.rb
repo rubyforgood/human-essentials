@@ -92,7 +92,7 @@ class ProductDrivesController < ApplicationController
   end
 
   helper_method \
-  def filter_params
+    def filter_params
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:by_name)
