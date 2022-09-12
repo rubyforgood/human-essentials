@@ -349,7 +349,7 @@ GEM
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
       rack-protection
-    omniauth-google-oauth2 (1.1.0)
+    omniauth-google-oauth2 (1.1.1)
       jwt (>= 2.0)
       oauth2 (~> 2.0.6)
       omniauth (~> 2.0)
@@ -449,7 +449,7 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    recaptcha (5.12.1)
+    recaptcha (5.12.3)
       json
     redis (4.8.0)
     regexp_parser (2.4.0)
@@ -695,4 +695,4 @@ RUBY VERSION
    ruby 3.1.2p20
 
 BUNDLED WITH
-   2.3.20
+   2.3.21

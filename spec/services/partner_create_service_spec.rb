@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PartnerCreateService, skip_seed: true do
+describe PartnerCreateService do
   describe '#call' do
     subject { described_class.new(organization: organization, partner_attrs: partner_attrs).call }
     let(:organization) {

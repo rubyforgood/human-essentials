@@ -1,4 +1,4 @@
-RSpec.describe InventoryCheckService, type: :service, skip_seed: true do
+RSpec.describe InventoryCheckService, type: :service do
   subject { InventoryCheckService }
   describe "call" do
     let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }

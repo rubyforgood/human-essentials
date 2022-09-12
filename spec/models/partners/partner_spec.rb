@@ -78,7 +78,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Partners::Partner, type: :model, skip_seed: true do
+RSpec.describe Partners::Partner, type: :model do
   describe 'associations' do
     it { should have_many(:users).dependent(:destroy) }
     it { should have_many(:requests).dependent(:destroy) }
