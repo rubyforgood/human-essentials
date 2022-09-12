@@ -1,0 +1,21 @@
+<h1>Edit User Information</h1>
+
+<%= form_for @user, html: {method: :patch}, url: partners_user_path(@user) do |form| %>
+  <div class="p-3">
+    <% if @user.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <div class="form-group row">
+      <%= form.label :name, class: "col-md-3" %>
+      <%= form.text_field :name, class: "col-md-8 form-control" %>
+    </div>
+    <%= form.submit(class: 'btn btn-primary') %>
+  </div>
+<% end %>
