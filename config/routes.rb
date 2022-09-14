@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     resources :requests, only: [:show, :new, :index, :create]
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
-    resources :users, only: [:index, :new, :create]
+    resources :users, only: [:index, :new, :create, :edit, :update]
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
 
