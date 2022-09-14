@@ -17,6 +17,8 @@
 #  describe_storage_space         :text
 #  distribution_times             :string
 #  distributor_type               :string
+#  enable_child_based_requests    :boolean          default(TRUE), not null
+#  enable_individual_requests     :boolean          default(TRUE), not null
 #  essentials_budget              :string
 #  essentials_funding_source      :string
 #  essentials_use                 :string
@@ -30,9 +32,11 @@
 #  greater_2_times_fpl            :integer
 #  income_requirement_desc        :boolean
 #  income_verification            :boolean
+#  instagram                      :string
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
+#  no_social_media_presence       :boolean
 #  other_agency_type              :string
 #  partner_status                 :string           default("pending")
 #  pick_up_email                  :string

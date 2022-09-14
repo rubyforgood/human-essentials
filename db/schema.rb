@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_14_000010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -514,6 +514,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
     t.string "status_in_diaper_base"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
+    t.string "instagram"
+    t.boolean "no_social_media_presence"
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 
