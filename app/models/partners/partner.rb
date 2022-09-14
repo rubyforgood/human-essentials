@@ -94,6 +94,8 @@ module Partners
     has_one_attached :proof_of_form_990
     has_many_attached :documents
 
+    validates :no_social_media_presence, acceptance: {message: "You must either check this box or have at least one social media platform filled out."}, if: :has_no_social_media?
+
     self.ignored_columns = %w[
       evidence_based_description
       program_client_improvement
@@ -180,6 +182,10 @@ module Partners
     end
 
     private
+
+    def has_no_social_media?
+      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
+    end
 
     def families_served_count
       families.count
