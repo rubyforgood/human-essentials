@@ -1,4 +1,4 @@
-# avoid infinite loop
+# avoid Rubocop failing with an infinite loop when it checks this cop
 # rubocop:disable Layout/ArrayAlignment
 describe DistributionPdf do
   let(:distribution) { FactoryBot.create(:distribution) }

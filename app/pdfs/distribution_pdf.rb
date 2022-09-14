@@ -13,11 +13,11 @@ class DistributionPdf
     font "OpenSans"
     font_size 10
 
-    logo_image = # if @organization.logo.attached?
-      #  StringIO.open(@organization.logo.download)
-      #             else
-      Organization::DIAPER_APP_LOGO
-    #            end
+    logo_image = if @organization.logo.attached?
+                   StringIO.open(@organization.logo.download)
+                 else
+                   Organization::DIAPER_APP_LOGO
+                 end
 
     image logo_image, fit: [325, 110]
 
