@@ -28,6 +28,10 @@ RSpec.describe Partner, type: :model do
   end
 
   context "Validations >" do
+    it "" do
+      
+    end
+
     it "must belong to an organization" do
       expect(build(:partner, organization_id: nil)).not_to be_valid
     end
