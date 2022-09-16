@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     resources :requests, only: [:show, :new, :index, :create]
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
-    resources :users, only: [:index, :new, :create] do
+    resources :users, only: [:index, :new, :create, :edit, :update] do
       get :switch_to_bank_role, on: :collection
     end
     resource :profile, only: [:show, :edit, :update]
@@ -103,6 +103,8 @@ Rails.application.routes.draw do
 
     resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
+      put :deactivate
+      put :reactivate
       collection do
         post :import_csv
         post :import_inventory
