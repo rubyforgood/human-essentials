@@ -8,6 +8,21 @@ module Partners
       @user = User.new
     end
 
+    def edit
+      @user = current_user
+    end
+
+    def update
+      @user = current_user
+      if @user.update(user_params)
+        flash[:success] = "User information was successfully updated!"
+        redirect_to edit_partners_user_path(@user)
+      else
+        flash[:error] = "Failed to update this user."
+        render :edit
+      end
+    end
+
     def create
       user = ::User.invite!(
         email: user_params[:email],
