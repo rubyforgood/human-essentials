@@ -106,6 +106,32 @@ RSpec.describe Partners::Partner, type: :model do
     end
   end
 
+  describe "validations" do
+    context "no social media presence and the checkbox isn't checked" do
+      let(:partner) { FactoryBot.build(:partners_partner, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
+
+      it "should not be valid" do
+        expect(partner.valid?).to eq(false)
+      end
+    end
+
+    context "no social media presence and the checkbox is checked" do
+      let(:partner) { FactoryBot.build(:partners_partner, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
+
+      it "should be valid" do
+        expect(partner.valid?).to eq(true)
+      end
+    end
+
+    context "has social media presence and the checkbox is unchecked" do
+      let(:partner) { FactoryBot.build(:partners_partner, website: "website URL", twitter: "", facebook: "", instagram: "instagram URL", no_social_media_presence: false) }
+
+      it "should be valid" do
+        expect(partner.valid?).to eq(true)
+      end
+    end
+  end
+
   describe '#verified?' do
     subject { partner.verified? }
     let(:partner) { FactoryBot.build(:partners_partner, partner_status: partner_status) }
