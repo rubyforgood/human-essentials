@@ -14,7 +14,6 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
   end
 
   context "While signed in >" do
-    let(:product_drive) { create(:product_drive, organization: organization) }
     before do
       sign_in(user)
     end
@@ -110,6 +109,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
 
     describe "PUT#update" do
       it "returns redirect http status" do
+        product_drive = create(:product_drive, organization: organization)
+
         put product_drive_path(default_params.merge(id: product_drive.id, product_drive: attributes_for(:product_drive)))
         expect(response).to have_http_status(:redirect)
       end
@@ -117,6 +118,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
 
     describe "GET #edit" do
       it "returns http success" do
+        product_drive = create(:product_drive, organization: organization)
+
         get edit_product_drive_path(default_params.merge(id: product_drive.id))
         expect(response).to be_successful
       end
@@ -124,6 +127,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
 
     describe "GET #show" do
       it "returns http success" do
+        product_drive = create(:product_drive, organization: organization)
+
         get product_drive_path(default_params.merge(id: product_drive.id))
         expect(response).to be_successful
       end
@@ -131,6 +136,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
 
     describe "DELETE #destroy" do
       it "redirects to the index" do
+        product_drive = create(:product_drive, organization: organization)
+        
         delete product_drive_path(default_params.merge(id: product_drive.id))
         expect(response).to redirect_to(product_drives_path)
       end
