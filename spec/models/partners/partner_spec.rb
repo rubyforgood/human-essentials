@@ -124,9 +124,30 @@ RSpec.describe Partners::Partner, type: :model do
     end
 
     context "has social media presence and the checkbox is unchecked" do
-      let(:partner) { FactoryBot.build(:partners_partner, website: "website URL", twitter: "", facebook: "", instagram: "instagram URL", no_social_media_presence: false) }
+      let(:partner) { FactoryBot.build(:partners_partner, no_social_media_presence: false) }
 
-      it "should be valid" do
+      it "with just a website it should be valid" do
+        partner.update(website: "some website URL", twitter: "", facebook: "", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just twitter it should be valid" do
+        partner.update(website: "", twitter: "some twitter URL", facebook: "", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just facebook it should be valid" do
+        partner.update(website: "", twitter: "", facebook: "some facebook URL", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just instagram it should be valid" do
+        partner.update(website: "", twitter: "", facebook: "", instagram: "some instagram URL")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with every social media option it should be valid" do
+        partner.update(website: "some website URL", twitter: "some twitter URL", facebook: "some facebook URL", instagram: "some instagram URL")
         expect(partner.valid?).to eq(true)
       end
     end
