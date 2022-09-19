@@ -38,7 +38,7 @@ gem "strong_migrations", "1.3.0"
 
 gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
-gem 'bootstrap', '~> 4.6.0'
+gem 'bootstrap', '~> 5.2.1'
 # jQuery framework (DOM methods, Ajax, chaining, etc.)
 gem "jquery-rails"
 gem "jquery-ui-rails"
