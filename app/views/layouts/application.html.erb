@@ -78,13 +78,13 @@
   </aside>
 
   <div class="content-wrapper">
-    <% flash.each do |key, value| %>
-      <div class="<%= flash_class(key) %> alert-dismissible fade show" role="alert">
-        <a href="#" class="close" data-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-        <%= sanitize(value, tags: %w(ul li)) %>
-      </div>
+    <%= turbo_frame_tag "flash" do %>
+      <%= render partial: "shared/flash" %>
     <% end %>
-    <%= yield %>
+
+    <div>
+      <%= yield %>
+    </div>
   </div>
 
   <footer class="main-footer">
