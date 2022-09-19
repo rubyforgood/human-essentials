@@ -3,6 +3,3 @@
 // ./bin/rails generate stimulus controllerName
 
 import { application } from "./application"
-
-import HighchartController from "./highchart_controller"
-application.register("highchart", HighchartController)
