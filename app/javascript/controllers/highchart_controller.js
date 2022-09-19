@@ -3,7 +3,7 @@ import Highcharts from 'highcharts';
 
 /*
  * HighchartController is a Stimulus controller that allows you to
- * easily create Highcharts charts in views. You must pass define the
+ * easily create Highcharts charts in views. You must define the
  * configValue via data-highchart-config-value attribute.
  */
 export default class extends Controller {
