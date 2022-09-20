@@ -521,13 +521,14 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    selenium-webdriver (4.1.0)
+    selenium-webdriver (4.4.0)
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
-      rubyzip (>= 1.2.2)
+      rubyzip (>= 1.2.2, < 3.0)
+      websocket (~> 1.0)
     semantic_range (3.0.0)
     shellany (0.0.1)
-    shoulda-matchers (5.1.0)
+    shoulda-matchers (5.2.0)
       activesupport (>= 5.2.0)
     simple_form (5.1.0)
       actionpack (>= 5.2)
@@ -580,7 +581,7 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webdrivers (5.0.0)
+    webdrivers (5.1.0)
       nokogiri (~> 1.6)
       rubyzip (>= 1.3.0)
       selenium-webdriver (~> 4.0)
@@ -594,6 +595,7 @@ GEM
       railties (>= 5.2)
       semantic_range (>= 2.3.0)
     webrick (1.7.0)
+    websocket (1.2.9)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -680,7 +682,7 @@ DEPENDENCIES
   rubocop
   rubocop-rails (~> 2.9.0)
   sass-rails
-  shoulda-matchers (~> 5.0)
+  shoulda-matchers (~> 5.2)
   simple_form
   simplecov
   skylight
@@ -689,7 +691,7 @@ DEPENDENCIES
   strong_migrations (= 1.3.0)
   uglifier (>= 1.3.0)
   web-console
-  webdrivers (~> 5.0)
+  webdrivers (~> 5.1)
   webmock (~> 3.18)
   webpacker (~> 5.0)
 
