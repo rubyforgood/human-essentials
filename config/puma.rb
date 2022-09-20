@@ -33,7 +33,7 @@ preload_app!
 #
 directory ENV.fetch("STACK_PATH") { "." }
 # Make sure to bind to Cloud 66 specific socket so that NGINX can direct traffic here
-# 
+#
 bind ENV.fetch("BIND") { "unix:///tmp/web_server.sock" }
 # Allow puma to be restarted by `rails restart` command.
 # plugin :tmp_restart
