@@ -222,8 +222,10 @@
                     <%= total_received_from_product_drives %>
                   </span> items
                   received <%= @selected_date_range_label %></h3>
-                <h4 class="text-center"><%= dollar_presentation(total_received_money_donations) %>
-                  raised  <%= @selected_date_range_label %></h4>
+                <h4 class="text-center">
+                  <span class="total_money_raised">
+                    <%= dollar_presentation( total_received_money_donations_from_product_drives) %>
+                  </span> raised  <%= @selected_date_range_label %></h4>
                 <div class="box-body">
                   <h4>Recent Donations from Product Drives</h4>
                   <%= render partial: "product_drive", collection: @recent_donations.by_source(:product_drive), as: :donation %>

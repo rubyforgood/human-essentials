@@ -4,6 +4,7 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  discarded_at    :datetime
 #  latitude        :float
 #  longitude       :float
 #  name            :string
@@ -46,9 +47,11 @@ class StorageLocation < ApplicationRecord
                              allow_blank: true
   before_destroy :verify_inventory_items, prepend: true
 
+  include Discard::Model
   include Geocodable
   include Filterable
   include Exportable
+
   scope :containing, ->(item_id) {
     joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
   }

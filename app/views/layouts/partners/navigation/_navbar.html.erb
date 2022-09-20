@@ -15,6 +15,11 @@
     <% end %>
 
     <div class="dropdown-divider"></div>
+    <%= link_to edit_partners_user_path(current_user), class:"dropdown-item" do %>
+      <i class="fa fa-users mr-2"></i> My Profile
+    <% end %>
+
+    <div class="dropdown-divider"></div>
     <% if current_user.organization.present? %>
       <%= link_to switch_to_bank_role_partners_users_path, class:"dropdown-item" do %>
         <i class="fa fa-repeat text-aqua"></i> Switch To Bank Role

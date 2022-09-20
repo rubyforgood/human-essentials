@@ -4,6 +4,7 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  discarded_at    :datetime
 #  latitude        :float
 #  longitude       :float
 #  name            :string

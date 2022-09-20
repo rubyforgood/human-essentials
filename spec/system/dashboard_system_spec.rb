@@ -374,6 +374,16 @@ RSpec.describe "Dashboard", type: :system, js: true do
       # Donations outside of the filtered period
       max_donations_in_filtered_period = max_recent_donation_links_count + 1
 
+      def create_next_product_drive_donation(donation_date:)
+        quantity_in_donation = @item_quantity.next
+        drive = @product_drives.sample
+
+        create :product_drive_donation, :with_items, product_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization,
+               money_raised: @money_raised_on_each_product_drive
+
+        OpenStruct.new drive_name: drive.name, quantity: quantity_in_donation, money_raised: @money_raised_on_each_product_drive
+      end
+
       [
         # rubocop:disable Layout/ExtraSpacing, Layout/SpaceAroundOperators
         ["Today",        test_time,                               test_time],
@@ -410,6 +420,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             filtered_dates = filtered_date_range.to_a
 
             @item_quantity = item_quantities.to_enum
+            @money_raised_on_each_product_drive = 123 # This is arbitrary, but needs to be different than other donations
 
             # Create some number of Product Drives
             # Keep local copy of names so examples can create expected values
@@ -417,15 +428,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
             @product_drives = (1..rand(2..5)).map do
               name = "Product Drive #{_1}"
               OpenStruct.new name: name, drive: create(:product_drive, name: name)
-            end
-
-            def create_next_product_drive_donation(donation_date:)
-              quantity_in_donation = @item_quantity.next
-              drive = @product_drives.sample
-
-              create :product_drive_donation, :with_items, product_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
-
-              OpenStruct.new drive_name: drive.name, quantity: quantity_in_donation
             end
 
             # days_this_year.sample in num_donations_in_filtered_period.times loop
@@ -449,9 +451,15 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             expected_recent_donation_links_count = [max_recent_donation_links_count, num_donations_in_filtered_period].min
 
-            it "shows the correct total and #{expected_recent_donation_links_count} Recent Donation link(s)" do
+            it "shows the correct total donations" do
               expect(org_dashboard_page.product_drive_total_donations).to eq @donations_in_filtered_date_range.map(&:quantity).sum
+            end
 
+            it "shows the correct total money raised" do
+              expect(org_dashboard_page.product_drive_total_money_raised).to eq @donations_in_filtered_date_range.map(&:money_raised).sum
+            end
+
+            it "shows #{expected_recent_donation_links_count} Recent Donation link(s)" do
               recent_donation_links = org_dashboard_page.recent_product_drive_donation_links
 
               expect(recent_donation_links.count).to eq expected_recent_donation_links_count
@@ -462,7 +470,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
                 items_donated, drive_name = _1.match(/([0-9,]+) from (.+)/).captures
 
                 # e.g., [1, "Some Drive"], [20, "Another Drive"]
-                OpenStruct.new quantity: items_donated.delete(",").to_i, drive_name: drive_name
+                OpenStruct.new quantity: items_donated.delete(",").to_i, drive_name: drive_name, money_raised: @money_raised_on_each_product_drive
               end
 
               # By design, the setup may have created more Donations during the period than are visible in the Recent Donation links
@@ -470,6 +478,58 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(@donations_in_filtered_date_range.intersection(recent_donations)).to match_array recent_donations
             end
           end
+        end
+      end
+
+      describe "Product drive behaviour with Mixed Donation types" do
+        before do
+          @item_quantity = item_quantities.to_enum
+          @money_raised_on_each_product_drive = 123 # This is arbitrary, but needs to be different than other donations
+          @money_raised_on_each_manufacturer_donation = 231 # This is arbitrary, but needs to be different than other donations
+
+          # Create some number of Product Drives
+          # Keep local copy of names so examples can create expected values
+          # without relying on fetching info from production code
+          @product_drives = (1..rand(2..5)).map do
+            name = "Product Drive #{_1}"
+            OpenStruct.new name: name, drive: create(:product_drive, name: name)
+          end
+
+          @product_drive_donations = 2.times.map do
+            create_next_product_drive_donation donation_date: test_time
+          end
+
+          # create a different donation -- which shouldn't get included in to our totals or shown under product drive
+          quantity_in_donation = @item_quantity.next
+          manufacturer = create :manufacturer, name: "Manufacturer for product drive test", organization: @organization
+          create :manufacturer_donation, :with_items, manufacturer: manufacturer, issued_at: test_time, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization, money_raised: @money_raised_on_each_manufacturer_donation
+
+          org_dashboard_page.visit
+        end
+
+        it "only counts product drive donations for product drive" do
+          expect(org_dashboard_page.product_drive_total_donations).to eq @product_drive_donations.map(&:quantity).sum
+        end
+
+        it "only counts product drive money raised" do
+          expect(org_dashboard_page.product_drive_total_money_raised).to eq @product_drive_donations.map(&:money_raised).sum
+        end
+
+        it "only shows product drive donations as product drive donations" do
+          recent_donation_links = org_dashboard_page.recent_product_drive_donation_links
+
+          expect(recent_donation_links.count).to eq @product_drive_donations.count
+
+          recent_donations = recent_donation_links.map do
+            items_donated, drive_name = _1.match(/([0-9,]+) from (.+)/).captures
+
+            # e.g., [1, "Some Drive"], [20, "Another Drive"]
+            OpenStruct.new quantity: items_donated.delete(",").to_i, drive_name: drive_name, money_raised: @money_raised_on_each_product_drive
+          end
+
+          # By design, the setup may have created more Donations during the period than are visible in the Recent Donation links
+          # Make sure each Recent Donation link uniquely matches a single Donation
+          expect(@product_drive_donations.intersection(recent_donations)).to match_array recent_donations
         end
       end
     end
