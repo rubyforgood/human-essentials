@@ -6,12 +6,10 @@ class PartnerInviteService
   end
 
   def call
-    return self unless valid?
-
     existing_user = User.find_by(email: partner.email)
     if existing_user && existing_user.partner_id.nil?
       existing_user.update!(partner_id: partner.profile.id)
-      return
+      return self
     end
 
     partner.update!(status: 'invited')
@@ -20,15 +18,5 @@ class PartnerInviteService
       resource: partner.profile)
   end
 
-  private
-
   attr_reader :partner
-
-  def valid?
-    if partner.profile.primary_user
-      errors.add(:base, "Partner has already been invited")
-    end
-
-    errors.blank?
-  end
 end
