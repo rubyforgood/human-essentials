@@ -1,3 +1,3 @@
 custom_web: bundle exec puma
 worker: bundle exec rails jobs:work
-clock: clockwork clock.rb
+clock: bundle exec clockwork clock.rb
