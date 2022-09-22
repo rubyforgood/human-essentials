@@ -28,6 +28,7 @@
       <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
     <% when "invited" %>
       <%= view_button_to partner_path(partner_row) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
+      <%= invite_button_to(invite_partner_path(partner_row), confirm: "Re-send an invitation to #{partner_row.name}?", text: 'Re-send Invite') %>
     <% when "awaiting_review" %>
       <%= view_button_to partner_path(partner_row) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
     <% when "approved" %>
