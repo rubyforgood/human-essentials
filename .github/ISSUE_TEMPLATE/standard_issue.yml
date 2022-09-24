@@ -8,7 +8,7 @@ body:
       # Thank you for taking the time to help us improve the app!
 - type: textarea
   attributes:
-    label: Issue Summary
+    label: Summary
     description: Summarize the issue paying attention to how it affects the stakeholders.
     placeholder: |
       When I click on this button, it always takes me back to the beginning instead of...
