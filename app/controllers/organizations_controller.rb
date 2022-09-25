@@ -14,7 +14,7 @@ class OrganizationsController < ApplicationController
 
   def update
     @organization = current_organization
-    if @organization.update(organization_params)
+    if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
       flash[:error] = "Failed to update your organization."
@@ -76,7 +76,8 @@ class OrganizationsController < ApplicationController
       :default_storage_location, :default_email_text,
       :invitation_text, :reminder_day, :deadline_day,
       :repackage_essentials, :distribute_monthly,
-      :ndbn_member_id,
+      :ndbn_member_id, :enable_child_based_requests,
+      :enable_individual_requests,
       partner_form_fields: []
     )
   end

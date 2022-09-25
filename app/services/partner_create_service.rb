@@ -23,7 +23,9 @@ class PartnerCreateService
       Partners::Partner.create!({
                                   essentials_bank_id: organization.id,
                                   partner_id: @partner.id,
-                                  name: @partner.name
+                                  name: @partner.name,
+                                  enable_child_based_requests: organization.enable_child_based_requests,
+                                  enable_individual_requests: organization.enable_individual_requests
                                 })
     rescue StandardError => e
       errors.add(:base, e.message)
