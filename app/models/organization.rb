@@ -98,8 +98,6 @@ class Organization < ApplicationRecord
     end
   end
 
-  before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
-
   after_create do
     account_request&.update!(status: "admin_approved")
   end
@@ -250,14 +248,6 @@ class Organization < ApplicationRecord
   end
 
   private
-
-  def sync_visible_partner_form_sections
-    partner_form = Partners::PartnerForm.where(
-      essentials_bank_id: id,
-    ).first_or_create
-
-    partner_form.update!(sections: partner_form_fields)
-  end
 
   def correct_logo_mime_type
     if logo.attached? && !logo.content_type

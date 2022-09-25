@@ -10,6 +10,13 @@ class ProductDrivesController < ApplicationController
                      .within_date_range(@selected_date_range)
                      .order(created_at: :desc)
     @selected_name_filter = filter_params[:by_name]
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_data Exports::ExportProductDrivesCSVService.generate_csv(@product_drives), filename: "Product-Drives-#{Time.zone.today}.csv"
+      end
+    end
   end
 
   # GET /product_drives/1
@@ -84,7 +91,8 @@ class ProductDrivesController < ApplicationController
     params.require(:filters)[:date_range]
   end
 
-  def filter_params
+  helper_method \
+    def filter_params
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:by_name)
