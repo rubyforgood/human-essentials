@@ -137,7 +137,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
     describe "DELETE #destroy" do
       it "redirects to the index" do
         product_drive = create(:product_drive, organization: organization)
-        
+
         delete product_drive_path(default_params.merge(id: product_drive.id))
         expect(response).to redirect_to(product_drives_path)
       end
