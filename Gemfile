@@ -98,7 +98,7 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
-# Used to manage periodic cron-like jobs 
+# Used to manage periodic cron-like jobs
 gem "clockwork"
 
 ##### DEPENDENCY PINS ######
