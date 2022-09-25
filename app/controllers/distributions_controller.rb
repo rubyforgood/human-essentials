@@ -97,11 +97,11 @@ class DistributionsController < ApplicationController
       respond_to do |format|
         format.html do
           flash[:error] = flash_error
-          render :new 
+          render :new
         end
 
-        format.turbo_stream do 
-          flash.now[:error] = flash_error 
+        format.turbo_stream do
+          flash.now[:error] = flash_error
           render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash")
         end
       end
