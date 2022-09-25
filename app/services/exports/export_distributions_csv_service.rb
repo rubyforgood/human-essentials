@@ -77,6 +77,9 @@ module Exports
         },
         "Agency Representative" => ->(distribution) {
           distribution.agency_rep
+        },
+        "Comments" => ->(distribution) {
+          distribution.comment
         }
       }
     end
