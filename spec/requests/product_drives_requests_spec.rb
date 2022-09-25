@@ -51,7 +51,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         end
 
         it 'returns ONLY the product drives within a selected date range (inclusive)' do
-          default_params.merge!(filters: { date_range: date_range_picker_params(Date.parse('30/01/1979'), Date.parse('30/01/1982')) })
+          default_params[:filters] = { date_range: date_range_picker_params(Date.parse('30/01/1979'), Date.parse('30/01/1982')) }
 
           FactoryBot.create(
             :product_drive,
