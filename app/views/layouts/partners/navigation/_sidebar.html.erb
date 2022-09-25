@@ -37,17 +37,19 @@
 
 
 
-  <li class="nav-item">
-    <%= link_to(partners_families_path, class: "nav-link") do %>
-      <i class="nav-icon fa fa-users"></i>
-      <p>Families</p>
-    <% end %>
-  </li>
+  <% if current_partner.enable_child_based_requests? %>
+    <li class="nav-item">
+      <%= link_to(partners_families_path, class: "nav-link") do %>
+        <i class="nav-icon fa fa-users"></i>
+        <p>Families</p>
+      <% end %>
+    </li>
 
-  <li class="nav-item">
-    <%= link_to(partners_children_path, class: "nav-link") do %>
-      <i class="nav-icon fa fa-child"></i>
-      <p>Children</p>
-    <% end %>
-  </li>
+    <li class="nav-item">
+      <%= link_to(partners_children_path, class: "nav-link") do %>
+        <i class="nav-icon fa fa-child"></i>
+        <p>Children</p>
+      <% end %>
+    </li>
+  <% end %>
 </ul>

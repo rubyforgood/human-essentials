@@ -37,6 +37,9 @@
                   <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: form, partner: current_partner} %>
                 </div>
               <% end %>
+              <div class="col-6">
+                <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: form, partner: current_partner} %>
+              </div>
             </div>
             <div class="card-footer">
               <%= form.submit("Update Information", class: "btn btn-primary") %>
