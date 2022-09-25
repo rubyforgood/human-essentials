@@ -13,9 +13,9 @@ module Exports
       end
     end
 
-    private
-
-    def self.generate_row(drive)
+    private_class_method(
+      # The following indentation is idiotic, but it's what rubocop wants
+      def self.generate_row(drive)
       [
         drive.name.to_s,
         drive.start_date.strftime("%m-%d-%Y").to_s,
@@ -26,5 +26,6 @@ module Exports
         dollar_value(drive.in_kind_value).to_s
       ]
     end
+    )
   end
 end
