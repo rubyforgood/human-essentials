@@ -1,55 +1,6 @@
 class Forecasting::DistributionsController < Forecasting::BaseController
   def index
-    series = series('Distribution')
-    title = 'Monthly Distributions'
-    @config = {
-      chart: {
-        type: 'column',
-        height: 850
-      },
-      title: {
-        text: title
-      },
-      subtitle: {
-        text: "Source: humanessentials.app"
-      },
-      xAxis: {
-        categories: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec'
-        ],
-        crosshair: true
-      },
-      yAxis: {
-        min: 0,
-        title: {
-          text: "Line Items"
-        }
-      },
-      tooltip: {
-        style: {
-          zIndex: 100
-        },
-        shared: true,
-        useHTML: true
-      },
-      plotOptions: {
-        column: {
-          pointPadding: 0.2,
-          borderWidth: 0
-        }
-      },
-      series: series
-    }.to_json
+    @series = series('Distribution')
+    @title = 'Monthly Distributions'
   end
 end

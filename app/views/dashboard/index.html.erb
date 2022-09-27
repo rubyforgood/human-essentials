@@ -161,7 +161,34 @@
                 <div class="box-body">
                   <div class="box-body text-center">
                     <h5 class="text-center"></h5>
-                    <div data-controller="highchart" data-highchart-config-value="<%= @activity_chart_config %>" >
+                    <% 
+                        activity_chart_config = {
+                          chart: {
+                            type: "bar"
+                          },
+                          title: "",
+                          xAxis: {
+                            categories: @distribution_data.keys,
+                            title: {
+                              text: nil
+                            }
+                          },
+                          yAxis: {
+                            title: {
+                              text: nil
+                            }
+                          },
+                          legend: {
+                            enabled: false
+                          },
+                          series: [
+                            {
+                              data: @distribution_data.values
+                            }
+                          ]
+                        }.to_json
+                      %>
+                    <div data-controller="highchart" data-highchart-config-value="<%= activity_chart_config %>" >
                       <div data-highchart-target="chart"></div>
                     </div>
 
