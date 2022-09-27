@@ -9,11 +9,17 @@ module Partners
         flash[:success] = "Details were successfully updated."
         redirect_to partners_profile_path
       else
+        handle_social_media_error_message
         render :edit
       end
     end
 
     private
+
+    def handle_social_media_error_message
+      current_partner.errors.delete(:no_social_media_presence)
+      current_partner.errors.add :base, message: "You must either provide a social media site or indicate that you have no social media presence"
+    end
 
     def partner_params
       params.require(:partners_partner).permit(
