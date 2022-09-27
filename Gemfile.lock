@@ -204,7 +204,7 @@ GEM
       sanitize (< 7)
     foreman (0.87.2)
     formatador (0.3.0)
-    geocoder (1.8.0)
+    geocoder (1.8.1)
     globalid (1.0.0)
       activesupport (>= 5.0)
     groupdate (6.1.0)
