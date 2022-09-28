@@ -50,6 +50,14 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
+                  <%=
+                    if @product_drives.length > 0
+                      download_button_to(
+                        product_drives_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
+                        text: "Export Product Drives"
+                      )
+                    end
+                  %>
                   <%= new_button_to new_product_drive_path(organization_id: current_organization), {text: "New Product Drive"} %>
                   </span>
               </div>
