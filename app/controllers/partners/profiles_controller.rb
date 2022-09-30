@@ -9,7 +9,7 @@ module Partners
         flash[:success] = "Details were successfully updated."
         redirect_to partners_profile_path
       else
-        handle_social_media_error_message
+        handle_social_media_error_message if current_partner.errors.include?(:no_social_media_presence)
         render :edit
       end
     end
