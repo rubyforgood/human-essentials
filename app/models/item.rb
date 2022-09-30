@@ -103,6 +103,14 @@ class Item < ApplicationRecord
     Item.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
+  def deactivate
+    if self.kit
+      self.kit.deactivate
+    else
+      self.update!(active: false)
+    end
+  end
+
   def other?
     partner_key == "other"
   end
@@ -111,7 +119,7 @@ class Item < ApplicationRecord
   # without first being disassociated with its historical presence
   def destroy
     if has_history?
-      update(active: false)
+      deactivate
     else
       super
     end

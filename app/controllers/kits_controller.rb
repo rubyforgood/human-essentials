@@ -1,6 +1,9 @@
 class KitsController < ApplicationController
   def index
     @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
+    unless params[:include_inactive_items]
+      @kits = @kits.active
+    end
     @selected_filter_name = filter_params[:by_name]
   end
 
@@ -31,6 +34,18 @@ class KitsController < ApplicationController
 
       render :new
     end
+  end
+
+  def deactivate
+    @kit = Kit.find(params[:id])
+    @kit.deactivate
+    redirect_back(fallback_location: dashboard_path, notice: "Kit has been deactivated!")
+  end
+
+  def reactivate
+    @kit = Kit.find(params[:id])
+    @kit.reactivate
+    redirect_back(fallback_location: dashboard_path, notice: "Kit has been reactivated!")
   end
 
   def allocations
