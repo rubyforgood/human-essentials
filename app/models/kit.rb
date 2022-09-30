@@ -32,17 +32,17 @@ class Kit < ApplicationRecord
 
   # @return [Boolean]
   def can_deactivate?
-    self.inventory_items.where('quantity > 0').none?
+    inventory_items.where('quantity > 0').none?
   end
 
   def deactivate
-    self.update!(active: false)
-    self.item.update!(active: false)
+    update!(active: false)
+    item.update!(active: false)
   end
 
   def reactivate
-    self.update!(active: true)
-    self.item.update!(active: true)
+    update!(active: true)
+    item.update!(active: true)
   end
 
   private

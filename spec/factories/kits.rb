@@ -25,6 +25,5 @@ FactoryBot.define do
         create(:item, kit: instance)
       end
     end
-
   end
 end

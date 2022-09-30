@@ -129,5 +129,4 @@ RSpec.describe Kit, type: :model do
     expect(kit.active).to eq(true)
     expect(kit.item.active).to eq(true)
   end
-
 end

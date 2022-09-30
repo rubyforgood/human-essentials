@@ -104,10 +104,10 @@ class Item < ApplicationRecord
   end
 
   def deactivate
-    if self.kit
-      self.kit.deactivate
+    if kit
+      kit.deactivate
     else
-      self.update!(active: false)
+      update!(active: false)
     end
   end
 
