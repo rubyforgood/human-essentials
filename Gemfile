@@ -32,7 +32,7 @@ gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.0"
+gem "strong_migrations", "1.3.1"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -190,9 +190,9 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 5.0'
+  gem 'shoulda-matchers', '~> 5.2'
   # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.0'
+  gem 'webdrivers', '~> 5.1'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
 end

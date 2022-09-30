@@ -1,0 +1,32 @@
+name: ✨ New Issue
+description: New Issue Submitted From The Core Team
+title: "<title>"
+body:
+- type: markdown
+  attributes:
+    value: |
+      # Thank you for taking the time to help us improve the app!
+- type: textarea
+  attributes:
+    label: Summary
+    description: Summarize the issue paying attention to how it affects the stakeholders.
+    placeholder: |
+      When I click on this button, it always takes me back to the beginning instead of...
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Things to consider
+    description: Things that would be helpful for the person completing the issue should know.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Criteria for Completion
+    description: This should be a bulleted list of items that, if satisfied, would result in an acceptably complete Pull Request. Be as specific as you need to be.
+    placeholder: |
+      - [ ] When a user clicks on {this} it should now do {that}
+      - [ ] This feature should only be available to organization admins
+      - [ ] Add a test proving that it works
+  validations:
+    required: false
