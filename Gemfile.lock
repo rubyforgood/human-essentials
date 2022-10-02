@@ -265,7 +265,6 @@ GEM
       addressable (~> 2.7)
     letter_opener (1.8.1)
       launchy (>= 2.2, < 3)
-    libv8-node (16.10.0.0)
     libv8-node (16.10.0.0-arm64-darwin)
     libv8-node (16.10.0.0-x86_64-darwin)
     libv8-node (16.10.0.0-x86_64-linux)
@@ -296,7 +295,6 @@ GEM
     mime-types-data (3.2022.0105)
     mini_magick (4.11.0)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.0)
     mini_racer (0.6.3)
       libv8-node (~> 16.10.0.0)
     minitest (5.16.3)
@@ -331,9 +329,6 @@ GEM
       net-protocol
       timeout
     nio4r (2.5.8)
-    nokogiri (1.13.8)
-      mini_portile2 (~> 2.8.0)
-      racc (~> 1.4)
     nokogiri (1.13.8-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.13.8-x86_64-darwin)
@@ -611,7 +606,6 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
-  ruby
   x86_64-darwin-20
   x86_64-darwin-21
   x86_64-linux
