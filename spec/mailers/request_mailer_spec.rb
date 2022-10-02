@@ -14,7 +14,7 @@ RSpec.describe RequestMailer, type: :mailer do
 
     it "should be sent to the partner main email with the correct subject line" do
       expect(subject.to).to eq([request.partner.email])
-      expect(subject.from).to eq(['info@humanessentials.app'])
+      expect(subject.from).to eq(['no-reply@humanessentials.app'])
       expect(subject.subject).to eq("Your essentials request (##{request.id}) has been canceled.")
     end
   end

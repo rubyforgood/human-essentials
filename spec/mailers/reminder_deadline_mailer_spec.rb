@@ -18,7 +18,7 @@ describe ReminderDeadlineMailer, type: :job do
     end
 
     it 'renders the sender email' do
-      expect(subject.from).to eq(["info@humanessentials.app"])
+      expect(subject.from).to eq(["no-reply@humanessentials.app"])
     end
 
     it 'renders the body' do
