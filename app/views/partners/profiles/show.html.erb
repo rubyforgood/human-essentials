@@ -34,6 +34,9 @@
               <%= render partial: "partners/profiles/show/#{partial}", locals: { partner: current_partner }%>
             </div>
           <% end %>
+          <div class="col-6">
+            <%= render partial: "partners/profiles/show/partner_settings", locals: { partner: current_partner }%>
+          </div>
         </div>
       </div>
     </div>

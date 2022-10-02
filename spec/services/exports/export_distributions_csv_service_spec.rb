@@ -69,7 +69,8 @@ describe Exports::ExportDistributionsCSVService do
         "Total Value",
         "Delivery Method",
         "State",
-        "Agency Representative"
+        "Agency Representative",
+        "Comments"
       ] + expected_item_headers
     end
 
@@ -91,7 +92,8 @@ describe Exports::ExportDistributionsCSVService do
           distribution.cents_to_dollar(distribution.line_items.total_value),
           distribution.delivery_method,
           distribution.state,
-          distribution.agency_rep
+          distribution.agency_rep,
+          distribution.comment
         ]
 
         row += total_item_quantity
