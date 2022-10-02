@@ -1,8 +1,9 @@
 class PartnerMailer < ApplicationMailer
-  default from: "info@humanessentials.app"
+  default from: "no-reply@humanessentials.app"
 
   def recertification_request(partner:)
     @partner = partner
+    @organization = partner.organization
 
     mail to: partner.email, subject: "[Action Required] Please Update Your Agency Information"
   end
