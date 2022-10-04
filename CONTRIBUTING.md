@@ -24,7 +24,7 @@ If you are so inclined, you can open a draft PR as you continue to work on it.
 1. Add a test for your change. If you are adding functionality or fixing a  bug, you should add a test!
 
 1. Run linters and fix any linting errors they brings up.  
-   - (from the repo root) `./bin/git_hooks/lint`
+   - `rubocop -a`
 
 1. Push to your branch/fork and submit a pull request. Include the issue number (ex. `Resolves #1`) in the PR description. This will ensure the issue gets closed automatically when the pull request gets merged.
 
@@ -35,7 +35,7 @@ Please feel free to contribute! While we welcome all contributions to this app, 
 To contribute, do these things:
 
  * **Identify an issue** you want to work on that is not currently assigned to anyone
- * **Assign it** to yourself (so that no one else works on it while you are)
+ * **Assign it** or have it assigned to yourself (so that no one else works on it while you are)
  * (If not already a Contributor, fork the repo first)
  * **Checkout a new issue branch** -- there's no absolute requirements on this, but we encourage the branch name format `XXX-brief-description-of-feature` where `XXX` is the issue number.
  * **Do the work** -- discuss any questions on the Issues as needed (we try to be pretty good about answering questions!)
