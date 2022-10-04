@@ -1,10 +1,12 @@
 module Exports
   class ExportDistributionsCSVService
-    def initialize(distribution_ids:)
+    def initialize(distribution_ids:, item_id:)
       # Use a where lookup so that I can eager load all the resources needed
       # rather than depending on external code to do it for me. This makes
       # this code more self contained and efficient!
       @distributions = Distribution.includes(:partner, :storage_location, line_items: [:item]).where(id: distribution_ids).order('issued_at DESC')
+      # if filter by item has been selected
+      @filtered_item_id = item_id
     end
 
     def generate_csv
@@ -64,7 +66,11 @@ module Exports
           distribution.storage_location.name
         },
         "Total Items" => ->(distribution) {
-          distribution.line_items.total
+          if @filtered_item_id.presence 
+            distribution.line_items.find_by(item_id: @filtered_item_id).quantity
+          else
+            distribution.line_items.total
+          end
         },
         "Total Value" => ->(distribution) {
           distribution.cents_to_dollar(distribution.line_items.total_value)
