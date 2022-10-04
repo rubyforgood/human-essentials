@@ -20,8 +20,7 @@ Human Essentials has over 200 registered banks across the United States at **no 
 
 
 
-
-## 🎉 Human Essentials is recognized by the United Nation's [Digital Public Good](https://digitalpublicgoods.net/registry/) initiative
+ ## 🎉 The [Digital Public Goods Alliance](https://digitalpublicgoods.net/registry/) recognizes Human Essentials as a digital public good (DPG)
 
 <p align="center">
 <a href="https://digitalpublicgoods.net">
@@ -29,7 +28,7 @@ Human Essentials has over 200 registered banks across the United States at **no 
 </a>
 </p>
 
-#### This project supports the following sustainable development goals:
+#### This project supports the following Sustainable Development Goals:
 * [SDG 1](https://sdgs.un.org/goals/goal1) - End poverty in all its forms everywhere
 * [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
 * [SDG 10](https://sdgs.un.org/goals/goal10) - Reduce inequality within and among countries
@@ -60,10 +59,11 @@ Human Essentials has over 200 registered banks across the United States at **no 
 
 ## Use as an Organization or Contribute as an Individual/Team to this Project
 
-### [NGO Adoption Info](ngo.md)
-### [Skills Based Volunteering Info](sbv.md)
+### [NGO Adoption Info](ngo.md) - information about how to use this DPG
+### [Skills Based Volunteering Info](sbv.md) - information about how to volunteer
 
 ---
+
 
 ## 👋 Welcome Contributors!
 
