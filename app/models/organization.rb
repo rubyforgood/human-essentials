@@ -118,7 +118,7 @@ class Organization < ApplicationRecord
 
   has_one_attached :logo
 
-  accepts_nested_attributes_for :users
+  accepts_nested_attributes_for :users, :account_request
 
   include Geocodable
 
