@@ -65,7 +65,7 @@ module Exports
         "Source Inventory" => ->(distribution) {
           distribution.storage_location.name
         },
-        "Total Items" => ->(distribution) {
+        "Total number of Items" => ->(distribution) {
           # filter the line items by item id (for selected item filter) to
           # get the number of items
           distribution.line_items.find_by(item_id: @filtered_item_id)&.quantity ||

@@ -67,7 +67,7 @@ describe Exports::ExportDistributionsCSVService do
         "Partner",
         "Date of Distribution",
         "Source Inventory",
-        "Total Items",
+        "Total number of Items",
         "Total Value",
         "Delivery Method",
         "State",
