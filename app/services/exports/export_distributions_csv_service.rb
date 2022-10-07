@@ -66,11 +66,10 @@ module Exports
           distribution.storage_location.name
         },
         "Total Items" => ->(distribution) {
-          if @filtered_item_id.presence 
-            distribution.line_items.find_by(item_id: @filtered_item_id).quantity
-          else
+          # filter the line items by item id (for selected item filter) to
+          # get the number of items
+          distribution.line_items.find_by(item_id: @filtered_item_id)&.quantity ||
             distribution.line_items.total
-          end
         },
         "Total Value" => ->(distribution) {
           distribution.cents_to_dollar(distribution.line_items.total_value)

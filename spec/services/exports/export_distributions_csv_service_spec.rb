@@ -1,6 +1,6 @@
 describe Exports::ExportDistributionsCSVService do
   describe '#generate_csv_data' do
-    subject { described_class.new(distribution_ids: distribution_ids).generate_csv_data }
+    subject { described_class.new(distribution_ids: distribution_ids, item_id: item_id).generate_csv_data }
     let(:distribution_ids) { distributions.map(&:id) }
 
     let(:duplicate_item) do
@@ -48,6 +48,8 @@ describe Exports::ExportDistributionsCSVService do
       end
     end
 
+    let(:item_id) { distributions.flatten.first.line_items.first.item_id }
+
     let(:total_item_quantities) do
       template = item_names.index_with(0)
 
@@ -88,7 +90,8 @@ describe Exports::ExportDistributionsCSVService do
           distribution.partner.name,
           distribution.issued_at.strftime("%m/%d/%Y"),
           distribution.storage_location.name,
-          distribution.line_items.total,
+          distribution.line_items.find_by(item_id: item_id)&.quantity ||
+            distribution.line_items.total,
           distribution.cents_to_dollar(distribution.line_items.total_value),
           distribution.delivery_method,
           distribution.state,
