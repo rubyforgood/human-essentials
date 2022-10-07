@@ -8,6 +8,10 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
 [![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
 
+## 🎃 Hacktoberfest
+
+We absolutely love [Hacktoberfest](https://hacktoberfest.com/) and love how it exposes our amazing project to so many new contributors but with so many new people helping out in a condensed time period it can get a little hectic for the core team to keep up. We are going to do our best to respond to comments, issues, and pull requests within a couple days but given the busy nature of the month please wait at least a week before reaching out. You are welcome to drop in to the team office hours which are every Sunday at 10:00AM ET. The office zoom room for the office hours will be posted in the #human-essentials channel in the Ruby for Good slack.
+
 ## 💖 Mission
 
 Human Essentials is an inventory management system that was built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and later adapted to meet the need of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other means of intaking human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
@@ -17,6 +21,53 @@ Human Essentials is an inventory management system that was built to address the
 Human Essentials has over 200 registered banks across the United States at **no cost to them**. It is currently helping over **3 million children** receive diapers and over **400k period supply recipients** receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous of non-profit organizations that distribute essential products to people.
 
 **We are proud of our achievements up to date but there is much more to do! This is where you come in...**
+
+
+
+ ## 🎉 The [Digital Public Goods Alliance](https://digitalpublicgoods.net/registry/) recognizes Human Essentials as a digital public good (DPG)
+
+<p align="center">
+<a href="https://digitalpublicgoods.net">
+<img src="https://user-images.githubusercontent.com/667909/181150972-e59a77ab-b657-4893-aef9-d3df1384a506.png" alt="DPG Approved" height="40">
+</a>
+</p>
+
+#### This project supports the following Sustainable Development Goals:
+* [SDG 1](https://sdgs.un.org/goals/goal1) - End poverty in all its forms everywhere
+* [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
+* [SDG 10](https://sdgs.un.org/goals/goal10) - Reduce inequality within and among countries
+
+---
+
+
+<p align="center">
+<h2 align="center">GitHub Stats at a Glance</h2>
+<a href="https://github.com/rubyforgood/human-essentials/graphs/contributors" alt="Contributors"> <img src="https://img.shields.io/github/contributors/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/issues" alt="Contributors"> <img src="https://img.shields.io/github/issues-closed/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/count/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/top/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/ alt="Size"><img src="https://img.shields.io/github/repo-size/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/pulls" alt="Pull Requests"><img src="https://img.shields.io/github/issues-pr-closed-raw/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/ alt="LICENSE"><img src="https://badgen.net/github/license/rubyforgood/human-essentials?icon=github&color=green" /></a>
+<a href="https://github.com/badges/shields/pulse" alt="Activity"><img src="https://img.shields.io/github/commit-activity/m/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Last Commit"><img src="https://img.shields.io/github/last-commit/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Total Commits"><img src="https://badgen.net/github/commits/rubyforgood/human-essentials/main?icon=github&color=green" /></a>
+</p>
+<p align="center">
+<a href="https://github.com/rubyforgood/human-essentials/ alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/ alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/ alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
+</p>
+
+---
+
+## Use as an Organization or Contribute as an Individual/Team to this Project
+
+### [NGO Adoption Info](ngo.md) - information about how to use this DPG
+### [Skills Based Volunteering Info](sbv.md) - information about how to volunteer
+
+---
+
 
 ## 👋 Welcome Contributors!
 
@@ -79,7 +130,7 @@ You must install postgres and run the database locally. Instructions differ depe
 
 Follow one of these guides to install postgres:
 This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test` respectively. This should all be handled with `rails db:setup`.
-Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing file called [`database.yml.example`](config/database.yml.example) as an example and just change the credentials.
+Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) as an example and just change the credentials.
 
 - MacOSX - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
 - Ubuntu - TODO
