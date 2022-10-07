@@ -1,6 +1,6 @@
 module Exports
   class ExportDistributionsCSVService
-    def initialize(distribution_ids:, item_id:)
+    def initialize(distribution_ids:, item_id: nil)
       # Use a where lookup so that I can eager load all the resources needed
       # rather than depending on external code to do it for me. This makes
       # this code more self contained and efficient!
