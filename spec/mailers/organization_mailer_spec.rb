@@ -21,7 +21,7 @@ RSpec.describe OrganizationMailer, type: :mailer do
 
     it "should be sent to the partner main email with the correct subject line" do
       expect(subject.to).to contain_exactly(organization.email)
-      expect(subject.from).to contain_exactly('info@humanessentials.app')
+      expect(subject.from).to contain_exactly('no-reply@humanessentials.app')
       expect(subject.subject).to eq("[Action Required] Approval requested for #{partner.name}")
     end
   end
