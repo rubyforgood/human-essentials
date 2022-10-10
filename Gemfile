@@ -32,7 +32,7 @@ gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.1"
+gem "strong_migrations", "1.3.2"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
