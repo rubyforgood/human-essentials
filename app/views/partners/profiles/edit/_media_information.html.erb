@@ -12,11 +12,6 @@
             <%= form.input :twitter, label: "Twitter", class: "form-control", wrapper: :input_group %>
             <%= form.input :instagram, label: "Instagram", class: "form-control", wrapper: :input_group %>
             <%= form.input :no_social_media_presence, label: "No Social Media Presence", as: :boolean, class: "form-control", wrapper: :input_group %>
-            <% partner.errors.each do |error| %>
-              <% if error.message == "You must either provide a social media site or indicate that you have no social media presence" %>
-                <div class="text-red-600"><%= error.message %></div>
-              <% end %>
-            <% end %>
           </div>
         </div>
       </div>
