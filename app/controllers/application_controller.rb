@@ -20,7 +20,13 @@ class ApplicationController < ActionController::Base
   helper_method :current_organization
 
   def current_role
-    session[:current_role] ? Role.find(session[:current_role]) : current_user&.roles&.first
+    if session[:current_role]
+      Role.find(session[:current_role])
+    else
+      role = UsersRole.current_role_for(current_user)
+      session[:current_role] = role&.id
+      role
+    end
   end
 
   def organization_url_options(options = {})
