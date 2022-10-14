@@ -3,7 +3,7 @@ module KitsHelper
     options = {class: "deactivate-kit-button"}
     span_options = {}
     unless kit.can_deactivate?
-      msg = "Cannot deactivate since kit has current allocations - please deallocate all storage locations first!"
+      msg = "Can't deactivate while a storage location still has kits."
       options[:enabled] = false
       span_options = {title: msg, class: "tooltip-target"}
     end
