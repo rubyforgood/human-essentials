@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.3"
+gem "pg", "~> 1.4.4"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -144,7 +144,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 5.1.2"
+  gem "rspec-rails", "~> 6.0.0"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
