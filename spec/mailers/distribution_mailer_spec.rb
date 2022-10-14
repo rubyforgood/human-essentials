@@ -14,7 +14,7 @@ RSpec.describe DistributionMailer, type: :mailer do
     it "renders the body with organization's email text" do
       expect(mail.body.encoded).to match("Default email text example")
       expect(mail.html_part.body).to match(%(From: <a href="mailto:me@org.com">me@org.com</a>))
-      expect(mail.from).to eq(["info@humanessentials.app"])
+      expect(mail.from).to eq(["no-reply@humanessentials.app"])
       expect(mail.subject).to eq("test subject from DEFAULT")
     end
 
@@ -72,7 +72,7 @@ RSpec.describe DistributionMailer, type: :mailer do
         html = html_body(mail)
         expect(html).to match("This is a friendly reminder")
         expect(html).to match(%(For more information: <a href="mailto:me@org.com">me@org.com</a>))
-        expect(mail.from).to eq(["info@humanessentials.app"])
+        expect(mail.from).to eq(["no-reply@humanessentials.app"])
         expect(mail.subject).to eq("PARTNER Distribution Reminder")
       end
     end
@@ -82,7 +82,7 @@ RSpec.describe DistributionMailer, type: :mailer do
         text = text_body(mail)
         expect(text).to match("This is a friendly reminder")
         expect(text).to match(%(For more information: me@org.com))
-        expect(mail.from).to eq(["info@humanessentials.app"])
+        expect(mail.from).to eq(["no-reply@humanessentials.app"])
         expect(mail.subject).to eq("PARTNER Distribution Reminder")
       end
     end
