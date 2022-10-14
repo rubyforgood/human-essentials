@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.3"
+gem "pg", "~> 1.4.4"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.1"
+gem "strong_migrations", "1.3.2"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -146,7 +146,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 5.1.2"
+  gem "rspec-rails", "~> 6.0.0"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
@@ -194,7 +194,7 @@ group :test do
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.2'
   # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.1'
+  gem 'webdrivers', '~> 5.2'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
 end
