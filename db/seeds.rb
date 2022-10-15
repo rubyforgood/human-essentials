@@ -133,15 +133,20 @@ end
   { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
   { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
   { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org }
-].each do |user|
-  User.create(
-    email: user[:email],
+].each do |user_data|
+  user = User.create(
+    email: user_data[:email],
     password: 'password!',
-    password_confirmation: 'password!',
-    organization_admin: user[:organization_admin],
-    super_admin: user[:super_admin],
-    organization: user[:organization]
+    password_confirmation: 'password!'
   )
+
+  if user_data[:organization_admin]
+    user.add_role(:org_admin, user_data[:organization])
+  end
+
+  if user_data[:super_admin]
+    user.add_role(:super_admin)
+  end
 end
 
 # ----------------------------------------------------------------------------
@@ -239,25 +244,27 @@ note = [
                                         status_in_diaper_base: partner_option[:status]
                                       })
 
-  ::User.create!(
+  user = ::User.create!(
     name: Faker::Name.name,
     password: "password!",
     password_confirmation: "password!",
     email: p.email,
-    partner: partner,
     invitation_sent_at: Time.utc(2021, 9, 8, 12, 43, 4),
     last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
   )
 
-  ::User.create!(
+  user.add_role(:partner, partner)
+
+  user_2 = ::User.create!(
     name: Faker::Name.name,
     password: "password!",
     password_confirmation: "password!",
     email: Faker::Internet.email,
-    partner: partner,
     invitation_sent_at: Time.utc(2021, 9, 16, 12, 43, 4),
     last_sign_in_at: Time.utc(2021, 9, 17, 11, 34, 4)
   )
+
+  user_2.add_role(:partner, partner)
 
   #
   # Skip creating records that they would have created after
@@ -457,7 +464,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   adjustment = organization.adjustments.create!(
     comment: "Starting inventory",
     storage_location: storage_location,
-    user: organization.users.find_by(organization_admin: true)
+    user: User.with_role(:org_admin, organization).first
   )
 
   LineItem.create!(quantity: quantity, item: item, itemizable: adjustment)

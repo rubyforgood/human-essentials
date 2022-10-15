@@ -228,6 +228,10 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
+def current_role
+  current_user.roles.first
+end
+
 def html_body(mail)
   mail.body.parts.find { |p| p.content_type =~ /html/ }.body.encoded
 end

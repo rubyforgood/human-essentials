@@ -39,13 +39,6 @@ RSpec.describe User, type: :model do
     expect(build(:user)).to be_valid
   end
 
-  context "Associations" do
-    it {
-      expect(described_class.reflect_on_association(:organization).macro)
-        .to eq(:belongs_to)
-    }
-  end
-
   context "Validations >" do
     it "requires a name" do
       expect(build(:user, name: nil)).not_to be_valid
@@ -106,9 +99,9 @@ RSpec.describe User, type: :model do
     end
 
     it "#kind" do
-      expect(build(:super_admin).kind).to eq("super")
-      expect(build(:organization_admin).kind).to eq("admin")
-      expect(build(:user).kind).to eq("normal")
+      expect(create(:super_admin).kind).to eq("super")
+      expect(create(:organization_admin).kind).to eq("admin")
+      expect(create(:user).kind).to eq("normal")
     end
 
     it "#reinvitable?" do

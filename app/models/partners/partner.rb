@@ -79,9 +79,9 @@
 module Partners
   class Partner < Base
     self.table_name = "partner_profiles"
+    resourcify
 
-    has_one :primary_user, -> { order('created_at ASC') }, class_name: '::User', inverse_of: :partner
-    has_many :users, class_name: '::User', dependent: :destroy
+    has_many :users, through: :roles, class_name: '::User', dependent: :destroy
     has_many :requests, dependent: :destroy
     has_many :families, dependent: :destroy
     has_many :children, through: :families
@@ -147,6 +147,10 @@ module Partners
       agency_distribution_information
       attached_documents
     ].freeze
+
+    def primary_user
+      users.order('created_at ASC').first
+    end
 
     def verified?
       partner_status == VERIFIED_STATUS
