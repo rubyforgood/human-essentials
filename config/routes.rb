@@ -14,16 +14,16 @@ Rails.application.routes.draw do
   }
 
   if Rails.env.production?
-    authenticate :user, lambda { |u| u.super_admin? } do
+    authenticate :user, lambda { |u| u.has_role?(Role::SUPER_ADMIN) } do
       mount Coverband::Reporters::Web.new, at: '/coverage'
     end
   end
 
   #
   # Mount web interface to see delayed job status and queue length.
-  # Visible only to logged in users with the `super_admin` flag set to true
+  # Visible only to logged in users with the `super_admin` role
   #
-  authenticated :user, ->(user) { user.super_admin? } do
+  authenticated :user, ->(user) { user.has_role?(Role::SUPER_ADMIN) } do
     mount DelayedJobWeb, at: "/delayed_job"
   end
 
@@ -37,9 +37,7 @@ Rails.application.routes.draw do
     resources :requests, only: [:show, :new, :index, :create]
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
-    resources :users, only: [:index, :new, :create, :edit, :update] do
-      get :switch_to_bank_role, on: :collection
-    end
+    resources :users, only: [:index, :new, :create, :edit, :update]
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
 
@@ -74,7 +72,7 @@ Rails.application.routes.draw do
 
   scope path: ":organization_id" do
     resources :users do
-      get :switch_to_partner_role, on: :collection
+      get :switch_to_role, on: :collection
     end
 
     # Users that are organization admins can manage the organization itself
