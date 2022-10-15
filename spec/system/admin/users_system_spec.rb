@@ -5,9 +5,9 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     end
 
     it "creates an user" do
-      visit admin_users_path
+      visit admin_users_path(organization_id: @organization.id)
       click_link "Invite a new user"
-      find('#user_organization_id option:first-of-type').select_option
+      find('#user_organization_id option:last-of-type').select_option
       fill_in "user_name", with: "TestUser"
       fill_in "user_email", with: "testuser@example.com"
       fill_in "user_password", with: "password!"

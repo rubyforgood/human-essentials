@@ -35,9 +35,20 @@
 #
 
 class User < ApplicationRecord
+  rolify
   include Discard::Model
-  belongs_to :organization, optional: true
-  belongs_to :partner, class_name: "Partners::Partner", optional: true
+
+  has_one :organization_role_join, class_name: "UsersRole", dependent: :destroy
+  has_one :organization_role, through: :organization_role_join, class_name: "Role", source: :role
+  has_one :organization, through: :organization_role, source: :resource, source_type: "Organization"
+  has_many :organizations, through: :roles, source: :resource, source_type: "Organization"
+
+  has_one :partner_role_join, class_name: "UsersRole", dependent: :destroy
+  has_one :partner_role, through: :partner_role_join, class_name: "Role", source: :role
+  has_one :partner, through: :partner_role, source: :resource, source_type: "Partners::Partner"
+  has_many :partners, through: :roles, source: :resource, source_type: "Partners::Partner"
+
+  attr_accessor :organization_admin # for creation / update time
 
   # :invitable is from the devise_invitable gem
   # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
@@ -51,8 +62,8 @@ class User < ApplicationRecord
 
   default_scope -> { kept }
   scope :alphabetized, -> { order(discarded_at: :desc, name: :asc) }
-  scope :partner_users, -> { where.not(partner_id: nil) }
-  scope :org_users, -> { where.not(organization_id: nil) }
+  scope :partner_users, -> { with_role(Role::PARTNER, :any) }
+  scope :org_users, -> { with_role(Role::ORG_USER, :any) }
 
   has_many :requests, class_name: "Partners::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_partner_requests, class_name: "Partners::Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
@@ -71,10 +82,22 @@ class User < ApplicationRecord
   end
 
   def kind
-    return "super" if super_admin?
-    return "admin" if organization_admin?
+    return "super" if has_role?(Role::SUPER_ADMIN)
+    return "admin" if has_role?(Role::ORG_ADMIN, organization)
+    return "normal" if has_role?(Role::ORG_USER, organization)
+    return "partner" if has_role?(Role::PARTNER, partner)
 
     "normal"
+  end
+
+  def switchable_roles
+    all_roles = roles.to_a.group_by(&:resource_id)
+    all_roles.values.each do |role_list|
+      if role_list.any? { |r| r.name == Role::ORG_ADMIN.to_s }
+        role_list.delete_if { |r| r.name == Role::ORG_USER.to_s }
+      end
+    end
+    all_roles.values.flatten
   end
 
   def flipper_id

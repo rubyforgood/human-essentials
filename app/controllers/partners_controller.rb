@@ -108,8 +108,9 @@ class PartnersController < ApplicationController
 
   def invite_partner_user
     partner = current_organization.partners.find(params[:partner])
-    partner_user_invite_service = PartnerUserInviteService.new(partner: partner, email: params[:email])
-    partner_user_invite_service.call
+    UserInviteService.invite(email: params[:email],
+      roles: [Role::PARTNER],
+      resource: partner)
 
     redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"
   rescue StandardError => e

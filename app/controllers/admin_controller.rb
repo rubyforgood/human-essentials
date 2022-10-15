@@ -3,7 +3,7 @@ class AdminController < ApplicationController
   before_action :require_admin
 
   def require_admin
-    verboten! unless current_user.super_admin?
+    verboten! unless current_user.has_role?(Role::SUPER_ADMIN)
   end
 
   def dashboard
