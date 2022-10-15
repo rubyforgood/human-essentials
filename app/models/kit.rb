@@ -30,6 +30,21 @@ class Kit < ApplicationRecord
 
   validate :at_least_one_item
 
+  # @return [Boolean]
+  def can_deactivate?
+    inventory_items.where('quantity > 0').none?
+  end
+
+  def deactivate
+    update!(active: false)
+    item.update!(active: false)
+  end
+
+  def reactivate
+    update!(active: true)
+    item.update!(active: true)
+  end
+
   private
 
   def at_least_one_item

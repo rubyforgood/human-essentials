@@ -4,6 +4,7 @@
   <th>Name</th>
   <th>Items</th>
   <th>Allocations</th>
+  <th>Actions</th>
 </tr>
 </thead>
 <tbody>
@@ -36,7 +37,20 @@
           <%= edit_button_to allocations_kit_path(organization_id: current_organization.id, id: kit.id), { text: "Modify Allocation" } %>
         </div>
       </td>
+      <td>
+        <% if kit.active %>
+          <%= deactivate_kit_button(kit) %>
+        <% else %>
+          <%= reactivate_button_to reactivate_kit_path(kit),
+                                   { confirm: confirm_reactivate_msg(kit.name),
+                                     class: 'reactivate-kit-button',
+                                     size: 'm' } %>
+        <% end %>
+      </td>
     </tr>
   <% end %>
 </tbody>
 </table>
+<script>
+  $('.tooltip-target').tooltip();
+</script>

@@ -150,6 +150,8 @@ Rails.application.routes.draw do
       member do
         get :allocations
         post :allocate
+        put :deactivate
+        put :reactivate
       end
     end
 
