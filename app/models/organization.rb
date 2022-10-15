@@ -30,6 +30,8 @@
 #
 
 class Organization < ApplicationRecord
+  resourcify
+
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
 
   include Deadlinable
@@ -60,7 +62,7 @@ class Organization < ApplicationRecord
     has_many :inventory_items, through: :storage_locations
     has_many :kits
     has_many :transfers
-    has_many :users
+    has_many :users, through: :roles
     has_many :vendors
   end
 
@@ -137,12 +139,6 @@ class Organization < ApplicationRecord
       url: account_request.organization_website,
       email: account_request.email,
       account_request_id: account_request.id
-    )
-
-    users.build(
-      organization_admin: true,
-      email: account_request.email,
-      name: account_request.name
     )
 
     self
@@ -258,6 +254,6 @@ class Organization < ApplicationRecord
   end
 
   def get_admin_email
-    User.where(organization_id: id, organization_admin: true).sample.email
+    User.with_role(Role::ORG_ADMIN, self).sample.email
   end
 end
