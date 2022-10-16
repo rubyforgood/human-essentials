@@ -9,10 +9,12 @@ module Clockwork
     puts "Running #{job}"
   end
 
-  every(1.day, "Periodically reset seed data in staging", at: "00:00", if: -> { ENV["RAILS_ENV"] == "staging" }) do
-    rake = Rake.application
-    rake.init
-    rake.load_rakefile
-    rake["reset_demo"].invoke
+  every(1.day, at: '00:00', "Periodically reset seed data in staging") do
+    unless ENV['RAILS_ENV'] == 'staging'
+      rake = Rake.application
+      rake.init
+      rake.load_rakefile
+      rake["reset_demo"].invoke
+    end
   end
 end
