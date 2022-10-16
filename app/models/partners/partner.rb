@@ -94,7 +94,7 @@ module Partners
     has_one_attached :proof_of_form_990
     has_many_attached :documents
 
-    validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :verified_and_has_no_social_media?
+    validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?
 
     self.ignored_columns = %w[
       evidence_based_description
@@ -183,8 +183,8 @@ module Partners
 
     private
 
-    def verified_and_has_no_social_media?
-      website.blank? && twitter.blank? && facebook.blank? && instagram.blank? && verified?
+    def has_no_social_media?
+      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
     end
 
     def families_served_count
