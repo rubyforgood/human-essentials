@@ -30,7 +30,7 @@
                 <%= f.input_field :distribution_quantity, class: "form-control" %>
               <% end %>
 
-              <% if current_user.organization_admin? %>
+              <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
                 <%= f.input :name, label: "On hand minimum quantity", wrapper: :input_group do %>
                   <%= f.input_field :on_hand_minimum_quantity, input_html: {value: 0}, class: "form-control" %>
                 <% end %>

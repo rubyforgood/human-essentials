@@ -132,7 +132,7 @@ RSpec.describe "Partners", type: :request do
         context 'when the partner has no users' do
           # see the deletable? method which is tested separately in the partner model spec
           it 'shows the delete button' do
-            partner.profile.users.delete_all
+            partner.profile.users.each(&:destroy)
             expect(subject.body).to include('Delete')
           end
         end
@@ -281,16 +281,14 @@ RSpec.describe "Partners", type: :request do
     subject { -> { post invite_partner_user_partner_path(default_params.merge(id: partner.id, partner: partner.id, email: email)) } }
     let(:partner) { create(:partner, organization: @organization) }
     let(:email) { Faker::Internet.email }
-    let(:fake_partner_user_invite_service) { instance_double(PartnerUserInviteService, call: -> {}) }
-
-    before do
-      allow(PartnerUserInviteService).to receive(:new).with(partner: partner, email: email).and_return(fake_partner_user_invite_service)
-    end
 
     context 'when the invite successfully' do
+      before do
+        allow(UserInviteService).to receive(:invite)
+      end
       it "send the invite" do
         subject.call
-        expect(fake_partner_user_invite_service).to have_received(:call)
+        expect(UserInviteService).to have_received(:invite)
         expect(response).to redirect_to(partner_path(partner))
         expect(flash[:notice]).to eq("We have invited #{email} to #{partner.name}!")
       end
@@ -299,7 +297,7 @@ RSpec.describe "Partners", type: :request do
     context 'when there is an error in invite' do
       let(:error_message) { 'Error message' }
       before do
-        allow(PartnerUserInviteService).to receive(:new).and_raise(StandardError.new(error_message))
+        allow(UserInviteService).to receive(:invite).and_raise(StandardError.new(error_message))
       end
 
       it 'redirect to partner url with error message' do

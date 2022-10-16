@@ -19,5 +19,11 @@ FactoryBot.define do
     after(:build) do |instance, _|
       instance.line_items << create(:line_item)
     end
+
+    trait :with_item do
+      after(:create) do |instance, _|
+        create(:item, kit: instance)
+      end
+    end
   end
 end
