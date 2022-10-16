@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   before_action :swaddled
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_paper_trail_whodunnit
+  helper_method :current_role
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
@@ -17,6 +18,13 @@ class ApplicationController < ActionController::Base
     @current_organization ||= Organization.find_by(short_name: params[:organization_id]) || current_user&.organization
   end
   helper_method :current_organization
+
+  def current_role
+    role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+    session[:current_role] = role&.id
+
+    role
+  end
 
   def organization_url_options(options = {})
     options.merge(organization_id: current_organization.to_param)
@@ -32,22 +40,38 @@ class ApplicationController < ActionController::Base
 
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
-    elsif current_user && !current_user.super_admin? && current_user.organization.present?
+    elsif current_role.name == Role::ORG_ADMIN.to_s
       options[:organization_id] = current_user.organization.to_param
-    elsif current_user&.super_admin?
+    elsif current_role.name == Role::SUPER_ADMIN.to_s
       # FIXME: This *might* not be the best way to approach this...
       options[:organization_id] = "admin"
     end
     options
   end
 
+  def dashboard_path_from_current_role
+    if current_role.name == Role::SUPER_ADMIN.to_s
+      admin_dashboard_path
+    elsif current_role.name == Role::PARTNER.to_s
+      partners_dashboard_path
+    elsif current_user.organization
+      dashboard_path(current_user.organization)
+    else
+      root_path
+    end
+  end
+
   def authorize_user
     return unless params[:controller] # part of omniauth controller flow
-    verboten! unless params[:controller].include?("devise") || current_user.super_admin? || current_organization.id == current_user.organization_id
+    verboten! unless params[:controller].include?("devise") ||
+      current_user.has_role?(Role::SUPER_ADMIN) ||
+      current_user.has_role?(Role::ORG_USER, current_organization) ||
+      current_user.has_role?(Role::ORG_ADMIN, current_organization)
   end
 
   def authorize_admin
-    verboten! unless current_user.super_admin? || (current_user.organization_admin? && current_organization.id == current_user.organization_id)
+    verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
+      current_user.has_role?(Role::ORG_ADMIN, current_organization)
   end
 
   def log_active_user

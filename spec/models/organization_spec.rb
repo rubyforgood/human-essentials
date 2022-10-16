@@ -48,6 +48,26 @@ RSpec.describe Organization, type: :model do
   context "Associations >" do
     it { should have_many(:item_categories) }
     it { should belong_to(:ndbn_member).class_name("NDBNMember").optional }
+
+    describe 'users' do
+      subject { organization.users }
+      let(:organization) { create(:organization) }
+
+      context 'when a organizaton has a user that has two roles' do
+        let(:user) { create(:user) }
+        before do
+          user.add_role(:admin, organization)
+          user.add_role(:volunteer, organization)
+        end
+
+       it 'should returns users without duplications' do
+          expect(subject).to eq([user])
+        end
+      end
+    end
+
+    it { is_expected.to have_many(:users).through(:roles) }
+
     describe "barcode_items" do
       before do
         BarcodeItem.delete_all
@@ -156,14 +176,6 @@ RSpec.describe Organization, type: :model do
         url: account_request.organization_website,
         email: account_request.email,
         account_request_id: account_request.id
-      }.stringify_keys)
-    end
-
-    it 'should build a admin user with the account request attributes' do
-      expect(subject.users.first.attributes).to include({
-        organization_admin: true,
-        email: account_request.email,
-        name: account_request.name
       }.stringify_keys)
     end
   end

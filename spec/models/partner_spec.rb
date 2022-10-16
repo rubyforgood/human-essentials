@@ -161,27 +161,31 @@ RSpec.describe Partner, type: :model do
   describe 'changing emails' do
     let(:partner) { create(:partner, status: :invited) }
     before do
-      allow(User).to receive(:invite!)
+      allow(UserInviteService).to receive(:invite)
     end
 
     [:invited, :awaiting_review, :recertification_required, :approved].each do |test_status|
-      it "should call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+      it "should call the UserInviteService.invite when the partner has status #{test_status} and the email is changed" do
         partner.status = test_status
         partner.email = "randomtest@email.com"
         partner.save!
-        expect(User).to have_received(:invite!).with(
-          {email: "randomtest@email.com", partner: partner.profile}
+        expect(UserInviteService).to have_received(:invite).with(
+          email: "randomtest@email.com",
+          roles: [Role::PARTNER],
+          resource: partner.profile
         )
       end
     end
 
     [:uninvited, :deactivated].each do |test_status|
-      it "should not call the PartnerUser.invite! when the partner has status #{test_status} and the email is changed" do
+      it "should not call the UserInviteService.invite when the partner has status #{test_status} and the email is changed" do
         partner.status = test_status
         partner.email = "randomtest@email.com"
         partner.save!
-        expect(User).not_to have_received(:invite!).with(
-          {email: "randomtest@email.com", partner: partner.profile}
+        expect(UserInviteService).not_to have_received(:invite).with(
+          email: "randomtest@email.com",
+          roles: [Role::PARTNER],
+          resource: partner.profile
         )
       end
     end
@@ -199,8 +203,8 @@ RSpec.describe Partner, type: :model do
     subject { partner.primary_partner_user }
     let(:partner) { create(:partner) }
 
-    it 'should return the asssociated primary User' do
-      partner_users = ::User.where(partner_id: partner.profile.id)
+    it 'should return the associated primary User' do
+      partner_users = ::User.with_role(Role::PARTNER, partner.profile)
       expect(partner_users).to include(subject)
     end
   end

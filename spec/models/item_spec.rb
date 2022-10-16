@@ -166,6 +166,16 @@ RSpec.describe Item, type: :model do
         expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
         expect(item).not_to be_active
       end
+
+      it 'deactivates the kit if it exists' do
+        kit = create(:kit)
+        item = create(:item, kit: kit)
+        create(:line_item, :purchase, item: item)
+        expect(kit).to be_active
+        expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
+        expect(item).not_to be_active
+        expect(kit).not_to be_active
+      end
     end
 
     describe "#reactivate!" do

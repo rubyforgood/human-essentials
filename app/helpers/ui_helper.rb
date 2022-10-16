@@ -143,6 +143,7 @@ module UiHelper
       properties[:data] ||= {}
       properties[:data].merge!(options[:data])
     end
+    properties[:title] = options[:title] if options[:title].present?
 
     # user sparingly.
     center = options[:center].present? ? "center-block" : ""

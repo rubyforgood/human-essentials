@@ -35,6 +35,9 @@
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= filter_text(label: "Filter By Kit Name", scope: :by_name, selected: @selected_filter_name) %>
                 </div>
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= filter_checkbox(label: "Show Inactive", scope: 'include_inactive_items', selected: @selected_filter_name) %>
+                </div>
               </div>
           </div>
           <div class="card-footer">
