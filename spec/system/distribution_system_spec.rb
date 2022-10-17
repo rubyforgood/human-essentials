@@ -386,6 +386,8 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save"
       end
 
+      expect(page).to have_content("Distribution Complete")
+
       @distribution = Distribution.last
       expect(@request.reload.distribution_id).to eq @distribution.id
       expect(@request.reload).to be_status_fulfilled

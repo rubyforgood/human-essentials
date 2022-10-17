@@ -560,6 +560,8 @@ GEM
     standard (1.5.0)
       rubocop (= 1.23.0)
       rubocop-performance (= 1.12.0)
+    stimulus-rails (1.1.0)
+      railties (>= 6.0.0)
     strong_migrations (1.3.2)
       activerecord (>= 5.2)
     strscan (3.0.4)
@@ -567,6 +569,10 @@ GEM
     tilt (2.0.10)
     timeout (0.3.0)
     ttfunk (1.7.0)
+    turbo-rails (1.1.1)
+      actionpack (>= 6.0.0)
+      activejob (>= 6.0.0)
+      railties (>= 6.0.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     uglifier (4.2.0)
@@ -676,6 +682,7 @@ DEPENDENCIES
   rails-controller-testing
   rails-erd
   recaptcha
+  redis (~> 4.0)
   rolify (~> 6.0)
   rspec-rails (~> 6.0.0)
   rspec-retry
@@ -688,7 +695,9 @@ DEPENDENCIES
   skylight
   sprockets (~> 4.1.1)
   standard (~> 1.0)
+  stimulus-rails
   strong_migrations (= 1.3.2)
+  turbo-rails
   uglifier (>= 1.3.0)
   web-console
   webdrivers (~> 5.2)
