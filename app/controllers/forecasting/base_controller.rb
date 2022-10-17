@@ -19,7 +19,7 @@ class Forecasting::BaseController < ApplicationController
       items << { name: item.name, data: dates.values }
     end
 
-    items.sort_by { |hsh| hsh[:name] }.to_json
+    items.sort_by { |hsh| hsh[:name] }
   end
 
   private

@@ -62,7 +62,7 @@ class Organization < ApplicationRecord
     has_many :inventory_items, through: :storage_locations
     has_many :kits
     has_many :transfers
-    has_many :users, through: :roles
+    has_many :users, -> { distinct }, through: :roles
     has_many :vendors
   end
 

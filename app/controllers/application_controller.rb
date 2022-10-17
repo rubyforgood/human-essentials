@@ -20,13 +20,10 @@ class ApplicationController < ActionController::Base
   helper_method :current_organization
 
   def current_role
-    if session[:current_role]
-      Role.find(session[:current_role])
-    else
-      role = UsersRole.current_role_for(current_user)
-      session[:current_role] = role&.id
-      role
-    end
+    role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+    session[:current_role] = role&.id
+
+    role
   end
 
   def organization_url_options(options = {})
@@ -91,6 +88,10 @@ class ApplicationController < ActionController::Base
 
   def last_request_logged_more_than_10_minutes_ago?
     current_user.last_request_at.utc < 10.minutes.ago.utc
+  end
+
+  def enable_turbo!
+    @turbo = true
   end
 
   def not_found!
