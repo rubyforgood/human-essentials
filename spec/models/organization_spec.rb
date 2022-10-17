@@ -60,7 +60,7 @@ RSpec.describe Organization, type: :model do
           user.add_role(:volunteer, organization)
         end
 
-       it 'should returns users without duplications' do
+        it 'should returns users without duplications' do
           expect(subject).to eq([user])
         end
       end
