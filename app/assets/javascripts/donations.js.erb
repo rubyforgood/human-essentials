@@ -79,6 +79,9 @@ $(document).on("change", product_drive_id, function(evt) {
       .filter(":selected")
       .text();
 
+    /**
+    * Handles the dynamic form of Donations
+    **/
     if (selection === product_drive_text) {
       $(product_drive_container_id).show();
       $(product_drive_participant_container_id).show();
