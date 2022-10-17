@@ -1,5 +1,5 @@
 class OrganizationMailer < ApplicationMailer
-  default from: "info@humanessentials.app"
+  default from: "no-reply@humanessentials.app"
 
   def partner_approval_request(organization:, partner:)
     @partner = partner

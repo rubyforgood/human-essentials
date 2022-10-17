@@ -102,7 +102,8 @@ RSpec.describe "Organizations", type: :request do
         expect(response).to redirect_to(organization_path)
       end
       it "demotes the user to user" do
-        expect { subject }.to change { admin_user.reload.organization_admin }.to be_falsey
+        subject
+        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
       end
     end
 

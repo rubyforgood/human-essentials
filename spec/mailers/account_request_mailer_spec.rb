@@ -16,8 +16,8 @@ RSpec.describe AccountRequestMailer, type: :mailer do
       expect(mail.to).to eq([account_request.email])
     end
 
-    it 'should be from info@humanessentials.app' do
-      expect(mail.from).to eq(['info@humanessentials.app'])
+    it 'should be from no-reply@humanessentials.app' do
+      expect(mail.from).to eq(['no-reply@humanessentials.app'])
     end
 
     it 'should have the correct subject' do
