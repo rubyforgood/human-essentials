@@ -67,7 +67,7 @@ describe Exports::ExportDistributionsCSVService do
         "Partner",
         "Date of Distribution",
         "Source Inventory",
-        "Total number of Items",
+        "Total Number of Items",
         "Total Value",
         "Delivery Method",
         "State",
@@ -90,8 +90,7 @@ describe Exports::ExportDistributionsCSVService do
           distribution.partner.name,
           distribution.issued_at.strftime("%m/%d/%Y"),
           distribution.storage_location.name,
-          distribution.line_items.find_by(item_id: item_id)&.quantity ||
-            distribution.line_items.total,
+          distribution.line_items.where(item_id: item_id).total,
           distribution.cents_to_dollar(distribution.line_items.total_value),
           distribution.delivery_method,
           distribution.state,
