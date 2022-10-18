@@ -65,11 +65,14 @@ module Exports
         "Source Inventory" => ->(distribution) {
           distribution.storage_location.name
         },
-        "Total number of Items" => ->(distribution) {
+        "Total Number of Items" => ->(distribution) {
           # filter the line items by item id (for selected item filter) to
           # get the number of items
-          distribution.line_items.find_by(item_id: @filtered_item_id)&.quantity ||
+          if @filtered_item_id
+            distribution.line_items.where(item_id: @filtered_item_id).total
+          else
             distribution.line_items.total
+          end
         },
         "Total Value" => ->(distribution) {
           distribution.cents_to_dollar(distribution.line_items.total_value)
