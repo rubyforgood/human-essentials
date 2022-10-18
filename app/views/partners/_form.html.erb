@@ -1,4 +1,4 @@
-<%= simple_form_for form, html: {class: 'form-horizontal'} do |f| %>
+<%= simple_form_for form, html: { class: 'form-horizontal' } do |f| %>
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -29,12 +29,12 @@
                 <% end %>
               </div>
 
-              <div data-partner-reminder-form>
+              <div data-controller='checkbox-with-nested-element'>
                 <%= f.input :send_reminders, label: "Do you want this partner to receive emails for distributions and reminders from the system?", wrapper: :input_group do %>
-                  <%= f.check_box :send_reminders, {class: "input-group-text", id: "send_reminders", data: { 'partner-reminder-form-checkbox': '' } }, "true", "false" %>
+                  <%= f.check_box :send_reminders, { class: "input-group-text", id: "send_reminders", data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisiblity' } }, "true", "false" %>
                  <% end %>
 
-                <div class='mb-2' data-partner-reminder-form-nested-form>
+                <div class='mb-2 hidden' data-checkbox-with-nested-element-target='nestedElement'>
                   <div class="flex items-center bg-yellow-300 text-sm font-bold px-4 py-3" role="alert">
                     <p>Please note that reminders will be sent out according to the settings of their partner group OR organization. This won't work unless you've set up at least one.</p>
                   </div>
