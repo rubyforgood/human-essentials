@@ -451,7 +451,10 @@ GEM
       ffi (~> 1.0)
     recaptcha (5.12.3)
       json
-    redis (4.8.0)
+    redis (5.0.5)
+      redis-client (>= 0.9.0)
+    redis-client (0.10.0)
+      connection_pool
     regexp_parser (2.4.0)
     request_store (1.5.1)
       rack (>= 1.4)
@@ -682,7 +685,7 @@ DEPENDENCIES
   rails-controller-testing
   rails-erd
   recaptcha
-  redis (~> 4.0)
+  redis (~> 5.0)
   rolify (~> 6.0)
   rspec-rails (~> 6.0.0)
   rspec-retry
