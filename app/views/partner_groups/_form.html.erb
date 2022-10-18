@@ -22,7 +22,7 @@
 
               <div class='mt-3' data-controller='checkbox-with-nested-element'>
                 <h2 class='text-bold text-lg'>Do you want to send deadline reminders to them every month?</h2>
-                <%= f.input :send_reminders, as: :boolean, label: "Yes", input_html: { data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisiblity' } } %>
+                <%= f.input :send_reminders, as: :boolean, label: "Yes", input_html: { data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisiblity', 'checkbox-with-nested-element-target': 'checkbox' } } %>
 
                 <div class='pl-4 w-3/4 hidden' data-checkbox-with-nested-element-target='nestedElement'>
 
