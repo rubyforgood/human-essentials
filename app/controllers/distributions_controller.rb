@@ -73,13 +73,13 @@ class DistributionsController < ApplicationController
     if result.success?
       session[:created_distribution_id] = result.distribution.id
       @distribution = result.distribution
-      flash[:notice] = "Distribution created!"
 
       perform_inventory_check
 
       respond_to do |format|
-        format.html { redirect_to distribution_path(result.distribution) }
-        format.turbo_stream { redirect_to distribution_path(result.distribution) }
+        format.turbo_stream do
+          redirect_to distribution_path(result.distribution), notice: "Distribution created!"
+        end
       end
     else
       @distribution = result.distribution
@@ -95,11 +95,6 @@ class DistributionsController < ApplicationController
       flash_error = insufficient_error_message(result.error.message)
 
       respond_to do |format|
-        format.html do
-          flash[:error] = flash_error
-          render :new
-        end
-
         format.turbo_stream do
           flash.now[:error] = flash_error
           render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash")
