@@ -3,7 +3,7 @@ class Admin::UsersController < AdminController
   before_action :load_organizations, only: %i[new create edit update]
 
   def index
-    @users = User.alphabetized.all
+    @users = User.includes(:organization).alphabetized.page(params[:page])
   end
 
   def update
@@ -26,16 +26,15 @@ class Admin::UsersController < AdminController
   end
 
   def create
-    @user = User.new(user_params)
-
-    if @user.save
-      @user.invite!(@user)
-      flash[:notice] = "Created a new user!"
-      redirect_to admin_users_path
-    else
-      flash[:error] = "Failed to create user"
-      render "admin/users/new"
-    end
+    UserInviteService.invite(name: user_params[:name],
+      email: user_params[:email],
+      roles: [Role::ORG_USER],
+      resource: Organization.find(user_params[:organization_id]))
+    flash[:notice] = "Created a new user!"
+    redirect_to admin_users_path
+  rescue
+    flash[:error] = "Failed to create user"
+    render "admin/users/new"
   end
 
   def destroy

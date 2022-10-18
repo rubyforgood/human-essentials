@@ -92,4 +92,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: failed-browser-tests
-          path: tmp/screenshots
+          path: tmp/capybara

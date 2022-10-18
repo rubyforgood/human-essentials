@@ -32,7 +32,6 @@ FactoryBot.define do
 
       transient do
         without_profile { false }
-        without_partner_users { true }
       end
     end
 
@@ -46,10 +45,6 @@ FactoryBot.define do
       # Create associated records on partnerbase DB
       partners_partner = create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
       create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
-
-      next if evaluator.try(:without_partner_users)
-
-      create(:partners_user, partner: partners_partner)
     end
   end
 end

@@ -1,6 +1,6 @@
-// Place all the behaviors and hooks related to the matching controller here.
-// All this logic will automatically be available in application.js.
-
+/**
+ * Likely we can remove this since distribution_and_transfers.js seen to cover this use
+ */
 const item_option = item => {
   return `<option value='${item.item_id}'> \
           ${item.item_name} -- ${item.quantity} \

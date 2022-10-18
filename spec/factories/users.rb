@@ -40,22 +40,34 @@ FactoryBot.define do
     sequence(:email, 100) { |n| "person#{n}@example.com" }
     password { "password!" }
     password_confirmation { "password!" }
-    organization { Organization.try(:first) || create(:organization) }
+    transient do
+      organization { Organization.try(:first) || create(:organization) }
+    end
+
+    after(:create) do |user, evaluator|
+      user.add_role(Role::ORG_USER, evaluator.organization)
+    end
 
     factory :organization_admin do
       name { "Very Organized Admin" }
-      organization_admin { true }
+      after(:create) do |user, evaluator|
+        user.add_role(Role::ORG_ADMIN, evaluator.organization)
+      end
     end
 
     factory :super_admin do
       name { "Administrative User" }
-      super_admin { true }
+      after(:create) do |user|
+        user.add_role(Role::SUPER_ADMIN)
+      end
     end
 
     factory :super_admin_no_org do
       name { "Administrative User No Org" }
-      super_admin { true }
-      organization_id { nil }
+      after(:create) do |user, evaluator|
+        user.add_role(Role::SUPER_ADMIN)
+        user.remove_role(Role::ORG_USER, evaluator.organization)
+      end
     end
 
     trait :deactivated do

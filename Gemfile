@@ -31,6 +31,8 @@ gem "groupdate", "~> 6.1"
 gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
+# Associates users with roles.
+gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
 gem "strong_migrations", "1.3.2"
 
@@ -50,6 +52,10 @@ gem "uglifier", ">= 1.3.0"
 gem 'webpacker', '~> 5.0'
 # Used to verify that the user is a human.
 gem "recaptcha"
+# Hotwire for SPA like without much JS
+gem "turbo-rails"
+# Sprinkle a little JS to add interactivity
+gem "stimulus-rails"
 
 ##### VIEWS/CONTROLLERS #####
 
@@ -204,3 +210,6 @@ end
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
+
+# Use Redis for Action Cable
+gem "redis", "~> 5.0"

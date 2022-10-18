@@ -38,7 +38,7 @@ class Audit < ApplicationRecord
   def user_is_organization_admin_of_the_organization
     return if organization.nil?
 
-    unless organization.users.include?(user) && user.organization_admin
+    unless user.has_role?(Role::ORG_ADMIN, organization)
       errors.add :user, "user must be an organization admin of the organization"
     end
   end
