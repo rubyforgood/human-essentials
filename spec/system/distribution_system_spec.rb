@@ -77,6 +77,7 @@ RSpec.feature "Distributions", type: :system do
 
         click_button "Save"
 
+        expect(page).not_to have_content('New Distribution')
         expect(page).to have_content("The following items have fallen below the minimum on hand quantity: #{item.name}")
       end
     end
