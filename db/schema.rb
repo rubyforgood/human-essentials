@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_25_211052) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_20_135244) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -168,6 +168,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_25_211052) do
     t.boolean "active", default: true
     t.boolean "archived"
     t.index ["family_id"], name: "index_children_on_family_id"
+  end
+
+  create_table "counties", force: :cascade do |t|
+    t.string "name"
+    t.string "region"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "delayed_jobs", force: :cascade do |t|

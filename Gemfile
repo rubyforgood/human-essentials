@@ -35,6 +35,8 @@ gem "paper_trail"
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
 gem "strong_migrations", "1.3.2"
+# faster imports
+gem "activerecord-import"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -104,6 +106,7 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
