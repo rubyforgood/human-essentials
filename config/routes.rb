@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     authenticate :user, lambda { |u| u.has_role?(Role::SUPER_ADMIN) } do
       mount Coverband::Reporters::Web.new, at: '/coverage'
     end
+  elsif Rails.env.development?
+    mount Lookbook::Engine, at: "/lookbook"
   end
 
   #

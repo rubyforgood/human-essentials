@@ -37,5 +37,7 @@ module Diaper
 
     # Sets the directory of the previews for ViewComponent
     config.view_component.preview_paths << "#{Rails.root}/spec/components/previews"
+    # Ensures the previews use the proper layout with just the needed assets
+    config.view_component.default_preview_layout = "view_component_preview"
   end
 end

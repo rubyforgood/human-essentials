@@ -178,6 +178,8 @@ group :development do
   gem "letter_opener"
   # Used as a dependency for Guard.
   gem "listen", "~> 3.7.0"
+  # Provides a web interface for viewing view components
+  gem "lookbook"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.
