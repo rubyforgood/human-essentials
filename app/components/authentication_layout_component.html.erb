@@ -1,0 +1,101 @@
+<div class="relative flex">
+
+  <!-- Content -->
+  <div class="w-full md:w-1/2">
+
+    <div class="min-h-screen h-full flex flex-col after:flex-1">
+
+      <div class="flex-1">
+        <!-- Header -->
+        <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+          <%= render(LogoComponent.new) %>
+
+          <div class="text-sm">
+            Have an account? <a class="font-medium text-indigo-500 hover:text-indigo-600" href="signin.html">Sign In</a>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="px-4 pt-12 pb-8">
+          <div class="max-w-md mx-auto w-full">
+            <div class="relative">
+              <div class="absolute left-0 top-1/2 -mt-px w-full h-0.5 bg-slate-200" aria-hidden="true"></div>
+              <ul class="relative flex justify-between w-full">
+                <li>
+                  <a class="flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-indigo-500 text-white" href="onboarding-01.html">1</a>
+                </li>
+                <li>
+                  <a class="flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-slate-100 text-slate-500" href="onboarding-02.html">2</a>
+                </li>
+                <li>
+                  <a class="flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-slate-100 text-slate-500" href="onboarding-03.html">3</a>
+                </li>
+                <li>
+                  <a class="flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-slate-100 text-slate-500" href="onboarding-04.html">4</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 py-8">
+        <div class="max-w-md mx-auto">
+
+          <h1 class="text-3xl text-slate-800 font-bold mb-6">Tell us what’s your situation ✨</h1>
+          <!-- Form -->
+          <form>
+            <div class="space-y-3 mb-8">
+              <label class="relative block cursor-pointer">
+                <input type="radio" name="radio-buttons" class="peer sr-only" checked="checked">
+                <div class="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
+                  <svg class="w-6 h-6 shrink-0 fill-current mr-4" viewBox="0 0 24 24">
+                    <path class="text-indigo-500" d="m12 10.856 9-5-8.514-4.73a1 1 0 0 0-.972 0L3 5.856l9 5Z"></path>
+                    <path class="text-indigo-300" d="m11 12.588-9-5V18a1 1 0 0 0 .514.874L11 23.588v-11Z"></path>
+                    <path class="text-indigo-200" d="M13 12.588v11l8.486-4.714A1 1 0 0 0 22 18V7.589l-9 4.999Z"></path>
+                  </svg>
+                  <span>I have a company</span>
+                </div>
+                <div class="absolute inset-0 border-2 border-transparent peer-checked:border-indigo-400 rounded pointer-events-none" aria-hidden="true"></div>
+              </label>
+              <label class="relative block cursor-pointer">
+                <input type="radio" name="radio-buttons" class="peer sr-only">
+                <div class="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
+                  <svg class="w-6 h-6 shrink-0 fill-current mr-4" viewBox="0 0 24 24">
+                    <path class="text-indigo-500" d="m12 10.856 9-5-8.514-4.73a1 1 0 0 0-.972 0L3 5.856l9 5Z"></path>
+                    <path class="text-indigo-300" d="m11 12.588-9-5V18a1 1 0 0 0 .514.874L11 23.588v-11Z"></path>
+                  </svg>
+                  <span>I’m a freelance / contractor</span>
+                </div>
+                <div class="absolute inset-0 border-2 border-transparent peer-checked:border-indigo-400 rounded pointer-events-none" aria-hidden="true"></div>
+              </label>
+              <label class="relative block cursor-pointer">
+                <input type="radio" name="radio-buttons" class="peer sr-only">
+                <div class="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
+                  <svg class="w-6 h-6 shrink-0 fill-current mr-4" viewBox="0 0 24 24">
+                    <path class="text-indigo-500" d="m12 10.856 9-5-8.514-4.73a1 1 0 0 0-.972 0L3 5.856l9 5Z"></path>
+                  </svg>
+                  <span>I’m just getting started</span>
+                </div>
+                <div class="absolute inset-0 border-2 border-transparent peer-checked:border-indigo-400 rounded pointer-events-none" aria-hidden="true"></div>
+              </label>
+            </div>
+            <div class="flex items-center justify-between">
+              <a class="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto" href="onboarding-02.html">Next Step -&gt;</a>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Image -->
+  <div class="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
+    <%= image_pack_tag @side_image_path, class: "object-cover object-center w-full h-full", width: 760, height: 1024 %>
+    <%= image_pack_tag 'auth-decoration.png', class: "absolute top-1/4 left-0 transform -translate-x-1/2 ml-8 hidden lg:block", width:"218", height:"224", alt: "Authentication decoration" %>
+  </div>
+
+</div>

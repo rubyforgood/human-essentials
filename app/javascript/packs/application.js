@@ -32,6 +32,10 @@ import "@fortawesome/fontawesome-free/css/brands.css";
 import "@fortawesome/fontawesome-free/css/v4-shims.css";
 import "toastr/build/toastr.css"
 
+// This allows accessing images stored in assets/javascripts/images
+// via image_pack_tag
+require.context('../images', true)
+
 // Global toastr options
 window.toastr = toastr;
 toastr.options = {

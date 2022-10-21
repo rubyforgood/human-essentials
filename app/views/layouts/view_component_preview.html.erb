@@ -1,0 +1,20 @@
+<%# required params: title, body_class, masthead_img_src   %>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Human Essentials - ViewComponent Library</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+  <%= csrf_meta_tags %>
+  <%= stylesheet_pack_tag 'application' %>
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+</head>
+
+<body class="font-inter antialiased bg-slate-100 text-slate-600 sidebar-expanded">
+  <main class='bg-white p-6'>
+    <%= yield %>
+  </main>
+</body>
+</html>
