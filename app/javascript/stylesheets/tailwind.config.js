@@ -4,15 +4,9 @@ module.exports = {
   content: [
     "app/views/**/*.html.erb",
     "app/components/*.rb",
-    "app/components/*.html.erb",
+    "app/components/*.html.erb"
   ],
   mode: 'jit',
-  corePlugins: {
-    // Preflight is used to reset the browser's default styles and normalize them across browsers.
-    // However, we have conflicts with our existing CSS, so we disable it to avoid having to address
-    // when installing the mosaic theme (https://cruip.com/demos/mosaic/). We can revisit this later.
-    preflight: false,
-  },
   variants: {
     extend: {
       borderWidth: ['last'],

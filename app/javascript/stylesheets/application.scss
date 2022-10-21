@@ -10,6 +10,18 @@
 @tailwind base;
 @tailwind components;
 
+/**
+* Added this to address issue with tailwind preflight that 
+* conflicts with existing legacy stylesheets. Without this
+* submit buttons would be transparent.
+* See https://github.com/tailwindlabs/tailwindcss/issues/6602 for more info.
+*/
+@layer base {
+  button[type="submit"], input[type='submit'] {
+    @apply bg-green-500 text-white;
+  }
+}
+
 // Additional styles
 @import 'mosaic/utility-patterns.scss';
 @import 'mosaic/range-slider.scss';
