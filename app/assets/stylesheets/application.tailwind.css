@@ -1,3 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import "tailwindcss/components";
+
+/* Mosaic Theme */
+@import './mosaic/theme.css';
+@import './mosaic/flatpickr.css';
+@import './mosaic/range-slider.css';
+@import './mosaic/toggle-switch.css'; 
+@import './mosaic/utility-patterns.css';
+/* Mosaic Theme */
+
+@import "tailwindcss/utilities";
