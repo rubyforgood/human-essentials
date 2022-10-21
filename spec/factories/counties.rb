@@ -10,9 +10,7 @@
 #
 FactoryBot.define do
   factory :county do
-    county { "MyString" }
-    string { "MyString" }
-    state_or_territory { "MyString" }
-    string { "MyString" }
+    name{ "County Name" }
+    region { "County State" }
   end
 end
