@@ -124,18 +124,19 @@ class DistributionPdf
       "In-Kind Value Received",
       "Packages"]]
 
-    request_items = @distribution.request.request_items.dup
+    request_items = @distribution.request.request_items.map do |request_item|
+      RequestItem.from_json(request_item, @distribution.request)
+    end
     line_items = @distribution.line_items.sorted
 
-    requested_not_received = request_items.filter_map do |request_item|
-      if line_items.none? { |i| i.item_id == request_item["item_id"] }
-        RequestItem.from_json(request_item, @distribution.request)
-      end
+    requested_not_received = request_items.select do |request_item|
+      line_items.none? { |i| i.item_id == request_item.item.id }
     end
 
     data += line_items.map do |c|
+      request_item = request_items.find { |i| i.item.id == c.item_id }
       [c.item.name,
-        c.quantity,
+        request_item&.quantity || "",
         c.quantity,
         dollar_value(c.item.value_in_cents),
         dollar_value(c.value_per_line_item),
