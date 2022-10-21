@@ -137,6 +137,7 @@ module Partners
     }.freeze
 
     ALL_PARTIALS = %w[
+      area_served
       media_information
       agency_stability
       organizational_capacity

@@ -105,6 +105,7 @@ class Organization < ApplicationRecord
   end
 
   ALL_PARTIALS = [
+    ['Area Served', 'area_served'],
     ['Media Information', 'media_information'],
     ['Agency Stability', 'agency_stability'],
     ['Organizational Capacity', 'organizational_capacity'],
