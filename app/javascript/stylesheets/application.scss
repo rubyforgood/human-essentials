@@ -1,6 +1,33 @@
 @import "trix/dist/trix";
 @import "actiontext";
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
 
+/**
+* --- Mosaic Theme ---
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=fallback');
+
+@tailwind base;
+@tailwind components;
+
+// Additional styles
+@import 'mosaic/utility-patterns.scss';
+@import 'mosaic/range-slider.scss';
+@import 'mosaic/toggle-switch.scss';
+@import 'mosaic/flatpickr.scss';
+@import 'mosaic/theme.scss';
+
+@tailwind utilities;
+
+// See Alpine.js: https://github.com/alpinejs/alpine#x-cloak
+[x-cloak=""] {
+  display: none;
+}
+
+@media screen and (max-width: theme('screens.lg')) {
+  [x-cloak="lg"] { display: none; }
+}
+
+/**
+* --- Mosaic Theme ---
+*/
