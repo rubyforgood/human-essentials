@@ -26,26 +26,26 @@
 }
 
 // Buttons
-.btn,
-.btn-lg,
-.btn-sm,
-.btn-xs {
+.btn-mosaic,
+.btn-mosaic-lg,
+.btn-mosaic-sm,
+.btn-mosaic-xs {
     @apply font-medium text-sm inline-flex items-center justify-center border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out;
 }
 
-.btn {
+.btn-mosaic {
     @apply px-3 py-2;
 }
 
-.btn-lg {
+.btn-mosaic-lg {
     @apply px-4 py-3;
 }
 
-.btn-sm {
+.btn-mosaic-sm {
     @apply px-2 py-1;
 }
 
-.btn-xs {
+.btn-mosaic-xs {
     @apply px-2 py-0.5;
 }
 
