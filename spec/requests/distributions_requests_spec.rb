@@ -85,7 +85,7 @@ RSpec.describe "Distributions", type: :request do
         expect(partner).to be_valid
 
         expect(PartnerMailerJob).to receive(:perform_later).once
-        post distributions_path(params)
+        post distributions_path(params.merge(format: :turbo_stream))
 
         expect(response).to have_http_status(:redirect)
         last_distribution = Distribution.last
@@ -93,7 +93,7 @@ RSpec.describe "Distributions", type: :request do
       end
 
       it "renders #new again on failure, with notice" do
-        post distributions_path(default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }))
+        post distributions_path(default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream))
         expect(response).to be_successful
         expect(response).to have_error
       end
