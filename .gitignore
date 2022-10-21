@@ -78,3 +78,6 @@ package-lock.json
 
 # plugin history
 .history/
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
