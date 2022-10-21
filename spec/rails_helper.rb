@@ -7,6 +7,7 @@ require File.expand_path("../config/environment", __dir__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require "spec_helper"
 require "rspec/rails"
+require "view_component/test_helpers"
 require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
@@ -73,6 +74,9 @@ Capybara.asset_host = "http://localhost:3000"
 Capybara::Screenshot.prune_strategy = :keep_last_run
 
 RSpec.configure do |config|
+  config.include ViewComponent::TestHelpers, type: :component
+  config.include Capybara::RSpecMatchers, type: :component
+
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
   config.include Devise::Test::ControllerHelpers, type: :helper

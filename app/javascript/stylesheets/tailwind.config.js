@@ -2,7 +2,8 @@ const plugin = require('tailwindcss/plugin');
 
 module.exports = {
   content: [
-    "app/views/**/*.html.erb"
+    "app/views/**/*.html.erb",
+    "app/components/*.rb"
   ],
   mode: 'jit',
   corePlugins: {

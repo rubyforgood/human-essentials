@@ -34,5 +34,8 @@ module Diaper
     # sidekiq worker that is only taking work from the `default`
     # queue.
     config.action_mailer.deliver_later_queue_name = 'default'
+
+    # Sets the directory of the previews for ViewComponent
+    config.view_component.preview_paths << "#{Rails.root}/spec/components/previews"
   end
 end

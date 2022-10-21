@@ -79,6 +79,8 @@ gem "matrix"
 gem "prawn-rails"
 # Reduces boilerplate HTML code when writing forms.
 gem "simple_form"
+# Super charge the frontend with the ability to create components
+gem "view_component"
 
 ##### ADDITIONAL FUNCTIONS #####
 
