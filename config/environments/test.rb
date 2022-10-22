@@ -49,6 +49,10 @@ Rails.application.configure do
   # Store files locally.
   config.active_storage.service = :test
 
+  # Prevent running compressing the assets as it causes
+  # a collision between SASS & tailwindcss
+  config.assets.css_compressor = nil
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
