@@ -1,27 +1,24 @@
-Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in the test
   RSpec.describe "Partner counties", type: :system, js: true do
     # With a partner with no partner counties, but has social media
-
-    let(:partner) { FactoryBot.create(:partner) }
     let(:partner_user) { partner.primary_partner_user }
-    let!(:url_prefix) { "/#{@organization.to_param}" }
+    let!(:partner) { FactoryBot.create(:partner) }
 
     before do
       partner.profile.update(partner_status: :verified)
       login_as(partner_user)
+      visit edit_partners_profile_path
     end
 
     describe "when signed in as a partner and editing the profile" do
-      pending "handles the partner county appropriately" do
+      it "handles the partner county appropriately" do
         county_1 = "A"
         # county_2 = "B"
 
-        # Visit partner profile as partner
-        subject { url_prefix + "/partners/profile/edit" }
-
         # update button is available, total is 0, no message
 
-        expect(page).to have_css("update-button", count: 1)
+
+        expect(page).to have_content("Edit My Organization")
+        expect(page).to have_button("Update Information", count: 1)
         expect(page).to have_css("add_partner_county_button", count: 1)
         expect(page).to have_content("100%")
         expect(page).not_to have_css("partner_county_error_message")
@@ -97,4 +94,3 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
     end
   end
-end
