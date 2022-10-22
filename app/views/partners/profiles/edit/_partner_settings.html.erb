@@ -7,14 +7,14 @@
             <h3 class="card-title"><strong>Settings</strong></h3>
           </div>
           <div class="card-body">
-            <% if form.object.organization.enable_child_based_requests? %>
-              <%= form.input :enable_child_based_requests, label: "Enable Child-based Requests (unclick if you only do bulk requests)",
+            <% if f.object.organization.enable_child_based_requests? %>
+              <%= f.input :enable_child_based_requests, label: "Enable Child-based Requests (unclick if you only do bulk requests)",
                              as: :boolean,
                              class: "form-control", wrapper: :input_group %>
             <% end %>
 
-            <% if form.object.organization.enable_individual_requests? %>
-              <%= form.input :enable_individual_requests, label: "Enable Requests for Individuals",
+            <% if f.object.organization.enable_individual_requests? %>
+              <%= f.input :enable_individual_requests, label: "Enable Requests for Individuals",
                              as: :boolean,
                              class: "form-control", wrapper: :input_group %>
             <% end %>

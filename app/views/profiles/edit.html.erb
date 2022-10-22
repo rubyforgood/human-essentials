@@ -15,22 +15,22 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card-transparent">
-          <%= simple_form_for @partner, url: profile_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+          <%= simple_form_for @partner, url: profile_path, html: {role: 'form', class: 'form-horizontal'} do |f| %>
             <div class="row">
               <div class="col-6">
-                <%= render partial: "partners/profiles/edit/agency_information", locals: {form: form, partner: @partner} %>
+                <%= render partial: "partners/profiles/edit/agency_information", locals: {f: f, partner: @partner} %>
               </div>
               <% @partner.partials_to_show.each do |partial| %>
                 <div class="col-6">
-                  <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: form, partner: @partner} %>
+                  <%= render partial: "partners/profiles/edit/#{partial}", locals: {f: f, partner: @partner} %>
                 </div>
               <% end %>
               <div class="col-6">
-                <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: form, partner: @partner} %>
+                <%= render partial: "partners/profiles/edit/partner_settings", locals: {f: f, partner: @partner} %>
               </div>
             </div>
             <div class="card-footer">
-              <%= form.submit("Update Information", class: "btn btn-primary") %>
+              <%= f.submit("Update Information", class: "btn btn-primary") %>
               <%= link_to "Cancel Update", partner_path(@partner.partner), class: "btn btn-danger float-right" %>
             </div>
           <% end %>

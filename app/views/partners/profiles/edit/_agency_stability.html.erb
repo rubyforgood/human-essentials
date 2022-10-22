@@ -7,31 +7,31 @@
             <h3 class="card-title"><strong>Agency Stability</strong></h3>
           </div>
           <div class="card-body">
-            <%= form.input :founded, label: "Year Founded", class: "form-control", wrapper: :input_group %>
-            <%= form.input :form_990, label: "Form 990 Filed", as: :boolean, class: "form-control", wrapper: :input_group %>
+            <%= f.input :founded, label: "Year Founded", class: "form-control", wrapper: :input_group %>
+            <%= f.input :form_990, label: "Form 990 Filed", as: :boolean, class: "form-control", wrapper: :input_group %>
             <label class="control-label col-md-3">Form 990</label>
             <% if partner.proof_of_form_990.attached? %>
               <div class="col-md-8">
                 Attached
                 file: <%= link_to partner.proof_of_form_990.blob['filename'], rails_blob_path(partner.proof_of_form_990), class: "font-weight-bold" %>
-                <%= form.file_field :proof_of_form_990, class: "form-control-file form-control" %>
+                <%= f.file_field :proof_of_form_990, class: "form-control-file form-control" %>
               </div>
             <% else %>
               <div class="col-md-8">
-                <%= form.file_field :proof_of_form_990, class: "form-control-file" %>
+                <%= f.file_field :proof_of_form_990, class: "form-control-file" %>
               </div>
             <% end %>
-            <%= form.input :program_name, label: "Program Name(s)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_description, label: "Program Description(s)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_age, label: "Agency Age", class: "form-control", wrapper: :input_group %>
-            <%= form.input :evidence_based, label: "Do You Track Program Results", as: :boolean,
+            <%= f.input :program_name, label: "Program Name(s)", class: "form-control", wrapper: :input_group %>
+            <%= f.input :program_description, label: "Program Description(s)", class: "form-control", wrapper: :input_group %>
+            <%= f.input :program_age, label: "Agency Age", class: "form-control", wrapper: :input_group %>
+            <%= f.input :evidence_based, label: "Do You Track Program Results", as: :boolean,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :case_management, label: "Case Management", class: "form-control", wrapper: :input_group %>
-            <%= form.input :essentials_use, label: "How Are Essentials (e.g. diapers, period supplies) Used In Your Program?", as: :text,
+            <%= f.input :case_management, label: "Case Management", class: "form-control", wrapper: :input_group %>
+            <%= f.input :essentials_use, label: "How Are Essentials (e.g. diapers, period supplies) Used In Your Program?", as: :text,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :receives_essentials_from_other, label: "Do You Receive Essentials From Other Sources?",
+            <%= f.input :receives_essentials_from_other, label: "Do You Receive Essentials From Other Sources?",
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :currently_provide_diapers, label: "Currently Providing Diapers?", as: :boolean,
+            <%= f.input :currently_provide_diapers, label: "Currently Providing Diapers?", as: :boolean,
                            class: "form-control", wrapper: :input_group %>
           </div>
         </div>
@@ -49,11 +49,11 @@
             <h3 class="card-title"><strong>Program Address (if different)</strong></h3>
           </div>
           <div class="card-body">
-            <%= form.input :program_address1, label: "Address (line 1)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_address2, label: "Address (line 2)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_city, label: "City", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_state, label: "State", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_zip_code, label: "Zip Code", class: "form-control", wrapper: :input_group %>
+            <%= f.input :program_address1, label: "Address (line 1)", class: "form-control", wrapper: :input_group %>
+            <%= f.input :program_address2, label: "Address (line 2)", class: "form-control", wrapper: :input_group %>
+            <%= f.input :program_city, label: "City", class: "form-control", wrapper: :input_group %>
+            <%= f.input :program_state, label: "State", class: "form-control", wrapper: :input_group %>
+            <%= f.input :program_zip_code, label: "Zip Code", class: "form-control", wrapper: :input_group %>
           </div>
         </div>
       </div>

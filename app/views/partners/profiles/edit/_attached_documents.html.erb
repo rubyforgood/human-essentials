@@ -18,11 +18,11 @@
                   </ul>
                 </div>
                 <div class="col-6">
-                  <%= form.file_field :documents, multiple: true, class: "form-control-file" %>
+                  <%= f.file_field :documents, multiple: true, class: "form-control-file" %>
                 </div>
               </div>
             <% else %>
-              <%= form.file_field :documents, multiple: true, class: "form-control-file" %>
+              <%= f.file_field :documents, multiple: true, class: "form-control-file" %>
             <% end %>
           </div>
         </div>

@@ -7,29 +7,29 @@
             <h3 class="card-title"><strong>Agency Information</strong></h3>
           </div>
           <div class="card-body">
-            <%= form.input :name, label: "Agency Name", class: "form-control", wrapper: :input_group %>
-            <%= form.input :agency_type, collection: Partners::Partner::AGENCY_TYPES.values, label: "Agency Type", class: "form-control", wrapper: :input_group %>
-            <%= form.input :other_agency_type, label: "Other Agency Type", class: "form-control", wrapper: :input_group %>
+            <%= f.input :name, label: "Agency Name", class: "form-control", wrapper: :input_group %>
+            <%= f.input :agency_type, collection: Partners::Partner::AGENCY_TYPES.values, label: "Agency Type", class: "form-control", wrapper: :input_group %>
+            <%= f.input :other_agency_type, label: "Other Agency Type", class: "form-control", wrapper: :input_group %>
             <div class="form-group row">
               <label class="control-label col-md-3">501(c)(3) IRS Determination Letter</label>
               <% if partner.proof_of_partner_status.attached? %>
                 <div class="col-md-8">
                   Attached
                   file: <%= link_to partner.proof_of_partner_status.blob['filename'], rails_blob_path(partner.proof_of_partner_status), class: "font-weight-bold" %>
-                  <%= form.file_field :proof_of_partner_status, class: "form-control-file form-control" %>
+                  <%= f.file_field :proof_of_partner_status, class: "form-control-file form-control" %>
                 </div>
               <% else %>
                 <div class="col-md-8">
-                  <%= form.file_field :proof_of_partner_status, class: "form-control-file" %>
+                  <%= f.file_field :proof_of_partner_status, class: "form-control-file" %>
                 </div>
               <% end %>
             </div>
-            <%= form.input :agency_mission, label: "Agency Mission", class: "form-control", wrapper: :input_group %>
-            <%= form.input :address1, label: "Address (line 1)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :address2, label: "Address (line 2)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :city, label: "City", class: "form-control", wrapper: :input_group %>
-            <%= form.input :state, label: "State", class: "form-control", wrapper: :input_group %>
-            <%= form.input :zip_code, label: "Zip Code", class: "form-control", wrapper: :input_group %>
+            <%= f.input :agency_mission, label: "Agency Mission", class: "form-control", wrapper: :input_group %>
+            <%= f.input :address1, label: "Address (line 1)", class: "form-control", wrapper: :input_group %>
+            <%= f.input :address2, label: "Address (line 2)", class: "form-control", wrapper: :input_group %>
+            <%= f.input :city, label: "City", class: "form-control", wrapper: :input_group %>
+            <%= f.input :state, label: "State", class: "form-control", wrapper: :input_group %>
+            <%= f.input :zip_code, label: "Zip Code", class: "form-control", wrapper: :input_group %>
           </div>
         </div>
       </div>

@@ -12,5 +12,5 @@
 class PartnerCounty < ApplicationRecord
   belongs_to :partner
   belongs_to :county
-  validates :client_share, inclusion => 0..100
+  validates :client_share, numericality: { in: 0..100 }
 end

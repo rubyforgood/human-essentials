@@ -7,9 +7,9 @@
             <h3 class="card-title"><strong>Population Served</strong></h3>
           </div>
           <div class="card-body">
-            <%= form.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
+            <%= f.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
                            as: :boolean, class: "form-control", wrapper: :input_group %>
-            <%= form.input :income_verification,label: "Do You Verify The Income Of Your Clients?",
+            <%= f.input :income_verification,label: "Do You Verify The Income Of Your Clients?",
                            as: :boolean, class: "form-control", wrapper: :input_group %>
           </div>
         </div>
@@ -27,31 +27,31 @@
             <h3 class="card-title"><strong>Race/Ethnicity of Client Base</strong></h3>
           </div>
           <div class="card-body">
-            <%= form.input :population_black, label: "% African American", as: :integer,
+            <%= f.input :population_black, label: "% African American", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :population_white, label: "% Caucasian", as: :integer,
+            <%= f.input :population_white, label: "% Caucasian", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :population_hispanic, label: "% Hispanic", as: :integer,
+            <%= f.input :population_hispanic, label: "% Hispanic", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :population_asian, label: "% Asian", as: :integer,
+            <%= f.input :population_asian, label: "% Asian", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :population_american_indian, label: "% American Indian", as: :integer,
+            <%= f.input :population_american_indian, label: "% American Indian", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :population_island, label: "% Pacific Island", as: :integer,
+            <%= f.input :population_island, label: "% Pacific Island", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :population_multi_racial, label: "% Multi-racial", as: :integer,
+            <%= f.input :population_multi_racial, label: "% Multi-racial", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :population_other, label: "% Other", as: :integer,
+            <%= f.input :population_other, label: "% Other", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :zips_served, label: "Zip Codes Served", class: "form-control", wrapper: :input_group %>
+            <%= f.input :zips_served, label: "Zip Codes Served", class: "form-control", wrapper: :input_group %>
             <h3 class="pt-3 font-weight-bold">Poverty Information of Those Served</h3>
-            <%= form.input :at_fpl_or_below, label: "% At FPL or Below", as: :integer,
+            <%= f.input :at_fpl_or_below, label: "% At FPL or Below", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :above_1_2_times_fpl, label: "% Above 1-2 times FPL", as: :integer,
+            <%= f.input :above_1_2_times_fpl, label: "% Above 1-2 times FPL", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :greater_2_times_fpl, label: "% Greater than 2 times FPL", as: :integer,
+            <%= f.input :greater_2_times_fpl, label: "% Greater than 2 times FPL", as: :integer,
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :poverty_unknown, label: "% Poverty Unknown", as: :integer,
+            <%= f.input :poverty_unknown, label: "% Poverty Unknown", as: :integer,
                            class: "form-control", wrapper: :input_group %>
           </div>
         </div>

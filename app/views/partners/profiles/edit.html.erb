@@ -27,22 +27,22 @@
       <div class="col-md-12">
         <!-- jquery validation -->
         <div class="card-transparent">
-          <%= simple_form_for current_partner, url: partners_profile_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+          <%= simple_form_for current_partner, url: partners_profile_path, html: {role: 'form', class: 'form-horizontal'} do |f| %>
             <div class="row">
               <div class="col-6">
-                <%= render partial: "partners/profiles/edit/agency_information", locals: {form: form, partner: current_partner} %>
+                <%= render partial: "partners/profiles/edit/agency_information", locals: {f: f, partner: current_partner} %>
               </div>
               <% current_partner.partials_to_show.each do |partial| %>
                 <div class="col-6">
-                  <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: form, partner: current_partner} %>
+                  <%= render partial: "partners/profiles/edit/#{partial}", locals: {f: f, partner: current_partner} %>
                 </div>
               <% end %>
               <div class="col-6">
-                <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: form, partner: current_partner} %>
+                <%= render partial: "partners/profiles/edit/partner_settings", locals: {f: f, partner: current_partner} %>
               </div>
             </div>
             <div class="card-footer">
-              <%= form.submit("Update Information", class: "btn btn-primary update-information-button") %>
+              <%= f.submit("Update Information", class: "btn btn-primary update-information-button") %>
               <%= link_to "Cancel Update", partners_profile_path, class: "btn btn-danger float-right" %>
             </div>
           <% end %>
