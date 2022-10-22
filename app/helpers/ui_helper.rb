@@ -195,12 +195,12 @@ def add_partner_county_button(form, node, options = {})
   text = options[:text] || "Add another county"
   size = options[:size] || "md"
   type = options[:type] || "primary"
-  partial = options[:partial] || "partner_counties/partner_county_fields"
+  partial = options[:partial]  || "partner_counties/partner_county_fields"
   link_to_add_association form, :partner_counties,
                           data: {
                             association_insertion_node: node,
                             association_insertion_method: "append"
-                          }, id: "__add_partner_county", class: "btn btn-#{size} btn-#{type}", partial: partial do
+                          }, id: "__add_partner_county", class: "btn btn-#{size} btn-#{type} add-partner-county", partial: partial do
     fa_icon "plus", text: text
   end
 end

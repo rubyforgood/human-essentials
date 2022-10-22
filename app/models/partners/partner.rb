@@ -184,6 +184,14 @@ module Partners
       }
     end
 
+    def client_share_total
+      tot = 0
+      partner_counties.each do |pc|
+        tot = tot + pc.client_share
+      end
+      tot
+    end
+
     private
 
     def families_served_count

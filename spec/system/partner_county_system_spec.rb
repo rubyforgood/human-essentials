@@ -19,13 +19,13 @@
 
         expect(page).to have_content("Edit My Organization")
         expect(page).to have_button("Update Information", count: 1)
-        expect(page).to have_css("add_partner_county_button", count: 1)
-        expect(page).to have_content("100%")
+        expect(page).to have_css("#__add_partner_county", count: 1)
+        expect(page).to have_content("0 %")
         expect(page).not_to have_css("partner_county_error_message")
 
         # add a county with 25% client share
 
-        click_on add_county_partner_button
+        click_on("Add another county")
 
         select(county_1, from: "county_select_1")
 
@@ -40,7 +40,7 @@
         # expect(page).to have_css("partner_county_error_message")
 
         # add a county with 75% client share
-        # click_on(add_county_partner_button)
+        # click_on(add_partner_county_button)
 
         # select(county_2, from: "county_select_2")
         # fill_in (:id_for_2nd_county_client_share, 25)

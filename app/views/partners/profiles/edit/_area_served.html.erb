@@ -5,6 +5,14 @@
         <div class="card">
           <div class="card-header bg-white">
             <h3 class="card-title"><strong>Area Served</strong></h3>
+            <div class="card_body">
+              <div id="partner_county_client_share_total" class="partner-counties-total-value">
+                <%= "#{@client_share_total} %" %>
+              </div>
+              <div class="row links justify-content-end">
+                <%= add_partner_county_button f, "#partner_counties" %>
+              </div>
+            </div>
           </div>
         </div>
       </div>

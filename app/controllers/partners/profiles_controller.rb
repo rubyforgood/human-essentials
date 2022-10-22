@@ -2,7 +2,9 @@ module Partners
   class ProfilesController < BaseController
     def show; end
 
-    def edit; end
+    def edit
+      @client_share_total = current_partner.client_share_total
+    end
 
     def update
       if current_partner.update(partner_params)
