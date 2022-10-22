@@ -533,8 +533,6 @@ GEM
     sanitize (6.0.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
-    sass-rails (6.0.0)
-      sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
@@ -721,7 +719,6 @@ DEPENDENCIES
   rspec-retry
   rubocop
   rubocop-rails (~> 2.9.0)
-  sass-rails
   shoulda-matchers (~> 5.2)
   simple_form
   simplecov

@@ -44,8 +44,6 @@ gem 'bootstrap', '~> 4.6.0'
 # jQuery framework (DOM methods, Ajax, chaining, etc.)
 gem "jquery-rails"
 gem "jquery-ui-rails"
-# SASS CSS framework (nested selectors, variables, etc.)
-gem "sass-rails"
 # JavaScript minified, used in asset compilation.
 gem "uglifier", ">= 1.3.0"
 # JavaScript bundler.
