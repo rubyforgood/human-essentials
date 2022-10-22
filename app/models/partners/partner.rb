@@ -92,6 +92,8 @@ module Partners
     has_one_attached :proof_of_form_990
     has_many_attached :documents
 
+    has_many :partner_counties
+
     self.ignored_columns = %w[
       evidence_based_description
       program_client_improvement
