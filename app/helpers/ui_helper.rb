@@ -179,3 +179,28 @@ module UiHelper
     end
   end
 end
+
+
+def delete_partner_county_button(form, options = {})
+  text = options[:text] || "Remove"
+  size = options[:text] || "sm"
+  type = options[:type] || "danger"
+
+  link_to_remove_association form, class: "btn btn-#{size} btn-#{type}", style: "width: 100px;" do
+    fa_icon "trash", text: text
+  end
+end
+
+def add_partner_county_button(form, node, options = {})
+  text = options[:text] || "Add another county"
+  size = options[:size] || "md"
+  type = options[:type] || "primary"
+  partial = options[:partial] || "partner_counties/partner_county_fields"
+  link_to_add_association form, :partner_counties,
+                          data: {
+                            association_insertion_node: node,
+                            association_insertion_method: "append"
+                          }, id: "__add_partner_county", class: "btn btn-#{size} btn-#{type}", partial: partial do
+    fa_icon "plus", text: text
+  end
+end
