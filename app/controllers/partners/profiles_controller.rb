@@ -3,11 +3,12 @@ module Partners
     def show; end
 
     def edit
+      @counties = County.all()
       @client_share_total = current_partner.client_share_total
     end
 
     def update
-      if current_partner.update(partner_params)
+      if PartnerProfileUpdateService.new(current_partner, partner_params).call
         flash[:success] = "Details were successfully updated."
         redirect_to partners_profile_path
       else
@@ -86,6 +87,7 @@ module Partners
         :essentials_funding_source,
         :enable_child_based_requests,
         :enable_individual_requests,
+        partner_counties_attributes: %i[county_id client_share _destroy],
         documents: []
       )
     end

@@ -1,3 +1,11 @@
+<script type="text/javascript">
+    document.onreadystatechange = function(){//window.addEventListener('readystatechange',function(){...}); (for Netscape) and window.attachEvent('onreadystatechange',function(){...}); (for IE and Opera) also work
+        if(document.readyState=='loaded' || document.readyState=='complete')
+            calculate_client_share_total();
+    }
+</script>
+
+
 <section class="content-header">
   <div class="container-fluid">
     <div class="row mb-2">
@@ -42,7 +50,17 @@
               </div>
             </div>
             <div class="card-footer">
-              <%= f.submit("Update Information", class: "btn btn-primary update-information-button") %>
+              <div id="profile-update-button">
+                <%= f.submit("Update Information", class: "btn btn-primary ") %>
+              </div>
+              <div id="profile-update-button-disabled" >
+                <div class="btn btn-light">
+                  Cannot Update Information
+                </div>
+                <div id="partner-county-client-share-total-warning">
+                  The total client share must be either 0 or 100%.
+                </div>
+              </div>
               <%= link_to "Cancel Update", partners_profile_path, class: "btn btn-danger float-right" %>
             </div>
           <% end %>

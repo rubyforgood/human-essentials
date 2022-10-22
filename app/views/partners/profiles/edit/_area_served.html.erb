@@ -4,15 +4,32 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-header bg-white">
-            <h3 class="card-title"><strong>Area Served</strong></h3>
-            <div class="card_body">
-              <div id="partner_county_client_share_total" class="partner-counties-total-value">
-                <%= "#{@client_share_total} %" %>
+            <h3 class="card-title"><strong>Area Served  (County / Client Share %) </strong></h3>
+          </div>
+          <div class="card-body">
+
+            <fieldset style="margin-bottom: 2rem">
+              <legend></legend>
+              <div id="partner_counties"  class="partner-county-fields partner-counties">
+
+                <%= f.simple_fields_for :partner_counties do |partner_county| %>
+                  <%= render 'partner_counties/partner_county_fields', f: partner_county %>
+                <% end %>
               </div>
+              <div class="partner-counties-total-row">
+                <div class = "partner-counties-total-prompt">Total is:</div>
+                <div id="partner_county_client_share_total" class="partner-counties-total-value">
+                  <%= @client_share_total %>
+                </div>
+                <div id="partner_county_client_share_total_warning" class="partner-counties-total-warning">
+                  The total client share must be either 0 or 100%.
+                </div>
+              </div>
+
               <div class="row links justify-content-end">
                 <%= add_partner_county_button f, "#partner_counties" %>
               </div>
-            </div>
+            </fieldset>
           </div>
         </div>
       </div>

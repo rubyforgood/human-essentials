@@ -11,13 +11,14 @@
 
     describe "when signed in as a partner and editing the profile" do
       it "handles the partner county appropriately" do
-        county_1 = "A"
+        county_1 = "Ada County,  Idaho"
         # county_2 = "B"
 
         # update button is available, total is 0, no message
 
 
         expect(page).to have_content("Edit My Organization")
+        expect(page).to have_content("Area Served")
         expect(page).to have_button("Update Information", count: 1)
         expect(page).to have_css("#__add_partner_county", count: 1)
         expect(page).to have_content("0 %")
@@ -26,18 +27,28 @@
         # add a county with 25% client share
 
         click_on("Add another county")
+        expect(page).to have_css(".partners_partner_partner_counties_county_id", count:1)
 
-        select(county_1, from: "county_select_1")
+        found_field = find_field(class: "pc-county-select")
+        found_field.send_keys("A")    # I am not happy with this, but I'm hoping this is sufficient to select the first thing.   Anything else seems to be disturbing the rest of the test
 
-        # fill_in (:id_for_first_county_client_share, 25)
+
+
+         fill_in class: "pc-client-share", with: "25"
+
+
 
         # update button is not available, total is 25, messages appear
 
-        # expect(page).not_to have_css("update-button", count: 1)
-        # expect(page).to have_css("update-button-disabled", count: 1)
-        # expect(page).to have_css("add_partner_county_button", count: 1)
-        # expect(page).to have_content("25%")
-        # expect(page).to have_css("partner_county_error_message")
+        expect(page).not_to have_button("Update Information", count: 1)
+        expect(page).not_to have_css("#__add_partner_county", count: 1)
+         expect(page).to have_css("update-button-disabled", count: 1)
+         expect(page).not_to have_css("add_partner_county_button", count: 1)
+         expect(page).to have_content("25 %")
+         expect(page).to have_css("partner_county_error_message")
+
+        # Everything beyond this is effectively pseudocode at this point -- #################
+
 
         # add a county with 75% client share
         # click_on(add_partner_county_button)
@@ -51,6 +62,12 @@
         # expect(page).to have_css("add_partner_county_button", count: 1)
         # expect(page).to have_content("100%")
         # expect(page).not_to have_css("partner_county_error_message")
+
+        # click("update-button")
+        # it goes where expected, with no message
+        # expect(page).to have_content("Organization Details")
+        # expect(page).to have_content("75 %")
+        # clink("Edit Information")
 
         # change the amount on the first county to 26%
         # fill_in (:id_for_first_county_client_share, 26)
@@ -77,6 +94,13 @@
         # expect(page).to have_content("75%")
         # expect(page).to have_css("partner_county_error_message")
 
+        # click("update-button")
+        # it goes where expected, with no message
+        # expect(page).to have_content("Organization Details")
+        #
+
+
+
         # remove remaining county
         # click_on("county_2_remove")
         # update button is available, etc.
@@ -91,6 +115,7 @@
         # click("update-button")
         # it goes where expected, with no message
         # expect(page).to have_content("Organization Details")
+        # expect(page).to have_content("Unspecified")
       end
     end
   end
