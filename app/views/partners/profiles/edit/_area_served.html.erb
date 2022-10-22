@@ -6,9 +6,18 @@
           <div class="card-header bg-white">
             <h3 class="card-title"><strong>Area Served</strong></h3>
             <div class="card_body">
-              <div id="partner_county_client_share_total" class="partner-counties-total-value">
-                <%= "#{@client_share_total} %" %>
+              <div id="partner_counties"  class="partner-county-fields">
+                  <%= f.simple_fields_for :partner_counties do |partner_county| %>
+                    <%= render 'partner_counties/partner_county_fields', f: partner_county %>
+                  <% end %>
               </div>
+              <div class="partner-counties-total-row">
+                <div class = "partner-counties-total-prompt">Total is:</div>
+                <div id="partner_county_client_share_total" class="partner-counties-total-value justify-content-end">
+                  <%= "#{@client_share_total} %" %>
+                </div>
+              </div>
+
               <div class="row links justify-content-end">
                 <%= add_partner_county_button f, "#partner_counties" %>
               </div>

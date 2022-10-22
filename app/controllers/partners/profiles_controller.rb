@@ -3,6 +3,7 @@ module Partners
     def show; end
 
     def edit
+      @counties = County.all()
       @client_share_total = current_partner.client_share_total
     end
 
