@@ -1,5 +1,5 @@
-@tailwind 'base';
-@tailwind 'components';
+@tailwind base;
+@tailwind components;
 
 /* Mosaic Theme */
 @import './mosaic/theme.css';
@@ -9,4 +9,4 @@
 @import './mosaic/utility-patterns.css';
 /* Mosaic Theme */
 
-@tailwind 'utilities';
+@tailwind utilities;

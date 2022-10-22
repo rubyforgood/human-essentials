@@ -84,18 +84,15 @@
               <a class="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto" href="onboarding-02.html">Next Step -&gt;</a>
             </div>
           </form>
-
         </div>
       </div>
-
     </div>
-
   </div>
 
   <!-- Image -->
   <div class="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
-    <%= image_pack_tag @side_image_path, class: "object-cover object-center w-full h-full", width: 760, height: 1024 %>
-    <%= image_pack_tag 'auth-decoration.png', class: "absolute top-1/4 left-0 transform -translate-x-1/2 ml-8 hidden lg:block", width:"218", height:"224", alt: "Authentication decoration" %>
+    <%= image_tag @side_image_path, class: "object-cover object-center w-full h-full", width: 760, height: 1024 %>
+    <%= image_tag 'auth-decoration.png', class: "absolute top-1/4 left-0 transform -translate-x-1/2 ml-8 hidden lg:block", width:"218", height:"224", alt: "Authentication decoration" %>
   </div>
 
 </div>

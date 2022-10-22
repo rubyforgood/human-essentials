@@ -3,13 +3,15 @@
 require "rails_helper"
 
 RSpec.describe AuthenticationLayoutComponent, type: :component do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject { render_inline(described_class.new(side_image_path:  side_image_path)) }
+  let(:side_image_path) { 'https://via.placeholder.com/300x300' }
 
-  # it "renders something useful" do
-  #   expect(
-  #     render_inline(described_class.new(attr: "value")) { "Hello, components!" }.css("p").to_html
-  #   ).to include(
-  #     "Hello, components!"
-  #   )
-  # end
+  it 'should have the logo component' do
+    expect(subject.text).to include('Human Essentials')
+  end
+
+  it 'should have the image with the src set to the side_image_path' do
+    expect(subject.css('img').first.attributes['src'].value).to eq(side_image_path)
+  end
+
 end
