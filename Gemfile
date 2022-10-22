@@ -107,7 +107,6 @@ gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
 
-
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
