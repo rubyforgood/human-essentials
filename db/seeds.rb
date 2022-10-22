@@ -783,5 +783,6 @@ partner_ids.each do |partner_id|
       client_share: client_share
     )
     county_index += 1
+    remaining_percentage = remaining_percentage - client_share
   end
 end
