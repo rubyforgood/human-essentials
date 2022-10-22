@@ -32,23 +32,26 @@ class Admin::OrganizationsController < AdminController
     @organization = Organization.new
     account_request = params[:token] && AccountRequest.get_by_identity_token(params[:token])
 
-    if account_request.blank?
-      @organization.users.build(organization_admin: true)
-    elsif account_request.processed?
+    @user = User.new
+    return unless account_request
+
+    if account_request.processed?
       flash[:error] = "The account request had already been processed and cannot be used again"
-      @organization.users.build(organization_admin: true)
     else
       @organization.assign_attributes_from_account_request(account_request)
+      @user.assign_attributes(email: account_request.email, name: account_request.name)
     end
   end
 
   def create
     @organization = Organization.new(organization_params)
-    @organization.users.last.assign_attributes(password: SecureRandom.uuid)
 
     if @organization.save
       Organization.seed_items(@organization)
-      @organization.users.last.invite!
+      @user = UserInviteService.invite(name: user_params[:name],
+                                       email: user_params[:email],
+                                       roles: [Role::ORG_USER, Role::ORG_ADMIN],
+                                       resource: @organization)
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
@@ -76,5 +79,9 @@ class Admin::OrganizationsController < AdminController
     params.require(:organization)
           .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id, :reminder_day, :deadline_day,
                   users_attributes: %i(name email organization_admin), account_request_attributes: %i(ndbn_member_id id))
+  end
+
+  def user_params
+    params.require(:organization).require(:user).permit(:name, :email)
   end
 end

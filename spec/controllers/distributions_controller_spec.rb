@@ -26,7 +26,7 @@ RSpec.describe DistributionsController, type: :controller do
           }
         end
 
-        subject { post :create, params: params }
+        subject { post :create, params: params.merge(format: :turbo_stream) }
 
         it "redirects with a flash notice and a flash error" do
           expect(subject).to have_http_status(:redirect)
@@ -60,7 +60,7 @@ RSpec.describe DistributionsController, type: :controller do
           }
         end
 
-        subject { post :create, params: params }
+        subject { post :create, params: params.merge(format: :turbo_stream) }
 
         it "redirects with a flash notice and a flash error" do
           expect(subject).to have_http_status(:redirect)
@@ -97,7 +97,7 @@ RSpec.describe DistributionsController, type: :controller do
           }
         end
 
-        subject { post :create, params: params }
+        subject { post :create, params: params.merge(format: :turbo_stream) }
 
         it "redirects with a flash notice and a flash alert" do
           expect(subject).to have_http_status(:redirect)

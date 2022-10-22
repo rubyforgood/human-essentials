@@ -37,7 +37,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
     end
 
     it "creates a new organization" do
-      allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path
       admin_user_params = attributes_for(:organization_admin)
       org_params = attributes_for(:organization)
@@ -51,9 +50,8 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
         select("VA", from: "organization_state")
         fill_in "organization_zipcode", with: "22630"
 
-        fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
-        fill_in "organization_users_attributes_0_email", with: admin_user_params[:email]
-        check "organization_users_attributes_0_organization_admin"
+        fill_in "organization_user_name", with: admin_user_params[:name]
+        fill_in "organization_user_email", with: admin_user_params[:email]
 
         click_on "Save"
       end
@@ -97,7 +95,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
     end
 
     it "creates a new organization" do
-      allow(User).to receive(:invite!).and_return(true)
       visit new_admin_organization_path
       org_params = attributes_for(:organization)
       fill_in "organization_name", with: org_params[:name]
@@ -110,9 +107,8 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       fill_in "organization_zipcode", with: "22630"
 
       admin_user_params = attributes_for(:organization_admin)
-      fill_in "organization_users_attributes_0_name", with: admin_user_params[:name]
-      fill_in "organization_users_attributes_0_email", with: admin_user_params[:email]
-      check "organization_users_attributes_0_organization_admin"
+      fill_in "organization_user_name", with: admin_user_params[:name]
+      fill_in "organization_user_email", with: admin_user_params[:email]
 
       click_on "Save"
 
