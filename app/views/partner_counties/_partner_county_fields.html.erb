@@ -1,9 +1,16 @@
-<div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
+<section class="nested-fields">
+  <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
+    <div class='d-flex flex-column justify-content-center'>
       <span class="pc-name">
           <%= f.input :county_id, collection: @counties, prompt: "County or equivalent", include_blank: "", label: false, input_html: { class: "my-0 pc-county-select" } %>
         </span>
-  <div class="mx-2">
-    <%= f.input :client_share, placeholder: "Client Share", label: "Client Share", input_html: { class: "pc-client-share", onchange: 'calculate_client_share_total()',
-                                                                                        onkeyup:  'calculate_client_share_total()'} %>
+      <div class="mx-2">
+        <%= f.input :client_share, placeholder: "Client Share", label: false, input_html: { class: "pc-client-share", onchange: 'calculate_client_share_total()',
+                                                                                            onkeyup:  'calculate_client_share_total()'} %>
+      </div>
+    </div>
+    <%= delete_partner_county_button f %>
   </div>
-</div>
+
+  <hr class="partner-county-separator">
+</section>
