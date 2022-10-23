@@ -60,7 +60,7 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
     end
 
-    describe "POST #create" do
+    xdescribe "POST #create" do
       let(:valid_organization_params) { attributes_for(:organization, users_attributes: [attributes_for(:organization_admin)]).except(:logo) }
 
       context "with valid params" do
