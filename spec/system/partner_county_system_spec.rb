@@ -52,6 +52,12 @@
         # expect(page).to have_content("100%")
         # expect(page).not_to have_css("partner_county_error_message")
 
+        # click("update-button")
+        # it goes where expected, with no message
+        # expect(page).to have_content("Organization Details")
+        # expect(page).to have_content("75 %")
+        # clink("Edit Information")
+
         # change the amount on the first county to 26%
         # fill_in (:id_for_first_county_client_share, 26)
 
@@ -77,6 +83,13 @@
         # expect(page).to have_content("75%")
         # expect(page).to have_css("partner_county_error_message")
 
+        # click("update-button")
+        # it goes where expected, with no message
+        # expect(page).to have_content("Organization Details")
+        #
+
+
+
         # remove remaining county
         # click_on("county_2_remove")
         # update button is available, etc.
@@ -91,6 +104,7 @@
         # click("update-button")
         # it goes where expected, with no message
         # expect(page).to have_content("Organization Details")
+        # expect(page).to have_content("Unspecified")
       end
     end
   end
