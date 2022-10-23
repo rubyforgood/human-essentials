@@ -7,7 +7,7 @@ class ProfilesController < ApplicationController
 
   def update
     @partner = current_organization.partners.find(params[:id]).profile
-    if @partner.update(edit_profile_params)
+    if PartnerProfileUpdateService.new(@partner, edit_profile_params).call
       redirect_to partner_path(@partner.partner) + "#partner-information", notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
@@ -97,6 +97,7 @@ class ProfilesController < ApplicationController
       :essentials_funding_source,
       :enable_child_based_requests,
       :enable_individual_requests,
+      partner_counties_attributes: %i[county_id client_share _destroy],
       documents: []
     )
   end
