@@ -9,6 +9,7 @@
   <%= javascript_include_tag 'application' %>
   <%= stylesheet_pack_tag 'application' %>
   <%= javascript_pack_tag 'application' %>
+  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">

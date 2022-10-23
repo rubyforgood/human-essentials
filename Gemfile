@@ -56,6 +56,8 @@ gem "recaptcha"
 gem "turbo-rails"
 # Sprinkle a little JS to add interactivity
 gem "stimulus-rails"
+# Allow using tailwindcss
+gem "tailwindcss-rails"
 
 ##### VIEWS/CONTROLLERS #####
 
