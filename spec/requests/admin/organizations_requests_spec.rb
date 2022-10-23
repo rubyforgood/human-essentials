@@ -18,6 +18,10 @@ RSpec.describe "Admin::Organizations", type: :request do
         let!(:account_request) { FactoryBot.create(:account_request) }
 
         it 'should render new with pre populate input fields from the account_request' do
+          ndbn_member = FactoryBot.create(:ndbn_member)
+          account_request.ndbn_member = ndbn_member
+          account_request.save
+
           get new_admin_organization_url(token: account_request.identity_token)
           expect(response).to render_template(:new)
 
@@ -35,6 +39,7 @@ RSpec.describe "Admin::Organizations", type: :request do
           expect(response.body).to match(CGI::escapeHTML(account_request.email))
           expect(response.body).to match(CGI::escapeHTML(account_request.organization_name))
           expect(response.body).to match(CGI::escapeHTML(account_request.organization_website))
+          expect(response.body).to match(CGI::escapeHTML("#{ndbn_member.ndbn_member_id} - #{ndbn_member.account_name}"))
           # rubocop:enable Style/ColonMethodCall
         end
       end
@@ -55,22 +60,25 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
     end
 
-    xdescribe "POST #create" do
-      let(:valid_organization_params) { attributes_for(:organization, users_attributes: [attributes_for(:organization_admin)]) }
+    describe "POST #create" do
+      let(:valid_organization_params) { attributes_for(:organization, users_attributes: [attributes_for(:organization_admin)]).except(:logo) }
 
       context "with valid params" do
-        it "redirects to #index" do
-          post admin_organizations_path({ organization: valid_organization_params })
-
-          expect(response).to redirect_to(admin_organizations_path)
+        it "creates an organization and redirects to #index" do
+          expect {
+            post admin_organizations_path({ organization: valid_organization_params })
+          }.to change(Organization, :count).by(1)
+          expect(response).to redirect_to(admin_organizations_path(organization_id: Organization.first.short_name))
         end
       end
 
       context "with invalid params" do
         let(:invalid_params) { valid_organization_params.merge(name: nil) }
 
-        it "renders #create with an error message" do
-          post admin_organizations_path({ organization: invalid_params })
+        it "does not create an organization and renders #create with an error message" do
+          expect {
+            post admin_organizations_path({ organization: invalid_params })
+          }.to change(Organization, :count).by(0)
 
           expect(subject).to render_template("new")
           expect(flash[:error]).to be_present
