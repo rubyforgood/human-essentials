@@ -11,12 +11,12 @@ export default class extends Controller {
     this.toggleNestedElementVisiblity()
   }
 
+  /**
+   * Toggles the visibility of the nested element depending
+   * on wither the checkbox is checked or not.
+   */
   toggleNestedElementVisiblity() {
-    if (this.checkboxTarget.checked) {
-      this.nestedElementTarget.classList.remove("hidden")
-    } else {
-      this.nestedElementTarget.classList.add("hidden")
-    }
+    this.nestedElementTarget.classList.toggle("hidden", !this.checkboxTarget.checked)
   }
 
 }
