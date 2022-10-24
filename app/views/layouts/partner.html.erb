@@ -6,7 +6,6 @@
   <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <%= csrf_meta_tags %>
-  <%= javascript_include_tag 'application' %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <%= javascript_pack_tag 'application' %>
   <%= stylesheet_pack_tag 'application' %>
