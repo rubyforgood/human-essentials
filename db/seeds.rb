@@ -140,6 +140,10 @@ end
     password_confirmation: 'password!'
   )
 
+  if user_data[:organization]
+    user.add_role(:org_user, user_data[:organization])
+  end
+
   if user_data[:organization_admin]
     user.add_role(:org_admin, user_data[:organization])
   end
