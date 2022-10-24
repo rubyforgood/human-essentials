@@ -35,7 +35,7 @@ function calculate_client_share_total(){
 
 //Following the pattern from adjustments.js
 
-$(document).on("cocoon:after-remove", "f", function(){
+$(document).on("cocoon:after-remove", function(){
     console.print("in cocoon-after-remove callback");
     calculate_client_share_total();
 });
