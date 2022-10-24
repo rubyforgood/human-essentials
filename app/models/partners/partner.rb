@@ -93,7 +93,7 @@ module Partners
     has_many_attached :documents
 
     has_many :partner_counties
-    accepts_nested_attributes_for :partner_counties
+    accepts_nested_attributes_for :partner_counties, allow_destroy: true
 
     self.ignored_columns = %w[
       evidence_based_description
