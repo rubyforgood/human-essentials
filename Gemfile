@@ -213,3 +213,5 @@ end
 
 # Use Redis for Action Cable
 gem "redis", "~> 5.0"
+
+gem "importmap-rails", "~> 1.1"
