@@ -26,6 +26,8 @@ class Item < ApplicationRecord
   include Exportable
   include Valuable
 
+  after_update :update_kit
+
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
   belongs_to :kit, optional: true
@@ -166,5 +168,11 @@ class Item < ApplicationRecord
 
   def inventory_item_at(storage_location_id)
     inventory_items.find_by(storage_location_id: storage_location_id)
+  end
+
+  private
+
+  def update_kit
+    kit.update(name: name) if kit.present?
   end
 end
