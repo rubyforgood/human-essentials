@@ -53,6 +53,6 @@ class AccountRequestsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def account_request_params
-    params.require(:account_request).permit(:name, :email, :organization_name, :organization_website, :request_details)
+    params.require(:account_request).permit(:name, :email, :organization_name, :organization_website, :request_details, :ndbn_member_id)
   end
 end

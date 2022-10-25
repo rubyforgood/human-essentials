@@ -7,6 +7,7 @@ class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
 
+  before_action :enable_turbo!, only: %i[index new show]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
 
@@ -72,10 +73,14 @@ class DistributionsController < ApplicationController
     if result.success?
       session[:created_distribution_id] = result.distribution.id
       @distribution = result.distribution
-      flash[:notice] = "Distribution created!"
 
       perform_inventory_check
-      redirect_to(distribution_path(result.distribution)) && return
+
+      respond_to do |format|
+        format.turbo_stream do
+          redirect_to distribution_path(result.distribution), notice: "Distribution created!"
+        end
+      end
     else
       @distribution = result.distribution
       if params[:request_id].present?
@@ -83,11 +88,18 @@ class DistributionsController < ApplicationController
         # does not match any known Request
         @distribution.request = Request.find(params[:request_id])
       end
-      flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
-      render :new
+
+      flash_error = insufficient_error_message(result.error.message)
+
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:error] = flash_error
+          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash")
+        end
+      end
     end
   end
 
