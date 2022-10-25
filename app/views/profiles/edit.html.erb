@@ -30,9 +30,20 @@
               </div>
             </div>
             <div class="card-footer">
-              <%= f.submit("Update Information", class: "btn btn-primary") %>
+              <div id="profile-update-button">
+                <%= f.submit("Update Information", class: "btn btn-primary ") %>
+              </div>
+              <div id="profile-update-button-disabled" >
+                <div class="btn btn-light">
+                  Cannot Update Information
+                </div>
+              </div>
+              <div id="partner-county-client-share-total-warning-footer">
+                The total client share must be either 0 or 100%.
+              </div>
               <%= link_to "Cancel Update", partner_path(@partner.partner), class: "btn btn-danger float-right" %>
             </div>
+
           <% end %>
         </div>
       </div>

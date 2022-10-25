@@ -8,15 +8,16 @@ class PartnerProfileUpdateService
   end
 
   def call
+
     @partner.update(@params)
 
     @partner.partner_counties.each(&:destroy!)
+
     @partner.reload
     # Replace the current distribution with the new parameters
 
     @partner.update @params
 
-    @partner.valid?  # Returns true if no errors
+    @partner.valid? # Returns true if no errors
   end
-
 end

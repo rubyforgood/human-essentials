@@ -1,7 +1,7 @@
 class ProfilesController < ApplicationController
   def edit
     @partner = current_organization.partners.find(params[:id]).profile
-    @counties = County.all()
+    @counties = County.all
     @client_share_total = @partner.client_share_total
   end
 
@@ -10,7 +10,8 @@ class ProfilesController < ApplicationController
     if PartnerProfileUpdateService.new(@partner, edit_profile_params).call
       redirect_to partner_path(@partner.partner) + "#partner-information", notice: "#{@partner.name} updated!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      @counties = County.all
+      flash[:error] = "Something went wrong.  Try again? #{@partner.errors.full_messages}"
       render action: :edit
     end
   end

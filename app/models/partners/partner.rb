@@ -92,7 +92,7 @@ module Partners
     has_one_attached :proof_of_form_990
     has_many_attached :documents
 
-    has_many :partner_counties
+    has_many :partner_counties, dependent: :destroy
     accepts_nested_attributes_for :partner_counties, allow_destroy: true
 
     self.ignored_columns = %w[
@@ -188,7 +188,7 @@ module Partners
     def client_share_total
       tot = 0
       partner_counties.each do |pc|
-        tot = tot + pc.client_share
+        tot += pc.client_share
       end
       tot
     end

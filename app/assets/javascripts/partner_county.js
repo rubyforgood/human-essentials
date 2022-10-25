@@ -14,16 +14,20 @@ function calculate_client_share_total(){
                 }
         }
     );
-    document.getElementById("partner_county_client_share_total").innerHTML =total;
+    document.getElementById("partner-county-client-share-total").innerHTML =total;
 
     if(total == 0 || total == 100){
         document.getElementById("partner-county-client-share-total-warning").style.visibility= 'hidden';
         document.getElementById("profile-update-button").style.visibility = 'visible';
         document.getElementById("profile-update-button-disabled").style.visibility = 'hidden';
+        document.getElementById("partner-county-client-share-total-warning-footer").style.visibility= 'hidden';
     }else {
         document.getElementById("partner-county-client-share-total-warning").style.visibility= 'visible';
         document.getElementById("profile-update-button").style.visibility = 'hidden';
         document.getElementById("profile-update-button-disabled").style.visibility = 'visible';
+        document.getElementById("partner-county-client-share-total-warning-footer").style.visibility= 'visible';
+
+
     }
     return total;
 }

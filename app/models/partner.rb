@@ -178,5 +178,4 @@ class Partner < ApplicationRecord
   def should_invite_because_email_changed?
     email_changed? and (invited? or awaiting_review? or recertification_required? or approved?)
   end
-
 end

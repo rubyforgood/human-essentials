@@ -180,7 +180,6 @@ module UiHelper
   end
 end
 
-
 def delete_partner_county_button(form, options = {})
   text = options[:text] || "Remove"
   size = options[:text] || "sm"
@@ -195,7 +194,7 @@ def add_partner_county_button(form, node, options = {})
   text = options[:text] || "Add another county"
   size = options[:size] || "md"
   type = options[:type] || "primary"
-  partial = options[:partial]  || "partner_counties/partner_county_fields"
+  partial = options[:partial] || "partner_counties/partner_county_fields"
   link_to_add_association form, :partner_counties,
                           data: {
                             association_insertion_node: node,
