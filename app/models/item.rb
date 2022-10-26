@@ -26,7 +26,7 @@ class Item < ApplicationRecord
   include Exportable
   include Valuable
 
-  after_update :update_kit
+  after_update :update_associated_kit_name, if: -> { kit.present? }
 
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
@@ -172,7 +172,7 @@ class Item < ApplicationRecord
 
   private
 
-  def update_kit
-    kit.update(name: name) if kit.present?
+  def update_associated_kit_name
+    kit.update(name: name)
   end
 end

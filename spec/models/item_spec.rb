@@ -227,7 +227,7 @@ RSpec.describe Item, type: :model do
   describe "after update" do
     let(:item) { create(:item, name: "my item", kit: kit) }
 
-    context "when item has kit" do
+    context "when item has the kit" do
       let(:kit) { create(:kit, name: "my kit") }
 
       it "updates kit name" do
@@ -240,6 +240,7 @@ RSpec.describe Item, type: :model do
       let(:kit) { nil }
 
       it "does not raise NoMethodError" do
+        allow_any_instance_of(Kit).to receive(:update).and_return(true)
         expect {
           item.update(name: "my new name")
         }.not_to raise_error(NoMethodError)
