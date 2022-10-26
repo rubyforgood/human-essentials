@@ -65,10 +65,10 @@ module Exports
         "Source Inventory" => ->(distribution) {
           distribution.storage_location.name
         },
-        "Total Number of Items" => ->(distribution) {
+        base_item_header_col_name => ->(distribution) {
           # filter the line items by item id (for selected item filter) to
           # get the number of items
-          if @filtered_item_id
+          if @filtered_item_id.present?
             distribution.line_items.where(item_id: @filtered_item_id).total
           else
             distribution.line_items.total
@@ -90,6 +90,11 @@ module Exports
           distribution.comment
         }
       }
+    end
+
+    # if filtered based on an item, change the column accordingly
+    def base_item_header_col_name
+      @filtered_item_id.present? ? "Total Number of Items" : "Total Items"
     end
 
     def base_headers
