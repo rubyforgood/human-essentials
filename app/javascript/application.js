@@ -5,10 +5,16 @@
  * all the interactions.
  */
 import jQuery from 'jquery'
+import 'admin-lte'
+import "@oddcamp/cocoon-vanilla-js";
+import { Turbo } from "@hotwired/turbo-rails"
+
 window.jQuery = jQuery
 window.$ = jQuery
 
-import 'admin-lte'
-import "@oddcamp/cocoon-vanilla-js";
+// Disable turbo by default to avoid issues with turbolinks
+Turbo.session.drive = false
 
 console.log("Hello from importmap-rails!")
+
+

@@ -7,11 +7,6 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
-import { Turbo } from "@hotwired/turbo-rails"
-
-// Disable turbo by default to avoid issues with turbolinks
-Turbo.session.drive = false
-
 import "../controllers/index"
 import "trix"
 import "@rails/actiontext"
