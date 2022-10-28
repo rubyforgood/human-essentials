@@ -24,12 +24,11 @@
                 <h2 class='text-bold text-lg'>Do you want to send deadline reminders to them every month?</h2>
                 <%= f.input :send_reminders, as: :boolean, label: "Yes", input_html: { data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisiblity', 'checkbox-with-nested-element-target': 'checkbox' } } %>
 
-                <div class='pl-4 w-3/4 hidden' data-checkbox-with-nested-element-target='nestedElement'>
-
-                  <div class="bg-yellow-200 border-l-4 border-orange-500 text-orange-700 p-4 mb-2" role="alert">
-                    <p class="font-bold text-red-800">That's great! You must fill out the details below to send reminders. </p>
+                <div class='pl-5 d-none' data-checkbox-with-nested-element-target='nestedElement'>
+                  <div class="callout callout-info">
+                    <h5>That's great!</h5>
+                    <p>You must fill out the details below to send reminders.</p>
                   </div>
-
 
                   <%= render 'shared/deadline_day_fields', f: f %>
                 </div>
