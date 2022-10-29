@@ -9,6 +9,8 @@ import 'admin-lte'
 import "@oddcamp/cocoon-vanilla-js";
 import { Turbo } from "@hotwired/turbo-rails"
 
+import 'bootstrap'
+
 window.jQuery = jQuery
 window.$ = jQuery
 
