@@ -3,3 +3,9 @@
 // ./bin/rails generate stimulus controllerName
 
 import { application } from "./application"
+
+import CheckboxWithNestedElementController from "./checkbox_with_nested_element_controller"
+application.register("checkbox-with-nested-element", CheckboxWithNestedElementController)
+
+import DonationsController from "./donations_controller"
+application.register("donations", DonationsController)

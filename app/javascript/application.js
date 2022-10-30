@@ -10,6 +10,7 @@ import "@oddcamp/cocoon-vanilla-js";
 import { Turbo } from "@hotwired/turbo-rails"
 
 import 'bootstrap'
+import 'controllers'
 
 window.jQuery = jQuery
 window.$ = jQuery
