@@ -14,7 +14,7 @@ digraph g {
   purchase -> bank
 }
 ```
-</details
+</details>
 
 ![](./physical-flow.svg)
 
