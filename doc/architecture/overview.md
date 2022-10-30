@@ -1,6 +1,8 @@
 # Overview
 
+![Physical flow](./physical-flow.svg)
 <details>
+<summary>(Diagram Code)</summary>
 
 ```plantuml:physical-flow
 digraph g {
@@ -17,5 +19,4 @@ digraph g {
 ```
 </details>
 
-![](./physical-flow.svg)
 
