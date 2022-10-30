@@ -20,3 +20,16 @@ digraph g {
 </details>
 
 
+![Partner Request](./partner-request.svg)
+<details>
+<summary>(Diagram Code)</summary>
+
+```plantuml:partner-request
+participant Partner as partner
+participant Bank as bank
+
+partner -> bank: Submit request
+bank -> bank: Build distribution
+bank -> partner: Fulfill distribution
+```
+</details>
