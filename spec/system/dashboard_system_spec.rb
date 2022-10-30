@@ -379,7 +379,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         drive = @product_drives.sample
 
         create :product_drive_donation, :with_items, product_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization,
-               money_raised: @money_raised_on_each_product_drive
+          money_raised: @money_raised_on_each_product_drive
 
         OpenStruct.new drive_name: drive.name, quantity: quantity_in_donation, money_raised: @money_raised_on_each_product_drive
       end

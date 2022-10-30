@@ -13,6 +13,7 @@
 #  status               :string           default("started"), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  ndbn_member_id       :bigint
 #
 class AccountRequest < ApplicationRecord
   validates :name, presence: true
@@ -22,6 +23,8 @@ class AccountRequest < ApplicationRecord
 
   validate :email_not_already_used_by_organization
   validate :email_not_already_used_by_user
+
+  belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
 
   has_one :organization, dependent: :nullify
 

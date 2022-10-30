@@ -23,6 +23,8 @@
       <p>Website: <%= partner_profile.website %></p>
       <p>Facebook: <%= partner_profile.facebook %></p>
       <p>Twitter: <%= partner_profile.twitter %></p>
+      <p>Instagram: <%= partner_profile.instagram %></p>
+      <p>No Social Media Presence: <%= humanize_boolean(partner_profile.no_social_media_presence) %></p>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_stability') || partner_profile_fields.empty? %>

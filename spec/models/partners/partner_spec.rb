@@ -33,9 +33,11 @@
 #  greater_2_times_fpl            :integer
 #  income_requirement_desc        :boolean
 #  income_verification            :boolean
+#  instagram                      :string
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
+#  no_social_media_presence       :boolean
 #  other_agency_type              :string
 #  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
@@ -101,6 +103,53 @@ RSpec.describe Partners::Partner, type: :model do
 
       it 'should return the first user ever created for a partner' do
         expect(subject).to eq(partner.primary_user)
+      end
+    end
+  end
+
+  describe "social media info validation for partners" do
+    context "no social media presence and the checkbox isn't checked" do
+      let(:partner) { FactoryBot.build(:partners_partner, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
+
+      it "should not be valid" do
+        expect(partner.valid?).to eq(false)
+      end
+    end
+
+    context "no social media presence and the checkbox is checked" do
+      let(:partner) { FactoryBot.build(:partners_partner, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
+
+      it "should be valid" do
+        expect(partner.valid?).to eq(true)
+      end
+    end
+
+    context "has social media presence and the checkbox is unchecked" do
+      let(:partner) { FactoryBot.build(:partners_partner, no_social_media_presence: false) }
+
+      it "with just a website it should be valid" do
+        partner.update(website: "some website URL", twitter: "", facebook: "", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just twitter it should be valid" do
+        partner.update(website: "", twitter: "some twitter URL", facebook: "", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just facebook it should be valid" do
+        partner.update(website: "", twitter: "", facebook: "some facebook URL", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just instagram it should be valid" do
+        partner.update(website: "", twitter: "", facebook: "", instagram: "some instagram URL")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with every social media option it should be valid" do
+        partner.update(website: "some website URL", twitter: "some twitter URL", facebook: "some facebook URL", instagram: "some instagram URL")
+        expect(partner.valid?).to eq(true)
       end
     end
   end
