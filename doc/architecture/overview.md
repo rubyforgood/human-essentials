@@ -1,5 +1,6 @@
 # Overview
 
+<details>
 ```plantuml:physical-flow
 digraph g {
   rankdir=LR
@@ -13,6 +14,7 @@ digraph g {
   purchase -> bank
 }
 ```
+</details
 
 ![](./physical-flow.svg)
 
