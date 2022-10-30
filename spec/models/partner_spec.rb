@@ -25,6 +25,24 @@ RSpec.describe Partner, type: :model do
     it { should have_many(:requests) }
     it { should have_many(:distributions) }
     it { should have_many(:requests) }
+    it { should have_many(:users).dependent(:destroy) }
+    it { should have_many(:partner_requests).dependent(:destroy) }
+    it { should have_many(:families).dependent(:destroy) }
+    it { should have_many(:children).through(:families) }
+
+    describe 'primary_user' do
+      subject { partner.primary_user }
+      let(:partner) { create(:partner) }
+      before do
+        second_user = partner.primary_user.clone
+        second_user.email = Faker::Internet.email
+        second_user.save!
+      end
+
+      it 'should return the first user ever created for a partner' do
+        expect(subject).to eq(partner.primary_user)
+      end
+    end
   end
 
   context "Validations >" do
@@ -144,14 +162,14 @@ RSpec.describe Partner, type: :model do
       end
       context 'when it has a profile but no users' do
         it 'should return true' do
-          create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
+          create(:partner_profile, partner_id: partner.id, name: partner.name)
           expect(partner.reload).to be_deletable
         end
       end
       context 'when it has a profile and users' do
         it 'should return false' do
-          partners_partner = create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
-          create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
+          create(:partner_profile, partner_id: partner.id)
+          create(:partners_user, email: partner.email, name: partner.name, partner: partner)
           expect(partner.reload).not_to be_deletable
         end
       end
@@ -194,18 +212,8 @@ RSpec.describe Partner, type: :model do
     subject { partner.profile }
     let(:partner) { create(:partner) }
 
-    it 'should return the associated Partners::Partner record' do
-      expect(subject).to eq(Partners::Partner.find_by(partner_id: partner.id))
-    end
-  end
-
-  describe '#primary_partner_user' do
-    subject { partner.primary_partner_user }
-    let(:partner) { create(:partner) }
-
-    it 'should return the associated primary User' do
-      partner_users = ::User.with_role(Role::PARTNER, partner.profile)
-      expect(partner_users).to include(subject)
+    it 'should return the associated Partners::Profile record' do
+      expect(subject).to eq(Partners::Profile.find_by(partner_id: partner.id))
     end
   end
 

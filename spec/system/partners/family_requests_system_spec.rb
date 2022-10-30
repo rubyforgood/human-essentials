@@ -1,11 +1,11 @@
 RSpec.describe "Family requests", type: :system, js: true do
   let(:partner) { FactoryBot.create(:partner) }
-  let(:partner_user) { partner.primary_partner_user }
+  let(:partner_user) { partner.primary_user }
   let(:family) { create(:partners_family, guardian_last_name: "Morales", partner: partner.profile) }
   let(:other_family) { create(:partners_family, partner: partner.profile) }
 
   before do
-    partner.profile.update(partner_status: :verified)
+    partner.update(status: :approved)
     login_as(partner_user)
   end
 

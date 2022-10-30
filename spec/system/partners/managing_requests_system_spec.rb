@@ -1,6 +1,6 @@
 RSpec.describe "Managing requests", type: :system, js: true do
   describe 'creating a individuals/family request' do
-    let(:partner_user) { partner.primary_partner_user }
+    let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is permitted to make a request' do
@@ -22,7 +22,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
       end
 
       context 'WHEN they create a request properly' do
-        let(:items_to_select) { Organization.find(partner_user.partner.essentials_bank_id).valid_items.sample(3) }
+        let(:items_to_select) { partner_user.partner.organization.valid_items.sample(3) }
         let(:item_details) do
           items_to_select.map do |item|
             default_quantity = Item.find(item[:id]).default_quantity
@@ -72,7 +72,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
   end
 
   describe 'creating a request' do
-    let(:partner_user) { partner.primary_partner_user }
+    let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is permitted to make a request' do
@@ -108,7 +108,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
       end
 
       context 'WHEN they create a request properly' do
-        let(:items_to_select) { Organization.find(partner_user.partner.essentials_bank_id).valid_items.sample(3) }
+        let(:items_to_select) { partner_user.partner.organization.valid_items.sample(3) }
         let(:item_details) do
           items_to_select.map do |item|
             {

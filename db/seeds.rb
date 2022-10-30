@@ -169,13 +169,6 @@ end
 # Partners & Associated Data
 # ----------------------------------------------------------------------------
 
-partner_status_map = {
-  pending: "pending",
-  recertification_required: "recertification_required",
-  approved: "verified",
-  verified: "verified"
-}
-
 note = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac enim orci. Donec id consequat est. Vivamus luctus vel erat quis tincidunt. Nunc quis varius justo. Integer quam augue, dictum vitae bibendum in, fermentum quis felis. Nam euismod ultrices velit a tristique. Vestibulum sed tincidunt erat. Vestibulum et ullamcorper sem. Sed ante leo, molestie vitae augue ac, aliquam ultrices enim."
 ]
@@ -211,16 +204,7 @@ note = [
     partner.partner_group = pdx_org.partner_groups.first
   end
 
-
-
-  # ----------------------------------------------------------------------------
-  # Creating associated records within the Partnerbase database
-  #
-  # **We have two separate database. One for diaperbase and the other for partnerbase**
-  # ----------------------------------------------------------------------------
-
-  partner = Partners::Partner.create!({
-                                        name: p.name,
+  profile = Partners::Profile.create!({
                                         address1: Faker::Address.street_address,
                                         address2: "",
                                         city: Faker::Address.city,
@@ -228,8 +212,6 @@ note = [
                                         zip_code: Faker::Address.zip,
                                         website: Faker::Internet.domain_name,
                                         zips_served: Faker::Address.zip,
-                                        essentials_bank_id: pdx_org.id,
-                                        partner_id: p.id,
                                         executive_director_name: Faker::Name.name,
                                         executive_director_email: p.email,
                                         executive_director_phone: Faker::PhoneNumber.phone_number,
@@ -239,9 +221,7 @@ note = [
                                         primary_contact_mobile: Faker::PhoneNumber.phone_number,
                                         pick_up_name: Faker::Name.name,
                                         pick_up_email: Faker::Internet.email,
-                                        pick_up_phone: Faker::PhoneNumber.phone_number,
-                                        partner_status: partner_status_map[partner_option[:status]] || "pending",
-                                        status_in_diaper_base: partner_option[:status]
+                                        pick_up_phone: Faker::PhoneNumber.phone_number
                                       })
 
   user = ::User.create!(
@@ -253,7 +233,7 @@ note = [
     last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
   )
 
-  user.add_role(:partner, partner)
+  user.add_role(:partner, p)
 
   user_2 = ::User.create!(
     name: Faker::Name.name,
@@ -264,13 +244,13 @@ note = [
     last_sign_in_at: Time.utc(2021, 9, 17, 11, 34, 4)
   )
 
-  user_2.add_role(:partner, partner)
+  user_2.add_role(:partner, p)
 
   #
   # Skip creating records that they would have created after
   # they've accepted the invitation
   #
-  next if partner.partner_status == 'pending'
+  next if p.status == 'uninvited'
 
   families = (1..Faker::Number.within(range: 4..13)).to_a.map do
     Partners::Family.create!(
@@ -290,7 +270,7 @@ note = [
       guardian_health_insurance: Partners::Family::INSURANCE_TYPES.sample,
       comments: Faker::Lorem.paragraph,
       military: false,
-      partner: partner
+      partner: p
     )
   end
 
@@ -318,7 +298,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: partner.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
       )
     end
 
@@ -336,7 +316,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: partner.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
       )
     end
   end
@@ -344,9 +324,9 @@ note = [
   Faker::Number.within(range: 32..56).times do
     pr = Partners::Request.new(
       comments: Faker::Lorem.paragraph,
-      partner: partner,
+      partner: p,
       for_families: Faker::Boolean.boolean,
-      partner_user: partner.primary_user
+      partner_user: p.primary_user
     )
 
     # Ensure that the item requests are valid with

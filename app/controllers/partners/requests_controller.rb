@@ -11,7 +11,7 @@ module Partners
       @partner_request = Partners::Request.new
       @partner_request.item_requests.build
 
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.partner.id).call
+      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
       @formatted_requestable_items = requestable_items.map do |rt|
         [rt.name, rt.id]
       end.sort
@@ -36,7 +36,7 @@ module Partners
 
         @partner_request = create_service.partner_request
         @errors = create_service.errors
-        @formatted_requestable_items = Organization.find(current_partner.essentials_bank_id).valid_items.map do |item|
+        @formatted_requestable_items = Organization.find(current_partner.organization_id).valid_items.map do |item|
           [item[:name], item[:id]]
         end.sort
 

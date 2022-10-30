@@ -8,6 +8,7 @@
 #  sent            :boolean          default(FALSE), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  old_partner_id  :bigint
 #  organization_id :bigint
 #  partner_id      :bigint
 #  partner_user_id :integer
@@ -16,7 +17,7 @@ module Partners
   class Request < Base
     self.table_name = "partner_requests"
 
-    belongs_to :partner, class_name: "Partners::Partner", dependent: :destroy
+    belongs_to :partner, dependent: :destroy
     belongs_to :partner_user, class_name: "::User", optional: true
 
     has_many :item_requests, class_name: 'Partners::ItemRequest', foreign_key: :partner_request_id, dependent: :destroy, inverse_of: :request

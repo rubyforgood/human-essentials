@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "/partners/requests", type: :request do
   describe "GET #index" do
     subject { -> { get partners_requests_path } }
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
 
     before do
@@ -18,7 +18,7 @@ RSpec.describe "/partners/requests", type: :request do
 
   describe "GET #new" do
     subject { -> { get new_partners_request_path } }
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
 
     before do
@@ -51,7 +51,7 @@ RSpec.describe "/partners/requests", type: :request do
         }
       }
     end
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
 
     before do

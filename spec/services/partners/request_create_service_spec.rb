@@ -11,7 +11,7 @@ describe Partners::RequestCreateService do
         additional_attrs: additional_attrs
       }
     end
-    let(:partner_user) { partner.primary_partner_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
     let(:comments) { Faker::Lorem.paragraph }
     let(:item_requests_attributes) do
@@ -77,7 +77,7 @@ describe Partners::RequestCreateService do
       end
 
       before do
-        allow(Organization).to receive(:find_by).with(id: partner_user.partner.essentials_bank_id).and_return(
+        allow(Organization).to receive(:find_by).with(id: partner_user.partner.organization_id).and_return(
           double(Organization, valid_items: fake_organization_valid_items)
         )
         allow(NotifyPartnerJob).to receive(:perform_now)

@@ -17,6 +17,7 @@
 #
 
 class Partner < ApplicationRecord
+  resourcify
   require "csv"
 
   ALLOWED_MIME_TYPES = [
@@ -31,9 +32,15 @@ class Partner < ApplicationRecord
   belongs_to :partner_group, optional: true
   has_many :item_categories, through: :partner_group
   has_many :requestable_items, through: :item_categories, source: :items
+  has_one :profile, class_name: 'Partners::Profile'
 
   has_many :distributions, dependent: :destroy
   has_many :requests, dependent: :destroy
+  has_many :partner_requests, dependent: :destroy, class_name: 'Partners::Request'
+  has_many :users, through: :roles, class_name: '::User', dependent: :destroy
+  has_many :families, dependent: :destroy, class_name: 'Partners::Family'
+  has_many :children, through: :families, class_name: 'Partners::Child'
+  has_many :authorized_family_members, through: :families, class_name: 'Partners::AuthorizedFamilyMember'
 
   has_many_attached :documents
 
@@ -64,8 +71,48 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
-  def deactivated?
-    status == 'deactivated'
+  AGENCY_TYPES = {
+    "CAREER" => "Career technical training",
+    "ABUSE" => "Child abuse resource center",
+    "CHURCH" => "Church outreach ministry",
+    "CDC" => "Community development corporation",
+    "HEALTH" => "Community health program",
+    "OUTREACH" => "Community outreach services",
+    "CRISIS" => "Crisis/Disaster services",
+    "DISAB" => "Developmental disabilities program",
+    "DOMV" => "Domestic violence shelter",
+    "CHILD" => "Early childhood services",
+    "EDU" => "Education program",
+    "FAMILY" => "Family resource center",
+    "FOOD" => "Food bank/pantry",
+    "GOVT" => "Government Agency/Affiliate",
+    "HEADSTART" => "Head Start/Early Head Start",
+    "HOMEVISIT" => "Home visits",
+    "HOMELESS" => "Homeless resource center",
+    "INFPAN" => "Infant/Child Pantry/Closet",
+    "PREG" => "Pregnancy resource center",
+    "REF" => "Refugee resource center",
+    "TREAT" => "Treatment clinic",
+    "WIC" => "Women, Infants and Children",
+    "OTHER" => "Other"
+  }.freeze
+
+  # @return [String]
+  def display_status
+    case self.status
+    when :awaiting_review
+      'Submitted'
+    when :uninvited
+      'Pending'
+    when :approved
+      'Verified'
+    else
+      self.status.titleize
+    end
+  end
+
+  def primary_user
+    users.order('created_at ASC').first
   end
 
   # @return [Boolean]
@@ -73,22 +120,7 @@ class Partner < ApplicationRecord
     uninvited? &&
       distributions.none? &&
       requests.none? &&
-      (profile.nil? || profile&.users&.none?)
-  end
-
-  #
-  # Returns the Partners::Partner record which is stored in
-  # the partnerbase DB and contains mostly profile data of
-  # the partner user.
-  def profile
-    @profile ||= ::Partners::Partner.find_by(partner_id: id)
-  end
-
-  #
-  # Returns the primary User record which is the
-  # first & main user associated to a partner agency.
-  def primary_partner_user
-    profile&.primary_user
+      self.users&.none?
   end
 
   # better to extract this outside of the model
@@ -154,6 +186,10 @@ class Partner < ApplicationRecord
     }
   end
 
+  def partials_to_show
+    self.organization.partner_form_fields || ALL_PARTIALS
+  end
+
   def quantity_year_to_date
     distributions
       .includes(:line_items)
@@ -161,7 +197,32 @@ class Partner < ApplicationRecord
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 
+  def impact_metrics
+    {
+      families_served: families_served_count,
+      children_served: children_served_count,
+      family_zipcodes: family_zipcodes_count,
+      family_zipcodes_list: family_zipcodes_list
+    }
+  end
+
   private
+
+  def families_served_count
+    self.families.count
+  end
+
+  def children_served_count
+    children.count
+  end
+
+  def family_zipcodes_count
+    families.pluck(:guardian_zip_code).uniq.count
+  end
+
+  def family_zipcodes_list
+    families.pluck(:guardian_zip_code).uniq
+  end
 
   def correct_document_mime_type
     if documents.attached? && documents.any? { |doc| !doc.content_type.in?(ALLOWED_MIME_TYPES) }

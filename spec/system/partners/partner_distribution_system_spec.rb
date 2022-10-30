@@ -1,6 +1,6 @@
 RSpec.describe "Partner Distributions", type: :system, js: true do
   describe "Distributions" do
-    let(:partner_user) { partner.primary_partner_user }
+    let(:partner_user) { partner.primary_user }
     let(:date) { 1.week.from_now }
     let(:past_date) { 1.week.ago }
     let!(:partner) { FactoryBot.create(:partner) }

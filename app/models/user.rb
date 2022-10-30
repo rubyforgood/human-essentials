@@ -45,8 +45,8 @@ class User < ApplicationRecord
 
   has_one :partner_role_join, class_name: "UsersRole", dependent: :destroy
   has_one :partner_role, through: :partner_role_join, class_name: "Role", source: :role
-  has_one :partner, through: :partner_role, source: :resource, source_type: "Partners::Partner"
-  has_many :partners, through: :roles, source: :resource, source_type: "Partners::Partner"
+  has_one :partner, through: :partner_role, source: :resource, source_type: "Partner"
+  has_many :partners, through: :roles, source: :resource, source_type: "Partner"
 
   attr_accessor :organization_admin # for creation / update time
 

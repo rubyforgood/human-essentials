@@ -14,7 +14,6 @@ module Partners
     def call
       return self unless valid?
 
-      partner.profile.update(partner_status: 'submitted')
       partner.awaiting_review!
 
       OrganizationMailer.partner_approval_request(organization: partner.organization, partner: partner).deliver_later
@@ -26,7 +25,7 @@ module Partners
     attr_reader :partner
 
     def valid?
-      if partner.profile.partner_status == 'submitted'
+      if partner.profile.status == 'awaiting_review'
         errors.add(:base, 'partner has already requested approval')
       end
 

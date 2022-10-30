@@ -11,7 +11,7 @@ describe Partners::FamilyRequestCreateService do
         family_requests_attributes: family_requests_attributes
       }
     end
-    let(:partner_user) { partner.primary_partner_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
     let(:comments) { Faker::Lorem.paragraph }
     let(:for_families) { false }

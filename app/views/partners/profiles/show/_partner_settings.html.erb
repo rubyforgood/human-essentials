@@ -2,13 +2,13 @@
   <h5 class="text-white card-header bg-primary">Settings</h5>
   <div class="card-body">
     <dl>
-      <% if partner.organization.enable_child_based_requests? %>
+      <% if profile.organization.enable_child_based_requests? %>
         <dt>Uses Child Based Requests</dt>
-        <dd><%= humanize_boolean(partner.enable_child_based_requests) %></dd>
+        <dd><%= humanize_boolean(profile.enable_child_based_requests) %></dd>
       <% end %>
-      <% if partner.organization.enable_individual_requests? %>
+      <% if profile.organization.enable_individual_requests? %>
         <dt>Uses Individual Requests</dt>
-        <dd><%= humanize_boolean(partner.enable_individual_requests) %></dd>
+        <dd><%= humanize_boolean(profile.enable_individual_requests) %></dd>
       <% end %>
     </dl>
   </div>

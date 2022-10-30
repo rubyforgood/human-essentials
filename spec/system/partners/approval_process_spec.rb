@@ -1,6 +1,6 @@
 RSpec.describe "Approval process for partners", type: :system, js: true do
   describe 'filling in organization details and requesting for approval' do
-    let(:partner_user) { partner.primary_partner_user }
+    let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is new and wants to request approval' do

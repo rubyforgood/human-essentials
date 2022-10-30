@@ -88,7 +88,7 @@ module Partners
     end
 
     def organization_id
-      @organization_id ||= partner.essentials_bank_id
+      @organization_id ||= partner.organization_id
     end
 
     def partner

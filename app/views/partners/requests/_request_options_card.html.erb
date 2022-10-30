@@ -14,7 +14,7 @@
           "aria-label": "Create a request by quantity" %>
     </article>
 
-    <% if current_partner.enable_child_based_requests? %>
+    <% if current_partner.profile.enable_child_based_requests? %>
       <article class="flex flex-col justify-between flex-1 p-4 mr-4 border-2 border-blue-900 rounded-lg shadow">
         <div>
           <h3>Child</h3>
@@ -28,7 +28,7 @@
       </article>
     <% end %>
 
-    <% if current_partner.enable_individual_requests? %>
+    <% if current_partner.profile.enable_individual_requests? %>
       <article class="flex flex-col justify-between flex-1 p-4 border-2 border-blue-900 rounded-lg shadow">
         <div>
           <h3># of Individuals</h3>
