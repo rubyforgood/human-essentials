@@ -44,6 +44,18 @@ RSpec.describe Organization, type: :model do
                                                       "image/gif")))
         .to_not be_valid
     end
+
+    it "validates that at least one distribution type is enabled" do
+      expect(build(:organization, enable_child_based_requests: true)).to be_valid
+      expect(build(:organization, enable_individual_requests: true)).to be_valid
+      expect(build(:organization, enable_quantity_based_requests: true)).to be_valid
+      expect(build(
+        :organization,
+        enable_child_based_requests: false,
+        enable_individual_requests: false,
+        enable_quantity_based_requests: false
+      )).to_not be_valid
+    end
   end
 
   context "Associations >" do
