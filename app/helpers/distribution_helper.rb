@@ -25,4 +25,11 @@ module DistributionHelper
     single_item = quantities.values.find { |li| item_id == li[:item_id] } || {}
     single_item[:quantity]
   end
+
+  def quantity_by_item_category_id(distribution, item_category_id)
+    item_category_id = Integer(item_category_id)
+    quantities = distribution.line_items.quantities_by_category
+
+    quantities[item_category_id]
+  end
 end

@@ -50,9 +50,11 @@ class DistributionsController < ApplicationController
     @total_items_all_distributions = total_items(@distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
+    @item_categories = current_organization.item_categories
     @storage_locations = current_organization.storage_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
     @selected_item = filter_params[:by_item_id]
+    @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
@@ -254,7 +256,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_partner, :by_state, :by_location)
+    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location)
   end
 
   def perform_inventory_check

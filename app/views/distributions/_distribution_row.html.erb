@@ -7,6 +7,8 @@
   <!-- Quantity -->
   <% if filter_params[:by_item_id].present? %>
     <td class="numeric"><%= quantity_by_item_id(distribution_row, filter_params[:by_item_id]) %></td>
+  <% elsif filter_params[:by_item_category_id].present? %>
+    <td class="numeric"><%= quantity_by_item_category_id(distribution_row, filter_params[:by_item_category_id]) %></td>
   <% else %>
     <td class="numeric"><%= distribution_row.line_items.total %></td>
   <% end %>
