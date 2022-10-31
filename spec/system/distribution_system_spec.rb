@@ -455,7 +455,6 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("table tbody tr td", text: stored_item1_total)
     end
 
-
     it "filters by item category id" do
       @organization.item_categories << item_category
       create(:distribution, :with_items, item: item1)
@@ -476,7 +475,6 @@ RSpec.feature "Distributions", type: :system do
       stored_item1_total = @storage_location.item_total(item1.id)
       expect(page).to have_css("table tbody tr td", text: stored_item1_total)
     end
-
 
     it "filters by partner" do
       create(:distribution, partner: partner1)

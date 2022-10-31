@@ -87,7 +87,7 @@ module Itemizable
     accepts_nested_attributes_for :line_items,
                                   allow_destroy: true,
                                   reject_if: proc { |l| l[:item_id].blank? || l[:quantity].blank? }
-    
+
     has_many :item_categories, through: :items
 
     # Anything using line_items should not be OK with an invalid line_item
