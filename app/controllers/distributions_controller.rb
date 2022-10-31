@@ -43,6 +43,8 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
+                     .includes(:partner, :storage_location, line_items: [:item])
+                     .order('issued_at DESC')
                      .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
@@ -64,7 +66,7 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distribution_ids: @distributions.map(&:id)).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
