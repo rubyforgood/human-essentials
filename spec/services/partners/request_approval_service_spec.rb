@@ -15,7 +15,17 @@ describe Partners::RequestApprovalService do
       end
 
       it 'should return an error saying it the partner is already requested approval' do
-        expect(subject.errors[:base]).to eq(["partner has already requested approval"])
+        expect(subject.errors[:base]).to eq(["This partner has already requested approval."])
+      end
+    end
+
+    context 'when the partner is not yet waiting for approval and the media information is blank' do
+      before do
+        partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
+      end
+
+      it 'should return an error saying that all social media info is blank' do
+        expect(subject.errors[:base]).to eq(['You must either provide a social media site or indicate that you have no social media presence before submitting for approval.'])
       end
     end
 

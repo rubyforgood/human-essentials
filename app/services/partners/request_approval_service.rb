@@ -27,7 +27,11 @@ module Partners
 
     def valid?
       if partner.profile.partner_status == 'submitted'
-        errors.add(:base, 'partner has already requested approval')
+        errors.add(:base, 'This partner has already requested approval.')
+      end
+
+      if !partner.profile.valid?
+        errors.add(:base, 'You must either provide a social media site or indicate that you have no social media presence before submitting for approval.')
       end
 
       errors.none?
