@@ -1,5 +1,4 @@
 RSpec.feature "Distributions", type: :system do
-
   def skip_send_notification!
     allow_any_instance_of(DistributionsController).to receive(:send_notification).and_return(true)
   end
