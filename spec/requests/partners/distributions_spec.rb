@@ -20,6 +20,7 @@ RSpec.describe "/partners/distributions", type: :request do
   describe "GET #print" do
     before do
       sign_in(partner_user)
+      allow_any_instance_of(Organization).to receive_message_chain(:logo, :attached?).and_return(false)
     end
 
     let(:distribution) { FactoryBot.create(:distribution, partner: partner) }
