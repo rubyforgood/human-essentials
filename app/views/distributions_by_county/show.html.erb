@@ -1,0 +1,59 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Distributions by County - #{current_organization.name}" %>
+        <h1>
+          Distributions by County
+          <small>for <%= current_organization.name %></small>
+          <small><%= @selected_date_range %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Distributions</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>County</th>
+                <th>Total items</th>
+                <th>Total value</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @breakdown.each do |key, bd| %>
+                <tr>
+                  <td><%= key %></td>
+                  <td><%= number_with_delimiter(bd[:num_items]) %></td>
+                  <td><%= dollar_presentation(bd[:amount]) %></td>
+                </tr>
+              <% end %>
+
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
+
