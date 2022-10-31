@@ -446,6 +446,12 @@ RSpec.feature "Distributions", type: :system do
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
+
+      # check for heading text
+      expect(page).to have_css("table thead tr th", text: "Total #{item1.name}")
+      # check for count update
+      stored_item1_total = @storage_location.item_total(item1.id)
+      expect(page).to have_css("table tbody tr td", text: stored_item1_total)
     end
 
     it "filters by partner" do
