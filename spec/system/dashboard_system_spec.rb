@@ -75,7 +75,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
     let(:org_short_name) { @organization.short_name }
     let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
 
-    fdescribe "Signage" do
+    describe "Signage" do
       it "shows their organization name unless they have a logo set" do
         org_dashboard_page.visit
 
