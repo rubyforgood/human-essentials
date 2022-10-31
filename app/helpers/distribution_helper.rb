@@ -17,4 +17,12 @@ module DistributionHelper
     crypt = ActiveSupport::MessageEncryptor.new(Rails.application.secret_key_base[0..31])
     distributions_calendar_url(hash: crypt.encrypt_and_sign(current_organization.id))
   end
+
+  def quantity_by_item_id(distribution, item_id)
+    item_id = Integer(item_id)
+    quantities = distribution.line_items.quantities_by_name
+
+    single_item = quantities.values.find { |li| item_id == li[:item_id] } || {}
+    single_item[:quantity]
+  end
 end
