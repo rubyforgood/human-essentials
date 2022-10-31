@@ -58,7 +58,7 @@ class PartnersController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distribution_ids: @partner_distributions.map(&:id)).generate_csv, filename: "PartnerDistributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @partner_distributions, filters: filter_params).generate_csv, filename: "PartnerDistributions-#{Time.zone.today}.csv"
       end
     end
   end
