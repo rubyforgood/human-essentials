@@ -1,4 +1,9 @@
 RSpec.feature "Distributions", type: :system do
+
+  def skip_send_notification!
+    allow_any_instance_of(DistributionsController).to receive(:send_notification).and_return(true)
+  end
+
   before do
     sign_in(@user)
     @url_prefix = "/#{@organization.to_param}"
@@ -330,6 +335,8 @@ RSpec.feature "Distributions", type: :system do
       end
 
       it "User creates a distribution from a donation then edits it" do
+        skip_send_notification!
+
         within ".distribution_line_items_quantity" do
           first(".numeric").set 13
         end
@@ -353,6 +360,8 @@ RSpec.feature "Distributions", type: :system do
       end
 
       it "User creates duplicate line items" do
+        skip_send_notification!
+
         item_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
         select(item_type, from: first_item_name_field)
