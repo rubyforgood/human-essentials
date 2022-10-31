@@ -106,11 +106,10 @@
                 <% if filter_params[:by_item_id].present? %>
                   <th class="numeric">Total <%= @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name %></th>
                 <% elsif filter_params[:by_item_category_id].present? %>
-                  <th class="numeric">Total <%= @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name %></th>
+                  <th class="numeric">Total in <%= @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name %></th>
                 <% else %>
                   <th class="numeric">Total items</th>
                 <% end %>
-                <% console %>
                 <!-- End Quantity -->
 
                 <th class="numeric">Total value</th>

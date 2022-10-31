@@ -30,7 +30,6 @@ module DistributionHelper
     item_category_id = Integer(item_category_id)
     quantities = distribution.line_items.quantities_by_category
 
-    single_category = quantities.values.find { |li| item_category_id == li[:item_category_id] } || {}
-    single_category[:quantity]
+    quantities[item_category_id]
   end
 end
