@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.2"
+gem "strong_migrations", "1.4.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
