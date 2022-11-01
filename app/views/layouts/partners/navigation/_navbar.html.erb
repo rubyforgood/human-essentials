@@ -14,6 +14,10 @@
       <i class="fa fa-users mr-2"></i> My Co-Workers
     <% end %>
 
+    <%= link_to edit_partners_user_path(current_user), class:"dropdown-item" do %>
+      <i class="fa fa-users mr-2"></i> My Profile
+    <% end %>
+
     <div class="dropdown-divider"></div>
     <% current_user.switchable_roles.each do |role| %>
       <% next if role == current_role %>
