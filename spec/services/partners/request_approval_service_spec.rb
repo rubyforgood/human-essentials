@@ -29,6 +29,38 @@ describe Partners::RequestApprovalService do
       end
     end
 
+    context 'when the partner is not yet waiting for approval and the media information is not blank it should not throw an error' do
+      it 'with a website' do
+        partner.profile.update(website: 'website URL', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
+        expect(subject.errors[:base]).to eq([])
+      end
+
+      it 'with facebook' do
+        partner.profile.update(website: '', facebook: 'facebook URL', twitter: '', instagram: '', no_social_media_presence: false)
+        expect(subject.errors[:base]).to eq([])
+      end
+
+      it 'with twitter' do
+        partner.profile.update(website: '', facebook: '', twitter: 'twitter URL', instagram: '', no_social_media_presence: false)
+        expect(subject.errors[:base]).to eq([])
+      end
+
+      it 'with instagram' do
+        partner.profile.update(website: '', facebook: '', twitter: '', instagram: 'instagram URL', no_social_media_presence: false)
+        expect(subject.errors[:base]).to eq([])
+      end
+
+      it 'with all social media options' do
+        partner.profile.update(website: 'website URL', facebook: 'facebook URL', twitter: 'twitter URL', instagram: 'instagram URL', no_social_media_presence: false)
+        expect(subject.errors[:base]).to eq([])
+      end
+
+      it 'with no social media but the checkbox is checked' do
+        partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: true)
+        expect(subject.errors[:base]).to eq([])
+      end
+    end
+
     context 'when the partner is not yet awaiting approval' do
       let(:fake_mailer) { double('fake_mailer', deliver_later: -> {}) }
       before do
