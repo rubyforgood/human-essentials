@@ -78,3 +78,5 @@ package-lock.json
 
 # plugin history
 .history/
+
+out/

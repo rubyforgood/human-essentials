@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_25_211052) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_25_211052) do
     t.datetime "updated_at", null: false
     t.string "rejection_reason"
     t.string "status", default: "started", null: false
+    t.bigint "ndbn_member_id"
     t.index ["status"], name: "index_account_requests_on_status"
   end
 
@@ -514,6 +515,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_25_211052) do
     t.string "status_in_diaper_base"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
+    t.string "instagram"
+    t.boolean "no_social_media_presence"
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 
@@ -761,6 +764,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_25_211052) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "account_requests", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"

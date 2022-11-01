@@ -84,8 +84,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         logo_filename = File.basename(org_dashboard_page.organization_logo_filepath).split("?").first
         expect(logo_filename).to include("logo.jpg")
 
-        @organization.logo.purge
-        @organization.save
+        # This allows us to simulate the deletion of the org logo without actually deleting it
+        # See @awwaiid 's comment: https://github.com/rubyforgood/human-essentials/pull/3220#issuecomment-1297049810
+        allow_any_instance_of(Organization).to receive_message_chain(:logo, :attached?).and_return(false)
         org_dashboard_page.visit
 
         expect(org_dashboard_page).not_to have_organization_logo
@@ -379,7 +380,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         drive = @product_drives.sample
 
         create :product_drive_donation, :with_items, product_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization,
-               money_raised: @money_raised_on_each_product_drive
+          money_raised: @money_raised_on_each_product_drive
 
         OpenStruct.new drive_name: drive.name, quantity: quantity_in_donation, money_raised: @money_raised_on_each_product_drive
       end

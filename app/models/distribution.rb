@@ -48,6 +48,7 @@ class Distribution < ApplicationRecord
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
+  scope :by_item_category_id, ->(item_category_id) { joins(:items).where(items: { item_category_id: item_category_id }) }
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   # location scope to allow filtering distributions by location
   scope :by_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }

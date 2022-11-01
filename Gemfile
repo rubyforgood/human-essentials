@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.2"
+gem "strong_migrations", "1.4.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -152,7 +152,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.0.0"
+  gem "rspec-rails", "~> 6.0.1"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
@@ -214,4 +214,4 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
 end
 
 # Use Redis for Action Cable
-gem "redis", "~> 4.0"
+gem "redis", "~> 5.0"

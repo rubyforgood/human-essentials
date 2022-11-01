@@ -65,6 +65,12 @@
             </div>
 
             <div class="form-inputs">
+              <%= f.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
+                <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
+              <% end %>
+            </div>
+
+            <div class="form-inputs">
               <%= f.input :request_details, placeholder: 'Tell us more about your organization and how you would use Human Essentials', label: "Request Details (min 50 characters)" %>
             </div>
           </div>
