@@ -35,7 +35,7 @@ module Diaper
     # queue.
     config.action_mailer.deliver_later_queue_name = 'default'
 
-    # Removes turbo from being processed by asset pipeline to avoid 
+    # Removes turbo from being processed by asset pipeline to avoid
     # compilation errors due to ES6 syntax
     config.after_initialize do
       # use this for turbo-rails version 0.8.2 or later:
