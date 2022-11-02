@@ -40,12 +40,6 @@ module Diaper
     config.after_initialize do
       # use this for turbo-rails version 0.8.2 or later:
       config.assets.precompile -= Turbo::Engine::PRECOMPILE_ASSETS
-
-      # use this for turbo-rails versions 0.7.1 - 0.8.1:
-      config.assets.precompile.delete("turbo.js")
-
-      # or use this for previous versions of turbo-rails:
-      config.assets.precompile.delete("turbo")
     end
   end
 end
