@@ -1,12 +1,14 @@
 module Exports
   class ExportDistributionsCSVService
-    def initialize(distribution_ids:, item_id: nil)
-      # Use a where lookup so that I can eager load all the resources needed
-      # rather than depending on external code to do it for me. This makes
-      # this code more self contained and efficient!
-      @distributions = Distribution.includes(:partner, :storage_location, line_items: [:item]).where(id: distribution_ids).order('issued_at DESC')
-      # if filter by item has been selected
-      @filtered_item_id = item_id
+    def initialize(distributions:, filters: [])
+      # Currently, the @distributions are already loaded by the controllers that are delegating exporting
+      # to this service object; this is happening within the same request/response cycle, so it's already
+      # in memory, so we can pass that collection in directly. Should this be moved to a background / async
+      # job, we will need to pass in a collection of IDs instead.
+      # Also, adding in a `filters` parameter to make the filters that have been used available to this
+      # service object.
+      @distributions = distributions
+      @filters = filters
     end
 
     def generate_csv

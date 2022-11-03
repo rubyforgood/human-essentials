@@ -10,7 +10,7 @@ RSpec.describe "Distributions", type: :request do
   let(:hashed_id) { CGI.escape(crypt.encrypt_and_sign(@organization.id)) }
   before(:each) do
     allow(Rails.application).to receive(:secret_key_base).and_return(secret_key)
-    allow(DistributionPdf).to receive(:new).and_return(double("DistributionPdf", render: "PDF"))
+    allow(DistributionPdf).to receive(:new).and_return(double("DistributionPdf", compute_and_render: "PDF"))
   end
 
   context "While signed in" do

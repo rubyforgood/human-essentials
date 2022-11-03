@@ -3,8 +3,10 @@
   <td><%= distribution_row.partner.name %></td>
   <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %> </td>
   <td><%= distribution_row.storage_location.name %></td>
-  <%if @selected_item.presence %>
-    <td class="numeric"><%= distribution_row.line_items.find_by(item_id: @selected_item).quantity %></td>
+  <% if filter_params[:by_item_id].present? %>
+    <td class="numeric"><%= quantity_by_item_id(distribution_row, filter_params[:by_item_id]) %></td>
+  <% elsif filter_params[:by_item_category_id].present? %>
+    <td class="numeric"><%= quantity_by_item_category_id(distribution_row, filter_params[:by_item_category_id]) %></td>
   <% else %>
     <td class="numeric"><%= distribution_row.line_items.total %></td>
   <% end %>

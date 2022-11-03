@@ -41,6 +41,11 @@
                     <%= filter_select(label: "Filter by item", scope: :by_item_id, collection: @items, selected: @selected_item) %>
                   </div>
                 <% end %>
+                <% if @item_categories.present? %>
+                  <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                    <%= filter_select(label: "Filter by item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %>
+                  </div>
+                <% end %>
                 <% if @partners.present? %>
                   <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
                     <%= filter_select(scope: :by_partner, collection: @partners, selected: @selected_partner) %>
@@ -96,7 +101,15 @@
                 <th>Partner</th>
                 <th class="date">Date of Distribution</th>
                 <th>Source Inventory</th>
-                <th class="numeric">Total Number of Items</th>
+                <!-- Quantity -->
+                <% if filter_params[:by_item_id].present? %>
+                  <th class="numeric">Total <%= @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name %></th>
+                <% elsif filter_params[:by_item_category_id].present? %>
+                  <th class="numeric">Total in <%= @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name %></th>
+                <% else %>
+                  <th class="numeric">Total items</th>
+                <% end %>
+                <!-- End Quantity -->
                 <th class="numeric">Total value</th>
                 <th>Delivery method</th>
                 <th>Comments</th>

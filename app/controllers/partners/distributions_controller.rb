@@ -18,7 +18,7 @@ module Partners
       respond_to do |format|
         format.any do
           pdf = DistributionPdf.new(distribution.organization, distribution)
-          send_data pdf.render,
+          send_data pdf.compute_and_render,
             filename: format("%s %s.pdf", distribution.partner.name, sortable_date(distribution.created_at)),
             type: "application/pdf",
             disposition: "inline"

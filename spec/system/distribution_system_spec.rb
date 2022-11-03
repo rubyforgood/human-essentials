@@ -429,7 +429,8 @@ RSpec.feature "Distributions", type: :system do
 
   context "when filtering on the index page" do
     subject { @url_prefix + "/distributions" }
-    let(:item1) { create(:item, name: "Good item") }
+    let(:item_category) { create(:item_category) }
+    let(:item1) { create(:item, name: "Good item", item_category: item_category) }
     let(:item2) { create(:item, name: "Crap item") }
     let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
     let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com") }
@@ -446,6 +447,33 @@ RSpec.feature "Distributions", type: :system do
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
+
+      # check for heading text
+      expect(page).to have_css("table thead tr th", text: "Total #{item1.name}")
+      # check for count update
+      stored_item1_total = @storage_location.item_total(item1.id)
+      expect(page).to have_css("table tbody tr td", text: stored_item1_total)
+    end
+
+    it "filters by item category id" do
+      @organization.item_categories << item_category
+      create(:distribution, :with_items, item: item1)
+      create(:distribution, :with_items, item: item2)
+
+      visit subject
+      # check for all distributions
+      expect(page).to have_css("table tbody tr", count: 2)
+      # filter
+      select(item_category.name, from: "filters_by_item_category_id")
+      click_button("Filter")
+      # check for filtered distributions
+      expect(page).to have_css("table tbody tr", count: 1)
+
+      # check for heading text
+      expect(page).to have_css("table thead tr th", text: "Total in #{item_category.name}")
+      # check for count update
+      stored_item1_total = @storage_location.item_total(item1.id)
+      expect(page).to have_css("table tbody tr td", text: stored_item1_total)
     end
 
     it "filters by partner" do

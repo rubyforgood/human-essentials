@@ -1,7 +1,7 @@
 describe Exports::ExportDistributionsCSVService do
   describe '#generate_csv_data' do
-    subject { described_class.new(distribution_ids: distribution_ids, item_id: item_id).generate_csv_data }
-    let(:distribution_ids) { distributions.map(&:id) }
+    subject { described_class.new(distributions: distributions).generate_csv_data }
+    let(:distributions) { distributions }
 
     let(:duplicate_item) do
       FactoryBot.create(
