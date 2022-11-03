@@ -71,7 +71,7 @@ module Exports
           # filter the line items by item id (for selected item filter) to
           # get the number of items
           if @filters[:by_item_id].present?
-            distribution.line_items.where(item_id: @filters[:by_item_id]).total
+            distribution.line_items.where(item_id: @filters[:by_item_id].to_i).total
           else
             distribution.line_items.total
           end
@@ -100,7 +100,7 @@ module Exports
     end
 
     def filtered_item
-      @filtered_item ||= Item.find(@filters[:by_item_id])
+      @filtered_item ||= Item.find(@filters[:by_item_id].to_i)
     end
 
     def base_headers

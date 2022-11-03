@@ -1,6 +1,6 @@
 describe Exports::ExportDistributionsCSVService do
   describe '#generate_csv_data' do
-    subject { described_class.new(distributions: distributions).generate_csv_data }
+    subject { described_class.new(distributions: distributions, filters: filters).generate_csv_data }
     let(:distributions) { distributions }
 
     let(:duplicate_item) do
@@ -49,6 +49,8 @@ describe Exports::ExportDistributionsCSVService do
     end
 
     let(:item_id) { distributions.flatten.first.line_items.first.item_id }
+    let(:filters) { { by_item_id: item_id } }
+    let(:item_name) { Item.find(item_id).name }
 
     let(:total_item_quantities) do
       template = item_names.index_with(0)
@@ -67,7 +69,7 @@ describe Exports::ExportDistributionsCSVService do
         "Partner",
         "Date of Distribution",
         "Source Inventory",
-        "Total Number of Items",
+        "Total Number of #{item_name}",
         "Total Value",
         "Delivery Method",
         "State",
