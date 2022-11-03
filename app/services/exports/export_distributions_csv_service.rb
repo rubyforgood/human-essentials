@@ -70,8 +70,8 @@ module Exports
         base_item_header_col_name => ->(distribution) {
           # filter the line items by item id (for selected item filter) to
           # get the number of items
-          if @filtered_item_id.present?
-            distribution.line_items.where(item_id: @filtered_item_id).total
+          if @filters[:by_item_id].present?
+            distribution.line_items.where(item_id: @filters[:by_item_id]).total
           else
             distribution.line_items.total
           end
@@ -96,7 +96,11 @@ module Exports
 
     # if filtered based on an item, change the column accordingly
     def base_item_header_col_name
-      @filtered_item_id.present? ? "Total Number of Items" : "Total Items"
+      @filters[:by_item_id].present? ? "Total Number of #{filtered_item.name}" : "Total Items"
+    end
+
+    def filtered_item
+      @filtered_item ||= Item.find(@filters[:by_item_id])
     end
 
     def base_headers

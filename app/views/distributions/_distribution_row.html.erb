@@ -3,6 +3,8 @@
   <td><%= distribution_row.partner.name %></td>
   <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %> </td>
   <td><%= distribution_row.storage_location.name %></td>
+
+  <!-- Quantity -->
   <% if filter_params[:by_item_id].present? %>
     <td class="numeric"><%= quantity_by_item_id(distribution_row, filter_params[:by_item_id]) %></td>
   <% elsif filter_params[:by_item_category_id].present? %>
@@ -10,6 +12,8 @@
   <% else %>
     <td class="numeric"><%= distribution_row.line_items.total %></td>
   <% end %>
+  <!-- Quantity -->
+
   <td class="numeric"><%= dollar_value(distribution_row.value_per_itemizable) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
   <td><%= distribution_row.comment %></td>
