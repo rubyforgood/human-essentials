@@ -49,7 +49,7 @@ describe Exports::ExportDistributionsCSVService do
     end
 
     let(:item_id) { distributions.flatten.first.line_items.first.item_id }
-    let(:filters) { { by_item_id: item_id } }
+    let(:filters) { {by_item_id: item_id} }
     let(:item_name) { Item.find(item_id).name }
 
     let(:total_item_quantities) do
