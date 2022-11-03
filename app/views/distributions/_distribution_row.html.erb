@@ -12,7 +12,7 @@
   <% else %>
     <td class="numeric"><%= distribution_row.line_items.total %></td>
   <% end %>
-  <!-- Quantity -->
+  <!-- End Quantity -->
 
   <td class="numeric"><%= dollar_value(distribution_row.value_per_itemizable) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
