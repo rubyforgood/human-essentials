@@ -322,10 +322,9 @@ note = [
   end
 
   Faker::Number.within(range: 32..56).times do
-    pr = Partners::Request.new(
+    pr = Request.new(
       comments: Faker::Lorem.paragraph,
       partner: p,
-      for_families: Faker::Boolean.boolean,
       partner_user: p.primary_user
     )
 
@@ -551,30 +550,6 @@ end
   end
   distribution.reload
   distribution.storage_location.decrease_inventory(distribution)
-end
-
-# ----------------------------------------------------------------------------
-# Requests
-# ----------------------------------------------------------------------------
-
-20.times.each do |count|
-  status = count > 15 ? 'fulfilled' : 'pending'
-
-  org_items = pdx_org.items.pluck(:id)
-  request_items = Array.new(Faker::Number.within(range: 3..8)).map do |_item|
-    {
-      "item_id" => org_items.sample,
-      "quantity" => Faker::Number.within(range: 5..10)
-    }
-  end
-
-  Request.create(
-    partner: random_record_for_org(pdx_org, Partner),
-    organization: pdx_org,
-    request_items: request_items,
-    comments: "Urgent",
-    status: status
-  )
 end
 
 # ----------------------------------------------------------------------------

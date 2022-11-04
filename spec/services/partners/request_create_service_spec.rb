@@ -7,8 +7,7 @@ describe Partners::RequestCreateService do
       {
         partner_user_id: partner_user.id,
         comments: comments,
-        item_requests_attributes: item_requests_attributes,
-        additional_attrs: additional_attrs
+        item_requests_attributes: item_requests_attributes
       }
     end
     let(:partner_user) { partner.primary_user }
@@ -22,14 +21,13 @@ describe Partners::RequestCreateService do
         )
       ]
     end
-    let(:additional_attrs) { { for_families: true } }
 
     context 'when the arguments are incorrect' do
       context 'because no item_requests_attributes and comments were defined' do
         let(:item_requests_attributes) { [] }
         let(:comments) { "" }
 
-        it 'should return the Partners::Request object with an error' do
+        it 'should return the Request object with an error' do
           result = subject
 
           expect(result).to be_a_kind_of(Partners::RequestCreateService)
@@ -47,7 +45,7 @@ describe Partners::RequestCreateService do
           ]
         end
 
-        it 'should return the Partners::Request object with an error' do
+        it 'should return the Request object with an error' do
           result = subject
 
           expect(result).to be_a_kind_of(Partners::RequestCreateService)
@@ -87,15 +85,6 @@ describe Partners::RequestCreateService do
         expect(subject.errors).to be_empty
       end
 
-      it 'should create a sent Partners::Request record' do
-        expect { subject }.to change { Partners::Request.where(sent: true).count }.by(1)
-      end
-
-      it 'should set the additional_attrs provided' do
-        subject
-        expect(Partners::Request.last.for_families).to eq(true)
-      end
-
       it 'should create a Request record' do
         expect { subject }.to change { Request.count }.by(1)
       end
@@ -108,29 +97,6 @@ describe Partners::RequestCreateService do
       context 'but a unexpected error occured during the save' do
         let(:error_message) { 'boom' }
 
-        context 'for the Partners::Request request' do
-          before do
-            allow_any_instance_of(Partners::Request).to receive(:save!).and_raise(error_message)
-          end
-
-          it 'should have an error with the raised error' do
-            expect(subject.errors[:base]).to eq([error_message])
-          end
-
-          it 'should NOT create a Partners::Request record' do
-            expect { subject }.not_to change { Partners::Request.count }
-          end
-
-          it 'should NOT create a Request record' do
-            expect { subject }.not_to change { Request.count }
-          end
-
-          it 'should NOT notify the Partner via email' do
-            subject
-            expect(NotifyPartnerJob).not_to have_received(:perform_now)
-          end
-        end
-
         context 'for the Request record' do
           before do
             allow_any_instance_of(Request).to receive(:save!).and_raise(error_message)
@@ -138,10 +104,6 @@ describe Partners::RequestCreateService do
 
           it 'should have an error with the raised error' do
             expect(subject.errors[:base]).to eq([error_message])
-          end
-
-          it 'should NOT create a Partners::Request record' do
-            expect { subject }.not_to change { Partners::Request.count }
           end
 
           it 'should NOT create a Request record' do

@@ -52,14 +52,14 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
         context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
           before do
-            expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
+            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(2)
 
-            expect(current_path).to eq(partners_request_path(Partners::Request.last.id))
+            expect(current_path).to eq(partners_request_path(Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
           end
 
           it 'AND the partner_user can view the details of the created individuals request in a seperate page' do
-            visit partners_request_path(id: Partners::Request.last.id)
+            visit partners_request_path(id: Request.last.id)
 
             # Should have the proper quantity per each item.
             item_details.each do |item|
@@ -99,9 +99,9 @@ RSpec.describe "Managing requests", type: :system, js: true do
         end
 
         it 'should be created without any issue' do
-          expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
+          expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(2)
 
-          expect(current_path).to eq(partners_request_path(Partners::Request.last.id))
+          expect(current_path).to eq(partners_request_path(Request.last.id))
           expect(page).to have_content('Request has been successfully created!')
           expect(page).to have_content("#{partner.organization.name} should have received the request.")
         end
@@ -138,15 +138,15 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
         context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
           before do
-            expect { click_button 'Submit Essentials Request' }.to change { Partners::Request.count + Request.count }.by(2)
+            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(2)
 
-            expect(current_path).to eq(partners_request_path(Partners::Request.last.id))
+            expect(current_path).to eq(partners_request_path(Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
             expect(page).to have_content("#{partner.organization.name} should have received the request.")
           end
 
           it 'AND the partner_user can view the details of the created request in a seperate page' do
-            visit partners_request_path(id: Partners::Request.last.id)
+            visit partners_request_path(id: Request.last.id)
 
             item_details.each do |item|
               expect(page).to have_content("#{item[:quantity]} of #{item[:name]}")

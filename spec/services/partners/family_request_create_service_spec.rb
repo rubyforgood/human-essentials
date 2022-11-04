@@ -66,35 +66,22 @@ describe Partners::FamilyRequestCreateService do
           ]
         end
 
-        it 'should create the appropriate organization ::Request, Partners::Request, Partners::ItemRequest and Partners::ChildItemRequests' do
+        it 'should create the appropriate organization Request, Partners::ItemRequest and Partners::ChildItemRequests' do
           expect do
             subject
-          end.to change { ::Request.count }
-            .by(1)
-            .and change { Partners::Request.count }
+          end.to change { Request.count }
             .by(1)
 
-          expect(::Request.last.request_items.map { |item| item["item_id"] }).to match_array(items_to_request.pluck(:id))
+          expect(Request.last.request_items.map { |item| item["item_id"] }).to match_array(items_to_request.pluck(:id))
 
-          partner_request = Partners::Request.last
+          partner_request = Request.last
           expect(partner_request.item_requests.count).to eq(2)
-          expect(partner_request).to_not be_for_families
 
           first_item_request = partner_request.item_requests.find_by(item_id: first_item_id)
           expect(first_item_request.children).to contain_exactly(child1)
 
           second_item_request = partner_request.item_requests.find_by(item_id: second_item_id)
           expect(second_item_request.children).to contain_exactly(child1, child2)
-        end
-
-        context 'with for_families = true' do
-          let(:for_families) { true }
-
-          it 'set for_families on the partner_request' do
-            subject
-            partner_request = Partners::Request.last
-            expect(partner_request).to be_for_families
-          end
         end
       end
 

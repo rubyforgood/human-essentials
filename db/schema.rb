@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_28_194319) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_04_191611) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -318,6 +318,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_28_194319) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "partner_key"
     t.integer "item_id"
+    t.integer "old_partner_request_id"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
     t.index ["partner_request_id"], name: "index_item_requests_on_partner_request_id"
   end
@@ -783,7 +784,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_28_194319) do
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
-  add_foreign_key "item_requests", "partner_requests"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"

@@ -26,7 +26,6 @@ RSpec.describe Partner, type: :model do
     it { should have_many(:distributions) }
     it { should have_many(:requests) }
     it { should have_many(:users).dependent(:destroy) }
-    it { should have_many(:partner_requests).dependent(:destroy) }
     it { should have_many(:families).dependent(:destroy) }
     it { should have_many(:children).through(:families) }
 

@@ -35,8 +35,7 @@ class Partner < ApplicationRecord
   has_one :profile, class_name: 'Partners::Profile'
 
   has_many :distributions, dependent: :destroy
-  has_many :requests, dependent: :destroy
-  has_many :partner_requests, dependent: :destroy, class_name: 'Partners::Request'
+  has_many :requests, dependent: :destroy, class_name: '::Request'
   has_many :users, through: :roles, class_name: '::User', dependent: :destroy
   has_many :families, dependent: :destroy, class_name: 'Partners::Family'
   has_many :children, through: :families, class_name: 'Partners::Child'

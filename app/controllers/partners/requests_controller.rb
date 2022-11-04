@@ -8,7 +8,7 @@ module Partners
     end
 
     def new
-      @partner_request = Partners::Request.new
+      @partner_request = ::Request.new
       @partner_request.item_requests.build
 
       requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
