@@ -32,7 +32,7 @@ class Partner < ApplicationRecord
   belongs_to :partner_group, optional: true
   has_many :item_categories, through: :partner_group
   has_many :requestable_items, through: :item_categories, source: :items
-  has_one :profile, class_name: 'Partners::Profile'
+  has_one :profile, class_name: 'Partners::Profile', dependent: :destroy
 
   has_many :distributions, dependent: :destroy
   has_many :requests, dependent: :destroy, class_name: '::Request'
@@ -98,7 +98,7 @@ class Partner < ApplicationRecord
 
   # @return [String]
   def display_status
-    case self.status
+    case status
     when :awaiting_review
       'Submitted'
     when :uninvited
@@ -106,7 +106,7 @@ class Partner < ApplicationRecord
     when :approved
       'Verified'
     else
-      self.status.titleize
+      status.titleize
     end
   end
 
@@ -119,7 +119,7 @@ class Partner < ApplicationRecord
     uninvited? &&
       distributions.none? &&
       requests.none? &&
-      self.users&.none?
+      users&.none?
   end
 
   # better to extract this outside of the model
@@ -186,7 +186,7 @@ class Partner < ApplicationRecord
   end
 
   def partials_to_show
-    self.organization.partner_form_fields || ALL_PARTIALS
+    organization.partner_form_fields || ALL_PARTIALS
   end
 
   def quantity_year_to_date
@@ -208,7 +208,7 @@ class Partner < ApplicationRecord
   private
 
   def families_served_count
-    self.families.count
+    families.count
   end
 
   def children_served_count

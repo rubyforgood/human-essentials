@@ -25,7 +25,7 @@ class Request < ApplicationRecord
   belongs_to :organization
   belongs_to :distribution, optional: true
 
-  has_many :item_requests, class_name: 'Partners::ItemRequest', foreign_key: :partner_request_id, dependent: :destroy, inverse_of: :request
+  has_many :item_requests, class_name: "Partners::ItemRequest", foreign_key: :partner_request_id, dependent: :destroy, inverse_of: :request
   accepts_nested_attributes_for :item_requests, allow_destroy: true, reject_if: proc { |attributes| attributes["quantity"].blank? }
   has_many :child_item_requests, through: :item_requests
 

@@ -87,7 +87,7 @@ module Partners
         :enable_child_based_requests,
         :enable_individual_requests,
         documents: []
-      ).select {|_,v| v.present?}
+      ).select { |_, v| v.present? }
     end
   end
 end

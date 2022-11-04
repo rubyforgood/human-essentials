@@ -14,9 +14,9 @@ module Partners
 
     def call
       @partner_request = ::Request.new(partner_id: partner.id,
-                                       organization_id: organization_id,
-                                       comments: comments,
-                                       partner_user_id: partner_user_id)
+        organization_id: organization_id,
+        comments: comments,
+        partner_user_id: partner_user_id)
       @partner_request = populate_item_request(@partner_request)
       @partner_request.assign_attributes(additional_attrs)
 
@@ -67,10 +67,10 @@ module Partners
       partner_request.item_requests << item_requests
 
       partner_request.request_items = partner_request.item_requests.map do |ir|
-          {
-            item_id: ir.item_id,
-            quantity: ir.quantity
-          }
+        {
+          item_id: ir.item_id,
+          quantity: ir.quantity
+        }
       end
       partner_request
     end

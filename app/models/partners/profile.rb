@@ -80,7 +80,7 @@ module Partners
   class Profile < Base
     self.table_name = "partner_profiles"
     belongs_to :partner
-    has_one :organization, through: :partner, class_name: '::Organization'
+    has_one :organization, through: :partner, class_name: "::Organization"
 
     has_one_attached :proof_of_partner_status
     has_one_attached :proof_of_form_990
@@ -111,6 +111,5 @@ module Partners
       agency_distribution_information
       attached_documents
     ].freeze
-
   end
 end

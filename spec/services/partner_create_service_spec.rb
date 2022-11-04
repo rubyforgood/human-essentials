@@ -37,7 +37,7 @@ describe PartnerCreateService do
       end
 
       it 'should create the associated partner profile data' do
-        query = Partners::Profile.joins(:partner).where(partners: { name: partner_attrs[:name] })
+        query = Partners::Profile.joins(:partner).where(partners: {name: partner_attrs[:name]})
         expect { subject }.to change { query.count }.from(0).to(1)
         expect(query.first.enable_child_based_requests).to eq(false)
         expect(query.first.enable_individual_requests).to eq(false)

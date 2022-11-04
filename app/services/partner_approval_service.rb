@@ -31,5 +31,4 @@ class PartnerApprovalService
 
     errors.none?
   end
-
 end
