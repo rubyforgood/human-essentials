@@ -7,7 +7,7 @@ class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
 
-  before_action :enable_turbo!, only: %i[index new show]
+  before_action :enable_turbo!, only: %i[new show]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
 
@@ -43,6 +43,8 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
+                     .includes(:partner, :storage_location, line_items: [:item])
+                     .order('issued_at DESC')
                      .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
@@ -50,9 +52,11 @@ class DistributionsController < ApplicationController
     @total_items_all_distributions = total_items(@distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
+    @item_categories = current_organization.item_categories
     @storage_locations = current_organization.storage_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
     @selected_item = filter_params[:by_item_id]
+    @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
@@ -62,7 +66,7 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distribution_ids: @distributions.map(&:id)).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
@@ -254,7 +258,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_partner, :by_state, :by_location)
+    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location)
   end
 
   def perform_inventory_check

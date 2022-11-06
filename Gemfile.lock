@@ -563,9 +563,9 @@ GEM
     standard (1.5.0)
       rubocop (= 1.23.0)
       rubocop-performance (= 1.12.0)
-    stimulus-rails (1.1.0)
+    stimulus-rails (1.1.1)
       railties (>= 6.0.0)
-    strong_migrations (1.3.2)
+    strong_migrations (1.4.0)
       activerecord (>= 5.2)
     strscan (3.0.4)
     thor (1.2.1)
@@ -612,7 +612,7 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.1)
+    zeitwerk (2.6.3)
 
 PLATFORMS
   arm64-darwin-21
@@ -699,7 +699,7 @@ DEPENDENCIES
   sprockets (~> 4.1.1)
   standard (~> 1.0)
   stimulus-rails
-  strong_migrations (= 1.3.2)
+  strong_migrations (= 1.4.0)
   turbo-rails
   uglifier (>= 1.3.0)
   web-console
