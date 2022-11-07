@@ -2,12 +2,14 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Distributions by County - #{current_organization.name}" %>
+        <% content_for :title, "Estimated Distributions by County - #{current_organization.name}" %>
         <h1>
-          Distributions by County
-          <small>for <%= current_organization.name %></small>
-          <small><%= @selected_date_range %></small>
+          Estimated Distributions by County
+
         </h1>
+        <h2>
+          for <%= current_organization.name %> <%= @selected_date_range %>
+        </h2>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -33,16 +35,16 @@
               <thead>
               <tr>
                 <th>County</th>
-                <th>Total items</th>
-                <th>Total value</th>
+                <th class="numeric">Total items</th>
+                <th class="numeric">Total value</th>
               </tr>
               </thead>
               <tbody>
               <% @breakdown.each do |key, bd| %>
                 <tr>
                   <td><%= key %></td>
-                  <td><%= number_with_delimiter(bd[:num_items]) %></td>
-                  <td><%= dollar_presentation(bd[:amount]) %></td>
+                  <td class="numeric"><%= number_with_delimiter(bd[:num_items]) %></td>
+                  <td class="numeric"><%= dollar_presentation(bd[:amount]) %></td>
                 </tr>
               <% end %>
 
