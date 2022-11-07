@@ -143,9 +143,9 @@ These are barcodes that act as "fall-throughs" and will generally be used to tra
 
 ![Barcode Retrieval](./barcode-retrieval.svg)
 <details>
-<summary>(Diagram Code - Barcode Retreival)</summary>
+<summary>(Diagram Code - Barcode Retrieval)</summary>
 
-```plantuml:barcode-retreival
+```plantuml:barcode-retrieval
 skinparam componentStyle rectangle
 skinparam linetype ortho
 
