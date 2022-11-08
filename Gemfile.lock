@@ -192,7 +192,7 @@ GEM
       faraday (~> 1.0)
     ffi (1.15.5)
     filterrific (5.2.3)
-    flipper (0.25.3)
+    flipper (0.25.4)
     flipper-active_record (0.25.3)
       activerecord (>= 4.2, < 8)
       flipper (~> 0.25.3)
