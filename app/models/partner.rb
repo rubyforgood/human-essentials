@@ -186,12 +186,9 @@ class Partner < ApplicationRecord
   def client_share_is_0_or_100
     value = 0
     partner_counties.each do |pc|
-
       value += pc.client_share
     end
-    puts "value is #{value}."
     return_value = (value == 0 || value == 100)
-    puts "client_share_is_0_or_100 returning #{return_value}."
     return return_value
   end
 
