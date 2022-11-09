@@ -15,7 +15,7 @@ module Partners
       else
         @counties = County.all
           flash[:error] = "Something went wrong.  Try again? #{current_partner.errors.full_messages}"
-        render :edit
+          render :edit
       end
     end
 

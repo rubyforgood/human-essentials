@@ -16,25 +16,24 @@ function calculate_client_share_total(){
     );
     document.getElementById("partner-county-client-share-total").innerHTML =total;
 
+
+
     if(total == 0 || total == 100){
         document.getElementById("partner-county-client-share-total-warning").style.visibility= 'hidden';
-        document.getElementById("profile-update-button").style.visibility = 'visible';
-        document.getElementById("profile-update-button-disabled").style.visibility = 'hidden';
-        document.getElementById("partner-county-client-share-total-warning-footer").style.visibility= 'hidden';
+  //      document.getElementById("profile-update-button").style.visibility = 'visible';
+    //    document.getElementById("profile-update-button-disabled").style.visibility = 'hidden';
+      //  document.getElementById("partner-county-client-share-total-warning-footer").style.visibility= 'hidden';
     }else {
         document.getElementById("partner-county-client-share-total-warning").style.visibility= 'visible';
-        document.getElementById("profile-update-button").style.visibility = 'hidden';
-        document.getElementById("profile-update-button-disabled").style.visibility = 'visible';
-        document.getElementById("partner-county-client-share-total-warning-footer").style.visibility= 'visible';
+        document.getElementById("partner-county-client-share-total-warning").style.color= 'red';
 
-
+//        document.getElementById("profile-update-button").style.visibility = 'hidden';
+  //      document.getElementById("profile-update-button-disabled").style.visibility = 'visible';
+    //    document.getElementById("partner-county-client-share-total-warning-footer").style.visibility= 'visible';
+      //  document.getElementById("partner-county-client-share-total-warning-footer").style.color= 'red';
     }
     return total;
 }
-
-///TODO  I'm trying to get calculate_client_share_total to fire when we remove a partner/county.   This is not working
-//   Reference:  https://github.com/nathanvda/cocoon
-
 
 //Following the pattern from adjustments.js
 
