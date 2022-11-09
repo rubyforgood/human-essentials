@@ -10,7 +10,7 @@
 #
 FactoryBot.define do
   factory :county do
-    name { "County Name" }
-    region { "County State" }
+    name { Faker::Address.unique.community  }
+    region { Faker::Address.state}
   end
 end

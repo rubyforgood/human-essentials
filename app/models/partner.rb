@@ -37,6 +37,8 @@ class Partner < ApplicationRecord
 
   has_many :partner_counties, dependent: :destroy
 
+  accepts_nested_attributes_for :partner_counties, allow_destroy: true
+
   has_many_attached :documents
 
   validates :organization, presence: true
@@ -48,6 +50,8 @@ class Partner < ApplicationRecord
   validates :quota, numericality: true, allow_blank: true
 
   validate :correct_document_mime_type
+
+  validate :client_share_is_0_or_100
 
   before_save { email&.downcase! }
   before_update :invite_new_partner, if: :should_invite_because_email_changed?
@@ -178,4 +182,17 @@ class Partner < ApplicationRecord
   def should_invite_because_email_changed?
     email_changed? and (invited? or awaiting_review? or recertification_required? or approved?)
   end
+
+  def client_share_is_0_or_100
+    value = 0
+    partner_counties.each do |pc|
+
+      value += pc.client_share
+    end
+    puts "value is #{value}."
+    return_value = (value == 0 || value == 100)
+    puts "client_share_is_0_or_100 returning #{return_value}."
+    return return_value
+  end
+
 end
