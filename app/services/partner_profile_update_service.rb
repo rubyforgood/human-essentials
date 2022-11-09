@@ -8,35 +8,28 @@ class PartnerProfileUpdateService
   end
 
   def call
-
     @partner.partner_counties.each(&:destroy!)
     @partner.reload
 
     @partner.assign_attributes(@params)
-    return false unless valid?
+    return false unless counties_are_valid?
 
-
-    @partner.reload
-    # Replace the current partner with the new parameters
+    @partner.reload # I'm not sure why I need to reload it *Again* but I seem to. CLF 20221109
 
     @partner.update @params
 
     @partner.valid? # Returns true if no errors
   end
 
-  def valid?
-    pca = @params["partner_counties_attributes"]
+  def counties_are_valid?
     total_share = 0
-    pca.each do | pc |
-      cs = pc[1]["client_share"].to_i
-      total_share = total_share + cs
+    @params["partner_counties_attributes"].each do |pc|
+      total_share += pc[1]["client_share"].to_i
     end
-    puts "total client_share is #{total_share}"
 
     is_good = (total_share == 0 || total_share == 100)
 
-    @partner.errors.add(:base, 'client share % must total to 0 or 100') unless is_good
+    @partner.errors.add(:base, "client share % must total to 0 or 100") unless is_good
     is_good
   end
-
 end

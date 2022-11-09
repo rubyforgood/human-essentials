@@ -31,11 +31,5 @@ class DistributionsByCountyController < ApplicationController
         end
       end
     end
-    puts "*******************************************************"
-    puts "what's in the breakdown...."
-    @breakdown.each do |bd|
-      puts "#{bd} "
-    end
-    puts "*******************************************************"
   end
 end

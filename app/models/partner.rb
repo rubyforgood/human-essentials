@@ -188,8 +188,6 @@ class Partner < ApplicationRecord
     partner_counties.each do |pc|
       value += pc.client_share
     end
-    return_value = (value == 0 || value == 100)
-    return return_value
+    (value == 0 || value == 100)
   end
-
 end

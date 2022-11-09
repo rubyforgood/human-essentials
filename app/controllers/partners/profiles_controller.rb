@@ -8,14 +8,13 @@ module Partners
     end
 
     def update
-
       if PartnerProfileUpdateService.new(current_partner, partner_params).call
         flash[:success] = "Details were successfully updated."
         redirect_to partners_profile_path
       else
         @counties = County.all
-          flash[:error] = "Something went wrong.  Try again? #{current_partner.errors.full_messages}"
-          render :edit
+        flash[:error] = "Something went wrong.  Try again? #{current_partner.errors.full_messages}"
+        render :edit
       end
     end
 
