@@ -11,7 +11,7 @@ describe Partners::RequestApprovalService do
 
     context 'when the partner is already awaiting approval' do
       before do
-        partner.profile.update!(partner_status: 'submitted')
+        partner.profile.update!(partner_status: 'submitted', website: 'website URL')
       end
 
       it 'should return an error saying it the partner is already requested approval' do
@@ -63,6 +63,7 @@ describe Partners::RequestApprovalService do
       before do
         allow(OrganizationMailer).to receive(:partner_approval_request).with(partner: partner, organization: partner.organization).and_return(fake_mailer)
         expect(partner.profile.partner_status).not_to eq('submitted')
+        partner.profile.update(website: 'website URL')
       end
 
       it 'should set the partner_status of the partner profile to submitted' do

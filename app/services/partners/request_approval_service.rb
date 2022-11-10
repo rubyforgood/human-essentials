@@ -30,7 +30,7 @@ module Partners
         errors.add(:base, 'This partner has already requested approval.')
       end
 
-      if !partner.profile.valid?
+      if partner.profile.has_no_social_media? && partner.profile.no_social_media_presence != true
         errors.add(:base, 'You must either provide a social media site or indicate that you have no social media presence before submitting for approval.')
       end
 

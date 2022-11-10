@@ -68,21 +68,21 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
     end
   end
 
-  # describe "request approval with invalid details" do
-  #   let(:partner_user) { partner.primary_partner_user }
-  #   let(:partner) { FactoryBot.create(:partner) }
+  describe "request approval with invalid details" do
+    let(:partner_user) { partner.primary_partner_user }
+    let(:partner) { FactoryBot.create(:partner) }
 
-  #   before do
-  #     partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false, partner_status: 'pending')
-  #     login_as(partner_user)
-  #     visit partner_user_root_path
-  #     click_on 'My Organization'
-  #     click_on 'Submit for Approval'
-  #   end
+    before do
+      partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false, partner_status: 'pending')
+      login_as(partner_user)
+      visit partner_user_root_path
+      click_on 'My Organization'
+      click_on 'Submit for Approval'
+    end
 
-  #   it "should render an error message", :aggregate_failures do
-  #     assert page.has_content? 'pending'
-  #     assert page.has_content? 'You must either provide a social media site or indicate that you have no social media presence before submitting for approval.'
-  #   end
-  # end
+    it "should render an error message", :aggregate_failures do
+      assert page.has_content? 'pending'
+      assert page.has_content? 'You must either provide a social media site or indicate that you have no social media presence before submitting for approval.'
+    end
+  end
 end

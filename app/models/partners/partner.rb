@@ -185,11 +185,11 @@ module Partners
       }
     end
 
-    private
-
     def has_no_social_media?
       website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
     end
+
+    private
 
     def families_served_count
       families.count
