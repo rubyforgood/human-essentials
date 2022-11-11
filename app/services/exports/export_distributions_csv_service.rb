@@ -67,8 +67,14 @@ module Exports
         "Source Inventory" => ->(distribution) {
           distribution.storage_location.name
         },
-        "Total Items" => ->(distribution) {
-          distribution.line_items.total
+        base_item_header_col_name => ->(distribution) {
+          # filter the line items by item id (for selected item filter) to
+          # get the number of items
+          if @filters[:by_item_id].present?
+            distribution.line_items.where(item_id: @filters[:by_item_id].to_i).total
+          else
+            distribution.line_items.total
+          end
         },
         "Total Value" => ->(distribution) {
           distribution.cents_to_dollar(distribution.line_items.total_value)
@@ -86,6 +92,15 @@ module Exports
           distribution.comment
         }
       }
+    end
+
+    # if filtered based on an item, change the column accordingly
+    def base_item_header_col_name
+      @filters[:by_item_id].present? ? "Total Number of #{filtered_item.name}" : "Total Items"
+    end
+
+    def filtered_item
+      @filtered_item ||= Item.find(@filters[:by_item_id].to_i)
     end
 
     def base_headers
