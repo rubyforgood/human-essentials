@@ -23,7 +23,8 @@ class DistributionMailer < ApplicationMailer
 
     @from_email = current_organization.email.presence || current_organization.users.first.email
     @distribution_changes = distribution_changes
-    attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = DistributionPdf.new(current_organization, @distribution).render
+    pdf = DistributionPdf.new(current_organization, @distribution).compute_and_render
+    attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = pdf
     mail(to: @partner.email, subject: "#{subject} from #{current_organization.name}")
   end
 

@@ -32,9 +32,11 @@
 #  greater_2_times_fpl            :integer
 #  income_requirement_desc        :boolean
 #  income_verification            :boolean
+#  instagram                      :string
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
+#  no_social_media_presence       :boolean
 #  other_agency_type              :string
 #  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
@@ -86,6 +88,8 @@ module Partners
     has_one_attached :proof_of_form_990
     has_many_attached :documents
 
+    validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?
+
     self.ignored_columns = %w[
       evidence_based_description
       program_client_improvement
@@ -111,5 +115,9 @@ module Partners
       agency_distribution_information
       attached_documents
     ].freeze
+
+    def has_no_social_media?
+      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
+    end
   end
 end

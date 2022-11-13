@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.2"
+gem "strong_migrations", "1.4.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -150,7 +150,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.0.0"
+  gem "rspec-rails", "~> 6.0.1"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
@@ -184,7 +184,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.37"
+  gem "capybara", "~> 3.38"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.

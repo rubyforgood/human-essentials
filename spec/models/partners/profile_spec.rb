@@ -32,9 +32,11 @@
 #  greater_2_times_fpl            :integer
 #  income_requirement_desc        :boolean
 #  income_verification            :boolean
+#  instagram                      :string
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
+#  no_social_media_presence       :boolean
 #  other_agency_type              :string
 #  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
@@ -85,23 +87,51 @@ RSpec.describe Partners::Profile, type: :model do
     it { should have_many_attached(:documents) }
   end
 
-  describe "#impact_metrics" do
-    subject { partner.impact_metrics }
-    let(:partner) { FactoryBot.create(:partner) }
+  describe "social media info validation for partners" do
+    context "no social media presence and the checkbox isn't checked" do
+      let(:partner) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
 
-    context "when partner has related informations" do
-      let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-123", partner: partner) }
-      let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-126", partner: partner) }
-      let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-123", partner: partner) }
-
-      let!(:child1) { FactoryBot.create_list(:partners_child, 2, family: family1) }
-      let!(:child2) { FactoryBot.create_list(:partners_child, 2, family: family3) }
-
-      it { is_expected.to eq({families_served: 3, children_served: 4, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]}) }
+      it "should not be valid" do
+        expect(partner.valid?).to eq(false)
+      end
     end
 
-    context "when partner don't have any related informations" do
-      it { is_expected.to eq({families_served: 0, children_served: 0, family_zipcodes: 0, family_zipcodes_list: []}) }
+    context "no social media presence and the checkbox is checked" do
+      let(:partner) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
+
+      it "should be valid" do
+        expect(partner.valid?).to eq(true)
+      end
+    end
+
+    context "has social media presence and the checkbox is unchecked" do
+      let(:partner) { FactoryBot.build(:partner_profile, no_social_media_presence: false) }
+
+      it "with just a website it should be valid" do
+        partner.update(website: "some website URL", twitter: "", facebook: "", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just twitter it should be valid" do
+        partner.update(website: "", twitter: "some twitter URL", facebook: "", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just facebook it should be valid" do
+        partner.update(website: "", twitter: "", facebook: "some facebook URL", instagram: "")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with just instagram it should be valid" do
+        partner.update(website: "", twitter: "", facebook: "", instagram: "some instagram URL")
+        expect(partner.valid?).to eq(true)
+      end
+
+      it "with every social media option it should be valid" do
+        partner.update(website: "some website URL", twitter: "some twitter URL", facebook: "some facebook URL", instagram: "some instagram URL")
+        expect(partner.valid?).to eq(true)
+      end
     end
   end
+
 end

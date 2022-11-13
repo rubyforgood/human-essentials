@@ -294,4 +294,24 @@ RSpec.describe Partner, type: :model do
       expect(partner).to be_valid
     end
   end
+
+  describe "#impact_metrics" do
+    subject { partner.impact_metrics }
+    let(:partner) { FactoryBot.create(:partner) }
+
+    context "when partner has related information" do
+      let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-123", partner: partner) }
+      let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-126", partner: partner) }
+      let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-123", partner: partner) }
+
+      let!(:child1) { FactoryBot.create_list(:partners_child, 2, family: family1) }
+      let!(:child2) { FactoryBot.create_list(:partners_child, 2, family: family3) }
+
+      it { is_expected.to eq({families_served: 3, children_served: 4, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]}) }
+    end
+
+    context "when partner don't have any related information" do
+      it { is_expected.to eq({families_served: 0, children_served: 0, family_zipcodes: 0, family_zipcodes_list: []}) }
+    end
+  end
 end

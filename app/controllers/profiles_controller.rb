@@ -30,6 +30,8 @@ class ProfilesController < ApplicationController
       :website,
       :facebook,
       :twitter,
+      :instagram,
+      :no_social_media_presence,
       :founded,
       :form_990,
       :proof_of_form_990,

@@ -1,17 +1,17 @@
-<header class="container mx-auto mb-8">
-  <h1 class="block font-bold mb-1">Dashboard - <%= @partner.name %></h1>
-  <h3><button class="bg-yellow-400 mx-auto p-2 font-bold rounded-2xl">
+<header class="container mx-auto mb-5">
+  <h1 class="d-block font-weight-bold mb-1">Dashboard - <%= @partner.name %></h1>
+  <h3><button class="btn btn-warning mx-auto p-2 font-weight-bold round">
   <%= @partner.display_status %> Partner</button></h3>
 </header>
 
 <main>
   <%= render partial: '/partners/requests/request_options_card' if @partner.approved? %>
 
-  <section class="container mx-auto my-8">
+  <section class="container mx-auto my-5">
     <%= render partial: "requests_in_progress" %>
   </section>
 
-  <section class="container mx-auto my-8">
+  <section class="container mx-auto my-5">
     <%= render partial: "partners/distributions/distribution_section",
                locals: {
                  distributions: @upcoming_distributions,
@@ -29,7 +29,7 @@
       } %>
     </section>
 
-  <section class="container mx-auto my-8">
+  <section class="container mx-auto my-5">
     <%= render partial: "family_details" %>
   </section>
 </main>
