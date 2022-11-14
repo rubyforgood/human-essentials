@@ -99,7 +99,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         end
 
         it 'should be created without any issue' do
-          expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(2)
+          expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
           expect(current_path).to eq(partners_request_path(Request.last.id))
           expect(page).to have_content('Request has been successfully created!')
@@ -138,7 +138,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
         context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
           before do
-            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(2)
+            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
             expect(current_path).to eq(partners_request_path(Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
