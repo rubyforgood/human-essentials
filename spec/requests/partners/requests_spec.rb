@@ -39,8 +39,8 @@ RSpec.describe "/partners/requests", type: :request do
   end
 
   describe "POST #create" do
-    subject { -> { post partners_requests_path, params: { partners_request: partners_request_attributes } } }
-    let(:partners_request_attributes) do
+    subject { -> { post partners_requests_path, params: { request: request_attributes } } }
+    let(:request_attributes) do
       {
         comments: Faker::Lorem.paragraph,
         item_requests_attributes: {
@@ -59,7 +59,7 @@ RSpec.describe "/partners/requests", type: :request do
     end
 
     context 'when given valid parameters' do
-      let(:partners_request_attributes) do
+      let(:request_attributes) do
         {
           comments: Faker::Lorem.paragraph,
           item_requests_attributes: {
@@ -78,7 +78,7 @@ RSpec.describe "/partners/requests", type: :request do
     end
 
     context 'when given invalid parameters' do
-      let(:partners_request_attributes) do
+      let(:request_attributes) do
         {
           comments: ""
         }
