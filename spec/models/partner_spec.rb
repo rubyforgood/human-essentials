@@ -189,7 +189,7 @@ RSpec.describe Partner, type: :model do
         expect(UserInviteService).to have_received(:invite).with(
           email: "randomtest@email.com",
           roles: [Role::PARTNER],
-          resource: partner.profile
+          resource: partner
         )
       end
     end
@@ -202,7 +202,7 @@ RSpec.describe Partner, type: :model do
         expect(UserInviteService).not_to have_received(:invite).with(
           email: "randomtest@email.com",
           roles: [Role::PARTNER],
-          resource: partner.profile
+          resource: partner
         )
       end
     end

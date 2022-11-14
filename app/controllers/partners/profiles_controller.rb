@@ -7,7 +7,7 @@ module Partners
     def update
       if current_partner.update(partner_params) && current_partner.profile.update(profile_params)
         flash[:success] = "Details were successfully updated."
-        redirect_to partners_profile_path
+        redirect_to partners_profile_path(current_partner)
       else
         render :edit
       end

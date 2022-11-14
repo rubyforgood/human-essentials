@@ -11,7 +11,7 @@ describe Partners::RequestApprovalService do
 
     context 'when the partner is already awaiting approval' do
       before do
-        partner.profile.update!(partner_status: 'awaiting_approval')
+        partner.update!(status: 'awaiting_review')
       end
 
       it 'should return an error saying it the partner is already requested approval' do

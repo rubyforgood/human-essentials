@@ -25,7 +25,7 @@ module Partners
     attr_reader :partner
 
     def valid?
-      if partner.profile.status == 'awaiting_review'
+      if partner.status == 'awaiting_review'
         errors.add(:base, 'partner has already requested approval')
       end
 

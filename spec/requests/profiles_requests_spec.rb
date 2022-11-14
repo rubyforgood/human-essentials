@@ -18,15 +18,15 @@ RSpec.describe "Profiles", type: :request do
 
   describe "POST #update" do
     context "successful save" do
-      profiles_params = { name: "Awesome Partner", executive_director_email: "awesomepartner@example.com", facebook: "facebooksucks" }
+      partner_params = { name: "Awesome Partner" }
+      profiles_params = { executive_director_email: "awesomepartner@example.com", facebook: "facebooksucks" }
 
       it "update partner" do
-        put profile_path(default_params.merge(id: partner, partners_profile: profiles_params))
+        put profile_path(default_params.merge(id: partner, partner: partner_params, partners_profile: profiles_params))
         expect(response).to have_http_status(:redirect)
-        partnerbase = partner.profile
-        expect(partnerbase.name).to eq("Awesome Partner")
-        expect(partnerbase.executive_director_email).to eq("awesomepartner@example.com")
-        expect(partnerbase.facebook).to eq("facebooksucks")
+        expect(partner.reload.name).to eq("Awesome Partner")
+        expect(partner.profile.reload.executive_director_email).to eq("awesomepartner@example.com")
+        expect(partner.profile.facebook).to eq("facebooksucks")
       end
 
       it "redirects to #show" do

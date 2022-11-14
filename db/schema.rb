@@ -784,7 +784,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_04_191611) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "families", "partner_profiles", column: "partner_id"
+  add_foreign_key "families", "partners"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"

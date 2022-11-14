@@ -133,5 +133,4 @@ RSpec.describe Partners::Profile, type: :model do
       end
     end
   end
-
 end

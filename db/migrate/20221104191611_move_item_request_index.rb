@@ -11,18 +11,20 @@ class MoveItemRequestIndex < ActiveRecord::Migration[7.0]
       SET old_partner_request_id=partner_request_id
       WHERE old_partner_request_id IS NULL
     SQL
-    Partners::ItemRequest.connection.execute(sql)
-    Partners::ItemRequest.find_each do |item_request|
-      sql = <<-SQL
-        SELECT * from partner_requests
-        WHERE id=#{item_request.partner_request_id}
-      SQL
-      old_request = Partners::ItemRequest.connection.select_all(sql).to_a
-      from = old_request[0]['updated_at'] - 10.seconds
-      to = old_request[0]['updated_at'] + 10.seconds
-      new_request = Request.where(partner_id: old_request[0]['partner_id']).
-        where("UPDATED_AT BETWEEN '#{from.to_s(:db)}' AND '#{to.to_s(:db)}'").first
-      item_request.update!(partner_request_id: new_request&.id)
+    sql = <<-SQL
+      select id, created_at, partner_id from partner_requests 
+      ORDER BY created_at DESC
+    SQL
+    rows = ApplicationRecord.connection.select_all(sql); nil
+    rows.each do |request|
+      from = request['created_at'] - 10.seconds
+      to = request['created_at'] + 10.seconds
+      new_partner = Partners::Partner.find_by_id(request['partner_id'])&.partner_id
+      next if new_partner.nil?
+      new_request = Request.where(partner_id: new_partner).
+        where("CREATED_AT BETWEEN '#{from.to_fs(:db)}' AND '#{to.to_fs(:db)}'").first
+      puts "old request #{request['id']} #{request['created_at']}new #{new_request&.id}" if new_request.blank?
+      #      ItemRequest.update_all(partner_request_id: new_request.id, updated_at: Time.zone.now)
     end
   end
 

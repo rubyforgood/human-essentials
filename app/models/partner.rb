@@ -96,6 +96,18 @@ class Partner < ApplicationRecord
     "OTHER" => "Other"
   }.freeze
 
+  ALL_PARTIALS = %w[
+    media_information
+    agency_stability
+    organizational_capacity
+    sources_of_funding
+    population_served
+    executive_director
+    diaper_pick_up_person
+    agency_distribution_information
+    attached_documents
+  ].freeze
+
   # @return [String]
   def display_status
     case status
@@ -186,7 +198,7 @@ class Partner < ApplicationRecord
   end
 
   def partials_to_show
-    organization.partner_form_fields || ALL_PARTIALS
+    organization.partner_form_fields.presence || ALL_PARTIALS
   end
 
   def quantity_year_to_date
@@ -230,7 +242,7 @@ class Partner < ApplicationRecord
   end
 
   def invite_new_partner
-    UserInviteService.invite(email: email, roles: [Role::PARTNER], resource: profile)
+    UserInviteService.invite(email: email, roles: [Role::PARTNER], resource: self)
   end
 
   def should_invite_because_email_changed?

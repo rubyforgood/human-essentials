@@ -1,7 +1,7 @@
 module Partners
   class ApprovalRequestsController < BaseController
     def create
-      svc = Partners::RequestApprovalService.new(partner: current_partner.partner)
+      svc = Partners::RequestApprovalService.new(partner: current_partner)
       svc.call
 
       if svc.errors.none?

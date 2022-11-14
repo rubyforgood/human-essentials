@@ -104,18 +104,6 @@ module Partners
       ages_served
     ]
 
-    ALL_PARTIALS = %w[
-      media_information
-      agency_stability
-      organizational_capacity
-      sources_of_funding
-      population_served
-      executive_director
-      diaper_pick_up_person
-      agency_distribution_information
-      attached_documents
-    ].freeze
-
     def has_no_social_media?
       website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
     end
