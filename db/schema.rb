@@ -515,6 +515,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.string "status_in_diaper_base"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
+    t.string "instagram"
+    t.boolean "no_social_media_presence"
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 

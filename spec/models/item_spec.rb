@@ -223,4 +223,28 @@ RSpec.describe Item, type: :model do
       expect(create(:item, package_size: '').package_size).to be_nil
     end
   end
+
+  describe "after update" do
+    let(:item) { create(:item, name: "my item", kit: kit) }
+
+    context "when item has the kit" do
+      let(:kit) { create(:kit, name: "my kit") }
+
+      it "updates kit name" do
+        item.update(name: "my new name")
+        expect(item.name).to eq kit.name
+      end
+    end
+
+    context "when item does not have kit" do
+      let(:kit) { nil }
+
+      it "does not raise NoMethodError" do
+        allow_any_instance_of(Kit).to receive(:update).and_return(true)
+        expect {
+          item.update(name: "my new name")
+        }.not_to raise_error(NoMethodError)
+      end
+    end
+  end
 end

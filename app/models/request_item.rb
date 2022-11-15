@@ -1,5 +1,6 @@
 class RequestItem
-  attr_accessor :name, :quantity, :on_hand, :on_hand_for_location
+  attr_accessor :item, :quantity, :on_hand, :on_hand_for_location
+  include ItemQuantity
 
   def self.from_json(json, request)
     location_id = request.partner.default_storage_location_id ||
@@ -14,11 +15,13 @@ class RequestItem
     else
       'N/A'
     end
-    new(item.name, quantity, on_hand, on_hand_for_location)
+    new(item, quantity, on_hand, on_hand_for_location)
   end
 
-  def initialize(name, quantity, on_hand, on_hand_for_location)
-    @name = name
+  delegate :name, to: :item
+
+  def initialize(item, quantity, on_hand, on_hand_for_location)
+    @item = item
     @quantity = quantity
     @on_hand = on_hand
     @on_hand_for_location = on_hand_for_location
