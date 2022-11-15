@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'docs/**'
+      - 'doc/**'
       - '*.md'
       - 'bin/*'
   pull_request:
     branches:
       - main
     paths-ignore:
-      - 'docs/**'
+      - 'doc/**'
       - '*.md'
       - 'bin/*'
 

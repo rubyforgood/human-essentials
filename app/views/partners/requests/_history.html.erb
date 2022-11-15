@@ -1,39 +1,26 @@
-<section class="container mx-auto my-8">
-  <h2 class="font-bold">Request History</h2>
+<section class="container mx-auto my-5">
+  <h2 class="font-weight-bold">Request History</h2>
 
-  <table class="bg-white rounded-md w-full shadow">
+  <table class="rounded-lg w-100 shadow-lg bg-white">
     <thead>
-      <tr class="border-b border-gray-200">
+      <tr class="border-bottom border-dark">
         <th scope="col" class="p-4 w-40">Request Date</th>
         <th scope="col" class="p-4">Items Requested</th>
       </tr>
     </thead>
     <tbody>
       <% @partner_requests.each do |partner_request| %>
-        <tr class="hover:bg-gray-100 border-b border-gray-200 last:border-b-0">
-          <td class="p-4 w-40">
-            <i class="text-blue-900 far fa-file-alt mr-1"></i>
+        <tr class="border-bottom last:border-none">
+          <td class="p-4">
+            <i class="text-primary far fa-file-alt mr-1"></i>
             <%= partner_request.created_at.strftime("%b %-d %Y") %>
           </td>
           <td class="p-4"><%= partner_request.id %></td>
-          <td class="p-4">
-            <% partner_request.item_requests[0..1].map do |item| %>
-              <span class="inline-block p-1 mr-1 mb-2 lg:mb-0 bg-white border border-gray-600 rounded-sm">
+          <td class="p-4 d-flex flex-wrap">
+            <% partner_request.item_requests.map do |item| %>
+              <span class="p-1 mr-1 mb-2 lg:mb-0 border border-dark rounded-sm">
                 <%= item.quantity %> <%= item.name%>
               </span>
-            <% end %>
-            <% if partner_request.item_requests.count > 2 %>
-              <button type="button" class="float-right w-28 text-blue-900 border-2 border-blue-900 rounded-sm py-1 px-2" id="more-button-<%= partner_request.id %>">
-                <i class="fas fa-caret-down mr-1 pointer-events-none"></i>
-                <%= partner_request.item_requests.count - 2 %> MORE
-              </button>
-              <ul class="absolute bg-white right-0 z-10 mt-10 lg:mt-2 py-2 px-4 shadow" id="requested-items-list-<%= partner_request.id %>">
-                <% partner_request.item_requests.drop(2).each.map do |item| %>
-                  <li class="border-b last:border-b-0 py-2">
-                    <%= item.quantity %> <%= item.name %>
-                  </li>
-                <% end %>
-              </ul>
             <% end %>
           </td>
         </tr>
@@ -41,31 +28,3 @@
     </tbody>
   </table>
 </section>
-
-<script>
-  const allMoreButtons = document.querySelectorAll('*[id^="more-button-"]');
-  const allItemsLists = document.querySelectorAll('*[id^="requested-items-list-"]');
-
-  window.onload = () => {
-    allItemsLists.forEach(list => {
-      list.style.display = "none";
-    });
-  };
-
-  const toggleList = item => {
-    if (item.style.display === "none") {
-      item.style.display = "block";
-    } else {
-      item.style.display = "none";
-    };
-  };
-
-  allMoreButtons.forEach(button => {
-    button.addEventListener("click", event => {
-      const elementId = event.target.id.replace("more-button-", "");
-      const itemsList = document.getElementById(`requested-items-list-${elementId}`);
-
-      toggleList(itemsList);
-    });
-  });
-</script>
