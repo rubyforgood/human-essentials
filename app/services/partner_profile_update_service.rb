@@ -13,7 +13,6 @@ class PartnerProfileUpdateService
 
     @partner.assign_attributes(@params)
     return false unless counties_are_valid?
-
     @partner.reload # I'm not sure why I need to reload it *Again* but I seem to. CLF 20221109
 
     @partner.update @params
@@ -22,13 +21,14 @@ class PartnerProfileUpdateService
   end
 
   def counties_are_valid?
+    return true if @params[:partner_counties_attributes].nil?
+
     total_share = 0
-    @params["partner_counties_attributes"].each do |pc|
-      total_share += pc[1]["client_share"].to_i
+    @params[:partner_counties_attributes].each do |pc|
+      total_share += pc[1][:client_share].to_i
     end
 
     is_good = (total_share == 0 || total_share == 100)
-
     @partner.errors.add(:base, "client share % must total to 0 or 100") unless is_good
     is_good
   end
