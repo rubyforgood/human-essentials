@@ -1,15 +1,16 @@
 require 'rails_helper'
 
-RSpec.describe "Distributions", type: :request, skip_seed: true do
+RSpec.describe "Distributions", type: :request do
   let(:default_params) do
     { organization_id: @organization.to_param }
   end
 
   let(:secret_key) { "HI MOM THIS IS ME AND I'M CODING" }
   let(:crypt) { ActiveSupport::MessageEncryptor.new(secret_key) }
-  let(:hashed_id) { crypt.encrypt_and_sign(@organization.id) }
+  let(:hashed_id) { CGI.escape(crypt.encrypt_and_sign(@organization.id)) }
   before(:each) do
     allow(Rails.application).to receive(:secret_key_base).and_return(secret_key)
+    allow(DistributionPdf).to receive(:new).and_return(double("DistributionPdf", compute_and_render: "PDF"))
   end
 
   context "While signed in" do
@@ -84,7 +85,7 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
         expect(partner).to be_valid
 
         expect(PartnerMailerJob).to receive(:perform_later).once
-        post distributions_path(params)
+        post distributions_path(params.merge(format: :turbo_stream))
 
         expect(response).to have_http_status(:redirect)
         last_distribution = Distribution.last
@@ -92,7 +93,7 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
       end
 
       it "renders #new again on failure, with notice" do
-        post distributions_path(default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }))
+        post distributions_path(default_params.merge(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream))
         expect(response).to be_successful
         expect(response).to have_error
       end

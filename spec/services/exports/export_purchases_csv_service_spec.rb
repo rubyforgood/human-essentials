@@ -1,10 +1,10 @@
-describe Exports::ExportPurchasesCSVService, skip_seed: true do
+describe Exports::ExportPurchasesCSVService do
   describe "#generate_csv_data" do
     subject { described_class.new(purchase_ids: purchase_ids).generate_csv_data }
     let(:purchase_ids) { purchases.map(&:id) }
     let(:duplicate_item) do
       FactoryBot.create(
-        :item, name: Faker::Appliance.equipment
+        :item, name: Faker::Appliance.unique.equipment
       )
     end
     let(:items_lists) do
@@ -13,7 +13,7 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
           [duplicate_item, 5],
           [
             FactoryBot.create(
-              :item, name: Faker::Appliance.equipment
+              :item, name: Faker::Appliance.unique.equipment
             ),
             7
           ],
@@ -21,7 +21,7 @@ describe Exports::ExportPurchasesCSVService, skip_seed: true do
         ],
         *(Array.new(3) do |i|
           [[FactoryBot.create(
-            :item, name: Faker::Appliance.equipment
+            :item, name: Faker::Appliance.unique.equipment
           ), i + 1]]
         end)
       ]

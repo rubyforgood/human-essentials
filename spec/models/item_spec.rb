@@ -21,7 +21,7 @@
 #  organization_id              :integer
 #
 
-RSpec.describe Item, type: :model, skip_seed: true do
+RSpec.describe Item, type: :model do
   describe 'Assocations >' do
     it { should belong_to(:item_category).optional }
   end
@@ -166,6 +166,16 @@ RSpec.describe Item, type: :model, skip_seed: true do
         expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
         expect(item).not_to be_active
       end
+
+      it 'deactivates the kit if it exists' do
+        kit = create(:kit)
+        item = create(:item, kit: kit)
+        create(:line_item, :purchase, item: item)
+        expect(kit).to be_active
+        expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
+        expect(item).not_to be_active
+        expect(kit).not_to be_active
+      end
     end
 
     describe "#reactivate!" do
@@ -211,6 +221,30 @@ RSpec.describe Item, type: :model, skip_seed: true do
     it "have nil values if an empty string is passed" do
       expect(create(:item, distribution_quantity: '').distribution_quantity).to be_nil
       expect(create(:item, package_size: '').package_size).to be_nil
+    end
+  end
+
+  describe "after update" do
+    let(:item) { create(:item, name: "my item", kit: kit) }
+
+    context "when item has the kit" do
+      let(:kit) { create(:kit, name: "my kit") }
+
+      it "updates kit name" do
+        item.update(name: "my new name")
+        expect(item.name).to eq kit.name
+      end
+    end
+
+    context "when item does not have kit" do
+      let(:kit) { nil }
+
+      it "does not raise NoMethodError" do
+        allow_any_instance_of(Kit).to receive(:update).and_return(true)
+        expect {
+          item.update(name: "my new name")
+        }.not_to raise_error(NoMethodError)
+      end
     end
   end
 end

@@ -24,5 +24,7 @@ class DashboardController < ApplicationController
     # which may not make sense when calculating total count using a date range
     @recent_donations_from_manufacturers = current_organization.donations.during(helpers.selected_range).by_source(:manufacturer)
     @top_manufacturers = current_organization.manufacturers.by_donation_count
+
+    @distribution_data = helpers.received_distributed_data(helpers.selected_range)
   end
 end

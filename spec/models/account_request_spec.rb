@@ -13,14 +13,16 @@
 #  status               :string           default("started"), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  ndbn_member_id       :bigint
 #
 require 'rails_helper'
 
-RSpec.describe AccountRequest, type: :model, skip_seed: true do
+RSpec.describe AccountRequest, type: :model do
   let(:account_request) { FactoryBot.create(:account_request) }
 
   describe 'associations' do
     it { should have_one(:organization).class_name('Organization') }
+    it { should belong_to(:ndbn_member).class_name("NDBNMember").optional }
   end
 
   describe 'validations' do

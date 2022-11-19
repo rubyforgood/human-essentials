@@ -39,13 +39,6 @@ RSpec.describe User, type: :model do
     expect(build(:user)).to be_valid
   end
 
-  context "Associations" do
-    it {
-      expect(described_class.reflect_on_association(:organization).macro)
-        .to eq(:belongs_to)
-    }
-  end
-
   context "Validations >" do
     it "requires a name" do
       expect(build(:user, name: nil)).not_to be_valid
@@ -63,7 +56,6 @@ RSpec.describe User, type: :model do
       let!(:a_name_user) { create(:user, name: 'Amanda') }
 
       it "retrieves users in the correct order" do
-        create_default_users
         alphabetized_list = described_class.alphabetized
 
         expect(alphabetized_list.first).to eq(a_name_user)
@@ -82,7 +74,6 @@ RSpec.describe User, type: :model do
       let!(:deactivated_z_name_user) { create(:user, name: 'Zeke', discarded_at: discarded_at) }
 
       it "retrieves users in the correct order" do
-        create_default_users
         alphabetized_list = described_class.org_users.with_discarded.alphabetized
 
         expect(alphabetized_list).to eq(
@@ -108,9 +99,9 @@ RSpec.describe User, type: :model do
     end
 
     it "#kind" do
-      expect(build(:super_admin).kind).to eq("super")
-      expect(build(:organization_admin).kind).to eq("admin")
-      expect(build(:user).kind).to eq("normal")
+      expect(create(:super_admin).kind).to eq("super")
+      expect(create(:organization_admin).kind).to eq("admin")
+      expect(create(:user).kind).to eq("normal")
     end
 
     it "#reinvitable?" do

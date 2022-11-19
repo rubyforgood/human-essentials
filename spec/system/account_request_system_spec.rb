@@ -1,4 +1,4 @@
-RSpec.describe 'Account request flow', type: :system, js: true, skip_seed: true do
+RSpec.describe 'Account request flow', type: :system, js: true do
   context 'when in staging' do
     before do
       allow(Rails.env).to receive(:staging?).and_return(true)
@@ -15,6 +15,7 @@ RSpec.describe 'Account request flow', type: :system, js: true, skip_seed: true 
       allow(Rails.env).to receive(:staging?).and_return(false)
     end
     it 'should allow prospective users to request an account via a form. And that request form data gets used to create an organization' do
+      ndbn_member = FactoryBot.create(:ndbn_member)
       visit root_path
 
       click_button('Request A Demo', match: :first)
@@ -27,6 +28,7 @@ RSpec.describe 'Account request flow', type: :system, js: true, skip_seed: true 
       fill_in 'Organization name', with: account_request_attrs[:organization_name]
       fill_in 'Organization website', with: account_request_attrs[:organization_website]
       fill_in 'Request Details (min 50 characters)', with: account_request_attrs[:request_details]
+      select "#{ndbn_member.ndbn_member_id} - #{ndbn_member.account_name}", from: 'account_request[ndbn_member_id]'
 
       expect(AccountRequest.count).to eq(0)
 

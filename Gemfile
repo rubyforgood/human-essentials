@@ -12,11 +12,11 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.3"
+gem "pg", "~> 1.4.5"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.3.1"
+gem "rails", "7.0.4"
 
 ###### MODELS / DATABASE #######
 
@@ -31,8 +31,10 @@ gem "groupdate", "~> 6.1"
 gem "money-rails"
 # Tracks history / audits models.
 gem "paper_trail"
+# Associates users with roles.
+gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.0"
+gem "strong_migrations", "1.4.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -50,6 +52,10 @@ gem "uglifier", ">= 1.3.0"
 gem 'webpacker', '~> 5.0'
 # Used to verify that the user is a human.
 gem "recaptcha"
+# Hotwire for SPA like without much JS
+gem "turbo-rails"
+# Sprinkle a little JS to add interactivity
+gem "stimulus-rails"
 
 ##### VIEWS/CONTROLLERS #####
 
@@ -113,6 +119,8 @@ group :production do
   gem 'lograge'
   # Profiler (third party app) showing performance and metrics.
   gem "skylight"
+  # Tool to detect unused code through knowing which methods are used in which files.
+  gem 'coverband'
 end
 
 group :development, :test, :staging do
@@ -142,7 +150,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 5.1.2"
+  gem "rspec-rails", "~> 6.0.1"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
@@ -176,7 +184,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.37"
+  gem "capybara", "~> 3.38"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
@@ -188,9 +196,9 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 5.0'
+  gem 'shoulda-matchers', '~> 5.2'
   # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.0'
+  gem 'webdrivers', '~> 5.2'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
 end
@@ -202,3 +210,6 @@ end
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
+
+# Use Redis for Action Cable
+gem "redis", "~> 5.0"

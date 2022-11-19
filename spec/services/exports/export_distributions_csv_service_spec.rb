@@ -1,7 +1,7 @@
-describe Exports::ExportDistributionsCSVService, skip_seed: true do
+describe Exports::ExportDistributionsCSVService do
   describe '#generate_csv_data' do
-    subject { described_class.new(distribution_ids: distribution_ids).generate_csv_data }
-    let(:distribution_ids) { distributions.map(&:id) }
+    subject { described_class.new(distributions: distributions, filters: filters).generate_csv_data }
+    let(:distributions) { distributions }
 
     let(:duplicate_item) do
       FactoryBot.create(
@@ -48,6 +48,10 @@ describe Exports::ExportDistributionsCSVService, skip_seed: true do
       end
     end
 
+    let(:item_id) { distributions.flatten.first.line_items.first.item_id }
+    let(:filters) { {by_item_id: item_id} }
+    let(:item_name) { Item.find(item_id).name }
+
     let(:total_item_quantities) do
       template = item_names.index_with(0)
 
@@ -65,11 +69,12 @@ describe Exports::ExportDistributionsCSVService, skip_seed: true do
         "Partner",
         "Date of Distribution",
         "Source Inventory",
-        "Total Items",
+        "Total Number of #{item_name}",
         "Total Value",
         "Delivery Method",
         "State",
-        "Agency Representative"
+        "Agency Representative",
+        "Comments"
       ] + expected_item_headers
     end
 
@@ -87,11 +92,12 @@ describe Exports::ExportDistributionsCSVService, skip_seed: true do
           distribution.partner.name,
           distribution.issued_at.strftime("%m/%d/%Y"),
           distribution.storage_location.name,
-          distribution.line_items.total,
+          distribution.line_items.where(item_id: item_id).total,
           distribution.cents_to_dollar(distribution.line_items.total_value),
           distribution.delivery_method,
           distribution.state,
-          distribution.agency_rep
+          distribution.agency_rep,
+          distribution.comment
         ]
 
         row += total_item_quantity

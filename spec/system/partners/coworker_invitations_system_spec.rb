@@ -1,4 +1,4 @@
-RSpec.describe "Coworking invitations", type: :system, js: true, skip_seed: true do
+RSpec.describe "Coworking invitations", type: :system, js: true do
   describe 'inviting a new user as a partner user' do
     let(:partner_user) { partner.primary_partner_user }
     let!(:partner) { FactoryBot.create(:partner) }
@@ -25,7 +25,8 @@ RSpec.describe "Coworking invitations", type: :system, js: true, skip_seed: true
       end
 
       it 'should create a new partner user for the partner account' do
-        expect(::User.find_by(email: new_user_email, partner: partner_user.partner)).not_to eq(nil)
+        user = ::User.find_by(email: new_user_email)
+        expect(user.has_role?(Role::PARTNER, partner_user.partner)).to be_truthy
       end
     end
   end

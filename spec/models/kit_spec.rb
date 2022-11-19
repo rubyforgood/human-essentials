@@ -13,7 +13,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Kit, type: :model, skip_seed: true do
+RSpec.describe Kit, type: :model do
   let(:kit) { build(:kit, name: "Test Kit") }
 
   context "Validations >" do
@@ -99,5 +99,34 @@ RSpec.describe Kit, type: :model, skip_seed: true do
       kit.value_in_cents = 550
       expect(kit.value_in_dollars).to eq(5.50)
     end
+  end
+
+  describe '#can_deactivate?' do
+    context 'with inventory items' do
+      it 'should return false' do
+        kit = create(:kit, :with_item)
+        create(:inventory_item, item: kit.item)
+        expect(kit.reload.can_deactivate?).to eq(false)
+      end
+    end
+
+    context 'without inventory items' do
+      it 'should return true' do
+        kit = create(:kit, :with_item)
+        expect(kit.reload.can_deactivate?).to eq(true)
+      end
+    end
+  end
+
+  specify 'deactivate and reactivate' do
+    kit = create(:kit, :with_item)
+    expect(kit.active).to eq(true)
+    expect(kit.item.active).to eq(true)
+    kit.deactivate
+    expect(kit.active).to eq(false)
+    expect(kit.item.active).to eq(false)
+    kit.reactivate
+    expect(kit.active).to eq(true)
+    expect(kit.item.active).to eq(true)
   end
 end

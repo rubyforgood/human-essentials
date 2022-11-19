@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Admin::UsersController", type: :request, skip_seed: true do
+RSpec.describe "Admin::UsersController", type: :request do
   let(:default_params) do
     { organization_id: @organization.id }
   end
@@ -25,8 +25,8 @@ RSpec.describe "Admin::UsersController", type: :request, skip_seed: true do
 
     describe "POST #create" do
       it "returns http success" do
-        post admin_users_path, params: { user: { organization_id: 1 } }
-        expect(response).to be_successful
+        post admin_users_path, params: { user: { email: 'email@email.com', organization_id: 1 } }
+        expect(response).to redirect_to(admin_users_path(organization_id: @organization.short_name))
       end
 
       it "preloads organizations" do

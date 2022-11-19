@@ -1,4 +1,4 @@
-describe ReminderDeadlineMailer, type: :job, skip_seed: true do
+describe ReminderDeadlineMailer, type: :job do
   describe 'notify deadline' do
     let(:today) { Date.new(2022, 1, 10) }
     let(:partner) { create(:partner) }
@@ -18,7 +18,7 @@ describe ReminderDeadlineMailer, type: :job, skip_seed: true do
     end
 
     it 'renders the sender email' do
-      expect(subject.from).to eq(["info@humanessentials.app"])
+      expect(subject.from).to eq(["no-reply@humanessentials.app"])
     end
 
     it 'renders the body' do

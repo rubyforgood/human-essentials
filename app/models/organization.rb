@@ -2,32 +2,36 @@
 #
 # Table name: organizations
 #
-#  id                       :integer          not null, primary key
-#  city                     :string
-#  deadline_day             :integer
-#  default_storage_location :integer
-#  distribute_monthly       :boolean          default(FALSE), not null
-#  email                    :string
-#  intake_location          :integer
-#  invitation_text          :text
-#  latitude                 :float
-#  longitude                :float
-#  name                     :string
-#  partner_form_fields      :text             default([]), is an Array
-#  reminder_day             :integer
-#  repackage_essentials     :boolean          default(FALSE), not null
-#  short_name               :string
-#  state                    :string
-#  street                   :string
-#  url                      :string
-#  zipcode                  :string
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  account_request_id       :integer
-#  ndbn_member_id           :bigint
+#  id                          :integer          not null, primary key
+#  city                        :string
+#  deadline_day                :integer
+#  default_storage_location    :integer
+#  distribute_monthly          :boolean          default(FALSE), not null
+#  email                       :string
+#  enable_child_based_requests :boolean          default(TRUE), not null
+#  enable_individual_requests  :boolean          default(TRUE), not null
+#  intake_location             :integer
+#  invitation_text             :text
+#  latitude                    :float
+#  longitude                   :float
+#  name                        :string
+#  partner_form_fields         :text             default([]), is an Array
+#  reminder_day                :integer
+#  repackage_essentials        :boolean          default(FALSE), not null
+#  short_name                  :string
+#  state                       :string
+#  street                      :string
+#  url                         :string
+#  zipcode                     :string
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
+#  account_request_id          :integer
+#  ndbn_member_id              :bigint
 #
 
 class Organization < ApplicationRecord
+  resourcify
+
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
 
   include Deadlinable
@@ -58,7 +62,7 @@ class Organization < ApplicationRecord
     has_many :inventory_items, through: :storage_locations
     has_many :kits
     has_many :transfers
-    has_many :users
+    has_many :users, -> { distinct }, through: :roles
     has_many :vendors
   end
 
@@ -96,8 +100,6 @@ class Organization < ApplicationRecord
     end
   end
 
-  before_update :sync_visible_partner_form_sections, if: :partner_form_fields_changed?
-
   after_create do
     account_request&.update!(status: "admin_approved")
   end
@@ -118,7 +120,7 @@ class Organization < ApplicationRecord
 
   has_one_attached :logo
 
-  accepts_nested_attributes_for :users
+  accepts_nested_attributes_for :users, :account_request
 
   include Geocodable
 
@@ -137,12 +139,6 @@ class Organization < ApplicationRecord
       url: account_request.organization_website,
       email: account_request.email,
       account_request_id: account_request.id
-    )
-
-    users.build(
-      organization_admin: true,
-      email: account_request.email,
-      name: account_request.name
     )
 
     self
@@ -249,14 +245,6 @@ class Organization < ApplicationRecord
 
   private
 
-  def sync_visible_partner_form_sections
-    partner_form = Partners::PartnerForm.where(
-      essentials_bank_id: id,
-    ).first_or_create
-
-    partner_form.update!(sections: partner_form_fields)
-  end
-
   def correct_logo_mime_type
     if logo.attached? && !logo.content_type
                               .in?(%w(image/jpeg image/jpg image/pjpeg image/png image/x-png))
@@ -266,6 +254,6 @@ class Organization < ApplicationRecord
   end
 
   def get_admin_email
-    User.where(organization_id: id, organization_admin: true).sample.email
+    User.with_role(Role::ORG_ADMIN, self).sample.email
   end
 end

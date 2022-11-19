@@ -1,4 +1,4 @@
-RSpec.describe RequestMailer, type: :mailer, skip_seed: true do
+RSpec.describe RequestMailer, type: :mailer do
   describe "#request_cancel_partner_notification" do
     subject { described_class.request_cancel_partner_notification(request_id: request.id) }
     let(:request) { create(:request) }
@@ -14,7 +14,7 @@ RSpec.describe RequestMailer, type: :mailer, skip_seed: true do
 
     it "should be sent to the partner main email with the correct subject line" do
       expect(subject.to).to eq([request.partner.email])
-      expect(subject.from).to eq(['info@humanessentials.app'])
+      expect(subject.from).to eq(['no-reply@humanessentials.app'])
       expect(subject.subject).to eq("Your essentials request (##{request.id}) has been canceled.")
     end
   end

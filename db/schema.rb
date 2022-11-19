@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
     t.datetime "updated_at", null: false
     t.string "rejection_reason"
     t.string "status", default: "started", null: false
+    t.bigint "ndbn_member_id"
     t.index ["status"], name: "index_account_requests_on_status"
   end
 
@@ -514,6 +515,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
     t.string "status_in_diaper_base"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
+    t.string "instagram"
+    t.boolean "no_social_media_presence"
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 
@@ -650,6 +653,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
     t.index ["status"], name: "index_requests_on_status"
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.string "name"
+    t.string "resource_type"
+    t.bigint "resource_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
+  end
+
   create_table "storage_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
@@ -661,6 +674,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
     t.integer "square_footage"
     t.string "warehouse_type"
     t.string "time_zone", default: "America/Los_Angeles", null: false
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_storage_locations_on_discarded_at"
     t.index ["latitude", "longitude"], name: "index_storage_locations_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_storage_locations_on_organization_id"
   end
@@ -715,6 +730,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "users_roles", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "role_id"
+    t.index ["role_id"], name: "index_users_roles_on_role_id"
+    t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
+    t.index ["user_id"], name: "index_users_roles_on_user_id"
+  end
+
   create_table "vendors", force: :cascade do |t|
     t.string "contact_name"
     t.string "email"
@@ -741,6 +764,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_19_192440) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
+  add_foreign_key "account_requests", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"

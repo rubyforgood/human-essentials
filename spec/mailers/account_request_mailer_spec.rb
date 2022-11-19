@@ -1,4 +1,4 @@
-RSpec.describe AccountRequestMailer, type: :mailer, skip_seed: true do
+RSpec.describe AccountRequestMailer, type: :mailer do
   describe '#confirmation' do
     let(:mail) { AccountRequestMailer.confirmation(account_request_id: account_request_id) }
     let(:account_request_id) { account_request.id }
@@ -16,8 +16,8 @@ RSpec.describe AccountRequestMailer, type: :mailer, skip_seed: true do
       expect(mail.to).to eq([account_request.email])
     end
 
-    it 'should be from info@humanessentials.app' do
-      expect(mail.from).to eq(['info@humanessentials.app'])
+    it 'should be from no-reply@humanessentials.app' do
+      expect(mail.from).to eq(['no-reply@humanessentials.app'])
     end
 
     it 'should have the correct subject' do

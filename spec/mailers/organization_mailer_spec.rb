@@ -1,4 +1,4 @@
-RSpec.describe OrganizationMailer, type: :mailer, skip_seed: true do
+RSpec.describe OrganizationMailer, type: :mailer do
   describe "#partner_approval_request" do
     subject { described_class.partner_approval_request(organization: organization, partner: partner) }
     let(:partner) { create(:partner) }
@@ -21,7 +21,7 @@ RSpec.describe OrganizationMailer, type: :mailer, skip_seed: true do
 
     it "should be sent to the partner main email with the correct subject line" do
       expect(subject.to).to contain_exactly(organization.email)
-      expect(subject.from).to contain_exactly('info@humanessentials.app')
+      expect(subject.from).to contain_exactly('no-reply@humanessentials.app')
       expect(subject.subject).to eq("[Action Required] Approval requested for #{partner.name}")
     end
   end

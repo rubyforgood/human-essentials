@@ -23,6 +23,8 @@
       <p>Website: <%= partner_profile.website %></p>
       <p>Facebook: <%= partner_profile.facebook %></p>
       <p>Twitter: <%= partner_profile.twitter %></p>
+      <p>Instagram: <%= partner_profile.instagram %></p>
+      <p>No Social Media Presence: <%= humanize_boolean(partner_profile.no_social_media_presence) %></p>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_stability') || partner_profile_fields.empty? %>
@@ -43,6 +45,12 @@
       <p>How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
       <p>Do You Receive Essentials from Other Sources? <%= partner_profile.receives_essentials_from_other %></p>
       <p>Currently Provide Diapers: <%= partner_profile.currently_provide_diapers %></p>
+      <% if partner_profile.organization.enable_child_based_requests? %>
+        <p>Enable Child-based Requests: <%= partner_profile.enable_child_based_requests? %></p>
+      <% end %>
+      <% if partner_profile.organization.enable_individual_requests? %>
+        <p>Enable Requests for Individuals: <%= partner_profile.enable_individual_requests? %></p>
+      <% end %>
       <br>
       <h3>Program Address (if different)</h3>
       <p>Program Address: <%= partner_profile.program_address1 %></p>
@@ -126,11 +134,21 @@
       <p>Essentials Funding Source: <%= partner_profile.essentials_funding_source %></p>
     <% end %>
     <% if partner_profile_fields.include?('attached_documents') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Other Documents</h2>
+      <h2 class='text-2xl underline'>Other Documents</h2><br/>
       <ul>
         <% partner_profile.documents.each do |document| %>
           <li><%= link_to document.filename, rails_blob_path(document, disposition: 'inline') %></li>
         <% end %>
+      </ul>
+    <h2 class='text-2xl underline'>Settings</h2>
+      <ul>
+      <% if partner_profile.organization.enable_child_based_requests? %>
+        <li>Uses Child Based Requests: <%= humanize_boolean(partner_profile.enable_child_based_requests) %></li>
+      <% end %>
+      <% if partner_profile.organization.enable_individual_requests? %>
+        <li>Uses Individual Requests: <%= humanize_boolean(partner_profile.enable_individual_requests) %></li>
+      <% end %>
+
       </ul>
   </div>
 <% end %>

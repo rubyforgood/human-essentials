@@ -8,25 +8,29 @@ module Partners
       @user = User.new
     end
 
+    def edit
+      @user = current_user
+    end
+
+    def update
+      @user = current_user
+      if @user.update(user_params)
+        flash[:success] = "User information was successfully updated!"
+        redirect_to edit_partners_user_path(@user)
+      else
+        flash[:error] = "Failed to update this user."
+        render :edit
+      end
+    end
+
     def create
-      user = ::User.invite!(
+      user = UserInviteService.invite(name: user_params[:name],
         email: user_params[:email],
-        name: user_params[:name],
-        partner: current_partner,
-      )
+        roles: [Role::PARTNER],
+        resource: current_partner)
 
       flash[:success] = "You have invited #{user.name} to join your organization!"
       redirect_to partners_users_path
-    end
-
-    def switch_to_bank_role
-      if current_user.organization.nil?
-        error_message = "Attempted to switch to a bank role but you have no bank associated with your account!"
-        redirect_back(fallback_location: root_path, alert: error_message)
-        return
-      end
-
-      redirect_to dashboard_path(current_user.organization)
     end
 
     private

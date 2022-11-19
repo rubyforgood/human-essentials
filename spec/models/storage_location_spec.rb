@@ -4,6 +4,7 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  discarded_at    :datetime
 #  latitude        :float
 #  longitude       :float
 #  name            :string
@@ -192,7 +193,7 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "import_inventory", needs_users: true do
+    describe "import_inventory" do
       it "imports storage locations from a csv file" do
         donations_count = Donation.count
         storage_location = create(:storage_location, organization_id: @organization.id)
@@ -200,7 +201,7 @@ RSpec.describe StorageLocation, type: :model do
         StorageLocation.import_inventory(import_file_path, @organization.id, storage_location.id)
         expect(storage_location.size).to eq 14_842
         expect(donations_count).to eq Donation.count
-        expect(@organization.adjustments.last.user_id).to eq(@organization.users.find_by(organization_admin: true).id)
+        expect(@organization.adjustments.last.user_id).to eq(@organization.users.with_role(Role::ORG_ADMIN, @organization).first.id)
       end
     end
 

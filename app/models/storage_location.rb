@@ -4,6 +4,7 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  discarded_at    :datetime
 #  latitude        :float
 #  longitude       :float
 #  name            :string
@@ -46,9 +47,11 @@ class StorageLocation < ApplicationRecord
                              allow_blank: true
   before_destroy :verify_inventory_items, prepend: true
 
+  include Discard::Model
   include Geocodable
   include Filterable
   include Exportable
+
   scope :containing, ->(item_id) {
     joins(:inventory_items).where("inventory_items.item_id = ?", item_id)
   }
@@ -109,7 +112,9 @@ class StorageLocation < ApplicationRecord
   # NOTE: We should generalize this elsewhere -- Importable concern?
   def self.import_inventory(filename, org, loc)
     current_org = Organization.find(org)
-    adjustment = current_org.adjustments.create!(storage_location_id: loc.to_i, user_id: current_org.users.find_by(organization_admin: true)&.id, comment: "Starting Inventory")
+    adjustment = current_org.adjustments.create!(storage_location_id: loc.to_i,
+                                                 user_id: User.with_role(Role::ORG_ADMIN, current_org).first&.id,
+                                                 comment: "Starting Inventory")
     # NOTE: this was originally headers: false; it may create buggy behavior
     CSV.parse(filename, headers: true) do |row|
       adjustment.line_items

@@ -161,7 +161,37 @@
                 <div class="box-body">
                   <div class="box-body text-center">
                     <h5 class="text-center"></h5>
-                    <div id="received-data-chart"></div>
+                    <% 
+                        activity_chart_config = {
+                          chart: {
+                            type: "bar"
+                          },
+                          title: "",
+                          xAxis: {
+                            categories: @distribution_data.keys,
+                            title: {
+                              text: nil
+                            }
+                          },
+                          yAxis: {
+                            title: {
+                              text: nil
+                            }
+                          },
+                          legend: {
+                            enabled: false
+                          },
+                          series: [
+                            {
+                              data: @distribution_data.values
+                            }
+                          ]
+                        }.to_json
+                      %>
+                    <div data-controller="highchart" data-highchart-config-value="<%= activity_chart_config %>" >
+                      <div data-highchart-target="chart"></div>
+                    </div>
+
                   </div>
                 </div>
               </div>
@@ -222,8 +252,10 @@
                     <%= total_received_from_product_drives %>
                   </span> items
                   received <%= @selected_date_range_label %></h3>
-                <h4 class="text-center"><%= dollar_presentation(total_received_money_donations) %>
-                  raised  <%= @selected_date_range_label %></h4>
+                <h4 class="text-center">
+                  <span class="total_money_raised">
+                    <%= dollar_presentation( total_received_money_donations_from_product_drives) %>
+                  </span> raised  <%= @selected_date_range_label %></h4>
                 <div class="box-body">
                   <h4>Recent Donations from Product Drives</h4>
                   <%= render partial: "product_drive", collection: @recent_donations.by_source(:product_drive), as: :donation %>
@@ -321,34 +353,3 @@
     </div>
   </div>
 </div>
-
-<script>
-
-<% data = received_distributed_data %>
-$(() => {
-  Highcharts.chart('received-data-chart', {
-    chart: {
-      type: 'bar'
-    },
-    title: '',
-    xAxis: {
-      categories: <%= data.keys.to_json.html_safe %>,
-      title: {
-        text: null
-      }
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-    },
-    legend: {
-      enabled: false
-    },
-    series: [
-      { data: <%= data.values.to_json.html_safe %> }
-    ]
-  })
-  $('#received-data-chart')
-});
-</script>

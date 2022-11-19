@@ -50,6 +50,11 @@
                 <%= f.input :zipcode %>
                 <%= f.input :reminder_day, class: "form-control", placeholder: "Reminder day" %>
                 <%= f.input :deadline_day, class: "form-control", placeholder: "Deadline day" %>
+                <%= f.simple_fields_for :account_request do |account_request| %>
+                  <%= account_request.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
+                    <%= account_request.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
+                  <% end %>
+                <% end %>
                 <%= f.rich_text_area :default_email_text %>
                 <%= f.input :logo %>
                 <p class="help-block">Logo should be a 4:1 ratio of width / height (default image is 763 x 188
@@ -57,11 +62,8 @@
                   Only jpeg/png format is supported.
                 </p>
                 <h1>Add a user</h1>
-                <%= f.simple_fields_for :users do |user| %>
+                <%= f.simple_fields_for :user, @user do |user| %>
                   <%= render 'admin/users/user_form_fields', f: user %>
-                  <%= user.input :organization_admin, label: "Organization Admin?", wrapper: :input_group do %>
-                    <%= user.check_box :organization_admin %>
-                  <% end %>
                 <% end %>
 
               </div>

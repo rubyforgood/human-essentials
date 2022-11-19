@@ -1,4 +1,4 @@
-RSpec.describe "Organization Administration", type: :system, js: true, skip_seed: true do
+RSpec.describe "Organization Administration", type: :system, js: true do
   subject { "/#{@organization.to_param}/organization" }
 
   context "while signed in as a normal user" do
@@ -32,7 +32,8 @@ RSpec.describe "Organization Administration", type: :system, js: true, skip_seed
 
     context "When looking at a single organization" do
       before do
-        @organization.users << create(:user, email: "yet_another_user@website.com")
+        user = create(:user, email: "yet_another_user@website.com")
+        user.add_role(Role::ORG_USER, @organization)
         visit subject
       end
 

@@ -1,27 +1,30 @@
-<section class="container mx-auto my-8">
-  <h2 class="font-bold">Requests In Progress</h2>
+<section class="container mx-auto my-5">
+  <h2 class="font-weight-bold">Requests In Progress</h2>
 
-  <table class="bg-white rounded-md w-full shadow">
+  <table class="rounded-lg w-100 shadow-lg bg-white">
     <thead>
-      <tr class="border-b border-gray-200">
-        <th scope="col" class="p-4 w-40">Request Date</th>
-        <th scope="col" class="p-4 w-40">Number of Items Requested</th>
+      <tr class="border-bottom border-dark">
+        <th scope="col" class="p-4" style='width:150px'>Request Date</th>
+        <th scope="col" class="p-4">Number of Items Requested</th>
         <th scope="col" class="p-4">Items Requested</th>
       </tr>
     </thead>
     <tbody>
     <% @requests_in_progress.each do |request| %>
-        <tr class="hover:bg-gray-100 border-b border-gray-200 last:border-b-0">
-          <td class="p-4 w-40">
-            <i class="text-blue-900 far fa-file-alt mr-1"></i>
-            <%= request.created_at.strftime("%m/%d/%Y") %>
-          </td>
-          <td class="p-4"><%= request.total_items %></td>
+        <tr class="border-bottom last:border-none">
           <td class="p-4">
+            <p> 
+              <span class="d-inline-block text-primary far fa-file-alt mr-1"></span>
+              <span class="d-inline-block"><%= request.created_at.strftime("%m/%d/%Y") %></span>
+            </p>
+          </td>
+
+          <td class="p-4"><%= request.total_items %></td>
+          <td class="p-4 d-flex flex-wrap">
             <%request_item = request.request_items.map { |json| RequestItem.from_json(json, request) } %>
 
             <% request_item.map do |item| %>
-              <span class="inline-block p-1 mr-1 mb-2 lg:mb-0 bg-white border border-gray-600 rounded-sm">
+              <span class="p-1 mr-1 mb-2 lg:mb-0 border border-dark rounded-sm">
                 <%= item.quantity %> <%= item.name%>
               </span>
             <% end %>

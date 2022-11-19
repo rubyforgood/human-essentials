@@ -10,12 +10,13 @@ RSpec.describe "Family requests", type: :system, js: true do
   end
 
   describe "for children with different items, from different families" do
+    let(:item_id) { Item.all.sample.id }
     let!(:children) do
       [
         create(:partners_child, family: family),
-        create(:partners_child, family: family, item_needed_diaperid: 2),
-        create(:partners_child, family: family, item_needed_diaperid: 2),
-        create(:partners_child, family: other_family, item_needed_diaperid: 2),
+        create(:partners_child, family: family, item_needed_diaperid: item_id),
+        create(:partners_child, family: family, item_needed_diaperid: item_id),
+        create(:partners_child, family: other_family, item_needed_diaperid: item_id),
         create(:partners_child, family: other_family)
       ]
     end

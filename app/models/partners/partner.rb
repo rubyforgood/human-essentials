@@ -17,6 +17,8 @@
 #  describe_storage_space         :text
 #  distribution_times             :string
 #  distributor_type               :string
+#  enable_child_based_requests    :boolean          default(TRUE), not null
+#  enable_individual_requests     :boolean          default(TRUE), not null
 #  essentials_budget              :string
 #  essentials_funding_source      :string
 #  essentials_use                 :string
@@ -30,9 +32,11 @@
 #  greater_2_times_fpl            :integer
 #  income_requirement_desc        :boolean
 #  income_verification            :boolean
+#  instagram                      :string
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
+#  no_social_media_presence       :boolean
 #  other_agency_type              :string
 #  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
@@ -77,9 +81,9 @@
 module Partners
   class Partner < Base
     self.table_name = "partner_profiles"
+    resourcify
 
-    has_one :primary_user, -> { order('created_at ASC') }, class_name: '::User', inverse_of: :partner
-    has_many :users, class_name: '::User', dependent: :destroy
+    has_many :users, through: :roles, class_name: '::User', dependent: :destroy
     has_many :requests, dependent: :destroy
     has_many :families, dependent: :destroy
     has_many :children, through: :families
@@ -89,6 +93,8 @@ module Partners
     has_one_attached :proof_of_partner_status
     has_one_attached :proof_of_form_990
     has_many_attached :documents
+
+    validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?
 
     self.ignored_columns = %w[
       evidence_based_description
@@ -146,6 +152,10 @@ module Partners
       attached_documents
     ].freeze
 
+    def primary_user
+      users.order('created_at ASC').first
+    end
+
     def verified?
       partner_status == VERIFIED_STATUS
     end
@@ -176,6 +186,10 @@ module Partners
     end
 
     private
+
+    def has_no_social_media?
+      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
+    end
 
     def families_served_count
       families.count

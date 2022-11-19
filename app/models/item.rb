@@ -26,6 +26,8 @@ class Item < ApplicationRecord
   include Exportable
   include Valuable
 
+  after_update :update_associated_kit_name, if: -> { kit.present? }
+
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
   belongs_to :kit, optional: true
@@ -103,6 +105,14 @@ class Item < ApplicationRecord
     Item.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
+  def deactivate
+    if kit
+      kit.deactivate
+    else
+      update!(active: false)
+    end
+  end
+
   def other?
     partner_key == "other"
   end
@@ -111,7 +121,7 @@ class Item < ApplicationRecord
   # without first being disassociated with its historical presence
   def destroy
     if has_history?
-      update(active: false)
+      deactivate
     else
       super
     end
@@ -158,5 +168,11 @@ class Item < ApplicationRecord
 
   def inventory_item_at(storage_location_id)
     inventory_items.find_by(storage_location_id: storage_location_id)
+  end
+
+  private
+
+  def update_associated_kit_name
+    kit.update(name: name)
   end
 end

@@ -1,4 +1,4 @@
-RSpec.describe "Adjustment management", type: :system, js: true, skip_seed: true do
+RSpec.describe "Adjustment management", type: :system, js: true do
   let!(:url_prefix) { "/#{@organization.to_param}" }
   let!(:storage_location) { create(:storage_location, :with_items, organization: @organization) }
   let(:add_quantity) { 10 }

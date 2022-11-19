@@ -3,7 +3,17 @@
   <td><%= distribution_row.partner.name %></td>
   <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %> </td>
   <td><%= distribution_row.storage_location.name %></td>
-  <td class="numeric"><%= distribution_row.line_items.total %></td>
+
+  <!-- Quantity -->
+  <% if filter_params[:by_item_id].present? %>
+    <td class="numeric"><%= quantity_by_item_id(distribution_row, filter_params[:by_item_id]) %></td>
+  <% elsif filter_params[:by_item_category_id].present? %>
+    <td class="numeric"><%= quantity_by_item_category_id(distribution_row, filter_params[:by_item_category_id]) %></td>
+  <% else %>
+    <td class="numeric"><%= distribution_row.line_items.total %></td>
+  <% end %>
+  <!-- End Quantity -->
+
   <td class="numeric"><%= dollar_value(distribution_row.value_per_itemizable) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
   <td><%= distribution_row.comment %></td>
@@ -11,7 +21,7 @@
 
   <td class="text-right">
     <%= view_button_to distribution_path(distribution_row) %>
-    <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.organization_admin? %>
+    <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
       <%= edit_button_to edit_distribution_path(distribution_row) %>
     <% end %>
     <%= print_button_to print_distribution_path(distribution_row, format: :pdf) %>

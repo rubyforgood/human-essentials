@@ -51,14 +51,14 @@ class PartnersController < ApplicationController
   def show
     @partner = current_organization.partners.find(params[:id])
     @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
-    @partner_distributions = @partner.distributions.order(created_at: :desc)
+    @partner_distributions = @partner.distributions.includes(:partner, :storage_location, line_items: [:item]).order("issued_at DESC")
     @partner_profile_fields = current_organization.partner_form_fields
     @partner_users = @partner.profile.users.order(name: :asc)
 
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distribution_ids: @partner_distributions.map(&:id)).generate_csv, filename: "PartnerDistributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @partner_distributions, filters: filter_params).generate_csv, filename: "PartnerDistributions-#{Time.zone.today}.csv"
       end
     end
   end
@@ -108,8 +108,9 @@ class PartnersController < ApplicationController
 
   def invite_partner_user
     partner = current_organization.partners.find(params[:partner])
-    partner_user_invite_service = PartnerUserInviteService.new(partner: partner, email: params[:email])
-    partner_user_invite_service.call
+    UserInviteService.invite(email: params[:email],
+      roles: [Role::PARTNER],
+      resource: partner)
 
     redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"
   rescue StandardError => e

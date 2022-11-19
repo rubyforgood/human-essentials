@@ -1,4 +1,4 @@
-RSpec.describe "Approval process for partners", type: :system, js: true, skip_seed: true do
+RSpec.describe "Approval process for partners", type: :system, js: true do
   describe 'filling in organization details and requesting for approval' do
     let(:partner_user) { partner.primary_partner_user }
     let!(:partner) { FactoryBot.create(:partner) }
@@ -36,6 +36,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true, skip_se
           fill_in 'Executive Director Phone', with: '8889990000'
           fill_in 'Executive Director Email', with: 'lorem@example.com'
           fill_in 'Primary Contact Phone', with: '8889990000'
+          check 'No Social Media Presence'
 
           click_on 'Update Information'
           assert page.has_content? 'Details were successfully updated.'
