@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_23_013754) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -406,6 +406,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.bigint "ndbn_member_id"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
+    t.boolean "enable_quantity_based_requests", default: true, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -515,6 +516,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.string "status_in_diaper_base"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
+    t.boolean "enable_quantity_based_requests", default: true, null: false
     t.string "instagram"
     t.boolean "no_social_media_presence"
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"

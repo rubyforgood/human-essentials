@@ -6,7 +6,8 @@ describe PartnerCreateService do
     let(:organization) {
       create(:organization,
         enable_individual_requests: false,
-        enable_child_based_requests: false)
+        enable_child_based_requests: false,
+        enable_quantity_based_requests: true)
     }
     let(:partner_attrs) { FactoryBot.attributes_for(:partner).except(:organization_id) }
 
@@ -41,6 +42,7 @@ describe PartnerCreateService do
         expect { subject }.to change { query.count }.from(0).to(1)
         expect(query.first.enable_child_based_requests).to eq(false)
         expect(query.first.enable_individual_requests).to eq(false)
+        expect(query.first.enable_quantity_based_requests).to eq(true)
       end
 
       context 'but there was an unexpected issue with saving the' do
