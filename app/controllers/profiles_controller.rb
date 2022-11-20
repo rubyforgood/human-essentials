@@ -97,6 +97,7 @@ class ProfilesController < ApplicationController
       :essentials_funding_source,
       :enable_child_based_requests,
       :enable_individual_requests,
+      :enable_quantity_based_requests,
       documents: []
     )
   end

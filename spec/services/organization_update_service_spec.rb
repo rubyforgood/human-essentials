@@ -28,7 +28,8 @@ describe OrganizationUpdateService, skip_seed: true do
       partners.each { |p|
         p.profile.update!(
           enable_individual_requests: true,
-          enable_child_based_requests: true
+          enable_child_based_requests: true,
+          enable_quantity_based_requests: true
         )
       }
     end
@@ -40,16 +41,31 @@ describe OrganizationUpdateService, skip_seed: true do
           .to eq([true, true])
         expect(organization.partners.map { |p| p.profile.enable_individual_requests })
           .to eq([true, true])
+        expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
+          .to eq([true, true])
       end
     end
 
     context "when field has changed" do
-      it "should update partners" do
-        organization.update!(enable_child_based_requests: false, enable_individual_requests: false)
+      it "should update partners when disabling child and individual requests" do
+        organization.update!(enable_child_based_requests: false, enable_individual_requests: false, enable_quantity_based_requests: true)
         described_class.update_partner_flags(organization)
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
           .to eq([false, false])
         expect(organization.partners.map { |p| p.profile.enable_individual_requests })
+          .to eq([false, false])
+        expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
+          .to eq([true, true])
+      end
+
+      it "should update partners when disabling quantity based requests" do
+        organization.update!(enable_quantity_based_requests: false)
+        described_class.update_partner_flags(organization)
+        expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
+          .to eq([true, true])
+        expect(organization.partners.map { |p| p.profile.enable_individual_requests })
+          .to eq([true, true])
+        expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
           .to eq([false, false])
       end
     end
