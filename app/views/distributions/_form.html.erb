@@ -1,37 +1,40 @@
-<div class="box-body">
-  <%= f.simple_fields_for :request do |r| %>
-    <%= r.input :id, as: :hidden %>
-  <% end %>
-  <%= f.association :partner,
-                    collection: current_organization.partners.alphabetized,
-                    label: "Partner",
-                    error: "Which partner is this distribution going to?" %>
+<%= simple_form_for distribution, method: :post, url: distributions_path(organization: distribution.organization, request_id: params[:request_id]), html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
 
-  <div class='w-72'>
-    <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date", html5: true %>
-  </div>
-  <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
-  <%= f.input :agency_rep, label: "Agency representative" %>
-  <%= f.input :delivery_method, as: :radio_buttons, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
+  <div class="box-body">
+    <%= f.simple_fields_for :request do |r| %>
+      <%= r.input :id, as: :hidden %>
+    <% end %>
+    <%= f.association :partner,
+      collection: current_organization.partners.alphabetized,
+      label: "Partner",
+      error: "Which partner is this distribution going to?" %>
 
-  <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: false }  %>
-
-  <%= f.input :comment, label: "Comment" %>
-
-  <fieldset style="margin-bottom: 2rem">
-    <legend>Items in this distribution</legend>
-    <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
-      <%= f.simple_fields_for :line_items do |item| %>
-        <%= render 'line_items/line_item_fields', f: item %>
-      <% end %>
+    <div class='w-72'>
+      <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date", html5: true %>
     </div>
-    <div class="row links justify-content-end">
-      <%= add_line_item_button f, "#distribution_line_items" %>
-    </div>
+    <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
+    <%= f.input :agency_rep, label: "Agency representative" %>
+    <%= f.input :delivery_method, as: :radio_buttons, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
 
-  </fieldset>
+    <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: false }  %>
+
+    <%= f.input :comment, label: "Comment" %>
+
+    <fieldset style="margin-bottom: 2rem">
+      <legend>Items in this distribution</legend>
+      <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
+        <%= f.simple_fields_for :line_items do |item| %>
+          <%= render 'line_items/line_item_fields', f: item %>
+        <% end %>
+      </div>
+      <div class="row links justify-content-end">
+        <%= add_line_item_button f, "#distribution_line_items" %>
+      </div>
+
+    </fieldset>
   </div>
   <div class="card-footer">
     <%= submit_button %>
   </div>
-</div>
+  </div>
+<% end %>
