@@ -1,9 +1,10 @@
-<%= simple_form_for distribution, method: :post, url: distributions_path(organization: distribution.organization, request_id: params[:request_id]), html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
+<%= simple_form_for distribution, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
 
   <div class="box-body">
     <%= f.simple_fields_for :request do |r| %>
       <%= r.input :id, as: :hidden %>
     <% end %>
+
     <%= f.association :partner,
       collection: current_organization.partners.alphabetized,
       label: "Partner",
