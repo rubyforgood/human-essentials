@@ -2,10 +2,10 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Users - #{current_partner.name}" %>
+        <% content_for :title, "Users - #{@partner.name}" %>
         <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
           Users
-          <small>for <%= current_partner.name %></small>
+          <small>for <%= @partner.name %></small>
         </h1>
       </div>
       <div class="col-sm-6">

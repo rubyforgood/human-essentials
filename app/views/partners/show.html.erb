@@ -34,6 +34,12 @@
             <h2 class="card-title">Partner Actions</h2>
           </div>
           <div class="card-body p-3">
+            <%= link_to partner_users_path(@partner) do %>
+              <div class="btn btn-app bg-success">
+                <i class="fas fa-users"></i> Users
+              </div>
+            <% end %>
+            <hr>
             <div class="row px-2">
               <div class="col-lg-4 col-sm-12">
                 <div>
@@ -43,15 +49,6 @@
                 <br>
                 <br>
                 <%= view_button_to '#partner-information', { text: "View Partner Information", type: "secondary", size: "m" } %>
-              </div>
-              <div class="col-lg-4 col-sm-12">
-                <div>
-                  <h4 class='text-2xl underline'> Partner Membership </h4>
-                  <%= modal_button_to("#resetPasswordModal", { text: "Reset Partner Password", icon: "check", type: "warning", size: "m" }) if can_administrate? %>
-                  <br>
-                  <br>
-                  <%= modal_button_to("#addUserModal", { text: "Add User To Partner", icon: "plus", type: "warning", size: "m" }) if can_administrate? %>
-                </div>
               </div>
               <div class="col-lg-4 col-sm-12">
                 <div>
