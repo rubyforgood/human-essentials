@@ -16,6 +16,7 @@ import "../controllers/index"
 import "trix"
 import "@rails/actiontext"
 import "stylesheets/application.scss"
+import $ from 'jquery';
 
 import {DateTime} from "luxon";
 import Litepicker from 'litepicker';
