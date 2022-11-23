@@ -41,7 +41,6 @@
                   <th>ID</th>
                   <th>User</th>
                   <th>Email</th>
-                  <th>Roles</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -52,13 +51,8 @@
                     <td><%= user.name %></td>
                     <td><%= user.email %></td>
                     <td>
-                      <span class="tag tag-success">
-                        <% user.roles.each do |role| %>
-                          <div><%= role.name %></div>
-                        <% end %>
-                      </span>
+                      <%= delete_button_to '#', { confirm: "Are you sure you want to remove user?", text: "Remove Access", icon: "undo" } %>
                     </td>
-                    <td>Mo</td>
                   </tr>
                 <% end %>
               </tbody>
@@ -90,4 +84,3 @@
       </div> 
     </div>
 </section>
-  </div>
