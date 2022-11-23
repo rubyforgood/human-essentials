@@ -5,18 +5,25 @@ class PartnerUsersController < ApplicationController
 
   def index
     @users = @partner.profile.users
-    @user = User.new
+    @user = User.new(name: '')
   end
 
   def create
-    svc = UserInviteService.invite(email: user_params[:email], roles: [Role::PARTNER], resource: @partner)
-
+    user = UserInviteService.invite(email: user_params[:email], name: user_params[:name], roles: [Role::PARTNER], resource: @partner.profile)
+    user.valid?
+    
     respond_to do |format|
       format.turbo_stream do
-        render turbo_stream: [
-          turbo_stream.replace('partner_users/new/form', partial: 'partner_users/form', locals: { partner: @partner, user: User.new }),
-          turbo_stream.replace("partners/#{@partner.id}/index", partial: 'partner_users/index', locals: { partner: @partner })
-        ]
+        if user.errors.none?
+          render turbo_stream: [
+            turbo_stream.replace("partners/#{@partner.id}/form", partial: 'partner_users/form', locals: { partner: @partner, user: User.new(name: '') }),
+            turbo_stream.replace("partners/#{@partner.id}/users", partial: 'partner_users/users', locals: { users: @partner.reload.profile.users, partner: @partner })
+          ]
+        else
+          render turbo_stream: [
+            turbo_stream.replace("partners/#{@partner.id}/form", partial: 'partner_users/form', locals: { partner: @partner, user: user }),
+          ]
+        end
       end
     end
   end
@@ -28,7 +35,7 @@ class PartnerUsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:email)
+    params.require(:user).permit(:email, :name)
   end
 
 
