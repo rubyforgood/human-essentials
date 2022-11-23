@@ -15,14 +15,19 @@ class PartnerUsersController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         if user.errors.none?
+          flash.now[:notice] = "#{user.name} has been invited. Invitation email sent to #{user.email}"
+
           render turbo_stream: [
             turbo_stream.replace("partners/#{@partner.id}/form", partial: 'partner_users/form', locals: { partner: @partner, user: User.new(name: '') }),
+            turbo_stream.replace("flash", partial: "shared/flash"),
             turbo_stream.replace("partners/#{@partner.id}/users", partial: 'partner_users/users', locals: { users: @partner.reload.profile.users, partner: @partner })
           ]
         else
+          flash.now[:error] = "Invitation failed. Check the form for errors."
           render turbo_stream: [
             turbo_stream.replace("partners/#{@partner.id}/form", partial: 'partner_users/form', locals: { partner: @partner, user: user }),
-          ]
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ], status: 400
         end
       end
     end
