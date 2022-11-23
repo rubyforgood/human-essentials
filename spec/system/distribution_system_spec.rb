@@ -25,16 +25,11 @@ RSpec.feature "Distributions", type: :system do
 
   context "When creating a new distribution manually" do
     it "Allows a distribution to be created" do
-      # update items to check for inactive ones
-      @storage_location.items.first.update!(name: 'Inactive Item', active: false)
-
       visit @url_prefix + "/distributions/new"
 
       select @partner.name, from: "Partner"
       select @storage_location.name, from: "From storage location"
       choose "Pick up"
-
-      expect(page).not_to have_content('Inactive')
 
       fill_in "Comment", with: "Take my wipes... please"
       fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
