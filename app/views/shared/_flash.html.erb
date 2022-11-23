@@ -1,6 +1,7 @@
-<% flash.each do |key, message| %>
-  <div class="<%= flash_class(key) %> alert-dismissible" role="alert">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
-    <%= message %>
-  </div>
+<%= turbo_frame_tag "flash" do %>
+  <% flash.each do |key, message| %>
+    <div class="<%= flash_class(key) %> alert-dismissible" role="alert">
+      <%= message %>
+    </div>
+  <% end %>
 <% end %>

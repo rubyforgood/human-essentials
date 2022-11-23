@@ -26,8 +26,7 @@
     <meta name="turbo-cache-control" content="no-cache" />
   <% end %>
 </head>
-<body 
-  data-turbo="<%= @turbo %>"
+<body data-turbo="<%= @turbo %>" data-controller='turbo'
   id="<%= params.fetch(:controller, '').gsub(/[^\w\d]+/,'_') %>" class="<%= params.fetch(:action, '') %> hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
 <div class="wrapper">
@@ -81,9 +80,7 @@
   </aside>
 
   <div class="content-wrapper">
-    <%= turbo_frame_tag "flash" do %>
-      <%= render partial: "shared/flash" %>
-    <% end %>
+    <%= render partial: "shared/flash" %>
 
     <div>
       <%= yield %>
