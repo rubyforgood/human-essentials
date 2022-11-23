@@ -17,7 +17,7 @@
     <%= f.input :agency_rep, label: "Agency representative" %>
     <%= f.input :delivery_method, as: :radio_buttons, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
 
-    <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: false }  %>
+    <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: false, include_omitted_items: true }  %>
 
     <%= f.input :comment, label: "Comment" %>
 
