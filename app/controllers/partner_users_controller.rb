@@ -1,7 +1,7 @@
 # frozen_String_literal: true
 
 class PartnerUsersController < ApplicationController
-  before_action :set_partner, only: %i[index create]
+  before_action :set_partner, only: %i[index create destroy]
 
   def index
     @users = @partner.profile.users
@@ -34,7 +34,24 @@ class PartnerUsersController < ApplicationController
   end
 
   def destroy
+    user = User.find(params[:id])
 
+    respond_to do |format|
+      format.turbo_stream do
+        if user.remove_role(Role::PARTNER, @partner.profile)
+          flash.now[:notice] = "Access to #{user.name} has been revoked."
+          render turbo_stream: [
+            turbo_stream.replace("flash", partial: "shared/flash"),
+            turbo_stream.replace("partners/#{@partner.id}/users", partial: 'partner_users/users', locals: { users: @partner.reload.profile.users, partner: @partner })
+          ]
+        else
+          flash.now[:error] = "Invitation failed. Check the form for errors."
+          render turbo_stream: [
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ], status: 400
+        end
+      end
+    end
   end
 
   private
