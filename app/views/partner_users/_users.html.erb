@@ -11,6 +11,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Invitation Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -20,6 +21,13 @@
               <td><%= user.id %></td>
               <td><%= user.name %></td>
               <td><%= user.email %></td>
+              <td>
+                <% if user.invitation_accepted_at %>
+                  <span class="badge bg-success">Accepted</span>
+                <% else %>
+                  <span class="badge bg-primary">Waiting Acceptance</span>
+                <% end %>
+              </td>
               <td>
                 <%= delete_button_to '#', { confirm: "Are you sure you want to remove user?", text: "Remove Access", icon: "undo" } %>
               </td>
