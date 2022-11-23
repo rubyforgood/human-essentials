@@ -25,10 +25,18 @@
                 <% if user.invitation_accepted_at %>
                   <span class="badge bg-success">Accepted</span>
                 <% else %>
-                  <span class="badge bg-primary">Waiting Acceptance</span>
+                  <div class='d-flex flex-column justify-content-center align-items-start'>
+                    <span class="badge bg-warning">
+                      <div>Waiting Acceptance</div>
+                    </span>
+                    <div>Last invite sent <strong><%= time_ago_in_words(user.invitation_sent_at) %> ago</strong></div>
+                  </div>
                 <% end %>
               </td>
-              <td>
+              <td class='d-flex'>
+                <% unless user.invitation_accepted_at %>
+                  <%= button_to "Resend Invite", '#', method: :post, class: "btn btn-primary btn-sm mr-2" %>
+                <% end %>
                 <%= button_to "Remove Access", partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
               </td>
             </tr>
