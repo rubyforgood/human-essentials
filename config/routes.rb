@@ -162,6 +162,8 @@ Rails.application.routes.draw do
     end
     resources :item_categories
     resources :partners do
+      resources :users, only: [:index], controller: 'partner_users'
+
       collection do
         post :import_csv
       end
