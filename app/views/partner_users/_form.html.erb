@@ -1,0 +1,13 @@
+<%= turbo_frame_tag 'partner_users/new/form' do %>
+  <%= simple_form_for user, url: partner_users_path(partner) do |f| %>
+    <div class="card-body">
+      <div class="form-group">
+        <%= f.input :email, label: "Email", placeholder: "Email", required: true %>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <%= f.submit "Create New User", class: 'btn btn-primary float-right' %>
+    </div>
+  <% end %>
+<% end %>
