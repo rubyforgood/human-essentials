@@ -29,47 +29,12 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-8">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Users</h3>
-          </div>
-
-          <div class="card-body table-responsive p-0">
-            <table class="table table-hover text-nowrap">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @users.each do |user| %>
-                  <tr>
-                    <td><%= user.id %></td>
-                    <td><%= user.name %></td>
-                    <td><%= user.email %></td>
-                    <td>
-                      <%= delete_button_to '#', { confirm: "Are you sure you want to remove user?", text: "Remove Access", icon: "undo" } %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-
-        </div>
+        <%= render 'users', users: @users, partner: @partner %>
       </div> 
 
       <div class="col-md-4">
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Add New User</h3>
-          </div>
-
-          <%= render 'form', user: @user, partner: @partner %>
-        </div>
+        <%= render 'form', user: @user, partner: @partner %>
       </div> 
     </div>
+  </div>
 </section>
