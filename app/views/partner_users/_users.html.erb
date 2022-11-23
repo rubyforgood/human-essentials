@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "partners/#{partner.id}/users" do %>
-  <div class="card">
+  <div class="card card-primary">
     <div class="card-header">
       <h3 class="card-title">Users</h3>
     </div>
@@ -29,7 +29,7 @@
                 <% end %>
               </td>
               <td>
-                <%= delete_button_to '#', { confirm: "Are you sure you want to remove user?", text: "Remove Access", icon: "undo" } %>
+                <%= button_to "Remove Access", partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
               </td>
             </tr>
           <% end %>
