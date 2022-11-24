@@ -1,7 +1,7 @@
 # frozen_String_literal: true
 
 class PartnerUsersController < ApplicationController
-  before_action :set_partner, only: %i[index create destroy]
+  before_action :set_partner, only: %i[index create destroy resend_invitation]
 
   def index
     @users = @partner.profile.users
@@ -46,6 +46,33 @@ class PartnerUsersController < ApplicationController
           ]
         else
           flash.now[:error] = "Invitation failed. Check the form for errors."
+          render turbo_stream: [
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ], status: 400
+        end
+      end
+    end
+  end
+
+  def resend_invitation
+    user = User.find(params[:id])
+
+    if user.invitation_accepted_at.nil?
+      user.invite!
+    else 
+      user.errors.add(:base, "User has already accepted invitation.")
+    end
+
+    respond_to do |format|
+      format.turbo_stream do
+        if user.errors.none?
+          flash.now[:notice] = "Invitation email sent to #{user.email}"
+          render turbo_stream: [
+            turbo_stream.replace("flash", partial: "shared/flash"),
+            turbo_stream.replace("partners/#{@partner.id}/users", partial: 'partner_users/users', locals: { users: @partner.reload.profile.users, partner: @partner })
+          ]
+        else
+          flash.now[:error] = user.errors.full_messages.to_sentence
           render turbo_stream: [
             turbo_stream.replace("flash", partial: "shared/flash")
           ], status: 400

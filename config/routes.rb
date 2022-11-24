@@ -162,7 +162,11 @@ Rails.application.routes.draw do
     end
     resources :item_categories
     resources :partners do
-      resources :users, only: [:index, :create, :destroy], controller: 'partner_users'
+      resources :users, only: [:index, :create, :destroy], controller: 'partner_users' do
+        member do
+          post :resend_invitation
+        end
+      end
 
       collection do
         post :import_csv

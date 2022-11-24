@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "partners/#{partner.id}/form" do %>
   <div class="card card-primary">
     <div class="card-header">
-      <h3 class="card-title">Add New User</h3>
+      <h3 class="card-title">Invite New User</h3>
     </div>
 
     <%= simple_form_for user, url: partner_users_path(partner) do |f| %>
@@ -15,7 +15,7 @@
       </div>
 
       <div class="card-footer">
-        <%= f.submit "Create New User", class: 'btn btn-primary float-right' %>
+        <%= f.submit "Invite User", class: 'btn btn-primary float-right' %>
       </div>
     <% end %>
   </div>

@@ -131,36 +131,6 @@
           </div>
         </section>
 
-        <section class="card card-info card-outline" id="partner-users">
-          <div class="card-header">
-            <h2 class="card-title">Users who can access this Partner</h2>
-          </div>
-          <div class="card-body p-0">
-            <div class="tab-content" id="custom-tabs-three-tabContent">
-              <table class="table">
-                <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Invitation Sent</th>
-                  <th>Last Logged In</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% @partner_users.each do |user| %>
-                  <tr>
-                    <td><%= user.name %></td>
-                    <td><%= user.email %></td>
-                    <td><%= user.invitation_sent_at && user.invitation_sent_at.strftime('%B %-d, %Y') %></td>
-                    <td><%= user.last_sign_in_at && user.last_sign_in_at.strftime('%B %-d, %Y') %></td>
-                  </tr>
-                  </tbody>
-                <% end %>
-                </table>
-            </div><!-- /.box-body.table-responsive -->
-          </div>
-        </section>
-
         <section class="card card-info card-outline">
           <div class="card-header">
             <h2 class="card-title">Settings</h2>
