@@ -2,31 +2,32 @@
 #
 # Table name: organizations
 #
-#  id                          :integer          not null, primary key
-#  city                        :string
-#  deadline_day                :integer
-#  default_storage_location    :integer
-#  distribute_monthly          :boolean          default(FALSE), not null
-#  email                       :string
-#  enable_child_based_requests :boolean          default(TRUE), not null
-#  enable_individual_requests  :boolean          default(TRUE), not null
-#  intake_location             :integer
-#  invitation_text             :text
-#  latitude                    :float
-#  longitude                   :float
-#  name                        :string
-#  partner_form_fields         :text             default([]), is an Array
-#  reminder_day                :integer
-#  repackage_essentials        :boolean          default(FALSE), not null
-#  short_name                  :string
-#  state                       :string
-#  street                      :string
-#  url                         :string
-#  zipcode                     :string
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
-#  account_request_id          :integer
-#  ndbn_member_id              :bigint
+#  id                             :integer          not null, primary key
+#  city                           :string
+#  deadline_day                   :integer
+#  default_storage_location       :integer
+#  distribute_monthly             :boolean          default(FALSE), not null
+#  email                          :string
+#  enable_child_based_requests    :boolean          default(TRUE), not null
+#  enable_individual_requests     :boolean          default(TRUE), not null
+#  enable_quantity_based_requests :boolean          default(TRUE), not null
+#  intake_location                :integer
+#  invitation_text                :text
+#  latitude                       :float
+#  longitude                      :float
+#  name                           :string
+#  partner_form_fields            :text             default([]), is an Array
+#  reminder_day                   :integer
+#  repackage_essentials           :boolean          default(FALSE), not null
+#  short_name                     :string
+#  state                          :string
+#  street                         :string
+#  url                            :string
+#  zipcode                        :string
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  account_request_id             :integer
+#  ndbn_member_id                 :bigint
 #
 
 class Organization < ApplicationRecord
@@ -41,6 +42,7 @@ class Organization < ApplicationRecord
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
+  validate :some_request_type_enabled
 
   belongs_to :account_request, optional: true
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
@@ -250,6 +252,12 @@ class Organization < ApplicationRecord
                               .in?(%w(image/jpeg image/jpg image/pjpeg image/png image/x-png))
       self.logo = nil
       errors.add(:logo, "Must be a JPG or a PNG file")
+    end
+  end
+
+  def some_request_type_enabled
+    unless enable_child_based_requests? || enable_individual_requests || enable_quantity_based_requests
+      errors.add(:enable_requests, "You must allow at least one request type (child-based, individual, or quantity-based)")
     end
   end
 

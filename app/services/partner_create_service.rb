@@ -24,7 +24,8 @@ class PartnerCreateService
                                   partner_id: @partner.id,
                                   name: @partner.name,
                                   enable_child_based_requests: organization.enable_child_based_requests,
-                                  enable_individual_requests: organization.enable_individual_requests
+                                  enable_individual_requests: organization.enable_individual_requests,
+                                  enable_quantity_based_requests: organization.enable_quantity_based_requests
                                 })
     rescue StandardError => e
       errors.add(:base, e.message)

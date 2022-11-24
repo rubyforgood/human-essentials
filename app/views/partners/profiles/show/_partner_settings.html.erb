@@ -2,6 +2,11 @@
   <h5 class="text-white card-header bg-primary">Settings</h5>
   <div class="card-body">
     <dl>
+      <% if partner.organization.enable_quantity_based_requests? %>
+      <% if profile.organization.enable_child_based_requests? %>
+        <dt>Uses Quantity Based Requests</dt>
+        <dd><%= humanize_boolean(partner.enable_quantity_based_requests) %></dd>
+      <% end %>
       <% if profile.organization.enable_child_based_requests? %>
         <dt>Uses Child Based Requests</dt>
         <dd><%= humanize_boolean(profile.enable_child_based_requests) %></dd>

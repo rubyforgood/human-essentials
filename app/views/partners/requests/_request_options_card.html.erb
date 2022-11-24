@@ -3,17 +3,19 @@
 
   <div class="d-flex">
 
-    <article class="col d-flex flex-column justify-content-between p-4 mr-4 border border-primary rounded shadow">
-      <div>
-        <h3 class='mb-0'>Quantity</h3>
-        <p>Specify quantity for each product.</p>
-      </div>
+    <% if current_partner.enable_quantity_based_requests? %>
+      <article class="col d-flex flex-column justify-content-between p-4 mr-4 border border-primary rounded shadow">
+        <div>
+          <h3 class='mb-0'>Quantity</h3>
+          <p>Specify quantity for each product.</p>
+        </div>
 
-      <%= link_to "Create Request",
-          new_partners_request_path,
-          class: "btn btn-primary w-100 py-2 px-4 rounded",
-          "aria-label": "Create a request by quantity" %>
-    </article>
+        <%= link_to "Create Request",
+            new_partners_request_path,
+            class: "btn btn-primary w-100 py-2 px-4 rounded",
+            "aria-label": "Create a request by quantity" %>
+      </article>
+    <% end %>
 
     <% if current_partner.profile.enable_child_based_requests? %>
       <article class="col d-flex flex-column justify-content-between p-4 mr-4 border border-primary rounded shadow">

@@ -88,6 +88,7 @@ module Partners
         :essentials_funding_source,
         :enable_child_based_requests,
         :enable_individual_requests,
+        :enable_quantity_based_requests,
         documents: []
       ).select { |_, v| v.present? }
     end

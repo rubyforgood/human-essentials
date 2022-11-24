@@ -85,7 +85,7 @@ class OrganizationsController < ApplicationController
       :invitation_text, :reminder_day, :deadline_day,
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
-      :enable_individual_requests,
+      :enable_individual_requests, :enable_quantity_based_requests,
       partner_form_fields: []
     )
   end
