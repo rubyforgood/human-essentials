@@ -8,7 +8,6 @@
       <table class="table table-hover text-nowrap">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Last Login</th>
@@ -19,7 +18,6 @@
         <tbody>
           <% users.order(name: :asc).each do |user| %>
             <tr>
-              <td><%= user.id %></td>
               <td><%= user.name %></td>
               <td><%= user.email %></td>
               <td>
@@ -31,7 +29,9 @@
               </td>
               <td>
                 <% if user.invitation_accepted_at %>
-                  <span class="badge bg-success">Accepted</span>
+                  <span class="badge bg-success">
+                    <i class="fas fa-check"></i> Accepted
+                  </span>
                 <% else %>
                   <div class='d-flex flex-column justify-content-center align-items-start'>
                     <span class="badge bg-warning">
@@ -45,11 +45,11 @@
               </td>
               <td class='d-flex'>
                 <% unless user.invitation_accepted_at %>
-                  <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, class: "btn btn-warning btn-sm mr-2" do %>
+                  <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, class: "btn btn-warning btn-xs mr-2" do %>
                     <i class="fa fa-envelope"></i> Resend Invitation
                   <% end %>
                 <% end %>
-                <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" do %>
+                <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-xs" do %>
                     <i class="fa fa-ban"></i> Remove Access
                 <% end %>
 
