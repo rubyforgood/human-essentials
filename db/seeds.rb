@@ -748,3 +748,10 @@ answers = [
   )
 end
 
+class Turbo::StreamsChannel
+  [:broadcast_append_to, :broadcast_prepend_to, :broadcast_replace_to, :broadcast_remove_to].each do |method|
+    define_singleton_method(method) do |*args|
+      return nil
+    end
+  end
+end
