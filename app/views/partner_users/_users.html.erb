@@ -45,9 +45,14 @@
               </td>
               <td class='d-flex'>
                 <% unless user.invitation_accepted_at %>
-                  <%= button_to "Resend Invite", resend_invitation_partner_user_path(partner, user), method: :post, class: "btn btn-primary btn-sm mr-2" %>
+                  <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, class: "btn btn-warning btn-sm mr-2" do %>
+                    <i class="fa fa-envelope"></i> Resend Invitation
+                  <% end %>
                 <% end %>
-                <%= button_to "Remove Access", partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+                <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" do %>
+                    <i class="fa fa-ban"></i> Remove Access
+                <% end %>
+
               </td>
             </tr>
           <% end %>
