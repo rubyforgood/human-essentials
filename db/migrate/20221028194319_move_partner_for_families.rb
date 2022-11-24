@@ -15,6 +15,9 @@ class MovePartnerForFamilies < ActiveRecord::Migration[7.0]
     KLASS.connection.execute(update_sql)
 
     KLASS.find_each do |record|
+      record.guardian_first_name = 'UNKNOWN' if record.guardian_first_name.blank?
+      record.guardian_last_name = 'UNKNOWN' if record.guardian_last_name.blank?
+      record.guardian_zip_code = 'UNKNOWN' if record.guardian_zip_code.blank?
       record.update!(partner_id: Partners::Profile.find_by(id: record.old_partner_id).partner_id)
     end
 
