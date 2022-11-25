@@ -253,64 +253,6 @@
       </div>
     </div>
   </div>
-
-  <div id="addUserModal" class="modal fade">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Add a User to <%= @partner.name %></h4>
-        </div><!-- modal-header -->
-        <div class="modal-body">
-          <div class="box-body">
-            <p>
-              This will invite an additional member of the partner organization to become a partner user in the system. This user will show up on the lists of users who can access this partner after being invited and you will be able to track their most recent log in as well.
-            </p>
-            <br/>
-            <%= form_tag invite_partner_user_partner_path do %>
-              <div class="input-group">
-                <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
-                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
-                <%= hidden_field_tag :partner, @partner.id %><br>
-              </div>
-              <br>
-              <%= submit_button({ text: "Invite User", icon: "envelope" }) %>
-            <% end # form %>
-          </div><!-- box-body -->
-        </div><!-- modal-body -->
-      </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-  </div><!-- addUserModal -->
-  <div id="resetPasswordModal" class="modal fade">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Reset Password <%= @partner.name %></h4>
-        </div><!-- modal-header -->
-        <div class="modal-body">
-          <div class="box-body">
-            <p>
-              If your partner is unable to log in because they have forgotten their password, this will send your partner an email to reset their password so are able to can log in again. The person receiving this email should exist in the list of users who can access this partner. That list is available on the current page <a href="#partner-users">here.</a>
-            </p>
-            <p>
-              Note: If the email entered for the partner does not match a user on the partner an email will be sent inviting that person to be a user of the partner agency.
-            </p>
-            <br/>
-            <%= form_tag invite_partner_user_partner_path do %>
-              <div class="input-group">
-                <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
-                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
-                <%= hidden_field_tag :partner, @partner.id %><br>
-              </div>
-              <br>
-              <%= submit_button({ text: "Reset Password", icon: "envelope" }) %>
-            <% end # form %>
-          </div><!-- box-body -->
-        </div><!-- modal-body -->
-      </div><!-- modal-content -->
-    </div><!-- modal-dialog -->
-  </div><!-- addUserModal -->
 </section>
 
 <script>
