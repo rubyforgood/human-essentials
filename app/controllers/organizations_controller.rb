@@ -22,20 +22,6 @@ class OrganizationsController < ApplicationController
     end
   end
 
-  def invite_user
-    UserInviteService.invite(email: params[:email],
-      name: params[:name],
-      roles: [Role::ORG_USER],
-      resource: Organization.find(params[:org]))
-    redirect_to organization_path, notice: "User invited to organization!"
-  end
-
-  def resend_user_invitation
-    user = User.find(params[:user_id])
-    user.invite!
-    redirect_to organization_path, notice: "User re-invited to organization!"
-  end
-
   def promote_to_org_admin
     user = User.find(params[:user_id])
     raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
