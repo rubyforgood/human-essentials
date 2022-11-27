@@ -3,7 +3,6 @@
   <div class="card-body">
     <dl>
       <% if partner.organization.enable_quantity_based_requests? %>
-      <% if profile.organization.enable_child_based_requests? %>
         <dt>Uses Quantity Based Requests</dt>
         <dd><%= humanize_boolean(partner.enable_quantity_based_requests) %></dd>
       <% end %>
