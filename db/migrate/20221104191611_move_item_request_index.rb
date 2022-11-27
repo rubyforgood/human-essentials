@@ -18,16 +18,18 @@ class MoveItemRequestIndex < ActiveRecord::Migration[7.0]
     SQL
     rows = ApplicationRecord.connection.select_all(sql)
     rows.each do |request|
+      puts request['id']
       from = request['created_at'] - 10.seconds
       to = request['created_at'] + 10.seconds
-      new_partner = Partners::Partner.find_by_id(request['partner_id'])&.partner_id
+      new_partner = Partners::Profile.find_by_id(request['partner_id'])&.partner_id
       next if new_partner.nil?
 
       new_request = Request.where(partner_id: new_partner).
         where("CREATED_AT BETWEEN '#{from.to_fs(:db)}' AND '#{to.to_fs(:db)}'").first
       next if new_request.nil?
 
-      ItemRequest.update_all(partner_request_id: new_request.id, updated_at: Time.zone.now)
+      Partners::ItemRequest.where(old_partner_request_id: request['id']).
+        update_all(partner_request_id: new_request.id, updated_at: Time.zone.now)
     end
   end
 

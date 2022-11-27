@@ -205,8 +205,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_04_191611) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 5, null: false
+    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
@@ -518,9 +518,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_04_191611) do
     t.string "status_in_diaper_base"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
-    t.boolean "enable_quantity_based_requests", default: true, null: false
     t.string "instagram"
     t.boolean "no_social_media_presence"
+    t.boolean "enable_quantity_based_requests", default: true, null: false
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 
@@ -533,7 +533,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_04_191611) do
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "for_families"
     t.integer "partner_user_id"
-    t.bigint "old_partner_id"
     t.index ["organization_id"], name: "index_partner_requests_on_organization_id"
     t.index ["partner_id"], name: "index_partner_requests_on_partner_id"
   end
@@ -760,8 +759,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_04_191611) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type"
-    t.string "{:null=>false}"
+    t.string "item_type", null: false
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
@@ -798,11 +796,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_04_191611) do
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
-  add_foreign_key "partner_users", "partner_profiles", column: "partner_id"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
-  add_foreign_key "users", "partner_profiles", column: "partner_id"
 end
