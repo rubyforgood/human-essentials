@@ -4,7 +4,9 @@ module UserInviteService
   # @param roles [Array<Symbol>]
   # @param resource [ApplicationRecord]
   # @return [User]
-  def self.invite(email:, name: nil, roles: [], resource: nil)
+  def self.invite(email:, name: nil, roles: [], resource:)
+    raise 'Resource not found!' if resource.nil?
+
     User.invite!(email: email) do |user|
       user.name = name if name
       roles.each do |role|
