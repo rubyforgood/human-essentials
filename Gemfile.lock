@@ -568,6 +568,8 @@ GEM
     strong_migrations (1.4.0)
       activerecord (>= 5.2)
     strscan (3.0.4)
+    terser (1.1.13)
+      execjs (>= 0.3.0, < 3)
     thor (1.2.1)
     tilt (2.0.10)
     timeout (0.3.0)
@@ -578,8 +580,6 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
-    uglifier (4.2.0)
-      execjs (>= 0.3.0, < 3)
     unicode-display_width (2.1.0)
     uniform_notifier (1.16.0)
     version_gem (1.1.0)
@@ -700,8 +700,8 @@ DEPENDENCIES
   standard (~> 1.0)
   stimulus-rails
   strong_migrations (= 1.4.0)
+  terser
   turbo-rails
-  uglifier (>= 1.3.0)
   web-console
   webdrivers (~> 5.2)
   webmock (~> 3.18)
