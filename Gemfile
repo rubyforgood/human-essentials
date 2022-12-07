@@ -119,7 +119,10 @@ group :production do
   gem "skylight"
   # Tool to detect unused code through knowing which methods are used in which files.
   gem 'coverband'
-  # JS compression
+end
+
+group :production, :staging do
+  # JS compression for deployed environments.
   gem 'terser'
 end
 
