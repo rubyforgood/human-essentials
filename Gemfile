@@ -46,8 +46,6 @@ gem "jquery-rails"
 gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# JavaScript minified, used in asset compilation.
-gem "uglifier", ">= 1.3.0"
 # JavaScript bundler.
 gem 'webpacker', '~> 5.0'
 # Used to verify that the user is a human.
